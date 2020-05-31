@@ -189,10 +189,4 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
     public HyperplaneSubset<TestPoint2D> transform(Transform<TestPoint2D> transform) {
         throw new UnsupportedOperationException();
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public HyperplaneSubset.Builder<TestPoint2D> builder() {
-        return new TestLineSegmentCollectionBuilder(segments.get(0).getHyperplane());
-    }
 }

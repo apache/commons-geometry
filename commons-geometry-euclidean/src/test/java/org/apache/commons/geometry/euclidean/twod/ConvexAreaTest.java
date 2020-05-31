@@ -312,6 +312,35 @@ public class ConvexAreaTest {
     }
 
     @Test
+    public void testGetVertices_mismatchedEndpoints() {
+        // This test checks the case where we have a valid set of boundary segments but
+        // with a small mismatch in the endpoints of some of the segments (possibly due
+        // to floating point errors).
+
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        Vector2D p1 = Vector2D.ZERO;
+        Vector2D p2 = Vector2D.of(0.99, 0);
+        Vector2D p3 = Vector2D.of(1, 0.002);
+        Vector2D p4 = Vector2D.of(0.995, -0.001);
+        Vector2D p5 = Vector2D.of(1, 1);
+
+        ConvexArea area = new ConvexArea(Arrays.asList(
+                    Lines.segmentFromPoints(p1, p2, precision),
+                    Lines.segmentFromPoints(p2, p3, precision),
+                    Lines.segmentFromPoints(p4, p5, precision),
+                    Lines.segmentFromPoints(p5, p1, precision)
+                ));
+
+        // act
+        List<Vector2D> vertices = area.getVertices();
+
+        // assert
+        Assert.assertEquals(Arrays.asList(p1, p2, p3, p5), vertices);
+    }
+
+    @Test
     public void testGetBounds_infinite() {
         // act/assert
         Assert.assertNull(ConvexArea.full().getBounds());
@@ -725,6 +754,46 @@ public class ConvexAreaTest {
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
         Assert.assertSame(area, split.getMinus());
         Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_trimmedSplitterDiscrepancy() {
+        // The following example came from a failed invocation of the Sphere.toTree() method.
+        // This test checks the case where the splitter trimmed to the area is non-empty but
+        // the boundaries split by the splitter all lies on a single side.
+
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+
+        Vector2D p1 = Vector2D.of(-100.27622744776312, -39.236143934478704);
+        Vector2D p2 = Vector2D.of(-100.23149336840831, -39.28090397981739);
+        Vector2D p3 = Vector2D.of(-96.28607710958399, -39.25486984391497);
+        ConvexArea area = ConvexArea.fromBounds(
+                    Lines.fromPointAndDirection(p1, Vector2D.of(-0.00601644753700725, -0.9999819010157307), precision),
+                    Lines.fromPoints(p1, p2, precision),
+                    Lines.fromPoints(p2, p3, precision),
+                    Lines.fromPointAndDirection(p3, Vector2D.of(0.9999648811047153, 0.008380725340508379), precision)
+                );
+
+        Line splitter = Lines.fromPointAndDirection(
+                Vector2D.of(-68.9981806624852, -70.04669274578112),
+                Vector2D.of(0.7124186895479748, -0.7017546656651072),
+                precision);
+
+        // act
+        Split<ConvexArea> minusSplit = area.split(splitter);
+        Split<ConvexArea> plusSplit = area.split(splitter.reverse());
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, minusSplit.getLocation());
+
+        Assert.assertSame(area, minusSplit.getMinus());
+        Assert.assertNull(minusSplit.getPlus());
+
+        Assert.assertEquals(SplitLocation.PLUS, plusSplit.getLocation());
+
+        Assert.assertNull(plusSplit.getMinus());
+        Assert.assertSame(area, plusSplit.getPlus());
     }
 
     @Test

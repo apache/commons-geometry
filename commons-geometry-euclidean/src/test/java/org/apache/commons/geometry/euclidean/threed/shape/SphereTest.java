@@ -18,6 +18,9 @@ package org.apache.commons.geometry.euclidean.threed.shape;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.DoubleSupplier;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -27,12 +30,15 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
+import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.rng.UniformRandomProvider;
+import org.apache.commons.rng.simple.RandomSource;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -284,31 +290,55 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_smallestNumberOfPlanes() throws IOException {
+    public void testToTree_zeroSubdivisions() throws IOException {
         // arrange
         double r = 2;
         Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
 
         // act
-        RegionBSPTree3D tree = s.toTree(2, 3);
+        RegionBSPTree3D tree = s.toTree(0);
 
         // assert
         checkBasicApproximationProperties(s, tree);
 
         List<PlaneConvexSubset> boundaries = tree.getBoundaries();
-        Assert.assertEquals(6, boundaries.size());
+        Assert.assertEquals(8, boundaries.size());
 
-        double expectedSize = 0.5 * Math.sqrt(3) * (r * r * r);
+        List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
+        Assert.assertEquals(8, triangles.size());
+
+        double expectedSize = (4.0 / 3.0) * r * r * r;
         Assert.assertEquals(expectedSize, tree.getSize(), TEST_EPS);
     }
 
     @Test
-    public void testToTree_multipleApproximationSizes() throws Exception {
+    public void testToTree_oneSubdivision() throws IOException {
+        // arrange
+        double r = 2;
+        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
+
+        // act
+        RegionBSPTree3D tree = s.toTree(1);
+
+        // assert
+        checkBasicApproximationProperties(s, tree);
+
+        List<PlaneConvexSubset> boundaries = tree.getBoundaries();
+        Assert.assertEquals(32, boundaries.size());
+
+        List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
+        Assert.assertEquals(32, triangles.size());
+
+        Assert.assertTrue(tree.getSize() <= s.getSize());
+    }
+
+    @Test
+    public void testToTree_multipleSubdivisionCounts() throws Exception {
         // -- arrange
         Sphere s = Sphere.from(Vector3D.of(-3, 5, 1), 10, TEST_PRECISION);
 
-        int min = 4;
-        int max = 50;
+        int min = 0;
+        int max = 5;
 
         RegionBSPTree3D tree;
 
@@ -317,10 +347,17 @@ public class SphereTest {
 
         for (int n = min; n <= max; ++n) {
             // -- act
-            tree = s.toTree(n, n);
+            tree = s.toTree(n);
 
             // -- assert
             checkBasicApproximationProperties(s, tree);
+
+            int expectedTriangles = (int) (8 * Math.pow(4, n));
+            List<PlaneConvexSubset> boundaries = tree.getBoundaries();
+            Assert.assertEquals(expectedTriangles, boundaries.size());
+
+            List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
+            Assert.assertEquals(expectedTriangles, triangles.size());
 
             // check that we get closer and closer to the correct size as we add more segments
             sizeDiff = s.getSize() - tree.getSize();
@@ -332,57 +369,90 @@ public class SphereTest {
     }
 
     @Test
+    public void testToTree_randomSpheres() {
+        // arrange
+        UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP, 1L);
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+        double min = 1e-1;
+        double max = 1e2;
+
+        DoubleSupplier randDouble = () -> (rand.nextDouble() * (max - min)) + min;
+
+        int count = 10;
+        for (int i = 0; i < count; ++i) {
+            Vector3D center = Vector3D.of(
+                    randDouble.getAsDouble(),
+                    randDouble.getAsDouble(),
+                    randDouble.getAsDouble());
+
+            double radius = randDouble.getAsDouble();
+            Sphere sphere = Sphere.from(center, radius, precision);
+
+            for (int s = 0; s < 7; ++s) {
+                // act
+                RegionBSPTree3D tree = sphere.toTree(s);
+
+                // assert
+                Assert.assertEquals((int)(8 * Math.pow(4, s)), tree.getBoundaries().size());
+                Assert.assertTrue(tree.isFinite());
+                Assert.assertFalse(tree.isEmpty());
+                Assert.assertTrue(tree.getSize() < sphere.getSize());
+            }
+        }
+    }
+
+    @Test
     public void testToTree_closeApproximation() throws IOException {
         // arrange
-        Sphere s = Sphere.from(Vector3D.of(0, -1, 2), 1, TEST_PRECISION);
+        Sphere s = Sphere.from(Vector3D.ZERO, 1, TEST_PRECISION);
 
         // act
-        RegionBSPTree3D tree = s.toTree(25, 40);
+        RegionBSPTree3D tree = s.toTree(8);
 
         // assert
         checkBasicApproximationProperties(s, tree);
 
-        double eps = 0.1;
+        double eps = 1e-3;
+        Assert.assertTrue(tree.isFinite());
         Assert.assertEquals(s.getSize(), tree.getSize(), eps);
         Assert.assertEquals(s.getBoundarySize(), tree.getBoundarySize(), eps);
         EuclideanTestUtils.assertCoordinatesEqual(s.getCentroid(), tree.getCentroid(), eps);
     }
 
     @Test
-    public void testToTree_invalidArgs() {
+    public void testToTree_subdivideFails() {
         // arrange
-        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
-        String baseStackMsg = "Sphere approximation stack number must be greater than or equal to 2; was ";
-        String baseSliceMsg = "Sphere approximation slice number must be greater than or equal to 3; was ";
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
+        Sphere s = Sphere.from(Vector3D.ZERO, 1, precision);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            s.toTree(1, 10);
-        }, IllegalArgumentException.class, baseStackMsg + "1");
-        GeometryTestUtils.assertThrows(() -> {
-            s.toTree(-1, 10);
-        }, IllegalArgumentException.class, baseStackMsg + "-1");
-        GeometryTestUtils.assertThrows(() -> {
-            s.toTree(0, -1);
-        }, IllegalArgumentException.class, baseStackMsg + "0");
+            s.toTree(6);
+        }, IllegalStateException.class,
+                Pattern.compile("^Failed to construct sphere approximation with subdivision count 6:.*"));
+    }
 
+    @Test
+    public void testToTree_invalidArgs() {
+        // arrange
+        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
+
+        // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            s.toTree(2, 2);
-        }, IllegalArgumentException.class, baseSliceMsg + "2");
-        GeometryTestUtils.assertThrows(() -> {
-            s.toTree(4, -1);
-        }, IllegalArgumentException.class, baseSliceMsg + "-1");
+            s.toTree(-1);
+        }, IllegalArgumentException.class,
+                "Number of sphere approximation subdivisions must be greater than or equal to zero; was -1");
     }
 
     @Test
     public void testHashCode() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        DoublePrecisionContext otherPrecision = new EpsilonDoublePrecisionContext(1e-2);
 
         Sphere a = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
         Sphere b = Sphere.from(Vector3D.of(1, 1, 3), 3, TEST_PRECISION);
         Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 4, TEST_PRECISION);
-        Sphere d = Sphere.from(Vector3D.of(1, 2, 3), 3, precision);
+        Sphere d = Sphere.from(Vector3D.of(1, 2, 3), 3, otherPrecision);
         Sphere e = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
 
         // act
@@ -509,6 +579,8 @@ public class SphereTest {
     private static void checkBasicApproximationProperties(Sphere s, RegionBSPTree3D tree) {
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
+        Assert.assertTrue(tree.isFinite());
+        Assert.assertFalse(tree.isInfinite());
 
         // volume must be less than the sphere
         Assert.assertTrue("Expected approximation volume to be less than circle", tree.getSize() < s.getSize());

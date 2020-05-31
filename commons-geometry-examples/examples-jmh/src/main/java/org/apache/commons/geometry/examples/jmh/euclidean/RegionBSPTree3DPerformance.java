@@ -51,18 +51,18 @@ public class RegionBSPTree3DPerformance {
     @State(Scope.Thread)
     public static class SphericalBoundaryInputBase {
 
-        /** The input to use for the stacks and slices parameters when generating the
+        /** The input to use for the subdivisions parameter when generating the
          * sphere boundaries.
          */
-        @Param({"5", "10", "15"})
-        private int stacksSlices;
+        @Param({"2", "3", "4"})
+        private int subdivisions;
 
         /** Compute the boundaries for the instance.
          * @return the boundaries for the instance.
          */
         protected List<PlaneConvexSubset> computeBoundaries() {
             final Sphere sphere = Sphere.from(Vector3D.ZERO, 1, new EpsilonDoublePrecisionContext(1e-10));
-            return sphere.toTree(stacksSlices, stacksSlices).getBoundaries();
+            return sphere.toTree(subdivisions).getBoundaries();
         }
     }
 

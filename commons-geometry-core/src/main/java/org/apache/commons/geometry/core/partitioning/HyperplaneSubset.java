@@ -114,12 +114,6 @@ public interface HyperplaneSubset<P extends Point<P>> extends Splittable<P, Hype
      */
     P closest(P pt);
 
-    /** Return a {@link Builder} instance for joining multiple
-     * hyperplane subsets together.
-     * @return a new builder instance
-     */
-    Builder<P> builder();
-
     /** Return a new hyperplane subset resulting from the application of the given transform.
      * The current instance is not modified.
      * @param transform the transform instance to apply
@@ -134,27 +128,4 @@ public interface HyperplaneSubset<P extends Point<P>> extends Splittable<P, Hype
      *      region as this instance
      */
     List<? extends HyperplaneConvexSubset<P>> toConvex();
-
-    /** Interface for joining multiple {@link HyperplaneSubset}s into a single
-     * instance.
-     * @param <P> Point implementation type
-     */
-    interface Builder<P extends Point<P>> {
-
-        /** Add a {@link HyperplaneSubset} instance to the builder.
-         * @param sub subset to add to this instance
-         */
-        void add(HyperplaneSubset<P> sub);
-
-        /** Add a {@link HyperplaneConvexSubset} instance to the builder.
-         * @param sub convex subset to add to this instance
-         */
-        void add(HyperplaneConvexSubset<P> sub);
-
-        /** Get a {@link HyperplaneSubset} representing the union
-         * of all input subsets.
-         * @return subset representing the union of all input subsets
-         */
-        HyperplaneSubset<P> build();
-    }
 }

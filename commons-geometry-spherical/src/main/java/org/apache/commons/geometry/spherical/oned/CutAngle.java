@@ -26,7 +26,6 @@ import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
@@ -362,12 +361,6 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
 
         /** {@inheritDoc} */
         @Override
-        public CutAngleSubsetBuilder builder() {
-            return new CutAngleSubsetBuilder(this);
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public CutAngleConvexSubset reverse() {
             return new CutAngleConvexSubset(hyperplane.reverse());
         }
@@ -382,68 +375,6 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
                 .append(']');
 
             return sb.toString();
-        }
-    }
-
-    /** {@link HyperplaneSubset.Builder} implementation for spherical 1D space. This is effectively
-     * a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
-     * for the correct functioning of partitioning code.
-     */
-    private static final class CutAngleSubsetBuilder implements HyperplaneSubset.Builder<Point1S> {
-        /** Base hyperplane subset for the builder. */
-        private final CutAngleConvexSubset base;
-
-        /** Construct a new instance using the given base hyperplane subset.
-         * @param base base hyperplane subset for the instance
-         */
-        CutAngleSubsetBuilder(final CutAngleConvexSubset base) {
-            this.base = base;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneSubset<Point1S> sub) {
-            validateHyperplane(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneConvexSubset<Point1S> sub) {
-            validateHyperplane(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public CutAngleConvexSubset build() {
-            return base;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            final StringBuilder sb = new StringBuilder();
-            sb.append(this.getClass().getSimpleName())
-                .append("[base= ")
-                .append(base)
-                .append(']');
-
-            return sb.toString();
-        }
-
-        /** Validate that the given hyperplane subset lies on the same hyperplane subset as this instance.
-         * @param sub hyperplane subset to validate
-         * @throws IllegalArgumentException if the argument is not on the same hyperplane
-         *      as the instance
-         */
-        private void validateHyperplane(final HyperplaneSubset<Point1S> sub) {
-            final CutAngle baseHyper = base.getHyperplane();
-            final CutAngle inputHyper = (CutAngle) sub.getHyperplane();
-
-            if (!baseHyper.eq(inputHyper, baseHyper.getPrecision())) {
-                throw new IllegalArgumentException("Argument is not on the same " +
-                        "hyperplane. Expected " + baseHyper + " but was " +
-                        inputHyper);
-            }
         }
     }
 }

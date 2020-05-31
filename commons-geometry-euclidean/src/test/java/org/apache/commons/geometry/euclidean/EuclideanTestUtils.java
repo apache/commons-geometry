@@ -191,18 +191,19 @@ public final class EuclideanTestUtils {
     /**
      * Assert that the given lists represent equivalent vertex loops. The loops must contain the same sequence
      * of vertices but do not need to start at the same point.
+     * @param <V> Vector implementation type
      * @param expected
      * @param actual
      * @param precision
      */
-    public static void assertVertexLoopSequence(List<Vector3D> expected, List<Vector3D> actual,
+    public static <V extends EuclideanVector<V>> void assertVertexLoopSequence(List<V> expected, List<V> actual,
             DoublePrecisionContext precision) {
         Assert.assertEquals("Vertex sequences have different sizes", expected.size(), actual.size());
 
         if (expected.size() > 0) {
 
             int offset = -1;
-            Vector3D start = expected.get(0);
+            V start = expected.get(0);
             for (int i = 0; i < actual.size(); ++i) {
                 if (actual.get(i).eq(start, precision)) {
                     offset = i;
@@ -214,8 +215,8 @@ public final class EuclideanTestUtils {
                 Assert.fail("Vertex loops do not share any points: expected " + expected + " but was " + actual);
             }
 
-            Vector3D expectedVertex;
-            Vector3D actualVertex;
+            V expectedVertex;
+            V actualVertex;
             for (int i = 0; i < expected.size(); ++i) {
                 expectedVertex = expected.get(i);
                 actualVertex = actual.get((i + offset) % actual.size());

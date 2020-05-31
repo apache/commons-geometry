@@ -29,7 +29,6 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree.RegionSizeProperties;
 import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
@@ -37,8 +36,8 @@ import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
 import org.apache.commons.geometry.core.partitioning.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
-import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
 import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree.TestRegionNode;
+import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -1179,20 +1178,20 @@ public class AbstractRegionBSPTreeTest {
         Assert.assertTrue(xAxisBoundary.getOutsideFacing().isEmpty());
         Assert.assertFalse(xAxisBoundary.getInsideFacing().isEmpty());
 
-        TestLineSegmentCollection xAxisInsideFacing = (TestLineSegmentCollection) xAxisBoundary.getInsideFacing();
-        Assert.assertEquals(1, xAxisInsideFacing.getLineSegments().size());
+        List<HyperplaneConvexSubset<TestPoint2D>> xAxisInsideFacing = xAxisBoundary.getInsideFacing();
+        Assert.assertEquals(1, xAxisInsideFacing.size());
 
-        TestLineSegment xAxisSeg = xAxisInsideFacing.getLineSegments().get(0);
+        TestLineSegment xAxisSeg = (TestLineSegment) xAxisInsideFacing.get(0);
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, 0), xAxisSeg.getStartPoint());
         PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, xAxisSeg.getEndPoint());
 
         Assert.assertTrue(yAxisBoundary.getOutsideFacing().isEmpty());
         Assert.assertFalse(yAxisBoundary.getInsideFacing().isEmpty());
 
-        TestLineSegmentCollection yAxisInsideFacing = (TestLineSegmentCollection) yAxisBoundary.getInsideFacing();
-        Assert.assertEquals(1, yAxisInsideFacing.getLineSegments().size());
+        List<HyperplaneConvexSubset<TestPoint2D>> yAxisInsideFacing = yAxisBoundary.getInsideFacing();
+        Assert.assertEquals(1, yAxisInsideFacing.size());
 
-        TestLineSegment yAxisSeg = yAxisInsideFacing.getLineSegments().get(0);
+        TestLineSegment yAxisSeg = (TestLineSegment) yAxisInsideFacing.get(0);
         PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, yAxisSeg.getStartPoint());
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, Double.POSITIVE_INFINITY), yAxisSeg.getEndPoint());
     }
@@ -1552,14 +1551,13 @@ public class AbstractRegionBSPTreeTest {
                 new TestLineSegment(new TestPoint2D(-4, -5), new TestPoint2D(1, 0))));
     }
 
-    private static void assertCutBoundarySegment(final HyperplaneSubset<TestPoint2D> boundary, final TestPoint2D start,
-            final TestPoint2D end) {
-        Assert.assertFalse("Expected boundary to not be empty", boundary.isEmpty());
+    private static void assertCutBoundarySegment(final List<HyperplaneConvexSubset<TestPoint2D>> boundaries,
+            final TestPoint2D start, final TestPoint2D end) {
+        Assert.assertFalse("Expected boundary to not be empty", boundaries.isEmpty());
 
-        TestLineSegmentCollection segmentCollection = (TestLineSegmentCollection) boundary;
-        Assert.assertEquals(1, segmentCollection.getLineSegments().size());
+        Assert.assertEquals(1, boundaries.size());
 
-        TestLineSegment segment = segmentCollection.getLineSegments().get(0);
+        TestLineSegment segment = (TestLineSegment) boundaries.get(0);
         PartitionTestUtils.assertPointsEqual(start, segment.getStartPoint());
         PartitionTestUtils.assertPointsEqual(end, segment.getEndPoint());
     }

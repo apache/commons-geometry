@@ -72,7 +72,9 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
      * @return the line subset paths comprising the boundary of the area.
      */
     public List<LinePath> getBoundaryPaths() {
-        return InteriorAngleLinePathConnector.connectMinimized(getBoundaries());
+        // use connectMaximized() here since that will prevent us from skipping vertices
+        // when there are multiple equivalent vertices to choose from for a given endpoint
+        return InteriorAngleLinePathConnector.connectMaximized(getBoundaries());
     }
 
     /** Get the vertices for the area in a counter-clockwise order. Each vertex in the

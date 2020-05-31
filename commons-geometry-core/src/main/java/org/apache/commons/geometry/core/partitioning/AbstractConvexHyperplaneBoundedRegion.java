@@ -242,13 +242,34 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
                         new Split<>(null, thisInstance);
             }
 
-            final List<S> minusBoundaries = new ArrayList<>();
-            final List<S> plusBoundaries = new ArrayList<>();
+            // the splitter passes through the region; split the other region boundaries
+            // by the splitter
+            final ArrayList<S> minusBoundaries = new ArrayList<>();
+            final ArrayList<S> plusBoundaries = new ArrayList<>();
 
             splitBoundaries(splitter, boundaryType, minusBoundaries, plusBoundaries);
 
+            // if the splitter was trimmed by the region boundaries, double-check that the split boundaries
+            // actually lie on both sides of the splitter; this is another case where floating point errors
+            // can cause a discrepancy between the results of splitting the splitter by the boundaries and
+            // splitting the boundaries by the splitter
+            if (!trimmedSplitter.isFull()) {
+                if (minusBoundaries.isEmpty()) {
+                    if (plusBoundaries.isEmpty()) {
+                        return new Split<>(null, null);
+                    }
+                    return new Split<>(null, thisInstance);
+                } else if (plusBoundaries.isEmpty()) {
+                    return new Split<>(thisInstance, null);
+                }
+            }
+
+            // we have a consistent region split; create the new plus and minus regions
             minusBoundaries.add(boundaryType.cast(trimmedSplitter));
             plusBoundaries.add(boundaryType.cast(trimmedSplitter.reverse()));
+
+            minusBoundaries.trimToSize();
+            plusBoundaries.trimToSize();
 
             return new Split<>(factory.apply(minusBoundaries), factory.apply(plusBoundaries));
         }

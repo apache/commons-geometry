@@ -21,10 +21,9 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 
 /** Class representing a line segment in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
@@ -195,12 +194,6 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
             return splitInfinite(splitterLine);
         }
         return splitFinite(splitterLine);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public HyperplaneSubset.Builder<TestPoint2D> builder() {
-        return new TestLineSegmentCollectionBuilder(line);
     }
 
     /** {@inheritDoc} */

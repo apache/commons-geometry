@@ -18,11 +18,9 @@ package org.apache.commons.geometry.spherical.oned;
 
 import java.util.List;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -505,66 +503,6 @@ public class CutAngleTest {
 
         //assert
         Assert.assertTrue(str.contains("CutAngleConvexSubset["));
-        Assert.assertTrue(str.contains("point= "));
-        Assert.assertTrue(str.contains("positiveFacing= "));
-    }
-
-    @Test
-    public void testBuilder() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
-
-        CutAngle pt = CutAngles.createPositiveFacing(0, precision);
-        HyperplaneConvexSubset<Point1S> sub = pt.span();
-
-        // act
-        HyperplaneSubset.Builder<Point1S> builder = sub.builder();
-
-        builder.add(sub);
-        builder.add(CutAngles.createPositiveFacing(1e-4, precision).span());
-        builder.add((HyperplaneSubset<Point1S>) sub);
-
-        HyperplaneSubset<Point1S> result = builder.build();
-
-        // assert
-        Assert.assertSame(sub, result);
-    }
-
-    @Test
-    public void testBuilder_invalidArgs() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
-
-        CutAngle pt = CutAngles.createPositiveFacing(0, precision);
-        HyperplaneConvexSubset<Point1S> sub = pt.span();
-
-        HyperplaneSubset.Builder<Point1S> builder = sub.builder();
-
-        // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> builder.add(CutAngles.createPositiveFacing(2e-3, precision).span()),
-            IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(
-            () -> builder.add(CutAngles.createNegativeFacing(2e-3, precision).span()),
-            IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(
-            () -> builder.add((HyperplaneSubset<Point1S>) CutAngles.createPositiveFacing(2e-3, precision).span()),
-            IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testBuilder_toString() {
-        // arrange
-        CutAngle pt = CutAngles.createPositiveFacing(2, TEST_PRECISION);
-        HyperplaneSubset.Builder<Point1S> builder = pt.span().builder();
-
-        // act
-        String str = builder.toString();
-
-        //assert
-        Assert.assertTrue(str.contains("CutAngleSubsetBuilder["));
-        Assert.assertTrue(str.contains("base= CutAngleConvexSubset["));
         Assert.assertTrue(str.contains("point= "));
         Assert.assertTrue(str.contains("positiveFacing= "));
     }

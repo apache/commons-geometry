@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed.shape;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,15 +23,15 @@ import java.util.stream.Stream;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractNSphere;
+import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
-import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
+import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D.RegionNode3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Class representing a 3 dimensional sphere in Euclidean space.
  */
@@ -75,33 +74,53 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
         return project(pt, Vector3D.Unit.PLUS_X);
     }
 
-    /** Return a {@link RegionBSPTree3D} representing an approximation of the sphere. All points
-     * in the approximation are contained in the sphere (ie, they lie inside or on the boundary).
-     * No guarantees are made regarding the internal structure of the returned tree. Non-boundary
-     * split nodes may be used in order to balance the tree and improve performance.
+    /** Build an approximation of this sphere using a {@link RegionBSPTree3D}. The approximation is constructed by
+     * taking an octahedron (8-sided polyhedron with triangular faces) inscribed in the sphere and subdividing each
+     * triangular face {@code subdivisions} number of times, each time projecting the newly created vertices onto the
+     * sphere surface. Each triangle subdivision produces 4 triangles, meaning that the total number of triangles
+     * inserted into tree is equal to \(8 \times 4^s\), where \(s\) is the number of subdivisions. For
+     * example, calling this method with {@code subdivisions} equal to {@code 3} will produce a tree having
+     * \(8 \times 4^3 = 512\) triangular facets inserted. See the table below for other examples. The returned BSP
+     * tree also contains structural cuts to reduce the overall height of the tree.
      *
-     * <p>The sphere approximation is created by logically dividing up the sphere into
-     * {@code stacks} number of sections by planes perpendicular to the z-axis. For each such "stack",
-     * {@code slices} number of boundary planes are then created around the z-pole of the sphere
-     * from points lying on the sphere boundary. The total number of logical boundaries in the approximation
-     * is therefore equal to {@code stacks * slices}. (Note that this may not match the number of
-     * boundaries returned by {@link RegionBSPTree3D#getBoundaries()}, depending on the internal
-     * structure of the returned tree.)
+     * <table>
+     *  <caption>Subdivisions to Triangle Counts</caption>
+     *  <thead>
+     *      <tr>
+     *          <th>Subdivisions</th>
+     *          <th>Triangles</th>
+     *      </tr>
+     *  </thead>
+     *  <tbody>
+     *      <tr><td>0</td><td>8</td></tr>
+     *      <tr><td>1</td><td>32</td></tr>
+     *      <tr><td>2</td><td>128</td></tr>
+     *      <tr><td>3</td><td>512</td></tr>
+     *      <tr><td>4</td><td>2048</td></tr>
+     *      <tr><td>5</td><td>8192</td></tr>
+     *  </tbody>
+     * </table>
      *
-     * <p>Choosing appropriate values for {@code stacks} and {@code slices} is a trade-off
-     * between size and accuracy: approximations with large numbers of boundaries more closely
-     * match the geometric properties of the sphere but at the cost of using larger tree structures.
-     * In general, the smallest number of boundaries that produce an acceptable result should be used.
-     *
-     * @param stacks number of stacks to use when creating the approximation; each stacks
-     *      contains {@code slices} number of boundary planes surrounding the
-     *      z-axis of the sphere
-     * @param slices number of boundary planes to create for each "stack" of the approximation
-     * @return a BSP tree approximation of the sphere
-     * @throws IllegalArgumentException if {@code stacks} is less than 2 or {@code slices} is less than 3
+     * <p>Care must be taken when using this method with large subdivision numbers so that floating point errors
+     * do not interfere with the creation of the planes and triangles in the tree. For example, if the number of
+     * subdivisions is too high, the subdivided triangle points may become equivalent according to the sphere's
+     * {@link #getPrecision() precision context} and plane creation may fail. Or plane creation may succeed but
+     * insertion of the plane into the tree may fail for similar reasons. In general, it is best to use the lowest
+     * subdivision number practical for the intended purpose.</p>
+     * @param subdivisions the number of triangle subdivisions to use when creating the tree; the total number of
+     *      triangular facets inserted into the returned tree is equal to \(8 \times 4^s\), where \(s\) is the number
+     *      of subdivisions
+     * @return a BSP tree containing an approximation of the sphere
+     * @throws IllegalArgumentException if {@code subdivisions} is less than zero
+     * @throws IllegalStateException if tree creation fails for the given subdivision count
      */
-    public RegionBSPTree3D toTree(final int stacks, final int slices) {
-        return new SphereApproximationBuilder(this, stacks, slices).build();
+    public RegionBSPTree3D toTree(final int subdivisions) {
+        if (subdivisions < 0) {
+            throw new IllegalArgumentException(
+                    "Number of sphere approximation subdivisions must be greater than or equal to zero; was " +
+                            subdivisions);
+        }
+        return new SphereApproximationBuilder(this, subdivisions).build();
     }
 
     /** Get the intersections of the given line with this sphere. The returned list will
@@ -173,200 +192,181 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
         return new Sphere(center, radius, precision);
     }
 
-    /** Class used to construct BSP tree approximations of spheres. Structural BSP tree cuts are
-     * used to help balance the tree and improve performance.
+    /** Internal class used to construct hyperplane-bounded approximations of spheres. The class begins with an
+     * octahedron inscribed in the sphere and then subdivides each triangular face a specified number of times.
      */
-    private static class SphereApproximationBuilder {
+    private static final class SphereApproximationBuilder {
 
-        /** Minimum number of stacks. */
-        private static final int MIN_STACKS = 2;
+        /** Threshold used to determine when to stop inserting structural cuts and begin adding facets. */
+        private static final int PARTITION_THRESHOLD = 2;
 
-        /** Minimum number of slices. */
-        private static final int MIN_SLICES = 3;
-
-        /** Minimum number of slices in a portion of a stack to allow a structural BSP split. */
-        private static final int SLICE_SPLIT_THRESHOLD = 4;
-
-        /** The sphere being approximated. */
+        /** The sphere that an approximation is being created for. */
         private final Sphere sphere;
 
-        /** Number of stacks in the approximation. */
-        private final int stacks;
+        /** The number of triangular subdivisions to use. */
+        private final int subdivisions;
 
-        /** Number of slices in the approximation. */
-        private final int slices;
-
-        /** Polar delta value between vertices. */
-        private final double polarDelta;
-
-        /** Azimuth delta value between vertices. */
-        private final double azimuthDelta;
-
-        /** Create a new instance for approximating the given sphere.
-         * @param sphere sphere to approximate
-         * @param stacks number of "stacks" (sections parallel to the x-y plane) in the approximation
-         * @param slices number of "slices" (boundary plane subsets per stack) in the approximation
-         * @throws IllegalArgumentException if {@code stacks} is less than 2 or {@code slices} is less than 3
+        /** Construct a new builder for creating a BSP tree approximation of the given sphere.
+         * @param sphere the sphere to create an approximation of
+         * @param subdivisions the number of triangle subdivisions to use in tree creation
          */
-        SphereApproximationBuilder(final Sphere sphere, final int stacks, final int slices) {
-            if (stacks < MIN_STACKS) {
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "Sphere approximation stack number must be greater than or equal to {0}; was {1}",
-                        MIN_STACKS, stacks));
-            }
-            if (slices < MIN_SLICES) {
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "Sphere approximation slice number must be greater than or equal to {0}; was {1}",
-                        MIN_SLICES, slices));
-            }
-
+        SphereApproximationBuilder(final Sphere sphere, final int subdivisions) {
             this.sphere = sphere;
-            this.stacks = stacks;
-            this.slices = slices;
-
-            this.polarDelta = PlaneAngleRadians.PI / stacks;
-            this.azimuthDelta = PlaneAngleRadians.TWO_PI / slices;
+            this.subdivisions = subdivisions;
         }
 
-        /** Build the BSP tree sphere approximation.
-         * @return the BSP tree sphere approximation
+        /** Build the sphere approximation BSP tree.
+         * @return the sphere approximation BSP tree
+         * @throws IllegalStateException if tree creation fails for the configured subdivision count
          */
-        public RegionBSPTree3D build() {
+        RegionBSPTree3D build() {
             final RegionBSPTree3D tree = RegionBSPTree3D.empty();
 
-            splitAndInsertStacks(tree.getRoot(), 0, stacks);
+            final Vector3D center = sphere.getCenter();
+            final double radius = sphere.getRadius();
+            final DoublePrecisionContext precision = sphere.getPrecision();
+
+            // insert the primary split planes
+            Plane plusXPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_X, precision);
+            Plane plusYPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_Y, precision);
+            Plane plusZPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_Z, precision);
+
+            tree.insert(plusXPlane.span(), RegionCutRule.INHERIT);
+            tree.insert(plusYPlane.span(), RegionCutRule.INHERIT);
+            tree.insert(plusZPlane.span(), RegionCutRule.INHERIT);
+
+            // create the vertices for the octahedron
+            final double cx = center.getX();
+            final double cy = center.getY();
+            final double cz = center.getZ();
+
+            Vector3D maxX = Vector3D.of(cx + radius, cy, cz);
+            Vector3D minX = Vector3D.of(cx - radius, cy, cz);
+
+            Vector3D maxY = Vector3D.of(cx, cy + radius, cz);
+            Vector3D minY = Vector3D.of(cx, cy - radius, cz);
+
+            Vector3D maxZ = Vector3D.of(cx, cy, cz + radius);
+            Vector3D minZ = Vector3D.of(cx, cy, cz - radius);
+
+            // partition and subdivide the face triangles and insert them into the tree
+            RegionNode3D root = tree.getRoot();
+
+            try {
+                partitionAndInsert(root.getMinus().getMinus().getMinus(), minX, minZ, minY, 0);
+                partitionAndInsert(root.getMinus().getMinus().getPlus(), minX, minY, maxZ, 0);
+
+                partitionAndInsert(root.getMinus().getPlus().getMinus(), minX, maxY, minZ, 0);
+                partitionAndInsert(root.getMinus().getPlus().getPlus(), minX, maxZ, maxY, 0);
+
+                partitionAndInsert(root.getPlus().getMinus().getMinus(), maxX, minY, minZ, 0);
+                partitionAndInsert(root.getPlus().getMinus().getPlus(), maxX, maxZ, minY, 0);
+
+                partitionAndInsert(root.getPlus().getPlus().getMinus(), maxX, minZ, maxY, 0);
+                partitionAndInsert(root.getPlus().getPlus().getPlus(), maxX, maxY, maxZ, 0);
+            } catch (final IllegalStateException | IllegalArgumentException exc) {
+                // standardize any tree construction failure as an IllegalStateException
+                throw new IllegalStateException("Failed to construct sphere approximation with subdivision count " +
+                        subdivisions + ": " + exc.getMessage(), exc);
+            }
 
             return tree;
         }
 
-        /** Recursively split the given node and insert stacks. The node is split until only a single stack
-         * remains, at which point slices are inserted.
-         * @param node node to insert into
-         * @param polarTopIdx the polar index for vertices at the top of the stack
-         * @param polarBottomIdx the polar index for vertices at the bottom of the stack
+        /** Recursively insert structural BSP tree cuts into the given node and then insert subdivided triangles
+         * when a target subdivision level is reached. The structural BSP tree cuts are used to help reduce the
+         * overall depth of the BSP tree.
+         * @param node the node to insert into
+         * @param p1 first triangle point
+         * @param p2 second triangle point
+         * @param p3 third triangle point
+         * @param level current subdivision level
          */
-        private void splitAndInsertStacks(final RegionBSPTree3D.RegionNode3D node, final int polarTopIdx,
-                final int polarBottomIdx) {
+        private void partitionAndInsert(final RegionNode3D node,
+                final Vector3D p1, final Vector3D p2, final Vector3D p3, int level) {
 
-            final int indexDiff = polarBottomIdx - polarTopIdx;
-            if (indexDiff < 2) {
-                // we have a single stack, separated by vertices on two stack rows; we can now insert
-                // boundary planes using the polar bottom index
-                insertStack(node, polarBottomIdx);
+            if (subdivisions - level > PARTITION_THRESHOLD) {
+                final int nextLevel = level + 1;
+
+                final Vector3D center = sphere.getCenter();
+
+                final Vector3D m1 = sphere.project(p1.lerp(p2, 0.5));
+                final Vector3D m2 = sphere.project(p2.lerp(p3, 0.5));
+                final Vector3D m3 = sphere.project(p3.lerp(p1, 0.5));
+
+                RegionNode3D curNode = node;
+
+                checkedCut(curNode, createPlane(m3, m2, center), RegionCutRule.INHERIT);
+                partitionAndInsert(curNode.getPlus(), m3, m2, p3, nextLevel);
+
+                curNode = curNode.getMinus();
+                checkedCut(curNode, createPlane(m2, m1, center), RegionCutRule.INHERIT);
+                partitionAndInsert(curNode.getPlus(), m1, p2, m2, nextLevel);
+
+                curNode = curNode.getMinus();
+                checkedCut(curNode, createPlane(m1, m3, center), RegionCutRule.INHERIT);
+                partitionAndInsert(curNode.getPlus(), p1, m1, m3, nextLevel);
+
+                partitionAndInsert(curNode.getMinus(), m1, m2, m3, nextLevel);
             } else {
-                // split the group of stacks in two
-                final int splitIdx = (indexDiff / 2) + polarTopIdx;
-                final Vector3D splitPt = pointAt(splitIdx, 0);
-
-                node.cut(Planes.fromPointAndNormal(splitPt, Vector3D.Unit.PLUS_Z, sphere.getPrecision()),
-                        RegionCutRule.INHERIT);
-
-                splitAndInsertStacks(node.getPlus(), polarTopIdx, splitIdx);
-                splitAndInsertStacks(node.getMinus(), splitIdx, polarBottomIdx);
+                insertSubdividedTriangles(node, p1, p2, p3, level);
             }
         }
 
-        /** Insert the boundaries ("slices") for the stack with the given polar bottom index.
-         * @param node node to insert into
-         * @param polarBottomIdx the polar index for vertices at the bottom of the stack
+        /** Recursively insert subdivided triangles into the given node. Each triangle is inserted into the minus
+         * side of the previous triangle.
+         * @param node the node to insert into
+         * @param p1 first triangle point
+         * @param p2 second triangle point
+         * @param p3 third triangle point
+         * @param level the current subdivision level
+         * @return the node representing the inside of the region after insertion of all triangles
          */
-        private void insertStack(final RegionBSPTree3D.RegionNode3D node, final int polarBottomIdx) {
-            if (slices >= SLICE_SPLIT_THRESHOLD) {
-                final int splitIdx = slices / 2;
+        private RegionNode3D insertSubdividedTriangles(final RegionNode3D node,
+                final Vector3D p1, final Vector3D p2, final Vector3D p3, int level) {
 
-                RegionBSPTree3D.RegionNode3D splitNode = node;
-                int sliceEndIdx = slices;
-
-                if (slices % 2 != 0) {
-                    // odd number of slices; we'll need to add the side directly opposite
-                    // split index before splitting
-                    splitNode = insertSlices(node, polarBottomIdx, slices - 1, slices);
-                    --sliceEndIdx;
-                }
-
-                final Vector3D p0 = sphere.getCenter();
-                final Vector3D p1 = pointAt(polarBottomIdx, splitIdx);
-                final Vector3D p2 = pointAt(polarBottomIdx - 1, splitIdx);
-
-                splitNode.cut(Planes.fromPoints(p0, p1, p2, sphere.getPrecision()), RegionCutRule.INHERIT);
-
-                splitAndInsertSlices(splitNode.getPlus(), polarBottomIdx, 0, splitIdx);
-                splitAndInsertSlices(splitNode.getMinus(), polarBottomIdx, splitIdx, sliceEndIdx);
+            if (level >= subdivisions) {
+                // base case
+                checkedCut(node, createPlane(p1, p2, p3), RegionCutRule.MINUS_INSIDE);
+                return node.getMinus();
             } else {
-                insertSlices(node, polarBottomIdx, 0, slices);
+                final int nextLevel = level + 1;
+
+                final Vector3D m1 = sphere.project(p1.lerp(p2, 0.5));
+                final Vector3D m2 = sphere.project(p2.lerp(p3, 0.5));
+                final Vector3D m3 = sphere.project(p3.lerp(p1, 0.5));
+
+                RegionNode3D curNode = node;
+                curNode = insertSubdividedTriangles(curNode, p1, m1, m3, nextLevel);
+                curNode = insertSubdividedTriangles(curNode, m1, p2, m2, nextLevel);
+                curNode = insertSubdividedTriangles(curNode, m3, m2, p3, nextLevel);
+                curNode = insertSubdividedTriangles(curNode, m1, m2, m3, nextLevel);
+
+                return curNode;
             }
         }
 
-        /** Recursively split a stack and insert slice boundaries.
-         * @param node node to insert into
-         * @param polarBottomIdx the polar index for vertices at the bottom of the stack
-         * @param azimuthStartIdx the azimuth start index for vertices in the inserted slices
-         * @param azimuthStopIdx the azimuth start index for vertices in the inserted slices
+        /** Create a plane from the given points, using the precision context of the sphere.
+         * @param p1 first point
+         * @param p2 second point
+         * @param p3 third point
+         * @return a plane defined by the given points
          */
-        private void splitAndInsertSlices(final RegionBSPTree3D.RegionNode3D node, final int polarBottomIdx,
-                final int azimuthStartIdx, final int azimuthStopIdx) {
-
-            final int indexDiff = azimuthStopIdx - azimuthStartIdx;
-            if (indexDiff >= SLICE_SPLIT_THRESHOLD) {
-                final int splitIdx = ((indexDiff + 1) / 2) + azimuthStartIdx;
-
-                final Vector3D p0 = sphere.getCenter();
-                final Vector3D p1 = pointAt(polarBottomIdx, splitIdx);
-                final Vector3D p2 = pointAt(polarBottomIdx - 1, splitIdx);
-
-                node.cut(Planes.fromPoints(p0, p1, p2, sphere.getPrecision()), RegionCutRule.INHERIT);
-
-                splitAndInsertSlices(node.getPlus(), polarBottomIdx, azimuthStartIdx, splitIdx);
-                splitAndInsertSlices(node.getMinus(), polarBottomIdx, splitIdx, azimuthStopIdx);
-            } else {
-                insertSlices(node, polarBottomIdx, azimuthStartIdx, azimuthStopIdx);
-            }
+        private Plane createPlane(final Vector3D p1, final Vector3D p2, final Vector3D p3) {
+            return Planes.fromPoints(p1, p2, p3, sphere.getPrecision());
         }
 
-        /** Insert slice boundaries. Each boundary is inserted on the minus side of the previously
-         * inserted boundary.
-         * @param node node to insert into
-         * @param polarBottomIdx the polar index for vertices at the bottom of the stack
-         * @param azimuthStartIdx the azimuth start index for vertices in the inserted slices
-         * @param azimuthStopIdx the azimuth start index for vertices in the inserted slices
-         * @return the node representing the interior of the inserted boundaries
-         *      (the minus child of the last split BSP tree node)
+        /** Insert the cut into the given node, throwing an exception if no portion of the cutter intersects
+         * the node.
+         * @param node node to cut
+         * @param cutter plane to use to cut the node
+         * @param cutRule cut rule to apply
+         * @throws IllegalStateException if no portion of the cutter plane intersects the node
          */
-        private RegionBSPTree3D.RegionNode3D insertSlices(final RegionBSPTree3D.RegionNode3D node,
-                final int polarBottomIdx, final int azimuthStartIdx, final int azimuthStopIdx) {
-
-            final boolean lastStack = polarBottomIdx == stacks;
-
-            RegionBSPTree3D.RegionNode3D currNode = node;
-            Vector3D p0;
-            Vector3D p1;
-            Vector3D p2;
-
-            for (int i = azimuthStartIdx + 1; i <= azimuthStopIdx; ++i) {
-                p0 = pointAt(polarBottomIdx, i);
-                p1 = pointAt(polarBottomIdx - 1, i);
-                p2 = lastStack ?
-                        pointAt(polarBottomIdx - 1, i - 1) :
-                        pointAt(polarBottomIdx, i - 1);
-
-                currNode = currNode.cut(Planes.fromPoints(p0, p1, p2, sphere.getPrecision()))
-                        .getMinus();
+        private void checkedCut(final RegionNode3D node, final Plane cutter, final RegionCutRule cutRule) {
+            if (!node.insertCut(cutter)) {
+                throw new IllegalStateException("Failed to cut BSP tree node with plane: " + cutter);
             }
-
-            return currNode;
-        }
-
-        /** Get the vertex at the given polar and azimuth indices.
-         * @param polarIdx vertex polar index
-         * @param azimuthIdx vertex azimuth index
-         * @return the vertex at the given indices
-         */
-        private Vector3D pointAt(final int polarIdx, final int azimuthIdx) {
-            final double polar = polarDelta * polarIdx;
-            final double az = azimuthDelta * azimuthIdx;
-
-            return SphericalCoordinates.toCartesian(sphere.getRadius(), az, polar)
-                    .add(sphere.getCenter());
         }
     }
 }

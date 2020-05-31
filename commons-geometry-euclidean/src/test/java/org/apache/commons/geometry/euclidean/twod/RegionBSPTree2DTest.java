@@ -845,25 +845,11 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
 
-        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
-        Collections.sort(segments, SEGMENT_COMPARATOR);
-
-        Assert.assertEquals(8, segments.size());
-
-        checkFiniteSegment(segments.get(0), Vector2D.ZERO, Vector2D.of(3, 0));
-        checkFiniteSegment(segments.get(1), Vector2D.of(0, 3), Vector2D.ZERO);
-        checkFiniteSegment(segments.get(2), Vector2D.of(1, 1), Vector2D.of(1, 2));
-        checkFiniteSegment(segments.get(3), Vector2D.of(1, 2), Vector2D.of(2, 2));
-        checkFiniteSegment(segments.get(4), Vector2D.of(2, 1), Vector2D.of(1, 1));
-        checkFiniteSegment(segments.get(5), Vector2D.of(2, 2), Vector2D.of(2, 1));
-        checkFiniteSegment(segments.get(6), Vector2D.of(3, 0), Vector2D.of(3, 3));
-        checkFiniteSegment(segments.get(7), Vector2D.of(3, 3), Vector2D.of(0, 3));
-
         List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(2, paths.size());
 
-        checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(3, 0), Vector2D.of(3, 3),
-                Vector2D.of(0, 3), Vector2D.ZERO);
+        checkVertices(paths.get(0), Vector2D.of(0, 3), Vector2D.ZERO, Vector2D.of(3, 0),
+                Vector2D.of(3, 3), Vector2D.of(0, 3));
         checkVertices(paths.get(1), Vector2D.of(1, 1), Vector2D.of(1, 2), Vector2D.of(2, 2),
                 Vector2D.of(2, 1), Vector2D.of(1, 1));
     }
@@ -885,20 +871,6 @@ public class RegionBSPTree2DTest {
         Assert.assertNull(tree.getCentroid());
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
-
-        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
-        Collections.sort(segments, SEGMENT_COMPARATOR);
-
-        Assert.assertEquals(8, segments.size());
-
-        checkFiniteSegment(segments.get(0), Vector2D.ZERO, Vector2D.of(0, 3));
-        checkFiniteSegment(segments.get(1), Vector2D.of(0, 3), Vector2D.of(3, 3));
-        checkFiniteSegment(segments.get(2), Vector2D.of(1, 1), Vector2D.of(2, 1));
-        checkFiniteSegment(segments.get(3), Vector2D.of(1, 2), Vector2D.of(1, 1));
-        checkFiniteSegment(segments.get(4), Vector2D.of(2, 1), Vector2D.of(2, 2));
-        checkFiniteSegment(segments.get(5), Vector2D.of(2, 2), Vector2D.of(1, 2));
-        checkFiniteSegment(segments.get(6), Vector2D.of(3, 0), Vector2D.ZERO);
-        checkFiniteSegment(segments.get(7), Vector2D.of(3, 3), Vector2D.of(3, 0));
 
         List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(2, paths.size());

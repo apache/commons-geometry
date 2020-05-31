@@ -53,7 +53,7 @@ public class SpherePerformance {
     private static final double MIN_VALUE = 1e-1;
 
     /** Maximum value for random doubles. */
-    private static final double MAX_VALUE = 1e-100;
+    private static final double MAX_VALUE = 1e2;
 
     /** Benchmark input providing a source of random {@link Sphere} instances.
      */
@@ -77,20 +77,20 @@ public class SpherePerformance {
         }
     }
 
-    /** Class defining input values to the {@link Sphere#toTree(int, int)} method.
+    /** Class defining input values to the {@link Sphere#toTree(int)} method.
      */
     @State(Scope.Thread)
     public static class ToTreeInput {
 
-        /** The number of "stacks" and "slices" in the sphere approximation. */
-        @Param({"10", "25", "50"})
-        private int size;
+        /** The number of subdivisions in the sphere approximation. */
+        @Param({"3", "4", "5"})
+        private int subdivisions;
 
-        /** Get the number of stacks and slices to use for the sphere approximation.
-         * @return the number of stacks and slices to use for the sphere approximation
+        /** Get the number of subdivisions to use for the sphere approximation.
+         * @return the number of subdivisions to use for the sphere approximation
          */
-        public int getSize() {
-            return size;
+        public int getSubdivisions() {
+            return subdivisions;
         }
     }
 
@@ -107,7 +107,7 @@ public class SpherePerformance {
         public void setup() {
             final Sphere sphere = randomSphere(RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP));
 
-            tree = sphere.toTree(getSize(), getSize());
+            tree = sphere.toTree(getSubdivisions());
         }
 
         /** Get the computed bsp tree sphere approximation.
@@ -138,7 +138,7 @@ public class SpherePerformance {
         return (rand.nextDouble() * (MAX_VALUE - MIN_VALUE)) + MIN_VALUE;
     }
 
-    /** Benchmark testing the performance of the {@link Sphere#toTree(int, int)} method.
+    /** Benchmark testing the performance of the {@link Sphere#toTree(int)} method.
      * @param randomSphere sphere input
      * @param toTreeInput toTree input parameters
      * @return created bsp tree
@@ -146,13 +146,13 @@ public class SpherePerformance {
     @Benchmark
     public RegionBSPTree3D toTreeCreation(final RandomSphere randomSphere, final ToTreeInput toTreeInput) {
         final Sphere sphere = randomSphere.getSphere();
-        final int size = toTreeInput.getSize();
+        final int subdivisions = toTreeInput.getSubdivisions();
 
-        return sphere.toTree(size, size);
+        return sphere.toTree(subdivisions);
     }
 
     /** Benchmark testing the performance of the computation of the size of the bsp trees
-     * created by the {@link Sphere#toTree(int, int)} method.
+     * created by the {@link Sphere#toTree(int)} method.
      * @param toTreeInstance bsp tree sphere approximation instance
      * @return the size (volume) of the region represented by the tree
      */

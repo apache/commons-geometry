@@ -131,7 +131,6 @@ public final class Planes {
         if (area.isFinite()) {
             // prefer a vertex-based representation for finite areas
             final List<Vector3D> vertices = plane.toSpace(area.getVertices());
-
             return fromConvexPlanarVertices(plane, vertices);
         }
 

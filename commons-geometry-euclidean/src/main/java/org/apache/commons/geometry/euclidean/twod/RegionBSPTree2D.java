@@ -288,7 +288,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @return a new tree instance constructed from the given boundaries
      * @see #from(Iterable, boolean)
      */
-    public static RegionBSPTree2D from(final Iterable<LineConvexSubset> boundaries) {
+    public static RegionBSPTree2D from(final Iterable<? extends LineConvexSubset> boundaries) {
         return from(boundaries, false);
     }
 
@@ -299,7 +299,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @param full if true, the initial tree will contain the entire space
      * @return a new tree instance constructed from the given boundaries
      */
-    public static RegionBSPTree2D from(final Iterable<LineConvexSubset> boundaries, final boolean full) {
+    public static RegionBSPTree2D from(final Iterable<? extends LineConvexSubset> boundaries, final boolean full) {
         final RegionBSPTree2D tree = new RegionBSPTree2D(full);
         tree.insert(boundaries);
 
@@ -471,11 +471,11 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             boolean onBoundary = false;
             boolean negateNormal = false;
 
-            if (boundary.getInsideFacing() != null && boundary.getInsideFacing().contains(pt)) {
+            if (boundary.containsInsideFacing(pt)) {
                 // on inside-facing boundary
                 onBoundary = true;
                 negateNormal = true;
-            } else  if (boundary.getOutsideFacing() != null && boundary.getOutsideFacing().contains(pt)) {
+            } else  if (boundary.containsOutsideFacing(pt)) {
                 // on outside-facing boundary
                 onBoundary = true;
             }

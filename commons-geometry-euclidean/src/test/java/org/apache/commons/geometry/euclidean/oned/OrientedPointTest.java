@@ -23,8 +23,6 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset.Builder;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -551,66 +549,6 @@ public class OrientedPointTest {
 
         //assert
         Assert.assertTrue(str.contains("OrientedPointConvexSubset"));
-        Assert.assertTrue(str.contains("point= (2.0)"));
-        Assert.assertTrue(str.contains("direction= (1.0)"));
-    }
-
-    @Test
-    public void testBuilder() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
-
-        OrientedPoint pt = OrientedPoints.createPositiveFacing(0, precision);
-        HyperplaneConvexSubset<Vector1D> sub = pt.span();
-
-        // act
-        Builder<Vector1D> builder = sub.builder();
-
-        builder.add(sub);
-        builder.add(OrientedPoints.createPositiveFacing(1e-4, precision).span());
-        builder.add((HyperplaneSubset<Vector1D>) sub);
-
-        HyperplaneSubset<Vector1D> result = builder.build();
-
-        // assert
-        Assert.assertSame(sub, result);
-    }
-
-    @Test
-    public void testBuilder_invalidArgs() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
-
-        OrientedPoint pt = OrientedPoints.createPositiveFacing(0, precision);
-        HyperplaneConvexSubset<Vector1D> sub = pt.span();
-
-        Builder<Vector1D> builder = sub.builder();
-
-        // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> builder.add(OrientedPoints.createPositiveFacing(2e-3, precision).span()),
-            IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(
-            () -> builder.add(OrientedPoints.createNegativeFacing(2e-3, precision).span()),
-            IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(
-            () -> builder.add((HyperplaneSubset<Vector1D>) OrientedPoints.createPositiveFacing(2e-3, precision).span()),
-            IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testBuilder_toString() {
-        // arrange
-        OrientedPoint pt = OrientedPoints.createPositiveFacing(2, TEST_PRECISION);
-        HyperplaneSubset.Builder<Vector1D> builder = pt.span().builder();
-
-        // act
-        String str = builder.toString();
-
-        //assert
-        Assert.assertTrue(str.contains("OrientedPointSubsetBuilder"));
-        Assert.assertTrue(str.contains("base= OrientedPointConvexSubset"));
         Assert.assertTrue(str.contains("point= (2.0)"));
         Assert.assertTrue(str.contains("direction= (1.0)"));
     }

@@ -26,13 +26,13 @@ import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.internal.IteratorTransform;
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.ClosestFirstVisitor;
 
 /** Abstract {@link BSPTree} specialized for representing regions of space. For example,
@@ -135,8 +135,7 @@ public abstract class AbstractRegionBSPTree<
             for (final AbstractRegionNode<P, N> node : nodes()) {
                 boundary = node.getCutBoundary();
                 if (boundary != null) {
-                    sum += boundary.getInsideFacing().getSize();
-                    sum += boundary.getOutsideFacing().getSize();
+                    sum += boundary.getSize();
                 }
             }
 
@@ -699,25 +698,21 @@ public abstract class AbstractRegionBSPTree<
         private RegionCutBoundary<P> computeBoundary() {
             HyperplaneConvexSubset<P> sub = getCut();
 
-            // find the portions of the node cut sub-hyperplane that touch inside and
+            // find the portions of the node cut hyperplane subset that touch inside and
             // outside cells in the minus sub-tree
-            HyperplaneSubset.Builder<P> minusInBuilder = sub.builder();
-            HyperplaneSubset.Builder<P> minusOutBuilder = sub.builder();
+            final List<HyperplaneConvexSubset<P>> minusIn = new ArrayList<>();
+            final List<HyperplaneConvexSubset<P>> minusOut = new ArrayList<>();
 
-            characterizeHyperplaneSubset(sub, getMinus(), minusInBuilder, minusOutBuilder);
+            characterizeHyperplaneSubset(sub, getMinus(), minusIn, minusOut);
 
-            List<? extends HyperplaneConvexSubset<P>> minusIn = minusInBuilder.build().toConvex();
-            List<? extends HyperplaneConvexSubset<P>> minusOut = minusOutBuilder.build().toConvex();
-
-            // create the result boundary builders
-            HyperplaneSubset.Builder<P> insideFacing = sub.builder();
-            HyperplaneSubset.Builder<P> outsideFacing = sub.builder();
+            final ArrayList<HyperplaneConvexSubset<P>> insideFacing = new ArrayList<>();
+            final ArrayList<HyperplaneConvexSubset<P>> outsideFacing = new ArrayList<>();
 
             if (!minusIn.isEmpty()) {
                 // Add to the boundary anything that touches an inside cell in the minus sub-tree
                 // and an outside cell in the plus sub-tree. These portions are oriented with their
                 // plus side pointing to the outside of the region.
-                for (HyperplaneConvexSubset<P> minusInFragment : minusIn) {
+                for (final HyperplaneConvexSubset<P> minusInFragment : minusIn) {
                     characterizeHyperplaneSubset(minusInFragment, getPlus(), null, outsideFacing);
                 }
             }
@@ -726,26 +721,31 @@ public abstract class AbstractRegionBSPTree<
                 // Add to the boundary anything that touches an outside cell in the minus sub-tree
                 // and an inside cell in the plus sub-tree. These portions are oriented with their
                 // plus side pointing to the inside of the region.
-                for (HyperplaneConvexSubset<P> minusOutFragment : minusOut) {
+                for (final HyperplaneConvexSubset<P> minusOutFragment : minusOut) {
                     characterizeHyperplaneSubset(minusOutFragment, getPlus(), insideFacing, null);
                 }
             }
 
-            return new RegionCutBoundary<>(insideFacing.build(), outsideFacing.build());
+            insideFacing.trimToSize();
+            outsideFacing.trimToSize();
+
+            return new RegionCutBoundary<>(
+                    insideFacing.isEmpty() ? null : insideFacing,
+                    outsideFacing.isEmpty() ? null : outsideFacing);
         }
 
         /** Recursive method to characterize a hyperplane convex subset with respect to the region's
          * boundaries.
          * @param sub the hyperplane convex subset to characterize
          * @param node the node to characterize the hyperplane convex subset against
-         * @param in the builder that will receive the portions of the subset that lie in the inside
+         * @param in list that will receive the portions of the subset that lie in the inside
          *      of the region; may be null
-         * @param out the builder that will receive the portions of the subset that lie on the outside
+         * @param out list that will receive the portions of the subset that lie on the outside
          *      of the region; may be null
          */
         private void characterizeHyperplaneSubset(final HyperplaneConvexSubset<P> sub,
-                final AbstractRegionNode<P, N> node, final HyperplaneSubset.Builder<P> in,
-                final HyperplaneSubset.Builder<P> out) {
+                final AbstractRegionNode<P, N> node, final List<HyperplaneConvexSubset<P>> in,
+                final List<HyperplaneConvexSubset<P>> out) {
 
             if (sub != null) {
                 if (node.isLeaf()) {
@@ -1123,21 +1123,14 @@ public abstract class AbstractRegionBSPTree<
             if (input.isInternal()) {
                 final RegionCutBoundary<P> cutBoundary = input.getCutBoundary();
 
-                final HyperplaneSubset<P> outsideFacing = cutBoundary.getOutsideFacing();
-                final HyperplaneSubset<P> insideFacing = cutBoundary.getInsideFacing();
-
-                if (outsideFacing != null && !outsideFacing.isEmpty()) {
-                    for (HyperplaneConvexSubset<P> boundary : outsideFacing.toConvex()) {
-
-                        addOutput(typeConverter.apply(boundary));
-                    }
+                for (final HyperplaneConvexSubset<P> boundary : cutBoundary.getOutsideFacing()) {
+                    addOutput(typeConverter.apply(boundary));
                 }
-                if (insideFacing != null && !insideFacing.isEmpty()) {
-                    for (HyperplaneConvexSubset<P> boundary : insideFacing.toConvex()) {
-                        HyperplaneConvexSubset<P> reversed = boundary.reverse();
 
-                        addOutput(typeConverter.apply(reversed));
-                    }
+                for (final HyperplaneConvexSubset<P> boundary : cutBoundary.getInsideFacing()) {
+                    HyperplaneConvexSubset<P> reversed = boundary.reverse();
+
+                    addOutput(typeConverter.apply(reversed));
                 }
             }
         }

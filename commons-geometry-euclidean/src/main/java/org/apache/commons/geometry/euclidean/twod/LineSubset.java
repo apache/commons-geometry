@@ -17,12 +17,10 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionEmbedding;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -63,16 +61,6 @@ public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEm
         return line.toSubspace(pt);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D toSpace(final Vector1D pt) {
-        return line.toSpace(pt);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public abstract List<LineConvexSubset> toConvex();
-
     /** Get a {@link Bounds2D} object defining an axis-aligned bounding box containing all
      * vertices for this subset. Null is returned if the subset is infinite or does not
      * contain any vertices.
@@ -86,9 +74,13 @@ public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEm
 
     /** {@inheritDoc} */
     @Override
-    public HyperplaneSubset.Builder<Vector2D> builder() {
-        return new Builder(line);
+    public Vector2D toSpace(final Vector1D pt) {
+        return line.toSpace(pt);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public abstract List<LineConvexSubset> toConvex();
 
     /** {@inheritDoc} */
     @Override
@@ -185,104 +177,5 @@ public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEm
         return splitterPlusIsPositiveFacing(splitter) ?
                 new Split<>(low, high) :
                 new Split<>(high, low);
-    }
-
-    /** Internal implementation of the {@link HyperplaneSubset.Builder} interface. In cases where only a single
-     * convex subset is given to the builder, this class returns the convex subset instance directly. In all other
-     * cases, an {@link EmbeddedTreeLineSubset} is used to construct the final subset.
-     */
-    private static final class Builder implements HyperplaneSubset.Builder<Vector2D> {
-        /** Line that a subset is being constructed for. */
-        private final Line line;
-
-        /** Embedded tree subset. */
-        private EmbeddedTreeLineSubset treeSubset;
-
-        /** Convex subset added as the first subset to the builder. This is returned directly if
-         * no other subsets are added.
-         */
-        private LineConvexSubset convexSubset;
-
-        /** Create a new subset builder for the given line.
-         * @param line line to build a subset for
-         */
-        Builder(final Line line) {
-            this.line = line;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneSubset<Vector2D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneConvexSubset<Vector2D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public LineSubset build() {
-            // return the convex subset directly if that was all we were given
-            if (convexSubset != null) {
-                return convexSubset;
-            }
-            return getTreeSubset();
-        }
-
-        /** Internal method for adding hyperplane subsets to this builder.
-         * @param sub the hyperplane subset to add; may be either convex or non-convex
-         */
-        private void addInternal(final HyperplaneSubset<Vector2D> sub) {
-            Objects.requireNonNull(sub, "Hyperplane subset must not be null");
-
-            if (sub instanceof LineConvexSubset) {
-                addConvexSubset((LineConvexSubset) sub);
-            } else if (sub instanceof EmbeddedTreeLineSubset) {
-                addTreeSubset((EmbeddedTreeLineSubset) sub);
-            } else {
-                throw new IllegalArgumentException("Unsupported hyperplane subset type: " + sub.getClass().getName());
-            }
-        }
-
-        /** Add a convex subset to the builder.
-         * @param convex convex subset to add
-         */
-        private void addConvexSubset(final LineConvexSubset convex) {
-            Lines.validateLinesEquivalent(line, convex.getLine());
-
-            if (treeSubset == null && convexSubset == null) {
-                convexSubset = convex;
-            } else {
-                getTreeSubset().add(convex);
-            }
-        }
-
-        /** Add an embedded tree subset to the builder.
-         * @param tree embedded tree subset to add
-         */
-        private void addTreeSubset(final EmbeddedTreeLineSubset tree) {
-            // no need to validate the line here since the add() method does that for us
-            getTreeSubset().add(tree);
-        }
-
-        /** Get the tree subset for the builder, creating it if needed.
-         * @return the tree subset for the builder
-         */
-        private EmbeddedTreeLineSubset getTreeSubset() {
-            if (treeSubset == null) {
-                treeSubset = new EmbeddedTreeLineSubset(line);
-
-                if (convexSubset != null) {
-                    treeSubset.add(convexSubset);
-
-                    convexSubset = null;
-                }
-            }
-
-            return treeSubset;
-        }
     }
 }

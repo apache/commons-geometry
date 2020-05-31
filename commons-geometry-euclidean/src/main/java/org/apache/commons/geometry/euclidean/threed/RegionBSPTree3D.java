@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -312,8 +313,14 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         public Result visit(final RegionNode3D node) {
             if (node.isInternal()) {
                 final RegionCutBoundary<Vector3D> boundary = node.getCutBoundary();
-                addBoundaryContribution(boundary.getOutsideFacing(), false);
-                addBoundaryContribution(boundary.getInsideFacing(), true);
+
+                for (final HyperplaneConvexSubset<Vector3D> outsideFacing : boundary.getOutsideFacing()) {
+                    addBoundaryContribution(outsideFacing, false);
+                }
+
+                for (final HyperplaneConvexSubset<Vector3D> insideFacing : boundary.getInsideFacing()) {
+                    addBoundaryContribution(insideFacing, true);
+                }
             }
 
             return Result.CONTINUE;
@@ -483,11 +490,11 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
             boolean onBoundary = false;
             boolean negateNormal = false;
 
-            if (boundary.getInsideFacing() != null && boundary.getInsideFacing().contains(pt)) {
+            if (boundary.containsInsideFacing(pt)) {
                 // on inside-facing boundary
                 onBoundary = true;
                 negateNormal = true;
-            } else  if (boundary.getOutsideFacing() != null && boundary.getOutsideFacing().contains(pt)) {
+            } else  if (boundary.containsOutsideFacing(pt)) {
                 // on outside-facing boundary
                 onBoundary = true;
             }
