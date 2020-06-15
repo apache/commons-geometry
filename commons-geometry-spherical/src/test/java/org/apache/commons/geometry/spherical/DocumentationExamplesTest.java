@@ -82,7 +82,7 @@ public class DocumentationExamplesTest {
         List<AngularInterval> intervals = tree.toIntervals(); //size = 2
 
         // ---------------
-        Assert.assertEquals(size, 1.25 * Math.PI, TEST_EPS);
+        Assert.assertEquals(1.25 * Math.PI, size, TEST_EPS);
         Assert.assertEquals(2, intervals.size());
     }
 

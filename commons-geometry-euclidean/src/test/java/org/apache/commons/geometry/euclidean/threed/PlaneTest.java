@@ -381,7 +381,7 @@ public class PlaneTest {
             Assert.assertEquals(0, v.dot(w), TEST_EPS);
 
             Assert.assertNotSame(embeddingPlane, nextEmbeddingPlane);
-            Assert.assertTrue(embeddingPlane.equals(nextEmbeddingPlane));
+            Assert.assertEquals(embeddingPlane, nextEmbeddingPlane);
         });
     }
 
@@ -993,17 +993,17 @@ public class PlaneTest {
         Plane e = Planes.fromPointAndNormal(pt, normal, TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(a.equals(c));
-        Assert.assertFalse(a.equals(d));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(a, c);
+        Assert.assertNotEquals(a, d);
 
-        Assert.assertTrue(a.equals(e));
-        Assert.assertTrue(e.equals(a));
+        Assert.assertEquals(a, e);
+        Assert.assertEquals(e, a);
     }
 
     @Test

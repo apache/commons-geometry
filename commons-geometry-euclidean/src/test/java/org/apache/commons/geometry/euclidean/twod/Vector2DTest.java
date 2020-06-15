@@ -250,8 +250,7 @@ public class Vector2DTest {
         checkVector(Vector2D.Unit.MINUS_Y.withNorm(3.14), 0.0, -3.14);
 
         for (int i = -10; i <= 10; i++) {
-            final double mag = i;
-            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).norm(), eps);
+            Assert.assertEquals(Math.abs((double) i), v.withNorm(i).norm(), eps);
         }
     }
 
@@ -914,20 +913,20 @@ public class Vector2DTest {
         Assert.assertFalse(u1.equals(null));
         Assert.assertFalse(u1.equals(new Object()));
 
-        Assert.assertTrue(u1.equals(u1));
-        Assert.assertTrue(u1.equals(u2));
+        Assert.assertEquals(u1, u1);
+        Assert.assertEquals(u1, u2);
 
-        Assert.assertFalse(u1.equals(Vector2D.of(-1, -2)));
-        Assert.assertFalse(u1.equals(Vector2D.of(1 + 10 * Precision.EPSILON, 2)));
-        Assert.assertFalse(u1.equals(Vector2D.of(1, 2 + 10 * Precision.EPSILON)));
+        Assert.assertNotEquals(u1, Vector2D.of(-1, -2));
+        Assert.assertNotEquals(u1, Vector2D.of(1 + 10 * Precision.EPSILON, 2));
+        Assert.assertNotEquals(u1, Vector2D.of(1, 2 + 10 * Precision.EPSILON));
 
-        Assert.assertTrue(Vector2D.of(0, Double.NaN).equals(Vector2D.of(Double.NaN, 0)));
+        Assert.assertEquals(Vector2D.of(0, Double.NaN), Vector2D.of(Double.NaN, 0));
 
-        Assert.assertTrue(Vector2D.of(0, Double.POSITIVE_INFINITY).equals(Vector2D.of(0, Double.POSITIVE_INFINITY)));
-        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, 0).equals(Vector2D.of(0, Double.POSITIVE_INFINITY)));
+        Assert.assertEquals(Vector2D.of(0, Double.POSITIVE_INFINITY), Vector2D.of(0, Double.POSITIVE_INFINITY));
+        Assert.assertNotEquals(Vector2D.of(Double.POSITIVE_INFINITY, 0), Vector2D.of(0, Double.POSITIVE_INFINITY));
 
-        Assert.assertTrue(Vector2D.of(Double.NEGATIVE_INFINITY, 0).equals(Vector2D.of(Double.NEGATIVE_INFINITY, 0)));
-        Assert.assertFalse(Vector2D.of(0, Double.NEGATIVE_INFINITY).equals(Vector2D.of(Double.NEGATIVE_INFINITY, 0)));
+        Assert.assertEquals(Vector2D.of(Double.NEGATIVE_INFINITY, 0), Vector2D.of(Double.NEGATIVE_INFINITY, 0));
+        Assert.assertNotEquals(Vector2D.of(0, Double.NEGATIVE_INFINITY), Vector2D.of(Double.NEGATIVE_INFINITY, 0));
     }
 
     @Test

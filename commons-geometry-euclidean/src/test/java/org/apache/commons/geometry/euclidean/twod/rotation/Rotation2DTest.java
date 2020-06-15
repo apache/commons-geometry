@@ -224,13 +224,13 @@ public class Rotation2DTest {
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(a.equals(c));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(a, c);
 
-        Assert.assertTrue(a.equals(d));
-        Assert.assertTrue(d.equals(a));
+        Assert.assertEquals(a, d);
+        Assert.assertEquals(d, a);
     }
 
     @Test

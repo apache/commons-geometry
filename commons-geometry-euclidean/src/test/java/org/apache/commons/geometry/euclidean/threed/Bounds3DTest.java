@@ -451,17 +451,17 @@ public class Bounds3DTest {
         Bounds3D b6 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
 
         // act/assert
-        Assert.assertTrue(b1.equals(b1));
+        Assert.assertEquals(b1, b1);
 
         Assert.assertFalse(b1.equals(null));
         Assert.assertFalse(b1.equals(new Object()));
 
-        Assert.assertFalse(b1.equals(b2));
-        Assert.assertFalse(b1.equals(b3));
-        Assert.assertFalse(b1.equals(b4));
-        Assert.assertFalse(b1.equals(b5));
+        Assert.assertNotEquals(b1, b2);
+        Assert.assertNotEquals(b1, b3);
+        Assert.assertNotEquals(b1, b4);
+        Assert.assertNotEquals(b1, b5);
 
-        Assert.assertTrue(b1.equals(b6));
+        Assert.assertEquals(b1, b6);
     }
 
     @Test

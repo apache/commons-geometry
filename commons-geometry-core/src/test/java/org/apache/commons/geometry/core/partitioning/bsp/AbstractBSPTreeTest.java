@@ -1903,15 +1903,15 @@ public class AbstractBSPTreeTest {
 
         Assert.assertEquals(orig.getCut(), copy.getCut());
 
-        if (!orig.isLeaf()) {
+        if (orig.isLeaf()) {
+            Assert.assertNull(copy.getMinus());
+            Assert.assertNull(copy.getPlus());
+        } else {
             Assert.assertNotSame(orig.getMinus(), copy.getMinus());
             Assert.assertNotSame(orig.getPlus(), copy.getPlus());
 
             assertNodesCopiedRecursive(orig.getMinus(), copy.getMinus());
             assertNodesCopiedRecursive(orig.getPlus(), copy.getPlus());
-        } else {
-            Assert.assertNull(copy.getMinus());
-            Assert.assertNull(copy.getPlus());
         }
 
         Assert.assertEquals(orig.depth(), copy.depth());

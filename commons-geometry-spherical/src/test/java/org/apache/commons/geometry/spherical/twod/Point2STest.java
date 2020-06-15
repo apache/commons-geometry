@@ -86,8 +86,8 @@ public class Point2STest {
     public void testNaN() {
         // act/assert
         Assert.assertTrue(Point2S.NaN.isNaN());
-        Assert.assertTrue(Point2S.NaN.equals(Point2S.of(Double.NaN, 1.0)));
-        Assert.assertFalse(Point2S.of(1.0, 1.3).equals(Point2S.NaN));
+        Assert.assertEquals(Point2S.NaN, Point2S.of(Double.NaN, 1.0));
+        Assert.assertNotEquals(Point2S.of(1.0, 1.3), Point2S.NaN);
         Assert.assertNull(Point2S.NaN.getVector());
 
         Assert.assertEquals(Point2S.NaN.hashCode(), Point2S.of(Double.NaN, Double.NaN).hashCode());
@@ -308,13 +308,13 @@ public class Point2STest {
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(a.equals(c));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(a, c);
 
-        Assert.assertTrue(a.equals(d));
-        Assert.assertTrue(d.equals(a));
+        Assert.assertEquals(a, d);
+        Assert.assertEquals(d, a);
     }
 
     @Test
@@ -329,13 +329,13 @@ public class Point2STest {
         Point2S f = Point2S.of(-1.0, PlaneAngleRadians.PI);
 
         // act/assert
-        Assert.assertTrue(a.equals(a));
-        Assert.assertFalse(a.equals(b));
-        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a, a);
+        Assert.assertNotEquals(a, b);
+        Assert.assertEquals(a, c);
 
-        Assert.assertTrue(d.equals(d));
-        Assert.assertFalse(d.equals(e));
-        Assert.assertTrue(d.equals(f));
+        Assert.assertEquals(d, d);
+        Assert.assertNotEquals(d, e);
+        Assert.assertEquals(d, f);
     }
 
     @Test

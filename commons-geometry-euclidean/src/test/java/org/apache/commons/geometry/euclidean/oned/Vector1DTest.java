@@ -591,15 +591,15 @@ public class Vector1DTest {
         Assert.assertFalse(u1.equals(null));
         Assert.assertFalse(u1.equals(new Object()));
 
-        Assert.assertTrue(u1.equals(u1));
-        Assert.assertTrue(u1.equals(u2));
+        Assert.assertEquals(u1, u1);
+        Assert.assertEquals(u1, u2);
 
-        Assert.assertFalse(u1.equals(Vector1D.of(-1)));
-        Assert.assertFalse(u1.equals(Vector1D.of(1 + 10 * Precision.EPSILON)));
+        Assert.assertNotEquals(u1, Vector1D.of(-1));
+        Assert.assertNotEquals(u1, Vector1D.of(1 + 10 * Precision.EPSILON));
 
-        Assert.assertTrue(Vector1D.of(Double.NaN).equals(Vector1D.of(Double.NaN)));
-        Assert.assertTrue(Vector1D.of(Double.POSITIVE_INFINITY).equals(Vector1D.of(Double.POSITIVE_INFINITY)));
-        Assert.assertTrue(Vector1D.of(Double.NEGATIVE_INFINITY).equals(Vector1D.of(Double.NEGATIVE_INFINITY)));
+        Assert.assertEquals(Vector1D.of(Double.NaN), Vector1D.of(Double.NaN));
+        Assert.assertEquals(Vector1D.of(Double.POSITIVE_INFINITY), Vector1D.of(Double.POSITIVE_INFINITY));
+        Assert.assertEquals(Vector1D.of(Double.NEGATIVE_INFINITY), Vector1D.of(Double.NEGATIVE_INFINITY));
     }
 
     @Test

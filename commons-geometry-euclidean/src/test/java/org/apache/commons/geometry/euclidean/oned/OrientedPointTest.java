@@ -310,13 +310,13 @@ public class OrientedPointTest {
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(c.equals(d));
-        Assert.assertFalse(e.equals(f));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(c, d);
+        Assert.assertNotEquals(e, f);
 
-        Assert.assertTrue(a.equals(a));
-        Assert.assertTrue(a.equals(g));
-        Assert.assertTrue(g.equals(a));
+        Assert.assertEquals(a, a);
+        Assert.assertEquals(a, g);
+        Assert.assertEquals(g, a);
     }
 
     @Test

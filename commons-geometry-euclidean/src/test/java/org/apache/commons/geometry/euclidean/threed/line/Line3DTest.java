@@ -236,8 +236,8 @@ public class Line3DTest {
         Vector3D u = l.getDirection().orthogonal();
         Vector3D v = l.getDirection().cross(u);
         for (double alpha = 0; alpha < 2 * Math.PI; alpha += 0.3) {
-            Assert.assertTrue(!l.contains(p1.add(Vector3D.linearCombination(Math.cos(alpha), u,
-                                                               Math.sin(alpha), v))));
+            Assert.assertFalse(l.contains(p1.add(Vector3D.linearCombination(Math.cos(alpha), u,
+                    Math.sin(alpha), v))));
         }
     }
 
@@ -248,7 +248,7 @@ public class Line3DTest {
         Line3D lA  = Lines3D.fromPoints(p1, p2, TEST_PRECISION);
         Line3D lB  = Lines3D.fromPoints(p2, p1, TEST_PRECISION);
         Assert.assertTrue(lA.isSimilarTo(lB));
-        Assert.assertTrue(!lA.isSimilarTo(Lines3D.fromPoints(p1, p1.add(lA.getDirection().orthogonal()), TEST_PRECISION)));
+        Assert.assertFalse(lA.isSimilarTo(Lines3D.fromPoints(p1, p1.add(lA.getDirection().orthogonal()), TEST_PRECISION)));
     }
 
     @Test
@@ -549,17 +549,17 @@ public class Line3DTest {
         Line3D e = Lines3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), new EpsilonDoublePrecisionContext(TEST_EPS));
 
         // act/assert
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(a.equals(c));
-        Assert.assertFalse(a.equals(d));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(a, c);
+        Assert.assertNotEquals(a, d);
 
-        Assert.assertTrue(a.equals(e));
-        Assert.assertTrue(e.equals(a));
+        Assert.assertEquals(a, e);
+        Assert.assertEquals(e, a);
     }
 
     @Test

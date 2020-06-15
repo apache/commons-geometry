@@ -422,7 +422,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         /** Simple constructor.
          * @param tree the owning tree instance
          */
-        protected RegionNode1S(final AbstractBSPTree<Point1S, RegionNode1S> tree) {
+        private RegionNode1S(final AbstractBSPTree<Point1S, RegionNode1S> tree) {
             super(tree);
         }
 

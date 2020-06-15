@@ -239,10 +239,9 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
 
         final double invDet = 1.0 / det;
 
-        final double c00 = invDet;
         final double c01 = -(this.m01 * invDet);
 
-        return new AffineTransformMatrix1D(c00, c01);
+        return new AffineTransformMatrix1D(invDet, c01);
     }
 
     /** {@inheritDoc} */

@@ -195,16 +195,16 @@ public class Transform1STest {
         Transform1S d = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(a.equals(c));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(a, c);
 
-        Assert.assertTrue(a.equals(d));
-        Assert.assertTrue(d.equals(a));
+        Assert.assertEquals(a, d);
+        Assert.assertEquals(d, a);
     }
 
     @Test

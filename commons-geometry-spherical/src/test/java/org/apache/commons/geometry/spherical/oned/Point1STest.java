@@ -112,8 +112,8 @@ public class Point1STest {
         Assert.assertTrue(Double.isNaN(pt.getNormalizedAzimuth()));
         Assert.assertNull(pt.getVector());
 
-        Assert.assertTrue(Point1S.NaN.equals(pt));
-        Assert.assertFalse(Point1S.of(1.0).equals(Point1S.NaN));
+        Assert.assertEquals(Point1S.NaN, pt);
+        Assert.assertNotEquals(Point1S.of(1.0), Point1S.NaN);
     }
 
     @Test
@@ -193,19 +193,19 @@ public class Point1STest {
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(b.equals(a));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(b, a);
 
-        Assert.assertFalse(a.equals(c));
-        Assert.assertFalse(c.equals(a));
+        Assert.assertNotEquals(a, c);
+        Assert.assertNotEquals(c, a);
 
-        Assert.assertTrue(a.equals(d));
-        Assert.assertTrue(d.equals(a));
+        Assert.assertEquals(a, d);
+        Assert.assertEquals(d, a);
 
-        Assert.assertFalse(a.equals(e));
-        Assert.assertTrue(e.equals(Point1S.NaN));
+        Assert.assertNotEquals(a, e);
+        Assert.assertEquals(e, Point1S.NaN);
     }
 
     @Test

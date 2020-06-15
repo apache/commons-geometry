@@ -128,8 +128,8 @@ public class DocumentationExamplesTest {
         v1.eq(v3, precision); // true - approximately equal according to the given precision context
 
         // ---------------------
-        Assert.assertTrue(v1.equals(v2));
-        Assert.assertFalse(v1.equals(v3));
+        Assert.assertEquals(v1, v2);
+        Assert.assertNotEquals(v1, v3);
         Assert.assertTrue(v1.eq(v3, precision));
     }
 

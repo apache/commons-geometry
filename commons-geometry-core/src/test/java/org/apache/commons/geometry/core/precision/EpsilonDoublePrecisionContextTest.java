@@ -31,8 +31,8 @@ public class EpsilonDoublePrecisionContextTest {
         EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
         // assert
-        Assert.assertEquals(ctx.getEpsilon(), eps, 0.0);
-        Assert.assertEquals(ctx.getMaxZero(), eps, 0.0);
+        Assert.assertEquals(eps, ctx.getEpsilon(), 0.0);
+        Assert.assertEquals(eps, ctx.getMaxZero(), 0.0);
     }
 
     @Test
@@ -201,11 +201,11 @@ public class EpsilonDoublePrecisionContextTest {
         // act/assert
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(b.equals(a));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(b, a);
 
-        Assert.assertTrue(a.equals(a));
-        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a, a);
+        Assert.assertEquals(a, c);
     }
 
     @Test

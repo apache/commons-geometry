@@ -1138,7 +1138,7 @@ public class AffineTransformMatrix2DTest {
     @Test
     public void testHashCode() {
         // arrange
-        double[] values = new double[] {
+        double[] values = {
             1, 2, 3,
             5, 6, 7
         };
@@ -1163,7 +1163,7 @@ public class AffineTransformMatrix2DTest {
     @Test
     public void testEquals() {
         // arrange
-        double[] values = new double[] {
+        double[] values = {
             1, 2, 3,
             5, 6, 7
         };
@@ -1171,7 +1171,7 @@ public class AffineTransformMatrix2DTest {
         AffineTransformMatrix2D a = AffineTransformMatrix2D.of(values);
 
         // act/assert
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
@@ -1183,7 +1183,7 @@ public class AffineTransformMatrix2DTest {
 
             AffineTransformMatrix2D modified = AffineTransformMatrix2D.of(temp);
 
-            Assert.assertFalse(a.equals(modified));
+            Assert.assertNotEquals(a, modified);
         }
     }
 

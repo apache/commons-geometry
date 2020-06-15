@@ -1094,23 +1094,23 @@ public class Vector3DTest {
         Assert.assertFalse(u1.equals(null));
         Assert.assertFalse(u1.equals(new Object()));
 
-        Assert.assertTrue(u1.equals(u1));
-        Assert.assertTrue(u1.equals(u2));
+        Assert.assertEquals(u1, u1);
+        Assert.assertEquals(u1, u2);
 
-        Assert.assertFalse(u1.equals(Vector3D.of(-1, -2, -3)));
-        Assert.assertFalse(u1.equals(Vector3D.of(1 + delta, 2, 3)));
-        Assert.assertFalse(u1.equals(Vector3D.of(1, 2 + delta, 3)));
-        Assert.assertFalse(u1.equals(Vector3D.of(1, 2, 3 + delta)));
+        Assert.assertNotEquals(u1, Vector3D.of(-1, -2, -3));
+        Assert.assertNotEquals(u1, Vector3D.of(1 + delta, 2, 3));
+        Assert.assertNotEquals(u1, Vector3D.of(1, 2 + delta, 3));
+        Assert.assertNotEquals(u1, Vector3D.of(1, 2, 3 + delta));
 
-        Assert.assertTrue(Vector3D.of(0, Double.NaN, 0).equals(Vector3D.of(Double.NaN, 0, 0)));
+        Assert.assertEquals(Vector3D.of(0, Double.NaN, 0), Vector3D.of(Double.NaN, 0, 0));
 
-        Assert.assertTrue(Vector3D.of(0, 0, Double.POSITIVE_INFINITY).equals(Vector3D.of(0, 0, Double.POSITIVE_INFINITY)));
-        Assert.assertFalse(Vector3D.of(0, Double.POSITIVE_INFINITY, 0).equals(Vector3D.of(0, 0, Double.POSITIVE_INFINITY)));
-        Assert.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0).equals(Vector3D.of(0, 0, Double.POSITIVE_INFINITY)));
+        Assert.assertEquals(Vector3D.of(0, 0, Double.POSITIVE_INFINITY), Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
+        Assert.assertNotEquals(Vector3D.of(0, Double.POSITIVE_INFINITY, 0), Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
+        Assert.assertNotEquals(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0), Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
 
-        Assert.assertTrue(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0).equals(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0)));
-        Assert.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0).equals(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0)));
-        Assert.assertFalse(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY).equals(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0)));
+        Assert.assertEquals(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0), Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0));
+        Assert.assertNotEquals(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0), Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0));
+        Assert.assertNotEquals(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY), Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0));
     }
 
     @Test

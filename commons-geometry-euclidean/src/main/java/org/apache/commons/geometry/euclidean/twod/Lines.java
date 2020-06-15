@@ -118,7 +118,7 @@ public final class Lines {
      */
     public static Ray rayFromLocation(final Line line, final double startLocation) {
         if (!Double.isFinite(startLocation)) {
-            throw new IllegalArgumentException("Invalid ray start location: " + Double.toString(startLocation));
+            throw new IllegalArgumentException("Invalid ray start location: " + startLocation);
         }
         return new Ray(line, line.toSpace(startLocation));
     }
@@ -163,7 +163,7 @@ public final class Lines {
      */
     public static ReverseRay reverseRayFromLocation(final Line line, final double endLocation) {
         if (!Double.isFinite(endLocation)) {
-            throw new IllegalArgumentException("Invalid reverse ray end location: " + Double.toString(endLocation));
+            throw new IllegalArgumentException("Invalid reverse ray end location: " + endLocation);
         }
 
         return new ReverseRay(line, line.toSpace(endLocation));

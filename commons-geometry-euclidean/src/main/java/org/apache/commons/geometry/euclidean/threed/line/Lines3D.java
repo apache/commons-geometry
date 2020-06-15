@@ -104,7 +104,7 @@ public final class Lines3D {
      */
     public static Ray3D rayFromLocation(final Line3D line, final double startLocation) {
         if (!Double.isFinite(startLocation)) {
-            throw new IllegalArgumentException("Invalid ray start location: " + Double.toString(startLocation));
+            throw new IllegalArgumentException("Invalid ray start location: " + startLocation);
         }
 
         return new Ray3D(line, startLocation);
@@ -147,7 +147,7 @@ public final class Lines3D {
      */
     public static ReverseRay3D reverseRayFromLocation(final Line3D line, final double endLocation) {
         if (!Double.isFinite(endLocation)) {
-            throw new IllegalArgumentException("Invalid reverse ray end location: " + Double.toString(endLocation));
+            throw new IllegalArgumentException("Invalid reverse ray end location: " + endLocation);
         }
 
         return new ReverseRay3D(line, endLocation);

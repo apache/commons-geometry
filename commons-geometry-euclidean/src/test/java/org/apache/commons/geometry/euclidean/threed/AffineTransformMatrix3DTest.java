@@ -1129,7 +1129,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testHashCode() {
         // arrange
-        double[] values = new double[] {
+        double[] values = {
             1, 2, 3, 4,
             5, 6, 7, 8,
             9, 10, 11, 12
@@ -1155,7 +1155,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testEquals() {
         // arrange
-        double[] values = new double[] {
+        double[] values = {
             1, 2, 3, 4,
             5, 6, 7, 8,
             9, 10, 11, 12
@@ -1164,7 +1164,7 @@ public class AffineTransformMatrix3DTest {
         AffineTransformMatrix3D a = AffineTransformMatrix3D.of(values);
 
         // act/assert
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
@@ -1176,7 +1176,7 @@ public class AffineTransformMatrix3DTest {
 
             AffineTransformMatrix3D modified = AffineTransformMatrix3D.of(temp);
 
-            Assert.assertFalse(a.equals(modified));
+            Assert.assertNotEquals(a, modified);
         }
     }
 

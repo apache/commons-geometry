@@ -68,16 +68,16 @@ public class AxisAngleSequenceTest {
 
         // act/assert
         Assert.assertFalse(seq.equals(null));
-        Assert.assertFalse(seq.equals(new Object()));
+        Assert.assertNotEquals(seq, new Object());
 
-        Assert.assertFalse(seq.equals(new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3)));
-        Assert.assertFalse(seq.equals(new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.ZYX, 1, 2, 3)));
-        Assert.assertFalse(seq.equals(new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 9, 2, 3)));
-        Assert.assertFalse(seq.equals(new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 9, 3)));
-        Assert.assertFalse(seq.equals(new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 9)));
+        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3));
+        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.ZYX, 1, 2, 3));
+        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 9, 2, 3));
+        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 9, 3));
+        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 9));
 
-        Assert.assertTrue(seq.equals(seq));
-        Assert.assertTrue(seq.equals(new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3)));
+        Assert.assertEquals(seq, seq);
+        Assert.assertEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3));
     }
 
     @Test

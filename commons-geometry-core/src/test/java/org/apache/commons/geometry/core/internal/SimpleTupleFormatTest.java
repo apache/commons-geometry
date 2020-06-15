@@ -26,40 +26,28 @@ public class SimpleTupleFormatTest {
     private static final String OPEN_PAREN = "(";
     private static final String CLOSE_PAREN = ")";
 
-    private static final DoubleFunction1N<Stub1D> FACTORY_1D = new DoubleFunction1N<Stub1D>() {
+    private static final DoubleFunction1N<Stub1D> FACTORY_1D = v -> {
+        Stub1D result = new Stub1D();
+        result.v = v;
 
-        @Override
-        public Stub1D apply(double v) {
-            Stub1D result = new Stub1D();
-            result.v = v;
-
-            return result;
-        }
+        return result;
     };
 
-    private static final DoubleFunction2N<Stub2D> FACTORY_2D = new DoubleFunction2N<Stub2D>() {
+    private static final DoubleFunction2N<Stub2D> FACTORY_2D = (v1, v2) -> {
+        Stub2D result = new Stub2D();
+        result.v1 = v1;
+        result.v2 = v2;
 
-        @Override
-        public Stub2D apply(double v1, double v2) {
-            Stub2D result = new Stub2D();
-            result.v1 = v1;
-            result.v2 = v2;
-
-            return result;
-        }
+        return result;
     };
 
-    private static final DoubleFunction3N<Stub3D> FACTORY_3D = new DoubleFunction3N<Stub3D>() {
+    private static final DoubleFunction3N<Stub3D> FACTORY_3D = (v1, v2, v3) -> {
+        Stub3D result = new Stub3D();
+        result.v1 = v1;
+        result.v2 = v2;
+        result.v3 = v3;
 
-        @Override
-        public Stub3D apply(double v1, double v2, double v3) {
-            Stub3D result = new Stub3D();
-            result.v1 = v1;
-            result.v2 = v2;
-            result.v3 = v3;
-
-            return result;
-        }
+        return result;
     };
 
     @Test

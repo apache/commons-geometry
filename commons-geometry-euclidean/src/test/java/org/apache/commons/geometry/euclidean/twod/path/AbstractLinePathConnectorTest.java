@@ -517,15 +517,15 @@ public class AbstractLinePathConnectorTest {
         ConnectableLineSubset a = new ConnectableLineSubset(segA);
 
         // act/assert
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertFalse(a.equals(new ConnectableLineSubset(segB)));
-        Assert.assertFalse(a.equals(new ConnectableLineSubset(Vector2D.Unit.PLUS_X)));
+        Assert.assertNotEquals(a, new ConnectableLineSubset(segB));
+        Assert.assertNotEquals(a, new ConnectableLineSubset(Vector2D.Unit.PLUS_X));
 
-        Assert.assertTrue(a.equals(new ConnectableLineSubset(segA)));
+        Assert.assertEquals(a, new ConnectableLineSubset(segA));
     }
 
     private static List<LineConvexSubset> shuffle(final List<LineConvexSubset> segments) {

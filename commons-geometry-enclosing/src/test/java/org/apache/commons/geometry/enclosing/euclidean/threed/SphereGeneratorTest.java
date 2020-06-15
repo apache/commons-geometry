@@ -98,7 +98,7 @@ public class SphereGeneratorTest {
         for (Vector3D v : support) {
             Assert.assertTrue(sphere.contains(v));
             Assert.assertEquals(1.0, v.distance(sphere.getCenter()), TEST_EPS);
-            Assert.assertTrue(v == sphere.getSupport().get(i++));
+            Assert.assertSame(v, sphere.getSupport().get(i++));
         }
 
         Assert.assertTrue(sphere.contains(Vector3D.of(2, 0.9, 0)));

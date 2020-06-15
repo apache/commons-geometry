@@ -334,7 +334,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         // arrange
         List<Vector2D> points = new ArrayList<>();
 
-        int[][] data = new int[][] {
+        int[][] data = {
                 {-11, -1}, {-11, 0}, {-11, 1},
                 {-10, -3}, {-10, -2}, {-10, -1}, {-10, 0}, {-10, 1},
                 {-10, 2}, {-10, 3}, {-9, -4}, {-9, -3}, {-9, -2},
@@ -391,7 +391,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
             points.add(Vector2D.of(line[0], line[1]));
         }
 
-        Vector2D[] referenceHull = new Vector2D[] {
+        Vector2D[] referenceHull = {
             Vector2D.of(-11.0, -1.0),
             Vector2D.of(-10.0, -3.0),
             Vector2D.of(-6.0, -7.0),

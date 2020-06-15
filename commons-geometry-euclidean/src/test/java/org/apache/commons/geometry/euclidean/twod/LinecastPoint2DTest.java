@@ -103,17 +103,17 @@ public class LinecastPoint2DTest {
         LinecastPoint2D e = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
 
         // act/assert
-        Assert.assertTrue(a.equals(a));
+        Assert.assertEquals(a, a);
 
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(a.equals(c));
-        Assert.assertFalse(a.equals(d));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(a, c);
+        Assert.assertNotEquals(a, d);
 
-        Assert.assertTrue(a.equals(e));
-        Assert.assertTrue(e.equals(a));
+        Assert.assertEquals(a, e);
+        Assert.assertEquals(e, a);
     }
 
     @Test

@@ -1039,18 +1039,18 @@ public class QuaternionRotationTest {
 
         // act/assert
         Assert.assertFalse(q1.equals(null));
-        Assert.assertFalse(q1.equals(new Object()));
+        Assert.assertNotEquals(q1, new Object());
 
-        Assert.assertTrue(q1.equals(q1));
-        Assert.assertTrue(q1.equals(q2));
+        Assert.assertEquals(q1, q1);
+        Assert.assertEquals(q1, q2);
 
-        Assert.assertFalse(q1.equals(QuaternionRotation.of(-1, -2, -3, 4)));
-        Assert.assertFalse(q1.equals(QuaternionRotation.of(1, 2, 3, -4)));
+        Assert.assertNotEquals(q1, QuaternionRotation.of(-1, -2, -3, 4));
+        Assert.assertNotEquals(q1, QuaternionRotation.of(1, 2, 3, -4));
 
-        Assert.assertFalse(q1.equals(QuaternionRotation.of(1 + delta, 2, 3, 4)));
-        Assert.assertFalse(q1.equals(QuaternionRotation.of(1, 2 + delta, 3, 4)));
-        Assert.assertFalse(q1.equals(QuaternionRotation.of(1, 2, 3 + delta, 4)));
-        Assert.assertFalse(q1.equals(QuaternionRotation.of(1, 2, 3, 4 + delta)));
+        Assert.assertNotEquals(q1, QuaternionRotation.of(1 + delta, 2, 3, 4));
+        Assert.assertNotEquals(q1, QuaternionRotation.of(1, 2 + delta, 3, 4));
+        Assert.assertNotEquals(q1, QuaternionRotation.of(1, 2, 3 + delta, 4));
+        Assert.assertNotEquals(q1, QuaternionRotation.of(1, 2, 3, 4 + delta));
     }
 
     @Test
@@ -1617,7 +1617,7 @@ public class QuaternionRotationTest {
      * @param rotation
      */
     private static void assertRotationEquals(UnaryOperator<Vector3D> expected, QuaternionRotation rotation) {
-        assertFnEquals(expected, rotation::apply);
+        assertFnEquals(expected, rotation);
     }
 
     /**
@@ -1626,7 +1626,7 @@ public class QuaternionRotationTest {
      * @param transform
      */
     private static void assertTransformEquals(UnaryOperator<Vector3D> expected, AffineTransformMatrix3D transform) {
-        assertFnEquals(expected, transform::apply);
+        assertFnEquals(expected, transform);
     }
 
     /**

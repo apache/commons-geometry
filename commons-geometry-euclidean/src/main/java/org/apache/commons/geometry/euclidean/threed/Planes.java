@@ -618,9 +618,7 @@ public final class Planes {
             this.requireConvex = true;
             this.uniqueVertexOutput = vertexOutput;
 
-            Plane plane = build();
-
-            return plane;
+            return build();
         }
 
         /** Process a point from the point sequence.

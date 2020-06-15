@@ -235,12 +235,12 @@ public class PolarCoordinatesTest {
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertTrue(a.equals(a));
-        Assert.assertTrue(a.equals(e));
+        Assert.assertEquals(a, a);
+        Assert.assertEquals(a, e);
 
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(a.equals(c));
-        Assert.assertFalse(a.equals(d));
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(a, c);
+        Assert.assertNotEquals(a, d);
     }
 
     @Test
@@ -250,7 +250,7 @@ public class PolarCoordinatesTest {
         PolarCoordinates b = PolarCoordinates.of(Double.NaN, 1);
 
         // act/assert
-        Assert.assertTrue(a.equals(b));
+        Assert.assertEquals(a, b);
     }
 
     @Test

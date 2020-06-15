@@ -200,7 +200,7 @@ public final class EuclideanTestUtils {
             DoublePrecisionContext precision) {
         Assert.assertEquals("Vertex sequences have different sizes", expected.size(), actual.size());
 
-        if (expected.size() > 0) {
+        if (!expected.isEmpty()) {
 
             int offset = -1;
             V start = expected.get(0);
