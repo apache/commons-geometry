@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.internal;
 
 import org.apache.commons.geometry.core.Vector;
+import org.apache.commons.numbers.arrays.SafeNorm;
 
 /** This class consists exclusively of static vector utility methods.
  */
@@ -109,7 +110,7 @@ public final class Vectors {
      * @see <a href="http://mathworld.wolfram.com/L2-Norm.html">L2 Norm</a>
      */
     public static double norm(final double x1, final double x2, final double x3) {
-        return Math.sqrt(normSq(x1, x2, x3));
+        return SafeNorm.value(new double[] {x1, x2, x3});
     }
 
     /** Get the square of the L<sub>2</sub> norm (also known as the Euclidean norm)
