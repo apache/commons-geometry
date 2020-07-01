@@ -61,7 +61,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
         NODE_MINUS_PLUS,
 
         /** Indicates that the visitor should not visit any of the nodes in this subtree. */
-        NONE;
+        NONE
     }
 
     /** Enum representing the result of a BSP tree node visit operation.

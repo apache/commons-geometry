@@ -41,5 +41,5 @@ public enum SplitLocation {
      * the object lies entirely on the hyperplane or is empty (and
      * therefore "lies" nowhere).
      */
-    NEITHER;
+    NEITHER
 }
