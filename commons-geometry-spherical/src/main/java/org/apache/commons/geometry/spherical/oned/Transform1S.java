@@ -135,10 +135,9 @@ public final class Transform1S implements Transform<Point1S> {
     public Transform1S inverse() {
         final double invScale = 1.0 / scale;
 
-        final double resultScale = invScale;
         final double resultRotate = -(rotate * invScale);
 
-        return new Transform1S(resultScale, resultRotate);
+        return new Transform1S(invScale, resultRotate);
     }
 
     /** {@inheritDoc} */

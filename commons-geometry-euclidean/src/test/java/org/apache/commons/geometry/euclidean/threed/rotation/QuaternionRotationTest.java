@@ -1088,10 +1088,9 @@ public class QuaternionRotationTest {
     public void testCreateVectorRotation_identity() {
         // arrange
         final Vector3D u1 = Vector3D.of(0, 2, 0);
-        final Vector3D u2 = u1;
 
         // act
-        final QuaternionRotation q = QuaternionRotation.createVectorRotation(u1, u2);
+        final QuaternionRotation q = QuaternionRotation.createVectorRotation(u1, u1);
 
         // assert
         checkQuaternion(q, 1, 0, 0, 0);
@@ -1100,7 +1099,7 @@ public class QuaternionRotationTest {
         Assert.assertEquals(0.0, q.getAngle(), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 2, 0), q.apply(u1), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 2, 0), q.inverse().apply(u2), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 2, 0), q.inverse().apply(u1), EPS);
     }
 
     @Test
@@ -1232,20 +1231,17 @@ public class QuaternionRotationTest {
         final Vector3D u1 = Vector3D.Unit.PLUS_X;
         final Vector3D u2 = Vector3D.Unit.PLUS_Y;
 
-        final Vector3D v1 = u1;
-        final Vector3D v2 = u2;
-
         // act
-        final QuaternionRotation q = QuaternionRotation.createBasisRotation(u1, u2, v1, v2);
+        final QuaternionRotation q = QuaternionRotation.createBasisRotation(u1, u2, u1, u2);
 
         // assert
         final QuaternionRotation qInv = q.inverse();
 
-        EuclideanTestUtils.assertCoordinatesEqual(v1, q.apply(u1), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(v2, q.apply(u2), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(u1, q.apply(u1), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(u2, q.apply(u2), EPS);
 
-        EuclideanTestUtils.assertCoordinatesEqual(u1, qInv.apply(v1), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(u2, qInv.apply(v2), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(u1, qInv.apply(u1), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(u2, qInv.apply(u2), EPS);
 
         assertRotationEquals(StandardRotations.IDENTITY, q);
     }

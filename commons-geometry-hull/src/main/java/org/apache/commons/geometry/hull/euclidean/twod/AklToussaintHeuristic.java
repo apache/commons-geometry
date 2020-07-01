@@ -120,30 +120,29 @@ public final class AklToussaintHeuristic {
     private static boolean insideQuadrilateral(final Vector2D point,
                                                final List<Vector2D> quadrilateralPoints) {
 
-        final Vector2D v0 = point;
         Vector2D v1 = quadrilateralPoints.get(0);
         Vector2D v2 = quadrilateralPoints.get(1);
 
-        if (v0.equals(v1) || v0.equals(v2)) {
+        if (point.equals(v1) || point.equals(v2)) {
             return true;
         }
 
         // get the location of the point relative to the first two vertices
-        final double last = signedAreaPoints(v1, v2, v0);
+        final double last = signedAreaPoints(v1, v2, point);
         final int size = quadrilateralPoints.size();
         // loop through the rest of the vertices
         for (int i = 1; i < size; i++) {
             v1 = v2;
             v2 = quadrilateralPoints.get((i + 1) == size ? 0 : i + 1);
 
-            if (v0.equals(v1) || v0.equals(v2)) {
+            if (point.equals(v1) || point.equals(v2)) {
                 return true;
             }
 
             // do side of line test: multiply the last location with this location
             // if they are the same sign then the operation will yield a positive result
             // -x * -y = +xy, x * y = +xy, -x * y = -xy, x * -y = -xy
-            if (last * signedAreaPoints(v1, v2, v0) < 0) {
+            if (last * signedAreaPoints(v1, v2, point) < 0) {
                 return false;
             }
         }

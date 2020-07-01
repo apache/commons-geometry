@@ -248,9 +248,6 @@ public final class Transform2S implements Transform<Point2S> {
      */
     private static Transform2S multiply(final Transform2S a, final Transform2S b) {
 
-        final AffineTransformMatrix3D aMat = a.euclideanTransform;
-        final AffineTransformMatrix3D bMat = b.euclideanTransform;
-
-        return new Transform2S(aMat.multiply(bMat));
+        return new Transform2S(a.euclideanTransform.multiply(b.euclideanTransform));
     }
 }

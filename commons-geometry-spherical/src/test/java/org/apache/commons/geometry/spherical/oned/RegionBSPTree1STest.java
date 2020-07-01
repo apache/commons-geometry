@@ -139,13 +139,12 @@ public class RegionBSPTree1STest {
     public void testFromInterval_nonFull() {
         for (double theta = 0.0; theta <= PlaneAngleRadians.TWO_PI; theta += 0.2) {
             // arrange
-            final double min = theta;
             final double max = theta + PlaneAngleRadians.PI_OVER_TWO;
 
             // act
-            final RegionBSPTree1S tree = RegionBSPTree1S.fromInterval(AngularInterval.of(min, max, TEST_PRECISION));
+            final RegionBSPTree1S tree = RegionBSPTree1S.fromInterval(AngularInterval.of(theta, max, TEST_PRECISION));
 
-            checkSingleInterval(tree, min, max);
+            checkSingleInterval(tree, theta, max);
 
             Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, tree.getSize(), TEST_EPS);
             Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
