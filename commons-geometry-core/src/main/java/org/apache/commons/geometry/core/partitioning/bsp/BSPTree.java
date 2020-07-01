@@ -77,7 +77,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
      * @return leaf node containing the point on its interior or boundary
      * @see #findNode(Point, FindNodeCutRule)
      */
-    default N findNode(P pt) {
+    default N findNode(final P pt) {
         return findNode(pt, FindNodeCutRule.MINUS);
     }
 

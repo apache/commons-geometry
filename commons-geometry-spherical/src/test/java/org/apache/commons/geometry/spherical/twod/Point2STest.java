@@ -35,7 +35,7 @@ public class Point2STest {
     public void testProperties() {
         for (int k = -2; k < 3; ++k) {
             // arrange
-            Point2S p = Point2S.of(1.0 + k * PlaneAngleRadians.TWO_PI, 1.4);
+            final Point2S p = Point2S.of(1.0 + k * PlaneAngleRadians.TWO_PI, 1.4);
 
             // act/assert
             Assert.assertEquals(1.0, p.getAzimuth(), TEST_EPS);
@@ -52,7 +52,7 @@ public class Point2STest {
     @Test
     public void testAzimuthPolarComparator() {
         // arrange
-        Comparator<Point2S> comp = Point2S.POLAR_AZIMUTH_ASCENDING_ORDER;
+        final Comparator<Point2S> comp = Point2S.POLAR_AZIMUTH_ASCENDING_ORDER;
 
         // act/assert
         Assert.assertEquals(0, comp.compare(Point2S.of(1, 2), Point2S.of(1, 2)));
@@ -70,7 +70,7 @@ public class Point2STest {
     @Test
     public void testFrom_vector() {
         // arrange
-        double quarterPi = 0.25 * PlaneAngleRadians.PI;
+        final double quarterPi = 0.25 * PlaneAngleRadians.PI;
 
         // act/assert
         checkPoint(Point2S.from(Vector3D.of(1, 1, 0)), quarterPi, PlaneAngleRadians.PI_OVER_TWO);
@@ -122,8 +122,8 @@ public class Point2STest {
     @Test
     public void testDistance() {
         // arrange
-        Point2S a = Point2S.of(1.0, 0.5 * PlaneAngleRadians.PI);
-        Point2S b = Point2S.of(a.getAzimuth() + 0.5 * PlaneAngleRadians.PI, a.getPolar());
+        final Point2S a = Point2S.of(1.0, 0.5 * PlaneAngleRadians.PI);
+        final Point2S b = Point2S.of(a.getAzimuth() + 0.5 * PlaneAngleRadians.PI, a.getPolar());
 
         // act/assert
         Assert.assertEquals(0.5 * PlaneAngleRadians.PI, a.distance(b), 1.0e-10);
@@ -135,8 +135,8 @@ public class Point2STest {
     @Test
     public void testSlerp_alongEquator() {
         // arrange
-        Point2S p1 = Point2S.PLUS_I;
-        Point2S p2 = Point2S.PLUS_J;
+        final Point2S p1 = Point2S.PLUS_I;
+        final Point2S p2 = Point2S.PLUS_J;
 
         // act/assert
         SphericalTestUtils.assertPointsEq(p1, p1.slerp(p2, 0), TEST_EPS);
@@ -158,8 +158,8 @@ public class Point2STest {
     @Test
     public void testSlerp_alongMeridian() {
         // arrange
-        Point2S p1 = Point2S.PLUS_J;
-        Point2S p2 = Point2S.PLUS_K;
+        final Point2S p1 = Point2S.PLUS_J;
+        final Point2S p2 = Point2S.PLUS_K;
 
         // act/assert
         SphericalTestUtils.assertPointsEq(p1, p1.slerp(p2, 0), TEST_EPS);
@@ -181,7 +181,7 @@ public class Point2STest {
     @Test
     public void testSlerp_samePoint() {
         // arrange
-        Point2S p1 = Point2S.PLUS_I;
+        final Point2S p1 = Point2S.PLUS_I;
 
         // act/assert
         SphericalTestUtils.assertPointsEq(p1, p1.slerp(p1, 0), TEST_EPS);
@@ -192,14 +192,14 @@ public class Point2STest {
     @Test
     public void testSlerp_antipodal() {
         // arrange
-        Point2S p1 = Point2S.PLUS_I;
-        Point2S p2 = Point2S.MINUS_I;
+        final Point2S p1 = Point2S.PLUS_I;
+        final Point2S p2 = Point2S.MINUS_I;
 
         // act/assert
         SphericalTestUtils.assertPointsEq(p1, p1.slerp(p1, 0), TEST_EPS);
         SphericalTestUtils.assertPointsEq(p1, p1.slerp(p1, 1), TEST_EPS);
 
-        Point2S pt = p1.slerp(p2, 0.5);
+        final Point2S pt = p1.slerp(p2, 0.5);
         Assert.assertEquals(p1.distance(pt), p2.distance(pt), TEST_EPS);
     }
 
@@ -208,10 +208,10 @@ public class Point2STest {
         for (double az = -6 * PlaneAngleRadians.PI; az <= 6 * PlaneAngleRadians.PI; az += 0.1) {
             for (double p = 0; p <= PlaneAngleRadians.PI; p += 0.1) {
                 // arrange
-                Point2S pt = Point2S.of(az, p);
+                final Point2S pt = Point2S.of(az, p);
 
                 // act
-                Point2S result = pt.antipodal();
+                final Point2S result = pt.antipodal();
 
                 // assert
                 Assert.assertEquals(PlaneAngleRadians.PI, pt.distance(result), TEST_EPS);
@@ -230,11 +230,11 @@ public class Point2STest {
     @Test
     public void testAntipodal_numericalStability() {
         // arrange
-        double eps = 1e-16;
-        Point2S pt = Point2S.of(1, 2);
+        final double eps = 1e-16;
+        final Point2S pt = Point2S.of(1, 2);
 
         // act
-        Point2S result = pt.antipodal().antipodal();
+        final Point2S result = pt.antipodal().antipodal();
 
         // assert
         Assert.assertEquals(1.0, result.getAzimuth(), eps);
@@ -244,7 +244,7 @@ public class Point2STest {
     @Test
     public void testDimension() {
         // arrange
-        Point2S pt = Point2S.of(1, 2);
+        final Point2S pt = Point2S.of(1, 2);
 
         // act/assert
         Assert.assertEquals(2, pt.getDimension());
@@ -253,14 +253,14 @@ public class Point2STest {
     @Test
     public void testEq() {
         // arrange
-        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-5);
-        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(5e-1);
+        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-5);
+        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(5e-1);
 
-        Point2S a = Point2S.of(1.0, 2.0);
-        Point2S b = Point2S.of(1.0, 2.01);
-        Point2S c = Point2S.of(1.01, 2.0);
-        Point2S d = Point2S.of(1.0, 2.0);
-        Point2S e = Point2S.of(3.0, 2.0);
+        final Point2S a = Point2S.of(1.0, 2.0);
+        final Point2S b = Point2S.of(1.0, 2.01);
+        final Point2S c = Point2S.of(1.01, 2.0);
+        final Point2S d = Point2S.of(1.0, 2.0);
+        final Point2S e = Point2S.of(3.0, 2.0);
 
         // act/assert
         Assert.assertTrue(a.eq(a, smallEps));
@@ -279,13 +279,13 @@ public class Point2STest {
     @Test
     public void testHashCode() {
         // arrange
-        Point2S a = Point2S.of(1.0, 2.0);
-        Point2S b = Point2S.of(1.0, 3.0);
-        Point2S c = Point2S.of(4.0, 2.0);
-        Point2S d = Point2S.of(1.0, 2.0);
+        final Point2S a = Point2S.of(1.0, 2.0);
+        final Point2S b = Point2S.of(1.0, 3.0);
+        final Point2S c = Point2S.of(4.0, 2.0);
+        final Point2S d = Point2S.of(1.0, 2.0);
 
         // act
-        int hash = a.hashCode();
+        final int hash = a.hashCode();
 
         // assert
         Assert.assertEquals(hash, a.hashCode());
@@ -299,10 +299,10 @@ public class Point2STest {
     @Test
     public void testEquals() {
         // arrange
-        Point2S a = Point2S.of(1.0, 2.0);
-        Point2S b = Point2S.of(1.0, 3.0);
-        Point2S c = Point2S.of(4.0, 2.0);
-        Point2S d = Point2S.of(1.0, 2.0);
+        final Point2S a = Point2S.of(1.0, 2.0);
+        final Point2S b = Point2S.of(1.0, 3.0);
+        final Point2S c = Point2S.of(4.0, 2.0);
+        final Point2S d = Point2S.of(1.0, 2.0);
 
         // act/assert
         Assert.assertFalse(a.equals(null));
@@ -320,13 +320,13 @@ public class Point2STest {
     @Test
     public void testEquals_poles() {
         // arrange
-        Point2S a = Point2S.of(1.0, 0.0);
-        Point2S b = Point2S.of(0.0, 0.0);
-        Point2S c = Point2S.of(1.0, 0.0);
+        final Point2S a = Point2S.of(1.0, 0.0);
+        final Point2S b = Point2S.of(0.0, 0.0);
+        final Point2S c = Point2S.of(1.0, 0.0);
 
-        Point2S d = Point2S.of(-1.0, PlaneAngleRadians.PI);
-        Point2S e = Point2S.of(0.0, PlaneAngleRadians.PI);
-        Point2S f = Point2S.of(-1.0, PlaneAngleRadians.PI);
+        final Point2S d = Point2S.of(-1.0, PlaneAngleRadians.PI);
+        final Point2S e = Point2S.of(0.0, PlaneAngleRadians.PI);
+        final Point2S f = Point2S.of(-1.0, PlaneAngleRadians.PI);
 
         // act/assert
         Assert.assertEquals(a, a);
@@ -358,8 +358,8 @@ public class Point2STest {
         Point2S.parse("abc");
     }
 
-    private static void checkPoint(Point2S p, double az, double polar) {
-        String msg = "Expected (" + az + "," + polar + ") but was " + p;
+    private static void checkPoint(final Point2S p, final double az, final double polar) {
+        final String msg = "Expected (" + az + "," + polar + ") but was " + p;
 
         Assert.assertEquals(msg, az, p.getAzimuth(), TEST_EPS);
         Assert.assertEquals(msg, polar, p.getPolar(), TEST_EPS);

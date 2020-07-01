@@ -40,26 +40,26 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_intervalArg_finite() {
         // arrange
-        DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
-        Interval interval = Interval.of(-1, 2, intervalPrecision);
+        final DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Interval interval = Interval.of(-1, 2, intervalPrecision);
 
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        Segment3D segment = (Segment3D) Lines3D.subsetFromInterval(line, interval);
+        final Segment3D segment = (Segment3D) Lines3D.subsetFromInterval(line, interval);
 
         // assert
-        double side = 1.0 / Math.sqrt(3);
+        final double side = 1.0 / Math.sqrt(3);
         checkFiniteSegment(segment, Vector3D.of(-side, -side, -side), Vector3D.of(2 * side, 2 * side, 2 * side));
     }
 
     @Test
     public void testFromInterval_intervalArg_full() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        LineConvexSubset3D span = Lines3D.subsetFromInterval(line, Interval.full());
+        final LineConvexSubset3D span = Lines3D.subsetFromInterval(line, Interval.full());
 
         // assert
         Assert.assertTrue(span.isInfinite());
@@ -77,13 +77,13 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_intervalArg_positiveHalfSpace() {
         // arrange
-        DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
-        Interval interval = Interval.min(-1, intervalPrecision);
+        final DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Interval interval = Interval.min(-1, intervalPrecision);
 
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        Ray3D ray = (Ray3D) Lines3D.subsetFromInterval(line, interval);
+        final Ray3D ray = (Ray3D) Lines3D.subsetFromInterval(line, interval);
 
         // assert
         Assert.assertTrue(ray.isInfinite());
@@ -92,7 +92,7 @@ public class LineConvexSubset3DTest {
         Assert.assertEquals(-1.0, ray.getSubspaceStart(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
-        double side = 1.0 / Math.sqrt(3);
+        final double side = 1.0 / Math.sqrt(3);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-side, -side, -side), ray.getStartPoint(), TEST_EPS);
         Assert.assertNull(ray.getEndPoint());
@@ -103,19 +103,19 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_intervalArg_negativeHalfSpace() {
         // arrange
-        DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
-        Interval interval = Interval.max(2, intervalPrecision);
+        final DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Interval interval = Interval.max(2, intervalPrecision);
 
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        ReverseRay3D halfLine = (ReverseRay3D) Lines3D.subsetFromInterval(line, interval);
+        final ReverseRay3D halfLine = (ReverseRay3D) Lines3D.subsetFromInterval(line, interval);
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
         Assert.assertEquals(2, halfLine.getSubspaceEnd(), TEST_EPS);
 
-        double side = 1.0 / Math.sqrt(3);
+        final double side = 1.0 / Math.sqrt(3);
 
         Assert.assertNull(halfLine.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2 * side, 2 * side, 2 * side), halfLine.getEndPoint(), TEST_EPS);
@@ -126,23 +126,23 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_doubleArgs_finite() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        Segment3D segment = (Segment3D) Lines3D.subsetFromInterval(line, -1, 2);
+        final Segment3D segment = (Segment3D) Lines3D.subsetFromInterval(line, -1, 2);
 
         // assert
-        double side = 1.0 / Math.sqrt(3);
+        final double side = 1.0 / Math.sqrt(3);
         checkFiniteSegment(segment, Vector3D.of(-side, -side, -side), Vector3D.of(2 * side, 2 * side, 2 * side));
     }
 
     @Test
     public void testFromInterval_doubleArgs_full() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        LineConvexSubset3D span = Lines3D.subsetFromInterval(line, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        final LineConvexSubset3D span = Lines3D.subsetFromInterval(line, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(span.getSubspaceStart());
@@ -155,16 +155,16 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_doubleArgs_positiveHalfSpace() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        Ray3D ray = (Ray3D) Lines3D.subsetFromInterval(line, -1, Double.POSITIVE_INFINITY);
+        final Ray3D ray = (Ray3D) Lines3D.subsetFromInterval(line, -1, Double.POSITIVE_INFINITY);
 
         // assert
         Assert.assertEquals(-1.0, ray.getSubspaceStart(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
-        double side = 1.0 / Math.sqrt(3);
+        final double side = 1.0 / Math.sqrt(3);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-side, -side, -side), ray.getStartPoint(), TEST_EPS);
         Assert.assertNull(ray.getEndPoint());
@@ -173,16 +173,16 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_doubleArgs_negativeHalfSpace() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        ReverseRay3D halfLine = (ReverseRay3D) Lines3D.subsetFromInterval(line, 2, Double.NEGATIVE_INFINITY);
+        final ReverseRay3D halfLine = (ReverseRay3D) Lines3D.subsetFromInterval(line, 2, Double.NEGATIVE_INFINITY);
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
         Assert.assertEquals(2, halfLine.getSubspaceEnd(), TEST_EPS);
 
-        double side = 1.0 / Math.sqrt(3);
+        final double side = 1.0 / Math.sqrt(3);
 
         Assert.assertNull(halfLine.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2 * side, 2 * side, 2 * side), halfLine.getEndPoint(), TEST_EPS);
@@ -191,7 +191,7 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_doubleArgs_invalidArgs() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -214,20 +214,20 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_vectorArgs() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        Segment3D segment = (Segment3D) Lines3D.subsetFromInterval(line, Vector1D.of(-1), Vector1D.of(2));
+        final Segment3D segment = (Segment3D) Lines3D.subsetFromInterval(line, Vector1D.of(-1), Vector1D.of(2));
 
         // assert
-        double side = 1.0 / Math.sqrt(3);
+        final double side = 1.0 / Math.sqrt(3);
         checkFiniteSegment(segment, Vector3D.of(-side, -side, -side), Vector3D.of(2 * side, 2 * side, 2 * side));
     }
 
     @Test
     public void testSpaceSubspaceConversion() {
         // arrange
-        Segment3D segment = Lines3D.segmentFromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final Segment3D segment = Lines3D.segmentFromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(3), segment.toSubspace(Vector3D.of(1, 3, 5)), TEST_EPS);
@@ -237,10 +237,10 @@ public class LineConvexSubset3DTest {
     @Test
     public void testGetSubspaceRegion() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
-        Interval interval = Interval.full();
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        final Interval interval = Interval.full();
 
-        LineConvexSubset3D subset = Lines3D.subsetFromInterval(line, interval);
+        final LineConvexSubset3D subset = Lines3D.subsetFromInterval(line, interval);
 
         // act/assert
         Assert.assertSame(interval, subset.getInterval());
@@ -250,16 +250,16 @@ public class LineConvexSubset3DTest {
     @Test
     public void testTransform_infinite() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, -1), TEST_PRECISION);
-        LineConvexSubset3D subset = Lines3D.subsetFromInterval(line,
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, -1), TEST_PRECISION);
+        final LineConvexSubset3D subset = Lines3D.subsetFromInterval(line,
                 Interval.min(line.toSubspace(Vector3D.of(1, 0, 0)).getX(), TEST_PRECISION));
 
-        Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
+        final Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .scale(2, 1, 1)
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
-        LineConvexSubset3D transformed = subset.transform(transform);
+        final LineConvexSubset3D transformed = subset.transform(transform);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -2), transformed.getStartPoint(), TEST_EPS);
@@ -267,23 +267,23 @@ public class LineConvexSubset3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 1, 0).normalize(), transformed.getLine().getDirection(), TEST_EPS);
     }
 
-    private static void checkInterval(Interval expected, Interval actual) {
+    private static void checkInterval(final Interval expected, final Interval actual) {
         Assert.assertEquals(expected.getMin(), actual.getMin(), TEST_EPS);
         Assert.assertEquals(expected.getMax(), actual.getMax(), TEST_EPS);
     }
 
-    private static void checkFiniteSegment(LineConvexSubset3D subset, Vector3D start, Vector3D end) {
+    private static void checkFiniteSegment(final LineConvexSubset3D subset, final Vector3D start, final Vector3D end) {
         checkFiniteSegment(subset, start, end, TEST_PRECISION);
     }
 
-    private static void checkFiniteSegment(LineConvexSubset3D subset, Vector3D start, Vector3D end, DoublePrecisionContext precision) {
+    private static void checkFiniteSegment(final LineConvexSubset3D subset, final Vector3D start, final Vector3D end, final DoublePrecisionContext precision) {
         Assert.assertFalse(subset.isInfinite());
         Assert.assertTrue(subset.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(start, subset.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, subset.getEndPoint(), TEST_EPS);
 
-        Line3D line = subset.getLine();
+        final Line3D line = subset.getLine();
 
         Assert.assertEquals(line.toSubspace(subset.getStartPoint()).getX(), subset.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(line.toSubspace(subset.getEndPoint()).getX(), subset.getSubspaceEnd(), TEST_EPS);

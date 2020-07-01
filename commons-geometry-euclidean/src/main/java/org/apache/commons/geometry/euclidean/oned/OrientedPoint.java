@@ -103,7 +103,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D> {
     public OrientedPoint transform(final Transform<Vector1D> transform) {
         final Vector1D transformedPoint = transform.apply(point);
 
-        Vector1D transformedDir;
+        final Vector1D transformedDir;
         if (point.isInfinite()) {
             // use a test point to determine if the direction switches or not
             final Vector1D transformedZero = transform.apply(Vector1D.ZERO);
@@ -219,7 +219,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         } else if (!(obj instanceof OrientedPoint)) {
@@ -339,7 +339,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D> {
 
         /** {@inheritDoc} */
         @Override
-        public Vector1D closest(Vector1D point) {
+        public Vector1D closest(final Vector1D point) {
             return hyperplane.project(point);
         }
 

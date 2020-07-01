@@ -197,7 +197,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      * </p>
      */
     @Override
-    public Vector1D project(Vector1D pt) {
+    public Vector1D project(final Vector1D pt) {
 
         OrientedPoint boundary = null;
 

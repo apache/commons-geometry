@@ -334,7 +334,7 @@ public final class QuaternionRotation implements Rotation3D {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -528,7 +528,7 @@ public final class QuaternionRotation implements Rotation3D {
      * @see Quaternion#normalize()
      * @see Quaternion#positivePolarForm()
      */
-    public static QuaternionRotation of(Quaternion quat) {
+    public static QuaternionRotation of(final Quaternion quat) {
         return new QuaternionRotation(quat);
     }
 
@@ -773,10 +773,10 @@ public final class QuaternionRotation implements Rotation3D {
 
         final double trace = m00 + m11 + m22;
 
-        double w;
-        double x;
-        double y;
-        double z;
+        final double w;
+        final double x;
+        final double y;
+        final double z;
 
         if (trace > 0.0) {
             // let s = 4*w

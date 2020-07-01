@@ -42,7 +42,7 @@ public class Rotation2DTest {
     @Test
     public void testIdentity() {
         // act
-        Rotation2D r = Rotation2D.identity();
+        final Rotation2D r = Rotation2D.identity();
 
         // assert
         Assert.assertEquals(0.0, r.getAngle(), 0.0);
@@ -52,7 +52,7 @@ public class Rotation2DTest {
     @Test
     public void testProperties() {
         // act
-        Rotation2D r = Rotation2D.of(100.0);
+        final Rotation2D r = Rotation2D.of(100.0);
 
         // assert
         Assert.assertEquals(100.0, r.getAngle(), 0.0);
@@ -90,10 +90,10 @@ public class Rotation2DTest {
     @Test
     public void testInverse_properties() {
         // arrange
-        Rotation2D orig = Rotation2D.of(100.0);
+        final Rotation2D orig = Rotation2D.of(100.0);
 
         // act
-        Rotation2D r = orig.inverse();
+        final Rotation2D r = orig.inverse();
 
         // assert
         Assert.assertEquals(-100.0, r.getAngle(), 0.0);
@@ -108,16 +108,16 @@ public class Rotation2DTest {
     @Test
     public void testToMatrix() {
         // arrange
-        double angle = 0.1 * Math.PI;
+        final double angle = 0.1 * Math.PI;
 
         // act
-        AffineTransformMatrix2D m = Rotation2D.of(angle).toMatrix();
+        final AffineTransformMatrix2D m = Rotation2D.of(angle).toMatrix();
 
         // assert
-        double sin = Math.sin(angle);
-        double cos = Math.cos(angle);
+        final double sin = Math.sin(angle);
+        final double cos = Math.cos(angle);
 
-        double[] expected = {
+        final double[] expected = {
             cos, -sin, 0,
             sin, cos, 0
         };
@@ -133,18 +133,18 @@ public class Rotation2DTest {
     @Test
     public void testCreateRotationVector() {
         // arrange
-        double min = -8;
-        double max = 8;
-        double step = 1;
+        final double min = -8;
+        final double max = 8;
+        final double step = 1;
 
         EuclideanTestUtils.permuteSkipZero(min, max, step, (ux, uy) -> {
             EuclideanTestUtils.permuteSkipZero(min, max, step, (vx, vy) -> {
 
-                Vector2D u = Vector2D.of(ux, uy);
-                Vector2D v = Vector2D.of(vx, vy);
+                final Vector2D u = Vector2D.of(ux, uy);
+                final Vector2D v = Vector2D.of(vx, vy);
 
                 // act
-                Rotation2D r = Rotation2D.createVectorRotation(u, v);
+                final Rotation2D r = Rotation2D.createVectorRotation(u, v);
 
                 // assert
                 EuclideanTestUtils.assertCoordinatesEqual(v.normalize(), r.apply(u).normalize(), TEST_EPS); // u -> v
@@ -156,12 +156,12 @@ public class Rotation2DTest {
     @Test
     public void testCreateRotationVector_invalidVectors() {
         // arrange
-        Vector2D vec = Vector2D.of(1, 1);
+        final Vector2D vec = Vector2D.of(1, 1);
 
-        Vector2D zero = Vector2D.ZERO;
-        Vector2D nan = Vector2D.NaN;
-        Vector2D posInf = Vector2D.POSITIVE_INFINITY;
-        Vector2D negInf = Vector2D.POSITIVE_INFINITY;
+        final Vector2D zero = Vector2D.ZERO;
+        final Vector2D nan = Vector2D.NaN;
+        final Vector2D posInf = Vector2D.POSITIVE_INFINITY;
+        final Vector2D negInf = Vector2D.POSITIVE_INFINITY;
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -196,12 +196,12 @@ public class Rotation2DTest {
     @Test
     public void testHashCode() {
         // arrange
-        Rotation2D a = Rotation2D.of(1.0);
-        Rotation2D b = Rotation2D.of(0.0);
-        Rotation2D c = Rotation2D.of(-1.0);
-        Rotation2D d = Rotation2D.of(1.0);
+        final Rotation2D a = Rotation2D.of(1.0);
+        final Rotation2D b = Rotation2D.of(0.0);
+        final Rotation2D c = Rotation2D.of(-1.0);
+        final Rotation2D d = Rotation2D.of(1.0);
 
-        int hash = a.hashCode();
+        final int hash = a.hashCode();
 
         // act/assert
         Assert.assertEquals(hash, a.hashCode());
@@ -215,10 +215,10 @@ public class Rotation2DTest {
     @Test
     public void testEquals() {
         // arrange
-        Rotation2D a = Rotation2D.of(1.0);
-        Rotation2D b = Rotation2D.of(0.0);
-        Rotation2D c = Rotation2D.of(-1.0);
-        Rotation2D d = Rotation2D.of(1.0);
+        final Rotation2D a = Rotation2D.of(1.0);
+        final Rotation2D b = Rotation2D.of(0.0);
+        final Rotation2D c = Rotation2D.of(-1.0);
+        final Rotation2D d = Rotation2D.of(1.0);
 
         // act/assert
         Assert.assertFalse(a.equals(null));
@@ -236,22 +236,22 @@ public class Rotation2DTest {
     @Test
     public void testToString() {
         // arrange
-        Rotation2D r = Rotation2D.of(1.0);
+        final Rotation2D r = Rotation2D.of(1.0);
 
         // act
-        String str = r.toString();
+        final String str = r.toString();
 
         // assert
         Assert.assertEquals("Rotation2D[angle=1.0]", str);
     }
 
-    private static void checkApply(double angle, Vector2D pt, Vector2D expectedPt) {
-        Rotation2D r = Rotation2D.of(angle);
+    private static void checkApply(final double angle, final Vector2D pt, final Vector2D expectedPt) {
+        final Rotation2D r = Rotation2D.of(angle);
         EuclideanTestUtils.assertCoordinatesEqual(expectedPt, r.apply(pt), TEST_EPS);
     }
 
-    private static void checkApplyVector(double angle, Vector2D pt, Vector2D expectedPt) {
-        Rotation2D r = Rotation2D.of(angle);
+    private static void checkApplyVector(final double angle, final Vector2D pt, final Vector2D expectedPt) {
+        final Rotation2D r = Rotation2D.of(angle);
         EuclideanTestUtils.assertCoordinatesEqual(expectedPt, r.applyVector(pt), TEST_EPS);
     }
 
@@ -261,10 +261,10 @@ public class Rotation2DTest {
      *      the transformed point
      */
     private static <T extends EuclideanTransform<Vector2D>> void checkRotate(
-            DoubleFunction<T> factory, BiFunction<T, Vector2D, Vector2D> transformFn) {
+            final DoubleFunction<T> factory, final BiFunction<T, Vector2D, Vector2D> transformFn) {
 
         // check zero
-        T transform = factory.apply(0);
+        final T transform = factory.apply(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, transformFn.apply(transform, Vector2D.ZERO), TEST_EPS);
 
         // check a variety of non-zero points
@@ -281,13 +281,13 @@ public class Rotation2DTest {
      *      the transformed point
      */
     private static <T extends EuclideanTransform<Vector2D>> void checkRotatePoint(
-            Vector2D pt, DoubleFunction<T> factory, BiFunction<T, Vector2D, Vector2D> transformFn) {
+            final Vector2D pt, final DoubleFunction<T> factory, final BiFunction<T, Vector2D, Vector2D> transformFn) {
 
         // arrange
-        double limit = 4 * Math.PI;
-        double inc = 0.25;
+        final double limit = 4 * Math.PI;
+        final double inc = 0.25;
 
-        Line line = Lines.fromPointAndDirection(Vector2D.ZERO, pt, TEST_PRECISION);
+        final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, pt, TEST_PRECISION);
 
         T transform;
         Vector2D resultPt;
@@ -303,7 +303,7 @@ public class Rotation2DTest {
             Assert.assertEquals(pt.norm(), resultPt.norm(), TEST_EPS);
 
             resultLine = Lines.fromPointAndDirection(Vector2D.ZERO, resultPt, TEST_PRECISION);
-            double lineAngle = line.angle(resultLine);
+            final double lineAngle = line.angle(resultLine);
 
             // check that the angle is what we expect
             Assert.assertEquals(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(angle), lineAngle, TEST_EPS);

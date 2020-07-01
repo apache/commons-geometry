@@ -50,7 +50,7 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testProperties() {
         // act
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
         // assert
         Assert.assertFalse(p.isFull());
@@ -68,7 +68,7 @@ public class VertexListConvexPolygon3DTest {
                 p.getVertices(), TEST_PRECISION);
 
 
-        Bounds3D bounds = p.getBounds();
+        final Bounds3D bounds = p.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), bounds.getMax(), TEST_EPS);
     }
@@ -84,8 +84,8 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testVertices_listIsImmutable() {
         // arrange
-        List<Vector3D> vertices = new ArrayList<>(TRIANGLE_VERTICES);
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, vertices);
+        final List<Vector3D> vertices = new ArrayList<>(TRIANGLE_VERTICES);
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, vertices);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -100,11 +100,11 @@ public class VertexListConvexPolygon3DTest {
         // the situation
 
         // arrange
-        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(0.5, 0, 0), Vector3D.of(2, 0, 0));
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, vertices);
+        final List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(0.5, 0, 0), Vector3D.of(2, 0, 0));
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, vertices);
 
         // act
-        Vector3D center = p.getCentroid();
+        final Vector3D center = p.getCentroid();
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), center, TEST_EPS);
@@ -113,10 +113,10 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testGetSubspaceRegion() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
         // act
-        ConvexArea area = p.getEmbedded().getSubspaceRegion();
+        final ConvexArea area = p.getEmbedded().getSubspaceRegion();
 
         // assert
         Assert.assertFalse(area.isFull());
@@ -126,7 +126,7 @@ public class VertexListConvexPolygon3DTest {
 
         Assert.assertEquals(0.5, area.getSize(), TEST_EPS);
 
-        List<Vector2D> vertices = area.getVertices();
+        final List<Vector2D> vertices = area.getVertices();
         Assert.assertEquals(3, vertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(1), TEST_EPS);
@@ -136,15 +136,15 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testToTriangles_threeVertices() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
         // act
-        List<Triangle3D> tris = p.toTriangles();
+        final List<Triangle3D> tris = p.toTriangles();
 
         // assert
         Assert.assertEquals(1, tris.size());
 
-        Triangle3D a = tris.get(0);
+        final Triangle3D a = tris.get(0);
         Assert.assertSame(XY_PLANE_Z1, a.getPlane());
         EuclideanTestUtils.assertVertexLoopSequence(TRIANGLE_VERTICES, a.getVertices(), TEST_PRECISION);
     }
@@ -152,29 +152,29 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testToTriangles_fiveVertices() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 1, 1);
-        Vector3D p2 = Vector3D.of(2, 1.2, 1);
-        Vector3D p3 = Vector3D.of(3, 2, 1);
-        Vector3D p4 = Vector3D.of(1, 4, 1);
-        Vector3D p5 = Vector3D.of(0, 2, 1);
+        final Vector3D p1 = Vector3D.of(1, 1, 1);
+        final Vector3D p2 = Vector3D.of(2, 1.2, 1);
+        final Vector3D p3 = Vector3D.of(3, 2, 1);
+        final Vector3D p4 = Vector3D.of(1, 4, 1);
+        final Vector3D p5 = Vector3D.of(0, 2, 1);
 
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(p1, p2, p3, p4, p5));
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(p1, p2, p3, p4, p5));
 
         // act
-        List<Triangle3D> tris = p.toTriangles();
+        final List<Triangle3D> tris = p.toTriangles();
 
         // assert
         Assert.assertEquals(3, tris.size());
 
-        Triangle3D a = tris.get(0);
+        final Triangle3D a = tris.get(0);
         Assert.assertSame(XY_PLANE_Z1, a.getPlane());
         EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p2, p3, p4), a.getVertices(), TEST_PRECISION);
 
-        Triangle3D b = tris.get(1);
+        final Triangle3D b = tris.get(1);
         Assert.assertSame(XY_PLANE_Z1, b.getPlane());
         EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p2, p4, p5), b.getVertices(), TEST_PRECISION);
 
-        Triangle3D c = tris.get(2);
+        final Triangle3D c = tris.get(2);
         Assert.assertSame(XY_PLANE_Z1, c.getPlane());
         EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p2, p5, p1), c.getVertices(), TEST_PRECISION);
     }
@@ -182,7 +182,7 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testClassify() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
                     Vector3D.of(1, 2, 1), Vector3D.of(3, 2, 1),
                     Vector3D.of(3, 4, 1), Vector3D.of(1, 4, 1)
                 ));
@@ -201,7 +201,7 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testClosest() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
                 Vector3D.of(1, 2, 1), Vector3D.of(3, 2, 1),
                 Vector3D.of(3, 4, 1), Vector3D.of(1, 4, 1)
             ));
@@ -243,18 +243,18 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testTransform() {
         // arrange
-        AffineTransformMatrix3D t = AffineTransformMatrix3D.identity()
+        final AffineTransformMatrix3D t = AffineTransformMatrix3D.identity()
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -PlaneAngleRadians.PI_OVER_TWO))
                 .scale(1, 1, 2)
                 .translate(Vector3D.of(1, 0, 0));
 
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
                 Vector3D.of(1, 2, 1), Vector3D.of(3, 2, 1),
                 Vector3D.of(3, 4, 1), Vector3D.of(1, 4, 1)
             ));
 
         // act
-        VertexListConvexPolygon3D result = p.transform(t);
+        final VertexListConvexPolygon3D result = p.transform(t);
 
         // assert
         Assert.assertFalse(result.isFull());
@@ -274,13 +274,13 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testReverse() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
                 Vector3D.of(1, 2, 1), Vector3D.of(3, 2, 1),
                 Vector3D.of(3, 4, 1), Vector3D.of(1, 4, 1)
             ));
 
         // act
-        VertexListConvexPolygon3D result = p.reverse();
+        final VertexListConvexPolygon3D result = p.reverse();
 
         // assert
         Assert.assertFalse(result.isFull());
@@ -300,12 +300,12 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testSplit_plus() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
-        Plane splitter = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Plane splitter = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Split<PlaneConvexSubset> split = p.split(splitter);
+        final Split<PlaneConvexSubset> split = p.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -317,12 +317,12 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testSplit_minus() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
-        Plane splitter = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
+        final Plane splitter = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
 
         // act
-        Split<PlaneConvexSubset> split = p.split(splitter);
+        final Split<PlaneConvexSubset> split = p.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
@@ -334,22 +334,22 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testSplit_both() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
-        Plane splitter = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.of(-1, 1, 0), TEST_PRECISION);
+        final Plane splitter = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.of(-1, 1, 0), TEST_PRECISION);
 
         // act
-        Split<PlaneConvexSubset> split = p.split(splitter);
+        final Split<PlaneConvexSubset> split = p.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        PlaneConvexSubset minus = split.getMinus();
+        final PlaneConvexSubset minus = split.getMinus();
         EuclideanTestUtils.assertVertexLoopSequence(
                 Arrays.asList(Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0.5, 0.5, 1)),
                 minus.getVertices(), TEST_PRECISION);
 
-        PlaneConvexSubset plus = split.getPlus();
+        final PlaneConvexSubset plus = split.getPlus();
         EuclideanTestUtils.assertVertexLoopSequence(
                 Arrays.asList(Vector3D.of(0, 0, 1), Vector3D.of(0.5, 0.5, 1), Vector3D.of(0, 1, 1)),
                 plus.getVertices(), TEST_PRECISION);
@@ -358,12 +358,12 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testSplit_neither() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
-        Plane splitter = Planes.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 1e-15, -1), TEST_PRECISION);
+        final Plane splitter = Planes.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 1e-15, -1), TEST_PRECISION);
 
         // act
-        Split<PlaneConvexSubset> split = p.split(splitter);
+        final Split<PlaneConvexSubset> split = p.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -375,18 +375,18 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testToString() {
         // arrange
-        VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
+        final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
         // act
-        String str = p.toString();
+        final String str = p.toString();
 
         // assert
         GeometryTestUtils.assertContains("VertexListConvexPolygon3D[normal= (", str);
         GeometryTestUtils.assertContains("vertices= [", str);
     }
 
-    private static void checkPoints(ConvexPolygon3D ps, RegionLocation loc, Vector3D... pts) {
-        for (Vector3D pt : pts) {
+    private static void checkPoints(final ConvexPolygon3D ps, final RegionLocation loc, final Vector3D... pts) {
+        for (final Vector3D pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, ps.classify(pt));
         }
     }

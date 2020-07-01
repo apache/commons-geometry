@@ -56,14 +56,14 @@ public class ParallelepipedTest {
     @Test
     public void testUnitCube() {
         // act
-        Parallelepiped p = Parallelepiped.unitCube(TEST_PRECISION);
+        final Parallelepiped p = Parallelepiped.unitCube(TEST_PRECISION);
 
         // assert
         Assert.assertEquals(1, p.getSize(), TEST_EPS);
         Assert.assertEquals(6, p.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getCentroid(), TEST_EPS);
 
-        List<PlaneConvexSubset> boundaries = p.getBoundaries();
+        final List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
 
         assertVertices(p,
@@ -82,16 +82,16 @@ public class ParallelepipedTest {
     @Test
     public void testFromTransformedUnitCube() {
         // arrange
-        AffineTransformMatrix3D t = AffineTransformMatrix3D.createTranslation(Vector3D.of(1, 0, 2))
+        final AffineTransformMatrix3D t = AffineTransformMatrix3D.createTranslation(Vector3D.of(1, 0, 2))
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Math.PI * 0.25))
                 .scale(Vector3D.of(2, 1, 1));
 
         // act
-        Parallelepiped p = Parallelepiped.fromTransformedUnitCube(t, TEST_PRECISION);
+        final Parallelepiped p = Parallelepiped.fromTransformedUnitCube(t, TEST_PRECISION);
 
         // assert
-        double sqrt2 = Math.sqrt(2);
-        double invSqrt2 = 1 / sqrt2;
+        final double sqrt2 = Math.sqrt(2);
+        final double invSqrt2 = 1 / sqrt2;
 
         Assert.assertEquals(2, p.getSize(), TEST_EPS);
         Assert.assertEquals(4 + (4 * Math.sqrt(2.5)), p.getBoundarySize(), TEST_EPS);
@@ -114,16 +114,16 @@ public class ParallelepipedTest {
     @Test
     public void testFromTransformedUnitCube_transformDoesNotPreserveOrientation() {
         // arrange
-        AffineTransformMatrix3D t = AffineTransformMatrix3D.createTranslation(Vector3D.of(1, 0, 2))
+        final AffineTransformMatrix3D t = AffineTransformMatrix3D.createTranslation(Vector3D.of(1, 0, 2))
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Math.PI * 0.25))
                 .scale(Vector3D.of(2, 1, -1));
 
         // act
-        Parallelepiped p = Parallelepiped.fromTransformedUnitCube(t, TEST_PRECISION);
+        final Parallelepiped p = Parallelepiped.fromTransformedUnitCube(t, TEST_PRECISION);
 
         // assert
-        double sqrt2 = Math.sqrt(2);
-        double invSqrt2 = 1 / sqrt2;
+        final double sqrt2 = Math.sqrt(2);
+        final double invSqrt2 = 1 / sqrt2;
 
         Assert.assertEquals(2, p.getSize(), TEST_EPS);
         Assert.assertEquals(4 + (4 * Math.sqrt(2.5)), p.getBoundarySize(), TEST_EPS);
@@ -165,10 +165,10 @@ public class ParallelepipedTest {
     @Test
     public void testAxisAligned_minFirst() {
         // act
-        Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
+        final Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
 
         // assert
-        List<PlaneConvexSubset> boundaries = p.getBoundaries();
+        final List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
 
         assertVertices(p,
@@ -187,10 +187,10 @@ public class ParallelepipedTest {
     @Test
     public void testAxisAligned_maxFirst() {
         // act
-        Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(4, 5, 6), Vector3D.of(1, 2, 3), TEST_PRECISION);
+        final Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(4, 5, 6), Vector3D.of(1, 2, 3), TEST_PRECISION);
 
         // assert
-        List<PlaneConvexSubset> boundaries = p.getBoundaries();
+        final List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
 
         assertVertices(p,
@@ -225,17 +225,17 @@ public class ParallelepipedTest {
     @Test
     public void testBuilder_defaultValues() {
         // arrange
-        Parallelepiped.Builder builder = Parallelepiped.builder(TEST_PRECISION);
+        final Parallelepiped.Builder builder = Parallelepiped.builder(TEST_PRECISION);
 
         // act
-        Parallelepiped p = builder.build();
+        final Parallelepiped p = builder.build();
 
         // assert
         Assert.assertEquals(1, p.getSize(), TEST_EPS);
         Assert.assertEquals(6, p.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getCentroid(), TEST_EPS);
 
-        List<PlaneConvexSubset> boundaries = p.getBoundaries();
+        final List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
 
         assertVertices(p,
@@ -254,10 +254,10 @@ public class ParallelepipedTest {
     @Test
     public void testBuilder_withRotation() {
         // arrange
-        Parallelepiped.Builder builder = Parallelepiped.builder(TEST_PRECISION);
+        final Parallelepiped.Builder builder = Parallelepiped.builder(TEST_PRECISION);
 
         // act
-        Parallelepiped p = builder
+        final Parallelepiped p = builder
                 .setScale(1, 2, 3)
                 .setRotation(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI_OVER_TWO))
                 .setPosition(Vector3D.of(1, 2, -1))
@@ -284,10 +284,10 @@ public class ParallelepipedTest {
     @Test
     public void testBuilder_withUniformScale() {
         // arrange
-        Parallelepiped.Builder builder = Parallelepiped.builder(TEST_PRECISION);
+        final Parallelepiped.Builder builder = Parallelepiped.builder(TEST_PRECISION);
 
         // act
-        Parallelepiped p = builder
+        final Parallelepiped p = builder
                 .setScale(0.5)
                 .build();
 
@@ -312,27 +312,27 @@ public class ParallelepipedTest {
     @Test
     public void testToTree() {
         // arrange
-        Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
+        final Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
 
         // act
-        RegionBSPTree3D tree = p.toTree();
+        final RegionBSPTree3D tree = p.toTree();
 
         // assert
         Assert.assertEquals(27, tree.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2.5, 3.5, 4.5), tree.getCentroid(), TEST_EPS);
     }
 
-    private static void assertVertices(Parallelepiped p, Vector3D... vertices) {
-        Set<Vector3D> expectedVertices = new TreeSet<>(VERTEX_COMPARATOR);
+    private static void assertVertices(final Parallelepiped p, final Vector3D... vertices) {
+        final Set<Vector3D> expectedVertices = new TreeSet<>(VERTEX_COMPARATOR);
         expectedVertices.addAll(Arrays.asList(vertices));
 
-        Set<Vector3D> actualVertices = new TreeSet<>(VERTEX_COMPARATOR);
-        for (PlaneConvexSubset boundary : p.getBoundaries()) {
+        final Set<Vector3D> actualVertices = new TreeSet<>(VERTEX_COMPARATOR);
+        for (final PlaneConvexSubset boundary : p.getBoundaries()) {
             actualVertices.addAll(boundary.getVertices());
         }
 
         Assert.assertEquals(expectedVertices.size(), actualVertices.size());
-        for (Vector3D expected : expectedVertices) {
+        for (final Vector3D expected : expectedVertices) {
             Assert.assertTrue("Expected vertices to contain " + expected, actualVertices.contains(expected));
         }
     }

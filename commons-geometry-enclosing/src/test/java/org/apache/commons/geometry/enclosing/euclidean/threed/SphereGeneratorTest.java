@@ -37,15 +37,15 @@ public class SphereGeneratorTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private SphereGenerator generator = new SphereGenerator(TEST_PRECISION);
+    private final SphereGenerator generator = new SphereGenerator(TEST_PRECISION);
 
     @Test
     public void testSupport0Point() {
         // arrange
-        List<Vector3D> support = Arrays.asList(new Vector3D[0]);
+        final List<Vector3D> support = Arrays.asList(new Vector3D[0]);
 
         // act
-        EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
+        final EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
 
         // assert
         Assert.assertTrue(sphere.getRadius() < 0);
@@ -56,12 +56,12 @@ public class SphereGeneratorTest {
     @Test
     public void testSupport1Point() {
         // arrange
-        DoublePrecisionContext lowPrecision = new EpsilonDoublePrecisionContext(0.5);
-        DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(0.001);
-        List<Vector3D> support = Arrays.asList(Vector3D.of(1, 2, 3));
+        final DoublePrecisionContext lowPrecision = new EpsilonDoublePrecisionContext(0.5);
+        final DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(0.001);
+        final List<Vector3D> support = Arrays.asList(Vector3D.of(1, 2, 3));
 
         // act
-        EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
+        final EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
 
         // assert
         Assert.assertEquals(0.0, sphere.getRadius(), TEST_EPS);
@@ -85,17 +85,17 @@ public class SphereGeneratorTest {
     @Test
     public void testSupport2Points() {
         // arrange
-        List<Vector3D> support = Arrays.asList(Vector3D.of(1, 0, 0),
+        final List<Vector3D> support = Arrays.asList(Vector3D.of(1, 0, 0),
                                                Vector3D.of(3, 0, 0));
 
         // act
-        EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
+        final EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
 
         // assert
         Assert.assertEquals(1.0, sphere.getRadius(), TEST_EPS);
 
         int i = 0;
-        for (Vector3D v : support) {
+        for (final Vector3D v : support) {
             Assert.assertTrue(sphere.contains(v));
             Assert.assertEquals(1.0, v.distance(sphere.getCenter()), TEST_EPS);
             Assert.assertSame(v, sphere.getSupport().get(i++));
@@ -110,18 +110,18 @@ public class SphereGeneratorTest {
     @Test
     public void testSupport3Points() {
         // arrange
-        List<Vector3D> support = Arrays.asList(Vector3D.of(1, 0, 0),
+        final List<Vector3D> support = Arrays.asList(Vector3D.of(1, 0, 0),
                                                Vector3D.of(3, 0, 0),
                                                Vector3D.of(2, 2, 0));
 
         // act
-        EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
+        final EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
 
         // assert
         Assert.assertEquals(5.0 / 4.0, sphere.getRadius(), TEST_EPS);
 
         int i = 0;
-        for (Vector3D v : support) {
+        for (final Vector3D v : support) {
             Assert.assertTrue(sphere.contains(v));
             Assert.assertEquals(5.0 / 4.0, v.distance(sphere.getCenter()), TEST_EPS);
             Assert.assertEquals(v, sphere.getSupport().get(i++));
@@ -141,19 +141,19 @@ public class SphereGeneratorTest {
     @Test
     public void testSupport4Points() {
         // arrange
-        List<Vector3D> support = Arrays.asList(Vector3D.of(17, 14, 18),
+        final List<Vector3D> support = Arrays.asList(Vector3D.of(17, 14, 18),
                                                Vector3D.of(11, 14, 22),
                                                Vector3D.of(2, 22, 17),
                                                Vector3D.of(22, 11, -10));
 
         // act
-        EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
+        final EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
 
         // assert
         Assert.assertEquals(25.0, sphere.getRadius(), TEST_EPS);
 
         int i = 0;
-        for (Vector3D v : support) {
+        for (final Vector3D v : support) {
             Assert.assertTrue(sphere.contains(v));
             Assert.assertEquals(25.0, v.distance(sphere.getCenter()), 1.0e-10);
             Assert.assertEquals(v, sphere.getSupport().get(i++));
@@ -182,16 +182,16 @@ public class SphereGeneratorTest {
                                                                  0xd015982e9f31ee04L);
         final UnitSphereSampler sr = new UnitSphereSampler(3, random);
         for (int i = 0; i < 100; ++i) {
-            double d = 25 * random.nextDouble();
-            double refRadius = 10 * random.nextDouble();
-            Vector3D refCenter = Vector3D.linearCombination(d, Vector3D.of(sr.nextVector()));
-            List<Vector3D> support = new ArrayList<>();
+            final double d = 25 * random.nextDouble();
+            final double refRadius = 10 * random.nextDouble();
+            final Vector3D refCenter = Vector3D.linearCombination(d, Vector3D.of(sr.nextVector()));
+            final List<Vector3D> support = new ArrayList<>();
             for (int j = 0; j < 5; ++j) {
                 support.add(Vector3D.linearCombination(1.0, refCenter, refRadius, Vector3D.of(sr.nextVector())));
             }
 
             // act
-            EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
+            final EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
 
             // assert
             Assert.assertEquals(0.0, refCenter.distance(sphere.getCenter()), 4e-7 * refRadius);
@@ -217,7 +217,7 @@ public class SphereGeneratorTest {
                                           Math.scalb(6595270610894208.0, -49))); //   11.715554057357394
 
         // --- act
-        EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
+        final EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
 
         // --- assert
         // the following values have been computed using Emacs calc with exact arithmetic from the
@@ -231,7 +231,7 @@ public class SphereGeneratorTest {
         Assert.assertEquals(11.711945804096960876521111630800, sphere.getCenter().getZ(), eps);
 
         final DoublePrecisionContext supportPrecision = new EpsilonDoublePrecisionContext(1e-14);
-        for (Vector3D v : support) {
+        for (final Vector3D v : support) {
             Assert.assertTrue(sphere.contains(v, supportPrecision));
         }
     }

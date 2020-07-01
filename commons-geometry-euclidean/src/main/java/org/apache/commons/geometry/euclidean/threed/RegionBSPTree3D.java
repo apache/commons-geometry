@@ -130,7 +130,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D project(Vector3D pt) {
+    public Vector3D project(final Vector3D pt) {
         // use our custom projector so that we can disambiguate points that are
         // actually equidistant from the target point
         final BoundaryProjector3D projector = new BoundaryProjector3D(pt);
@@ -238,7 +238,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         /** Simple constructor.
          * @param tree the owning tree instance
          */
-        protected RegionNode3D(AbstractBSPTree<Vector3D, RegionNode3D> tree) {
+        protected RegionNode3D(final AbstractBSPTree<Vector3D, RegionNode3D> tree) {
             super(tree);
         }
 
@@ -442,7 +442,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */
-        private BoundaryProjector3D(Vector3D point) {
+        private BoundaryProjector3D(final Vector3D point) {
             super(point);
         }
 
@@ -532,7 +532,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param boundary node cut boundary
          * @param reverse if true, the boundary contribution is reversed before being added to the total.
          */
-        private void addBoundaryContribution(final HyperplaneSubset<Vector3D> boundary, boolean reverse) {
+        private void addBoundaryContribution(final HyperplaneSubset<Vector3D> boundary, final boolean reverse) {
             final PlaneSubset boundarySubset = (PlaneSubset) boundary;
 
             final Plane boundaryPlane = boundarySubset.getPlane();

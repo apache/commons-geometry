@@ -44,18 +44,18 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testAngularIntervalExample() {
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create angular intervals of different sizes, one of size pi/2 and one of size 3pi/2
-        AngularInterval a = AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, precision);
-        AngularInterval b = AngularInterval.of(Point1S.PI, Point1S.of(PlaneAngleRadians.PI_OVER_TWO), precision);
+        final AngularInterval a = AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, precision);
+        final AngularInterval b = AngularInterval.of(Point1S.PI, Point1S.of(PlaneAngleRadians.PI_OVER_TWO), precision);
 
         // test some points
         a.contains(Point1S.of(0.25 * Math.PI)); // true
         b.contains(Point1S.of(0.25 * Math.PI)); // true
 
-        RegionLocation aLocZero = a.classify(Point1S.ZERO); // RegionLocation.BOUNDARY
-        RegionLocation bLocZero = b.classify(Point1S.ZERO); // RegionLocation.INSIDE
+        final RegionLocation aLocZero = a.classify(Point1S.ZERO); // RegionLocation.BOUNDARY
+        final RegionLocation bLocZero = b.classify(Point1S.ZERO); // RegionLocation.INSIDE
 
         // -------------------
         Assert.assertTrue(a.contains(Point1S.of(0.25 * Math.PI)));
@@ -67,19 +67,19 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testRegionBSPTree1SExample() {
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create a region from the union of multiple angular intervals
-        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(0, 0.25 * Math.PI, precision));
         tree.add(AngularInterval.of(0.5 * Math.PI, Math.PI, precision));
         tree.add(AngularInterval.of(0.75 * Math.PI, 1.5 * Math.PI, precision));
 
         // compute the region size in radians
-        double size = tree.getSize(); // 1.25pi
+        final double size = tree.getSize(); // 1.25pi
 
         // convert back to intervals
-        List<AngularInterval> intervals = tree.toIntervals(); //size = 2
+        final List<AngularInterval> intervals = tree.toIntervals(); //size = 2
 
         // ---------------
         Assert.assertEquals(1.25 * Math.PI, size, TEST_EPS);
@@ -88,15 +88,15 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testGreatCircleIntersectionExample() {
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create two great circles
-        GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
-        GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, precision);
+        final GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
+        final GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, precision);
 
         // find the two intersection points of the great circles
-        Point2S ptA = a.intersection(b); //(pi, pi/2)
-        Point2S ptB = ptA.antipodal(); // (0, pi/2)
+        final Point2S ptA = a.intersection(b); //(pi, pi/2)
+        final Point2S ptB = ptA.antipodal(); // (0, pi/2)
 
         // ----------------------
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_I, ptA, TEST_EPS);
@@ -105,27 +105,27 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testRegionBSPTree2SExample() {
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create a path outlining a quadrant triangle
-        GreatArcPath path = GreatArcPath.builder(precision)
+        final GreatArcPath path = GreatArcPath.builder(precision)
                 .append(Point2S.PLUS_I)
                 .append(Point2S.PLUS_J)
                 .append(Point2S.PLUS_K)
                 .build(true); // close the path with the starting path
 
         // convert to a region
-        RegionBSPTree2S tree = path.toTree();
+        final RegionBSPTree2S tree = path.toTree();
 
         // split in two through the centroid
-        GreatCircle splitter = GreatCircles.fromPoints(tree.getCentroid(), Point2S.PLUS_K, precision);
-        Split<RegionBSPTree2S> split = tree.split(splitter);
+        final GreatCircle splitter = GreatCircles.fromPoints(tree.getCentroid(), Point2S.PLUS_K, precision);
+        final Split<RegionBSPTree2S> split = tree.split(splitter);
 
         // compute some properties for the minus side
-        RegionBSPTree2S minus = split.getMinus();
+        final RegionBSPTree2S minus = split.getMinus();
 
-        double minusSize = minus.getSize(); // pi/4
-        List<GreatArcPath> minusPaths = minus.getBoundaryPaths(); // size = 1
+        final double minusSize = minus.getSize(); // pi/4
+        final List<GreatArcPath> minusPaths = minus.getBoundaryPaths(); // size = 1
 
         // ---------------------
         Assert.assertEquals(Math.PI / 4, minusSize, TEST_EPS);

@@ -35,13 +35,13 @@ public class BoundarySource2DTest {
     @Test
     public void testToTree() {
         // act
-        BoundarySource2D src = BoundarySource2D.from(
+        final BoundarySource2D src = BoundarySource2D.from(
             Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION),
             Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)
         );
 
         // act
-        RegionBSPTree2D tree = src.toTree();
+        final RegionBSPTree2D tree = src.toTree();
 
         // assert
         Assert.assertEquals(5, tree.count());
@@ -52,10 +52,10 @@ public class BoundarySource2DTest {
     @Test
     public void testToTree_noBoundaries() {
         // act
-        BoundarySource2D src = BoundarySource2D.from();
+        final BoundarySource2D src = BoundarySource2D.from();
 
         // act
-        RegionBSPTree2D tree = src.toTree();
+        final RegionBSPTree2D tree = src.toTree();
 
         // assert
         Assert.assertEquals(1, tree.count());
@@ -66,23 +66,23 @@ public class BoundarySource2DTest {
     @Test
     public void testFrom_varargs_empty() {
         // act
-        BoundarySource2D src = BoundarySource2D.from();
+        final BoundarySource2D src = BoundarySource2D.from();
 
         // assert
-        List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
+        final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testFrom_varargs() {
         // act
-        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Segment b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        final Segment b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
 
-        BoundarySource2D src = BoundarySource2D.from(a, b);
+        final BoundarySource2D src = BoundarySource2D.from(a, b);
 
         // assert
-        List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
+        final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(2, segments.size());
 
         Assert.assertSame(a, segments.get(0));
@@ -92,30 +92,30 @@ public class BoundarySource2DTest {
     @Test
     public void testFrom_list_empty() {
         // arrange
-        List<LineConvexSubset> input = new ArrayList<>();
+        final List<LineConvexSubset> input = new ArrayList<>();
 
         // act
-        BoundarySource2D src = BoundarySource2D.from(input);
+        final BoundarySource2D src = BoundarySource2D.from(input);
 
         // assert
-        List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
+        final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testFrom_list() {
         // act
-        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Segment b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        final Segment b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
 
-        List<LineConvexSubset> input = new ArrayList<>();
+        final List<LineConvexSubset> input = new ArrayList<>();
         input.add(a);
         input.add(b);
 
-        BoundarySource2D src = BoundarySource2D.from(input);
+        final BoundarySource2D src = BoundarySource2D.from(input);
 
         // assert
-        List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
+        final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(2, segments.size());
 
         Assert.assertSame(a, segments.get(0));

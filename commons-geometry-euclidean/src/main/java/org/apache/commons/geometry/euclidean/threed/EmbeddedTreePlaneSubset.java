@@ -52,7 +52,7 @@ public final class EmbeddedTreePlaneSubset extends AbstractEmbeddedRegionPlaneSu
      * @param full if true, the subset will cover the entire space;
      *      otherwise it will be empty
      */
-    public EmbeddedTreePlaneSubset(final EmbeddingPlane plane, boolean full) {
+    public EmbeddedTreePlaneSubset(final EmbeddingPlane plane, final boolean full) {
         this(plane, new RegionBSPTree2D(full));
     }
 
@@ -178,7 +178,7 @@ public final class EmbeddedTreePlaneSubset extends AbstractEmbeddedRegionPlaneSu
         final RegionBSPTree2D otherTree = subset.getSubspaceRegion();
         final Rotation2D rot = getEmbeddedRegionRotation(subset);
 
-        RegionBSPTree2D regionToAdd;
+        final RegionBSPTree2D regionToAdd;
         if (rot != null) {
             // we need to transform the subspace region before adding
             regionToAdd = otherTree.copy();

@@ -57,7 +57,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testCtor_booleanArg_true() {
         // act
-        RegionBSPTree2D tree = new RegionBSPTree2D(true);
+        final RegionBSPTree2D tree = new RegionBSPTree2D(true);
 
         // assert
         Assert.assertTrue(tree.isFull());
@@ -68,7 +68,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testCtor_booleanArg_false() {
         // act
-        RegionBSPTree2D tree = new RegionBSPTree2D(false);
+        final RegionBSPTree2D tree = new RegionBSPTree2D(false);
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -79,7 +79,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testCtor_default() {
         // act
-        RegionBSPTree2D tree = new RegionBSPTree2D();
+        final RegionBSPTree2D tree = new RegionBSPTree2D();
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -90,7 +90,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testFull_factoryMethod() {
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
         // assert
         Assert.assertTrue(tree.isFull());
@@ -101,7 +101,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testEmpty_factoryMethod() {
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -112,7 +112,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testPartitionedRegionBuilder_halfSpace() {
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.partitionedRegionBuilder()
+        final RegionBSPTree2D tree = RegionBSPTree2D.partitionedRegionBuilder()
                 .insertPartition(
                     Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION))
                 .insertBoundary(
@@ -131,13 +131,13 @@ public class RegionBSPTree2DTest {
     @Test
     public void testPartitionedRegionBuilder_square() {
         // arrange
-        Parallelogram square = Parallelogram.unitSquare(TEST_PRECISION);
-        List<LineConvexSubset> boundaries = square.getBoundaries();
+        final Parallelogram square = Parallelogram.unitSquare(TEST_PRECISION);
+        final List<LineConvexSubset> boundaries = square.getBoundaries();
 
-        Vector2D lowerBound = Vector2D.of(-2, -2);
+        final Vector2D lowerBound = Vector2D.of(-2, -2);
 
-        int maxUpper = 5;
-        int maxLevel = 4;
+        final int maxUpper = 5;
+        final int maxLevel = 4;
 
         // act/assert
         Bounds2D bounds;
@@ -154,15 +154,15 @@ public class RegionBSPTree2DTest {
     @Test
     public void testPartitionedRegionBuilder_nonConvex() {
         // arrange
-        RegionBSPTree2D src = Parallelogram.unitSquare(TEST_PRECISION).toTree();
+        final RegionBSPTree2D src = Parallelogram.unitSquare(TEST_PRECISION).toTree();
         src.union(Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
-        List<LineConvexSubset> boundaries = src.getBoundaries();
+        final List<LineConvexSubset> boundaries = src.getBoundaries();
 
-        Vector2D lowerBound = Vector2D.of(-2, -2);
+        final Vector2D lowerBound = Vector2D.of(-2, -2);
 
-        int maxUpper = 5;
-        int maxLevel = 4;
+        final int maxUpper = 5;
+        final int maxLevel = 4;
 
         // act/assert
         Bounds2D bounds;
@@ -182,14 +182,14 @@ public class RegionBSPTree2DTest {
      * @param level
      * @param src
      */
-    private void checkFinitePartitionedRegion(Bounds2D bounds, int level, BoundarySource2D src) {
+    private void checkFinitePartitionedRegion(final Bounds2D bounds, final int level, final BoundarySource2D src) {
         // arrange
-        String msg = "Partitioned region check failed with bounds= " + bounds + " and level= " + level;
+        final String msg = "Partitioned region check failed with bounds= " + bounds + " and level= " + level;
 
-        RegionBSPTree2D standard = RegionBSPTree2D.from(src.boundaryStream().collect(Collectors.toList()));
+        final RegionBSPTree2D standard = RegionBSPTree2D.from(src.boundaryStream().collect(Collectors.toList()));
 
         // act
-        RegionBSPTree2D partitioned = RegionBSPTree2D.partitionedRegionBuilder()
+        final RegionBSPTree2D partitioned = RegionBSPTree2D.partitionedRegionBuilder()
                 .insertAxisAlignedGrid(bounds, level, TEST_PRECISION)
                 .insertBoundaries(src)
                 .build();
@@ -199,7 +199,7 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(msg, standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(standard.getCentroid(), partitioned.getCentroid(), TEST_EPS);
 
-        RegionBSPTree2D diff = RegionBSPTree2D.empty();
+        final RegionBSPTree2D diff = RegionBSPTree2D.empty();
         diff.difference(partitioned, standard);
         Assert.assertTrue(msg, diff.isEmpty());
     }
@@ -210,15 +210,15 @@ public class RegionBSPTree2DTest {
      * @param level
      * @param boundaries
      */
-    private void checkFinitePartitionedRegion(Bounds2D bounds, int level,
-            List<? extends LineConvexSubset> boundaries) {
+    private void checkFinitePartitionedRegion(final Bounds2D bounds, final int level,
+                                              final List<? extends LineConvexSubset> boundaries) {
         // arrange
-        String msg = "Partitioned region check failed with bounds= " + bounds + " and level= " + level;
+        final String msg = "Partitioned region check failed with bounds= " + bounds + " and level= " + level;
 
-        RegionBSPTree2D standard = RegionBSPTree2D.from(boundaries);
+        final RegionBSPTree2D standard = RegionBSPTree2D.from(boundaries);
 
         // act
-        RegionBSPTree2D partitioned = RegionBSPTree2D.partitionedRegionBuilder()
+        final RegionBSPTree2D partitioned = RegionBSPTree2D.partitionedRegionBuilder()
                 .insertAxisAlignedGrid(bounds, level, TEST_PRECISION)
                 .insertBoundaries(boundaries)
                 .build();
@@ -228,7 +228,7 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(msg, standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(standard.getCentroid(), partitioned.getCentroid(), TEST_EPS);
 
-        RegionBSPTree2D diff = RegionBSPTree2D.empty();
+        final RegionBSPTree2D diff = RegionBSPTree2D.empty();
         diff.difference(partitioned, standard);
         Assert.assertTrue(msg, diff.isEmpty());
     }
@@ -236,12 +236,12 @@ public class RegionBSPTree2DTest {
     @Test
     public void testPartitionedRegionBuilder_insertPartitionAfterBoundary() {
         // arrange
-        PartitionedRegionBuilder2D builder = RegionBSPTree2D.partitionedRegionBuilder();
+        final PartitionedRegionBuilder2D builder = RegionBSPTree2D.partitionedRegionBuilder();
         builder.insertBoundary(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION));
 
-        Line partition = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        final Line partition = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
-        String msg = "Cannot insert partitions after boundaries have been inserted";
+        final String msg = "Cannot insert partitions after boundaries have been inserted";
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -264,11 +264,11 @@ public class RegionBSPTree2DTest {
     @Test
     public void testCopy() {
         // arrange
-        RegionBSPTree2D tree = new RegionBSPTree2D(true);
+        final RegionBSPTree2D tree = new RegionBSPTree2D(true);
         tree.getRoot().cut(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
         // act
-        RegionBSPTree2D copy = tree.copy();
+        final RegionBSPTree2D copy = tree.copy();
 
         // assert
         Assert.assertNotSame(tree, copy);
@@ -278,11 +278,11 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBoundaries() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         // act
-        List<LineConvexSubset> segments = new ArrayList<>();
+        final List<LineConvexSubset> segments = new ArrayList<>();
         tree.boundaries().forEach(segments::add);
 
         // assert
@@ -292,11 +292,11 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGetBoundaries() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         // act
-        List<LineConvexSubset> segments = tree.getBoundaries();
+        final List<LineConvexSubset> segments = tree.getBoundaries();
 
         // assert
         Assert.assertEquals(4, segments.size());
@@ -305,11 +305,11 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBoundaryStream() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         // act
-        List<LineConvexSubset> segments = tree.boundaryStream().collect(Collectors.toList());
+        final List<LineConvexSubset> segments = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(4, segments.size());
@@ -318,10 +318,10 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBoundaryStream_noBoundaries() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
         // act
-        List<LineConvexSubset> segments = tree.boundaryStream().collect(Collectors.toList());
+        final List<LineConvexSubset> segments = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, segments.size());
@@ -330,11 +330,11 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGetBounds_hasBounds() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(2, 3), Vector2D.of(5, 8), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(2, 3), Vector2D.of(5, 8), TEST_PRECISION)
                 .toTree();
 
         // act
-        Bounds2D bounds = tree.getBounds();
+        final Bounds2D bounds = tree.getBounds();
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 3), bounds.getMin(), TEST_EPS);
@@ -347,7 +347,7 @@ public class RegionBSPTree2DTest {
         Assert.assertNull(RegionBSPTree2D.empty().getBounds());
         Assert.assertNull(RegionBSPTree2D.full().getBounds());
 
-        RegionBSPTree2D halfFull = RegionBSPTree2D.empty();
+        final RegionBSPTree2D halfFull = RegionBSPTree2D.empty();
         halfFull.getRoot().insertCut(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION));
         Assert.assertNull(halfFull.getBounds());
     }
@@ -355,12 +355,12 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGetBoundaryPaths_cachesResult() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         // act
-        List<LinePath> a = tree.getBoundaryPaths();
-        List<LinePath> b = tree.getBoundaryPaths();
+        final List<LinePath> a = tree.getBoundaryPaths();
+        final List<LinePath> b = tree.getBoundaryPaths();
 
         // assert
         Assert.assertSame(a, b);
@@ -369,13 +369,13 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGetBoundaryPaths_recomputesResultOnChange() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         // act
-        List<LinePath> a = tree.getBoundaryPaths();
+        final List<LinePath> a = tree.getBoundaryPaths();
         tree.insert(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION));
-        List<LinePath> b = tree.getBoundaryPaths();
+        final List<LinePath> b = tree.getBoundaryPaths();
 
         // assert
         Assert.assertNotSame(a, b);
@@ -384,7 +384,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGetBoundaryPaths_isUnmodifiable() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         // act/assert
@@ -396,7 +396,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testAdd_convexArea() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
         // act
         tree.add(ConvexArea.convexPolygonFromVertices(Arrays.asList(
@@ -423,10 +423,10 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToConvex_full() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
         // act
-        List<ConvexArea> result = tree.toConvex();
+        final List<ConvexArea> result = tree.toConvex();
 
         // assert
         Assert.assertEquals(1, result.size());
@@ -436,10 +436,10 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToConvex_empty() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
         // act
-        List<ConvexArea> result = tree.toConvex();
+        final List<ConvexArea> result = tree.toConvex();
 
         // assert
         Assert.assertEquals(0, result.size());
@@ -448,16 +448,16 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToConvex_halfSpace() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().insertCut(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
         // act
-        List<ConvexArea> result = tree.toConvex();
+        final List<ConvexArea> result = tree.toConvex();
 
         // assert
         Assert.assertEquals(1, result.size());
 
-        ConvexArea area = result.get(0);
+        final ConvexArea area = result.get(0);
         Assert.assertFalse(area.isFull());
         Assert.assertFalse(area.isEmpty());
 
@@ -469,19 +469,19 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToConvex_quadrantComplement() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION))
             .getPlus().cut(Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
         tree.complement();
 
         // act
-        List<ConvexArea> result = tree.toConvex();
+        final List<ConvexArea> result = tree.toConvex();
 
         // assert
         Assert.assertEquals(1, result.size());
 
-        ConvexArea area = result.get(0);
+        final ConvexArea area = result.get(0);
         Assert.assertFalse(area.isFull());
         Assert.assertFalse(area.isEmpty());
 
@@ -493,15 +493,15 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToConvex_square() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).toTree();
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).toTree();
 
         // act
-        List<ConvexArea> result = tree.toConvex();
+        final List<ConvexArea> result = tree.toConvex();
 
         // assert
         Assert.assertEquals(1, result.size());
 
-        ConvexArea area = result.get(0);
+        final ConvexArea area = result.get(0);
         Assert.assertFalse(area.isFull());
         Assert.assertFalse(area.isEmpty());
 
@@ -518,7 +518,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToConvex_multipleConvexAreas() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Arrays.asList(
                     Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION),
 
@@ -530,7 +530,7 @@ public class RegionBSPTree2DTest {
                 ));
 
         // act
-        List<ConvexArea> result = tree.toConvex();
+        final List<ConvexArea> result = tree.toConvex();
 
         // assert
         Collections.sort(result, (a, b) ->
@@ -538,7 +538,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(2, result.size());
 
-        ConvexArea firstArea = result.get(0);
+        final ConvexArea firstArea = result.get(0);
         Assert.assertFalse(firstArea.isFull());
         Assert.assertFalse(firstArea.isEmpty());
 
@@ -551,7 +551,7 @@ public class RegionBSPTree2DTest {
                 Vector2D.of(0.25, -1), Vector2D.of(0.25, 2),
                 Vector2D.of(-1, 0.5), Vector2D.of(0.75, 0.5));
 
-        ConvexArea secondArea = result.get(1);
+        final ConvexArea secondArea = result.get(1);
         Assert.assertFalse(secondArea.isFull());
         Assert.assertFalse(secondArea.isEmpty());
 
@@ -568,24 +568,24 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGetNodeRegion() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        RegionNode2D root = tree.getRoot();
+        final RegionNode2D root = tree.getRoot();
         root.cut(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
-        RegionNode2D minus = root.getMinus();
+        final RegionNode2D minus = root.getMinus();
         minus.cut(Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
-        Vector2D origin = Vector2D.ZERO;
+        final Vector2D origin = Vector2D.ZERO;
 
-        Vector2D a = Vector2D.of(1, 0);
-        Vector2D b = Vector2D.of(1, 1);
-        Vector2D c = Vector2D.of(0, 1);
-        Vector2D d = Vector2D.of(-1, 1);
-        Vector2D e = Vector2D.of(-1, 0);
-        Vector2D f = Vector2D.of(-1, -1);
-        Vector2D g = Vector2D.of(0, -1);
-        Vector2D h = Vector2D.of(1, -1);
+        final Vector2D a = Vector2D.of(1, 0);
+        final Vector2D b = Vector2D.of(1, 1);
+        final Vector2D c = Vector2D.of(0, 1);
+        final Vector2D d = Vector2D.of(-1, 1);
+        final Vector2D e = Vector2D.of(-1, 0);
+        final Vector2D f = Vector2D.of(-1, -1);
+        final Vector2D g = Vector2D.of(0, -1);
+        final Vector2D h = Vector2D.of(1, -1);
 
         // act/assert
         checkConvexArea(root.getNodeRegion(), Arrays.asList(origin, a, b, c, d, e, f, g, h), Arrays.asList());
@@ -600,12 +600,12 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_full() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
-        Line splitter = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTree2D> split = tree.split(splitter);
+        final Split<RegionBSPTree2D> split = tree.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
@@ -613,10 +613,10 @@ public class RegionBSPTree2DTest {
         checkClassify(split.getMinus(), RegionLocation.INSIDE, Vector2D.of(0, 1));
         checkClassify(split.getMinus(), RegionLocation.OUTSIDE, Vector2D.of(1, -1));
 
-        List<LinePath> minusBoundaryList = split.getMinus().getBoundaryPaths();
+        final List<LinePath> minusBoundaryList = split.getMinus().getBoundaryPaths();
         Assert.assertEquals(1, minusBoundaryList.size());
 
-        LinePath minusBoundary = minusBoundaryList.get(0);
+        final LinePath minusBoundary = minusBoundaryList.get(0);
         Assert.assertEquals(1, minusBoundary.getElements().size());
         Assert.assertTrue(minusBoundary.isInfinite());
         Assert.assertSame(splitter, minusBoundary.getStart().getLine());
@@ -624,10 +624,10 @@ public class RegionBSPTree2DTest {
         checkClassify(split.getPlus(), RegionLocation.OUTSIDE, Vector2D.of(0, 1));
         checkClassify(split.getPlus(), RegionLocation.INSIDE, Vector2D.of(1, -1));
 
-        List<LinePath> plusBoundaryList = split.getPlus().getBoundaryPaths();
+        final List<LinePath> plusBoundaryList = split.getPlus().getBoundaryPaths();
         Assert.assertEquals(1, plusBoundaryList.size());
 
-        LinePath plusBoundary = minusBoundaryList.get(0);
+        final LinePath plusBoundary = minusBoundaryList.get(0);
         Assert.assertEquals(1, plusBoundary.getElements().size());
         Assert.assertTrue(plusBoundary.isInfinite());
         Assert.assertSame(splitter, plusBoundary.getStart().getLine());
@@ -636,12 +636,12 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_empty() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        Line splitter = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTree2D> split = tree.split(splitter);
+        final Split<RegionBSPTree2D> split = tree.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -653,23 +653,23 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_bothSides() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
 
-        Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTree2D> split = tree.split(splitter);
+        final Split<RegionBSPTree2D> split = tree.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        List<LinePath> minusPath = split.getMinus().getBoundaryPaths();
+        final List<LinePath> minusPath = split.getMinus().getBoundaryPaths();
         Assert.assertEquals(1, minusPath.size());
         checkVertices(minusPath.get(0), Vector2D.ZERO, Vector2D.of(1, 1),
                 Vector2D.of(0, 1), Vector2D.ZERO);
 
-        List<LinePath> plusPath = split.getPlus().getBoundaryPaths();
+        final List<LinePath> plusPath = split.getPlus().getBoundaryPaths();
         Assert.assertEquals(1, plusPath.size());
         checkVertices(plusPath.get(0), Vector2D.ZERO, Vector2D.of(2, 0),
                 Vector2D.of(2, 1), Vector2D.of(1, 1), Vector2D.ZERO);
@@ -678,20 +678,20 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_plusSideOnly() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
 
-        Line splitter = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTree2D> split = tree.split(splitter);
+        final Split<RegionBSPTree2D> split = tree.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
 
         Assert.assertNull(split.getMinus());
 
-        List<LinePath> plusPath = split.getPlus().getBoundaryPaths();
+        final List<LinePath> plusPath = split.getPlus().getBoundaryPaths();
         Assert.assertEquals(1, plusPath.size());
         checkVertices(plusPath.get(0), Vector2D.ZERO, Vector2D.of(2, 0),
                 Vector2D.of(2, 1), Vector2D.of(0, 1), Vector2D.ZERO);
@@ -700,19 +700,19 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_minusSideOnly() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
 
-        Line splitter = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION)
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION)
                 .reverse();
 
         // act
-        Split<RegionBSPTree2D> split = tree.split(splitter);
+        final Split<RegionBSPTree2D> split = tree.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        List<LinePath> minusPath = split.getMinus().getBoundaryPaths();
+        final List<LinePath> minusPath = split.getMinus().getBoundaryPaths();
         Assert.assertEquals(1, minusPath.size());
         checkVertices(minusPath.get(0), Vector2D.ZERO, Vector2D.of(2, 0),
                 Vector2D.of(2, 1), Vector2D.of(0, 1), Vector2D.ZERO);
@@ -723,7 +723,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_full() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
         // act/assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
@@ -738,7 +738,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_empty() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
         // act/assert
         Assert.assertEquals(0, tree.getSize(), TEST_EPS);
@@ -753,7 +753,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_halfSpace() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(X_AXIS);
 
         // act/assert
@@ -762,18 +762,18 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<LineConvexSubset> segments = tree.getBoundaries();
+        final List<LineConvexSubset> segments = tree.getBoundaries();
         Assert.assertEquals(1, segments.size());
 
-        LineConvexSubset segment = segments.get(0);
+        final LineConvexSubset segment = segments.get(0);
         Assert.assertSame(X_AXIS, segment.getLine());
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
 
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertEquals(1, path.getElements().size());
         assertSegmentsEqual(segment, path.getStart());
     }
@@ -781,7 +781,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_complementedHalfSpace() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(X_AXIS);
 
         tree.complement();
@@ -792,18 +792,18 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<LineConvexSubset> segments = tree.getBoundaries();
+        final List<LineConvexSubset> segments = tree.getBoundaries();
         Assert.assertEquals(1, segments.size());
 
-        LineConvexSubset segment = segments.get(0);
+        final LineConvexSubset segment = segments.get(0);
         Assert.assertEquals(X_AXIS.reverse(), segment.getLine());
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
 
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertEquals(1, path.getElements().size());
         assertSegmentsEqual(segment, path.getElements().get(0));
     }
@@ -811,7 +811,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_quadrant() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.getRoot().cut(X_AXIS)
             .getMinus().cut(Y_AXIS);
 
@@ -821,25 +821,25 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
+        final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Assert.assertEquals(2, segments.size());
 
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
-        LineConvexSubset firstSegment = segments.get(0);
+        final LineConvexSubset firstSegment = segments.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, firstSegment.getStartPoint(), TEST_EPS);
         Assert.assertNull(firstSegment.getEndPoint());
         Assert.assertSame(Y_AXIS, firstSegment.getLine());
 
-        LineConvexSubset secondSegment = segments.get(1);
+        final LineConvexSubset secondSegment = segments.get(1);
         Assert.assertNull(secondSegment.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, secondSegment.getEndPoint(), TEST_EPS);
         Assert.assertSame(X_AXIS, secondSegment.getLine());
 
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertEquals(2, path.getElements().size());
         assertSegmentsEqual(secondSegment, path.getElements().get(0));
         assertSegmentsEqual(firstSegment, path.getElements().get(1));
@@ -848,7 +848,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_mixedCutRule() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
         tree.getRoot().cut(Lines.fromPointAndAngle(Vector2D.ZERO, 0.25 * Math.PI, TEST_PRECISION),
                 RegionCutRule.INHERIT);
@@ -868,13 +868,13 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(4, tree.getBoundarySize(), TEST_EPS);
 
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertEquals(4, path.getElements().size());
 
-        List<Vector2D> vertices = path.getVertexSequence();
+        final List<Vector2D> vertices = path.getVertexSequence();
         Assert.assertEquals(5, vertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(1), TEST_EPS);
@@ -886,7 +886,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_complementedQuadrant() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.getRoot().cut(X_AXIS)
             .getMinus().cut(Y_AXIS);
 
@@ -898,25 +898,25 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
+        final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Assert.assertEquals(2, segments.size());
 
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
-        LineConvexSubset firstSegment = segments.get(0);
+        final LineConvexSubset firstSegment = segments.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, firstSegment.getStartPoint(), TEST_EPS);
         Assert.assertNull(firstSegment.getEndPoint());
         Assert.assertEquals(X_AXIS.reverse(), firstSegment.getLine());
 
-        LineConvexSubset secondSegment = segments.get(1);
+        final LineConvexSubset secondSegment = segments.get(1);
         Assert.assertNull(secondSegment.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, secondSegment.getEndPoint(), TEST_EPS);
         Assert.assertEquals(Y_AXIS.reverse(), secondSegment.getLine());
 
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertEquals(2, path.getElements().size());
         assertSegmentsEqual(secondSegment, path.getElements().get(0));
         assertSegmentsEqual(firstSegment, path.getElements().get(1));
@@ -925,7 +925,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_closedRegion() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1))
                 .close());
@@ -936,7 +936,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
-        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
+        final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
@@ -945,7 +945,7 @@ public class RegionBSPTree2DTest {
         checkFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(2, 1));
         checkFiniteSegment(segments.get(2), Vector2D.of(2, 1), Vector2D.ZERO);
 
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
         checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1), Vector2D.ZERO);
@@ -954,7 +954,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_complementedClosedRegion() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1))
                 .close());
@@ -967,7 +967,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
-        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
+        final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
@@ -976,7 +976,7 @@ public class RegionBSPTree2DTest {
         checkFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.ZERO);
         checkFiniteSegment(segments.get(2), Vector2D.of(2, 1), Vector2D.of(1, 0));
 
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
         checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(2, 1), Vector2D.of(1, 0), Vector2D.ZERO);
@@ -985,9 +985,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_regionWithHole() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
                 .toTree();
-        RegionBSPTree2D inner = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION)
+        final RegionBSPTree2D inner = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION)
                 .toTree();
 
         tree.difference(inner);
@@ -998,7 +998,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
 
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(2, paths.size());
 
         checkVertices(paths.get(0), Vector2D.of(0, 3), Vector2D.ZERO, Vector2D.of(3, 0),
@@ -1010,9 +1010,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_complementedRegionWithHole() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
                 .toTree();
-        RegionBSPTree2D inner = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION)
+        final RegionBSPTree2D inner = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION)
                 .toTree();
 
         tree.difference(inner);
@@ -1025,7 +1025,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
 
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(2, paths.size());
 
         checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(0, 3), Vector2D.of(3, 3),
@@ -1037,7 +1037,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testFrom_boundaries() {
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
+        final RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
                     Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span(),
                     Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION)
                         .rayFrom(Vector2D.ZERO)
@@ -1057,7 +1057,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testFrom_boundaries_fullIsTrue() {
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
+        final RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
                     Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span(),
                     Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION)
                         .rayFrom(Vector2D.ZERO)
@@ -1085,7 +1085,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToTree_returnsSameInstance() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 2), TEST_PRECISION).toTree();
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 2), TEST_PRECISION).toTree();
 
         // act/assert
         Assert.assertSame(tree, tree.toTree());
@@ -1101,7 +1101,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testProject_halfSpace() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(X_AXIS);
 
         // act/assert
@@ -1116,7 +1116,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testProject_rect() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(
                     Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
 
         // act/assert
@@ -1140,7 +1140,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testLinecast_empty() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
         // act/assert
         LinecastChecker2D.with(tree)
@@ -1155,7 +1155,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testLinecast_full() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
         // act/assert
         LinecastChecker2D.with(tree)
@@ -1170,7 +1170,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testLinecast() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         // act/assert
@@ -1194,7 +1194,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testLinecast_complementedTree() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         tree.complement();
@@ -1220,24 +1220,24 @@ public class RegionBSPTree2DTest {
     @Test
     public void testLinecast_complexRegion() {
         // arrange
-        RegionBSPTree2D a = LinePath.fromVertexLoop(Arrays.asList(
+        final RegionBSPTree2D a = LinePath.fromVertexLoop(Arrays.asList(
                     Vector2D.ZERO, Vector2D.of(0, 1),
                     Vector2D.of(0.5, 1), Vector2D.of(0.5, 0)
                 ), TEST_PRECISION).toTree();
         a.complement();
 
-        RegionBSPTree2D b = LinePath.fromVertexLoop(Arrays.asList(
+        final RegionBSPTree2D b = LinePath.fromVertexLoop(Arrays.asList(
                 Vector2D.of(0.5, 0), Vector2D.of(0.5, 1),
                 Vector2D.of(1, 1), Vector2D.of(1, 0)
             ), TEST_PRECISION).toTree();
         b.complement();
 
-        RegionBSPTree2D c = LinePath.fromVertexLoop(Arrays.asList(
+        final RegionBSPTree2D c = LinePath.fromVertexLoop(Arrays.asList(
                 Vector2D.of(0.5, 0.5), Vector2D.of(1.5, 0.5),
                 Vector2D.of(1.5, 1.5), Vector2D.of(0.5, 1.5)
             ), TEST_PRECISION).toTree();
 
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.union(a, b);
         tree.union(c);
 
@@ -1251,7 +1251,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testLinecast_removesDuplicatePoints() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
         tree.insert(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span());
 
@@ -1268,10 +1268,10 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(3, 2), TEST_PRECISION)
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(3, 2), TEST_PRECISION)
                 .toTree();
 
-        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
                 .rotate(PlaneAngleRadians.PI_OVER_TWO)
                 .translate(Vector2D.of(0, -1));
 
@@ -1279,10 +1279,10 @@ public class RegionBSPTree2DTest {
         tree.transform(transform);
 
         // assert
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertEquals(4, path.getElements().size());
         checkFiniteSegment(path.getElements().get(0), Vector2D.of(-4, -0.5), Vector2D.of(-2, -0.5));
         checkFiniteSegment(path.getElements().get(1), Vector2D.of(-2, -0.5), Vector2D.of(-2, 0.5));
@@ -1293,10 +1293,10 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform_halfSpace() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.getRoot().insertCut(Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
 
-        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
                 .rotate(PlaneAngleRadians.PI_OVER_TWO)
                 .translate(Vector2D.of(1, 0));
 
@@ -1304,26 +1304,26 @@ public class RegionBSPTree2DTest {
         tree.transform(transform);
 
         // assert
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertEquals(1, path.getElements().size());
-        LineConvexSubset segment = path.getStart();
+        final LineConvexSubset segment = path.getStart();
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
 
-        Line expectedLine = Lines.fromPointAndAngle(Vector2D.of(-1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
+        final Line expectedLine = Lines.fromPointAndAngle(Vector2D.of(-1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
         Assert.assertTrue(expectedLine.eq(segment.getLine(), expectedLine.getPrecision()));
     }
 
     @Test
     public void testTransform_fullAndEmpty() {
         // arrange
-        RegionBSPTree2D full = RegionBSPTree2D.full();
-        RegionBSPTree2D empty = RegionBSPTree2D.empty();
+        final RegionBSPTree2D full = RegionBSPTree2D.full();
+        final RegionBSPTree2D empty = RegionBSPTree2D.empty();
 
-        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         full.transform(transform);
@@ -1337,18 +1337,18 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
 
-        AffineTransformMatrix2D transform = AffineTransformMatrix2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
 
         // act
         tree.transform(transform);
 
         // assert
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertEquals(4, path.getElements().size());
         checkFiniteSegment(path.getElements().get(0), Vector2D.of(-2, 1), Vector2D.of(-1, 1));
         checkFiniteSegment(path.getElements().get(1), Vector2D.of(-1, 1), Vector2D.of(-1, 2));
@@ -1359,19 +1359,19 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform_doubleReflection() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(
                     Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
 
-        AffineTransformMatrix2D transform = AffineTransformMatrix2D.from(Vector2D::negate);
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.from(Vector2D::negate);
 
         // act
         tree.transform(transform);
 
         // assert
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertEquals(4, path.getElements().size());
         checkFiniteSegment(path.getElements().get(0), Vector2D.of(-2, -2), Vector2D.of(-1, -2));
         checkFiniteSegment(path.getElements().get(1), Vector2D.of(-1, -2), Vector2D.of(-1, -1));
@@ -1382,7 +1382,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBooleanOperations() {
         // arrange
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION).toTree();
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION).toTree();
         RegionBSPTree2D temp;
 
         // act
@@ -1400,7 +1400,7 @@ public class RegionBSPTree2DTest {
         tree.xor(temp);
 
         // assert
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(2, paths.size());
 
         checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(0, 3), Vector2D.of(6, 3),
@@ -1410,11 +1410,11 @@ public class RegionBSPTree2DTest {
                 Vector2D.of(1, 2), Vector2D.of(1, 1));
     }
 
-    private static void assertSegmentsEqual(LineConvexSubset expected, LineConvexSubset actual) {
+    private static void assertSegmentsEqual(final LineConvexSubset expected, final LineConvexSubset actual) {
         Assert.assertEquals(expected.getLine(), actual.getLine());
 
-        Vector2D expectedStart = expected.getStartPoint();
-        Vector2D expectedEnd = expected.getEndPoint();
+        final Vector2D expectedStart = expected.getStartPoint();
+        final Vector2D expectedEnd = expected.getEndPoint();
 
         if (expectedStart != null) {
             EuclideanTestUtils.assertCoordinatesEqual(expectedStart, actual.getStartPoint(), TEST_EPS);
@@ -1429,14 +1429,14 @@ public class RegionBSPTree2DTest {
         }
     }
 
-    private static void checkFiniteSegment(LineConvexSubset segment, Vector2D start, Vector2D end) {
+    private static void checkFiniteSegment(final LineConvexSubset segment, final Vector2D start, final Vector2D end) {
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
     }
 
-    private static void checkClassify(Region<Vector2D> region, RegionLocation loc, Vector2D... points) {
-        for (Vector2D point : points) {
-            String msg = "Unexpected location for point " + point;
+    private static void checkClassify(final Region<Vector2D> region, final RegionLocation loc, final Vector2D... points) {
+        for (final Vector2D point : points) {
+            final String msg = "Unexpected location for point " + point;
 
             Assert.assertEquals(msg, loc, region.classify(point));
         }
@@ -1451,10 +1451,10 @@ public class RegionBSPTree2DTest {
      * @param path
      * @param vertices
      */
-    private static void checkVertices(LinePath path, Vector2D... vertices) {
+    private static void checkVertices(final LinePath path, final Vector2D... vertices) {
         Assert.assertTrue("Line segment path is not finite", path.isFinite());
 
-        List<Vector2D> actual = path.getVertexSequence();
+        final List<Vector2D> actual = path.getVertexSequence();
 
         Assert.assertEquals("Vertex lists have different lengths", vertices.length, actual.size());
 

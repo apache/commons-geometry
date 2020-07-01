@@ -45,10 +45,10 @@ public class Bounds2DTest {
     @Test
     public void testFrom_varargs_singlePoint() {
         // arrange
-        Vector2D p1 = Vector2D.of(-1, 2);
+        final Vector2D p1 = Vector2D.of(-1, 2);
 
         // act
-        Bounds2D b = Bounds2D.from(p1);
+        final Bounds2D b = Bounds2D.from(p1);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(p1, b.getMin(), TEST_EPS);
@@ -60,12 +60,12 @@ public class Bounds2DTest {
     @Test
     public void testFrom_varargs_multiplePoints() {
         // arrange
-        Vector2D p1 = Vector2D.of(1, 6);
-        Vector2D p2 = Vector2D.of(0, 5);
-        Vector2D p3 = Vector2D.of(3, 6);
+        final Vector2D p1 = Vector2D.of(1, 6);
+        final Vector2D p2 = Vector2D.of(0, 5);
+        final Vector2D p3 = Vector2D.of(3, 6);
 
         // act
-        Bounds2D b = Bounds2D.from(p1, p2, p3);
+        final Bounds2D b = Bounds2D.from(p1, p2, p3);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 5), b.getMin(), TEST_EPS);
@@ -77,10 +77,10 @@ public class Bounds2DTest {
     @Test
     public void testFrom_iterable_singlePoint() {
         // arrange
-        Vector2D p1 = Vector2D.of(-1, 2);
+        final Vector2D p1 = Vector2D.of(-1, 2);
 
         // act
-        Bounds2D b = Bounds2D.from(Arrays.asList(p1));
+        final Bounds2D b = Bounds2D.from(Arrays.asList(p1));
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(p1, b.getMin(), TEST_EPS);
@@ -92,12 +92,12 @@ public class Bounds2DTest {
     @Test
     public void testFrom_iterable_multiplePoints() {
         // arrange
-        Vector2D p1 = Vector2D.of(1, 6);
-        Vector2D p2 = Vector2D.of(2, 5);
-        Vector2D p3 = Vector2D.of(3, 4);
+        final Vector2D p1 = Vector2D.of(1, 6);
+        final Vector2D p2 = Vector2D.of(2, 5);
+        final Vector2D p3 = Vector2D.of(3, 4);
 
         // act
-        Bounds2D b = Bounds2D.from(Arrays.asList(p1, p2, p3));
+        final Bounds2D b = Bounds2D.from(Arrays.asList(p1, p2, p3));
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 4), b.getMin(), TEST_EPS);
@@ -117,11 +117,11 @@ public class Bounds2DTest {
     @Test
     public void testFrom_invalidBounds() {
         // arrange
-        Vector2D good = Vector2D.of(1, 1);
+        final Vector2D good = Vector2D.of(1, 1);
 
-        Vector2D nan = Vector2D.of(Double.NaN, 1);
-        Vector2D posInf = Vector2D.of(1, Double.POSITIVE_INFINITY);
-        Vector2D negInf = Vector2D.of(1, Double.NEGATIVE_INFINITY);
+        final Vector2D nan = Vector2D.of(Double.NaN, 1);
+        final Vector2D posInf = Vector2D.of(1, Double.POSITIVE_INFINITY);
+        final Vector2D negInf = Vector2D.of(1, Double.NEGATIVE_INFINITY);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -152,15 +152,15 @@ public class Bounds2DTest {
     @Test
     public void testHasSize() {
         // arrange
-        DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
-        DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
+        final DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
 
-        Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p1 = Vector2D.ZERO;
 
-        Vector2D p2 = Vector2D.of(1e-5, 1);
-        Vector2D p3 = Vector2D.of(1, 1e-5);
+        final Vector2D p2 = Vector2D.of(1e-5, 1);
+        final Vector2D p3 = Vector2D.of(1, 1e-5);
 
-        Vector2D p4 = Vector2D.of(1, 1);
+        final Vector2D p4 = Vector2D.of(1, 1);
 
         // act/assert
         Assert.assertFalse(Bounds2D.from(p1).hasSize(high));
@@ -179,7 +179,7 @@ public class Bounds2DTest {
     @Test
     public void testContains_strict() {
         // arrange
-        Bounds2D b = Bounds2D.from(
+        final Bounds2D b = Bounds2D.from(
                 Vector2D.of(0, 4),
                 Vector2D.of(2, 6));
 
@@ -201,7 +201,7 @@ public class Bounds2DTest {
     @Test
     public void testContains_precision() {
         // arrange
-        Bounds2D b = Bounds2D.from(
+        final Bounds2D b = Bounds2D.from(
                 Vector2D.of(0, 4),
                 Vector2D.of(2, 6));
 
@@ -222,22 +222,22 @@ public class Bounds2DTest {
     @Test
     public void testIntersects() {
         // arrange
-        Bounds2D b = Bounds2D.from(Vector2D.ZERO, Vector2D.of(1, 1));
+        final Bounds2D b = Bounds2D.from(Vector2D.ZERO, Vector2D.of(1, 1));
 
         // act/assert
         checkIntersects(b, Vector2D::getX, (v, x) -> Vector2D.of(x, v.getY()));
         checkIntersects(b, Vector2D::getY, (v, y) -> Vector2D.of(v.getX(), y));
     }
 
-    private void checkIntersects(Bounds2D b, ToDoubleFunction<Vector2D> getter,
-            BiFunction<Vector2D, Double, Vector2D> setter) {
+    private void checkIntersects(final Bounds2D b, final ToDoubleFunction<Vector2D> getter,
+                                 final BiFunction<Vector2D, Double, Vector2D> setter) {
 
-        Vector2D min = b.getMin();
-        Vector2D max = b.getMax();
+        final Vector2D min = b.getMin();
+        final Vector2D max = b.getMax();
 
-        double minValue = getter.applyAsDouble(min);
-        double maxValue = getter.applyAsDouble(max);
-        double midValue = (0.5 * (maxValue - minValue)) + minValue;
+        final double minValue = getter.applyAsDouble(min);
+        final double maxValue = getter.applyAsDouble(max);
+        final double midValue = (0.5 * (maxValue - minValue)) + minValue;
 
         // check all possible interval relationships
 
@@ -286,7 +286,7 @@ public class Bounds2DTest {
     @Test
     public void testIntersection() {
         // -- arrange
-        Bounds2D b = Bounds2D.from(Vector2D.ZERO, Vector2D.of(1, 1));
+        final Bounds2D b = Bounds2D.from(Vector2D.ZERO, Vector2D.of(1, 1));
 
         // -- act/assert
 
@@ -327,9 +327,9 @@ public class Bounds2DTest {
         Assert.assertNull(b.intersection(Bounds2D.from(Vector2D.of(0, 2), Vector2D.of(1, 3))));
     }
 
-    private void checkIntersection(Bounds2D b, Vector2D a1, Vector2D a2, Vector2D r1, Vector2D r2) {
-        Bounds2D a = Bounds2D.from(a1, a2);
-        Bounds2D result = b.intersection(a);
+    private void checkIntersection(final Bounds2D b, final Vector2D a1, final Vector2D a2, final Vector2D r1, final Vector2D r2) {
+        final Bounds2D a = Bounds2D.from(a1, a2);
+        final Bounds2D result = b.intersection(a);
 
         checkBounds(result, r1, r2);
     }
@@ -337,12 +337,12 @@ public class Bounds2DTest {
     @Test
     public void toRegion() {
         // arrange
-        Bounds2D b = Bounds2D.from(
+        final Bounds2D b = Bounds2D.from(
                 Vector2D.of(0, 4),
                 Vector2D.of(2, 6));
 
         // act
-        Parallelogram p = b.toRegion(TEST_PRECISION);
+        final Parallelogram p = b.toRegion(TEST_PRECISION);
 
         // assert
         Assert.assertEquals(4, p.getSize(), TEST_EPS);
@@ -361,15 +361,15 @@ public class Bounds2DTest {
     @Test
     public void testEq() {
         // arrange
-        DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
-        DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
+        final DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
 
-        Bounds2D b1 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
+        final Bounds2D b1 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 
-        Bounds2D b2 = Bounds2D.from(Vector2D.of(1.1, 1), Vector2D.of(2, 2));
-        Bounds2D b3 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(1.9, 2));
+        final Bounds2D b2 = Bounds2D.from(Vector2D.of(1.1, 1), Vector2D.of(2, 2));
+        final Bounds2D b3 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(1.9, 2));
 
-        Bounds2D b4 = Bounds2D.from(Vector2D.of(1.001, 1.001), Vector2D.of(2.001, 2.001));
+        final Bounds2D b4 = Bounds2D.from(Vector2D.of(1.001, 1.001), Vector2D.of(2.001, 2.001));
 
         // act/assert
         Assert.assertTrue(b1.eq(b1, low));
@@ -387,17 +387,17 @@ public class Bounds2DTest {
     @Test
     public void testHashCode() {
         // arrange
-        Bounds2D b1 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
+        final Bounds2D b1 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 
-        Bounds2D b2 = Bounds2D.from(Vector2D.of(-2, 1), Vector2D.of(2, 2));
-        Bounds2D b3 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(3, 2));
-        Bounds2D b4 = Bounds2D.from(Vector2D.of(1 + 1e-15, 1), Vector2D.of(2, 2));
-        Bounds2D b5 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2 + 1e-15, 2));
+        final Bounds2D b2 = Bounds2D.from(Vector2D.of(-2, 1), Vector2D.of(2, 2));
+        final Bounds2D b3 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(3, 2));
+        final Bounds2D b4 = Bounds2D.from(Vector2D.of(1 + 1e-15, 1), Vector2D.of(2, 2));
+        final Bounds2D b5 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2 + 1e-15, 2));
 
-        Bounds2D b6 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
+        final Bounds2D b6 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 
         // act
-        int hash = b1.hashCode();
+        final int hash = b1.hashCode();
 
         // assert
         Assert.assertEquals(hash, b1.hashCode());
@@ -413,14 +413,14 @@ public class Bounds2DTest {
     @Test
     public void testEquals() {
         // arrange
-        Bounds2D b1 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
+        final Bounds2D b1 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 
-        Bounds2D b2 = Bounds2D.from(Vector2D.of(-1, 1), Vector2D.of(2, 2));
-        Bounds2D b3 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(3, 2));
-        Bounds2D b4 = Bounds2D.from(Vector2D.of(1 + 1e-15, 1), Vector2D.of(2, 2));
-        Bounds2D b5 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2 + 1e-15, 2));
+        final Bounds2D b2 = Bounds2D.from(Vector2D.of(-1, 1), Vector2D.of(2, 2));
+        final Bounds2D b3 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(3, 2));
+        final Bounds2D b4 = Bounds2D.from(Vector2D.of(1 + 1e-15, 1), Vector2D.of(2, 2));
+        final Bounds2D b5 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2 + 1e-15, 2));
 
-        Bounds2D b6 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
+        final Bounds2D b6 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 
         // act/assert
         Assert.assertEquals(b1, b1);
@@ -439,10 +439,10 @@ public class Bounds2DTest {
     @Test
     public void testToString() {
         // arrange
-        Bounds2D b = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
+        final Bounds2D b = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 
         // act
-        String str = b.toString();
+        final String str = b.toString();
 
         // assert
         GeometryTestUtils.assertContains("Bounds2D[min= (1", str);
@@ -452,14 +452,14 @@ public class Bounds2DTest {
     @Test
     public void testBuilder_addMethods() {
         // arrange
-        Vector2D p1 = Vector2D.of(1, 10);
-        Vector2D p2 = Vector2D.of(2, 9);
-        Vector2D p3 = Vector2D.of(3, 8);
-        Vector2D p4 = Vector2D.of(4, 7);
-        Vector2D p5 = Vector2D.of(5, 6);
+        final Vector2D p1 = Vector2D.of(1, 10);
+        final Vector2D p2 = Vector2D.of(2, 9);
+        final Vector2D p3 = Vector2D.of(3, 8);
+        final Vector2D p4 = Vector2D.of(4, 7);
+        final Vector2D p5 = Vector2D.of(5, 6);
 
         // act
-        Bounds2D b = Bounds2D.builder()
+        final Bounds2D b = Bounds2D.builder()
                 .add(p1)
                 .addAll(Arrays.asList(p2, p3))
                 .add(Bounds2D.from(p4, p5))
@@ -488,19 +488,19 @@ public class Bounds2DTest {
         Assert.assertTrue(Bounds2D.builder().add(Vector2D.ZERO).hasBounds());
     }
 
-    private static void checkBounds(Bounds2D b, Vector2D min, Vector2D max) {
+    private static void checkBounds(final Bounds2D b, final Vector2D min, final Vector2D max) {
         EuclideanTestUtils.assertCoordinatesEqual(min, b.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(max, b.getMax(), TEST_EPS);
     }
 
-    private static void assertContainsStrict(Bounds2D bounds, boolean contains, Vector2D... pts) {
-        for (Vector2D pt : pts) {
+    private static void assertContainsStrict(final Bounds2D bounds, final boolean contains, final Vector2D... pts) {
+        for (final Vector2D pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, contains, bounds.contains(pt));
         }
     }
 
-    private static void assertContainsWithPrecision(Bounds2D bounds, boolean contains, Vector2D... pts) {
-        for (Vector2D pt : pts) {
+    private static void assertContainsWithPrecision(final Bounds2D bounds, final boolean contains, final Vector2D... pts) {
+        for (final Vector2D pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, contains, bounds.contains(pt, TEST_PRECISION));
         }
     }

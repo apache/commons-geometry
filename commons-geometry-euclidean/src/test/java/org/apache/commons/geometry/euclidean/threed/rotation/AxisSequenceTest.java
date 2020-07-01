@@ -25,19 +25,19 @@ public class AxisSequenceTest {
     @Test
     public void testAxes() {
         // act/assert
-        for (AxisSequence axes : AxisSequence.values()) {
+        for (final AxisSequence axes : AxisSequence.values()) {
             checkAxes(axes);
         }
     }
 
-    private void checkAxes(AxisSequence axes) {
+    private void checkAxes(final AxisSequence axes) {
         // make sure that the name of the enum value matches
         // the axes it contains
-        String name = axes.toString();
+        final String name = axes.toString();
 
-        Vector3D a1 = getAxisForName(name.substring(0, 1));
-        Vector3D a2 = getAxisForName(name.substring(1, 2));
-        Vector3D a3 = getAxisForName(name.substring(2, 3));
+        final Vector3D a1 = getAxisForName(name.substring(0, 1));
+        final Vector3D a2 = getAxisForName(name.substring(1, 2));
+        final Vector3D a3 = getAxisForName(name.substring(2, 3));
 
         // assert
         Assert.assertEquals(a1, axes.getAxis1());
@@ -47,7 +47,7 @@ public class AxisSequenceTest {
         Assert.assertArrayEquals(new Vector3D[] {a1, a2, a3}, axes.toArray());
     }
 
-    private Vector3D getAxisForName(String name) {
+    private Vector3D getAxisForName(final String name) {
         if ("X".equals(name)) {
             return Vector3D.Unit.PLUS_X;
         }

@@ -160,8 +160,8 @@ public final class ReverseRay extends LineConvexSubset {
 
     /** {@inheritDoc} */
     @Override
-    RegionLocation classifyAbscissa(double abscissa) {
-        int cmp = getPrecision().compare(abscissa, getSubspaceEnd());
+    RegionLocation classifyAbscissa(final double abscissa) {
+        final int cmp = getPrecision().compare(abscissa, getSubspaceEnd());
         if (cmp < 0) {
             return RegionLocation.INSIDE;
         } else if (cmp == 0) {
@@ -173,7 +173,7 @@ public final class ReverseRay extends LineConvexSubset {
 
     /** {@inheritDoc} */
     @Override
-    double closestAbscissa(double abscissa) {
+    double closestAbscissa(final double abscissa) {
         return Math.min(getSubspaceEnd(), abscissa);
     }
 

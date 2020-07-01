@@ -152,7 +152,7 @@ public final class Transform2S implements Transform<Point2S> {
      * @return true if the underlying transform matrices are exactly equal
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

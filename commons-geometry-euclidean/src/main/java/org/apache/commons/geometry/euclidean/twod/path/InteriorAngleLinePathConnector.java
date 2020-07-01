@@ -96,7 +96,7 @@ public abstract class InteriorAngleLinePathConnector extends AbstractLinePathCon
     public static final class Maximize extends InteriorAngleLinePathConnector {
         /** {@inheritDoc} */
         @Override
-        protected boolean isBetterAngle(double newAngle, double previousAngle) {
+        protected boolean isBetterAngle(final double newAngle, final double previousAngle) {
             return newAngle > previousAngle;
         }
     }
@@ -110,7 +110,7 @@ public abstract class InteriorAngleLinePathConnector extends AbstractLinePathCon
     public static final class Minimize extends InteriorAngleLinePathConnector {
         /** {@inheritDoc} */
         @Override
-        protected boolean isBetterAngle(double newAngle, double previousAngle) {
+        protected boolean isBetterAngle(final double newAngle, final double previousAngle) {
             return newAngle < previousAngle;
         }
     }

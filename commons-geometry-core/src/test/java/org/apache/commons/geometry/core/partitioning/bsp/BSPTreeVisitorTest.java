@@ -30,7 +30,7 @@ public class BSPTreeVisitorTest {
     @Test
     public void testDefaultVisitOrder() {
         // arrange
-        BSPTreeVisitor<TestPoint2D, TestNode> visitor = n -> BSPTreeVisitor.Result.CONTINUE;
+        final BSPTreeVisitor<TestPoint2D, TestNode> visitor = n -> BSPTreeVisitor.Result.CONTINUE;
 
         // act/assert
         Assert.assertEquals(BSPTreeVisitor.Order.NODE_MINUS_PLUS, visitor.visitOrder(null));
@@ -39,8 +39,8 @@ public class BSPTreeVisitorTest {
     @Test
     public void testClosestFirst() {
         // arrange
-        TestBSPTree tree = new TestBSPTree();
-        TestNode root = tree.getRoot();
+        final TestBSPTree tree = new TestBSPTree();
+        final TestNode root = tree.getRoot();
         root.cut(TestLine.X_AXIS);
         root.getMinus().cut(TestLine.Y_AXIS);
         root.getPlus().cut(TestLine.Y_AXIS);
@@ -70,8 +70,8 @@ public class BSPTreeVisitorTest {
     @Test
     public void testFarthestFirst() {
         // arrange
-        TestBSPTree tree = new TestBSPTree();
-        TestNode root = tree.getRoot();
+        final TestBSPTree tree = new TestBSPTree();
+        final TestNode root = tree.getRoot();
         root.cut(TestLine.X_AXIS);
         root.getMinus().cut(TestLine.Y_AXIS);
         root.getPlus().cut(TestLine.Y_AXIS);
@@ -98,15 +98,15 @@ public class BSPTreeVisitorTest {
         checkFarthestFirst(TestPoint2D.ZERO, root.getPlus(), BSPTreeVisitor.Order.MINUS_NODE_PLUS);
     }
 
-    private static void checkClosestFirst(TestPoint2D target, TestNode node, BSPTreeVisitor.Order order) {
-        ClosestFirstStubVisitor visitor = new ClosestFirstStubVisitor(target);
+    private static void checkClosestFirst(final TestPoint2D target, final TestNode node, final BSPTreeVisitor.Order order) {
+        final ClosestFirstStubVisitor visitor = new ClosestFirstStubVisitor(target);
 
         Assert.assertSame(target, visitor.getTarget());
         Assert.assertEquals(order, visitor.visitOrder(node));
     }
 
-    private static void checkFarthestFirst(TestPoint2D target, TestNode node, BSPTreeVisitor.Order order) {
-        FarthestFirstStubVisitor visitor = new FarthestFirstStubVisitor(target);
+    private static void checkFarthestFirst(final TestPoint2D target, final TestNode node, final BSPTreeVisitor.Order order) {
+        final FarthestFirstStubVisitor visitor = new FarthestFirstStubVisitor(target);
 
         Assert.assertSame(target, visitor.getTarget());
         Assert.assertEquals(order, visitor.visitOrder(node));
@@ -114,24 +114,24 @@ public class BSPTreeVisitorTest {
 
     private static class ClosestFirstStubVisitor extends ClosestFirstVisitor<TestPoint2D, TestNode> {
 
-        ClosestFirstStubVisitor(TestPoint2D target) {
+        ClosestFirstStubVisitor(final TestPoint2D target) {
             super(target);
         }
 
         @Override
-        public Result visit(TestNode node) {
+        public Result visit(final TestNode node) {
             return Result.CONTINUE;
         }
     }
 
     private static class FarthestFirstStubVisitor extends FarthestFirstVisitor<TestPoint2D, TestNode> {
 
-        FarthestFirstStubVisitor(TestPoint2D target) {
+        FarthestFirstStubVisitor(final TestPoint2D target) {
             super(target);
         }
 
         @Override
-        public Result visit(TestNode node) {
+        public Result visit(final TestNode node) {
             return Result.CONTINUE;
         }
     }

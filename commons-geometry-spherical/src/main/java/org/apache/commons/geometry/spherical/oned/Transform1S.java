@@ -160,7 +160,7 @@ public final class Transform1S implements Transform<Point1S> {
      * @return true if all transform elements are exactly equal; otherwise false
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

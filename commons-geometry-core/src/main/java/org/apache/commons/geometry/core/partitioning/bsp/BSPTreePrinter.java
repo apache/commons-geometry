@@ -111,7 +111,7 @@ final class BSPTreePrinter<P extends Point<P>, N extends Node<P, N>>
     /** Add the given string to the output.
      * @param str the string to add
      */
-    private void write(String str) {
+    private void write(final String str) {
         output.append(str);
     }
 

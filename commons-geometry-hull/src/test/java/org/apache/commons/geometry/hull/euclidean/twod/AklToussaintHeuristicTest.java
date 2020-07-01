@@ -26,12 +26,12 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 public class AklToussaintHeuristicTest extends ConvexHullGenerator2DAbstractTest {
 
     @Override
-    protected ConvexHullGenerator2D createConvexHullGenerator(boolean includeCollinearPoints) {
+    protected ConvexHullGenerator2D createConvexHullGenerator(final boolean includeCollinearPoints) {
         return new MonotoneChain(includeCollinearPoints, TEST_PRECISION);
     }
 
     @Override
-    protected Collection<Vector2D> reducePoints(Collection<Vector2D> points) {
+    protected Collection<Vector2D> reducePoints(final Collection<Vector2D> points) {
         return AklToussaintHeuristic.reducePoints(points);
     }
 

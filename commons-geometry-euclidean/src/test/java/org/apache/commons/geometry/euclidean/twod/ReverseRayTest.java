@@ -37,11 +37,11 @@ public class ReverseRayTest {
     @Test
     public void testFromPointAndDirection() {
         // arrange
-        Vector2D p0 = Vector2D.of(1, 2);
-        Vector2D p1 = Vector2D.of(2, 2);
+        final Vector2D p0 = Vector2D.of(1, 2);
+        final Vector2D p1 = Vector2D.of(2, 2);
 
         // act
-        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(p0, p0.vectorTo(p1), TEST_PRECISION);
+        final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(p0, p0.vectorTo(p1), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(revRay.isFull());
@@ -63,8 +63,8 @@ public class ReverseRayTest {
     @Test
     public void testFromPointAndDirection_invalidArgs() {
         // arrange
-        Vector2D p = Vector2D.of(0, 2);
-        Vector2D d = Vector2D.of(1e-17, -1e-12);
+        final Vector2D p = Vector2D.of(0, 2);
+        final Vector2D d = Vector2D.of(1e-17, -1e-12);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -75,14 +75,14 @@ public class ReverseRayTest {
     @Test
     public void testFromPoint() {
         // arrange
-        Vector2D p0 = Vector2D.of(1, 1);
-        Vector2D p1 = Vector2D.of(1, 2);
-        Vector2D p3 = Vector2D.of(3, 3);
+        final Vector2D p0 = Vector2D.of(1, 1);
+        final Vector2D p1 = Vector2D.of(1, 2);
+        final Vector2D p3 = Vector2D.of(3, 3);
 
-        Line line = Lines.fromPoints(p0, p1, TEST_PRECISION);
+        final Line line = Lines.fromPoints(p0, p1, TEST_PRECISION);
 
         // act
-        ReverseRay revRay = Lines.reverseRayFromPoint(line, p3);
+        final ReverseRay revRay = Lines.reverseRayFromPoint(line, p3);
 
         // assert
         Assert.assertFalse(revRay.isFull());
@@ -104,9 +104,9 @@ public class ReverseRayTest {
     @Test
     public void testFromPoint_invalidArgs() {
         // arrange
-        Vector2D p = Vector2D.of(0, 2);
-        Vector2D d = Vector2D.of(1, 1);
-        Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
+        final Vector2D p = Vector2D.of(0, 2);
+        final Vector2D d = Vector2D.of(1, 1);
+        final Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -125,13 +125,13 @@ public class ReverseRayTest {
     @Test
     public void testFromLocation() {
         // arrange
-        Vector2D p0 = Vector2D.of(1, 1);
-        Vector2D p1 = Vector2D.of(1, 2);
+        final Vector2D p0 = Vector2D.of(1, 1);
+        final Vector2D p1 = Vector2D.of(1, 2);
 
-        Line line = Lines.fromPoints(p0, p1, TEST_PRECISION);
+        final Line line = Lines.fromPoints(p0, p1, TEST_PRECISION);
 
         // act
-        ReverseRay revRay = Lines.reverseRayFromLocation(line, -2);
+        final ReverseRay revRay = Lines.reverseRayFromLocation(line, -2);
 
         // assert
         Assert.assertFalse(revRay.isFull());
@@ -153,9 +153,9 @@ public class ReverseRayTest {
     @Test
     public void testFromLocation_invalidArgs() {
         // arrange
-        Vector2D p = Vector2D.of(0, 2);
-        Vector2D d = Vector2D.of(1, 1);
-        Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
+        final Vector2D p = Vector2D.of(0, 2);
+        final Vector2D d = Vector2D.of(1, 1);
+        final Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -174,13 +174,13 @@ public class ReverseRayTest {
     @Test
     public void testTransform() {
         // arrange
-        AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(-0.5 * Math.PI)
+        final AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(-0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X);
 
-        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        ReverseRay result = revRay.transform(t);
+        final ReverseRay result = revRay.transform(t);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, -1), result.getEndPoint(), TEST_EPS);
@@ -189,15 +189,15 @@ public class ReverseRayTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(0.5 * Math.PI)
+        final AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X)
                 .scale(1, -1);
 
-        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(2, 3),
+        final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(2, 3),
                 Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        ReverseRay result = revRay.transform(t);
+        final ReverseRay result = revRay.transform(t);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2, -2), result.getEndPoint(), TEST_EPS);
@@ -206,15 +206,15 @@ public class ReverseRayTest {
     @Test
     public void testReverse() {
         // arrange
-        Vector2D start = Vector2D.of(1, 2);
+        final Vector2D start = Vector2D.of(1, 2);
 
         EuclideanTestUtils.permuteSkipZero(-4, 4, 1, (x, y) -> {
-            Vector2D dir = Vector2D.of(x, y);
+            final Vector2D dir = Vector2D.of(x, y);
 
-            ReverseRay revRay = Lines.reverseRayFromPointAndDirection(start, dir, TEST_PRECISION);
+            final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(start, dir, TEST_PRECISION);
 
             // act
-            Ray rev = revRay.reverse();
+            final Ray rev = revRay.reverse();
 
             // assert
             EuclideanTestUtils.assertCoordinatesEqual(revRay.getLine().getOrigin(), rev.getLine().getOrigin(), TEST_EPS);
@@ -227,9 +227,9 @@ public class ReverseRayTest {
     @Test
     public void testClosest() {
         // arrange
-        Vector2D p1 = Vector2D.of(0, -1);
-        Vector2D p2 = Vector2D.of(0, 1);
-        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(p2, p1.directionTo(p2), TEST_PRECISION);
+        final Vector2D p1 = Vector2D.of(0, -1);
+        final Vector2D p2 = Vector2D.of(0, 1);
+        final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(p2, p1.directionTo(p2), TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(p1, revRay.closest(p1), TEST_EPS);
@@ -250,7 +250,7 @@ public class ReverseRayTest {
     @Test
     public void testClassify() {
         // arrange
-        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(1, 1),
+        final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(1, 1),
                 Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
@@ -268,13 +268,13 @@ public class ReverseRayTest {
     @Test
     public void testSplit() {
         // --- arrange
-        Vector2D p0 = Vector2D.of(1, 1);
-        Vector2D p1 = Vector2D.of(-3, 1);
-        Vector2D high = Vector2D.of(2, 1);
+        final Vector2D p0 = Vector2D.of(1, 1);
+        final Vector2D p1 = Vector2D.of(-3, 1);
+        final Vector2D high = Vector2D.of(2, 1);
 
-        Vector2D delta = Vector2D.of(1e-11, 1e-11);
+        final Vector2D delta = Vector2D.of(1e-11, 1e-11);
 
-        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(p0, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(p0, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // --- act
 
@@ -319,15 +319,15 @@ public class ReverseRayTest {
     @Test
     public void testSplit_smallAngle_pointOnSplitter() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
 
-        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(
+        final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(
                 Vector2D.of(1, 1e-6), Vector2D.of(-1, 1e-2), precision);
 
-        Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0, precision);
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0, precision);
 
         // act
-        Split<LineConvexSubset> split = revRay.split(splitter);
+        final Split<LineConvexSubset> split = revRay.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -339,10 +339,10 @@ public class ReverseRayTest {
     @Test
     public void testGetInterval() {
         // arrange
-        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(2, -1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(2, -1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Interval interval = revRay.getInterval();
+        final Interval interval = revRay.getInterval();
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(interval.getMin());
@@ -354,20 +354,20 @@ public class ReverseRayTest {
     @Test
     public void testToString() {
         // arrange
-        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         // act
-        String str = revRay.toString();
+        final String str = revRay.toString();
 
         // assert
         GeometryTestUtils.assertContains("ReverseRay[direction= (1", str);
         GeometryTestUtils.assertContains(", endPoint= (0", str);
     }
 
-    private static void checkSplit(Split<LineConvexSubset> split, Vector2D minusStart, Vector2D minusEnd,
-            Vector2D plusStart, Vector2D plusEnd) {
+    private static void checkSplit(final Split<LineConvexSubset> split, final Vector2D minusStart, final Vector2D minusEnd,
+                                   final Vector2D plusStart, final Vector2D plusEnd) {
 
-        LineConvexSubset minus = split.getMinus();
+        final LineConvexSubset minus = split.getMinus();
         if (minusStart == null && minusEnd == null) {
             Assert.assertNull(minus);
         } else {
@@ -376,7 +376,7 @@ public class ReverseRayTest {
         }
 
 
-        LineConvexSubset plus = split.getPlus();
+        final LineConvexSubset plus = split.getPlus();
         if (plusStart == null && plusEnd == null) {
             Assert.assertNull(plus);
         } else {
@@ -385,7 +385,7 @@ public class ReverseRayTest {
         }
     }
 
-    private static void checkPoint(Vector2D expected, Vector2D pt) {
+    private static void checkPoint(final Vector2D expected, final Vector2D pt) {
         if (expected == null) {
             Assert.assertNull(pt);
         } else {

@@ -52,8 +52,8 @@ public final class EmbeddingPlane extends Plane implements EmbeddingHyperplane<V
      * @param originOffset offset of the origin with respect to the plane.
      * @param precision precision context used for floating point comparisons
      */
-    EmbeddingPlane(final Vector3D.Unit u, final Vector3D.Unit v, final Vector3D.Unit w, double originOffset,
-            final DoublePrecisionContext precision) {
+    EmbeddingPlane(final Vector3D.Unit u, final Vector3D.Unit v, final Vector3D.Unit w, final double originOffset,
+                   final DoublePrecisionContext precision) {
         super(w, originOffset, precision);
 
         this.u = u;
@@ -217,7 +217,7 @@ public final class EmbeddingPlane extends Plane implements EmbeddingHyperplane<V
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         } else if (obj == null || obj.getClass() != EmbeddingPlane.class) {

@@ -87,7 +87,7 @@ public class TestPoint2D implements Point<TestPoint2D> {
 
     /** {@inheritDoc} */
     @Override
-    public double distance(TestPoint2D p) {
+    public double distance(final TestPoint2D p) {
         final double dx = x - p.x;
         final double dy = y - p.y;
 

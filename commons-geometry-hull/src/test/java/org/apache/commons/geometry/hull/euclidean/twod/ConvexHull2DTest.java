@@ -40,15 +40,15 @@ public class ConvexHull2DTest {
     @Test
     public void testProperties_noPoints() {
         // act
-        ConvexHull2D hull = new ConvexHull2D(Collections.emptyList(), TEST_PRECISION);
+        final ConvexHull2D hull = new ConvexHull2D(Collections.emptyList(), TEST_PRECISION);
 
         // assert
         Assert.assertEquals(0, hull.getVertices().size());
 
-        LinePath path = hull.getPath();
+        final LinePath path = hull.getPath();
         Assert.assertEquals(0, path.getElements().size());
 
-        List<Vector2D> pathVertices = path.getVertexSequence();
+        final List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(0, pathVertices.size());
 
         Assert.assertNull(hull.getRegion());
@@ -57,18 +57,18 @@ public class ConvexHull2DTest {
     @Test
     public void testProperties_singlePoint() {
         // arrange
-        List<Vector2D> vertices = Arrays.asList(Vector2D.Unit.PLUS_X);
+        final List<Vector2D> vertices = Arrays.asList(Vector2D.Unit.PLUS_X);
 
         // act
-        ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
+        final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // assert
         Assert.assertEquals(vertices, hull.getVertices());
 
-        LinePath path = hull.getPath();
+        final LinePath path = hull.getPath();
         Assert.assertEquals(0, path.getElements().size());
 
-        List<Vector2D> pathVertices = path.getVertexSequence();
+        final List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(0, pathVertices.size());
 
         Assert.assertNull(hull.getRegion());
@@ -77,18 +77,18 @@ public class ConvexHull2DTest {
     @Test
     public void testProperties_twoPoints() {
         // arrange
-        List<Vector2D> vertices = Arrays.asList(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
+        final List<Vector2D> vertices = Arrays.asList(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
 
         // act
-        ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
+        final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // assert
         Assert.assertEquals(vertices, hull.getVertices());
 
-        LinePath path = hull.getPath();
+        final LinePath path = hull.getPath();
         Assert.assertEquals(1, path.getElements().size());
 
-        List<Vector2D> pathVertices = path.getVertexSequence();
+        final List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(2, pathVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, pathVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, pathVertices.get(1), TEST_EPS);
@@ -99,18 +99,18 @@ public class ConvexHull2DTest {
     @Test
     public void testProperties_threePoints() {
         // arrange
-        List<Vector2D> vertices = Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
+        final List<Vector2D> vertices = Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
 
         // act
-        ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
+        final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // assert
         Assert.assertEquals(vertices, hull.getVertices());
 
-        LinePath path = hull.getPath();
+        final LinePath path = hull.getPath();
         Assert.assertEquals(3, path.getElements().size());
 
-        List<Vector2D> pathVertices = path.getVertexSequence();
+        final List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(4, pathVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, pathVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, pathVertices.get(1), TEST_EPS);
@@ -123,19 +123,19 @@ public class ConvexHull2DTest {
     @Test
     public void testProperties_fourPoints() {
         // arrange
-        List<Vector2D> vertices = Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X,
+        final List<Vector2D> vertices = Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X,
                 Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y);
 
         // act
-        ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
+        final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // assert
         Assert.assertEquals(vertices, hull.getVertices());
 
-        LinePath path = hull.getPath();
+        final LinePath path = hull.getPath();
         Assert.assertEquals(4, path.getElements().size());
 
-        List<Vector2D> pathVertices = path.getVertexSequence();
+        final List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(5, pathVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, pathVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, pathVertices.get(1), TEST_EPS);
@@ -149,13 +149,13 @@ public class ConvexHull2DTest {
     @Test
     public void testVertexListCannotBeModified() {
         // arrange
-        List<Vector2D> vertices = new ArrayList<>();
+        final List<Vector2D> vertices = new ArrayList<>();
         vertices.add(Vector2D.Unit.PLUS_X);
 
-        ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
+        final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // act
-        List<Vector2D> hullVertices = hull.getVertices();
+        final List<Vector2D> hullVertices = hull.getVertices();
 
         // assert
         Assert.assertNotSame(vertices, hullVertices);
@@ -167,11 +167,11 @@ public class ConvexHull2DTest {
     @Test
     public void testToString() {
         // arrange
-        List<Vector2D> vertices = Arrays.asList(Vector2D.Unit.PLUS_X);
-        ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
+        final List<Vector2D> vertices = Arrays.asList(Vector2D.Unit.PLUS_X);
+        final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // act
-        String str = hull.toString();
+        final String str = hull.toString();
 
         // assert
         GeometryTestUtils.assertContains("ConvexHull2D[vertices= [(1", str);

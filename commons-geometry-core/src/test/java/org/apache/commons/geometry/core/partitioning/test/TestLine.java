@@ -60,7 +60,7 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
         double vecX = x2 - x1;
         double vecY = y2 - y1;
 
-        double norm = norm(vecX, vecY);
+        final double norm = norm(vecX, vecY);
 
         vecX /= norm;
         vecY /= norm;
@@ -99,13 +99,13 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
 
     /** {@inheritDoc} */
     @Override
-    public double offset(TestPoint2D point) {
+    public double offset(final TestPoint2D point) {
         return originOffset - signedArea(directionX, directionY, point.getX(), point.getY());
     }
 
     /** {@inheritDoc} */
     @Override
-    public HyperplaneLocation classify(TestPoint2D point) {
+    public HyperplaneLocation classify(final TestPoint2D point) {
         final double offset = offset(point);
         final double cmp = PartitionTestUtils.PRECISION.compare(offset, 0.0);
         if (cmp == 0) {
@@ -116,7 +116,7 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean contains(TestPoint2D point) {
+    public boolean contains(final TestPoint2D point) {
         return classify(point) == HyperplaneLocation.ON;
     }
 
@@ -124,13 +124,13 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
      * @param point point to project into the line's 1D space
      * @return location of the point in the line's 1D space
      */
-    public double toSubspaceValue(TestPoint2D point) {
+    public double toSubspaceValue(final TestPoint2D point) {
         return (directionX * point.getX()) + (directionY * point.getY());
     }
 
     /** {@inheritDoc} */
     @Override
-    public TestPoint1D toSubspace(TestPoint2D point) {
+    public TestPoint1D toSubspace(final TestPoint2D point) {
         return new TestPoint1D(toSubspaceValue(point));
     }
 
@@ -140,10 +140,10 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
      */
     public TestPoint2D toSpace(final double abscissa) {
         if (Double.isInfinite(abscissa)) {
-            int dirXCmp = PartitionTestUtils.PRECISION.sign(directionX);
-            int dirYCmp = PartitionTestUtils.PRECISION.sign(directionY);
+            final int dirXCmp = PartitionTestUtils.PRECISION.sign(directionX);
+            final int dirYCmp = PartitionTestUtils.PRECISION.sign(directionY);
 
-            double x;
+            final double x;
             if (dirXCmp == 0) {
                 // vertical line
                 x = getOrigin().getX();
@@ -151,7 +151,7 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
                 x = (dirXCmp < 0 ^ abscissa < 0) ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             }
 
-            double y;
+            final double y;
             if (dirYCmp == 0) {
                 // horizontal line
                 y = getOrigin().getY();
@@ -170,7 +170,7 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
 
     /** {@inheritDoc} */
     @Override
-    public TestPoint2D toSpace(TestPoint1D point) {
+    public TestPoint2D toSpace(final TestPoint1D point) {
         return toSpace(point.getX());
     }
 
@@ -183,22 +183,22 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
     /** {@inheritDoc} */
     @Override
     public TestLine reverse() {
-        TestPoint2D pt = getOrigin();
+        final TestPoint2D pt = getOrigin();
         return new TestLine(pt.getX(), pt.getY(), pt.getX() - directionX, pt.getY() - directionY);
     }
 
     /** {@inheritDoc} */
     @Override
-    public TestLine transform(Transform<TestPoint2D> transform) {
-        TestPoint2D p1 = transform.apply(toSpace(0));
-        TestPoint2D p2 = transform.apply(toSpace(1));
+    public TestLine transform(final Transform<TestPoint2D> transform) {
+        final TestPoint2D p1 = transform.apply(toSpace(0));
+        final TestPoint2D p2 = transform.apply(toSpace(1));
 
         return new TestLine(p1, p2);
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean similarOrientation(Hyperplane<TestPoint2D> other) {
+    public boolean similarOrientation(final Hyperplane<TestPoint2D> other) {
         final TestLine otherLine = (TestLine) other;
         final double dot = (directionX * otherLine.directionX) + (directionY * otherLine.directionY);
         return dot >= 0.0;

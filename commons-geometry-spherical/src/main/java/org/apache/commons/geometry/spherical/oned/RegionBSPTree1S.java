@@ -51,7 +51,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      * @param full whether or not the region should contain the entire
      *      circle or be empty
      */
-    public RegionBSPTree1S(boolean full) {
+    public RegionBSPTree1S(final boolean full) {
         super(full);
     }
 

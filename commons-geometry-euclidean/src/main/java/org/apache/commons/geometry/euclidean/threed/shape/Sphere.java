@@ -281,9 +281,9 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
             final DoublePrecisionContext precision = sphere.getPrecision();
 
             // insert the primary split planes
-            Plane plusXPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_X, precision);
-            Plane plusYPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_Y, precision);
-            Plane plusZPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_Z, precision);
+            final Plane plusXPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_X, precision);
+            final Plane plusYPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_Y, precision);
+            final Plane plusZPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_Z, precision);
 
             tree.insert(plusXPlane.span(), RegionCutRule.INHERIT);
             tree.insert(plusYPlane.span(), RegionCutRule.INHERIT);
@@ -294,17 +294,17 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
             final double cy = center.getY();
             final double cz = center.getZ();
 
-            Vector3D maxX = Vector3D.of(cx + radius, cy, cz);
-            Vector3D minX = Vector3D.of(cx - radius, cy, cz);
+            final Vector3D maxX = Vector3D.of(cx + radius, cy, cz);
+            final Vector3D minX = Vector3D.of(cx - radius, cy, cz);
 
-            Vector3D maxY = Vector3D.of(cx, cy + radius, cz);
-            Vector3D minY = Vector3D.of(cx, cy - radius, cz);
+            final Vector3D maxY = Vector3D.of(cx, cy + radius, cz);
+            final Vector3D minY = Vector3D.of(cx, cy - radius, cz);
 
-            Vector3D maxZ = Vector3D.of(cx, cy, cz + radius);
-            Vector3D minZ = Vector3D.of(cx, cy, cz - radius);
+            final Vector3D maxZ = Vector3D.of(cx, cy, cz + radius);
+            final Vector3D minZ = Vector3D.of(cx, cy, cz - radius);
 
             // partition and subdivide the face triangles and insert them into the tree
-            RegionNode3D root = tree.getRoot();
+            final RegionNode3D root = tree.getRoot();
 
             try {
                 partitionAndInsert(root.getMinus().getMinus().getMinus(), minX, minZ, minY, 0);
@@ -337,7 +337,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
          * @param level current subdivision level
          */
         private void partitionAndInsert(final RegionNode3D node,
-                final Vector3D p1, final Vector3D p2, final Vector3D p3, int level) {
+                                        final Vector3D p1, final Vector3D p2, final Vector3D p3, final int level) {
 
             if (subdivisions - level > PARTITION_THRESHOLD) {
                 final int nextLevel = level + 1;
@@ -377,7 +377,8 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
          * @return the node representing the inside of the region after insertion of all triangles
          */
         private RegionNode3D insertSubdividedTriangles(final RegionNode3D node,
-                final Vector3D p1, final Vector3D p2, final Vector3D p3, int level) {
+                                                       final Vector3D p1, final Vector3D p2, final Vector3D p3,
+                                                       final int level) {
 
             if (level >= subdivisions) {
                 // base case
@@ -460,14 +461,14 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
             final double cy = center.getY();
             final double cz = center.getZ();
 
-            Vector3D maxX = Vector3D.of(cx + radius, cy, cz);
-            Vector3D minX = Vector3D.of(cx - radius, cy, cz);
+            final Vector3D maxX = Vector3D.of(cx + radius, cy, cz);
+            final Vector3D minX = Vector3D.of(cx - radius, cy, cz);
 
-            Vector3D maxY = Vector3D.of(cx, cy + radius, cz);
-            Vector3D minY = Vector3D.of(cx, cy - radius, cz);
+            final Vector3D maxY = Vector3D.of(cx, cy + radius, cz);
+            final Vector3D minY = Vector3D.of(cx, cy - radius, cz);
 
-            Vector3D maxZ = Vector3D.of(cx, cy, cz + radius);
-            Vector3D minZ = Vector3D.of(cx, cy, cz - radius);
+            final Vector3D maxZ = Vector3D.of(cx, cy, cz + radius);
+            final Vector3D minZ = Vector3D.of(cx, cy, cz - radius);
 
             addSubdivided(minX, minZ, minY, 0);
             addSubdivided(minX, minY, maxZ, 0);
@@ -490,7 +491,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
          * @param p3 third point
          * @param level recursion level; counts up
          */
-        private void addSubdivided(final Vector3D p1, final Vector3D p2, final Vector3D p3, int level) {
+        private void addSubdivided(final Vector3D p1, final Vector3D p2, final Vector3D p3, final int level) {
             if (level >= subdivisions) {
                 // base case
                 builder.addFaceUsingVertices(p1, p2, p3);

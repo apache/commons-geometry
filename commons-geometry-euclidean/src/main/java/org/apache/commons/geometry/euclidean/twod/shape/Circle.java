@@ -266,7 +266,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
          * @param idx vertex point index
          * @return the vertex point at the given index
          */
-        private Vector2D pointAt(int idx) {
+        private Vector2D pointAt(final int idx) {
             return PolarCoordinates.toCartesian(circle.getRadius(), idx * angleDelta)
                     .add(circle.getCenter());
         }

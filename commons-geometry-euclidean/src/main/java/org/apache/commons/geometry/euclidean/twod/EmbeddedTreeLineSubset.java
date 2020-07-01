@@ -56,7 +56,7 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
      * @param full if true, the subset will cover the entire space;
      *      otherwise it will be empty
      */
-    public EmbeddedTreeLineSubset(final Line line, boolean full) {
+    public EmbeddedTreeLineSubset(final Line line, final boolean full) {
         this(line, new RegionBSPTree1D(full));
     }
 

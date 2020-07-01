@@ -31,15 +31,15 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_singleNodeTreeWithSingleNodeTree() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().setAttribute("A");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().setAttribute("B");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -68,18 +68,18 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_singleNodeTreeWithMultiNodeTree() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().setAttribute("B");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -108,18 +108,18 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_multiNodeTreeWithSingleNodeTree() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().setAttribute("A");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -148,21 +148,21 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_cutsIntersect() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(TestLine.Y_AXIS)
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -191,21 +191,21 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_cutsParallel() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -234,21 +234,21 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_cutsAntiParallel() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(new TestLine(new TestPoint2D(1, 0), TestPoint2D.ZERO))
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -277,21 +277,21 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_cutOnPlusSide_parallel() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(new TestLine(new TestPoint2D(0, -2), new TestPoint2D(1, -2)))
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -323,21 +323,21 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_cutOnPlusSide_antiParallel() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(new TestLine(new TestPoint2D(1, -2), new TestPoint2D(0, -2)))
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -369,21 +369,21 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_cutOnMinusSide_parallel() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(new TestLine(new TestPoint2D(0, 2), new TestPoint2D(1, 2)))
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -415,21 +415,21 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_cutOnMinusSide_antiParallel() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(new TestLine(new TestPoint2D(1, 2), new TestPoint2D(0, 2)))
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, c);
@@ -461,19 +461,19 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_outputIsFirstInput() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(TestLine.Y_AXIS)
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, a);
@@ -497,19 +497,19 @@ public class AbstractBSPTreeMergeOperatorTest {
     @Test
     public void testMerge_outputIsSecondInput() {
         // arrange
-        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
             .getPlus().attr("A")
             .getParent()
             .getMinus().attr("a");
 
-        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        final AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
         b.getRoot().cut(TestLine.Y_AXIS)
             .getPlus().attr("B")
             .getParent()
             .getMinus().attr("b");
 
-        TestMergeOperator mergeOp = new TestMergeOperator();
+        final TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
         mergeOp.apply(a, b, b);
@@ -537,22 +537,22 @@ public class AbstractBSPTreeMergeOperatorTest {
          * @param input2
          * @param output
          */
-        public void apply(AttributeBSPTree<TestPoint2D, String> input1, AttributeBSPTree<TestPoint2D, String> input2,
-                AttributeBSPTree<TestPoint2D, String> output) {
+        public void apply(final AttributeBSPTree<TestPoint2D, String> input1, final AttributeBSPTree<TestPoint2D, String> input2,
+                          final AttributeBSPTree<TestPoint2D, String> output) {
             performMerge(input1, input2, output);
         }
 
         /** {@inheritDoc} */
         @Override
-        protected AttributeNode<TestPoint2D, String> mergeLeaf(AttributeNode<TestPoint2D, String> node1,
-                AttributeNode<TestPoint2D, String> node2) {
+        protected AttributeNode<TestPoint2D, String> mergeLeaf(final AttributeNode<TestPoint2D, String> node1,
+                                                               final AttributeNode<TestPoint2D, String> node2) {
 
             final AttributeNode<TestPoint2D, String> leaf = node1.isLeaf() ? node1 : node2;
             final AttributeNode<TestPoint2D, String> subtree = node1.isInternal() ? node1 : node2;
 
-            String attr = leaf.getAttribute();
+            final String attr = leaf.getAttribute();
 
-            AttributeNode<TestPoint2D, String> output = outputSubtree(subtree);
+            final AttributeNode<TestPoint2D, String> output = outputSubtree(subtree);
             StreamSupport.stream(output.nodes().spliterator(), false)
                 .filter(BSPTree.Node::isLeaf)
                 .forEach(n -> n.setAttribute(attr + n.getAttribute()));

@@ -29,7 +29,7 @@ import org.junit.Test;
 public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
 
     @Override
-    protected ConvexHullGenerator2D createConvexHullGenerator(boolean includeCollinearPoints) {
+    protected ConvexHullGenerator2D createConvexHullGenerator(final boolean includeCollinearPoints) {
         return new MonotoneChain(includeCollinearPoints, TEST_PRECISION);
     }
 

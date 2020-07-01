@@ -42,10 +42,10 @@ public class LinecastPoint2DTest {
     @Test
     public void testProperties() {
         // arrange
-        Vector2D pt = Vector2D.of(1, 1);
-        Vector2D normal = Vector2D.Unit.PLUS_X;
+        final Vector2D pt = Vector2D.of(1, 1);
+        final Vector2D normal = Vector2D.Unit.PLUS_X;
 
-        LinecastPoint2D it = new LinecastPoint2D(pt, normal, X_AXIS);
+        final LinecastPoint2D it = new LinecastPoint2D(pt, normal, X_AXIS);
 
         // act
         Assert.assertSame(pt, it.getPoint());
@@ -57,12 +57,12 @@ public class LinecastPoint2DTest {
     @Test
     public void testAbscissaOrder() {
         // arrange
-        LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
 
-        LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, X_AXIS);
-        LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(-3, 3), Vector2D.Unit.PLUS_Y, X_AXIS);
-        LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 4), Vector2D.Unit.PLUS_Y, X_AXIS);
-        LinecastPoint2D e = new LinecastPoint2D(Vector2D.of(1, 4), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(-3, 3), Vector2D.Unit.PLUS_Y, X_AXIS);
+        final LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 4), Vector2D.Unit.PLUS_Y, X_AXIS);
+        final LinecastPoint2D e = new LinecastPoint2D(Vector2D.of(1, 4), Vector2D.Unit.PLUS_X, X_AXIS);
 
         // act/assert
         Assert.assertEquals(-1, LinecastPoint2D.ABSCISSA_ORDER.compare(a, b));
@@ -74,14 +74,14 @@ public class LinecastPoint2DTest {
     @Test
     public void testHashCode() {
         // arrange
-        LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
-        LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, X_AXIS);
-        LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y, X_AXIS);
-        LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, Y_AXIS);
-        LinecastPoint2D e = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y, X_AXIS);
+        final LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, Y_AXIS);
+        final LinecastPoint2D e = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
 
         // act
-        int hash = a.hashCode();
+        final int hash = a.hashCode();
 
         // assert
         Assert.assertEquals(hash, a.hashCode());
@@ -96,11 +96,11 @@ public class LinecastPoint2DTest {
     @Test
     public void testEquals() {
         // arrange
-        LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
-        LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, X_AXIS);
-        LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y, X_AXIS);
-        LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, Y_AXIS);
-        LinecastPoint2D e = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y, X_AXIS);
+        final LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, Y_AXIS);
+        final LinecastPoint2D e = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
 
         // act/assert
         Assert.assertEquals(a, a);
@@ -119,18 +119,18 @@ public class LinecastPoint2DTest {
     @Test
     public void testEq() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
-        Line otherLine = Lines.fromPointAndDirection(Vector2D.of(1e-4, 1e-4), Vector2D.Unit.PLUS_X, precision);
+        final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
+        final Line otherLine = Lines.fromPointAndDirection(Vector2D.of(1e-4, 1e-4), Vector2D.Unit.PLUS_X, precision);
 
-        LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, line);
+        final LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, line);
 
-        LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, line);
-        LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y, line);
+        final LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, line);
+        final LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y, line);
 
-        LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, line);
-        LinecastPoint2D e = new LinecastPoint2D(
+        final LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, line);
+        final LinecastPoint2D e = new LinecastPoint2D(
                 Vector2D.of(1 + 1e-3, 1 + 1e-3), Vector2D.Unit.from(1 + 1e-3, 1e-3), otherLine);
 
         // act/assert
@@ -146,10 +146,10 @@ public class LinecastPoint2DTest {
     @Test
     public void testToString() {
         // arrange
-        LinecastPoint2D it = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
+        final LinecastPoint2D it = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
 
         // act
-        String str = it.toString();
+        final String str = it.toString();
 
         // assert
         GeometryTestUtils.assertContains("LinecastPoint2D[point= (1.0, 1.0), normal= (1.0, 0.0)", str);
@@ -158,7 +158,7 @@ public class LinecastPoint2DTest {
     @Test
     public void testSortAndFilter_empty() {
         // arrange
-        List<LinecastPoint2D> pts = new ArrayList<>();
+        final List<LinecastPoint2D> pts = new ArrayList<>();
 
         // act
         LinecastPoint2D.sortAndFilter(pts);
@@ -170,24 +170,24 @@ public class LinecastPoint2DTest {
     @Test
     public void testSortAndFilter() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
-        Line eqLine = Lines.fromPointAndDirection(Vector2D.of(1e-3, 1e-3), Vector2D.Unit.PLUS_X, precision);
-        Line diffLine = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, precision);
+        final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
+        final Line eqLine = Lines.fromPointAndDirection(Vector2D.of(1e-3, 1e-3), Vector2D.Unit.PLUS_X, precision);
+        final Line diffLine = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, precision);
 
-        LinecastPoint2D a = new LinecastPoint2D(Vector2D.ZERO, Vector2D.Unit.MINUS_Y, line);
-        LinecastPoint2D aDup1 = new LinecastPoint2D(Vector2D.of(1e-3, 0), Vector2D.Unit.MINUS_Y, line);
-        LinecastPoint2D aDup2 = new LinecastPoint2D(Vector2D.of(1e-3, 1e-3), Vector2D.of(1e-3, -1), eqLine);
+        final LinecastPoint2D a = new LinecastPoint2D(Vector2D.ZERO, Vector2D.Unit.MINUS_Y, line);
+        final LinecastPoint2D aDup1 = new LinecastPoint2D(Vector2D.of(1e-3, 0), Vector2D.Unit.MINUS_Y, line);
+        final LinecastPoint2D aDup2 = new LinecastPoint2D(Vector2D.of(1e-3, 1e-3), Vector2D.of(1e-3, -1), eqLine);
 
-        LinecastPoint2D b = new LinecastPoint2D(Vector2D.ZERO, Vector2D.Unit.MINUS_X, diffLine);
-        LinecastPoint2D bDup = new LinecastPoint2D(Vector2D.of(-1e-3, 1e-4), Vector2D.Unit.MINUS_X, diffLine);
+        final LinecastPoint2D b = new LinecastPoint2D(Vector2D.ZERO, Vector2D.Unit.MINUS_X, diffLine);
+        final LinecastPoint2D bDup = new LinecastPoint2D(Vector2D.of(-1e-3, 1e-4), Vector2D.Unit.MINUS_X, diffLine);
 
-        LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(0.5, 0), Vector2D.Unit.MINUS_Y, line);
+        final LinecastPoint2D c = new LinecastPoint2D(Vector2D.of(0.5, 0), Vector2D.Unit.MINUS_Y, line);
 
-        LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 0), Vector2D.Unit.MINUS_Y, line);
+        final LinecastPoint2D d = new LinecastPoint2D(Vector2D.of(1, 0), Vector2D.Unit.MINUS_Y, line);
 
-        List<LinecastPoint2D> list = new ArrayList<>(Arrays.asList(d, aDup1, bDup, b, c, a, aDup2));
+        final List<LinecastPoint2D> list = new ArrayList<>(Arrays.asList(d, aDup1, bDup, b, c, a, aDup2));
 
         // act
         LinecastPoint2D.sortAndFilter(list);

@@ -58,13 +58,13 @@ public final class TestRegionBSPTree extends AbstractRegionBSPTree<TestPoint2D, 
 
     /** {@inheritDoc} */
     @Override
-    public boolean contains(TestPoint2D pt) {
+    public boolean contains(final TestPoint2D pt) {
         return classify(pt) != RegionLocation.OUTSIDE;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Split<TestRegionBSPTree> split(Hyperplane<TestPoint2D> splitter) {
+    public Split<TestRegionBSPTree> split(final Hyperplane<TestPoint2D> splitter) {
         return split(splitter, new TestRegionBSPTree(), new TestRegionBSPTree());
     }
 
@@ -73,7 +73,7 @@ public final class TestRegionBSPTree extends AbstractRegionBSPTree<TestPoint2D, 
     public static final class TestRegionNode
         extends AbstractRegionBSPTree.AbstractRegionNode<TestPoint2D, TestRegionNode> {
 
-        protected TestRegionNode(AbstractBSPTree<TestPoint2D, TestRegionNode> tree) {
+        protected TestRegionNode(final AbstractBSPTree<TestPoint2D, TestRegionNode> tree) {
             super(tree);
         }
 

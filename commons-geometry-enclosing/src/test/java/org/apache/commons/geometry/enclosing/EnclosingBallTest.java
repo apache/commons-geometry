@@ -34,39 +34,39 @@ public class EnclosingBallTest {
     @Test
     public void testProperties_emptySupport() {
         // arrange
-        Vector2D center = Vector2D.of(1.2, 3.4);
-        double radius = 10;
-        List<Vector2D> support = new ArrayList<>();
+        final Vector2D center = Vector2D.of(1.2, 3.4);
+        final double radius = 10;
+        final List<Vector2D> support = new ArrayList<>();
 
         // act
-        EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, support);
+        final EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, support);
 
         // assert
         Assert.assertSame(center, ball.getCenter());
         Assert.assertEquals(radius, ball.getRadius(), TEST_EPS);
         Assert.assertEquals(0, ball.getSupportSize());
 
-        List<Vector2D> resultSupport = ball.getSupport();
+        final List<Vector2D> resultSupport = ball.getSupport();
         Assert.assertEquals(0, resultSupport.size());
     }
 
     @Test
     public void testProperties_nonEmptySupport() {
         // arrange
-        Vector2D center = Vector2D.of(1.2, 3.4);
-        double radius = 10;
-        List<Vector2D> support = new ArrayList<>(Arrays.asList(
+        final Vector2D center = Vector2D.of(1.2, 3.4);
+        final double radius = 10;
+        final List<Vector2D> support = new ArrayList<>(Arrays.asList(
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y));
 
         // act
-        EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, support);
+        final EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, support);
 
         // assert
         Assert.assertSame(center, ball.getCenter());
         Assert.assertEquals(radius, ball.getRadius(), TEST_EPS);
         Assert.assertEquals(3, ball.getSupportSize());
 
-        List<Vector2D> resultSupport = ball.getSupport();
+        final List<Vector2D> resultSupport = ball.getSupport();
         Assert.assertNotSame(support, resultSupport);
         Assert.assertEquals(support, resultSupport);
     }
@@ -74,9 +74,9 @@ public class EnclosingBallTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testGetSupport_listCannotBeModified() {
         // arrange
-        List<Vector2D> support = new ArrayList<>(Arrays.asList(Vector2D.ZERO));
+        final List<Vector2D> support = new ArrayList<>(Arrays.asList(Vector2D.ZERO));
 
-        EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.of(1, 1), 4, support);
+        final EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.of(1, 1), 4, support);
 
         // act/assert
         ball.getSupport().add(Vector2D.Unit.PLUS_X);
@@ -85,9 +85,9 @@ public class EnclosingBallTest {
     @Test
     public void testContains_strict() {
         // arrange
-        Vector2D center = Vector2D.of(1, 2);
-        double radius = 2;
-        EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, Collections.emptyList());
+        final Vector2D center = Vector2D.of(1, 2);
+        final double radius = 2;
+        final EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, Collections.emptyList());
 
         // act/assert
         Assert.assertTrue(ball.contains(center));
@@ -110,12 +110,12 @@ public class EnclosingBallTest {
     @Test
     public void testContains_precision() {
         // arrange
-        DoublePrecisionContext lowerPrecision = new EpsilonDoublePrecisionContext(1e-4);
-        DoublePrecisionContext higherPrecision = new EpsilonDoublePrecisionContext(1e-10);
+        final DoublePrecisionContext lowerPrecision = new EpsilonDoublePrecisionContext(1e-4);
+        final DoublePrecisionContext higherPrecision = new EpsilonDoublePrecisionContext(1e-10);
 
-        Vector2D center = Vector2D.of(1, 2);
-        double radius = 2;
-        EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, Collections.emptyList());
+        final Vector2D center = Vector2D.of(1, 2);
+        final double radius = 2;
+        final EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, Collections.emptyList());
 
         // act/assert
         Assert.assertTrue(ball.contains(center, higherPrecision));
@@ -141,10 +141,10 @@ public class EnclosingBallTest {
     @Test
     public void testToString() {
         // arrange
-        EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.ZERO, 1, Arrays.asList(Vector2D.Unit.PLUS_X));
+        final EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.ZERO, 1, Arrays.asList(Vector2D.Unit.PLUS_X));
 
         // act
-        String str = ball.toString();
+        final String str = ball.toString();
 
         // assert
         Assert.assertTrue(str.startsWith("EnclosingBall[center= (0"));

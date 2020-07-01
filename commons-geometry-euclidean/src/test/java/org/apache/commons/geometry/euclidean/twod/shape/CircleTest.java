@@ -53,10 +53,10 @@ public class CircleTest {
     @Test
     public void testFrom() {
         // arrange
-        Vector2D center = Vector2D.of(1, 2);
+        final Vector2D center = Vector2D.of(1, 2);
 
         // act
-        Circle c = Circle.from(center, 3, TEST_PRECISION);
+        final Circle c = Circle.from(center, 3, TEST_PRECISION);
 
         // act/assert
         Assert.assertFalse(c.isFull());
@@ -82,7 +82,7 @@ public class CircleTest {
     @Test
     public void testFrom_illegalRadius() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> Circle.from(Vector2D.ZERO, -1, TEST_PRECISION),
@@ -101,8 +101,8 @@ public class CircleTest {
     @Test
     public void testGeometricProperties() {
         // arrange
-        double r = 2;
-        Circle c = Circle.from(Vector2D.of(1, 2), r, TEST_PRECISION);
+        final double r = 2;
+        final Circle c = Circle.from(Vector2D.of(1, 2), r, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(2 * Math.PI * r, c.getBoundarySize(), TEST_EPS);
@@ -112,7 +112,7 @@ public class CircleTest {
     @Test
     public void testClassify() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(1, 2), 1, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(1, 2), 1, TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertRegionLocation(c, RegionLocation.INSIDE,
@@ -137,7 +137,7 @@ public class CircleTest {
     @Test
     public void testContains() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(1, 2), 1, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(1, 2), 1, TEST_PRECISION);
 
         // act/assert
         checkContains(c, true,
@@ -162,15 +162,15 @@ public class CircleTest {
     @Test
     public void testProject() {
         // arrange
-        Vector2D center = Vector2D.of(1.5, 2.5);
-        double radius = 3;
-        Circle c = Circle.from(center, radius, TEST_PRECISION);
+        final Vector2D center = Vector2D.of(1.5, 2.5);
+        final double radius = 3;
+        final Circle c = Circle.from(center, radius, TEST_PRECISION);
 
         EuclideanTestUtils.permute(-4, 4, 1, (x, y) -> {
-            Vector2D pt = Vector2D.of(x, y);
+            final Vector2D pt = Vector2D.of(x, y);
 
             // act
-            Vector2D projection = c.project(pt);
+            final Vector2D projection = c.project(pt);
 
             // assert
             Assert.assertEquals(radius, center.distance(projection), TEST_EPS);
@@ -182,10 +182,10 @@ public class CircleTest {
     @Test
     public void testProject_argumentEqualsCenter() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(1, 2), 2, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(1, 2), 2, TEST_PRECISION);
 
         // act
-        Vector2D projection = c.project(Vector2D.of(1, 2));
+        final Vector2D projection = c.project(Vector2D.of(1, 2));
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 2), projection, TEST_EPS);
@@ -194,8 +194,8 @@ public class CircleTest {
     @Test
     public void testIntersections() {
         // --- arrange
-        Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
-        double sqrt3 = Math.sqrt(3);
+        final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
+        final double sqrt3 = Math.sqrt(3);
 
         // --- act/assert
         // descending horizontal lines
@@ -227,7 +227,7 @@ public class CircleTest {
         checkIntersections(c, Lines.fromPoints(Vector2D.of(5, -2), Vector2D.of(5, 5), TEST_PRECISION));
 
         // diagonal from origin
-        Vector2D center = c.getCenter();
+        final Vector2D center = c.getCenter();
         checkIntersections(c, Lines.fromPoints(Vector2D.ZERO, c.getCenter(), TEST_PRECISION),
                 center.withNorm(center.norm() - c.getRadius()), center.withNorm(center.norm() + c.getRadius()));
     }
@@ -235,8 +235,8 @@ public class CircleTest {
     @Test
     public void testLinecast() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
-        double sqrt3 = Math.sqrt(3);
+        final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
+        final double sqrt3 = Math.sqrt(3);
 
         // act/assert
         checkLinecast(c, Lines.segmentFromPoints(Vector2D.of(-1, 0), Vector2D.of(5, 0), TEST_PRECISION),
@@ -249,8 +249,8 @@ public class CircleTest {
     @Test
     public void testLinecast_intersectionsNotInSegment() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
-        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
+        final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
         // act/assert
         checkLinecast(c, line.segment(-1, 0));
@@ -262,11 +262,11 @@ public class CircleTest {
     @Test
     public void testLinecast_segmentPointOnBoundary() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
-        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
-        double sqrt3 = Math.sqrt(3);
-        double start = 2 - sqrt3;
-        double end = 2 + sqrt3;
+        final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
+        final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        final double sqrt3 = Math.sqrt(3);
+        final double start = 2 - sqrt3;
+        final double end = 2 + sqrt3;
 
         // act/assert
         checkLinecast(c, line.segment(start, 2), Vector2D.of(start, 0));
@@ -277,25 +277,25 @@ public class CircleTest {
     @Test
     public void testToTree_threeSegments() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
 
         // act
-        RegionBSPTree2D tree = c.toTree(3);
+        final RegionBSPTree2D tree = c.toTree(3);
 
         // assert
         checkBasicApproximationProperties(c, tree);
 
-        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
+        final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_DIRECTION_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
 
-        double inc = PlaneAngleRadians.TWO_PI / 3.0;
-        Vector2D p0 = Vector2D.of(4, 1);
-        Vector2D p1 = Vector2D.of(
+        final double inc = PlaneAngleRadians.TWO_PI / 3.0;
+        final Vector2D p0 = Vector2D.of(4, 1);
+        final Vector2D p1 = Vector2D.of(
                 (2 * Math.cos(inc)) + 2,
                 (2 * Math.sin(inc)) + 1);
-        Vector2D p2 = Vector2D.of(
+        final Vector2D p2 = Vector2D.of(
                 (2 * Math.cos(2 * inc)) + 2,
                 (2 * Math.sin(2 * inc)) + 1);
 
@@ -307,23 +307,23 @@ public class CircleTest {
     @Test
     public void testToTree_fourSegments() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
 
         // act
-        RegionBSPTree2D tree = c.toTree(4);
+        final RegionBSPTree2D tree = c.toTree(4);
 
         // assert
         checkBasicApproximationProperties(c, tree);
 
-        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
+        final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_DIRECTION_COMPARATOR);
 
         Assert.assertEquals(4, segments.size());
 
-        Vector2D p0 = Vector2D.of(4, 1);
-        Vector2D p1 = Vector2D.of(2, 3);
-        Vector2D p2 = Vector2D.of(0, 1);
-        Vector2D p3 = Vector2D.of(2, -1);
+        final Vector2D p0 = Vector2D.of(4, 1);
+        final Vector2D p1 = Vector2D.of(2, 3);
+        final Vector2D p2 = Vector2D.of(0, 1);
+        final Vector2D p3 = Vector2D.of(2, -1);
 
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p0, p1);
@@ -334,10 +334,10 @@ public class CircleTest {
     @Test
     public void testToTree_multipleApproximationSizes() {
         // -- arrange
-        Circle c = Circle.from(Vector2D.of(-3, 5), 10, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(-3, 5), 10, TEST_PRECISION);
 
-        int min = 5;
-        int max = 100;
+        final int min = 5;
+        final int max = 100;
 
         RegionBSPTree2D tree;
 
@@ -362,15 +362,15 @@ public class CircleTest {
     @Test
     public void testToTree_closeApproximation() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(-2, 0), 1, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(-2, 0), 1, TEST_PRECISION);
 
         // act
-        RegionBSPTree2D tree = c.toTree(100);
+        final RegionBSPTree2D tree = c.toTree(100);
 
         // assert
         checkBasicApproximationProperties(c, tree);
 
-        double eps = 5e-3;
+        final double eps = 5e-3;
         Assert.assertEquals(c.getSize(), tree.getSize(), eps);
         Assert.assertEquals(c.getBoundarySize(), tree.getBoundarySize(), eps);
         EuclideanTestUtils.assertCoordinatesEqual(c.getCentroid(), tree.getCentroid(), eps);
@@ -379,8 +379,8 @@ public class CircleTest {
     @Test
     public void testToTree_invalidSegmentCount() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
-        String baseMsg = "Circle approximation segment number must be greater than or equal to 3; was ";
+        final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
+        final String baseMsg = "Circle approximation segment number must be greater than or equal to 3; was ";
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -394,16 +394,16 @@ public class CircleTest {
     @Test
     public void testHashCode() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Circle a = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
-        Circle b = Circle.from(Vector2D.of(1, 1), 3, TEST_PRECISION);
-        Circle c = Circle.from(Vector2D.of(1, 2), 4, TEST_PRECISION);
-        Circle d = Circle.from(Vector2D.of(1, 2), 3, precision);
-        Circle e = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
+        final Circle a = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
+        final Circle b = Circle.from(Vector2D.of(1, 1), 3, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(1, 2), 4, TEST_PRECISION);
+        final Circle d = Circle.from(Vector2D.of(1, 2), 3, precision);
+        final Circle e = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
 
         // act
-        int hash = a.hashCode();
+        final int hash = a.hashCode();
 
         // act/assert
         Assert.assertEquals(hash, a.hashCode());
@@ -418,13 +418,13 @@ public class CircleTest {
     @Test
     public void testEquals() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Circle a = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
-        Circle b = Circle.from(Vector2D.of(1, 1), 3, TEST_PRECISION);
-        Circle c = Circle.from(Vector2D.of(1, 2), 4, TEST_PRECISION);
-        Circle d = Circle.from(Vector2D.of(1, 2), 3, precision);
-        Circle e = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
+        final Circle a = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
+        final Circle b = Circle.from(Vector2D.of(1, 1), 3, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(1, 2), 4, TEST_PRECISION);
+        final Circle d = Circle.from(Vector2D.of(1, 2), 3, precision);
+        final Circle e = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(a, a);
@@ -442,33 +442,33 @@ public class CircleTest {
     @Test
     public void testToString() {
         // arrange
-        Circle c = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
+        final Circle c = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
 
         // act
-        String str = c.toString();
+        final String str = c.toString();
 
         // assert
         Assert.assertEquals("Circle[center= (1.0, 2.0), radius= 3.0]", str);
     }
 
-    private static void checkContains(Circle circle, boolean contains, Vector2D... pts) {
-        for (Vector2D pt : pts) {
+    private static void checkContains(final Circle circle, final boolean contains, final Vector2D... pts) {
+        for (final Vector2D pt : pts) {
             Assert.assertEquals("Expected circle to " + (contains ? "" : "not") + "contain point " + pt,
                     contains, circle.contains(pt));
         }
     }
 
-    private static void checkIntersections(Circle circle, Line line, Vector2D... expectedPts) {
+    private static void checkIntersections(final Circle circle, final Line line, final Vector2D... expectedPts) {
         // --- act
         // compute the intersections forward and reverse
-        List<Vector2D> actualPtsForward = circle.intersections(line);
-        List<Vector2D> actualPtsReverse = circle.intersections(line.reverse());
+        final List<Vector2D> actualPtsForward = circle.intersections(line);
+        final List<Vector2D> actualPtsReverse = circle.intersections(line.reverse());
 
-        Vector2D actualFirstForward = circle.firstIntersection(line);
-        Vector2D actualFirstReverse = circle.firstIntersection(line.reverse());
+        final Vector2D actualFirstForward = circle.firstIntersection(line);
+        final Vector2D actualFirstReverse = circle.firstIntersection(line.reverse());
 
         // --- assert
-        int len = expectedPts.length;
+        final int len = expectedPts.length;
 
         // check the lists
         Assert.assertEquals(len, actualPtsForward.size());
@@ -495,9 +495,9 @@ public class CircleTest {
         }
     }
 
-    private static void checkLinecast(Circle c, LineConvexSubset segment, Vector2D... expectedPts) {
+    private static void checkLinecast(final Circle c, final LineConvexSubset segment, final Vector2D... expectedPts) {
         // check linecast
-        List<LinecastPoint2D> results = c.linecast(segment);
+        final List<LinecastPoint2D> results = c.linecast(segment);
         Assert.assertEquals(expectedPts.length, results.size());
 
         LinecastPoint2D actual;
@@ -512,7 +512,7 @@ public class CircleTest {
         }
 
         // check linecastFirst
-        LinecastPoint2D firstResult = c.linecastFirst(segment);
+        final LinecastPoint2D firstResult = c.linecastFirst(segment);
         if (expectedPts.length > 0) {
             Assert.assertEquals(results.get(0), firstResult);
         } else {
@@ -523,18 +523,18 @@ public class CircleTest {
     /**
      * Check a number of standard properties for bsp trees generated as circle approximations.
      */
-    private static void checkBasicApproximationProperties(Circle c, RegionBSPTree2D tree) {
+    private static void checkBasicApproximationProperties(final Circle c, final RegionBSPTree2D tree) {
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
 
         // all vertices must be inside the circle or on the boundary
-        List<LinePath> paths = tree.getBoundaryPaths();
+        final List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        LinePath path = paths.get(0);
+        final LinePath path = paths.get(0);
         Assert.assertTrue(path.isFinite());
 
-        for (Vector2D vertex : path.getVertexSequence()) {
+        for (final Vector2D vertex : path.getVertexSequence()) {
             Assert.assertTrue("Expected vertex to be contained in circle: " + vertex, c.contains(vertex));
         }
 
@@ -545,7 +545,7 @@ public class CircleTest {
         Assert.assertTrue("Expected approximation area to be less than circle", tree.getSize() < c.getSize());
     }
 
-    private static void assertFiniteSegment(LineConvexSubset segment, Vector2D start, Vector2D end) {
+    private static void assertFiniteSegment(final LineConvexSubset segment, final Vector2D start, final Vector2D end) {
         Assert.assertFalse(segment.isInfinite());
         Assert.assertTrue(segment.isFinite());
 

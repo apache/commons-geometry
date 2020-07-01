@@ -24,11 +24,11 @@ public class SplitTest {
     @Test
     public void testProperties() {
         // arrange
-        Object a = new Object();
-        Object b = new Object();
+        final Object a = new Object();
+        final Object b = new Object();
 
         // act
-        Split<Object> split = new Split<>(a, b);
+        final Split<Object> split = new Split<>(a, b);
 
         // assert
         Assert.assertSame(a, split.getMinus());
@@ -38,8 +38,8 @@ public class SplitTest {
     @Test
     public void testGetLocation() {
         // arrange
-        Object a = new Object();
-        Object b = new Object();
+        final Object a = new Object();
+        final Object b = new Object();
 
         // act/assert
         Assert.assertEquals(SplitLocation.NEITHER, new Split<Object>(null, null).getLocation());
@@ -51,10 +51,10 @@ public class SplitTest {
     @Test
     public void testToString() {
         // arrange
-        Split<String> split = new Split<>("a", "b");
+        final Split<String> split = new Split<>("a", "b");
 
         // act
-        String str = split.toString();
+        final String str = split.toString();
 
         // assert
         Assert.assertEquals("Split[location= BOTH, minus= a, plus= b]", str);

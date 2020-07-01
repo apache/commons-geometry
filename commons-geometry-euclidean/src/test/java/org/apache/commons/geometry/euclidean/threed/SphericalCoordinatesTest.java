@@ -80,7 +80,7 @@ public class SphericalCoordinatesTest {
         checkOfWithAngleWrapAround(1, PlaneAngleRadians.PI, PlaneAngleRadians.PI);
     }
 
-    private void checkOfWithAngleWrapAround(double radius, double azimuth, double polar) {
+    private void checkOfWithAngleWrapAround(final double radius, final double azimuth, final double polar) {
         for (int i = -4; i <= 4; ++i) {
             checkSpherical(
                     SphericalCoordinates.of(radius, azimuth + (i * PlaneAngleRadians.TWO_PI), polar + (-i * PlaneAngleRadians.TWO_PI)),
@@ -115,7 +115,7 @@ public class SphericalCoordinatesTest {
     @Test
     public void testFromCartesian_coordinates() {
         // arrange
-        double sqrt3 = Math.sqrt(3);
+        final double sqrt3 = Math.sqrt(3);
 
         // act/assert
         checkSpherical(SphericalCoordinates.fromCartesian(0, 0, 0), 0, 0, 0);
@@ -136,7 +136,7 @@ public class SphericalCoordinatesTest {
     @Test
     public void testFromCartesian_vector() {
         // arrange
-        double sqrt3 = Math.sqrt(3);
+        final double sqrt3 = Math.sqrt(3);
 
         // act/assert
         checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(0, 0, 0)), 0, 0, 0);
@@ -157,7 +157,7 @@ public class SphericalCoordinatesTest {
     @Test
     public void testToVector() {
         // arrange
-        double sqrt3 = Math.sqrt(3);
+        final double sqrt3 = Math.sqrt(3);
 
         // act/assert
         checkVector(SphericalCoordinates.of(0, 0, 0).toVector(), 0, 0, 0);
@@ -178,7 +178,7 @@ public class SphericalCoordinatesTest {
     @Test
     public void testToCartesian_static() {
         // arrange
-        double sqrt3 = Math.sqrt(3);
+        final double sqrt3 = Math.sqrt(3);
 
         // act/assert
         checkVector(SphericalCoordinates.toCartesian(0, 0, 0), 0, 0, 0);
@@ -199,7 +199,7 @@ public class SphericalCoordinatesTest {
     @Test
     public void testGetDimension() {
         // arrange
-        SphericalCoordinates s = SphericalCoordinates.of(0, 0, 0);
+        final SphericalCoordinates s = SphericalCoordinates.of(0, 0, 0);
 
         // act/assert
         Assert.assertEquals(3, s.getDimension());
@@ -258,12 +258,12 @@ public class SphericalCoordinatesTest {
     @Test
     public void testHashCode() {
         // arrange
-        SphericalCoordinates a = SphericalCoordinates.of(1, 2, 3);
-        SphericalCoordinates b = SphericalCoordinates.of(10, 2, 3);
-        SphericalCoordinates c = SphericalCoordinates.of(1, 20, 3);
-        SphericalCoordinates d = SphericalCoordinates.of(1, 2, 30);
+        final SphericalCoordinates a = SphericalCoordinates.of(1, 2, 3);
+        final SphericalCoordinates b = SphericalCoordinates.of(10, 2, 3);
+        final SphericalCoordinates c = SphericalCoordinates.of(1, 20, 3);
+        final SphericalCoordinates d = SphericalCoordinates.of(1, 2, 30);
 
-        SphericalCoordinates e = SphericalCoordinates.of(1, 2, 3);
+        final SphericalCoordinates e = SphericalCoordinates.of(1, 2, 3);
 
         // act/assert
         Assert.assertEquals(a.hashCode(), a.hashCode());
@@ -277,9 +277,9 @@ public class SphericalCoordinatesTest {
     @Test
     public void testHashCode_NaNInstancesHaveSameHashCode() {
         // arrange
-        SphericalCoordinates a = SphericalCoordinates.of(1, 2, Double.NaN);
-        SphericalCoordinates b = SphericalCoordinates.of(1, Double.NaN, 3);
-        SphericalCoordinates c = SphericalCoordinates.of(Double.NaN, 2, 3);
+        final SphericalCoordinates a = SphericalCoordinates.of(1, 2, Double.NaN);
+        final SphericalCoordinates b = SphericalCoordinates.of(1, Double.NaN, 3);
+        final SphericalCoordinates c = SphericalCoordinates.of(Double.NaN, 2, 3);
 
         // act/assert
         Assert.assertEquals(a.hashCode(), b.hashCode());
@@ -289,12 +289,12 @@ public class SphericalCoordinatesTest {
     @Test
     public void testEquals() {
         // arrange
-        SphericalCoordinates a = SphericalCoordinates.of(1, 2, 3);
-        SphericalCoordinates b = SphericalCoordinates.of(10, 2, 3);
-        SphericalCoordinates c = SphericalCoordinates.of(1, 20, 3);
-        SphericalCoordinates d = SphericalCoordinates.of(1, 2, 30);
+        final SphericalCoordinates a = SphericalCoordinates.of(1, 2, 3);
+        final SphericalCoordinates b = SphericalCoordinates.of(10, 2, 3);
+        final SphericalCoordinates c = SphericalCoordinates.of(1, 20, 3);
+        final SphericalCoordinates d = SphericalCoordinates.of(1, 2, 30);
 
-        SphericalCoordinates e = SphericalCoordinates.of(1, 2, 3);
+        final SphericalCoordinates e = SphericalCoordinates.of(1, 2, 3);
 
         // act/assert
         Assert.assertFalse(a.equals(null));
@@ -311,9 +311,9 @@ public class SphericalCoordinatesTest {
     @Test
     public void testEquals_NaNInstancesEqual() {
         // arrange
-        SphericalCoordinates a = SphericalCoordinates.of(1, 2, Double.NaN);
-        SphericalCoordinates b = SphericalCoordinates.of(1, Double.NaN, 3);
-        SphericalCoordinates c = SphericalCoordinates.of(Double.NaN, 2, 3);
+        final SphericalCoordinates a = SphericalCoordinates.of(1, 2, Double.NaN);
+        final SphericalCoordinates b = SphericalCoordinates.of(1, Double.NaN, 3);
+        final SphericalCoordinates c = SphericalCoordinates.of(Double.NaN, 2, 3);
 
         // act/assert
         Assert.assertEquals(a, b);
@@ -323,11 +323,11 @@ public class SphericalCoordinatesTest {
     @Test
     public void testToString() {
         // arrange
-        SphericalCoordinates sph = SphericalCoordinates.of(1, 2, 3);
-        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}, 3.{0,2}\\)");
+        final SphericalCoordinates sph = SphericalCoordinates.of(1, 2, 3);
+        final Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}, 3.{0,2}\\)");
 
         // act
-        String str = sph.toString();
+        final String str = sph.toString();
 
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
@@ -396,13 +396,13 @@ public class SphericalCoordinatesTest {
         Assert.assertEquals(Double.POSITIVE_INFINITY, SphericalCoordinates.normalizePolar(Double.POSITIVE_INFINITY), EPS);
     }
 
-    private void checkSpherical(SphericalCoordinates c, double radius, double azimuth, double polar) {
+    private void checkSpherical(final SphericalCoordinates c, final double radius, final double azimuth, final double polar) {
         Assert.assertEquals(radius, c.getRadius(), EPS);
         Assert.assertEquals(azimuth, c.getAzimuth(), EPS);
         Assert.assertEquals(polar, c.getPolar(), EPS);
     }
 
-    private void checkVector(Vector3D v, double x, double y, double z) {
+    private void checkVector(final Vector3D v, final double x, final double y, final double z) {
         Assert.assertEquals(x, v.getX(), EPS);
         Assert.assertEquals(y, v.getY(), EPS);
         Assert.assertEquals(z, v.getZ(), EPS);

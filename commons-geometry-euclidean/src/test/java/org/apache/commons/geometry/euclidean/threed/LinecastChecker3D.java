@@ -99,7 +99,7 @@ class LinecastChecker3D {
      * @param segment
      */
     public void whenGiven(final LineConvexSubset3D segment) {
-        Line3D line = segment.getLine();
+        final Line3D line = segment.getLine();
 
         checkLinecastResults(target.linecast(segment), line);
         checkLinecastFirstResult(target.linecastFirst(segment), line);
@@ -109,13 +109,13 @@ class LinecastChecker3D {
      * @param results
      * @param line
      */
-    private void checkLinecastResults(List<LinecastPoint3D> results, Line3D line) {
+    private void checkLinecastResults(final List<LinecastPoint3D> results, final Line3D line) {
         Assert.assertNotNull("Linecast result list cannot be null", results);
         Assert.assertEquals("Unexpected result size for linecast", expectedResults.size(), results.size());
 
         for (int i = 0; i < expectedResults.size(); ++i) {
-            LinecastPoint3D expected = toLinecastPoint(expectedResults.get(i), line);
-            LinecastPoint3D actual = results.get(i);
+            final LinecastPoint3D expected = toLinecastPoint(expectedResults.get(i), line);
+            final LinecastPoint3D actual = results.get(i);
 
             if (!eq(expected, actual)) {
                 Assert.fail("Unexpected linecast point at index " + i + " expected " + expected +
@@ -128,11 +128,11 @@ class LinecastChecker3D {
      * @param result
      * @param line
      */
-    private void checkLinecastFirstResult(LinecastPoint3D result, Line3D line) {
+    private void checkLinecastFirstResult(final LinecastPoint3D result, final Line3D line) {
         if (expectedResults.isEmpty()) {
             Assert.assertNull("Expected linecastFirst result to be null", result);
         } else {
-            LinecastPoint3D expected = toLinecastPoint(expectedResults.get(0), line);
+            final LinecastPoint3D expected = toLinecastPoint(expectedResults.get(0), line);
 
             Assert.assertNotNull("Expected linecastFirst result to not be null", result);
 
@@ -156,7 +156,7 @@ class LinecastChecker3D {
      * @param actual
      * @return
      */
-    private static boolean eq(LinecastPoint3D a, LinecastPoint3D b) {
+    private static boolean eq(final LinecastPoint3D a, final LinecastPoint3D b) {
         return a.getPoint().eq(b.getPoint(), TEST_PRECISION) &&
                 a.getNormal().eq(b.getNormal(), TEST_PRECISION) &&
                 a.getLine().equals(b.getLine()) &&
@@ -169,7 +169,7 @@ class LinecastChecker3D {
      * @param line
      * @return
      */
-    private static LinecastPoint3D toLinecastPoint(ExpectedResult expected, Line3D line) {
+    private static LinecastPoint3D toLinecastPoint(final ExpectedResult expected, final Line3D line) {
         return new LinecastPoint3D(expected.getPoint(), expected.getNormal(), line);
     }
 

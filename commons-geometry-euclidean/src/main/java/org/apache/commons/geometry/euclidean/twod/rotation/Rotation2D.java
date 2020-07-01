@@ -88,7 +88,7 @@ public final class Rotation2D implements EuclideanTransform<Vector2D> {
      * points and vectors similarly.</p>
      * */
     @Override
-    public Vector2D applyVector(Vector2D vec) {
+    public Vector2D applyVector(final Vector2D vec) {
         return apply(vec);
     }
 

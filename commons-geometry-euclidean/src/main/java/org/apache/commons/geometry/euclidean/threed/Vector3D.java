@@ -88,7 +88,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param y y coordinate value
      * @param z z coordinate value
      */
-    private Vector3D(double x, double y, double z) {
+    private Vector3D(final double x, final double y, final double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -343,7 +343,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     public Vector3D.Unit orthogonal() {
         final double threshold = 0.6 * getCheckedNorm();
 
-        double inverse;
+        final double inverse;
         if (Math.abs(x) <= threshold) {
             inverse  = 1 / Vectors.norm(y, z);
             return new Unit(0, inverse * z, -inverse * y);
@@ -357,7 +357,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D.Unit orthogonal(Vector3D dir) {
+    public Vector3D.Unit orthogonal(final Vector3D dir) {
         return dir.getComponent(this, true, Vector3D.Unit::from);
     }
 
@@ -422,7 +422,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      *
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (this == other) {
             return true;
         }
@@ -458,7 +458,8 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @throws IllegalArgumentException if {@code base} has a zero, NaN,
      *      or infinite norm
      */
-    private <V extends Vector3D> V getComponent(Vector3D base, boolean reject, DoubleFunction3N<V> factory) {
+    private <V extends Vector3D> V getComponent(final Vector3D base, final boolean reject,
+                                                final DoubleFunction3N<V> factory) {
         final double aDotB = dot(base);
 
         // We need to check the norm value here to ensure that it's legal. However, we don't
@@ -652,7 +653,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
             ++count;
         }
 
-        double invCount = 1.0 / count;
+        final double invCount = 1.0 / count;
 
         return new Vector3D(invCount * x, invCount * y, invCount * z);
     }

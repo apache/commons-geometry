@@ -100,7 +100,7 @@ public interface HyperplaneSubset<P extends Point<P>> extends Splittable<P, Hype
      * @param pt the point to check
      * @return true if the point is contained in the hyperplane subset
      */
-    default boolean contains(P pt) {
+    default boolean contains(final P pt) {
         final RegionLocation loc = classify(pt);
         return loc != null && loc != RegionLocation.OUTSIDE;
     }

@@ -147,7 +147,7 @@ public final class PolarCoordinates implements Spatial {
      *
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (this == other) {
             return true;
         }
@@ -176,7 +176,7 @@ public final class PolarCoordinates implements Spatial {
      * @param azimuth Azimuth angle in radians.
      * @return new {@link PolarCoordinates} instance
      */
-    public static PolarCoordinates of(double radius, double azimuth) {
+    public static PolarCoordinates of(final double radius, final double azimuth) {
         return new PolarCoordinates(radius, azimuth);
     }
 
@@ -220,7 +220,7 @@ public final class PolarCoordinates implements Spatial {
      * @return new {@link PolarCoordinates} instance
      * @throws IllegalArgumentException if the string format is invalid.
      */
-    public static PolarCoordinates parse(String input) {
+    public static PolarCoordinates parse(final String input) {
         return SimpleTupleFormat.getDefault().parse(input, PolarCoordinates::new);
     }
 

@@ -165,8 +165,8 @@ public final class Ray extends LineConvexSubset {
 
     /** {@inheritDoc} */
     @Override
-    RegionLocation classifyAbscissa(double abscissa) {
-        int cmp = getPrecision().compare(abscissa, getSubspaceStart());
+    RegionLocation classifyAbscissa(final double abscissa) {
+        final int cmp = getPrecision().compare(abscissa, getSubspaceStart());
         if (cmp > 0) {
             return RegionLocation.INSIDE;
         } else if (cmp == 0) {
@@ -178,7 +178,7 @@ public final class Ray extends LineConvexSubset {
 
     /** {@inheritDoc} */
     @Override
-    double closestAbscissa(double abscissa) {
+    double closestAbscissa(final double abscissa) {
         return Math.max(getSubspaceStart(), abscissa);
     }
 

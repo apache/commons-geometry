@@ -81,7 +81,7 @@ public class Vector3DTest {
     @Test
     public void testCoordinateAscendingOrder() {
         // arrange
-        Comparator<Vector3D> cmp = Vector3D.COORDINATE_ASCENDING_ORDER;
+        final Comparator<Vector3D> cmp = Vector3D.COORDINATE_ASCENDING_ORDER;
 
         // act/assert
         Assert.assertEquals(0, cmp.compare(Vector3D.of(1, 2, 3), Vector3D.of(1, 2, 3)));
@@ -102,7 +102,7 @@ public class Vector3DTest {
     @Test
     public void testCoordinates() {
         // arrange
-        Vector3D c = Vector3D.of(1, 2, 3);
+        final Vector3D c = Vector3D.of(1, 2, 3);
 
         // act/assert
         Assert.assertEquals(1.0, c.getX(), EPS);
@@ -113,10 +113,10 @@ public class Vector3DTest {
     @Test
     public void testToArray() {
         // arrange
-        Vector3D c = Vector3D.of(1, 2, 3);
+        final Vector3D c = Vector3D.of(1, 2, 3);
 
         // act
-        double[] arr = c.toArray();
+        final double[] arr = c.toArray();
 
         // assert
         Assert.assertEquals(3, arr.length);
@@ -128,7 +128,7 @@ public class Vector3DTest {
     @Test
     public void testDimension() {
         // arrange
-        Vector3D c = Vector3D.of(1, 2, 3);
+        final Vector3D c = Vector3D.of(1, 2, 3);
 
         // act/assert
         Assert.assertEquals(3, c.getDimension());
@@ -188,7 +188,7 @@ public class Vector3DTest {
     @Test
     public void testZero() {
         // act
-        Vector3D zero = Vector3D.of(1, 2, 3).getZero();
+        final Vector3D zero = Vector3D.of(1, 2, 3).getZero();
 
         // assert
         checkVector(zero, 0, 0, 0);
@@ -206,7 +206,7 @@ public class Vector3DTest {
     @Test
     public void testNorm_unitVectors() {
         // arrange
-        Vector3D v = Vector3D.of(1.0, 2.0, 3.0).normalize();
+        final Vector3D v = Vector3D.of(1.0, 2.0, 3.0).normalize();
 
         // act/assert
         Assert.assertEquals(1.0, v.norm(), 0.0);
@@ -223,7 +223,7 @@ public class Vector3DTest {
     @Test
     public void testNormSq_unitVectors() {
         // arrange
-        Vector3D v = Vector3D.of(1.0, 2.0, 3.0).normalize();
+        final Vector3D v = Vector3D.of(1.0, 2.0, 3.0).normalize();
 
         // act/assert
         Assert.assertEquals(1.0, v.normSq(), 0.0);
@@ -232,15 +232,15 @@ public class Vector3DTest {
     @Test
     public void testWithNorm() {
         // arrange
-        double x = 2;
-        double y = 3;
-        double z = 4;
+        final double x = 2;
+        final double y = 3;
+        final double z = 4;
 
-        double len = Math.sqrt((x * x) + (y * y) + (z * z));
+        final double len = Math.sqrt((x * x) + (y * y) + (z * z));
 
-        double normX = x / len;
-        double normY = y / len;
-        double normZ = z / len;
+        final double normX = x / len;
+        final double normY = y / len;
+        final double normZ = z / len;
 
         // act/assert
         checkVector(Vector3D.of(x, y, z).withNorm(0.0), 0.0, 0.0, 0.0);
@@ -282,7 +282,7 @@ public class Vector3DTest {
     @Test
     public void testWithNorm_unitVectors() {
         // arrange
-        Vector3D v = Vector3D.of(2.0, -3.0, 4.0).normalize();
+        final Vector3D v = Vector3D.of(2.0, -3.0, 4.0).normalize();
 
         // act/assert
         checkVector(Vector3D.Unit.PLUS_X.withNorm(2.5), 2.5, 0.0, 0.0);
@@ -297,9 +297,9 @@ public class Vector3DTest {
     @Test
     public void testAdd() {
         // arrange
-        Vector3D v1 = Vector3D.of(1, 2, 3);
-        Vector3D v2 = Vector3D.of(-4, -5, -6);
-        Vector3D v3 = Vector3D.of(7, 8, 9);
+        final Vector3D v1 = Vector3D.of(1, 2, 3);
+        final Vector3D v2 = Vector3D.of(-4, -5, -6);
+        final Vector3D v3 = Vector3D.of(7, 8, 9);
 
         // act/assert
         checkVector(v1.add(v1), 2, 4, 6);
@@ -314,9 +314,9 @@ public class Vector3DTest {
     @Test
     public void testAdd_scaled() {
         // arrange
-        Vector3D v1 = Vector3D.of(1, 2, 3);
-        Vector3D v2 = Vector3D.of(-4, -5, -6);
-        Vector3D v3 = Vector3D.of(7, 8, 9);
+        final Vector3D v1 = Vector3D.of(1, 2, 3);
+        final Vector3D v2 = Vector3D.of(-4, -5, -6);
+        final Vector3D v3 = Vector3D.of(7, 8, 9);
 
         // act/assert
         checkVector(v1.add(0, v1), 1, 2, 3);
@@ -333,9 +333,9 @@ public class Vector3DTest {
     @Test
     public void testSubtract() {
         // arrange
-        Vector3D v1 = Vector3D.of(1, 2, 3);
-        Vector3D v2 = Vector3D.of(-4, -5, -6);
-        Vector3D v3 = Vector3D.of(7, 8, 9);
+        final Vector3D v1 = Vector3D.of(1, 2, 3);
+        final Vector3D v2 = Vector3D.of(-4, -5, -6);
+        final Vector3D v3 = Vector3D.of(7, 8, 9);
 
         // act/assert
         checkVector(v1.subtract(v1), 0, 0, 0);
@@ -350,9 +350,9 @@ public class Vector3DTest {
     @Test
     public void testSubtract_scaled() {
         // arrange
-        Vector3D v1 = Vector3D.of(1, 2, 3);
-        Vector3D v2 = Vector3D.of(-4, -5, -6);
-        Vector3D v3 = Vector3D.of(7, 8, 9);
+        final Vector3D v1 = Vector3D.of(1, 2, 3);
+        final Vector3D v2 = Vector3D.of(-4, -5, -6);
+        final Vector3D v3 = Vector3D.of(7, 8, 9);
 
         // act/assert
         checkVector(v1.subtract(0, v1), 1, 2, 3);
@@ -376,8 +376,8 @@ public class Vector3DTest {
     @Test
     public void testNegate_unitVectors() {
         // arrange
-        Vector3D v1 = Vector3D.of(1.0, 2.0, 3.0).normalize();
-        Vector3D v2 = Vector3D.of(-2.0, -4.0, -3.0).normalize();
+        final Vector3D v1 = Vector3D.of(1.0, 2.0, 3.0).normalize();
+        final Vector3D v2 = Vector3D.of(-2.0, -4.0, -3.0).normalize();
 
         // act/assert
         checkVector(v1.negate(), -1.0 / Math.sqrt(14.0), -Math.sqrt(2.0 / 7.0), -3.0 / Math.sqrt(14.0));
@@ -387,7 +387,7 @@ public class Vector3DTest {
     @Test
     public void testNormalize() {
         // arrange
-        double invSqrt3 = 1 / Math.sqrt(3);
+        final double invSqrt3 = 1 / Math.sqrt(3);
 
         // act/assert
         checkVector(Vector3D.of(100, 0, 0).normalize(), 1, 0, 0);
@@ -421,8 +421,8 @@ public class Vector3DTest {
     @Test
     public void testNormalize_isIdempotent() {
         // arrange
-        double invSqrt3 = 1 / Math.sqrt(3);
-        Vector3D v = Vector3D.of(2, 2, 2).normalize();
+        final double invSqrt3 = 1 / Math.sqrt(3);
+        final Vector3D v = Vector3D.of(2, 2, 2).normalize();
 
         // act/assert
         Assert.assertSame(v, v.normalize());
@@ -432,10 +432,10 @@ public class Vector3DTest {
     @Test
     public void testOrthogonal() {
         // arrange
-        Vector3D v1 = Vector3D.of(0.1, 2.5, 1.3);
-        Vector3D v2 = Vector3D.of(2.3, -0.003, 7.6);
-        Vector3D v3 = Vector3D.of(-1.7, 1.4, 0.2);
-        Vector3D v4 = Vector3D.of(4.2, 0.1, -1.8);
+        final Vector3D v1 = Vector3D.of(0.1, 2.5, 1.3);
+        final Vector3D v2 = Vector3D.of(2.3, -0.003, 7.6);
+        final Vector3D v3 = Vector3D.of(-1.7, 1.4, 0.2);
+        final Vector3D v4 = Vector3D.of(4.2, 0.1, -1.8);
 
         // act/assert
         Assert.assertEquals(0.0, v1.dot(v1.orthogonal()), EPS);
@@ -460,7 +460,7 @@ public class Vector3DTest {
     @Test
     public void testOrthogonal_givenDirection() {
         // arrange
-        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+        final double invSqrt2 = 1.0 / Math.sqrt(2.0);
 
         // act/assert
         checkVector(Vector3D.Unit.PLUS_X.orthogonal(Vector3D.of(-1.0, 0.1, 0.0)), 0.0, 1.0, 0.0);
@@ -508,10 +508,10 @@ public class Vector3DTest {
     @Test
     public void testAngle() {
         // arrange
-        double tolerance = 1e-10;
+        final double tolerance = 1e-10;
 
-        Vector3D v1 = Vector3D.of(1, 2, 3);
-        Vector3D v2 = Vector3D.of(4, 5, 6);
+        final Vector3D v1 = Vector3D.of(1, 2, 3);
+        final Vector3D v2 = Vector3D.of(4, 5, 6);
 
         // act/assert
         Assert.assertEquals(0.22572612855273393616, v1.angle(v2), tolerance);
@@ -530,7 +530,7 @@ public class Vector3DTest {
     @Test
     public void testAngle_illegalNorm() {
         // arrange
-        Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
+        final Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.angle(v),
@@ -555,11 +555,11 @@ public class Vector3DTest {
     @Test
     public void testAngle_angularSeparation() {
         // arrange
-        Vector3D v1 = Vector3D.of(2, -1, 4);
+        final Vector3D v1 = Vector3D.of(2, -1, 4);
 
-        Vector3D  k = v1.normalize();
-        Vector3D  i = k.orthogonal();
-        Vector3D v2 = k.multiply(Math.cos(1.2)).add(i.multiply(Math.sin(1.2)));
+        final Vector3D  k = v1.normalize();
+        final Vector3D  i = k.orthogonal();
+        final Vector3D v2 = k.multiply(Math.cos(1.2)).add(i.multiply(Math.sin(1.2)));
 
         // act/assert
         Assert.assertTrue(Math.abs(v1.angle(v2) - 1.2) < 1.0e-12);
@@ -576,7 +576,7 @@ public class Vector3DTest {
 
         checkVector(Vector3D.of(2, 1, -4).cross(Vector3D.of(3, 1, -1)), 3, -10, -1);
 
-        double invSqrt6 = 1 / Math.sqrt(6);
+        final double invSqrt6 = 1 / Math.sqrt(6);
         checkVector(Vector3D.of(1, 1, 1).cross(Vector3D.of(-1, 0, 1)).normalize(), invSqrt6, -2 * invSqrt6, invSqrt6);
     }
 
@@ -600,10 +600,10 @@ public class Vector3DTest {
                                           -227970081415313.0 / 288230376151711744.0);
 
         // act
-        Vector3D cNaive = Vector3D.of(u1.getY() * u2.getZ() - u1.getZ() * u2.getY(),
+        final Vector3D cNaive = Vector3D.of(u1.getY() * u2.getZ() - u1.getZ() * u2.getY(),
                                        u1.getZ() * u2.getX() - u1.getX() * u2.getZ(),
                                        u1.getX() * u2.getY() - u1.getY() * u2.getX());
-        Vector3D cAccurate = u1.cross(u2);
+        final Vector3D cAccurate = u1.cross(u2);
 
         // assert
         Assert.assertTrue(u3.distance(cNaive) > 2.9 * u3.norm());
@@ -614,19 +614,19 @@ public class Vector3DTest {
     public void testCrossProduct_accuracy() {
         // we compare accurate versus naive cross product implementations
         // on regular vectors (i.e. not extreme cases like in the previous test)
-        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 885362227452043215L);
+        final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 885362227452043215L);
         for (int i = 0; i < 10000; ++i) {
             // arrange
-            double ux = 10000 * random.nextDouble();
-            double uy = 10000 * random.nextDouble();
-            double uz = 10000 * random.nextDouble();
-            double vx = 10000 * random.nextDouble();
-            double vy = 10000 * random.nextDouble();
-            double vz = 10000 * random.nextDouble();
+            final double ux = 10000 * random.nextDouble();
+            final double uy = 10000 * random.nextDouble();
+            final double uz = 10000 * random.nextDouble();
+            final double vx = 10000 * random.nextDouble();
+            final double vy = 10000 * random.nextDouble();
+            final double vz = 10000 * random.nextDouble();
 
             // act
-            Vector3D cNaive = Vector3D.of(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx);
-            Vector3D cAccurate = Vector3D.of(ux, uy, uz).cross(Vector3D.of(vx, vy, vz));
+            final Vector3D cNaive = Vector3D.of(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx);
+            final Vector3D cAccurate = Vector3D.of(ux, uy, uz).cross(Vector3D.of(vx, vy, vz));
 
             // assert
             Assert.assertEquals(0.0, cAccurate.distance(cNaive), 6.0e-15 * cAccurate.norm());
@@ -636,21 +636,21 @@ public class Vector3DTest {
     @Test
     public void testCrossProduct_cancellation() {
         // act/assert
-        Vector3D v1 = Vector3D.of(9070467121.0, 4535233560.0, 1);
-        Vector3D v2 = Vector3D.of(9070467123.0, 4535233561.0, 1);
+        final Vector3D v1 = Vector3D.of(9070467121.0, 4535233560.0, 1);
+        final Vector3D v2 = Vector3D.of(9070467123.0, 4535233561.0, 1);
         checkVector(v1.cross(v2), -1, 2, 1);
 
-        double scale    = Math.scalb(1.0, 100);
-        Vector3D big1   = Vector3D.linearCombination(scale, v1);
-        Vector3D small2 = Vector3D.linearCombination(1 / scale, v2);
+        final double scale    = Math.scalb(1.0, 100);
+        final Vector3D big1   = Vector3D.linearCombination(scale, v1);
+        final Vector3D small2 = Vector3D.linearCombination(1 / scale, v2);
         checkVector(big1.cross(small2), -1, 2, 1);
     }
 
     @Test
     public void testScalarMultiply() {
         // arrange
-        Vector3D v1 = Vector3D.of(2, 3, 4);
-        Vector3D v2 = Vector3D.of(-2, -3, -4);
+        final Vector3D v1 = Vector3D.of(2, 3, 4);
+        final Vector3D v2 = Vector3D.of(-2, -3, -4);
 
         // act/assert
         checkVector(v1.multiply(0), 0, 0, 0);
@@ -669,9 +669,9 @@ public class Vector3DTest {
     @Test
     public void testDistance() {
         // arrange
-        Vector3D v1 = Vector3D.of(1, -2, 3);
-        Vector3D v2 = Vector3D.of(-4, 2, 0);
-        Vector3D v3 = Vector3D.of(5, -6, -7);
+        final Vector3D v1 = Vector3D.of(1, -2, 3);
+        final Vector3D v2 = Vector3D.of(-4, 2, 0);
+        final Vector3D v3 = Vector3D.of(5, -6, -7);
 
         // act/assert
         Assert.assertEquals(0.0, v1.distance(v1), EPS);
@@ -689,9 +689,9 @@ public class Vector3DTest {
     @Test
     public void testDistanceSq() {
         // arrange
-        Vector3D v1 = Vector3D.of(1, -2, 3);
-        Vector3D v2 = Vector3D.of(-4, 2, 0);
-        Vector3D v3 = Vector3D.of(5, -6, -7);
+        final Vector3D v1 = Vector3D.of(1, -2, 3);
+        final Vector3D v2 = Vector3D.of(-4, 2, 0);
+        final Vector3D v3 = Vector3D.of(5, -6, -7);
 
         // act/assert
         Assert.assertEquals(0.0, v1.distanceSq(v1), EPS);
@@ -709,9 +709,9 @@ public class Vector3DTest {
     @Test
     public void testDotProduct() {
         // arrange
-        Vector3D v1 = Vector3D.of(1, -2, 3);
-        Vector3D v2 = Vector3D.of(-4, 5, -6);
-        Vector3D v3 = Vector3D.of(7, 8, 9);
+        final Vector3D v1 = Vector3D.of(1, -2, 3);
+        final Vector3D v2 = Vector3D.of(-4, 5, -6);
+        final Vector3D v3 = Vector3D.of(7, 8, 9);
 
         // act/assert
         Assert.assertEquals(14, v1.dot(v1), EPS);
@@ -730,16 +730,16 @@ public class Vector3DTest {
         // leads to a result of 0.0, instead of the correct -1.855129...
 
         // arrange
-        Vector3D u1 = Vector3D.of(-1321008684645961.0 /  268435456.0,
+        final Vector3D u1 = Vector3D.of(-1321008684645961.0 /  268435456.0,
                                    -5774608829631843.0 /  268435456.0,
                                    -7645843051051357.0 / 8589934592.0);
-        Vector3D u2 = Vector3D.of(-5712344449280879.0 /    2097152.0,
+        final Vector3D u2 = Vector3D.of(-5712344449280879.0 /    2097152.0,
                                    -4550117129121957.0 /    2097152.0,
                                     8846951984510141.0 /     131072.0);
 
         // act
-        double sNaive = u1.getX() * u2.getX() + u1.getY() * u2.getY() + u1.getZ() * u2.getZ();
-        double sAccurate = u1.dot(u2);
+        final double sNaive = u1.getX() * u2.getX() + u1.getY() * u2.getY() + u1.getZ() * u2.getZ();
+        final double sAccurate = u1.dot(u2);
 
         // assert
         Assert.assertEquals(0.0, sNaive, 1.0e-30);
@@ -750,19 +750,19 @@ public class Vector3DTest {
     public void testDotProduct_accuracy() {
         // we compare accurate versus naive dot product implementations
         // on regular vectors (i.e. not extreme cases like in the previous test)
-        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 553267312521321237L);
+        final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 553267312521321237L);
         for (int i = 0; i < 10000; ++i) {
             // arrange
-            double ux = 10000 * random.nextDouble();
-            double uy = 10000 * random.nextDouble();
-            double uz = 10000 * random.nextDouble();
-            double vx = 10000 * random.nextDouble();
-            double vy = 10000 * random.nextDouble();
-            double vz = 10000 * random.nextDouble();
+            final double ux = 10000 * random.nextDouble();
+            final double uy = 10000 * random.nextDouble();
+            final double uz = 10000 * random.nextDouble();
+            final double vx = 10000 * random.nextDouble();
+            final double vy = 10000 * random.nextDouble();
+            final double vz = 10000 * random.nextDouble();
 
             // act
-            double sNaive = ux * vx + uy * vy + uz * vz;
-            double sAccurate = Vector3D.of(ux, uy, uz).dot(Vector3D.of(vx, vy, vz));
+            final double sNaive = ux * vx + uy * vy + uz * vz;
+            final double sAccurate = Vector3D.of(ux, uy, uz).dot(Vector3D.of(vx, vy, vz));
 
             // assert
             Assert.assertEquals(sNaive, sAccurate, 2.5e-16 * sAccurate);
@@ -772,8 +772,8 @@ public class Vector3DTest {
     @Test
     public void testProject() {
         // arrange
-        Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
-        Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
+        final Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
+        final Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
 
         // act/assert
         checkVector(Vector3D.ZERO.project(Vector3D.Unit.PLUS_X), 0.0, 0.0, 0.0);
@@ -802,7 +802,7 @@ public class Vector3DTest {
     @Test
     public void testProject_baseHasIllegalNorm() {
         // arrange
-        Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
+        final Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> v.project(Vector3D.ZERO),
@@ -818,8 +818,8 @@ public class Vector3DTest {
     @Test
     public void testReject() {
         // arrange
-        Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
-        Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
+        final Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
+        final Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
 
         // act/assert
         checkVector(Vector3D.ZERO.reject(Vector3D.Unit.PLUS_X), 0.0, 0.0, 0.0);
@@ -848,7 +848,7 @@ public class Vector3DTest {
     @Test
     public void testReject_baseHasIllegalNorm() {
         // arrange
-        Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
+        final Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> v.reject(Vector3D.ZERO),
@@ -864,7 +864,7 @@ public class Vector3DTest {
     @Test
     public void testProjectAndReject_areComplementary() {
         // arrange
-        double eps = 1e-12;
+        final double eps = 1e-12;
 
         // act/assert
         checkProjectAndRejectFullSphere(Vector3D.of(1.0, 0.0, 0.0), 1.0, eps);
@@ -878,18 +878,18 @@ public class Vector3DTest {
         checkProjectAndRejectFullSphere(Vector3D.of(-2.0, -2.0, -2.0), 3.0, eps);
     }
 
-    private void checkProjectAndRejectFullSphere(Vector3D vec, double baseMag, double eps) {
+    private void checkProjectAndRejectFullSphere(final Vector3D vec, final double baseMag, final double eps) {
         for (double polar = 0.0; polar <= PlaneAngleRadians.PI; polar += 0.5) {
             for (double azimuth = 0.0; azimuth <= PlaneAngleRadians.TWO_PI; azimuth += 0.5) {
-                Vector3D base = SphericalCoordinates.toCartesian(baseMag, azimuth, polar);
+                final Vector3D base = SphericalCoordinates.toCartesian(baseMag, azimuth, polar);
 
-                Vector3D proj = vec.project(base);
-                Vector3D rej = vec.reject(base);
+                final Vector3D proj = vec.project(base);
+                final Vector3D rej = vec.reject(base);
 
                 // ensure that the projection and rejection sum to the original vector
                 EuclideanTestUtils.assertCoordinatesEqual(vec, proj.add(rej), eps);
 
-                double angle = base.angle(vec);
+                final double angle = base.angle(vec);
 
                 // check the angle between the projection and the base; this will
                 // be undefined when the angle between the original vector and the
@@ -913,9 +913,9 @@ public class Vector3DTest {
     @Test
     public void testVectorTo() {
         // act/assert
-        Vector3D p1 = Vector3D.of(1, 2, 3);
-        Vector3D p2 = Vector3D.of(4, 5, 6);
-        Vector3D p3 = Vector3D.of(-7, -8, -9);
+        final Vector3D p1 = Vector3D.of(1, 2, 3);
+        final Vector3D p2 = Vector3D.of(4, 5, 6);
+        final Vector3D p3 = Vector3D.of(-7, -8, -9);
 
         // act/assert
         checkVector(p1.vectorTo(p1), 0, 0, 0);
@@ -932,11 +932,11 @@ public class Vector3DTest {
     @Test
     public void testDirectionTo() {
         // act/assert
-        double invSqrt3 = 1.0 / Math.sqrt(3);
+        final double invSqrt3 = 1.0 / Math.sqrt(3);
 
-        Vector3D p1 = Vector3D.of(1, 1, 1);
-        Vector3D p2 = Vector3D.of(1, 5, 1);
-        Vector3D p3 = Vector3D.of(-2, -2, -2);
+        final Vector3D p1 = Vector3D.of(1, 1, 1);
+        final Vector3D p2 = Vector3D.of(1, 5, 1);
+        final Vector3D p3 = Vector3D.of(-2, -2, -2);
 
         // act/assert
         checkVector(p1.directionTo(p2), 0, 1, 0);
@@ -949,7 +949,7 @@ public class Vector3DTest {
     @Test
     public void testDirectionTo_illegalNorm() {
         // arrange
-        Vector3D p = Vector3D.of(1, 2, 3);
+        final Vector3D p = Vector3D.of(1, 2, 3);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.directionTo(Vector3D.ZERO),
@@ -967,9 +967,9 @@ public class Vector3DTest {
     @Test
     public void testLerp() {
         // arrange
-        Vector3D v1 = Vector3D.of(1, -5, 2);
-        Vector3D v2 = Vector3D.of(-4, 0, 2);
-        Vector3D v3 = Vector3D.of(10, -4, 0);
+        final Vector3D v1 = Vector3D.of(1, -5, 2);
+        final Vector3D v2 = Vector3D.of(-4, 0, 2);
+        final Vector3D v3 = Vector3D.of(10, -4, 0);
 
         // act/assert
         checkVector(v1.lerp(v1, 0), 1, -5, 2);
@@ -993,12 +993,12 @@ public class Vector3DTest {
     @Test
     public void testTransform() {
         // arrange
-        AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
+        final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .scale(2)
                 .translate(1, 2, 3);
 
-        Vector3D v1 = Vector3D.of(1, 2, 3);
-        Vector3D v2 = Vector3D.of(-4, -5, -6);
+        final Vector3D v1 = Vector3D.of(1, 2, 3);
+        final Vector3D v2 = Vector3D.of(-4, -5, -6);
 
         // act/assert
         checkVector(v1.transform(transform), 3, 6, 9);
@@ -1008,10 +1008,10 @@ public class Vector3DTest {
     @Test
     public void testPrecisionEquals() {
         // arrange
-        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
 
-        Vector3D vec = Vector3D.of(1, -2, 3);
+        final Vector3D vec = Vector3D.of(1, -2, 3);
 
         // act/assert
         Assert.assertTrue(vec.eq(vec, smallEps));
@@ -1039,8 +1039,8 @@ public class Vector3DTest {
     @Test
     public void testIsZero() {
         // arrange
-        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
 
         // act/assert
         Assert.assertTrue(Vector3D.of(0.0, -0.0, 0.0).isZero(smallEps));
@@ -1068,10 +1068,10 @@ public class Vector3DTest {
     @Test
     public void testHashCode() {
         // arrange
-        double delta = 10 * Precision.EPSILON;
-        Vector3D u = Vector3D.of(1, 1, 1);
-        Vector3D v = Vector3D.of(1 + delta, 1 + delta, 1 + delta);
-        Vector3D w = Vector3D.of(1, 1, 1);
+        final double delta = 10 * Precision.EPSILON;
+        final Vector3D u = Vector3D.of(1, 1, 1);
+        final Vector3D v = Vector3D.of(1 + delta, 1 + delta, 1 + delta);
+        final Vector3D w = Vector3D.of(1, 1, 1);
 
         // act/assert
         Assert.assertTrue(u.hashCode() != v.hashCode());
@@ -1086,9 +1086,9 @@ public class Vector3DTest {
     @Test
     public void testEquals() {
         // arrange
-        double delta = 10 * Precision.EPSILON;
-        Vector3D u1 = Vector3D.of(1, 2, 3);
-        Vector3D u2 = Vector3D.of(1, 2, 3);
+        final double delta = 10 * Precision.EPSILON;
+        final Vector3D u1 = Vector3D.of(1, 2, 3);
+        final Vector3D u2 = Vector3D.of(1, 2, 3);
 
         // act/assert
         Assert.assertFalse(u1.equals(null));
@@ -1116,11 +1116,11 @@ public class Vector3DTest {
     @Test
     public void testToString() {
         // arrange
-        Vector3D v = Vector3D.of(1, 2, 3);
-        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}, 3.{0,2}\\)");
+        final Vector3D v = Vector3D.of(1, 2, 3);
+        final Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}, 3.{0,2}\\)");
 
         // act
-        String str = v.toString();
+        final String str = v.toString();
 
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
@@ -1178,7 +1178,7 @@ public class Vector3DTest {
     @Test
     public void testUnitFrom_coordinates() {
         // arrange
-        double invSqrt3 = 1.0 / Math.sqrt(3.0);
+        final double invSqrt3 = 1.0 / Math.sqrt(3.0);
 
         // act/assert
         checkVector(Vector3D.Unit.from(2.0, -2.0, 2.0), invSqrt3, -invSqrt3, invSqrt3);
@@ -1188,9 +1188,9 @@ public class Vector3DTest {
     @Test
     public void testUnitFrom_vector() {
         // arrange
-        double invSqrt3 = 1.0 / Math.sqrt(3.0);
-        Vector3D vec = Vector3D.of(2.0, -2.0, 2.0);
-        Vector3D.Unit unitVec = Vector3D.Unit.from(2.0, -2.0, 2.0);
+        final double invSqrt3 = 1.0 / Math.sqrt(3.0);
+        final Vector3D vec = Vector3D.of(2.0, -2.0, 2.0);
+        final Vector3D.Unit unitVec = Vector3D.Unit.from(2.0, -2.0, 2.0);
 
         // act/assert
         checkVector(Vector3D.Unit.from(vec), invSqrt3, -invSqrt3, invSqrt3);
@@ -1225,7 +1225,7 @@ public class Vector3DTest {
     @Test
     public void testMax_noPointsGiven() {
         // arrange
-        String msg = "Cannot compute vector max: no vectors given";
+        final String msg = "Cannot compute vector max: no vectors given";
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1249,7 +1249,7 @@ public class Vector3DTest {
     @Test
     public void testMin_noPointsGiven() {
         // arrange
-        String msg = "Cannot compute vector min: no vectors given";
+        final String msg = "Cannot compute vector min: no vectors given";
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1278,7 +1278,7 @@ public class Vector3DTest {
     @Test
     public void testCentroid_noPointsGiven() {
         // arrange
-        String msg = "Cannot compute centroid: no points given";
+        final String msg = "Cannot compute centroid: no points given";
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1289,7 +1289,7 @@ public class Vector3DTest {
     @Test
     public void testLinearCombination1() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 2, 3);
+        final Vector3D p1 = Vector3D.of(1, 2, 3);
 
         // act/assert
         checkVector(Vector3D.linearCombination(0, p1), 0, 0, 0);
@@ -1304,8 +1304,8 @@ public class Vector3DTest {
     @Test
     public void testLinearCombination2() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 2, 3);
-        Vector3D p2 = Vector3D.of(-3, -4, -5);
+        final Vector3D p1 = Vector3D.of(1, 2, 3);
+        final Vector3D p2 = Vector3D.of(-3, -4, -5);
 
         // act/assert
         checkVector(Vector3D.linearCombination(2, p1, -3, p2), 11, 16, 21);
@@ -1315,9 +1315,9 @@ public class Vector3DTest {
     @Test
     public void testLinearCombination3() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 2, 3);
-        Vector3D p2 = Vector3D.of(-3, -4, -5);
-        Vector3D p3 = Vector3D.of(5, 6, 7);
+        final Vector3D p1 = Vector3D.of(1, 2, 3);
+        final Vector3D p2 = Vector3D.of(-3, -4, -5);
+        final Vector3D p3 = Vector3D.of(5, 6, 7);
 
         // act/assert
         checkVector(Vector3D.linearCombination(2, p1, -3, p2, 4, p3), 31, 40, 49);
@@ -1327,10 +1327,10 @@ public class Vector3DTest {
     @Test
     public void testLinearCombination4() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 2, 3);
-        Vector3D p2 = Vector3D.of(-3, -4, -5);
-        Vector3D p3 = Vector3D.of(5, 6, 7);
-        Vector3D p4 = Vector3D.of(-7, -8, 9);
+        final Vector3D p1 = Vector3D.of(1, 2, 3);
+        final Vector3D p2 = Vector3D.of(-3, -4, -5);
+        final Vector3D p3 = Vector3D.of(5, 6, 7);
+        final Vector3D p4 = Vector3D.of(-7, -8, 9);
 
         // act/assert
         checkVector(Vector3D.linearCombination(2, p1, -3, p2, 4, p3, -5, p4), 66, 80, 4);
@@ -1344,7 +1344,7 @@ public class Vector3DTest {
         Assert.assertSame(v, v.normalize());
     }
 
-    private void checkVector(Vector3D v, double x, double y, double z) {
+    private void checkVector(final Vector3D v, final double x, final double y, final double z) {
         Assert.assertEquals(x, v.getX(), EPS);
         Assert.assertEquals(y, v.getY(), EPS);
         Assert.assertEquals(z, v.getZ(), EPS);

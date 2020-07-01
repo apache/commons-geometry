@@ -68,7 +68,7 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
     /** BSP Tree node class for {@link TestBSPTree}.
      */
     public static class TestNode extends AbstractBSPTree.AbstractNode<TestPoint2D, TestNode> {
-        public TestNode(AbstractBSPTree<TestPoint2D, TestNode> tree) {
+        public TestNode(final AbstractBSPTree<TestPoint2D, TestNode> tree) {
             super(tree);
         }
 

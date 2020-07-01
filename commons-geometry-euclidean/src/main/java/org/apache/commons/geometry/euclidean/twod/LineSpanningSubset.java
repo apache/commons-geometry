@@ -151,13 +151,13 @@ final class LineSpanningSubset extends LineConvexSubset {
 
     /** {@inheritDoc} */
     @Override
-    RegionLocation classifyAbscissa(double abscissa) {
+    RegionLocation classifyAbscissa(final double abscissa) {
         return RegionLocation.INSIDE;
     }
 
     /** {@inheritDoc} */
     @Override
-    double closestAbscissa(double abscissa) {
+    double closestAbscissa(final double abscissa) {
         return abscissa;
     }
 

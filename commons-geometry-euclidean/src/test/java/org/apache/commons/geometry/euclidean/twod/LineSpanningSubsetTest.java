@@ -36,10 +36,10 @@ public class LineSpanningSubsetTest {
     @Test
     public void testProperties() {
         // arrange
-        Line line = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        final Line line = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        LineSpanningSubset result = new LineSpanningSubset(line);
+        final LineSpanningSubset result = new LineSpanningSubset(line);
 
         // assert
         Assert.assertSame(line, result.getHyperplane());
@@ -63,15 +63,15 @@ public class LineSpanningSubsetTest {
     @Test
     public void testTransform() {
         // arrange
-        AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(-0.5 * Math.PI)
+        final AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(-0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X)
                 .scale(1, -1);
 
-        LineConvexSubset span =
+        final LineConvexSubset span =
                 Lines.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
 
         // act
-        LineConvexSubset result = span.transform(t);
+        final LineConvexSubset result = span.transform(t);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, result.getLine().getDirection(), TEST_EPS);
@@ -80,11 +80,11 @@ public class LineSpanningSubsetTest {
     @Test
     public void testReverse() {
         // arrange
-        LineConvexSubset span =
+        final LineConvexSubset span =
                 Lines.fromPointAndDirection(Vector2D.of(1, 2), Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
 
         // act
-        LineConvexSubset rev = span.reverse();
+        final LineConvexSubset rev = span.reverse();
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 2), rev.getLine().getOrigin(), TEST_EPS);
@@ -94,9 +94,9 @@ public class LineSpanningSubsetTest {
     @Test
     public void testClosest() {
         // arrange
-        Vector2D p1 = Vector2D.of(0, -1);
-        Vector2D p2 = Vector2D.of(0, 1);
-        LineConvexSubset span =
+        final Vector2D p1 = Vector2D.of(0, -1);
+        final Vector2D p2 = Vector2D.of(0, 1);
+        final LineConvexSubset span =
                 Lines.fromPointAndDirection(p1, p1.directionTo(p2), TEST_PRECISION).span();
 
         // act/assert
@@ -118,7 +118,7 @@ public class LineSpanningSubsetTest {
     @Test
     public void testClassify() {
         // arrange
-        LineConvexSubset span =
+        final LineConvexSubset span =
                 Lines.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
 
         // act/assert
@@ -133,9 +133,9 @@ public class LineSpanningSubsetTest {
     @Test
     public void testSplit() {
         // --- arrange
-        Vector2D pt = Vector2D.of(1, 1);
+        final Vector2D pt = Vector2D.of(1, 1);
 
-        LineConvexSubset span = Lines.fromPointAndDirection(pt, Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
+        final LineConvexSubset span = Lines.fromPointAndDirection(pt, Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
 
         // --- act
         Split<LineConvexSubset> split;
@@ -166,11 +166,11 @@ public class LineSpanningSubsetTest {
     @Test
     public void testGetInterval() {
         // arrange
-        LineConvexSubset span =
+        final LineConvexSubset span =
                 Lines.fromPointAndDirection(Vector2D.of(2, -1), Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
 
         // act
-        Interval interval = span.getInterval();
+        final Interval interval = span.getInterval();
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(interval.getMin());
@@ -180,21 +180,21 @@ public class LineSpanningSubsetTest {
     @Test
     public void testToString() {
         // arrange
-        LineConvexSubset span =
+        final LineConvexSubset span =
                 Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
 
         // act
-        String str = span.toString();
+        final String str = span.toString();
 
         // assert
         GeometryTestUtils.assertContains("LineSpanningSubset[origin= (0", str);
         GeometryTestUtils.assertContains(", direction= (1", str);
     }
 
-    private static void checkSplit(Split<LineConvexSubset> split, Vector2D minusStart, Vector2D minusEnd,
-            Vector2D plusStart, Vector2D plusEnd) {
+    private static void checkSplit(final Split<LineConvexSubset> split, final Vector2D minusStart, final Vector2D minusEnd,
+                                   final Vector2D plusStart, final Vector2D plusEnd) {
 
-        LineConvexSubset minus = split.getMinus();
+        final LineConvexSubset minus = split.getMinus();
         if (minusStart == null && minusEnd == null) {
             Assert.assertNull(minus);
         } else {
@@ -203,7 +203,7 @@ public class LineSpanningSubsetTest {
         }
 
 
-        LineConvexSubset plus = split.getPlus();
+        final LineConvexSubset plus = split.getPlus();
         if (plusStart == null && plusEnd == null) {
             Assert.assertNull(plus);
         } else {
@@ -212,7 +212,7 @@ public class LineSpanningSubsetTest {
         }
     }
 
-    private static void checkPoint(Vector2D expected, Vector2D pt) {
+    private static void checkPoint(final Vector2D expected, final Vector2D pt) {
         if (expected == null) {
             Assert.assertNull(pt);
         } else {

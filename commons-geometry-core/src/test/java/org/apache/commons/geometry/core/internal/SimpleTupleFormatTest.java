@@ -53,7 +53,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testConstructor() {
         // act
-        SimpleTupleFormat formatter = new SimpleTupleFormat("|", "{", "}");
+        final SimpleTupleFormat formatter = new SimpleTupleFormat("|", "{", "}");
 
         // assert
         Assert.assertEquals("|", formatter.getSeparator());
@@ -64,7 +64,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testConstructor_defaultSeparator() {
         // act
-        SimpleTupleFormat formatter = new SimpleTupleFormat("{", "}");
+        final SimpleTupleFormat formatter = new SimpleTupleFormat("{", "}");
 
         // assert
         Assert.assertEquals(",", formatter.getSeparator());
@@ -75,7 +75,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testFormat1D() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         Assert.assertEquals("(1.0)", formatter.format(1.0));
@@ -88,7 +88,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testFormat1D_noPrefixSuffix() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         Assert.assertEquals("1.0", formatter.format(1.0));
@@ -101,7 +101,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testFormat2D() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         Assert.assertEquals("(1.0, -1.0)", formatter.format(1.0, -1.0));
@@ -113,7 +113,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testFormat2D_noPrefixSuffix() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         Assert.assertEquals("1.0, -1.0", formatter.format(1.0, -1.0));
@@ -125,7 +125,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testFormat3D() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         Assert.assertEquals("(1.0, 0.0, -1.0)", formatter.format(1.0, 0.0, -1.0));
@@ -136,7 +136,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testFormat3D_noPrefixSuffix() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         Assert.assertEquals("1.0, 0.0, -1.0", formatter.format(1.0, 0.0, -1.0));
@@ -147,7 +147,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testFormat4D() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         Assert.assertEquals("(1.0, 0.0, -1.0, 2.0)", formatter.format(1.0, 0.0, -1.0, 2.0));
@@ -158,7 +158,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testFormat4D_noPrefixSuffix() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         Assert.assertEquals("1.0, 0.0, -1.0, 2.0", formatter.format(1.0, 0.0, -1.0, 2.0));
@@ -169,7 +169,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testFormat_longTokens() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
+        final SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
         // act/assert
         Assert.assertEquals("<<1.0>>", formatter.format(1.0));
@@ -180,7 +180,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse1D() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse1D(formatter, "(1)", 1.0);
@@ -206,7 +206,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse1D_noPrefixSuffix() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         checkParse1D(formatter, "1", 1.0);
@@ -232,7 +232,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse1D_failure() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse1DFailure(formatter, "", "index 0: expected \"(\" but found \"\"");
@@ -246,7 +246,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse2D() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse2D(formatter, "(1,-2)", 1.0, -2.0);
@@ -270,7 +270,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse2D_noPrefixSuffix() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         checkParse2D(formatter, "1,-2", 1.0, -2.0);
@@ -294,7 +294,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse2D_failure() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse2DFailure(formatter, "", "index 0: expected \"(\" but found \"\"");
@@ -308,7 +308,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse3D() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse3D(formatter, "(1,-2,3)", 1.0, -2.0, 3.0);
@@ -331,7 +331,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse3D_noPrefixSuffix() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         checkParse3D(formatter, "1,-2,3", 1.0, -2.0, 3.0);
@@ -354,7 +354,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse3D_failure() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+        final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse3DFailure(formatter, "", "index 0: expected \"(\" but found \"\"");
@@ -368,7 +368,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse_longTokens() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
+        final SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
         // act/assert
         checkParse1D(formatter, "<<1.0>>", 1.0);
@@ -379,7 +379,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testParse_longTokens_failure() {
         // arrange
-        SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
+        final SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
         // act/assert
         checkParse1DFailure(formatter, "<", "index 0: expected \"<<\" but found \"<\"");
@@ -391,7 +391,7 @@ public class SimpleTupleFormatTest {
     @Test
     public void testDefaultInstance() {
         // act
-        SimpleTupleFormat formatter = SimpleTupleFormat.getDefault();
+        final SimpleTupleFormat formatter = SimpleTupleFormat.getDefault();
 
         // assert
         Assert.assertEquals(",", formatter.getSeparator());
@@ -401,55 +401,55 @@ public class SimpleTupleFormatTest {
         Assert.assertEquals("(1.0, 2.0)", formatter.format(1, 2));
     }
 
-    private void checkParse1D(SimpleTupleFormat formatter, String str, double v) {
-        Stub1D result = formatter.parse(str, FACTORY_1D);
+    private void checkParse1D(final SimpleTupleFormat formatter, final String str, final double v) {
+        final Stub1D result = formatter.parse(str, FACTORY_1D);
 
         Assert.assertEquals(v, result.v, EPS);
     }
 
-    private void checkParse1DFailure(SimpleTupleFormat formatter, String str, String msgSubstr) {
+    private void checkParse1DFailure(final SimpleTupleFormat formatter, final String str, final String msgSubstr) {
         try {
             formatter.parse(str, FACTORY_1D);
             Assert.fail("Operation should have failed");
-        } catch (IllegalArgumentException exc) {
-            String excMsg = exc.getMessage();
+        } catch (final IllegalArgumentException exc) {
+            final String excMsg = exc.getMessage();
             Assert.assertTrue("Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]",
                     excMsg.contains(msgSubstr));
         }
     }
 
-    private void checkParse2D(SimpleTupleFormat formatter, String str, double v1, double v2) {
-        Stub2D result = formatter.parse(str, FACTORY_2D);
+    private void checkParse2D(final SimpleTupleFormat formatter, final String str, final double v1, final double v2) {
+        final Stub2D result = formatter.parse(str, FACTORY_2D);
 
         Assert.assertEquals(v1, result.v1, EPS);
         Assert.assertEquals(v2, result.v2, EPS);
     }
 
-    private void checkParse2DFailure(SimpleTupleFormat formatter, String str, String msgSubstr) {
+    private void checkParse2DFailure(final SimpleTupleFormat formatter, final String str, final String msgSubstr) {
         try {
             formatter.parse(str, FACTORY_2D);
             Assert.fail("Operation should have failed");
-        } catch (IllegalArgumentException exc) {
-            String excMsg = exc.getMessage();
+        } catch (final IllegalArgumentException exc) {
+            final String excMsg = exc.getMessage();
             Assert.assertTrue("Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]",
                     excMsg.contains(msgSubstr));
         }
     }
 
-    private void checkParse3D(SimpleTupleFormat formatter, String str, double v1, double v2, double v3) {
-        Stub3D result = formatter.parse(str, FACTORY_3D);
+    private void checkParse3D(final SimpleTupleFormat formatter, final String str, final double v1, final double v2, final double v3) {
+        final Stub3D result = formatter.parse(str, FACTORY_3D);
 
         Assert.assertEquals(v1, result.v1, EPS);
         Assert.assertEquals(v2, result.v2, EPS);
         Assert.assertEquals(v3, result.v3, EPS);
     }
 
-    private void checkParse3DFailure(SimpleTupleFormat formatter, String str, String msgSubstr) {
+    private void checkParse3DFailure(final SimpleTupleFormat formatter, final String str, final String msgSubstr) {
         try {
             formatter.parse(str, FACTORY_3D);
             Assert.fail("Operation should have failed");
-        } catch (IllegalArgumentException exc) {
-            String excMsg = exc.getMessage();
+        } catch (final IllegalArgumentException exc) {
+            final String excMsg = exc.getMessage();
             Assert.assertTrue("Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]",
                     excMsg.contains(msgSubstr));
         }

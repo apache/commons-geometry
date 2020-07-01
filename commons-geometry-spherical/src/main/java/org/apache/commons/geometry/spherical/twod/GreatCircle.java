@@ -340,7 +340,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         } else if (!(obj instanceof GreatCircle)) {

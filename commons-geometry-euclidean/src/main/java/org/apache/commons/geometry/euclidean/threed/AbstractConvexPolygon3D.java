@@ -103,9 +103,9 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
         double scaledCentroidSumY = 0.0;
         double scaledCentroidSumZ = 0.0;
 
-        Iterator<Vector3D> it = vertices.iterator();
+        final Iterator<Vector3D> it = vertices.iterator();
 
-        Vector3D startPt = it.next();
+        final Vector3D startPt = it.next();
 
         Vector3D prevPt = it.next();
         Vector3D curPt;

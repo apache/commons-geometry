@@ -51,7 +51,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
      * @param full whether or not the region should contain the entire
      *      2-sphere or be empty
      */
-    public RegionBSPTree2S(boolean full) {
+    public RegionBSPTree2S(final boolean full) {
         super(full);
     }
 
@@ -291,7 +291,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */
-        BoundaryProjector2S(Point2S point) {
+        BoundaryProjector2S(final Point2S point) {
             super(point);
         }
 

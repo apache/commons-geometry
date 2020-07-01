@@ -316,7 +316,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
          * otherwise.</p>
          */
         @Override
-        public RegionLocation classify(Point1S point) {
+        public RegionLocation classify(final Point1S point) {
             if (hyperplane.contains(point)) {
                 return RegionLocation.BOUNDARY;
             }
@@ -326,7 +326,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
 
         /** {@inheritDoc} */
         @Override
-        public Point1S closest(Point1S point) {
+        public Point1S closest(final Point1S point) {
             return hyperplane.project(point);
         }
 

@@ -68,7 +68,7 @@ public final class Matrices {
      * @throws IllegalStateException if the matrix determinant value is NaN, infinite,
      *      or zero
      */
-    public static double checkDeterminantForInverse(double det) {
+    public static double checkDeterminantForInverse(final double det) {
         if (!Vectors.isRealNonZero(det)) {
             throw nonInvertibleTransform("matrix determinant is " + det);
         }

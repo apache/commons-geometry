@@ -185,7 +185,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @return a string representation of the tree
      */
     public String treeString(final int maxDepth) {
-        BSPTreePrinter<P, N> printer = new BSPTreePrinter<>(maxDepth);
+        final BSPTreePrinter<P, N> printer = new BSPTreePrinter<>(maxDepth);
         accept(printer);
 
         return printer.toString();
@@ -664,9 +664,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     protected void splitIntoTrees(final Hyperplane<P> splitter,
             final AbstractBSPTree<P, N> minus, final AbstractBSPTree<P, N> plus) {
 
-        AbstractBSPTree<P, N> temp = (minus != null) ? minus : plus;
+        final AbstractBSPTree<P, N> temp = (minus != null) ? minus : plus;
 
-        N splitRoot = temp.splitSubtree(this.getRoot(), splitter.span());
+        final N splitRoot = temp.splitSubtree(this.getRoot(), splitter.span());
 
         if (minus != null) {
             if (plus != null) {
@@ -726,8 +726,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         final N result = createNode();
 
-        N resultMinus;
-        N resultPlus;
+        final N resultMinus;
+        final N resultPlus;
 
         if (partitionerSplitSide == SplitLocation.PLUS) {
             if (nodeCutSplitSide == SplitLocation.PLUS) {
@@ -1017,8 +1017,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             final N self = getSelf();
 
             // cast for access to private member
-            AbstractNode<P, N> minusNode = newMinus;
-            AbstractNode<P, N> plusNode = newPlus;
+            final AbstractNode<P, N> minusNode = newMinus;
+            final AbstractNode<P, N> plusNode = newPlus;
 
             // get the child depth now if we know it offhand, otherwise set it to the unknown value
             // and have the child pull it when needed

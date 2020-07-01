@@ -177,7 +177,7 @@ public final class SphericalCoordinates implements Spatial {
      *
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (this == other) {
             return true;
         }
@@ -262,7 +262,7 @@ public final class SphericalCoordinates implements Spatial {
      * @return new {@link SphericalCoordinates} instance
      * @throws IllegalArgumentException if the string format is invalid.
      */
-    public static SphericalCoordinates parse(String input) {
+    public static SphericalCoordinates parse(final String input) {
         return SimpleTupleFormat.getDefault().parse(input, SphericalCoordinates::new);
     }
 
@@ -272,7 +272,7 @@ public final class SphericalCoordinates implements Spatial {
      * @return equivalent azimuth value in the range {@code [0, 2pi)}.
      * @see PolarCoordinates#normalizeAzimuth(double)
      */
-    public static double normalizeAzimuth(double azimuth) {
+    public static double normalizeAzimuth(final double azimuth) {
         return PolarCoordinates.normalizeAzimuth(azimuth);
     }
 

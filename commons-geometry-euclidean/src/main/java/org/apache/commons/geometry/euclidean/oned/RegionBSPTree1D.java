@@ -49,7 +49,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * @param full whether or not the region should contain the entire
      *      number line or be empty
      */
-    public RegionBSPTree1D(boolean full) {
+    public RegionBSPTree1D(final boolean full) {
         super(full);
     }
 
@@ -350,7 +350,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         /** Simple constructor.
          * @param tree the owning tree instance
          */
-        private RegionNode1D(AbstractBSPTree<Vector1D, RegionNode1D> tree) {
+        private RegionNode1D(final AbstractBSPTree<Vector1D, RegionNode1D> tree) {
             super(tree);
         }
 
@@ -454,7 +454,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */
-        BoundaryProjector1D(Vector1D point) {
+        BoundaryProjector1D(final Vector1D point) {
             super(point);
         }
 

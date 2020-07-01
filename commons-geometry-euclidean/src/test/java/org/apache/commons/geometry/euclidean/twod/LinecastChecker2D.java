@@ -95,7 +95,7 @@ public class LinecastChecker2D {
      * @param segment
      */
     public void whenGiven(final LineConvexSubset segment) {
-        Line line = segment.getLine();
+        final Line line = segment.getLine();
 
         checkLinecastResults(target.linecast(segment), line);
         checkLinecastFirstResult(target.linecastFirst(segment), line);
@@ -105,13 +105,13 @@ public class LinecastChecker2D {
      * @param results
      * @param line
      */
-    private void checkLinecastResults(List<LinecastPoint2D> results, Line line) {
+    private void checkLinecastResults(final List<LinecastPoint2D> results, final Line line) {
         Assert.assertNotNull("Linecast result list cannot be null", results);
         Assert.assertEquals("Unexpected result size for linecast", expectedResults.size(), results.size());
 
         for (int i = 0; i < expectedResults.size(); ++i) {
-            LinecastPoint2D expected = toLinecastPoint(expectedResults.get(i), line);
-            LinecastPoint2D actual = results.get(i);
+            final LinecastPoint2D expected = toLinecastPoint(expectedResults.get(i), line);
+            final LinecastPoint2D actual = results.get(i);
 
             if (!eq(expected, actual)) {
                 Assert.fail("Unexpected linecast point at index " + i + " expected " + expected +
@@ -124,11 +124,11 @@ public class LinecastChecker2D {
      * @param result
      * @param line
      */
-    private void checkLinecastFirstResult(LinecastPoint2D result, Line line) {
+    private void checkLinecastFirstResult(final LinecastPoint2D result, final Line line) {
         if (expectedResults.isEmpty()) {
             Assert.assertNull("Expected linecastFirst result to be null", result);
         } else {
-            LinecastPoint2D expected = toLinecastPoint(expectedResults.get(0), line);
+            final LinecastPoint2D expected = toLinecastPoint(expectedResults.get(0), line);
 
             Assert.assertNotNull("Expected linecastFirst result to not be null", result);
 
@@ -152,7 +152,7 @@ public class LinecastChecker2D {
      * @param actual
      * @return
      */
-    private static boolean eq(LinecastPoint2D a, LinecastPoint2D b) {
+    private static boolean eq(final LinecastPoint2D a, final LinecastPoint2D b) {
         return a.getPoint().eq(b.getPoint(), TEST_PRECISION) &&
                 a.getNormal().eq(b.getNormal(), TEST_PRECISION) &&
                 a.getLine().equals(b.getLine()) &&
@@ -165,7 +165,7 @@ public class LinecastChecker2D {
      * @param line
      * @return
      */
-    private static LinecastPoint2D toLinecastPoint(ExpectedResult expected, Line line) {
+    private static LinecastPoint2D toLinecastPoint(final ExpectedResult expected, final Line line) {
         return new LinecastPoint2D(expected.getPoint(), expected.getNormal(), line);
     }
 

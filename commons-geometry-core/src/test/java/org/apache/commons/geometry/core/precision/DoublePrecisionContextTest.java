@@ -21,7 +21,7 @@ import org.junit.Test;
 
 public class DoublePrecisionContextTest {
 
-    private StubContext ctx = new StubContext();
+    private final StubContext ctx = new StubContext();
 
     @Test
     public void testEq() {
@@ -137,7 +137,7 @@ public class DoublePrecisionContextTest {
         }
 
         @Override
-        public int compare(double a, double b) {
+        public int compare(final double a, final double b) {
             return Double.compare(a, b);
         }
     }

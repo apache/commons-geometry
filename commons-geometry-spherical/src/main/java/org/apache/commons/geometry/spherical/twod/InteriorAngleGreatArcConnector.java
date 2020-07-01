@@ -94,7 +94,7 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
     public static class Maximize extends InteriorAngleGreatArcConnector {
         /** {@inheritDoc} */
         @Override
-        protected boolean isBetterAngle(double newAngle, double previousAngle) {
+        protected boolean isBetterAngle(final double newAngle, final double previousAngle) {
             return newAngle > previousAngle;
         }
     }
@@ -108,7 +108,7 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
     public static class Minimize extends InteriorAngleGreatArcConnector {
         /** {@inheritDoc} */
         @Override
-        protected boolean isBetterAngle(double newAngle, double previousAngle) {
+        protected boolean isBetterAngle(final double newAngle, final double previousAngle) {
             return newAngle < previousAngle;
         }
     }

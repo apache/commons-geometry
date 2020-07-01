@@ -267,7 +267,7 @@ public final class TestOBJWriter implements AutoCloseable {
     public static void write(final BoundarySource3D src, final File file) {
         try (TestOBJWriter writer = new TestOBJWriter(file)) {
             writer.writeBoundaries(src);
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw new UncheckedIOException(exc);
         }
     }

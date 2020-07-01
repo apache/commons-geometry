@@ -50,7 +50,7 @@ public class SimpleTupleFormat {
      * @param suffix String used to signal the end of a tuple; if null, no
      *      string is expected at the end of the tuple
      */
-    public SimpleTupleFormat(String prefix, String suffix) {
+    public SimpleTupleFormat(final String prefix, final String suffix) {
         this(DEFAULT_SEPARATOR, prefix, suffix);
     }
 
@@ -61,7 +61,7 @@ public class SimpleTupleFormat {
      * @param suffix String used to signal the end of a tuple; if null, no
      *      string is expected at the end of the tuple
      */
-    protected SimpleTupleFormat(String separator, String prefix, String suffix) {
+    protected SimpleTupleFormat(final String separator, final String prefix, final String suffix) {
         this.separator = separator;
         this.prefix = prefix;
         this.suffix = suffix;
@@ -92,7 +92,7 @@ public class SimpleTupleFormat {
      * @param a value
      * @return 1-tuple string
      */
-    public String format(double a) {
+    public String format(final double a) {
         final StringBuilder sb = new StringBuilder();
 
         if (prefix != null) {
@@ -113,7 +113,7 @@ public class SimpleTupleFormat {
      * @param a2 second value
      * @return 2-tuple string
      */
-    public String format(double a1, double a2) {
+    public String format(final double a1, final double a2) {
         final StringBuilder sb = new StringBuilder();
 
         if (prefix != null) {
@@ -138,7 +138,7 @@ public class SimpleTupleFormat {
      * @param a3 third value
      * @return 3-tuple string
      */
-    public String format(double a1, double a2, double a3) {
+    public String format(final double a1, final double a2, final double a3) {
         final StringBuilder sb = new StringBuilder();
 
         if (prefix != null) {
@@ -167,7 +167,7 @@ public class SimpleTupleFormat {
      * @param a4 fourth value
      * @return 4-tuple string
      */
-    public String format(double a1, double a2, double a3, double a4) {
+    public String format(final double a1, final double a2, final double a3, final double a4) {
         final StringBuilder sb = new StringBuilder();
 
         if (prefix != null) {
@@ -200,7 +200,7 @@ public class SimpleTupleFormat {
      * @return object returned by {@code fn}
      * @throws IllegalArgumentException if the input string format is invalid
      */
-    public <T> T parse(String str, DoubleFunction1N<T> fn) {
+    public <T> T parse(final String str, final DoubleFunction1N<T> fn) {
         final ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);
@@ -219,7 +219,7 @@ public class SimpleTupleFormat {
      * @return object returned by {@code fn}
      * @throws IllegalArgumentException if the input string format is invalid
      */
-    public <T> T parse(String str, DoubleFunction2N<T> fn) {
+    public <T> T parse(final String str, final DoubleFunction2N<T> fn) {
         final ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);
@@ -239,7 +239,7 @@ public class SimpleTupleFormat {
      * @return object returned by {@code fn}
      * @throws IllegalArgumentException if the input string format is invalid
      */
-    public <T> T parse(String str, DoubleFunction3N<T> fn) {
+    public <T> T parse(final String str, final DoubleFunction3N<T> fn) {
         final ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);
@@ -260,7 +260,7 @@ public class SimpleTupleFormat {
      * @throws IllegalArgumentException if the configured prefix is not null and is not found at the current
      *      parsing position, ignoring preceding whitespace
      */
-    private void readPrefix(String str, ParsePosition pos) {
+    private void readPrefix(final String str, final ParsePosition pos) {
         if (prefix != null) {
             consumeWhitespace(str, pos);
             readSequence(str, prefix, pos);
@@ -275,7 +275,7 @@ public class SimpleTupleFormat {
      * @throws IllegalArgumentException if the configured prefix is not null and is not found at the current
      *      parsing position, ignoring preceding whitespace
      */
-    private double readTupleValue(String str, ParsePosition pos) {
+    private double readTupleValue(final String str, final ParsePosition pos) {
         final int startIdx = pos.getIndex();
 
         int endIdx = str.indexOf(separator, startIdx);
@@ -298,7 +298,7 @@ public class SimpleTupleFormat {
             matchSequence(str, separator, pos);
 
             return value;
-        } catch (NumberFormatException exc) {
+        } catch (final NumberFormatException exc) {
             throw parseFailure(String.format("unable to parse number from string \"%s\"", substr), str, pos, exc);
         }
     }
@@ -311,7 +311,7 @@ public class SimpleTupleFormat {
      * @throws IllegalArgumentException if the configured suffix is not null and is not found at the current
      *      parsing position, ignoring preceding whitespace
      */
-    private void readSuffix(String str, ParsePosition pos) {
+    private void readSuffix(final String str, final ParsePosition pos) {
         if (suffix != null) {
             consumeWhitespace(str, pos);
             readSequence(str, suffix, pos);
@@ -324,7 +324,7 @@ public class SimpleTupleFormat {
      * @param pos the current parsing position
      * @throws IllegalArgumentException if extra non-whitespace content is found past the current parsing position
      */
-    private void endParse(String str, ParsePosition pos) {
+    private void endParse(final String str, final ParsePosition pos) {
         consumeWhitespace(str, pos);
         if (pos.getIndex() != str.length()) {
             throw parseFailure("unexpected content", str, pos);
@@ -389,7 +389,7 @@ public class SimpleTupleFormat {
      * @throws IllegalArgumentException if {@code str} does not contain the characters from
      *      {@code seq} at position {@code pos}
      */
-    private void readSequence(String str, String seq, ParsePosition pos) {
+    private void readSequence(final String str, final String seq, final ParsePosition pos) {
         if (!matchSequence(str, seq, pos)) {
             final int idx = pos.getIndex();
             final String actualSeq = str.substring(idx, Math.min(str.length(), idx + seq.length()));
@@ -419,7 +419,7 @@ public class SimpleTupleFormat {
      * @param pos the current parse position
      * @return an exception signaling a parse failure
      */
-    private static IllegalArgumentException parseFailure(String msg, String str, ParsePosition pos) {
+    private static IllegalArgumentException parseFailure(final String msg, final String str, final ParsePosition pos) {
         return parseFailure(msg, str, pos, null);
     }
 
@@ -430,7 +430,8 @@ public class SimpleTupleFormat {
      * @param cause the original cause of the error
      * @return an exception signaling a parse failure
      */
-    private static IllegalArgumentException parseFailure(String msg, String str, ParsePosition pos, Throwable cause) {
+    private static IllegalArgumentException parseFailure(final String msg, final String str, final ParsePosition pos,
+                                                         final Throwable cause) {
         final String fullMsg = String.format("Failed to parse string \"%s\" at index %d: %s",
                 str, pos.getIndex(), msg);
 
@@ -448,7 +449,7 @@ public class SimpleTupleFormat {
          * @param msg the exception message
          * @param cause the exception root cause
          */
-        TupleParseException(String msg, Throwable cause) {
+        TupleParseException(final String msg, final Throwable cause) {
             super(msg, cause);
         }
     }

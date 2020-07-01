@@ -32,7 +32,7 @@ public class LineSubsetTest {
     @Test
     public void testToSubspaceAndToSpace() {
         // arrange
-        LineSubset subset = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION)
+        final LineSubset subset = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION)
                 .span();
 
         // act/assert

@@ -366,7 +366,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

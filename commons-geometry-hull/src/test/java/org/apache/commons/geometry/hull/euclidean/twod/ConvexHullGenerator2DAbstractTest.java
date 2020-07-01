@@ -51,7 +51,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
     protected abstract ConvexHullGenerator2D createConvexHullGenerator(boolean includeCollinearPoints);
 
-    protected Collection<Vector2D> reducePoints(Collection<Vector2D> points) {
+    protected Collection<Vector2D> reducePoints(final Collection<Vector2D> points) {
         // do nothing by default, may be overridden by other tests
         return points;
     }
@@ -68,7 +68,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testEmpty() {
         // act
-        ConvexHull2D hull = generator.generate(Collections.emptyList());
+        final ConvexHull2D hull = generator.generate(Collections.emptyList());
 
         // assert
         Assert.assertEquals(0, hull.getVertices().size());
@@ -79,10 +79,10 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testOnePoint() {
         // arrange
-        List<Vector2D> points = createRandomPoints(1);
+        final List<Vector2D> points = createRandomPoints(1);
 
         // act
-        ConvexHull2D hull = generator.generate(points);
+        final ConvexHull2D hull = generator.generate(points);
 
         // assert
         Assert.assertEquals(1, hull.getVertices().size());
@@ -93,10 +93,10 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testTwoPoints() {
         // arrange
-        List<Vector2D> points = createRandomPoints(2);
+        final List<Vector2D> points = createRandomPoints(2);
 
         // act
-        ConvexHull2D hull = generator.generate(points);
+        final ConvexHull2D hull = generator.generate(points);
 
         // assert
         Assert.assertEquals(2, hull.getVertices().size());
@@ -127,12 +127,12 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         // execute 100 random variations
         for (int i = 0; i < 100; i++) {
             // randomize the size from 4 to 100
-            int size = (int) Math.floor(random.nextDouble() * 96.0 + 4.0);
+            final int size = (int) Math.floor(random.nextDouble() * 96.0 + 4.0);
 
-            List<Vector2D> points = createRandomPoints(size);
+            final List<Vector2D> points = createRandomPoints(size);
 
             // act
-            ConvexHull2D hull = generator.generate(reducePoints(points));
+            final ConvexHull2D hull = generator.generate(reducePoints(points));
 
             // assert
             checkConvexHull(points, hull);
@@ -289,7 +289,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         //            make sure that they are processed in the proper order
         //            for each algorithm.
 
-        List<Vector2D> points = new ArrayList<>();
+        final List<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(16.078200000000184, -36.52519999989808));
         points.add(Vector2D.of(19.164300000000186, -36.52519999989808));
         points.add(Vector2D.of(19.1643, -25.28136477910407));
@@ -310,7 +310,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         //            make sure that they are processed in the proper order
         //            for each algorithm.
 
-        List<Vector2D> points = new ArrayList<>();
+        final List<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(0, -29.959696875));
         points.add(Vector2D.of(0, -31.621809375));
         points.add(Vector2D.of(0, -28.435696875));
@@ -332,9 +332,9 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testIssue1123() {
         // arrange
-        List<Vector2D> points = new ArrayList<>();
+        final List<Vector2D> points = new ArrayList<>();
 
-        int[][] data = {
+        final int[][] data = {
                 {-11, -1}, {-11, 0}, {-11, 1},
                 {-10, -3}, {-10, -2}, {-10, -1}, {-10, 0}, {-10, 1},
                 {-10, 2}, {-10, 3}, {-9, -4}, {-9, -3}, {-9, -2},
@@ -387,11 +387,11 @@ public abstract class ConvexHullGenerator2DAbstractTest {
                 {11, -1}, {11, 0}, {11, 1}
             };
 
-        for (int[] line : data) {
+        for (final int[] line : data) {
             points.add(Vector2D.of(line[0], line[1]));
         }
 
-        Vector2D[] referenceHull = {
+        final Vector2D[] referenceHull = {
             Vector2D.of(-11.0, -1.0),
             Vector2D.of(-10.0, -3.0),
             Vector2D.of(-6.0, -7.0),
@@ -411,8 +411,8 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         };
 
         // act
-        ConvexHull2D convHull = generator.generate(points);
-        Region<Vector2D> hullRegion = convHull.getRegion();
+        final ConvexHull2D convHull = generator.generate(points);
+        final Region<Vector2D> hullRegion = convHull.getRegion();
 
         // assert
         Assert.assertEquals(274.0, hullRegion.getSize(), 1.0e-12);
@@ -431,9 +431,9 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
     // ------------------------------------------------------------------------------
 
-    protected final List<Vector2D> createRandomPoints(int size) {
+    protected final List<Vector2D> createRandomPoints(final int size) {
         // create the cloud container
-        List<Vector2D> points = new ArrayList<>(size);
+        final List<Vector2D> points = new ArrayList<>(size);
         // fill the cloud with a random distribution of points
         for (int i = 0; i < size; i++) {
             points.add(Vector2D.of(random.nextDouble() * 2.0 - 1.0, random.nextDouble() * 2.0 - 1.0));
@@ -457,15 +457,15 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
         final List<Vector2D> points = hull.getVertices();
         int sign = 0;
-        int size = points.size();
+        final int size = points.size();
 
         for (int i = 0; i < size; i++) {
-            Vector2D p1 = points.get(i == 0 ? size - 1 : i - 1);
-            Vector2D p2 = points.get(i);
-            Vector2D p3 = points.get(i == size - 1 ? 0 : i + 1);
+            final Vector2D p1 = points.get(i == 0 ? size - 1 : i - 1);
+            final Vector2D p2 = points.get(i);
+            final Vector2D p3 = points.get(i == size - 1 ? 0 : i + 1);
 
-            Vector2D d1 = p2.subtract(p1);
-            Vector2D d2 = p3.subtract(p2);
+            final Vector2D d1 = p2.subtract(p1);
+            final Vector2D d2 = p3.subtract(p2);
 
             Assert.assertTrue(d1.norm() > 1e-10);
             Assert.assertTrue(d2.norm() > 1e-10);
@@ -495,7 +495,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         final ConvexArea region = hull.getRegion();
 
         for (final Vector2D p : points) {
-            RegionLocation location = region.classify(p);
+            final RegionLocation location = region.classify(p);
             Assert.assertNotEquals(RegionLocation.OUTSIDE, location);
 
             if (location == RegionLocation.BOUNDARY && includesCollinearPoints) {

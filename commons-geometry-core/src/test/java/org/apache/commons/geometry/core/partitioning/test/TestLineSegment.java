@@ -146,7 +146,7 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
 
     /** {@inheritDoc} */
     @Override
-    public RegionLocation classify(TestPoint2D point) {
+    public RegionLocation classify(final TestPoint2D point) {
         if (line.contains(point)) {
             final double value = line.toSubspaceValue(point);
 
@@ -165,7 +165,7 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
 
     /** {@inheritDoc} */
     @Override
-    public TestPoint2D closest(TestPoint2D point) {
+    public TestPoint2D closest(final TestPoint2D point) {
         double value = line.toSubspaceValue(point);
         value = Math.max(Math.min(value, end), start);
 
@@ -181,13 +181,13 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
     /** {@inheritDoc} */
     @Override
     public TestLineSegment reverse() {
-        TestLine rLine = line.reverse();
+        final TestLine rLine = line.reverse();
         return new TestLineSegment(-end, -start, rLine);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Split<TestLineSegment> split(Hyperplane<TestPoint2D> splitter) {
+    public Split<TestLineSegment> split(final Hyperplane<TestPoint2D> splitter) {
         final TestLine splitterLine = (TestLine) splitter;
 
         if (isInfinite()) {
@@ -198,25 +198,25 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
 
     /** {@inheritDoc} */
     @Override
-    public HyperplaneConvexSubset<TestPoint2D> transform(Transform<TestPoint2D> transform) {
+    public HyperplaneConvexSubset<TestPoint2D> transform(final Transform<TestPoint2D> transform) {
         if (!isInfinite()) {
             // simple case; just transform the points directly
-            TestPoint2D p1 = transform.apply(getStartPoint());
-            TestPoint2D p2 = transform.apply(getEndPoint());
+            final TestPoint2D p1 = transform.apply(getStartPoint());
+            final TestPoint2D p2 = transform.apply(getEndPoint());
 
             return new TestLineSegment(p1, p2);
         }
 
         // determine how the line has transformed
-        TestPoint2D p0 = transform.apply(line.toSpace(0));
-        TestPoint2D p1 = transform.apply(line.toSpace(1));
+        final TestPoint2D p0 = transform.apply(line.toSpace(0));
+        final TestPoint2D p1 = transform.apply(line.toSpace(1));
 
-        TestLine tLine = new TestLine(p0, p1);
-        double translation = tLine.toSubspaceValue(p0);
-        double scale = tLine.toSubspaceValue(p1);
+        final TestLine tLine = new TestLine(p0, p1);
+        final double translation = tLine.toSubspaceValue(p0);
+        final double scale = tLine.toSubspaceValue(p1);
 
-        double tStart = (start * scale) + translation;
-        double tEnd = (end * scale) + translation;
+        final double tStart = (start * scale) + translation;
+        final double tEnd = (end * scale) + translation;
 
         return new TestLineSegment(tStart, tEnd, tLine);
     }
@@ -240,7 +240,7 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
      * @param splitter the splitter line
      * @return the split convex subset
      */
-    private Split<TestLineSegment> splitInfinite(TestLine splitter) {
+    private Split<TestLineSegment> splitInfinite(final TestLine splitter) {
         final TestPoint2D intersection = splitter.intersection(line);
 
         if (intersection == null) {
@@ -283,7 +283,7 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
      * @param splitter the splitter line
      * @return the split convex subset
      */
-    private Split<TestLineSegment> splitFinite(TestLine splitter) {
+    private Split<TestLineSegment> splitFinite(final TestLine splitter) {
 
         final double startOffset = splitter.offset(line.toSpace(start));
         final double endOffset = splitter.offset(line.toSpace(end));

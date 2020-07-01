@@ -38,10 +38,10 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testMonotoneChainExample() {
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
 
         // create a list of input points for the algorithm
-        List<Vector2D> pts = Arrays.asList(
+        final List<Vector2D> pts = Arrays.asList(
                     Vector2D.ZERO,
                     Vector2D.of(0.5, 0.5),
                     Vector2D.of(0, 0.5),
@@ -53,17 +53,17 @@ public class DocumentationExamplesTest {
                 );
 
         // create an instance of the monotone chain convex hull generator
-        MonotoneChain mc = new MonotoneChain(precision);
+        final MonotoneChain mc = new MonotoneChain(precision);
 
         // compute the convex hull
-        ConvexHull2D hull = mc.generate(pts);
+        final ConvexHull2D hull = mc.generate(pts);
 
         // list the vertices from the input that were used in the hull
-        List<Vector2D> vertices = hull.getVertices(); // [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
+        final List<Vector2D> vertices = hull.getVertices(); // [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
 
         // get the hull as a region
-        ConvexArea region = hull.getRegion();
-        boolean containsAll = pts.stream().allMatch(region::contains); // true - region contains all input points
+        final ConvexArea region = hull.getRegion();
+        final boolean containsAll = pts.stream().allMatch(region::contains); // true - region contains all input points
 
         // ---
         Assert.assertEquals(4, vertices.size());

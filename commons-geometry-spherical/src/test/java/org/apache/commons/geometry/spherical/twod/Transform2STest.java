@@ -31,7 +31,7 @@ public class Transform2STest {
     @Test
     public void testIdentity() {
         // act
-        Transform2S t = Transform2S.identity();
+        final Transform2S t = Transform2S.identity();
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -51,9 +51,9 @@ public class Transform2STest {
     @Test
     public void testRotation() {
         // arrange
-        Transform2S aroundPole = Transform2S.createRotation(Point2S.PLUS_K, PlaneAngleRadians.PI_OVER_TWO);
-        Transform2S aroundX = Transform2S.createRotation(Vector3D.Unit.PLUS_X, -PlaneAngleRadians.PI_OVER_TWO);
-        Transform2S aroundY = Transform2S.createRotation(
+        final Transform2S aroundPole = Transform2S.createRotation(Point2S.PLUS_K, PlaneAngleRadians.PI_OVER_TWO);
+        final Transform2S aroundX = Transform2S.createRotation(Vector3D.Unit.PLUS_X, -PlaneAngleRadians.PI_OVER_TWO);
+        final Transform2S aroundY = Transform2S.createRotation(
                 QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act/assert
@@ -76,7 +76,7 @@ public class Transform2STest {
     @Test
     public void testMultipleRotations() {
         // act
-        Transform2S t = Transform2S.identity()
+        final Transform2S t = Transform2S.identity()
                 .rotate(Point2S.PLUS_K, PlaneAngleRadians.PI_OVER_TWO)
                 .rotate(Vector3D.Unit.PLUS_X, -PlaneAngleRadians.PI_OVER_TWO)
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
@@ -92,7 +92,7 @@ public class Transform2STest {
     @Test
     public void testMultiply() {
         // act
-        Transform2S t = Transform2S.identity()
+        final Transform2S t = Transform2S.identity()
                 .multiply(Transform2S.createRotation(Point2S.PLUS_K, PlaneAngleRadians.PI_OVER_TWO))
                 .multiply(Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO));
 
@@ -107,7 +107,7 @@ public class Transform2STest {
     @Test
     public void testPremultiply() {
         // act
-        Transform2S t = Transform2S.identity()
+        final Transform2S t = Transform2S.identity()
                 .premultiply(Transform2S.createRotation(Point2S.PLUS_K, PlaneAngleRadians.PI_OVER_TWO))
                 .premultiply(Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO));
 
@@ -122,14 +122,14 @@ public class Transform2STest {
     @Test
     public void testReflection_point() {
         // arrange
-        Point2S a = Point2S.of(1, 1);
-        Point2S b = Point2S.of(-1, 1);
+        final Point2S a = Point2S.of(1, 1);
+        final Point2S b = Point2S.of(-1, 1);
 
-        Point2S c = Point2S.of(1, PlaneAngleRadians.PI - 1);
-        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI - 1);
+        final Point2S c = Point2S.of(1, PlaneAngleRadians.PI - 1);
+        final Point2S d = Point2S.of(-1, PlaneAngleRadians.PI - 1);
 
         // act
-        Transform2S t = Transform2S.createReflection(Point2S.PLUS_I);
+        final Transform2S t = Transform2S.createReflection(Point2S.PLUS_I);
 
         // assert
         Assert.assertFalse(t.preservesOrientation());
@@ -150,14 +150,14 @@ public class Transform2STest {
     @Test
     public void testReflection_vector() {
         // arrange
-        Point2S a = Point2S.of(1, 1);
-        Point2S b = Point2S.of(-1, 1);
+        final Point2S a = Point2S.of(1, 1);
+        final Point2S b = Point2S.of(-1, 1);
 
-        Point2S c = Point2S.of(1, PlaneAngleRadians.PI - 1);
-        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI - 1);
+        final Point2S c = Point2S.of(1, PlaneAngleRadians.PI - 1);
+        final Point2S d = Point2S.of(-1, PlaneAngleRadians.PI - 1);
 
         // act
-        Transform2S t = Transform2S.createReflection(Vector3D.Unit.PLUS_Y);
+        final Transform2S t = Transform2S.createReflection(Vector3D.Unit.PLUS_Y);
 
         // assert
         Assert.assertFalse(t.preservesOrientation());
@@ -178,14 +178,14 @@ public class Transform2STest {
     @Test
     public void testDoubleReflection() {
         // arrange
-        Point2S a = Point2S.of(1, 1);
-        Point2S b = Point2S.of(-1, 1);
+        final Point2S a = Point2S.of(1, 1);
+        final Point2S b = Point2S.of(-1, 1);
 
-        Point2S c = Point2S.of(1, PlaneAngleRadians.PI - 1);
-        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI - 1);
+        final Point2S c = Point2S.of(1, PlaneAngleRadians.PI - 1);
+        final Point2S d = Point2S.of(-1, PlaneAngleRadians.PI - 1);
 
         // act
-        Transform2S t = Transform2S.identity()
+        final Transform2S t = Transform2S.identity()
                 .reflect(Point2S.PLUS_I)
                 .reflect(Vector3D.Unit.PLUS_Y);
 
@@ -208,13 +208,13 @@ public class Transform2STest {
     @Test
     public void testHashcode() {
         // arrange
-        Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
-        Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO);
-        Transform2S c = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI);
-        Transform2S d = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
+        final Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
+        final Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO);
+        final Transform2S c = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI);
+        final Transform2S d = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
 
         // act
-        int hash = a.hashCode();
+        final int hash = a.hashCode();
 
         // assert
         Assert.assertEquals(hash, a.hashCode());
@@ -228,10 +228,10 @@ public class Transform2STest {
     @Test
     public void testEquals() {
         // arrange
-        Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
-        Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO);
-        Transform2S c = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI);
-        Transform2S d = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
+        final Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
+        final Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO);
+        final Transform2S c = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI);
+        final Transform2S d = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
         Assert.assertEquals(a, a);
@@ -249,24 +249,24 @@ public class Transform2STest {
     @Test
     public void testToString() {
         // arrange
-        Transform2S t = Transform2S.identity();
+        final Transform2S t = Transform2S.identity();
 
         // act
-        String str = t.toString();
+        final String str = t.toString();
 
         // assert
         GeometryTestUtils.assertContains("Transform2S", str);
         GeometryTestUtils.assertContains("euclideanTransform= [", str);
     }
 
-    private static void checkInverse(Transform2S t) {
-        Transform2S inv = t.inverse();
+    private static void checkInverse(final Transform2S t) {
+        final Transform2S inv = t.inverse();
 
         // test non-pole points
         for (double az = -PlaneAngleRadians.TWO_PI; az <= 2 * PlaneAngleRadians.TWO_PI; az += 0.2) {
             for (double p = 0.1; p < PlaneAngleRadians.PI; p += 0.2) {
 
-                Point2S pt = Point2S.of(az, p);
+                final Point2S pt = Point2S.of(az, p);
 
                 SphericalTestUtils.assertPointsEqual(pt, inv.apply(t.apply(pt)), TEST_EPS);
                 SphericalTestUtils.assertPointsEqual(pt, t.apply(inv.apply(pt)), TEST_EPS);

@@ -55,7 +55,7 @@ public final class EuclideanTestUtils {
      * @param step the step (increment) value for the range
      * @param callback callback to invoke for each permutation.
      */
-    public static void permute(double min, double max, double step, PermuteCallback2D callback) {
+    public static void permute(final double min, final double max, final double step, final PermuteCallback2D callback) {
         permuteInternal(min, max, step, false, callback);
     }
 
@@ -67,7 +67,7 @@ public final class EuclideanTestUtils {
      * @param step the step (increment) value for the range
      * @param callback callback to invoke for each permutation.
      */
-    public static void permuteSkipZero(double min, double max, double step, PermuteCallback2D callback) {
+    public static void permuteSkipZero(final double min, final double max, final double step, final PermuteCallback2D callback) {
         permuteInternal(min, max, step, true, callback);
     }
 
@@ -80,7 +80,7 @@ public final class EuclideanTestUtils {
      * @param skipZero if true, the {@code (0, 0)} permutation will be skipped
      * @param callback callback to invoke for each permutation.
      */
-    private static void permuteInternal(double min, double max, double step, boolean skipZero, PermuteCallback2D callback) {
+    private static void permuteInternal(final double min, final double max, final double step, final boolean skipZero, final PermuteCallback2D callback) {
         for (double x = min; x <= max; x += step) {
             for (double y = min; y <= max; y += step) {
                 if (!skipZero || (x != 0.0 || y != 0.0)) {
@@ -98,7 +98,7 @@ public final class EuclideanTestUtils {
      * @param step the step (increment) value for the range
      * @param callback callback to invoke for each permutation.
      */
-    public static void permute(double min, double max, double step, PermuteCallback3D callback) {
+    public static void permute(final double min, final double max, final double step, final PermuteCallback3D callback) {
         permuteInternal(min, max, step, false, callback);
     }
 
@@ -110,7 +110,7 @@ public final class EuclideanTestUtils {
      * @param step the step (increment) value for the range
      * @param callback callback to invoke for each permutation.
      */
-    public static void permuteSkipZero(double min, double max, double step, PermuteCallback3D callback) {
+    public static void permuteSkipZero(final double min, final double max, final double step, final PermuteCallback3D callback) {
         permuteInternal(min, max, step, true, callback);
     }
 
@@ -123,7 +123,7 @@ public final class EuclideanTestUtils {
      * @param skipZero if true, the {@code (0, 0, 0)} permutation will be skipped
      * @param callback callback to invoke for each permutation.
      */
-    private static void permuteInternal(double min, double max, double step, boolean skipZero, PermuteCallback3D callback) {
+    private static void permuteInternal(final double min, final double max, final double step, final boolean skipZero, final PermuteCallback3D callback) {
         for (double x = min; x <= max; x += step) {
             for (double y = min; y <= max; y += step) {
                 for (double z = min; z <= max; z += step) {
@@ -143,8 +143,8 @@ public final class EuclideanTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertCoordinatesEqual(Vector1D expected, Vector1D actual, double tolerance) {
-        String msg = "Expected coordinates to equal " + expected + " but was " + actual + ";";
+    public static void assertCoordinatesEqual(final Vector1D expected, final Vector1D actual, final double tolerance) {
+        final String msg = "Expected coordinates to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
     }
 
@@ -156,8 +156,8 @@ public final class EuclideanTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertCoordinatesEqual(Vector2D expected, Vector2D actual, double tolerance) {
-        String msg = "Expected coordinates to equal " + expected + " but was " + actual + ";";
+    public static void assertCoordinatesEqual(final Vector2D expected, final Vector2D actual, final double tolerance) {
+        final String msg = "Expected coordinates to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
         Assert.assertEquals(msg, expected.getY(), actual.getY(), tolerance);
     }
@@ -170,8 +170,8 @@ public final class EuclideanTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertCoordinatesEqual(Vector3D expected, Vector3D actual, double tolerance) {
-        String msg = "Expected coordinates to equal " + expected + " but was " + actual + ";";
+    public static void assertCoordinatesEqual(final Vector3D expected, final Vector3D actual, final double tolerance) {
+        final String msg = "Expected coordinates to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
         Assert.assertEquals(msg, expected.getY(), actual.getY(), tolerance);
         Assert.assertEquals(msg, expected.getZ(), actual.getZ(), tolerance);
@@ -182,8 +182,8 @@ public final class EuclideanTestUtils {
      *
      * @param value
      */
-    public static void assertPositiveInfinity(double value) {
-        String msg = "Expected value to be positive infinity but was " + value;
+    public static void assertPositiveInfinity(final double value) {
+        final String msg = "Expected value to be positive infinity but was " + value;
         Assert.assertTrue(msg, Double.isInfinite(value));
         Assert.assertTrue(msg, value > 0);
     }
@@ -196,14 +196,14 @@ public final class EuclideanTestUtils {
      * @param actual
      * @param precision
      */
-    public static <V extends EuclideanVector<V>> void assertVertexLoopSequence(List<V> expected, List<V> actual,
-            DoublePrecisionContext precision) {
+    public static <V extends EuclideanVector<V>> void assertVertexLoopSequence(final List<V> expected, final List<V> actual,
+                                                                               final DoublePrecisionContext precision) {
         Assert.assertEquals("Vertex sequences have different sizes", expected.size(), actual.size());
 
         if (!expected.isEmpty()) {
 
             int offset = -1;
-            V start = expected.get(0);
+            final V start = expected.get(0);
             for (int i = 0; i < actual.size(); ++i) {
                 if (actual.get(i).eq(start, precision)) {
                     offset = i;
@@ -234,8 +234,8 @@ public final class EuclideanTestUtils {
      *
      * @param value
      */
-    public static void assertNegativeInfinity(double value) {
-        String msg = "Expected value to be negative infinity but was " + value;
+    public static void assertNegativeInfinity(final double value) {
+        final String msg = "Expected value to be negative infinity but was " + value;
         Assert.assertTrue(msg, Double.isInfinite(value));
         Assert.assertTrue(msg, value < 0);
     }
@@ -246,8 +246,8 @@ public final class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(Region<Vector1D> region, RegionLocation loc, Vector1D... pts) {
-        for (Vector1D pt : pts) {
+    public static void assertRegionLocation(final Region<Vector1D> region, final RegionLocation loc, final Vector1D... pts) {
+        for (final Vector1D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
         }
     }
@@ -258,8 +258,8 @@ public final class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(Region<Vector2D> region, RegionLocation loc, Vector2D... pts) {
-        for (Vector2D pt : pts) {
+    public static void assertRegionLocation(final Region<Vector2D> region, final RegionLocation loc, final Vector2D... pts) {
+        for (final Vector2D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
         }
     }
@@ -270,8 +270,8 @@ public final class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(Region<Vector3D> region, RegionLocation loc, Vector3D... pts) {
-        for (Vector3D pt : pts) {
+    public static void assertRegionLocation(final Region<Vector3D> region, final RegionLocation loc, final Vector3D... pts) {
+        for (final Vector3D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
         }
     }
@@ -281,8 +281,8 @@ public final class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(HyperplaneSubset<Vector1D> sub, RegionLocation loc, Vector1D... pts) {
-        for (Vector1D pt : pts) {
+    public static void assertRegionLocation(final HyperplaneSubset<Vector1D> sub, final RegionLocation loc, final Vector1D... pts) {
+        for (final Vector1D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, sub.classify(pt));
         }
     }
@@ -292,8 +292,8 @@ public final class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(HyperplaneSubset<Vector2D> sub, RegionLocation loc, Vector2D... pts) {
-        for (Vector2D pt : pts) {
+    public static void assertRegionLocation(final HyperplaneSubset<Vector2D> sub, final RegionLocation loc, final Vector2D... pts) {
+        for (final Vector2D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, sub.classify(pt));
         }
     }
@@ -303,8 +303,8 @@ public final class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(HyperplaneSubset<Vector3D> sub, RegionLocation loc, Vector3D... pts) {
-        for (Vector3D pt : pts) {
+    public static void assertRegionLocation(final HyperplaneSubset<Vector3D> sub, final RegionLocation loc, final Vector3D... pts) {
+        for (final Vector3D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, sub.classify(pt));
         }
     }

@@ -40,7 +40,7 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
      * @param segments the segments to use in the collection
      * @throws IllegalArgumentException if the collection is null or empty
      */
-    public TestLineSegmentCollection(List<TestLineSegment> segments) {
+    public TestLineSegmentCollection(final List<TestLineSegment> segments) {
         this.segments = Collections.unmodifiableList(new ArrayList<>(segments));
     }
 
@@ -60,7 +60,7 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
     /** {@inheritDoc} */
     @Override
     public boolean isFull() {
-        for (TestLineSegment seg : segments) {
+        for (final TestLineSegment seg : segments) {
             if (seg.isFull()) {
                 return true;
             }
@@ -71,7 +71,7 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
     /** {@inheritDoc} */
     @Override
     public boolean isEmpty() {
-        for (TestLineSegment seg : segments) {
+        for (final TestLineSegment seg : segments) {
             if (!seg.isEmpty()) {
                 return false;
             }
@@ -82,7 +82,7 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
     /** {@inheritDoc} */
     @Override
     public boolean isInfinite() {
-        for (TestLineSegment seg : segments) {
+        for (final TestLineSegment seg : segments) {
             if (seg.isInfinite()) {
                 return true;
             }
@@ -101,7 +101,7 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
     public double getSize() {
         double size = 0.0;
 
-        for (TestLineSegment seg : segments) {
+        for (final TestLineSegment seg : segments) {
             size += seg.getSize();
         }
 
@@ -116,12 +116,12 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
 
     /** {@inheritDoc} */
     @Override
-    public Split<TestLineSegmentCollection> split(Hyperplane<TestPoint2D> splitter) {
+    public Split<TestLineSegmentCollection> split(final Hyperplane<TestPoint2D> splitter) {
         final List<TestLineSegment> minusList = new ArrayList<>();
         final List<TestLineSegment> plusList = new ArrayList<>();
 
-        for (TestLineSegment segment : segments) {
-            Split<TestLineSegment> split = segment.split(splitter);
+        for (final TestLineSegment segment : segments) {
+            final Split<TestLineSegment> split = segment.split(splitter);
 
             if (split.getMinus() != null) {
                 minusList.add(split.getMinus());
@@ -145,11 +145,11 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
 
     /** {@inheritDoc} */
     @Override
-    public RegionLocation classify(TestPoint2D point) {
+    public RegionLocation classify(final TestPoint2D point) {
 
         // simply return the first value that is not outside;
         // this is decidedly not robust but should work for testing purposes
-        for (TestLineSegment seg : segments) {
+        for (final TestLineSegment seg : segments) {
             final RegionLocation loc = seg.classify(point);
             if (loc != RegionLocation.OUTSIDE) {
                 return loc;
@@ -161,13 +161,13 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
 
     /** {@inheritDoc} */
     @Override
-    public TestPoint2D closest(TestPoint2D point) {
+    public TestPoint2D closest(final TestPoint2D point) {
         TestPoint2D closest = null;
         double minDist = -1;
 
-        for (TestLineSegment seg : segments) {
-            TestPoint2D pt = seg.closest(point);
-            double dist = pt.distance(point);
+        for (final TestLineSegment seg : segments) {
+            final TestPoint2D pt = seg.closest(point);
+            final double dist = pt.distance(point);
             if (minDist < 0 || dist < minDist) {
                 minDist = dist;
                 closest = pt;
@@ -186,7 +186,7 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
 
     /** {@inheritDoc} */
     @Override
-    public HyperplaneSubset<TestPoint2D> transform(Transform<TestPoint2D> transform) {
+    public HyperplaneSubset<TestPoint2D> transform(final Transform<TestPoint2D> transform) {
         throw new UnsupportedOperationException();
     }
 }

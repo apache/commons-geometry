@@ -36,8 +36,8 @@ public final class SphericalTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertPointsEqual(Point1S expected, Point1S actual, double tolerance) {
-        String msg = "Expected point to equal " + expected + " but was " + actual + ";";
+    public static void assertPointsEqual(final Point1S expected, final Point1S actual, final double tolerance) {
+        final String msg = "Expected point to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getAzimuth(), actual.getAzimuth(), tolerance);
     }
 
@@ -46,8 +46,8 @@ public final class SphericalTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertPointsEqual(Point2S expected, Point2S actual, double tolerance) {
-        String msg = "Expected point to equal " + expected + " but was " + actual + ";";
+    public static void assertPointsEqual(final Point2S expected, final Point2S actual, final double tolerance) {
+        final String msg = "Expected point to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getAzimuth(), actual.getAzimuth(), tolerance);
         Assert.assertEquals(msg, expected.getPolar(), actual.getPolar(), tolerance);
     }
@@ -57,8 +57,8 @@ public final class SphericalTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertPointsEq(Point2S expected, Point2S actual, double tolerance) {
-        String msg = "Expected point to be equivalent to " + expected + " but was " + actual + ";";
+    public static void assertPointsEq(final Point2S expected, final Point2S actual, final double tolerance) {
+        final String msg = "Expected point to be equivalent to " + expected + " but was " + actual + ";";
         Assert.assertTrue(msg, expected.eq(actual, new EpsilonDoublePrecisionContext(tolerance)));
     }
 
@@ -67,8 +67,8 @@ public final class SphericalTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertVectorsEqual(Vector3D expected, Vector3D actual, double tolerance) {
-        String msg = "Expected vector to equal " + expected + " but was " + actual + ";";
+    public static void assertVectorsEqual(final Vector3D expected, final Vector3D actual, final double tolerance) {
+        final String msg = "Expected vector to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
         Assert.assertEquals(msg, expected.getY(), actual.getY(), tolerance);
         Assert.assertEquals(msg, expected.getZ(), actual.getZ(), tolerance);
@@ -79,8 +79,8 @@ public final class SphericalTestUtils {
      * @param loc expected location of the given points
      * @param pts points to test
      */
-    public static void checkClassify(Region<Point2S> region, RegionLocation loc, Point2S... pts) {
-        for (Point2S pt : pts) {
+    public static void checkClassify(final Region<Point2S> region, final RegionLocation loc, final Point2S... pts) {
+        for (final Point2S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
         }
     }

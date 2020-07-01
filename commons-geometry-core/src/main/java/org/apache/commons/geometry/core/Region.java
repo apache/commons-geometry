@@ -67,7 +67,7 @@ public interface Region<P extends Point<P>> extends Sized {
      * @param pt the point to test
      * @return true if the point is on the inside or boundary of the region
      */
-    default boolean contains(P pt) {
+    default boolean contains(final P pt) {
         final RegionLocation location = classify(pt);
         return location != null && location != RegionLocation.OUTSIDE;
     }

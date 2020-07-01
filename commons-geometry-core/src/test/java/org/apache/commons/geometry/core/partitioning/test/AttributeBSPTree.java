@@ -41,7 +41,7 @@ public class AttributeBSPTree<P extends Point<P>, T>
      * initial attribute value.
      * @param initialNodeAttribute The attribute value to assign to newly created nodes.
      */
-    public AttributeBSPTree(T initialNodeAttribute) {
+    public AttributeBSPTree(final T initialNodeAttribute) {
         this.initialNodeAttribute = initialNodeAttribute;
 
         this.getRoot().setAttribute(initialNodeAttribute);
@@ -71,7 +71,7 @@ public class AttributeBSPTree<P extends Point<P>, T>
         /** Simple constructor.
          * @param tree the owning tree; this must be an instance of {@link AttributeBSPTree}
          */
-        protected AttributeNode(AbstractBSPTree<P, AttributeNode<P, T>> tree) {
+        protected AttributeNode(final AbstractBSPTree<P, AttributeNode<P, T>> tree) {
             super(tree);
         }
 

@@ -297,7 +297,7 @@ public abstract class AbstractRegionBSPTree<
 
     /** {@inheritDoc} */
     @Override
-    public P project(P pt) {
+    public P project(final P pt) {
         final BoundaryProjector<P, N> projector = new BoundaryProjector<>(pt);
         accept(projector);
 
@@ -393,8 +393,8 @@ public abstract class AbstractRegionBSPTree<
             } else {
                 // the point is on the cut boundary; classify against both child
                 // subtrees and see if we end up with the same result or not
-                RegionLocation minusLoc = classifyRecursive(node.getMinus(), point);
-                RegionLocation plusLoc = classifyRecursive(node.getPlus(), point);
+                final RegionLocation minusLoc = classifyRecursive(node.getMinus(), point);
+                final RegionLocation plusLoc = classifyRecursive(node.getPlus(), point);
 
                 if (minusLoc == plusLoc) {
                     return minusLoc;
@@ -553,7 +553,7 @@ public abstract class AbstractRegionBSPTree<
         /** Simple constructor.
          * @param tree owning tree instance
          */
-        protected AbstractRegionNode(AbstractBSPTree<P, N> tree) {
+        protected AbstractRegionNode(final AbstractBSPTree<P, N> tree) {
             super(tree);
         }
 
@@ -696,7 +696,7 @@ public abstract class AbstractRegionBSPTree<
          * @return object representing the portions of the node's cut that lie on the region's boundary
          */
         private RegionCutBoundary<P> computeBoundary() {
-            HyperplaneConvexSubset<P> sub = getCut();
+            final HyperplaneConvexSubset<P> sub = getCut();
 
             // find the portions of the node cut hyperplane subset that touch inside and
             // outside cells in the minus sub-tree
@@ -1128,7 +1128,7 @@ public abstract class AbstractRegionBSPTree<
                 }
 
                 for (final HyperplaneConvexSubset<P> boundary : cutBoundary.getInsideFacing()) {
-                    HyperplaneConvexSubset<P> reversed = boundary.reverse();
+                    final HyperplaneConvexSubset<P> reversed = boundary.reverse();
 
                     addOutput(typeConverter.apply(reversed));
                 }

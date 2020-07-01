@@ -56,8 +56,8 @@ public class Plane extends AbstractHyperplane<Vector3D> {
      * @param originOffset offset of the origin with respect to the plane
      * @param precision precision context used to compare floating point values
      */
-    Plane(final Vector3D.Unit normal, double originOffset,
-            final DoublePrecisionContext precision) {
+    Plane(final Vector3D.Unit normal, final double originOffset,
+          final DoublePrecisionContext precision) {
 
         super(precision);
 
@@ -370,7 +370,7 @@ public class Plane extends AbstractHyperplane<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         } else if (obj == null || obj.getClass() != this.getClass()) {

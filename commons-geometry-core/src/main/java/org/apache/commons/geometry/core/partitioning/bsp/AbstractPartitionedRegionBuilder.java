@@ -198,7 +198,7 @@ public abstract class AbstractPartitionedRegionBuilder<
      * @return true if any nodes were changed
      */
     private boolean propagateRegionInterior() {
-        List<N> outsidePartitionedLeaves = getOutsidePartitionedLeaves();
+        final List<N> outsidePartitionedLeaves = getOutsidePartitionedLeaves();
         Collections.sort(outsidePartitionedLeaves, DEEPEST_FIRST_ORDER);
 
         int changeCount = 0;

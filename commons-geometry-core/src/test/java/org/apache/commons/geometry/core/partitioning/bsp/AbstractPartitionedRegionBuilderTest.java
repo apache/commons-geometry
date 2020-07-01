@@ -35,7 +35,7 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testCtor_invalidTree() {
         // arrange
-        TestRegionBSPTree tree = new TestRegionBSPTree(true);
+        final TestRegionBSPTree tree = new TestRegionBSPTree(true);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -46,10 +46,10 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_empty() {
         // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         // act
-        TestRegionBSPTree tree = builder.build();
+        final TestRegionBSPTree tree = builder.build();
 
         // assert
         Assert.assertTrue(tree.isEmpty());
@@ -60,7 +60,7 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testInsertPartition_cannotInsertAfterBoundary() {
         // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
 
@@ -73,11 +73,11 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_noPartitions_halfSpace() {
         // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         // act
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
-        TestRegionBSPTree tree = builder.build();
+        final TestRegionBSPTree tree = builder.build();
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -99,13 +99,13 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_boundaryOnPartition_sameOrientation() {
      // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         // act
         builder.insertPartition(new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0)).span());
 
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
-        TestRegionBSPTree tree = builder.build();
+        final TestRegionBSPTree tree = builder.build();
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -124,13 +124,13 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_boundaryOnPartition_oppositeOrientation() {
      // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         // act
         builder.insertPartition(new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, 0)).span());
 
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
-        TestRegionBSPTree tree = builder.build();
+        final TestRegionBSPTree tree = builder.build();
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -149,14 +149,14 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_boundaryOnPartition_multipleBoundaries_sameOrientation() {
      // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         // act
         builder.insertPartition(new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0)).span());
 
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 1), new TestPoint2D(0, 0)));
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
-        TestRegionBSPTree tree = builder.build();
+        final TestRegionBSPTree tree = builder.build();
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -174,14 +174,14 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_boundaryOnPartition_multipleBoundaries_oppositeOrientation() {
      // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         // act
         builder.insertPartition(new TestLine(new TestPoint2D(0, 0), new TestPoint2D(-1, 0)).span());
 
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 1), new TestPoint2D(0, 0)));
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
-        TestRegionBSPTree tree = builder.build();
+        final TestRegionBSPTree tree = builder.build();
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -199,7 +199,7 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_multipleBoundariesOnPartition() {
         // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         // act
         builder.insertPartition(new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0)).span());
@@ -209,7 +209,7 @@ public class AbstractPartitionedRegionBuilderTest {
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, -1), new TestPoint2D(0, 0)));
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(-1, 0)));
 
-        TestRegionBSPTree tree = builder.build();
+        final TestRegionBSPTree tree = builder.build();
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -228,13 +228,13 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_grid_halfSpace_boundaryOnPartition() {
         // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         // act
         insertGridRecursive(-2, 2, 5, builder);
 
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
-        TestRegionBSPTree tree = builder.build();
+        final TestRegionBSPTree tree = builder.build();
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -253,7 +253,7 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_boundariesOnPartitionPropagateInsideCorrectly() {
         // arrange
-        TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+        final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
         // act
         builder.insertPartition(new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)));
@@ -261,7 +261,7 @@ public class AbstractPartitionedRegionBuilderTest {
 
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(1, 1), new TestPoint2D(1, 0)));
-        TestRegionBSPTree tree = builder.build();
+        final TestRegionBSPTree tree = builder.build();
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -281,9 +281,9 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_grid_cube() {
         // arrange
-        int maxCount = 5;
+        final int maxCount = 5;
 
-        List<TestLineSegment> boundaries = Arrays.asList(
+        final List<TestLineSegment> boundaries = Arrays.asList(
                 new TestLineSegment(new TestPoint2D(-1, -1), new TestPoint2D(1, -1)),
                 new TestLineSegment(new TestPoint2D(1, -1), new TestPoint2D(1, 1)),
                 new TestLineSegment(new TestPoint2D(1, 1), new TestPoint2D(-1, 1)),
@@ -291,16 +291,16 @@ public class AbstractPartitionedRegionBuilderTest {
             );
 
         for (int c = 0; c <= maxCount; ++c) {
-            TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+            final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
             // act
             insertGridRecursive(-2, 2, c, builder);
 
-            for (TestLineSegment boundary : boundaries) {
+            for (final TestLineSegment boundary : boundaries) {
                 builder.insertBoundary(boundary);
             }
 
-            TestRegionBSPTree tree = builder.build();
+            final TestRegionBSPTree tree = builder.build();
 
             // assert
             Assert.assertFalse(tree.isEmpty());
@@ -324,9 +324,9 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_grid_diamond() {
         // arrange
-        int maxCount = 5;
+        final int maxCount = 5;
 
-        List<TestLineSegment> boundaries = Arrays.asList(
+        final List<TestLineSegment> boundaries = Arrays.asList(
                 new TestLineSegment(new TestPoint2D(0, 1), new TestPoint2D(-1, 0)),
                 new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(0, -1)),
                 new TestLineSegment(new TestPoint2D(0, -1), new TestPoint2D(1, 0)),
@@ -334,16 +334,16 @@ public class AbstractPartitionedRegionBuilderTest {
             );
 
         for (int c = 0; c <= maxCount; ++c) {
-            TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+            final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
             // act
             insertGridRecursive(-2, 2, c, builder);
 
-            for (TestLineSegment boundary : boundaries) {
+            for (final TestLineSegment boundary : boundaries) {
                 builder.insertBoundary(boundary);
             }
 
-            TestRegionBSPTree tree = builder.build();
+            final TestRegionBSPTree tree = builder.build();
 
             // assert
             Assert.assertFalse(tree.isEmpty());
@@ -367,9 +367,9 @@ public class AbstractPartitionedRegionBuilderTest {
     @Test
     public void testBuildRegion_grid_horseshoe() {
         // arrange
-        int maxCount = 5;
+        final int maxCount = 5;
 
-        List<TestLineSegment> boundaries = Arrays.asList(
+        final List<TestLineSegment> boundaries = Arrays.asList(
                 new TestLineSegment(new TestPoint2D(1, 0), new TestPoint2D(1, 1)),
                 new TestLineSegment(new TestPoint2D(1, 1), new TestPoint2D(3, 1)),
                 new TestLineSegment(new TestPoint2D(3, 1), new TestPoint2D(3, 2)),
@@ -381,16 +381,16 @@ public class AbstractPartitionedRegionBuilderTest {
             );
 
         for (int c = 0; c <= maxCount; ++c) {
-            TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
+            final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
             // act
             insertGridRecursive(-2, 2, c, builder);
 
-            for (TestLineSegment boundary : boundaries) {
+            for (final TestLineSegment boundary : boundaries) {
                 builder.insertBoundary(boundary);
             }
 
-            TestRegionBSPTree tree = builder.build();
+            final TestRegionBSPTree tree = builder.build();
 
             // assert
             Assert.assertFalse(tree.isEmpty());
@@ -413,9 +413,9 @@ public class AbstractPartitionedRegionBuilderTest {
         }
     }
 
-    private static void insertGridRecursive(double min, double max, int count, TestRegionBuilder builder) {
+    private static void insertGridRecursive(final double min, final double max, final int count, final TestRegionBuilder builder) {
         if (count > 0) {
-            double center = (0.5 * (max - min)) + min;
+            final double center = (0.5 * (max - min)) + min;
 
             builder.insertPartition(
                     new TestLine(new TestPoint2D(center, center), new TestPoint2D(center + 1, center)).span());
@@ -431,7 +431,7 @@ public class AbstractPartitionedRegionBuilderTest {
     private static class TestRegionBuilder
         extends AbstractPartitionedRegionBuilder<TestPoint2D, TestRegionBSPTree.TestRegionNode> {
 
-        TestRegionBuilder(TestRegionBSPTree tree) {
+        TestRegionBuilder(final TestRegionBSPTree tree) {
             super(tree);
         }
 

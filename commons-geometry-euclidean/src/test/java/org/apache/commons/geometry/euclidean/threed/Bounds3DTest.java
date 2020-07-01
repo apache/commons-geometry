@@ -45,10 +45,10 @@ public class Bounds3DTest {
     @Test
     public void testFrom_varargs_singlePoint() {
         // arrange
-        Vector3D p1 = Vector3D.of(-1, 2, -3);
+        final Vector3D p1 = Vector3D.of(-1, 2, -3);
 
         // act
-        Bounds3D b = Bounds3D.from(p1);
+        final Bounds3D b = Bounds3D.from(p1);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(p1, b.getMin(), TEST_EPS);
@@ -60,12 +60,12 @@ public class Bounds3DTest {
     @Test
     public void testFrom_varargs_multiplePoints() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 6, 7);
-        Vector3D p2 = Vector3D.of(0, 5, 11);
-        Vector3D p3 = Vector3D.of(3, 6, 8);
+        final Vector3D p1 = Vector3D.of(1, 6, 7);
+        final Vector3D p2 = Vector3D.of(0, 5, 11);
+        final Vector3D p3 = Vector3D.of(3, 6, 8);
 
         // act
-        Bounds3D b = Bounds3D.from(p1, p2, p3);
+        final Bounds3D b = Bounds3D.from(p1, p2, p3);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 5, 7), b.getMin(), TEST_EPS);
@@ -77,10 +77,10 @@ public class Bounds3DTest {
     @Test
     public void testFrom_iterable_singlePoint() {
         // arrange
-        Vector3D p1 = Vector3D.of(-1, 2, -3);
+        final Vector3D p1 = Vector3D.of(-1, 2, -3);
 
         // act
-        Bounds3D b = Bounds3D.from(Arrays.asList(p1));
+        final Bounds3D b = Bounds3D.from(Arrays.asList(p1));
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(p1, b.getMin(), TEST_EPS);
@@ -92,12 +92,12 @@ public class Bounds3DTest {
     @Test
     public void testFrom_iterable_multiplePoints() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 6, 7);
-        Vector3D p2 = Vector3D.of(2, 5, 9);
-        Vector3D p3 = Vector3D.of(3, 4, 8);
+        final Vector3D p1 = Vector3D.of(1, 6, 7);
+        final Vector3D p2 = Vector3D.of(2, 5, 9);
+        final Vector3D p3 = Vector3D.of(3, 4, 8);
 
         // act
-        Bounds3D b = Bounds3D.from(Arrays.asList(p1, p2, p3));
+        final Bounds3D b = Bounds3D.from(Arrays.asList(p1, p2, p3));
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 4, 7), b.getMin(), TEST_EPS);
@@ -117,11 +117,11 @@ public class Bounds3DTest {
     @Test
     public void testFrom_invalidBounds() {
         // arrange
-        Vector3D good = Vector3D.of(1, 1, 1);
+        final Vector3D good = Vector3D.of(1, 1, 1);
 
-        Vector3D nan = Vector3D.of(Double.NaN, 1, 1);
-        Vector3D posInf = Vector3D.of(1, Double.POSITIVE_INFINITY, 1);
-        Vector3D negInf = Vector3D.of(1, 1, Double.NEGATIVE_INFINITY);
+        final Vector3D nan = Vector3D.of(Double.NaN, 1, 1);
+        final Vector3D posInf = Vector3D.of(1, Double.POSITIVE_INFINITY, 1);
+        final Vector3D negInf = Vector3D.of(1, 1, Double.NEGATIVE_INFINITY);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -152,16 +152,16 @@ public class Bounds3DTest {
     @Test
     public void testHasSize() {
         // arrange
-        DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
-        DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
+        final DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
 
-        Vector3D p1 = Vector3D.ZERO;
+        final Vector3D p1 = Vector3D.ZERO;
 
-        Vector3D p2 = Vector3D.of(1e-5, 1, 1);
-        Vector3D p3 = Vector3D.of(1, 1e-5, 1);
-        Vector3D p4 = Vector3D.of(1, 1, 1e-5);
+        final Vector3D p2 = Vector3D.of(1e-5, 1, 1);
+        final Vector3D p3 = Vector3D.of(1, 1e-5, 1);
+        final Vector3D p4 = Vector3D.of(1, 1, 1e-5);
 
-        Vector3D p5 = Vector3D.of(1, 1, 1);
+        final Vector3D p5 = Vector3D.of(1, 1, 1);
 
         // act/assert
         Assert.assertFalse(Bounds3D.from(p1).hasSize(high));
@@ -183,7 +183,7 @@ public class Bounds3DTest {
     @Test
     public void testContains_strict() {
         // arrange
-        Bounds3D b = Bounds3D.from(
+        final Bounds3D b = Bounds3D.from(
                 Vector3D.of(0, 4, 8),
                 Vector3D.of(2, 6, 10));
 
@@ -207,7 +207,7 @@ public class Bounds3DTest {
     @Test
     public void testContains_precision() {
         // arrange
-        Bounds3D b = Bounds3D.from(
+        final Bounds3D b = Bounds3D.from(
                 Vector3D.of(0, 4, 8),
                 Vector3D.of(2, 6, 10));
 
@@ -231,7 +231,7 @@ public class Bounds3DTest {
     @Test
     public void testIntersects() {
         // arrange
-        Bounds3D b = Bounds3D.from(Vector3D.ZERO, Vector3D.of(1, 1, 1));
+        final Bounds3D b = Bounds3D.from(Vector3D.ZERO, Vector3D.of(1, 1, 1));
 
         // act/assert
         checkIntersects(b, Vector3D::getX, (v, x) -> Vector3D.of(x, v.getY(), v.getZ()));
@@ -239,15 +239,15 @@ public class Bounds3DTest {
         checkIntersects(b, Vector3D::getZ, (v, z) -> Vector3D.of(v.getX(), v.getY(), z));
     }
 
-    private void checkIntersects(Bounds3D b, ToDoubleFunction<Vector3D> getter,
-            BiFunction<Vector3D, Double, Vector3D> setter) {
+    private void checkIntersects(final Bounds3D b, final ToDoubleFunction<Vector3D> getter,
+                                 final BiFunction<Vector3D, Double, Vector3D> setter) {
 
-        Vector3D min = b.getMin();
-        Vector3D max = b.getMax();
+        final Vector3D min = b.getMin();
+        final Vector3D max = b.getMax();
 
-        double minValue = getter.applyAsDouble(min);
-        double maxValue = getter.applyAsDouble(max);
-        double midValue = (0.5 * (maxValue - minValue)) + minValue;
+        final double minValue = getter.applyAsDouble(min);
+        final double maxValue = getter.applyAsDouble(max);
+        final double midValue = (0.5 * (maxValue - minValue)) + minValue;
 
         // check all possible interval relationships
 
@@ -296,7 +296,7 @@ public class Bounds3DTest {
     @Test
     public void testIntersection() {
         // -- arrange
-        Bounds3D b = Bounds3D.from(Vector3D.ZERO, Vector3D.of(1, 1, 1));
+        final Bounds3D b = Bounds3D.from(Vector3D.ZERO, Vector3D.of(1, 1, 1));
 
         // -- act/assert
 
@@ -355,9 +355,9 @@ public class Bounds3DTest {
         Assert.assertNull(b.intersection(Bounds3D.from(Vector3D.of(0, 0, 2), Vector3D.of(1, 1, 3))));
     }
 
-    private void checkIntersection(Bounds3D b, Vector3D a1, Vector3D a2, Vector3D r1, Vector3D r2) {
-        Bounds3D a = Bounds3D.from(a1, a2);
-        Bounds3D result = b.intersection(a);
+    private void checkIntersection(final Bounds3D b, final Vector3D a1, final Vector3D a2, final Vector3D r1, final Vector3D r2) {
+        final Bounds3D a = Bounds3D.from(a1, a2);
+        final Bounds3D result = b.intersection(a);
 
         checkBounds(result, r1, r2);
     }
@@ -365,12 +365,12 @@ public class Bounds3DTest {
     @Test
     public void toRegion() {
         // arrange
-        Bounds3D b = Bounds3D.from(
+        final Bounds3D b = Bounds3D.from(
                 Vector3D.of(0, 4, 8),
                 Vector3D.of(2, 6, 10));
 
         // act
-        Parallelepiped p = b.toRegion(TEST_PRECISION);
+        final Parallelepiped p = b.toRegion(TEST_PRECISION);
 
         // assert
         Assert.assertEquals(8, p.getSize(), TEST_EPS);
@@ -389,15 +389,15 @@ public class Bounds3DTest {
     @Test
     public void testEq() {
         // arrange
-        DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
-        DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
+        final DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
 
-        Bounds3D b1 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b1 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
 
-        Bounds3D b2 = Bounds3D.from(Vector3D.of(1.1, 1, 1), Vector3D.of(2, 2, 2));
-        Bounds3D b3 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(1.9, 2, 2));
+        final Bounds3D b2 = Bounds3D.from(Vector3D.of(1.1, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b3 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(1.9, 2, 2));
 
-        Bounds3D b4 = Bounds3D.from(Vector3D.of(1.001, 1.001, 1.001), Vector3D.of(2.001, 2.001, 2.001));
+        final Bounds3D b4 = Bounds3D.from(Vector3D.of(1.001, 1.001, 1.001), Vector3D.of(2.001, 2.001, 2.001));
 
         // act/assert
         Assert.assertTrue(b1.eq(b1, low));
@@ -415,17 +415,17 @@ public class Bounds3DTest {
     @Test
     public void testHashCode() {
         // arrange
-        Bounds3D b1 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b1 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
 
-        Bounds3D b2 = Bounds3D.from(Vector3D.of(-2, 1, 1), Vector3D.of(2, 2, 2));
-        Bounds3D b3 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(3, 2, 2));
-        Bounds3D b4 = Bounds3D.from(Vector3D.of(1 + 1e-15, 1, 1), Vector3D.of(2, 2, 2));
-        Bounds3D b5 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2 + 1e-15, 2, 2));
+        final Bounds3D b2 = Bounds3D.from(Vector3D.of(-2, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b3 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(3, 2, 2));
+        final Bounds3D b4 = Bounds3D.from(Vector3D.of(1 + 1e-15, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b5 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2 + 1e-15, 2, 2));
 
-        Bounds3D b6 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b6 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
 
         // act
-        int hash = b1.hashCode();
+        final int hash = b1.hashCode();
 
         // assert
         Assert.assertEquals(hash, b1.hashCode());
@@ -441,14 +441,14 @@ public class Bounds3DTest {
     @Test
     public void testEquals() {
         // arrange
-        Bounds3D b1 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b1 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
 
-        Bounds3D b2 = Bounds3D.from(Vector3D.of(-1, 1, 1), Vector3D.of(2, 2, 2));
-        Bounds3D b3 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(3, 2, 2));
-        Bounds3D b4 = Bounds3D.from(Vector3D.of(1 + 1e-15, 1, 1), Vector3D.of(2, 2, 2));
-        Bounds3D b5 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2 + 1e-15, 2, 2));
+        final Bounds3D b2 = Bounds3D.from(Vector3D.of(-1, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b3 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(3, 2, 2));
+        final Bounds3D b4 = Bounds3D.from(Vector3D.of(1 + 1e-15, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b5 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2 + 1e-15, 2, 2));
 
-        Bounds3D b6 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b6 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
 
         // act/assert
         Assert.assertEquals(b1, b1);
@@ -467,10 +467,10 @@ public class Bounds3DTest {
     @Test
     public void testToString() {
         // arrange
-        Bounds3D b = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
+        final Bounds3D b = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
 
         // act
-        String str = b.toString();
+        final String str = b.toString();
 
         // assert
         GeometryTestUtils.assertContains("Bounds3D[min= (1", str);
@@ -480,14 +480,14 @@ public class Bounds3DTest {
     @Test
     public void testBuilder_addMethods() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 10, 11);
-        Vector3D p2 = Vector3D.of(2, 9, 12);
-        Vector3D p3 = Vector3D.of(3, 8, 13);
-        Vector3D p4 = Vector3D.of(4, 7, 14);
-        Vector3D p5 = Vector3D.of(5, 6, 15);
+        final Vector3D p1 = Vector3D.of(1, 10, 11);
+        final Vector3D p2 = Vector3D.of(2, 9, 12);
+        final Vector3D p3 = Vector3D.of(3, 8, 13);
+        final Vector3D p4 = Vector3D.of(4, 7, 14);
+        final Vector3D p5 = Vector3D.of(5, 6, 15);
 
         // act
-        Bounds3D b = Bounds3D.builder()
+        final Bounds3D b = Bounds3D.builder()
                 .add(p1)
                 .addAll(Arrays.asList(p2, p3))
                 .add(Bounds3D.from(p4, p5))
@@ -519,19 +519,19 @@ public class Bounds3DTest {
         Assert.assertTrue(Bounds3D.builder().add(Vector3D.ZERO).hasBounds());
     }
 
-    private static void checkBounds(Bounds3D b, Vector3D min, Vector3D max) {
+    private static void checkBounds(final Bounds3D b, final Vector3D min, final Vector3D max) {
         EuclideanTestUtils.assertCoordinatesEqual(min, b.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(max, b.getMax(), TEST_EPS);
     }
 
-    private static void assertContainsStrict(Bounds3D bounds, boolean contains, Vector3D... pts) {
-        for (Vector3D pt : pts) {
+    private static void assertContainsStrict(final Bounds3D bounds, final boolean contains, final Vector3D... pts) {
+        for (final Vector3D pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, contains, bounds.contains(pt));
         }
     }
 
-    private static void assertContainsWithPrecision(Bounds3D bounds, boolean contains, Vector3D... pts) {
-        for (Vector3D pt : pts) {
+    private static void assertContainsWithPrecision(final Bounds3D bounds, final boolean contains, final Vector3D... pts) {
+        for (final Vector3D pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, contains, bounds.contains(pt, TEST_PRECISION));
         }
     }

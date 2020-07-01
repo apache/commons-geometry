@@ -81,7 +81,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
 
     /** {@inheritDoc} */
     @Override
-    public RegionLocation classify(P pt) {
+    public RegionLocation classify(final P pt) {
         boolean isOn = false;
 
         HyperplaneLocation loc;
@@ -100,7 +100,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
 
     /** {@inheritDoc} */
     @Override
-    public P project(P pt) {
+    public P project(final P pt) {
 
         P projected;
         double dist;

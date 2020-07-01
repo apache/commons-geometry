@@ -234,8 +234,8 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      * @throws IllegalArgumentException if any of the face index arrays does not have exactly 3 elements or
      *       if any index is not a valid index into the vertex list
      */
-    public static SimpleTriangleMesh from(final Vector3D[] vertices, int[][] faces,
-            final DoublePrecisionContext precision) {
+    public static SimpleTriangleMesh from(final Vector3D[] vertices, final int[][] faces,
+                                          final DoublePrecisionContext precision) {
         return from(Arrays.asList(vertices), Arrays.asList(faces), precision);
     }
 
@@ -247,8 +247,8 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      * @throws IllegalArgumentException if any of the face index arrays does not have exactly 3 elements or
      *       if any index is not a valid index into the vertex list
      */
-    public static SimpleTriangleMesh from(final Collection<Vector3D> vertices, Collection<int[]> faces,
-            final DoublePrecisionContext precision) {
+    public static SimpleTriangleMesh from(final Collection<Vector3D> vertices, final Collection<int[]> faces,
+                                          final DoublePrecisionContext precision) {
         final Builder builder = builder(precision);
 
         return builder.addVertices(vertices)
@@ -687,7 +687,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
 
             boundsBuilder.add(vertex);
 
-            int idx = vertices.size();
+            final int idx = vertices.size();
             vertices.add(vertex);
 
             return idx;

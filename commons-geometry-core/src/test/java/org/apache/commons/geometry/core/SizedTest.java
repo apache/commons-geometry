@@ -24,9 +24,9 @@ public class SizedTest {
     @Test
     public void testProperties() {
         // arrange
-        Sized finite = new StubSized(1);
-        Sized infinite = new StubSized(Double.POSITIVE_INFINITY);
-        Sized nan = new StubSized(Double.NaN);
+        final Sized finite = new StubSized(1);
+        final Sized infinite = new StubSized(Double.POSITIVE_INFINITY);
+        final Sized nan = new StubSized(Double.NaN);
 
         // act/assert
         Assert.assertTrue(finite.isFinite());

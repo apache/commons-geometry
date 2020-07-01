@@ -38,7 +38,7 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_line_simple() {
         // arrange
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
         // act/assert
 
@@ -62,7 +62,7 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_line_alongFace() {
         // arrange
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
         // act/assert
         LinecastChecker3D.with(linecaster)
@@ -76,7 +76,7 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_line_corners() {
         // arrange
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
         // act/assert
 
@@ -101,11 +101,11 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_line_removesDuplicatePoints() {
         // arrange
-        BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.from(
                     Planes.convexPolygonFromVertices(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
                     Planes.convexPolygonFromVertices(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
                 );
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(src);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(src);
 
         // act/assert
         LinecastChecker3D.with(linecaster)
@@ -116,7 +116,7 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_segment_simple() {
         // arrange
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
         // act/assert
 
@@ -149,10 +149,10 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_segment_boundaryExcluded() {
         // arrange
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
         // act/assert
-        Vector3D center = Vector3D.of(0.5, 0.5, 0.5);
+        final Vector3D center = Vector3D.of(0.5, 0.5, 0.5);
         LinecastChecker3D.with(linecaster)
             .expect(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .whenGiven(Lines3D.fromPointAndDirection(center, Vector3D.Unit.PLUS_X, TEST_PRECISION)
@@ -167,7 +167,7 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_segment_startEndPointsOnBoundaries() {
         // arrange
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
         // act/assert
         LinecastChecker3D.with(linecaster)
@@ -179,7 +179,7 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_segment_alongFace() {
         // arrange
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
         // act/assert
 
@@ -203,9 +203,9 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_segment_corners() {
         // arrange
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
-        Vector3D corner = Vector3D.of(1, 1, 1);
+        final Vector3D corner = Vector3D.of(1, 1, 1);
 
         // act/assert
 
@@ -234,11 +234,11 @@ public class BoundarySourceLinecaster3DTest {
     @Test
     public void testLinecast_segment_removesDuplicatePoints() {
         // arrange
-        BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.from(
                     Planes.convexPolygonFromVertices(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
                     Planes.convexPolygonFromVertices(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
                 );
-        BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(src);
+        final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(src);
 
         // act/assert
         LinecastChecker3D.with(linecaster)

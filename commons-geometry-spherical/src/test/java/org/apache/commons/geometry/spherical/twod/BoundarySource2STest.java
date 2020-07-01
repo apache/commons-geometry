@@ -35,11 +35,11 @@ public class BoundarySource2STest {
     @Test
     public void testToTree() {
         // act
-        List<GreatArc> arcs = Arrays.asList(GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION));
-        BoundarySource2S src = () -> arcs.stream();
+        final List<GreatArc> arcs = Arrays.asList(GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION));
+        final BoundarySource2S src = () -> arcs.stream();
 
         // act
-        RegionBSPTree2S tree = src.toTree();
+        final RegionBSPTree2S tree = src.toTree();
 
         // assert
         Assert.assertEquals(3, tree.count());
@@ -50,10 +50,10 @@ public class BoundarySource2STest {
     @Test
     public void testToTree_noBoundaries() {
         // act
-        BoundarySource2S src = () -> new ArrayList<GreatArc>().stream();
+        final BoundarySource2S src = () -> new ArrayList<GreatArc>().stream();
 
         // act
-        RegionBSPTree2S tree = src.toTree();
+        final RegionBSPTree2S tree = src.toTree();
 
         // assert
         Assert.assertEquals(1, tree.count());

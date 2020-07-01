@@ -587,7 +587,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
             ++count;
         }
 
-        double invCount = 1.0 / count;
+        final double invCount = 1.0 / count;
 
         return new Vector2D(invCount * x, invCount * y);
     }
@@ -663,10 +663,10 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param v4 fourth vector
      * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
      */
-    public static Vector2D linearCombination(final double a1, Vector2D v1,
-            final double a2, final Vector2D v2,
-            final double a3, final Vector2D v3,
-            final double a4, final Vector2D v4) {
+    public static Vector2D linearCombination(final double a1, final Vector2D v1,
+                                             final double a2, final Vector2D v2,
+                                             final double a3, final Vector2D v3,
+                                             final double a4, final Vector2D v4) {
         return new Vector2D(
                 LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x),
                 LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y, a4, v4.y));

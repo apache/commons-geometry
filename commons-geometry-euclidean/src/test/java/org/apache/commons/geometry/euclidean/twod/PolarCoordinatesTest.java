@@ -49,7 +49,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testOf_azimuthWrapAround() {
         // arrange
-        double delta = 1e-6;
+        final double delta = 1e-6;
 
         // act/assert
         checkAzimuthWrapAround(2, 0);
@@ -61,7 +61,7 @@ public class PolarCoordinatesTest {
         checkAzimuthWrapAround(2, PlaneAngleRadians.TWO_PI - delta);
     }
 
-    private void checkAzimuthWrapAround(double radius, double azimuth) {
+    private void checkAzimuthWrapAround(final double radius, final double azimuth) {
         checkPolar(PolarCoordinates.of(radius, azimuth), radius, azimuth);
 
         checkPolar(PolarCoordinates.of(radius, azimuth - PlaneAngleRadians.TWO_PI), radius, azimuth);
@@ -97,7 +97,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testFromCartesian_coordinates() {
         // arrange
-        double sqrt2 = Math.sqrt(2);
+        final double sqrt2 = Math.sqrt(2);
 
         // act/assert
         checkPolar(PolarCoordinates.fromCartesian(0, 0), 0, 0);
@@ -117,7 +117,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testFromCartesian_vector() {
         // arrange
-        double sqrt2 = Math.sqrt(2);
+        final double sqrt2 = Math.sqrt(2);
 
         // act/assert
         checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(0, 0)), 0, 0);
@@ -137,7 +137,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testDimension() {
         // arrange
-        PolarCoordinates p = PolarCoordinates.of(1, 0);
+        final PolarCoordinates p = PolarCoordinates.of(1, 0);
 
         // act/assert
         Assert.assertEquals(2, p.getDimension());
@@ -195,12 +195,12 @@ public class PolarCoordinatesTest {
     @Test
     public void testHashCode() {
         // arrange
-        PolarCoordinates a = PolarCoordinates.of(1, 2);
-        PolarCoordinates b = PolarCoordinates.of(10, 2);
-        PolarCoordinates c = PolarCoordinates.of(10, 20);
-        PolarCoordinates d = PolarCoordinates.of(1, 20);
+        final PolarCoordinates a = PolarCoordinates.of(1, 2);
+        final PolarCoordinates b = PolarCoordinates.of(10, 2);
+        final PolarCoordinates c = PolarCoordinates.of(10, 20);
+        final PolarCoordinates d = PolarCoordinates.of(1, 20);
 
-        PolarCoordinates e = PolarCoordinates.of(1, 2);
+        final PolarCoordinates e = PolarCoordinates.of(1, 2);
 
         // act/assert
         Assert.assertEquals(a.hashCode(), a.hashCode());
@@ -214,8 +214,8 @@ public class PolarCoordinatesTest {
     @Test
     public void testHashCode_NaNInstancesHaveSameHashCode() {
         // arrange
-        PolarCoordinates a = PolarCoordinates.of(1, Double.NaN);
-        PolarCoordinates b = PolarCoordinates.of(Double.NaN, 1);
+        final PolarCoordinates a = PolarCoordinates.of(1, Double.NaN);
+        final PolarCoordinates b = PolarCoordinates.of(Double.NaN, 1);
 
         // act/assert
         Assert.assertEquals(a.hashCode(), b.hashCode());
@@ -224,12 +224,12 @@ public class PolarCoordinatesTest {
     @Test
     public void testEquals() {
         // arrange
-        PolarCoordinates a = PolarCoordinates.of(1, 2);
-        PolarCoordinates b = PolarCoordinates.of(10, 2);
-        PolarCoordinates c = PolarCoordinates.of(10, 20);
-        PolarCoordinates d = PolarCoordinates.of(1, 20);
+        final PolarCoordinates a = PolarCoordinates.of(1, 2);
+        final PolarCoordinates b = PolarCoordinates.of(10, 2);
+        final PolarCoordinates c = PolarCoordinates.of(10, 20);
+        final PolarCoordinates d = PolarCoordinates.of(1, 20);
 
-        PolarCoordinates e = PolarCoordinates.of(1, 2);
+        final PolarCoordinates e = PolarCoordinates.of(1, 2);
 
         // act/assert
         Assert.assertFalse(a.equals(null));
@@ -246,8 +246,8 @@ public class PolarCoordinatesTest {
     @Test
     public void testEquals_NaNInstancesEqual() {
         // arrange
-        PolarCoordinates a = PolarCoordinates.of(1, Double.NaN);
-        PolarCoordinates b = PolarCoordinates.of(Double.NaN, 1);
+        final PolarCoordinates a = PolarCoordinates.of(1, Double.NaN);
+        final PolarCoordinates b = PolarCoordinates.of(Double.NaN, 1);
 
         // act/assert
         Assert.assertEquals(a, b);
@@ -256,7 +256,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testToCartesian() {
         // arrange
-        double sqrt2 = Math.sqrt(2);
+        final double sqrt2 = Math.sqrt(2);
 
         // act/assert
         checkVector(PolarCoordinates.of(0, 0).toCartesian(), 0, 0);
@@ -276,7 +276,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testToCartesian_static() {
         // arrange
-        double sqrt2 = Math.sqrt(2);
+        final double sqrt2 = Math.sqrt(2);
 
         // act/assert
         checkVector(PolarCoordinates.toCartesian(0, 0), 0, 0);
@@ -311,11 +311,11 @@ public class PolarCoordinatesTest {
     @Test
     public void testToString() {
         // arrange
-        PolarCoordinates polar = PolarCoordinates.of(1, 2);
-        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
+        final PolarCoordinates polar = PolarCoordinates.of(1, 2);
+        final Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
 
         // act
-        String str = polar.toString();
+        final String str = polar.toString();
 
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
@@ -360,17 +360,17 @@ public class PolarCoordinatesTest {
         Assert.assertEquals(Double.POSITIVE_INFINITY, PolarCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), EPS);
     }
 
-    private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {
+    private void checkPolar(final PolarCoordinates polar, final double radius, final double azimuth) {
         Assert.assertEquals(radius, polar.getRadius(), EPS);
         Assert.assertEquals(azimuth, polar.getAzimuth(), EPS);
     }
 
-    private void checkVector(Vector2D v, double x, double y) {
+    private void checkVector(final Vector2D v, final double x, final double y) {
         Assert.assertEquals(x, v.getX(), EPS);
         Assert.assertEquals(y, v.getY(), EPS);
     }
 
-    private void checkPoint(Vector2D p, double x, double y) {
+    private void checkPoint(final Vector2D p, final double x, final double y) {
         Assert.assertEquals(x, p.getX(), EPS);
         Assert.assertEquals(y, p.getY(), EPS);
     }

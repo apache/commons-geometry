@@ -33,8 +33,8 @@ public final class GeometryTestUtils {
     /** Asserts that the given value is positive infinity.
      * @param value
      */
-    public static void assertPositiveInfinity(double value) {
-        String msg = "Expected value to be positive infinity but was " + value;
+    public static void assertPositiveInfinity(final double value) {
+        final String msg = "Expected value to be positive infinity but was " + value;
         Assert.assertTrue(msg, Double.isInfinite(value));
         Assert.assertTrue(msg, value > 0);
     }
@@ -42,8 +42,8 @@ public final class GeometryTestUtils {
     /** Asserts that the given value is negative infinity..
      * @param value
      */
-    public static void assertNegativeInfinity(double value) {
-        String msg = "Expected value to be negative infinity but was " + value;
+    public static void assertNegativeInfinity(final double value) {
+        final String msg = "Expected value to be negative infinity but was " + value;
         Assert.assertTrue(msg, Double.isInfinite(value));
         Assert.assertTrue(msg, value < 0);
     }
@@ -52,7 +52,7 @@ public final class GeometryTestUtils {
      * @param r the Runnable instance
      * @param exceptionType the expected exception type
      */
-    public static void assertThrows(Runnable r, Class<?> exceptionType) {
+    public static void assertThrows(final Runnable r, final Class<?> exceptionType) {
         assertThrows(r, exceptionType, (String) null);
     }
 
@@ -63,12 +63,12 @@ public final class GeometryTestUtils {
      * @param exceptionType the expected exception type
      * @param message the expected exception message; ignored if null
      */
-    public static void assertThrows(Runnable r, Class<?> exceptionType, String message) {
+    public static void assertThrows(final Runnable r, final Class<?> exceptionType, final String message) {
         try {
             r.run();
             Assert.fail("Operation should have thrown an exception");
-        } catch (Exception exc) {
-            Class<?> actualType = exc.getClass();
+        } catch (final Exception exc) {
+            final Class<?> actualType = exc.getClass();
 
             Assert.assertTrue("Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName(),
                     exceptionType.isAssignableFrom(actualType));
@@ -86,20 +86,20 @@ public final class GeometryTestUtils {
      * @param exceptionType the expected exception type
      * @param pattern regex pattern to match; ignored if null
      */
-    public static void assertThrows(Runnable r, Class<?> exceptionType, Pattern pattern) {
+    public static void assertThrows(final Runnable r, final Class<?> exceptionType, final Pattern pattern) {
         try {
             r.run();
             Assert.fail("Operation should have thrown an exception");
-        } catch (Exception exc) {
-            Class<?> actualType = exc.getClass();
+        } catch (final Exception exc) {
+            final Class<?> actualType = exc.getClass();
 
             Assert.assertTrue("Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName(),
                     exceptionType.isAssignableFrom(actualType));
 
             if (pattern != null) {
-                String message = exc.getMessage();
+                final String message = exc.getMessage();
 
-                String err = "Expected exception message to match /" + pattern + "/ but was [" + message + "]";
+                final String err = "Expected exception message to match /" + pattern + "/ but was [" + message + "]";
                 Assert.assertTrue(err, pattern.matcher(message).matches());
             }
         }
@@ -109,8 +109,8 @@ public final class GeometryTestUtils {
      * @param substr
      * @param actual
      */
-    public static void assertContains(String substr, String actual) {
-        String msg = "Expected string to contain [" + substr + "] but was [" + actual + "]";
+    public static void assertContains(final String substr, final String actual) {
+        final String msg = "Expected string to contain [" + substr + "] but was [" + actual + "]";
         Assert.assertTrue(msg, actual.contains(substr));
     }
 
@@ -120,18 +120,18 @@ public final class GeometryTestUtils {
      * @param obj  object to serialize and recover
      * @return  the recovered, deserialized object
      */
-    public static Object serializeAndRecover(Object obj) {
+    public static Object serializeAndRecover(final Object obj) {
         try {
             // serialize the Object
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream so = new ObjectOutputStream(bos);
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            final ObjectOutputStream so = new ObjectOutputStream(bos);
             so.writeObject(obj);
 
             // deserialize the Object
-            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-            ObjectInputStream si = new ObjectInputStream(bis);
+            final ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            final ObjectInputStream si = new ObjectInputStream(bis);
             return si.readObject();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -46,8 +46,8 @@ public final class PartitionTestUtils {
      * @param expected
      * @param actual
      */
-    public static void assertPointsEqual(TestPoint2D expected, TestPoint2D actual) {
-        String msg = "Expected points to equal " + expected + " but was " + actual + ";";
+    public static void assertPointsEqual(final TestPoint2D expected, final TestPoint2D actual) {
+        final String msg = "Expected points to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getX(), actual.getX(), EPS);
         Assert.assertEquals(msg, expected.getY(), actual.getY(), EPS);
     }
@@ -56,8 +56,8 @@ public final class PartitionTestUtils {
      * @param expected
      * @param actual
      */
-    public static void assertSegmentsEqual(TestLineSegment expected, TestLineSegment actual) {
-        String msg = "Expected line segment to equal " + expected + " but was " + actual;
+    public static void assertSegmentsEqual(final TestLineSegment expected, final TestLineSegment actual) {
+        final String msg = "Expected line segment to equal " + expected + " but was " + actual;
 
         Assert.assertEquals(msg, expected.getStartPoint().getX(),
                 actual.getStartPoint().getX(), EPS);
@@ -88,7 +88,7 @@ public final class PartitionTestUtils {
     public static void assertPointLocations(final Region<TestPoint2D> region, final RegionLocation location,
             final List<TestPoint2D> points) {
 
-        for (TestPoint2D p : points) {
+        for (final TestPoint2D p : points) {
             Assert.assertEquals("Unexpected location for point " + p, location, region.classify(p));
         }
     }
@@ -96,7 +96,7 @@ public final class PartitionTestUtils {
     /** Assert that the given node is a consistent internal node.
      * @param node
      */
-    public static void assertIsInternalNode(Node<?, ?> node) {
+    public static void assertIsInternalNode(final Node<?, ?> node) {
         Assert.assertNotNull(node.getCut());
         Assert.assertNotNull(node.getMinus());
         Assert.assertNotNull(node.getPlus());
@@ -108,7 +108,7 @@ public final class PartitionTestUtils {
     /** Assert that the given node is a consistent leaf node.
      * @param node
      */
-    public static void assertIsLeafNode(Node<?, ?> node) {
+    public static void assertIsLeafNode(final Node<?, ?> node) {
         Assert.assertNull(node.getCut());
         Assert.assertNull(node.getMinus());
         Assert.assertNull(node.getPlus());
@@ -138,12 +138,12 @@ public final class PartitionTestUtils {
         Assert.assertEquals("Node has an incorrect depth property", node.depth(), expectedDepth);
 
         if (node.getCut() == null) {
-            String msg = "Node without cut cannot have children";
+            final String msg = "Node without cut cannot have children";
 
             Assert.assertNull(msg, node.getMinus());
             Assert.assertNull(msg, node.getPlus());
         } else {
-            String msg = "Node with cut must have children";
+            final String msg = "Node with cut must have children";
 
             Assert.assertNotNull(msg, node.getMinus());
             Assert.assertNotNull(msg, node.getPlus());

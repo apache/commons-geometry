@@ -37,10 +37,10 @@ public class ReverseRay3DTest {
     @Test
     public void testFromPointAndDirection() {
         // arrange
-        Vector3D pt = Vector3D.of(1, 1, 2);
+        final Vector3D pt = Vector3D.of(1, 1, 2);
 
         // act
-        ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        final ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // assert
         Assert.assertTrue(revRay.isInfinite());
@@ -63,8 +63,8 @@ public class ReverseRay3DTest {
     @Test
     public void testFromPointAndDirection_invalidArgs() {
         // arrange
-        Vector3D pt = Vector3D.of(0, 2, 4);
-        Vector3D dir = Vector3D.of(1e-11, 0, 0);
+        final Vector3D pt = Vector3D.of(0, 2, 4);
+        final Vector3D dir = Vector3D.of(1e-11, 0, 0);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -75,12 +75,12 @@ public class ReverseRay3DTest {
     @Test
     public void testFromPoint() {
         // arrange
-        Vector3D pt = Vector3D.of(-2, -1, 2);
+        final Vector3D pt = Vector3D.of(-2, -1, 2);
 
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        ReverseRay3D revRay = Lines3D.reverseRayFromPoint(line, pt);
+        final ReverseRay3D revRay = Lines3D.reverseRayFromPoint(line, pt);
 
         // assert
         Assert.assertTrue(revRay.isInfinite());
@@ -101,7 +101,7 @@ public class ReverseRay3DTest {
     @Test
     public void testFromPoint_invalidArgs() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -120,10 +120,10 @@ public class ReverseRay3DTest {
     @Test
     public void testFromLocation() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        ReverseRay3D revRay = Lines3D.reverseRayFromLocation(line, -1);
+        final ReverseRay3D revRay = Lines3D.reverseRayFromLocation(line, -1);
 
         // assert
         Assert.assertTrue(revRay.isInfinite());
@@ -144,14 +144,14 @@ public class ReverseRay3DTest {
     @Test
     public void testTransform() {
         // arrange
-        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+        final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
                 .translate(Vector3D.Unit.PLUS_Y);
 
-        ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        ReverseRay3D result = revRay.transform(t);
+        final ReverseRay3D result = revRay.transform(t);
 
         // assert
         Assert.assertNull(result.getStartPoint());
@@ -163,15 +163,15 @@ public class ReverseRay3DTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+        final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
                 .translate(Vector3D.Unit.PLUS_Y)
                 .scale(1, 1, -2);
 
-        ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        ReverseRay3D result = revRay.transform(t);
+        final ReverseRay3D result = revRay.transform(t);
 
         // assert
         Assert.assertNull(result.getStartPoint());
@@ -183,11 +183,11 @@ public class ReverseRay3DTest {
     @Test
     public void testContains() {
         // arrange
-        Vector3D p0 = Vector3D.of(1, 1, 1);
+        final Vector3D p0 = Vector3D.of(1, 1, 1);
 
-        Vector3D delta = Vector3D.of(1e-12, 1e-12, 1e-12);
+        final Vector3D delta = Vector3D.of(1e-12, 1e-12, 1e-12);
 
-        ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         Assert.assertFalse(revRay.contains(Vector3D.of(2, 2, 2)));
@@ -203,10 +203,10 @@ public class ReverseRay3DTest {
     @Test
     public void testGetInterval() {
         // arrange
-        ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.of(2, -1, 3), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.of(2, -1, 3), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Interval interval = revRay.getInterval();
+        final Interval interval = revRay.getInterval();
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(interval.getMin());
@@ -218,10 +218,10 @@ public class ReverseRay3DTest {
     @Test
     public void testToString() {
         // arrange
-        ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        String str = revRay.toString();
+        final String str = revRay.toString();
 
         // assert
         GeometryTestUtils.assertContains("ReverseRay3D[direction= (1", str);

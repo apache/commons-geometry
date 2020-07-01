@@ -387,7 +387,7 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * @return true if all transform matrix elements are exactly equal; otherwise false
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

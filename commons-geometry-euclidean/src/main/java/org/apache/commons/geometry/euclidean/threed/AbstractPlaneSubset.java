@@ -37,7 +37,7 @@ abstract class AbstractPlaneSubset implements PlaneSubset {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D intersection(LineConvexSubset3D lineSubset) {
+    public Vector3D intersection(final LineConvexSubset3D lineSubset) {
         return Planes.intersection(this, lineSubset);
     }
 }

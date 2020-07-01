@@ -32,10 +32,10 @@ public class EmbeddingTest {
     @Test
     public void testToSubspace_collection_emptyInput() {
         // arrange
-        TestLine line = TestLine.Y_AXIS;
+        final TestLine line = TestLine.Y_AXIS;
 
         // act
-        List<TestPoint1D> result = line.toSubspace(new ArrayList<>());
+        final List<TestPoint1D> result = line.toSubspace(new ArrayList<>());
 
         // assert
         Assert.assertEquals(0, result.size());
@@ -44,16 +44,16 @@ public class EmbeddingTest {
     @Test
     public void testToSubspace_collection() {
         // arrange
-        List<TestPoint2D> pts = Arrays.asList(
+        final List<TestPoint2D> pts = Arrays.asList(
                     new TestPoint2D(0, 0),
                     new TestPoint2D(1, 0.25),
                     new TestPoint2D(0.5, 1)
                 );
 
-        TestLine line = TestLine.Y_AXIS;
+        final TestLine line = TestLine.Y_AXIS;
 
         // act
-        List<TestPoint1D> result = line.toSubspace(pts);
+        final List<TestPoint1D> result = line.toSubspace(pts);
 
         // assert
         Assert.assertEquals(3, result.size());
@@ -65,10 +65,10 @@ public class EmbeddingTest {
     @Test
     public void testToSpace_collection_emptyInput() {
         // arrange
-        TestLine line = TestLine.Y_AXIS;
+        final TestLine line = TestLine.Y_AXIS;
 
         // act
-        List<TestPoint2D> result = line.toSpace(new ArrayList<>());
+        final List<TestPoint2D> result = line.toSpace(new ArrayList<>());
 
         // assert
         Assert.assertEquals(0, result.size());
@@ -77,16 +77,16 @@ public class EmbeddingTest {
     @Test
     public void testToSpace_collection() {
         // arrange
-        List<TestPoint1D> pts = Arrays.asList(
+        final List<TestPoint1D> pts = Arrays.asList(
                     new TestPoint1D(0),
                     new TestPoint1D(1),
                     new TestPoint1D(0.5)
                 );
 
-        TestLine line = TestLine.Y_AXIS;
+        final TestLine line = TestLine.Y_AXIS;
 
         // act
-        List<TestPoint2D> result = line.toSpace(pts);
+        final List<TestPoint2D> result = line.toSpace(pts);
 
         // assert
         Assert.assertEquals(3, result.size());

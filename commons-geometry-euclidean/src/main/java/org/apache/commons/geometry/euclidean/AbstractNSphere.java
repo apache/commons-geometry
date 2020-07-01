@@ -207,7 +207,7 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
 
         final double dist = distanceFn.applyAsDouble(line, center);
 
-        int cmp = precision.compare(dist, radius);
+        final int cmp = precision.compare(dist, radius);
         if (cmp <= 0) {
             // on the boundary or inside the n-sphere
             final double abscissa = abscissaFn.applyAsDouble(line, center);
@@ -243,7 +243,7 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
 
         final double dist = distanceFn.applyAsDouble(line, center);
 
-        int cmp = precision.compare(dist, radius);
+        final int cmp = precision.compare(dist, radius);
         if (cmp <= 0) {
             // on the boundary or inside the n-sphere
             final double abscissa = abscissaFn.applyAsDouble(line, center);

@@ -232,9 +232,9 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
 
         // go through the elements and validate that the produced area is convex and finite;
         // use the precision context from the first path element
-        LineConvexSubset startElement = elements.get(0);
-        Vector2D startVertex = startElement.getStartPoint();
-        DoublePrecisionContext precision = startElement.getPrecision();
+        final LineConvexSubset startElement = elements.get(0);
+        final Vector2D startVertex = startElement.getStartPoint();
+        final DoublePrecisionContext precision = startElement.getPrecision();
 
         Vector2D curVector;
         Vector2D prevVector = null;

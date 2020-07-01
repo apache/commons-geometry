@@ -69,7 +69,7 @@ public class Vector2DTest {
     @Test
     public void testCoordinateAscendingOrder() {
         // arrange
-        Comparator<Vector2D> cmp = Vector2D.COORDINATE_ASCENDING_ORDER;
+        final Comparator<Vector2D> cmp = Vector2D.COORDINATE_ASCENDING_ORDER;
 
         // act/assert
         Assert.assertEquals(0, cmp.compare(Vector2D.of(1, 2), Vector2D.of(1, 2)));
@@ -88,7 +88,7 @@ public class Vector2DTest {
     @Test
     public void testCoordinates() {
         // arrange
-        Vector2D v = Vector2D.of(1, 2);
+        final Vector2D v = Vector2D.of(1, 2);
 
         // act/assert
         Assert.assertEquals(1.0, v.getX(), EPS);
@@ -98,10 +98,10 @@ public class Vector2DTest {
     @Test
     public void testToArray() {
         // arrange
-        Vector2D oneTwo = Vector2D.of(1, 2);
+        final Vector2D oneTwo = Vector2D.of(1, 2);
 
         // act
-        double[] array = oneTwo.toArray();
+        final double[] array = oneTwo.toArray();
 
         // assert
         Assert.assertEquals(2, array.length);
@@ -112,7 +112,7 @@ public class Vector2DTest {
     @Test
     public void testDimension() {
         // arrange
-        Vector2D v = Vector2D.of(1, 2);
+        final Vector2D v = Vector2D.of(1, 2);
 
         // act/assert
         Assert.assertEquals(2, v.getDimension());
@@ -185,7 +185,7 @@ public class Vector2DTest {
     @Test
     public void testNorm_unitVectors() {
         // arrange
-        Vector2D v = Vector2D.of(2.0, 3.0).normalize();
+        final Vector2D v = Vector2D.of(2.0, 3.0).normalize();
 
         // act/assert
         Assert.assertEquals(1.0, v.norm(), 0.0);
@@ -207,7 +207,7 @@ public class Vector2DTest {
     @Test
     public void testNormSq_unitVectors() {
         // arrange
-        Vector2D v = Vector2D.of(2.0, 3.0).normalize();
+        final Vector2D v = Vector2D.of(2.0, 3.0).normalize();
 
         // act/assert
         Assert.assertEquals(1.0, v.normSq(), 0.0);
@@ -242,8 +242,8 @@ public class Vector2DTest {
     @Test
     public void testWithNorm_unitVectors() {
         // arrange
-        double eps = 1e-14;
-        Vector2D v = Vector2D.of(2.0, -3.0).normalize();
+        final double eps = 1e-14;
+        final Vector2D v = Vector2D.of(2.0, -3.0).normalize();
 
         // act/assert
         checkVector(Vector2D.Unit.PLUS_X.withNorm(2.5), 2.5, 0.0);
@@ -257,9 +257,9 @@ public class Vector2DTest {
     @Test
     public void testAdd() {
         // arrange
-        Vector2D v1 = Vector2D.of(-1, 2);
-        Vector2D v2 = Vector2D.of(3, -4);
-        Vector2D v3 = Vector2D.of(5, 6);
+        final Vector2D v1 = Vector2D.of(-1, 2);
+        final Vector2D v2 = Vector2D.of(3, -4);
+        final Vector2D v3 = Vector2D.of(5, 6);
 
         // act/assert
         checkVector(v1.add(v1), -2, 4);
@@ -274,9 +274,9 @@ public class Vector2DTest {
     @Test
     public void testAdd_scaled() {
         // arrange
-        Vector2D v1 = Vector2D.of(-1, 2);
-        Vector2D v2 = Vector2D.of(3, -4);
-        Vector2D v3 = Vector2D.of(5, 6);
+        final Vector2D v1 = Vector2D.of(-1, 2);
+        final Vector2D v2 = Vector2D.of(3, -4);
+        final Vector2D v3 = Vector2D.of(5, 6);
 
         // act/assert
         checkVector(v1.add(2, v1), -3, 6);
@@ -291,9 +291,9 @@ public class Vector2DTest {
     @Test
     public void testSubtract() {
         // arrange
-        Vector2D v1 = Vector2D.of(-1, 2);
-        Vector2D v2 = Vector2D.of(3, -4);
-        Vector2D v3 = Vector2D.of(5, 6);
+        final Vector2D v1 = Vector2D.of(-1, 2);
+        final Vector2D v2 = Vector2D.of(3, -4);
+        final Vector2D v3 = Vector2D.of(5, 6);
 
         // act/assert
         checkVector(v1.subtract(v1), 0, 0);
@@ -308,9 +308,9 @@ public class Vector2DTest {
     @Test
     public void testSubtract_scaled() {
         // arrange
-        Vector2D v1 = Vector2D.of(-1, 2);
-        Vector2D v2 = Vector2D.of(3, -4);
-        Vector2D v3 = Vector2D.of(5, 6);
+        final Vector2D v1 = Vector2D.of(-1, 2);
+        final Vector2D v2 = Vector2D.of(3, -4);
+        final Vector2D v3 = Vector2D.of(5, 6);
 
         // act/assert
         checkVector(v1.subtract(2, v1), 1, -2);
@@ -348,8 +348,8 @@ public class Vector2DTest {
     @Test
     public void testNormalize_isIdempotent() {
         // arrange
-        double invSqrt2 = 1.0 / Math.sqrt(2);
-        Vector2D v = Vector2D.of(2, 2).normalize();
+        final double invSqrt2 = 1.0 / Math.sqrt(2);
+        final Vector2D v = Vector2D.of(2, 2).normalize();
 
         // act/assert
         Assert.assertSame(v, v.normalize());
@@ -367,9 +367,9 @@ public class Vector2DTest {
     @Test
     public void testNegate_unitVectors() {
         // arrange
-        Vector2D v1 = Vector2D.of(1.0, 1.0).normalize();
-        Vector2D v2 = Vector2D.of(-1.0, -2.0).normalize();
-        Vector2D v3 = Vector2D.of(2.0, -3.0).normalize();
+        final Vector2D v1 = Vector2D.of(1.0, 1.0).normalize();
+        final Vector2D v2 = Vector2D.of(-1.0, -2.0).normalize();
+        final Vector2D v3 = Vector2D.of(2.0, -3.0).normalize();
 
         // act/assert
         checkVector(v1.negate(), -1.0 / Math.sqrt(2.0), -1.0 / Math.sqrt(2.0));
@@ -392,9 +392,9 @@ public class Vector2DTest {
     @Test
     public void testDistance() {
         // arrange
-        Vector2D v1 = Vector2D.of(1, 1);
-        Vector2D v2 = Vector2D.of(4, 5);
-        Vector2D v3 = Vector2D.of(-1, 0);
+        final Vector2D v1 = Vector2D.of(1, 1);
+        final Vector2D v2 = Vector2D.of(4, 5);
+        final Vector2D v3 = Vector2D.of(-1, 0);
 
         // act/assert
         Assert.assertEquals(0, v1.distance(v1), EPS);
@@ -409,9 +409,9 @@ public class Vector2DTest {
     @Test
     public void testDistanceSq() {
         // arrange
-        Vector2D v1 = Vector2D.of(1, 1);
-        Vector2D v2 = Vector2D.of(4, 5);
-        Vector2D v3 = Vector2D.of(-1, 0);
+        final Vector2D v1 = Vector2D.of(1, 1);
+        final Vector2D v2 = Vector2D.of(4, 5);
+        final Vector2D v3 = Vector2D.of(-1, 0);
 
         // act/assert
         Assert.assertEquals(0, v1.distanceSq(v1), EPS);
@@ -426,9 +426,9 @@ public class Vector2DTest {
     @Test
     public void testDotProduct() {
         // arrange
-        Vector2D v1 = Vector2D.of(1, 1);
-        Vector2D v2 = Vector2D.of(4, 5);
-        Vector2D v3 = Vector2D.of(-1, 0);
+        final Vector2D v1 = Vector2D.of(1, 1);
+        final Vector2D v2 = Vector2D.of(4, 5);
+        final Vector2D v3 = Vector2D.of(-1, 0);
 
         // act/assert
         Assert.assertEquals(2, v1.dot(v1), EPS);
@@ -450,7 +450,7 @@ public class Vector2DTest {
     @Test
     public void testOrthogonal() {
         // arrange
-        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+        final double invSqrt2 = 1.0 / Math.sqrt(2.0);
 
         // act/assert
         checkVector(Vector2D.of(3, 0).orthogonal(), 0.0, 1.0);
@@ -470,10 +470,10 @@ public class Vector2DTest {
     public void testOrthogonal_fullCircle() {
         for (double az = 0.0; az <= PlaneAngleRadians.TWO_PI; az += 0.25) {
             // arrange
-            Vector2D v = PolarCoordinates.toCartesian(Math.PI, az);
+            final Vector2D v = PolarCoordinates.toCartesian(Math.PI, az);
 
             //act
-            Vector2D ortho = v.orthogonal();
+            final Vector2D ortho = v.orthogonal();
 
             // assert
             Assert.assertEquals(1.0, ortho.norm(), EPS);
@@ -497,7 +497,7 @@ public class Vector2DTest {
     @Test
     public void testOrthogonal_givenDirection() {
         // arrange
-        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+        final double invSqrt2 = 1.0 / Math.sqrt(2.0);
 
         // act/assert
         checkVector(Vector2D.Unit.PLUS_X.orthogonal(Vector2D.of(-1.0, 0.1)), 0.0, 1.0);
@@ -561,7 +561,7 @@ public class Vector2DTest {
     @Test
     public void testAngle_illegalNorm() {
         // arrange
-        Vector2D v = Vector2D.of(1.0, 1.0);
+        final Vector2D v = Vector2D.of(1.0, 1.0);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.angle(v),
@@ -586,22 +586,22 @@ public class Vector2DTest {
     @Test
     public void testSignedArea() {
         // arrange
-        double eps = 1e-10;
+        final double eps = 1e-10;
 
-        Vector2D a = Vector2D.Unit.PLUS_X;
-        Vector2D b = Vector2D.Unit.PLUS_Y;
-        Vector2D c = Vector2D.of(1, 1).withNorm(2.0);
-        Vector2D d = Vector2D.of(-1, 1).withNorm(3.0);
+        final Vector2D a = Vector2D.Unit.PLUS_X;
+        final Vector2D b = Vector2D.Unit.PLUS_Y;
+        final Vector2D c = Vector2D.of(1, 1).withNorm(2.0);
+        final Vector2D d = Vector2D.of(-1, 1).withNorm(3.0);
 
         // act/assert
         Assert.assertEquals(1.0, a.signedArea(b), eps);
         Assert.assertEquals(-1.0, b.signedArea(a), eps);
 
-        double xAxisAndCArea = 2 * Math.cos(0.25 * PlaneAngleRadians.PI);
+        final double xAxisAndCArea = 2 * Math.cos(0.25 * PlaneAngleRadians.PI);
         Assert.assertEquals(xAxisAndCArea, a.signedArea(c), eps);
         Assert.assertEquals(-xAxisAndCArea, c.signedArea(a), eps);
 
-        double xAxisAndDArea = 3 * Math.cos(0.25 * PlaneAngleRadians.PI);
+        final double xAxisAndDArea = 3 * Math.cos(0.25 * PlaneAngleRadians.PI);
         Assert.assertEquals(xAxisAndDArea, a.signedArea(d), eps);
         Assert.assertEquals(-xAxisAndDArea, d.signedArea(a), eps);
 
@@ -612,9 +612,9 @@ public class Vector2DTest {
     @Test
     public void testSignedArea_collinear() {
         // arrange
-        Vector2D a = Vector2D.Unit.PLUS_X;
-        Vector2D b = Vector2D.Unit.PLUS_Y;
-        Vector2D c = Vector2D.of(-3, 8);
+        final Vector2D a = Vector2D.Unit.PLUS_X;
+        final Vector2D b = Vector2D.Unit.PLUS_Y;
+        final Vector2D c = Vector2D.of(-3, 8);
 
         // act/assert
         Assert.assertEquals(0.0, a.signedArea(a), EPS);
@@ -629,8 +629,8 @@ public class Vector2DTest {
     @Test
     public void testProject() {
         // arrange
-        Vector2D v1 = Vector2D.of(3.0, 4.0);
-        Vector2D v2 = Vector2D.of(1.0, 4.0);
+        final Vector2D v1 = Vector2D.of(3.0, 4.0);
+        final Vector2D v2 = Vector2D.of(1.0, 4.0);
 
         // act/assert
         checkVector(Vector2D.ZERO.project(v1), 0.0, 0.0);
@@ -650,7 +650,7 @@ public class Vector2DTest {
     @Test
     public void testProject_baseHasIllegalNorm() {
         // arrange
-        Vector2D v = Vector2D.of(1.0, 1.0);
+        final Vector2D v = Vector2D.of(1.0, 1.0);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> v.project(Vector2D.ZERO),
@@ -666,8 +666,8 @@ public class Vector2DTest {
     @Test
     public void testReject() {
         // arrange
-        Vector2D v1 = Vector2D.of(3.0, 4.0);
-        Vector2D v2 = Vector2D.of(1.0, 4.0);
+        final Vector2D v1 = Vector2D.of(3.0, 4.0);
+        final Vector2D v2 = Vector2D.of(1.0, 4.0);
 
         // act/assert
         checkVector(Vector2D.ZERO.reject(v1), 0.0, 0.0);
@@ -687,7 +687,7 @@ public class Vector2DTest {
     @Test
     public void testReject_baseHasIllegalNorm() {
         // arrange
-        Vector2D v = Vector2D.of(1.0, 1.0);
+        final Vector2D v = Vector2D.of(1.0, 1.0);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> v.reject(Vector2D.ZERO),
@@ -703,7 +703,7 @@ public class Vector2DTest {
     @Test
     public void testProjectAndReject_areComplementary() {
         // arrange
-        double eps = 1e-12;
+        final double eps = 1e-12;
 
         // act/assert
         checkProjectAndRejectFullCircle(Vector2D.of(1.0, 0.0), 1.0, eps);
@@ -715,17 +715,17 @@ public class Vector2DTest {
         checkProjectAndRejectFullCircle(Vector2D.of(-2.0, -2.0), 6.0, eps);
     }
 
-    private void checkProjectAndRejectFullCircle(Vector2D vec, double baseMag, double eps) {
+    private void checkProjectAndRejectFullCircle(final Vector2D vec, final double baseMag, final double eps) {
         for (double theta = 0.0; theta <= PlaneAngleRadians.TWO_PI; theta += 0.5) {
-            Vector2D base = PolarCoordinates.toCartesian(baseMag, theta);
+            final Vector2D base = PolarCoordinates.toCartesian(baseMag, theta);
 
-            Vector2D proj = vec.project(base);
-            Vector2D rej = vec.reject(base);
+            final Vector2D proj = vec.project(base);
+            final Vector2D rej = vec.reject(base);
 
             // ensure that the projection and rejection sum to the original vector
             EuclideanTestUtils.assertCoordinatesEqual(vec, proj.add(rej), eps);
 
-            double angle = base.angle(vec);
+            final double angle = base.angle(vec);
 
             // check the angle between the projection and the base; this will
             // be undefined when the angle between the original vector and the
@@ -748,9 +748,9 @@ public class Vector2DTest {
     @Test
     public void testVectorTo() {
         // arrange
-        Vector2D p1 = Vector2D.of(1, 1);
-        Vector2D p2 = Vector2D.of(4, 5);
-        Vector2D p3 = Vector2D.of(-1, 0);
+        final Vector2D p1 = Vector2D.of(1, 1);
+        final Vector2D p2 = Vector2D.of(4, 5);
+        final Vector2D p3 = Vector2D.of(-1, 0);
 
         // act/assert
         checkVector(p1.vectorTo(p1), 0, 0);
@@ -764,11 +764,11 @@ public class Vector2DTest {
     @Test
     public void testDirectionTo() {
         // act/assert
-        double invSqrt2 = 1.0 / Math.sqrt(2);
+        final double invSqrt2 = 1.0 / Math.sqrt(2);
 
-        Vector2D p1 = Vector2D.of(1, 1);
-        Vector2D p2 = Vector2D.of(1, 5);
-        Vector2D p3 = Vector2D.of(-2, -2);
+        final Vector2D p1 = Vector2D.of(1, 1);
+        final Vector2D p2 = Vector2D.of(1, 5);
+        final Vector2D p3 = Vector2D.of(-2, -2);
 
         // act/assert
         checkVector(p1.directionTo(p2), 0, 1);
@@ -781,7 +781,7 @@ public class Vector2DTest {
     @Test
     public void testDirectionTo_illegalNorm() {
         // arrange
-        Vector2D p = Vector2D.of(1, 2);
+        final Vector2D p = Vector2D.of(1, 2);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.directionTo(Vector2D.ZERO),
@@ -799,9 +799,9 @@ public class Vector2DTest {
     @Test
     public void testLerp() {
         // arrange
-        Vector2D v1 = Vector2D.of(1, -5);
-        Vector2D v2 = Vector2D.of(-4, 0);
-        Vector2D v3 = Vector2D.of(10, -4);
+        final Vector2D v1 = Vector2D.of(1, -5);
+        final Vector2D v2 = Vector2D.of(-4, 0);
+        final Vector2D v3 = Vector2D.of(10, -4);
 
         // act/assert
         checkVector(v1.lerp(v1, 0), 1, -5);
@@ -825,12 +825,12 @@ public class Vector2DTest {
     @Test
     public void testTransform() {
         // arrange
-        AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .scale(2)
                 .translate(1, 2);
 
-        Vector2D v1 = Vector2D.of(1, 2);
-        Vector2D v2 = Vector2D.of(-4, -5);
+        final Vector2D v1 = Vector2D.of(1, 2);
+        final Vector2D v2 = Vector2D.of(-4, -5);
 
         // act/assert
         checkVector(v1.transform(transform), 3, 6);
@@ -840,10 +840,10 @@ public class Vector2DTest {
     @Test
     public void testPrecisionEquals() {
         // arrange
-        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
 
-        Vector2D vec = Vector2D.of(1, -2);
+        final Vector2D vec = Vector2D.of(1, -2);
 
         // act/assert
         Assert.assertTrue(vec.eq(vec, smallEps));
@@ -865,8 +865,8 @@ public class Vector2DTest {
     @Test
     public void testIsZero() {
         // arrange
-        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
 
         // act/assert
         Assert.assertTrue(Vector2D.of(0.0, -0.0).isZero(smallEps));
@@ -890,9 +890,9 @@ public class Vector2DTest {
     @Test
     public void testHashCode() {
         // arrange
-        Vector2D u = Vector2D.of(1, 1);
-        Vector2D v = Vector2D.of(1 + 10 * Precision.EPSILON, 1 + 10 * Precision.EPSILON);
-        Vector2D w = Vector2D.of(1, 1);
+        final Vector2D u = Vector2D.of(1, 1);
+        final Vector2D v = Vector2D.of(1 + 10 * Precision.EPSILON, 1 + 10 * Precision.EPSILON);
+        final Vector2D w = Vector2D.of(1, 1);
 
         // act/assert
         Assert.assertTrue(u.hashCode() != v.hashCode());
@@ -906,8 +906,8 @@ public class Vector2DTest {
     @Test
     public void testEquals() {
         // arrange
-        Vector2D u1 = Vector2D.of(1, 2);
-        Vector2D u2 = Vector2D.of(1, 2);
+        final Vector2D u1 = Vector2D.of(1, 2);
+        final Vector2D u2 = Vector2D.of(1, 2);
 
         // act/assert
         Assert.assertFalse(u1.equals(null));
@@ -932,11 +932,11 @@ public class Vector2DTest {
     @Test
     public void testToString() {
         // arrange
-        Vector2D v = Vector2D.of(1, 2);
-        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
+        final Vector2D v = Vector2D.of(1, 2);
+        final Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
 
         // act
-        String str = v.toString();
+        final String str = v.toString();
 
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
@@ -990,7 +990,7 @@ public class Vector2DTest {
     @Test
     public void testUnitFrom_coordinates() {
         // arrange
-        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+        final double invSqrt2 = 1.0 / Math.sqrt(2.0);
 
         // act/assert
         checkVector(Vector2D.Unit.from(2.0, -2.0), invSqrt2, -invSqrt2);
@@ -1000,9 +1000,9 @@ public class Vector2DTest {
     @Test
     public void testUnitFrom_vector() {
         // arrange
-        double invSqrt2 = 1.0 / Math.sqrt(2.0);
-        Vector2D vec = Vector2D.of(2.0, -2.0);
-        Vector2D.Unit unitVec = Vector2D.Unit.from(2.0, -2.0);
+        final double invSqrt2 = 1.0 / Math.sqrt(2.0);
+        final Vector2D vec = Vector2D.of(2.0, -2.0);
+        final Vector2D.Unit unitVec = Vector2D.Unit.from(2.0, -2.0);
 
         // act/assert
         checkVector(Vector2D.Unit.from(vec), invSqrt2, -invSqrt2);
@@ -1037,7 +1037,7 @@ public class Vector2DTest {
     @Test
     public void testMax_noPointsGiven() {
         // arrange
-        String msg = "Cannot compute vector max: no vectors given";
+        final String msg = "Cannot compute vector max: no vectors given";
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1061,7 +1061,7 @@ public class Vector2DTest {
     @Test
     public void testMin_noPointsGiven() {
         // arrange
-        String msg = "Cannot compute vector min: no vectors given";
+        final String msg = "Cannot compute vector min: no vectors given";
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1090,7 +1090,7 @@ public class Vector2DTest {
     @Test
     public void testCentroid_noPointsGiven() {
         // arrange
-        String msg = "Cannot compute centroid: no points given";
+        final String msg = "Cannot compute centroid: no points given";
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1101,7 +1101,7 @@ public class Vector2DTest {
     @Test
     public void testLinearCombination1() {
         // arrange
-        Vector2D p1 = Vector2D.of(1, 2);
+        final Vector2D p1 = Vector2D.of(1, 2);
 
         // act/assert
         checkVector(Vector2D.linearCombination(0, p1), 0, 0);
@@ -1116,8 +1116,8 @@ public class Vector2DTest {
     @Test
     public void testLinearCombination2() {
         // arrange
-        Vector2D p1 = Vector2D.of(1, 2);
-        Vector2D p2 = Vector2D.of(-3, -4);
+        final Vector2D p1 = Vector2D.of(1, 2);
+        final Vector2D p2 = Vector2D.of(-3, -4);
 
         // act/assert
         checkVector(Vector2D.linearCombination(2, p1, -3, p2), 11, 16);
@@ -1127,9 +1127,9 @@ public class Vector2DTest {
     @Test
     public void testLinearCombination3() {
         // arrange
-        Vector2D p1 = Vector2D.of(1, 2);
-        Vector2D p2 = Vector2D.of(-3, -4);
-        Vector2D p3 = Vector2D.of(5, 6);
+        final Vector2D p1 = Vector2D.of(1, 2);
+        final Vector2D p2 = Vector2D.of(-3, -4);
+        final Vector2D p3 = Vector2D.of(5, 6);
 
         // act/assert
         checkVector(Vector2D.linearCombination(2, p1, -3, p2, 4, p3), 31, 40);
@@ -1139,10 +1139,10 @@ public class Vector2DTest {
     @Test
     public void testLinearCombination4() {
         // arrange
-        Vector2D p1 = Vector2D.of(1, 2);
-        Vector2D p2 = Vector2D.of(-3, -4);
-        Vector2D p3 = Vector2D.of(5, 6);
-        Vector2D p4 = Vector2D.of(-7, -8);
+        final Vector2D p1 = Vector2D.of(1, 2);
+        final Vector2D p2 = Vector2D.of(-3, -4);
+        final Vector2D p3 = Vector2D.of(5, 6);
+        final Vector2D p4 = Vector2D.of(-7, -8);
 
         // act/assert
         checkVector(Vector2D.linearCombination(2, p1, -3, p2, 4, p3, -5, p4), 66, 80);
@@ -1156,11 +1156,11 @@ public class Vector2DTest {
         Assert.assertSame(v, v.normalize());
     }
 
-    private void checkVector(Vector2D v, double x, double y) {
+    private void checkVector(final Vector2D v, final double x, final double y) {
         checkVector(v, x, y, EPS);
     }
 
-    private void checkVector(Vector2D v, double x, double y, double eps) {
+    private void checkVector(final Vector2D v, final double x, final double y, final double eps) {
         Assert.assertEquals(x, v.getX(), eps);
         Assert.assertEquals(y, v.getY(), eps);
     }

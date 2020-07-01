@@ -54,10 +54,10 @@ public class SphereTest {
     @Test
     public void testFrom() {
         // arrange
-        Vector3D center = Vector3D.of(1, 2, 3);
+        final Vector3D center = Vector3D.of(1, 2, 3);
 
         // act
-        Sphere s = Sphere.from(center, 3, TEST_PRECISION);
+        final Sphere s = Sphere.from(center, 3, TEST_PRECISION);
 
         // act/assert
         Assert.assertFalse(s.isFull());
@@ -85,7 +85,7 @@ public class SphereTest {
     @Test
     public void testFrom_illegalRadius() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> Sphere.from(Vector3D.ZERO, -1, TEST_PRECISION),
@@ -104,8 +104,8 @@ public class SphereTest {
     @Test
     public void testGeometricProperties() {
         // arrange
-        double r = 2;
-        Sphere s = Sphere.from(Vector3D.of(1, 2, 3), r, TEST_PRECISION);
+        final double r = 2;
+        final Sphere s = Sphere.from(Vector3D.of(1, 2, 3), r, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(4 * Math.PI * r * r, s.getBoundarySize(), TEST_EPS);
@@ -115,9 +115,9 @@ public class SphereTest {
     @Test
     public void testClassify() {
         // arrange
-        Vector3D center = Vector3D.of(1, 2, 3);
-        double radius = 4;
-        Sphere s = Sphere.from(center, radius, TEST_PRECISION);
+        final Vector3D center = Vector3D.of(1, 2, 3);
+        final double radius = 4;
+        final Sphere s = Sphere.from(center, radius, TEST_PRECISION);
 
         EuclideanTestUtils.permute(0, PlaneAngleRadians.TWO_PI, 0.2, (azimuth, polar) -> {
             // act/assert
@@ -141,9 +141,9 @@ public class SphereTest {
     @Test
     public void testContains() {
      // arrange
-        Vector3D center = Vector3D.of(1, 2, 3);
-        double radius = 4;
-        Sphere s = Sphere.from(center, radius, TEST_PRECISION);
+        final Vector3D center = Vector3D.of(1, 2, 3);
+        final double radius = 4;
+        final Sphere s = Sphere.from(center, radius, TEST_PRECISION);
 
         EuclideanTestUtils.permute(0, PlaneAngleRadians.TWO_PI, 0.2, (azimuth, polar) -> {
             // act/assert
@@ -165,15 +165,15 @@ public class SphereTest {
     @Test
     public void testProject() {
         // arrange
-        Vector3D center = Vector3D.of(1.5, 2.5, 3.5);
-        double radius = 3;
-        Sphere s = Sphere.from(center, radius, TEST_PRECISION);
+        final Vector3D center = Vector3D.of(1.5, 2.5, 3.5);
+        final double radius = 3;
+        final Sphere s = Sphere.from(center, radius, TEST_PRECISION);
 
         EuclideanTestUtils.permute(-4, 4, 1, (x, y, z) -> {
-            Vector3D pt = Vector3D.of(x, y, z);
+            final Vector3D pt = Vector3D.of(x, y, z);
 
             // act
-            Vector3D projection = s.project(pt);
+            final Vector3D projection = s.project(pt);
 
             // assert
             Assert.assertEquals(radius, center.distance(projection), TEST_EPS);
@@ -185,10 +185,10 @@ public class SphereTest {
     @Test
     public void testProject_argumentEqualsCenter() {
         // arrange
-        Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
+        final Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
 
         // act
-        Vector3D projection = c.project(Vector3D.of(1, 2, 3));
+        final Vector3D projection = c.project(Vector3D.of(1, 2, 3));
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(3, 2, 3), projection, TEST_EPS);
@@ -197,8 +197,8 @@ public class SphereTest {
     @Test
     public void testIntersections() {
         // --- arrange
-        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
-        double sqrt3 = Math.sqrt(3);
+        final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
+        final double sqrt3 = Math.sqrt(3);
 
         // --- act/assert
         // descending along y in x-y plane
@@ -244,7 +244,7 @@ public class SphereTest {
         checkIntersections(s, Lines3D.fromPoints(Vector3D.of(2, -2, 0), Vector3D.of(2, 4, 0), TEST_PRECISION));
 
         // diagonal from origin
-        Vector3D center = s.getCenter();
+        final Vector3D center = s.getCenter();
         checkIntersections(s, Lines3D.fromPoints(Vector3D.ZERO, s.getCenter(), TEST_PRECISION),
                 center.withNorm(center.norm() - s.getRadius()), center.withNorm(center.norm() + s.getRadius()));
     }
@@ -252,8 +252,8 @@ public class SphereTest {
     @Test
     public void testLinecast() {
         // arrange
-        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
-        double sqrt3 = Math.sqrt(3);
+        final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
+        final double sqrt3 = Math.sqrt(3);
 
         // act/assert
         checkLinecast(s, Lines3D.segmentFromPoints(Vector3D.of(-1, 0, 3), Vector3D.of(5, 0, 3), TEST_PRECISION),
@@ -266,8 +266,8 @@ public class SphereTest {
     @Test
     public void testLinecast_intersectionsNotInSegment() {
         // arrange
-        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         checkLinecast(s, line.segment(-1, 0));
@@ -279,11 +279,11 @@ public class SphereTest {
     @Test
     public void testLinecast_segmentPointOnBoundary() {
         // arrange
-        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
-        double sqrt3 = Math.sqrt(3);
-        double start = 2 - sqrt3;
-        double end = 2 + sqrt3;
+        final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final double sqrt3 = Math.sqrt(3);
+        final double start = 2 - sqrt3;
+        final double end = 2 + sqrt3;
 
         // act/assert
         checkLinecast(s, line.segment(start, 2), Vector3D.of(start, 0, 3));
@@ -294,41 +294,41 @@ public class SphereTest {
     @Test
     public void testToTree_zeroSubdivisions() throws IOException {
         // arrange
-        double r = 2;
-        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
+        final double r = 2;
+        final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
 
         // act
-        RegionBSPTree3D tree = s.toTree(0);
+        final RegionBSPTree3D tree = s.toTree(0);
 
         // assert
         checkBasicApproximationProperties(s, tree);
 
-        List<PlaneConvexSubset> boundaries = tree.getBoundaries();
+        final List<PlaneConvexSubset> boundaries = tree.getBoundaries();
         Assert.assertEquals(8, boundaries.size());
 
-        List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
+        final List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
         Assert.assertEquals(8, triangles.size());
 
-        double expectedSize = (4.0 / 3.0) * r * r * r;
+        final double expectedSize = (4.0 / 3.0) * r * r * r;
         Assert.assertEquals(expectedSize, tree.getSize(), TEST_EPS);
     }
 
     @Test
     public void testToTree_oneSubdivision() throws IOException {
         // arrange
-        double r = 2;
-        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
+        final double r = 2;
+        final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
 
         // act
-        RegionBSPTree3D tree = s.toTree(1);
+        final RegionBSPTree3D tree = s.toTree(1);
 
         // assert
         checkBasicApproximationProperties(s, tree);
 
-        List<PlaneConvexSubset> boundaries = tree.getBoundaries();
+        final List<PlaneConvexSubset> boundaries = tree.getBoundaries();
         Assert.assertEquals(32, boundaries.size());
 
-        List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
+        final List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
         Assert.assertEquals(32, triangles.size());
 
         Assert.assertTrue(tree.getSize() <= s.getSize());
@@ -337,10 +337,10 @@ public class SphereTest {
     @Test
     public void testToTree_multipleSubdivisionCounts() throws Exception {
         // -- arrange
-        Sphere s = Sphere.from(Vector3D.of(-3, 5, 1), 10, TEST_PRECISION);
+        final Sphere s = Sphere.from(Vector3D.of(-3, 5, 1), 10, TEST_PRECISION);
 
-        int min = 0;
-        int max = 5;
+        final int min = 0;
+        final int max = 5;
 
         RegionBSPTree3D tree;
 
@@ -354,11 +354,11 @@ public class SphereTest {
             // -- assert
             checkBasicApproximationProperties(s, tree);
 
-            int expectedTriangles = (int) (8 * Math.pow(4, n));
-            List<PlaneConvexSubset> boundaries = tree.getBoundaries();
+            final int expectedTriangles = (int) (8 * Math.pow(4, n));
+            final List<PlaneConvexSubset> boundaries = tree.getBoundaries();
             Assert.assertEquals(expectedTriangles, boundaries.size());
 
-            List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
+            final List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
             Assert.assertEquals(expectedTriangles, triangles.size());
 
             // check that we get closer and closer to the correct size as we add more segments
@@ -373,26 +373,26 @@ public class SphereTest {
     @Test
     public void testToTree_randomSpheres() {
         // arrange
-        UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP, 1L);
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
-        double min = 1e-1;
-        double max = 1e2;
+        final UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP, 1L);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+        final double min = 1e-1;
+        final double max = 1e2;
 
-        DoubleSupplier randDouble = () -> (rand.nextDouble() * (max - min)) + min;
+        final DoubleSupplier randDouble = () -> (rand.nextDouble() * (max - min)) + min;
 
-        int count = 10;
+        final int count = 10;
         for (int i = 0; i < count; ++i) {
-            Vector3D center = Vector3D.of(
+            final Vector3D center = Vector3D.of(
                     randDouble.getAsDouble(),
                     randDouble.getAsDouble(),
                     randDouble.getAsDouble());
 
-            double radius = randDouble.getAsDouble();
-            Sphere sphere = Sphere.from(center, radius, precision);
+            final double radius = randDouble.getAsDouble();
+            final Sphere sphere = Sphere.from(center, radius, precision);
 
             for (int s = 0; s < 7; ++s) {
                 // act
-                RegionBSPTree3D tree = sphere.toTree(s);
+                final RegionBSPTree3D tree = sphere.toTree(s);
 
                 // assert
                 Assert.assertEquals((int)(8 * Math.pow(4, s)), tree.getBoundaries().size());
@@ -406,15 +406,15 @@ public class SphereTest {
     @Test
     public void testToTree_closeApproximation() throws IOException {
         // arrange
-        Sphere s = Sphere.from(Vector3D.ZERO, 1, TEST_PRECISION);
+        final Sphere s = Sphere.from(Vector3D.ZERO, 1, TEST_PRECISION);
 
         // act
-        RegionBSPTree3D tree = s.toTree(8);
+        final RegionBSPTree3D tree = s.toTree(8);
 
         // assert
         checkBasicApproximationProperties(s, tree);
 
-        double eps = 1e-3;
+        final double eps = 1e-3;
         Assert.assertTrue(tree.isFinite());
         Assert.assertEquals(s.getSize(), tree.getSize(), eps);
         Assert.assertEquals(s.getBoundarySize(), tree.getBoundarySize(), eps);
@@ -424,8 +424,8 @@ public class SphereTest {
     @Test
     public void testToTree_subdivideFails() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
-        Sphere s = Sphere.from(Vector3D.ZERO, 1, precision);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
+        final Sphere s = Sphere.from(Vector3D.ZERO, 1, precision);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -437,7 +437,7 @@ public class SphereTest {
     @Test
     public void testToTree_invalidArgs() {
         // arrange
-        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
+        final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -449,16 +449,16 @@ public class SphereTest {
     @Test
     public void testToMesh_zeroSubdivisions() {
         // arrange
-        Sphere s = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
+        final Sphere s = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
 
         // act
-        TriangleMesh mesh = s.toTriangleMesh(0);
+        final TriangleMesh mesh = s.toTriangleMesh(0);
 
         // assert
         Assert.assertEquals(6, mesh.getVertexCount());
         Assert.assertEquals(8, mesh.getFaceCount());
 
-        Bounds3D bounds = mesh.getBounds();
+        final Bounds3D bounds = mesh.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(3, 4, 5), bounds.getMax(), TEST_EPS);
 
@@ -468,27 +468,27 @@ public class SphereTest {
     @Test
     public void testToMesh_manySubdivisions() {
         // arrange
-        Sphere s = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
-        int subdivisions = 5;
+        final Sphere s = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
+        final int subdivisions = 5;
 
         // act
-        TriangleMesh mesh = s.toTriangleMesh(subdivisions);
+        final TriangleMesh mesh = s.toTriangleMesh(subdivisions);
 
         // assert
         Assert.assertEquals((int) (8 * Math.pow(4, subdivisions)), mesh.getFaceCount());
 
-        Bounds3D bounds = mesh.getBounds();
+        final Bounds3D bounds = mesh.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(3, 4, 5), bounds.getMax(), TEST_EPS);
 
-        RegionBSPTree3D tree = RegionBSPTree3D.partitionedRegionBuilder()
+        final RegionBSPTree3D tree = RegionBSPTree3D.partitionedRegionBuilder()
                 .insertAxisAlignedGrid(bounds, 3, TEST_PRECISION)
                 .insertBoundaries(mesh)
                 .build();
 
         Assert.assertTrue(tree.isFinite());
 
-        double approximationEps = 0.1;
+        final double approximationEps = 0.1;
         Assert.assertEquals(s.getSize(), tree.getSize(), approximationEps);
         Assert.assertEquals(s.getBoundarySize(), tree.getBoundarySize(), approximationEps);
 
@@ -498,7 +498,7 @@ public class SphereTest {
     @Test
     public void testToMesh_invalidArgs() {
         // arrange
-        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
+        final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -510,16 +510,16 @@ public class SphereTest {
     @Test
     public void testHashCode() {
         // arrange
-        DoublePrecisionContext otherPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext otherPrecision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Sphere a = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
-        Sphere b = Sphere.from(Vector3D.of(1, 1, 3), 3, TEST_PRECISION);
-        Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 4, TEST_PRECISION);
-        Sphere d = Sphere.from(Vector3D.of(1, 2, 3), 3, otherPrecision);
-        Sphere e = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
+        final Sphere a = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
+        final Sphere b = Sphere.from(Vector3D.of(1, 1, 3), 3, TEST_PRECISION);
+        final Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 4, TEST_PRECISION);
+        final Sphere d = Sphere.from(Vector3D.of(1, 2, 3), 3, otherPrecision);
+        final Sphere e = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
 
         // act
-        int hash = a.hashCode();
+        final int hash = a.hashCode();
 
         // act/assert
         Assert.assertEquals(hash, a.hashCode());
@@ -534,13 +534,13 @@ public class SphereTest {
     @Test
     public void testEquals() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Sphere a = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
-        Sphere b = Sphere.from(Vector3D.of(1, 1, 3), 3, TEST_PRECISION);
-        Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 4, TEST_PRECISION);
-        Sphere d = Sphere.from(Vector3D.of(1, 2, 3), 3, precision);
-        Sphere e = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
+        final Sphere a = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
+        final Sphere b = Sphere.from(Vector3D.of(1, 1, 3), 3, TEST_PRECISION);
+        final Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 4, TEST_PRECISION);
+        final Sphere d = Sphere.from(Vector3D.of(1, 2, 3), 3, precision);
+        final Sphere e = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(a, a);
@@ -558,33 +558,33 @@ public class SphereTest {
     @Test
     public void testToString() {
         // arrange
-        Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
+        final Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
 
         // act
-        String str = c.toString();
+        final String str = c.toString();
 
         // assert
         Assert.assertEquals("Sphere[center= (1.0, 2.0, 3.0), radius= 3.0]", str);
     }
 
-    private static void checkContains(Sphere sphere, boolean contains, Vector3D... pts) {
-        for (Vector3D pt : pts) {
+    private static void checkContains(final Sphere sphere, final boolean contains, final Vector3D... pts) {
+        for (final Vector3D pt : pts) {
             Assert.assertEquals("Expected circle to " + (contains ? "" : "not") + "contain point " + pt,
                     contains, sphere.contains(pt));
         }
     }
 
-    private static void checkIntersections(Sphere sphere, Line3D line, Vector3D... expectedPts) {
+    private static void checkIntersections(final Sphere sphere, final Line3D line, final Vector3D... expectedPts) {
         // --- act
         // compute the intersections forward and reverse
-        List<Vector3D> actualPtsForward = sphere.intersections(line);
-        List<Vector3D> actualPtsReverse = sphere.intersections(line.reverse());
+        final List<Vector3D> actualPtsForward = sphere.intersections(line);
+        final List<Vector3D> actualPtsReverse = sphere.intersections(line.reverse());
 
-        Vector3D actualFirstForward = sphere.firstIntersection(line);
-        Vector3D actualFirstReverse = sphere.firstIntersection(line.reverse());
+        final Vector3D actualFirstForward = sphere.firstIntersection(line);
+        final Vector3D actualFirstReverse = sphere.firstIntersection(line.reverse());
 
         // --- assert
-        int len = expectedPts.length;
+        final int len = expectedPts.length;
 
         // check the lists
         Assert.assertEquals(len, actualPtsForward.size());
@@ -611,9 +611,9 @@ public class SphereTest {
         }
     }
 
-    private static void checkLinecast(Sphere s, LineConvexSubset3D segment, Vector3D... expectedPts) {
+    private static void checkLinecast(final Sphere s, final LineConvexSubset3D segment, final Vector3D... expectedPts) {
         // check linecast
-        List<LinecastPoint3D> results = s.linecast(segment);
+        final List<LinecastPoint3D> results = s.linecast(segment);
         Assert.assertEquals(expectedPts.length, results.size());
 
         LinecastPoint3D actual;
@@ -628,7 +628,7 @@ public class SphereTest {
         }
 
         // check linecastFirst
-        LinecastPoint3D firstResult = s.linecastFirst(segment);
+        final LinecastPoint3D firstResult = s.linecastFirst(segment);
         if (expectedPts.length > 0) {
             Assert.assertEquals(results.get(0), firstResult);
         } else {
@@ -639,7 +639,7 @@ public class SphereTest {
     /**
      * Check a number of standard properties for bsp trees generated as sphere approximations.
      */
-    private static void checkBasicApproximationProperties(Sphere s, RegionBSPTree3D tree) {
+    private static void checkBasicApproximationProperties(final Sphere s, final RegionBSPTree3D tree) {
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
         Assert.assertTrue(tree.isFinite());
@@ -649,10 +649,10 @@ public class SphereTest {
         Assert.assertTrue("Expected approximation volume to be less than circle", tree.getSize() < s.getSize());
 
         // all vertices must be inside the sphere or on the boundary
-        for (PlaneConvexSubset boundary : tree.getBoundaries()) {
+        for (final PlaneConvexSubset boundary : tree.getBoundaries()) {
             Assert.assertTrue(boundary.isFinite());
 
-            for (Vector3D vertex : boundary.getVertices()) {
+            for (final Vector3D vertex : boundary.getVertices()) {
                 Assert.assertTrue("Expected vertex to be contained in sphere: " + vertex, s.contains(vertex));
             }
         }

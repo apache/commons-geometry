@@ -32,8 +32,8 @@ public class HyperplaneSubsetsTest {
     @Test
     public void testClassify() {
         // arrange
-        TestLine line = TestLine.X_AXIS;
-        StubRegion1D region = new StubRegion1D();
+        final TestLine line = TestLine.X_AXIS;
+        final StubRegion1D region = new StubRegion1D();
 
         // act/assert
         Assert.assertEquals(RegionLocation.INSIDE,
@@ -52,9 +52,9 @@ public class HyperplaneSubsetsTest {
     @Test
     public void testClosest() {
         // arrange
-        TestLine line = TestLine.X_AXIS;
-        StubRegion1D region = new StubRegion1D();
-        StubRegion1D emptyRegion = new StubRegion1D(true);
+        final TestLine line = TestLine.X_AXIS;
+        final StubRegion1D region = new StubRegion1D();
+        final StubRegion1D emptyRegion = new StubRegion1D(true);
 
         // act/assert
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(-1, 0),
@@ -87,7 +87,7 @@ public class HyperplaneSubsetsTest {
             this(false);
         }
 
-        StubRegion1D(boolean empty) {
+        StubRegion1D(final boolean empty) {
             this.empty = empty;
         }
 
@@ -117,9 +117,9 @@ public class HyperplaneSubsetsTest {
         }
 
         @Override
-        public RegionLocation classify(TestPoint1D pt) {
+        public RegionLocation classify(final TestPoint1D pt) {
             if (!empty) {
-                int sign = PartitionTestUtils.PRECISION.sign(pt.getX());
+                final int sign = PartitionTestUtils.PRECISION.sign(pt.getX());
 
                 if (sign < 0) {
                     return RegionLocation.INSIDE;
@@ -131,12 +131,12 @@ public class HyperplaneSubsetsTest {
         }
 
         @Override
-        public TestPoint1D project(TestPoint1D pt) {
+        public TestPoint1D project(final TestPoint1D pt) {
             return empty ? null : new TestPoint1D(0);
         }
 
         @Override
-        public Split<? extends HyperplaneBoundedRegion<TestPoint1D>> split(Hyperplane<TestPoint1D> splitter) {
+        public Split<? extends HyperplaneBoundedRegion<TestPoint1D>> split(final Hyperplane<TestPoint1D> splitter) {
             throw new UnsupportedOperationException();
         }
     }

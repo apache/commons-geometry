@@ -69,7 +69,7 @@ public class EpsilonDoublePrecisionContext extends DoublePrecisionContext implem
 
     /** {@inheritDoc} **/
     @Override
-    public int compare(double a, double b) {
+    public int compare(final double a, final double b) {
         return Precision.compareTo(a, b, epsilon);
     }
 
@@ -84,7 +84,7 @@ public class EpsilonDoublePrecisionContext extends DoublePrecisionContext implem
 
     /** {@inheritDoc} **/
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -92,7 +92,7 @@ public class EpsilonDoublePrecisionContext extends DoublePrecisionContext implem
             return false;
         }
 
-        EpsilonDoublePrecisionContext other = (EpsilonDoublePrecisionContext) obj;
+        final EpsilonDoublePrecisionContext other = (EpsilonDoublePrecisionContext) obj;
 
         return this.epsilon == other.epsilon;
     }
@@ -100,7 +100,7 @@ public class EpsilonDoublePrecisionContext extends DoublePrecisionContext implem
     /** {@inheritDoc} **/
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getSimpleName())
             .append("[")
             .append("epsilon= ")

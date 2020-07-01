@@ -44,7 +44,7 @@ public class ConvexVolumeTest {
     @Test
     public void testFull() {
         // act
-        ConvexVolume vol = ConvexVolume.full();
+        final ConvexVolume vol = ConvexVolume.full();
 
         // assert
         Assert.assertTrue(vol.isFull());
@@ -60,16 +60,16 @@ public class ConvexVolumeTest {
     @Test
     public void testBoundaryStream() {
         // arrange
-        Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
-        ConvexVolume volume = ConvexVolume.fromBounds(plane);
+        final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        final ConvexVolume volume = ConvexVolume.fromBounds(plane);
 
         // act
-        List<PlaneConvexSubset> boundaries = volume.boundaryStream().collect(Collectors.toList());
+        final List<PlaneConvexSubset> boundaries = volume.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(1, boundaries.size());
 
-        PlaneConvexSubset sp = boundaries.get(0);
+        final PlaneConvexSubset sp = boundaries.get(0);
         Assert.assertEquals(0, sp.getEmbedded().getSubspaceRegion().getBoundaries().size());
         EuclideanTestUtils.assertCoordinatesEqual(plane.getOrigin(), sp.getPlane().getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(plane.getNormal(), sp.getPlane().getNormal(), TEST_EPS);
@@ -78,10 +78,10 @@ public class ConvexVolumeTest {
     @Test
     public void testBoundaryStream_noBoundaries() {
         // arrange
-        ConvexVolume volume = ConvexVolume.full();
+        final ConvexVolume volume = ConvexVolume.full();
 
         // act
-        List<PlaneConvexSubset> boundaries = volume.boundaryStream().collect(Collectors.toList());
+        final List<PlaneConvexSubset> boundaries = volume.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, boundaries.size());
@@ -90,10 +90,10 @@ public class ConvexVolumeTest {
     @Test
     public void testTriangleStream_noBoundaries() {
         // arrange
-        ConvexVolume full = ConvexVolume.full();
+        final ConvexVolume full = ConvexVolume.full();
 
         // act
-        List<Triangle3D> tris = full.triangleStream().collect(Collectors.toList());
+        final List<Triangle3D> tris = full.triangleStream().collect(Collectors.toList());
 
         // act/assert
         Assert.assertEquals(0, tris.size());
@@ -102,13 +102,13 @@ public class ConvexVolumeTest {
     @Test
     public void testTriangleStream_infinite() {
         // arrange
-        Pattern pattern = Pattern.compile("^Cannot convert infinite plane subset to triangles: .*");
+        final Pattern pattern = Pattern.compile("^Cannot convert infinite plane subset to triangles: .*");
 
-        ConvexVolume half = ConvexVolume.fromBounds(
+        final ConvexVolume half = ConvexVolume.fromBounds(
                 Planes.fromNormal(Vector3D.Unit.MINUS_X, TEST_PRECISION)
             );
 
-        ConvexVolume quadrant = ConvexVolume.fromBounds(
+        final ConvexVolume quadrant = ConvexVolume.fromBounds(
                     Planes.fromNormal(Vector3D.Unit.MINUS_X, TEST_PRECISION),
                     Planes.fromNormal(Vector3D.Unit.MINUS_Y, TEST_PRECISION),
                     Planes.fromNormal(Vector3D.Unit.MINUS_Z, TEST_PRECISION)
@@ -127,10 +127,10 @@ public class ConvexVolumeTest {
     @Test
     public void testTriangleStream_finite() {
         // arrange
-        Vector3D min = Vector3D.ZERO;
-        Vector3D max = Vector3D.of(1, 1, 1);
+        final Vector3D min = Vector3D.ZERO;
+        final Vector3D max = Vector3D.of(1, 1, 1);
 
-        ConvexVolume box = ConvexVolume.fromBounds(
+        final ConvexVolume box = ConvexVolume.fromBounds(
                     Planes.fromPointAndNormal(min, Vector3D.Unit.MINUS_X, TEST_PRECISION),
                     Planes.fromPointAndNormal(min, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
                     Planes.fromPointAndNormal(min, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
@@ -141,15 +141,15 @@ public class ConvexVolumeTest {
                 );
 
         // act
-        List<Triangle3D> tris = box.triangleStream().collect(Collectors.toList());
+        final List<Triangle3D> tris = box.triangleStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(12, tris.size());
 
-        Bounds3D.Builder boundsBuilder = Bounds3D.builder();
+        final Bounds3D.Builder boundsBuilder = Bounds3D.builder();
         tris.forEach(t -> boundsBuilder.addAll(t.getVertices()));
 
-        Bounds3D bounds = boundsBuilder.build();
+        final Bounds3D bounds = boundsBuilder.build();
         EuclideanTestUtils.assertCoordinatesEqual(min, bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(max, bounds.getMax(), TEST_EPS);
     }
@@ -157,8 +157,8 @@ public class ConvexVolumeTest {
     @Test
     public void testGetBounds_noBounds() {
         // arrange
-        ConvexVolume full = ConvexVolume.full();
-        ConvexVolume halfFull = ConvexVolume.fromBounds(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        final ConvexVolume full = ConvexVolume.full();
+        final ConvexVolume halfFull = ConvexVolume.fromBounds(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act/assert
         Assert.assertNull(full.getBounds());
@@ -168,10 +168,10 @@ public class ConvexVolumeTest {
     @Test
     public void testGetBounds_hasBounds() {
         // arrange
-        ConvexVolume vol = rect(Vector3D.of(1, 1, 1), 0.5, 1, 2);
+        final ConvexVolume vol = rect(Vector3D.of(1, 1, 1), 0.5, 1, 2);
 
         // act
-        Bounds3D bounds = vol.getBounds();
+        final Bounds3D bounds = vol.getBounds();
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, -1), bounds.getMin(), TEST_EPS);
@@ -181,10 +181,10 @@ public class ConvexVolumeTest {
     @Test
     public void testToTree_full() {
         // arrange
-        ConvexVolume volume = ConvexVolume.full();
+        final ConvexVolume volume = ConvexVolume.full();
 
         // act
-        RegionBSPTree3D tree = volume.toTree();
+        final RegionBSPTree3D tree = volume.toTree();
 
         // assert
         Assert.assertTrue(tree.isFull());
@@ -194,7 +194,7 @@ public class ConvexVolumeTest {
     @Test
     public void testToTree() {
         // arrange
-        ConvexVolume volume = ConvexVolume.fromBounds(
+        final ConvexVolume volume = ConvexVolume.fromBounds(
                     Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
                     Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
                     Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
@@ -205,7 +205,7 @@ public class ConvexVolumeTest {
                 );
 
         // act
-        RegionBSPTree3D tree = volume.toTree();
+        final RegionBSPTree3D tree = volume.toTree();
 
         // assert
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);
@@ -223,7 +223,7 @@ public class ConvexVolumeTest {
     @Test
     public void testFromBounds_noPlanes() {
         // act
-        ConvexVolume vol = ConvexVolume.fromBounds();
+        final ConvexVolume vol = ConvexVolume.fromBounds();
 
         // assert
         Assert.assertSame(ConvexVolume.full(), vol);
@@ -232,7 +232,7 @@ public class ConvexVolumeTest {
     @Test
     public void testFromBounds_halfspace() {
         // act
-        ConvexVolume vol = ConvexVolume.fromBounds(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        final ConvexVolume vol = ConvexVolume.fromBounds(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // assert
         Assert.assertFalse(vol.isFull());
@@ -252,7 +252,7 @@ public class ConvexVolumeTest {
     @Test
     public void testFromBounds_cube() {
         // act
-        ConvexVolume vol = rect(Vector3D.of(1, 1, 1), 0.5, 1, 2);
+        final ConvexVolume vol = rect(Vector3D.of(1, 1, 1), 0.5, 1, 2);
 
         // assert
         Assert.assertFalse(vol.isFull());
@@ -278,18 +278,18 @@ public class ConvexVolumeTest {
     @Test
     public void testTrim() {
         // arrange
-        ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
+        final ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 
-        PlaneConvexSubset subplane = Planes.subsetFromConvexArea(
+        final PlaneConvexSubset subplane = Planes.subsetFromConvexArea(
                 Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION).getEmbedding(), ConvexArea.full());
 
         // act
-        PlaneConvexSubset trimmed = vol.trim(subplane);
+        final PlaneConvexSubset trimmed = vol.trim(subplane);
 
         // assert
         Assert.assertEquals(1, trimmed.getSize(), TEST_EPS);
 
-        List<Vector3D> vertices = trimmed.getVertices();
+        final List<Vector3D> vertices = trimmed.getVertices();
 
         Assert.assertEquals(4, vertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0.5, -0.5), vertices.get(0), TEST_EPS);
@@ -301,21 +301,21 @@ public class ConvexVolumeTest {
     @Test
     public void testSplit() {
         // arrange
-        ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
+        final ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 
-        Plane splitter = Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Plane splitter = Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Split<ConvexVolume> split = vol.split(splitter);
+        final Split<ConvexVolume> split = vol.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        ConvexVolume minus = split.getMinus();
+        final ConvexVolume minus = split.getMinus();
         Assert.assertEquals(0.5, minus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.25, 0, 0), minus.getCentroid(), TEST_EPS);
 
-        ConvexVolume plus = split.getPlus();
+        final ConvexVolume plus = split.getPlus();
         Assert.assertEquals(0.5, plus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.25, 0, 0), plus.getCentroid(), TEST_EPS);
     }
@@ -323,7 +323,7 @@ public class ConvexVolumeTest {
     @Test
     public void testLinecast_full() {
         // arrange
-        ConvexVolume volume = ConvexVolume.full();
+        final ConvexVolume volume = ConvexVolume.full();
 
         // act/assert
         LinecastChecker3D.with(volume)
@@ -338,7 +338,7 @@ public class ConvexVolumeTest {
     @Test
     public void testLinecast() {
         // arrange
-        ConvexVolume volume = rect(Vector3D.of(0.5, 0.5, 0.5), 0.5, 0.5, 0.5);
+        final ConvexVolume volume = rect(Vector3D.of(0.5, 0.5, 0.5), 0.5, 0.5, 0.5);
 
         // act/assert
         LinecastChecker3D.with(volume)
@@ -364,14 +364,14 @@ public class ConvexVolumeTest {
     @Test
     public void testTransform() {
         // arrange
-        ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
+        final ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 
-        Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
+        final Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 2, 3))
                 .scale(Vector3D.of(2, 1, 1));
 
         // act
-        ConvexVolume transformed = vol.transform(transform);
+        final ConvexVolume transformed = vol.transform(transform);
 
         // assert
         Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
@@ -380,8 +380,8 @@ public class ConvexVolumeTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 2, 3), transformed.getCentroid(), TEST_EPS);
     }
 
-    private static ConvexVolume rect(Vector3D center, double xDelta, double yDelta, double zDelta) {
-        List<Plane> planes = Arrays.asList(
+    private static ConvexVolume rect(final Vector3D center, final double xDelta, final double yDelta, final double zDelta) {
+        final List<Plane> planes = Arrays.asList(
                     Planes.fromPointAndNormal(center.add(Vector3D.of(xDelta, 0, 0)), Vector3D.Unit.PLUS_X, TEST_PRECISION),
                     Planes.fromPointAndNormal(center.add(Vector3D.of(-xDelta, 0, 0)), Vector3D.Unit.MINUS_X, TEST_PRECISION),
 

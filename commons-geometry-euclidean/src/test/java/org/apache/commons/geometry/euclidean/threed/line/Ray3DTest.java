@@ -37,10 +37,10 @@ public class Ray3DTest {
     @Test
     public void testFromPointAndDirection() {
         // arrange
-        Vector3D pt = Vector3D.of(1, 1, 2);
+        final Vector3D pt = Vector3D.of(1, 1, 2);
 
         // act
-        Ray3D ray = Lines3D.rayFromPointAndDirection(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        final Ray3D ray = Lines3D.rayFromPointAndDirection(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // assert
         Assert.assertTrue(ray.isInfinite());
@@ -63,8 +63,8 @@ public class Ray3DTest {
     @Test
     public void testFromPointAndDirection_invalidArgs() {
         // arrange
-        Vector3D pt = Vector3D.of(0, 2, 4);
-        Vector3D dir = Vector3D.of(1e-11, 0, 0);
+        final Vector3D pt = Vector3D.of(0, 2, 4);
+        final Vector3D dir = Vector3D.of(1e-11, 0, 0);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -75,12 +75,12 @@ public class Ray3DTest {
     @Test
     public void testFromPoint() {
         // arrange
-        Vector3D pt = Vector3D.of(-2, -1, 2);
+        final Vector3D pt = Vector3D.of(-2, -1, 2);
 
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Ray3D ray = Lines3D.rayFromPoint(line, pt);
+        final Ray3D ray = Lines3D.rayFromPoint(line, pt);
 
         // assert
         Assert.assertTrue(ray.isInfinite());
@@ -101,7 +101,7 @@ public class Ray3DTest {
     @Test
     public void testFromPoint_invalidArgs() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -120,10 +120,10 @@ public class Ray3DTest {
     @Test
     public void testFromLocation() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Ray3D ray = Lines3D.rayFromLocation(line, -1);
+        final Ray3D ray = Lines3D.rayFromLocation(line, -1);
 
         // assert
         Assert.assertTrue(ray.isInfinite());
@@ -144,14 +144,14 @@ public class Ray3DTest {
     @Test
     public void testTransform() {
         // arrange
-        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+        final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
                 .translate(Vector3D.Unit.PLUS_Y);
 
-        Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Ray3D result = ray.transform(t);
+        final Ray3D result = ray.transform(t);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, -1), result.getStartPoint(), TEST_EPS);
@@ -163,15 +163,15 @@ public class Ray3DTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+        final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
                 .translate(Vector3D.Unit.PLUS_Y)
                 .scale(1, 1, -2);
 
-        Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Ray3D result = ray.transform(t);
+        final Ray3D result = ray.transform(t);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 2), result.getStartPoint(), TEST_EPS);
@@ -183,11 +183,11 @@ public class Ray3DTest {
     @Test
     public void testContains() {
         // arrange
-        Vector3D p0 = Vector3D.of(1, 1, 1);
+        final Vector3D p0 = Vector3D.of(1, 1, 1);
 
-        Vector3D delta = Vector3D.of(1e-12, 1e-12, 1e-12);
+        final Vector3D delta = Vector3D.of(1e-12, 1e-12, 1e-12);
 
-        Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         Assert.assertFalse(ray.contains(Vector3D.of(2, 2, 2)));
@@ -203,10 +203,10 @@ public class Ray3DTest {
     @Test
     public void testGetInterval() {
         // arrange
-        Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(2, -1, 3), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(2, -1, 3), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Interval interval = ray.getInterval();
+        final Interval interval = ray.getInterval();
 
         // assert
         Assert.assertEquals(-1, interval.getMin(), TEST_EPS);
@@ -218,10 +218,10 @@ public class Ray3DTest {
     @Test
     public void testToString() {
         // arrange
-        Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        String str = ray.toString();
+        final String str = ray.toString();
 
         // assert
         GeometryTestUtils.assertContains("Ray3D[startPoint= (0", str);

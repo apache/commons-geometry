@@ -30,10 +30,10 @@ public class IteratorTransformTest {
     @Test
     public void testIteration() {
         // arrange
-        List<Integer> input = Arrays.asList(1, 2, 3, 4, 12, 13);
+        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 12, 13);
 
         // act
-        List<String> result = toList(new EvenCharIterator(input.iterator()));
+        final List<String> result = toList(new EvenCharIterator(input.iterator()));
 
         // assert
         Assert.assertEquals(Arrays.asList("2", "4", "1", "2"), result);
@@ -42,16 +42,16 @@ public class IteratorTransformTest {
     @Test(expected = NoSuchElementException.class)
     public void testThrowsNoSuchElement() {
         // arrange
-        List<Integer> input = Arrays.asList();
-        EvenCharIterator it = new EvenCharIterator(input.iterator());
+        final List<Integer> input = Arrays.asList();
+        final EvenCharIterator it = new EvenCharIterator(input.iterator());
 
         // act/assert
         Assert.assertFalse(it.hasNext());
         it.next();
     }
 
-    private static <T> List<T> toList(Iterator<T> it) {
-        List<T> result = new ArrayList<>();
+    private static <T> List<T> toList(final Iterator<T> it) {
+        final List<T> result = new ArrayList<>();
         while (it.hasNext()) {
             result.add(it.next());
         }
@@ -67,15 +67,15 @@ public class IteratorTransformTest {
 
         /** {@inheritDoc} */
         @Override
-        protected void acceptInput(Integer input) {
+        protected void acceptInput(final Integer input) {
             // filter out odd integers
-            int value = input.intValue();
+            final int value = input.intValue();
             if (value % 2 == 0) {
-                char[] chars = (value + "").toCharArray();
+                final char[] chars = (value + "").toCharArray();
 
                 if (chars.length > 1) {
-                    List<String> strs = new ArrayList<>();
-                    for (char ch : chars) {
+                    final List<String> strs = new ArrayList<>();
+                    for (final char ch : chars) {
                         strs.add(ch + "");
                     }
 

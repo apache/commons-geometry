@@ -44,7 +44,7 @@ public class GreatArcPathTest {
     @Test
     public void testEmpty() {
         // act
-        GreatArcPath path = GreatArcPath.empty();
+        final GreatArcPath path = GreatArcPath.empty();
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -63,7 +63,7 @@ public class GreatArcPathTest {
     @Test
     public void testFromVertices_boolean_empty() {
         // act
-        GreatArcPath path = GreatArcPath.fromVertices(Collections.emptyList(), true, TEST_PRECISION);
+        final GreatArcPath path = GreatArcPath.fromVertices(Collections.emptyList(), true, TEST_PRECISION);
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -81,13 +81,13 @@ public class GreatArcPathTest {
     @Test
     public void testFromVertices_boolean_notClosed() {
         // arrange
-        List<Point2S> points = Arrays.asList(
+        final List<Point2S> points = Arrays.asList(
                 Point2S.PLUS_I,
                 Point2S.PLUS_K,
                 Point2S.PLUS_J);
 
         // act
-        GreatArcPath path = GreatArcPath.fromVertices(points, false, TEST_PRECISION);
+        final GreatArcPath path = GreatArcPath.fromVertices(points, false, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -96,7 +96,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_I, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_J, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(2, arcs.size());
         assertArc(arcs.get(0), Point2S.PLUS_I, Point2S.PLUS_K);
         assertArc(arcs.get(1), Point2S.PLUS_K, Point2S.PLUS_J);
@@ -107,13 +107,13 @@ public class GreatArcPathTest {
     @Test
     public void testFromVertices_boolean_closed() {
         // arrange
-        List<Point2S> points = Arrays.asList(
+        final List<Point2S> points = Arrays.asList(
                 Point2S.PLUS_I,
                 Point2S.PLUS_K,
                 Point2S.PLUS_J);
 
         // act
-        GreatArcPath path = GreatArcPath.fromVertices(points, true, TEST_PRECISION);
+        final GreatArcPath path = GreatArcPath.fromVertices(points, true, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -122,7 +122,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_I, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_I, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(3, arcs.size());
         assertArc(arcs.get(0), Point2S.PLUS_I, Point2S.PLUS_K);
         assertArc(arcs.get(1), Point2S.PLUS_K, Point2S.PLUS_J);
@@ -138,18 +138,18 @@ public class GreatArcPathTest {
     @Test
     public void testFromVertices_boolean_closed_pointsConsideredEqual() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Point2S almostPlusI = Point2S.of(1e-4, PlaneAngleRadians.PI_OVER_TWO);
+        final Point2S almostPlusI = Point2S.of(1e-4, PlaneAngleRadians.PI_OVER_TWO);
 
-        List<Point2S> points = Arrays.asList(
+        final List<Point2S> points = Arrays.asList(
                 Point2S.PLUS_I,
                 Point2S.PLUS_K,
                 Point2S.PLUS_J,
                 almostPlusI);
 
         // act
-        GreatArcPath path = GreatArcPath.fromVertices(points, true, precision);
+        final GreatArcPath path = GreatArcPath.fromVertices(points, true, precision);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -158,7 +158,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_I, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(almostPlusI, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(3, arcs.size());
         assertArc(arcs.get(0), Point2S.PLUS_I, Point2S.PLUS_K);
         assertArc(arcs.get(1), Point2S.PLUS_K, Point2S.PLUS_J);
@@ -174,13 +174,13 @@ public class GreatArcPathTest {
     @Test
     public void testFromVertices() {
         // arrange
-        List<Point2S> points = Arrays.asList(
+        final List<Point2S> points = Arrays.asList(
                 Point2S.MINUS_I,
                 Point2S.MINUS_J,
                 Point2S.PLUS_I);
 
         // act
-        GreatArcPath path = GreatArcPath.fromVertices(points, TEST_PRECISION);
+        final GreatArcPath path = GreatArcPath.fromVertices(points, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -189,7 +189,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_I, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_I, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(2, arcs.size());
         assertArc(arcs.get(0), Point2S.MINUS_I, Point2S.MINUS_J);
         assertArc(arcs.get(1), Point2S.MINUS_J, Point2S.PLUS_I);
@@ -200,13 +200,13 @@ public class GreatArcPathTest {
     @Test
     public void testFromVertexLoop() {
         // arrange
-        List<Point2S> points = Arrays.asList(
+        final List<Point2S> points = Arrays.asList(
                 Point2S.MINUS_I,
                 Point2S.MINUS_J,
                 Point2S.MINUS_K);
 
         // act
-        GreatArcPath path = GreatArcPath.fromVertexLoop(points, TEST_PRECISION);
+        final GreatArcPath path = GreatArcPath.fromVertexLoop(points, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -215,7 +215,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_I, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_I, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(3, arcs.size());
         assertArc(arcs.get(0), Point2S.MINUS_I, Point2S.MINUS_J);
         assertArc(arcs.get(1), Point2S.MINUS_J, Point2S.MINUS_K);
@@ -231,17 +231,17 @@ public class GreatArcPathTest {
     @Test
     public void testFromArcs() {
         // arrange
-        Point2S ptA = Point2S.PLUS_I;
-        Point2S ptB = Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO);
-        Point2S ptC = Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO - 1);
-        Point2S ptD = Point2S.of(2, PlaneAngleRadians.PI_OVER_TWO - 1);
+        final Point2S ptA = Point2S.PLUS_I;
+        final Point2S ptB = Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO);
+        final Point2S ptC = Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO - 1);
+        final Point2S ptD = Point2S.of(2, PlaneAngleRadians.PI_OVER_TWO - 1);
 
-        GreatArc a = GreatCircles.arcFromPoints(ptA, ptB, TEST_PRECISION);
-        GreatArc b = GreatCircles.arcFromPoints(ptB, ptC, TEST_PRECISION);
-        GreatArc c = GreatCircles.arcFromPoints(ptC, ptD, TEST_PRECISION);
+        final GreatArc a = GreatCircles.arcFromPoints(ptA, ptB, TEST_PRECISION);
+        final GreatArc b = GreatCircles.arcFromPoints(ptB, ptC, TEST_PRECISION);
+        final GreatArc c = GreatCircles.arcFromPoints(ptC, ptD, TEST_PRECISION);
 
         // act
-        GreatArcPath path = GreatArcPath.fromArcs(a, b, c);
+        final GreatArcPath path = GreatArcPath.fromArcs(a, b, c);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -250,7 +250,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(ptA, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(ptD, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(3, arcs.size());
         assertArc(arcs.get(0), ptA, ptB);
         assertArc(arcs.get(1), ptB, ptC);
@@ -262,10 +262,10 @@ public class GreatArcPathTest {
     @Test
     public void testFromArcs_full() {
         // arrange
-        GreatArc fullArc = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
+        final GreatArc fullArc = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
 
         // act
-        GreatArcPath path = GreatArcPath.fromArcs(fullArc);
+        final GreatArcPath path = GreatArcPath.fromArcs(fullArc);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -277,7 +277,7 @@ public class GreatArcPathTest {
         Assert.assertNull(path.getStartVertex());
         Assert.assertNull(path.getEndVertex());
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(1, arcs.size());
 
         Assert.assertSame(fullArc, arcs.get(0));
@@ -286,11 +286,11 @@ public class GreatArcPathTest {
     @Test
     public void testBoundaryStream() {
         // arrange
-        GreatArc fullArc = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
-        GreatArcPath path = GreatArcPath.fromArcs(fullArc);
+        final GreatArc fullArc = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
+        final GreatArcPath path = GreatArcPath.fromArcs(fullArc);
 
         // act
-        List<GreatArc> arcs = path.boundaryStream().collect(Collectors.toList());
+        final List<GreatArc> arcs = path.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(1, arcs.size());
@@ -300,10 +300,10 @@ public class GreatArcPathTest {
     @Test
     public void testBoundaryStream_noBoundaries() {
         // arrange
-        GreatArcPath path = GreatArcPath.empty();
+        final GreatArcPath path = GreatArcPath.empty();
 
         // act
-        List<GreatArc> arcs = path.boundaryStream().collect(Collectors.toList());
+        final List<GreatArc> arcs = path.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, arcs.size());
@@ -312,7 +312,7 @@ public class GreatArcPathTest {
     @Test
     public void testToTree_empty() {
         // act
-        RegionBSPTree2S tree = GreatArcPath.empty().toTree();
+        final RegionBSPTree2S tree = GreatArcPath.empty().toTree();
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -322,13 +322,13 @@ public class GreatArcPathTest {
     @Test
     public void testToTree_halfSpace() {
         // arrange
-        GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
+        final GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)
                 .append(Point2S.PLUS_J)
                 .build();
 
         // act
-        RegionBSPTree2S tree = path.toTree();
+        final RegionBSPTree2S tree = path.toTree();
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -344,14 +344,14 @@ public class GreatArcPathTest {
     @Test
     public void testToTree_triangle() {
         // arrange
-        GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
+        final GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)
                 .append(Point2S.PLUS_J)
                 .append(Point2S.PLUS_K)
                 .close();
 
         // act
-        RegionBSPTree2S tree = path.toTree();
+        final RegionBSPTree2S tree = path.toTree();
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -359,7 +359,7 @@ public class GreatArcPathTest {
 
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, tree.getSize(), TEST_EPS);
 
-        Point2S bc = Point2S.from(Point2S.PLUS_I.getVector()
+        final Point2S bc = Point2S.from(Point2S.PLUS_I.getVector()
                 .add(Point2S.PLUS_J.getVector())
                 .add(Point2S.PLUS_K.getVector()));
 
@@ -373,16 +373,16 @@ public class GreatArcPathTest {
     @Test
     public void testBuilder_append() {
         // arrange
-        Point2S a = Point2S.PLUS_I;
-        Point2S b = Point2S.PLUS_J;
-        Point2S c = Point2S.PLUS_K;
-        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
-        Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
+        final Point2S a = Point2S.PLUS_I;
+        final Point2S b = Point2S.PLUS_J;
+        final Point2S c = Point2S.PLUS_K;
+        final Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
+        final Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
 
-        GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
+        final GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        GreatArcPath path = builder.append(GreatCircles.arcFromPoints(a, b, TEST_PRECISION))
+        final GreatArcPath path = builder.append(GreatCircles.arcFromPoints(a, b, TEST_PRECISION))
             .appendVertices(c, d)
             .append(e)
             .append(GreatCircles.arcFromPoints(e, a, TEST_PRECISION))
@@ -395,7 +395,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(a, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(a, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(5, arcs.size());
         assertArc(arcs.get(0), a, b);
         assertArc(arcs.get(1), b, c);
@@ -409,16 +409,16 @@ public class GreatArcPathTest {
     @Test
     public void testBuilder_prepend() {
         // arrange
-        Point2S a = Point2S.PLUS_I;
-        Point2S b = Point2S.PLUS_J;
-        Point2S c = Point2S.PLUS_K;
-        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
-        Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
+        final Point2S a = Point2S.PLUS_I;
+        final Point2S b = Point2S.PLUS_J;
+        final Point2S c = Point2S.PLUS_K;
+        final Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
+        final Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
 
-        GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
+        final GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        GreatArcPath path = builder.prepend(GreatCircles.arcFromPoints(e, a, TEST_PRECISION))
+        final GreatArcPath path = builder.prepend(GreatCircles.arcFromPoints(e, a, TEST_PRECISION))
             .prependPoints(Arrays.asList(c, d))
             .prepend(b)
             .prepend(GreatCircles.arcFromPoints(a, b, TEST_PRECISION))
@@ -431,7 +431,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(a, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(a, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(5, arcs.size());
         assertArc(arcs.get(0), a, b);
         assertArc(arcs.get(1), b, c);
@@ -445,16 +445,16 @@ public class GreatArcPathTest {
     @Test
     public void testBuilder_appendAndPrepend_points() {
         // arrange
-        Point2S a = Point2S.PLUS_I;
-        Point2S b = Point2S.PLUS_J;
-        Point2S c = Point2S.PLUS_K;
-        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
-        Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
+        final Point2S a = Point2S.PLUS_I;
+        final Point2S b = Point2S.PLUS_J;
+        final Point2S c = Point2S.PLUS_K;
+        final Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
+        final Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
 
-        GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
+        final GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        GreatArcPath path = builder.prepend(a)
+        final GreatArcPath path = builder.prepend(a)
                 .append(b)
                 .prepend(e)
                 .append(c)
@@ -468,7 +468,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(d, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(c, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(4, arcs.size());
         assertArc(arcs.get(0), d, e);
         assertArc(arcs.get(1), e, a);
@@ -481,16 +481,16 @@ public class GreatArcPathTest {
     @Test
     public void testBuilder_appendAndPrepend_mixedArguments() {
         // arrange
-        Point2S a = Point2S.PLUS_I;
-        Point2S b = Point2S.PLUS_J;
-        Point2S c = Point2S.PLUS_K;
-        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
-        Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
+        final Point2S a = Point2S.PLUS_I;
+        final Point2S b = Point2S.PLUS_J;
+        final Point2S c = Point2S.PLUS_K;
+        final Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
+        final Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
 
-        GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
+        final GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        GreatArcPath path = builder.append(GreatCircles.arcFromPoints(a, b, TEST_PRECISION))
+        final GreatArcPath path = builder.append(GreatCircles.arcFromPoints(a, b, TEST_PRECISION))
                 .prepend(GreatCircles.arcFromPoints(e, a, TEST_PRECISION))
                 .append(c)
                 .prepend(d)
@@ -504,7 +504,7 @@ public class GreatArcPathTest {
         SphericalTestUtils.assertPointsEq(d, path.getStartVertex(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(d, path.getEndVertex(), TEST_EPS);
 
-        List<GreatArc> arcs = path.getArcs();
+        final List<GreatArc> arcs = path.getArcs();
         Assert.assertEquals(5, arcs.size());
         assertArc(arcs.get(0), d, e);
         assertArc(arcs.get(1), e, a);
@@ -594,10 +594,10 @@ public class GreatArcPathTest {
     @Test
     public void testToString_empty() {
         // arrange
-        GreatArcPath path = GreatArcPath.empty();
+        final GreatArcPath path = GreatArcPath.empty();
 
         // act
-        String str = path.toString();
+        final String str = path.toString();
 
         // assert
         Assert.assertEquals("GreatArcPath[empty= true]", str);
@@ -606,10 +606,10 @@ public class GreatArcPathTest {
     @Test
     public void testToString_singleFullArc() {
         // arrange
-        GreatArcPath path = GreatArcPath.fromArcs(GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION).span());
+        final GreatArcPath path = GreatArcPath.fromArcs(GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION).span());
 
         // act
-        String str = path.toString();
+        final String str = path.toString();
 
         // assert
         GeometryTestUtils.assertContains("GreatArcPath[full= true, circle= GreatCircle[", str);
@@ -618,28 +618,28 @@ public class GreatArcPathTest {
     @Test
     public void testToString_nonFullArcs() {
         // arrange
-        GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
+        final GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)
                 .append(Point2S.PLUS_J)
                 .build();
 
         // act
-        String str = path.toString();
+        final String str = path.toString();
 
         // assert
         GeometryTestUtils.assertContains("ArcPath[vertices= [", str);
     }
 
-    private static void assertArc(GreatArc arc, Point2S start, Point2S end) {
+    private static void assertArc(final GreatArc arc, final Point2S start, final Point2S end) {
         SphericalTestUtils.assertPointsEq(start, arc.getStartPoint(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
     }
 
-    private static void assertPoints(Collection<Point2S> expected, Collection<Point2S> actual) {
+    private static void assertPoints(final Collection<Point2S> expected, final Collection<Point2S> actual) {
         Assert.assertEquals(expected.size(), actual.size());
 
-        Iterator<Point2S> expIt = expected.iterator();
-        Iterator<Point2S> actIt = actual.iterator();
+        final Iterator<Point2S> expIt = expected.iterator();
+        final Iterator<Point2S> actIt = actual.iterator();
 
         while (expIt.hasNext() && actIt.hasNext()) {
             SphericalTestUtils.assertPointsEq(expIt.next(), actIt.next(), TEST_EPS);

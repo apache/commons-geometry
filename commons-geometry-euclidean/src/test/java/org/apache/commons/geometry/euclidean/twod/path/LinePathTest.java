@@ -52,7 +52,7 @@ public class LinePathTest {
     @Test
     public void testFrom_empty() {
         // act
-        LinePath path = LinePath.from(new ArrayList<>());
+        final LinePath path = LinePath.from(new ArrayList<>());
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -73,10 +73,10 @@ public class LinePathTest {
     @Test
     public void testFrom_singleFiniteSegment() {
         // arrange
-        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         // act
-        LinePath path = LinePath.from(a);
+        final LinePath path = LinePath.from(a);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -89,7 +89,7 @@ public class LinePathTest {
         Assert.assertSame(a, path.getStart());
         Assert.assertSame(a, path.getEnd());
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(a, segments.get(0));
 
@@ -99,10 +99,10 @@ public class LinePathTest {
     @Test
     public void testFrom_singleInfiniteSegment() {
         // arrange
-        LineConvexSubset a = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION).span();
+        final LineConvexSubset a = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION).span();
 
         // act
-        LinePath path = LinePath.from(a);
+        final LinePath path = LinePath.from(a);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -115,7 +115,7 @@ public class LinePathTest {
         Assert.assertSame(a, path.getStart());
         Assert.assertSame(a, path.getEnd());
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(a, segments.get(0));
 
@@ -125,15 +125,15 @@ public class LinePathTest {
     @Test
     public void testFrom_finiteSegments_notClosed() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
 
-        Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
-        Segment b = Lines.segmentFromPoints(p2, p3, TEST_PRECISION);
+        final Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
+        final Segment b = Lines.segmentFromPoints(p2, p3, TEST_PRECISION);
 
         // act
-        LinePath path = LinePath.from(a, b);
+        final LinePath path = LinePath.from(a, b);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -146,7 +146,7 @@ public class LinePathTest {
         Assert.assertSame(a, path.getStart());
         Assert.assertSame(b, path.getEnd());
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(2, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -157,16 +157,16 @@ public class LinePathTest {
     @Test
     public void testFrom_finiteSegments_closed() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
 
-        Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
-        Segment b = Lines.segmentFromPoints(p2, p3, TEST_PRECISION);
-        Segment c = Lines.segmentFromPoints(p3, p1, TEST_PRECISION);
+        final Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
+        final Segment b = Lines.segmentFromPoints(p2, p3, TEST_PRECISION);
+        final Segment c = Lines.segmentFromPoints(p3, p1, TEST_PRECISION);
 
         // act
-        LinePath path = LinePath.from(Arrays.asList(a, b, c));
+        final LinePath path = LinePath.from(Arrays.asList(a, b, c));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -179,7 +179,7 @@ public class LinePathTest {
 
         Assert.assertEquals(2 + Math.sqrt(2), path.getSize(), TEST_EPS);
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(3, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -191,13 +191,13 @@ public class LinePathTest {
     @Test
     public void testFrom_infiniteSegments() {
         // arrange
-        ReverseRay a = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION)
+        final ReverseRay a = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION)
                 .reverseRayTo(1.0);
-        Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+        final Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 .rayFrom(0.0);
 
         // act
-        LinePath path = LinePath.from(Arrays.asList(a, b));
+        final LinePath path = LinePath.from(Arrays.asList(a, b));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -210,7 +210,7 @@ public class LinePathTest {
         Assert.assertSame(a, path.getStart());
         Assert.assertSame(b, path.getEnd());
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(2, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -221,11 +221,11 @@ public class LinePathTest {
     @Test
     public void testFrom_finiteAndInfiniteSegments_startInfinite() {
         // arrange
-        ReverseRay a = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).reverseRayTo(1.0);
-        Segment b = Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
+        final ReverseRay a = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).reverseRayTo(1.0);
+        final Segment b = Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
         // act
-        LinePath path = LinePath.from(Arrays.asList(a, b));
+        final LinePath path = LinePath.from(Arrays.asList(a, b));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -236,7 +236,7 @@ public class LinePathTest {
         Assert.assertSame(a, path.getStart());
         Assert.assertSame(b, path.getEnd());
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(2, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -247,12 +247,12 @@ public class LinePathTest {
     @Test
     public void testFrom_finiteAndInfiniteSegments_endInfinite() {
         // arrange
-        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+        final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        final Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 .rayFrom(0.0);
 
         // act
-        LinePath path = LinePath.from(Arrays.asList(a, b));
+        final LinePath path = LinePath.from(Arrays.asList(a, b));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -263,7 +263,7 @@ public class LinePathTest {
         Assert.assertSame(a, path.getStart());
         Assert.assertSame(b, path.getEnd());
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(2, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -274,11 +274,11 @@ public class LinePathTest {
     @Test
     public void testFrom_segmentsNotConnected() {
         // arrange
-        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        Segment b = Lines.segmentFromPoints(Vector2D.of(1.01, 0), Vector2D.of(1, 0), TEST_PRECISION);
+        final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        final Segment b = Lines.segmentFromPoints(Vector2D.of(1.01, 0), Vector2D.of(1, 0), TEST_PRECISION);
 
-        LineConvexSubset c = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span();
-        LineConvexSubset d = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).span();
+        final LineConvexSubset c = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span();
+        final LineConvexSubset d = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).span();
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -297,7 +297,7 @@ public class LinePathTest {
     @Test
     public void testFromVertices_empty() {
         // act
-        LinePath path = LinePath.fromVertices(new ArrayList<>(), TEST_PRECISION);
+        final LinePath path = LinePath.fromVertices(new ArrayList<>(), TEST_PRECISION);
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -324,11 +324,11 @@ public class LinePathTest {
     @Test
     public void testFromVertices_twoVertices() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
 
         // act
-        LinePath path = LinePath.fromVertices(Arrays.asList(p1, p2), TEST_PRECISION);
+        final LinePath path = LinePath.fromVertices(Arrays.asList(p1, p2), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -339,7 +339,7 @@ public class LinePathTest {
         assertFiniteSegment(path.getStart(), p1, p2);
         Assert.assertSame(path.getStart(), path.getEnd());
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(1, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
 
@@ -349,13 +349,13 @@ public class LinePathTest {
     @Test
     public void testFromVertices_multipleVertices_notClosed() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
-        Vector2D p4 = Vector2D.of(0, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p4 = Vector2D.of(0, 1);
 
         // act
-        LinePath path = LinePath.fromVertices(Arrays.asList(p1, p2, p3, p4), TEST_PRECISION);
+        final LinePath path = LinePath.fromVertices(Arrays.asList(p1, p2, p3, p4), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -366,7 +366,7 @@ public class LinePathTest {
         assertFiniteSegment(path.getStart(), p1, p2);
         assertFiniteSegment(path.getEnd(), p3, p4);
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -378,13 +378,13 @@ public class LinePathTest {
     @Test
     public void testFromVertices_multipleVertices_closed() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
-        Vector2D p4 = Vector2D.of(0, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p4 = Vector2D.of(0, 1);
 
         // act
-        LinePath path = LinePath.fromVertices(Arrays.asList(p1, p2, p3, p4, p1), TEST_PRECISION);
+        final LinePath path = LinePath.fromVertices(Arrays.asList(p1, p2, p3, p4, p1), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -395,7 +395,7 @@ public class LinePathTest {
         assertFiniteSegment(path.getStart(), p1, p2);
         assertFiniteSegment(path.getEnd(), p4, p1);
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -408,7 +408,7 @@ public class LinePathTest {
     @Test
     public void testFromVertexLoop_empty() {
         // act
-        LinePath path = LinePath.fromVertexLoop(new ArrayList<>(), TEST_PRECISION);
+        final LinePath path = LinePath.fromVertexLoop(new ArrayList<>(), TEST_PRECISION);
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -435,12 +435,12 @@ public class LinePathTest {
     @Test
     public void testFromVertexLoop_closeRequired() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
 
         // act
-        LinePath path = LinePath.fromVertexLoop(Arrays.asList(p1, p2, p3), TEST_PRECISION);
+        final LinePath path = LinePath.fromVertexLoop(Arrays.asList(p1, p2, p3), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -448,7 +448,7 @@ public class LinePathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -460,12 +460,12 @@ public class LinePathTest {
     @Test
     public void testFromVertexLoop_closeNotRequired() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
 
         // act
-        LinePath path = LinePath.fromVertexLoop(Arrays.asList(p1, p2, p3, Vector2D.of(0, 0)), TEST_PRECISION);
+        final LinePath path = LinePath.fromVertexLoop(Arrays.asList(p1, p2, p3, Vector2D.of(0, 0)), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -473,7 +473,7 @@ public class LinePathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -485,25 +485,25 @@ public class LinePathTest {
     @Test
     public void testFromVertices_booleanArg() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(0, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(0, 1);
 
         // act
-        LinePath open = LinePath.fromVertices(Arrays.asList(p1, p2, p3), false, TEST_PRECISION);
-        LinePath closed = LinePath.fromVertices(Arrays.asList(p1, p2, p3), true, TEST_PRECISION);
+        final LinePath open = LinePath.fromVertices(Arrays.asList(p1, p2, p3), false, TEST_PRECISION);
+        final LinePath closed = LinePath.fromVertices(Arrays.asList(p1, p2, p3), true, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(open.isClosed());
 
-        List<LineConvexSubset> openSegments = open.getElements();
+        final List<LineConvexSubset> openSegments = open.getElements();
         Assert.assertEquals(2, openSegments.size());
         assertFiniteSegment(openSegments.get(0), p1, p2);
         assertFiniteSegment(openSegments.get(1), p2, p3);
 
         Assert.assertTrue(closed.isClosed());
 
-        List<LineConvexSubset> closedSegments = closed.getElements();
+        final List<LineConvexSubset> closedSegments = closed.getElements();
         Assert.assertEquals(3, closedSegments.size());
         assertFiniteSegment(closedSegments.get(0), p1, p2);
         assertFiniteSegment(closedSegments.get(1), p2, p3);
@@ -513,11 +513,11 @@ public class LinePathTest {
     @Test
     public void testGetElements_listIsNotModifiable() {
         // arrange
-        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        List<LineConvexSubset> inputSegments = new ArrayList<>(Arrays.asList(a));
+        final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        final List<LineConvexSubset> inputSegments = new ArrayList<>(Arrays.asList(a));
 
         // act
-        LinePath path = LinePath.from(inputSegments);
+        final LinePath path = LinePath.from(inputSegments);
 
         inputSegments.clear();
 
@@ -533,11 +533,11 @@ public class LinePathTest {
     @Test
     public void testBoundaryStream() {
         // arrange
-        Segment seg = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        LinePath path = LinePath.from(Arrays.asList(seg));
+        final Segment seg = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        final LinePath path = LinePath.from(Arrays.asList(seg));
 
         // act
-        List<LineConvexSubset> segments = path.boundaryStream().collect(Collectors.toList());
+        final List<LineConvexSubset> segments = path.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(1, segments.size());
@@ -547,10 +547,10 @@ public class LinePathTest {
     @Test
     public void testBoundaryStream_empty() {
         // arrange
-        LinePath path = LinePath.empty();
+        final LinePath path = LinePath.empty();
 
         // act
-        List<LineConvexSubset> segments = path.boundaryStream().collect(Collectors.toList());
+        final List<LineConvexSubset> segments = path.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, segments.size());
@@ -559,8 +559,8 @@ public class LinePathTest {
     @Test
     public void testTransform_empty() {
         // arrange
-        LinePath path = LinePath.empty();
-        AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.Unit.PLUS_X);
+        final LinePath path = LinePath.empty();
+        final AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.Unit.PLUS_X);
 
         // act/assert
         Assert.assertSame(path, path.transform(t));
@@ -569,24 +569,24 @@ public class LinePathTest {
     @Test
     public void testTransform_finite() {
         // arrange
-        LinePath path = LinePath.builder(TEST_PRECISION)
+        final LinePath path = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.Unit.ZERO)
                 .append(Vector2D.Unit.PLUS_X)
                 .append(Vector2D.Unit.PLUS_Y)
                 .close();
 
-        AffineTransformMatrix2D t =
+        final AffineTransformMatrix2D t =
                 AffineTransformMatrix2D.createRotation(Vector2D.of(1, 1), PlaneAngleRadians.PI_OVER_TWO);
 
         // act
-        LinePath result = path.transform(t);
+        final LinePath result = path.transform(t);
 
         // assert
         Assert.assertNotSame(path, result);
         Assert.assertTrue(result.isClosed());
         Assert.assertTrue(result.isFinite());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
 
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.of(2, 0), Vector2D.of(2, 1));
@@ -597,23 +597,23 @@ public class LinePathTest {
     @Test
     public void testTransform_infinite() {
         // arrange
-        LinePath path = LinePath.from(
+        final LinePath path = LinePath.from(
                 Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
 
-        AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.Unit.PLUS_X);
+        final AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.Unit.PLUS_X);
 
         // act
-        LinePath result = path.transform(t);
+        final LinePath result = path.transform(t);
 
         // assert
         Assert.assertNotSame(path, result);
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isFinite());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
 
         Assert.assertEquals(1, segments.size());
-        LineConvexSubset segment = segments.get(0);
+        final LineConvexSubset segment = segments.get(0);
         Assert.assertTrue(segment.isInfinite());
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
@@ -624,7 +624,7 @@ public class LinePathTest {
     @Test
     public void testReverse_empty() {
         // arrange
-        LinePath path = LinePath.empty();
+        final LinePath path = LinePath.empty();
 
         // act/assert
         Assert.assertSame(path, path.reverse());
@@ -633,21 +633,21 @@ public class LinePathTest {
     @Test
     public void testReverse() {
         // arrange
-        LinePath path = LinePath.builder(TEST_PRECISION)
+        final LinePath path = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.Unit.ZERO)
                 .append(Vector2D.Unit.PLUS_X)
                 .append(Vector2D.Unit.PLUS_Y)
                 .close();
 
         // act
-        LinePath result = path.reverse();
+        final LinePath result = path.reverse();
 
         // assert
         Assert.assertNotSame(path, result);
         Assert.assertTrue(result.isClosed());
         Assert.assertTrue(result.isFinite());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
 
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.Unit.ZERO, Vector2D.Unit.PLUS_Y);
@@ -658,21 +658,21 @@ public class LinePathTest {
     @Test
     public void testReverse_singleInfinite() {
         // arrange
-        LinePath path = LinePath.from(
+        final LinePath path = LinePath.from(
                 Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
 
         // act
-        LinePath result = path.reverse();
+        final LinePath result = path.reverse();
 
         // assert
         Assert.assertNotSame(path, result);
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isFinite());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
 
         Assert.assertEquals(1, segments.size());
-        LineConvexSubset segment = segments.get(0);
+        final LineConvexSubset segment = segments.get(0);
         Assert.assertTrue(segment.isInfinite());
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
@@ -683,30 +683,30 @@ public class LinePathTest {
     @Test
     public void testReverse_doubleInfinite() {
         // arrange
-        LineConvexSubset a = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).reverseRayTo(Vector2D.ZERO);
-        LineConvexSubset b = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).rayFrom(Vector2D.ZERO);
+        final LineConvexSubset a = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).reverseRayTo(Vector2D.ZERO);
+        final LineConvexSubset b = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).rayFrom(Vector2D.ZERO);
 
-        LinePath path = LinePath.from(a, b);
+        final LinePath path = LinePath.from(a, b);
 
         // act
-        LinePath result = path.reverse();
+        final LinePath result = path.reverse();
 
         // assert
         Assert.assertNotSame(path, result);
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isFinite());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
         Assert.assertEquals(2, segments.size());
 
-        LineConvexSubset bResult = segments.get(0);
+        final LineConvexSubset bResult = segments.get(0);
         Assert.assertTrue(bResult.isInfinite());
         Assert.assertNull(bResult.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bResult.getEndPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bResult.getLine().getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_X, bResult.getLine().getDirection(), TEST_EPS);
 
-        LineConvexSubset aResult = segments.get(1);
+        final LineConvexSubset aResult = segments.get(1);
         Assert.assertTrue(aResult.isInfinite());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, aResult.getStartPoint(), TEST_EPS);
         Assert.assertNull(aResult.getEndPoint());
@@ -717,12 +717,12 @@ public class LinePathTest {
     @Test
     public void testToTree() {
         // arrange
-        LinePath path = LinePath.builder(TEST_PRECISION)
+        final LinePath path = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.of(0, 1))
                 .close();
 
         // act
-        RegionBSPTree2D tree = path.toTree();
+        final RegionBSPTree2D tree = path.toTree();
 
         // assert
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);
@@ -739,9 +739,9 @@ public class LinePathTest {
     @Test
     public void testSimplify() {
         // arrange
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
-        LinePath path = builder.appendVertices(
+        final LinePath path = builder.appendVertices(
                 Vector2D.of(-1, 0),
                 Vector2D.ZERO,
                 Vector2D.of(1, 0),
@@ -750,10 +750,10 @@ public class LinePathTest {
             .build();
 
         // act
-        LinePath result = path.simplify();
+        final LinePath result = path.simplify();
 
         // assert
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
         Assert.assertEquals(2, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.of(-1, 0), Vector2D.of(1, 0));
         assertFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(1, 2));
@@ -762,9 +762,9 @@ public class LinePathTest {
     @Test
     public void testSimplify_startAndEndCombined() {
         // arrange
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
-        LinePath path = builder.appendVertices(
+        final LinePath path = builder.appendVertices(
                 Vector2D.ZERO,
                 Vector2D.of(1, 0),
                 Vector2D.of(0, 1),
@@ -772,14 +772,14 @@ public class LinePathTest {
             .close();
 
         // act
-        LinePath result = path.simplify();
+        final LinePath result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
         Assert.assertTrue(result.isClosed());
         Assert.assertFalse(result.isInfinite());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.of(-1, 0), Vector2D.of(1, 0));
         assertFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(0, 1));
@@ -789,34 +789,34 @@ public class LinePathTest {
     @Test
     public void testSimplify_empty() {
         // arrange
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
-        LinePath path = builder.build();
+        final LinePath path = builder.build();
 
         // act
-        LinePath result = path.simplify();
+        final LinePath result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isInfinite());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testSimplify_infiniteSegment() {
         // arrange
-        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
 
-        Builder builder = LinePath.builder(TEST_PRECISION);
-        LinePath path = builder
+        final Builder builder = LinePath.builder(TEST_PRECISION);
+        final LinePath path = builder
                 .append(line.span())
                 .build();
 
         // act
-        LinePath result = path.simplify();
+        final LinePath result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
@@ -827,7 +827,7 @@ public class LinePathTest {
         Assert.assertNotNull(path.getEnd());
         Assert.assertSame(path.getStart(), path.getEnd());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(line, segments.get(0).getLine());
     }
@@ -835,18 +835,18 @@ public class LinePathTest {
     @Test
     public void testSimplify_combinedInfiniteSegment() {
         // arrange
-        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        Split<LineConvexSubset> split = line.span().split(
+        final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        final Split<LineConvexSubset> split = line.span().split(
                 Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
-        Builder builder = LinePath.builder(TEST_PRECISION);
-        LinePath path = builder
+        final Builder builder = LinePath.builder(TEST_PRECISION);
+        final LinePath path = builder
                 .append(split.getMinus())
                 .append(split.getPlus())
                 .build();
 
         // act
-        LinePath result = path.simplify();
+        final LinePath result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
@@ -857,7 +857,7 @@ public class LinePathTest {
         Assert.assertNotNull(result.getEnd());
         Assert.assertSame(result.getStart(), result.getEnd());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(line, segments.get(0).getLine());
     }
@@ -865,10 +865,10 @@ public class LinePathTest {
     @Test
     public void testSimplify_startAndEndNotCombinedWhenNotClosed() {
         // arrange
-        Line xAxis = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Line xAxis = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
-        LinePath path = builder
+        final LinePath path = builder
                 .append(xAxis.segment(0, 1))
                 .appendVertices(
                         Vector2D.of(2, 1),
@@ -877,14 +877,14 @@ public class LinePathTest {
             .build();
 
         // act
-        LinePath result = path.simplify();
+        final LinePath result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isInfinite());
 
-        List<LineConvexSubset> segments = result.getElements();
+        final List<LineConvexSubset> segments = result.getElements();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
         assertFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(2, 1));
@@ -895,15 +895,15 @@ public class LinePathTest {
     @Test
     public void testSimplify_subsequentCallsToReturnedObjectReturnSameObject() {
         // arrange
-        Builder builder = LinePath.builder(TEST_PRECISION);
-        LinePath path = builder.appendVertices(
+        final Builder builder = LinePath.builder(TEST_PRECISION);
+        final LinePath path = builder.appendVertices(
                     Vector2D.ZERO,
                     Vector2D.of(1, 0),
                     Vector2D.of(2, 0))
                 .build();
 
         // act
-        LinePath result = path.simplify();
+        final LinePath result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
@@ -913,7 +913,7 @@ public class LinePathTest {
     @Test
     public void testLinecast_empty() {
         // arrange
-        LinePath path = LinePath.empty();
+        final LinePath path = LinePath.empty();
 
         // act/assert
         LinecastChecker2D.with(path)
@@ -928,7 +928,7 @@ public class LinePathTest {
     @Test
     public void testLinecast() {
         // arrange
-        LinePath path = LinePath.fromVertexLoop(Arrays.asList(
+        final LinePath path = LinePath.fromVertexLoop(Arrays.asList(
                     Vector2D.ZERO, Vector2D.of(1, 0),
                     Vector2D.of(1, 1), Vector2D.of(0, 1)
                 ), TEST_PRECISION);
@@ -954,76 +954,76 @@ public class LinePathTest {
     @Test
     public void testToString() {
         // arrange
-        Line yAxis = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
-        Line xAxis = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        final Line yAxis = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        final Line xAxis = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
-        LinePath empty = LinePath.empty();
+        final LinePath empty = LinePath.empty();
 
-        LinePath singleFullSegment = LinePath.from(xAxis.span());
-        LinePath singleFiniteSegment = LinePath.from(
+        final LinePath singleFullSegment = LinePath.from(xAxis.span());
+        final LinePath singleFiniteSegment = LinePath.from(
                 Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
-        LinePath startOpenPath = LinePath.builder(TEST_PRECISION)
+        final LinePath startOpenPath = LinePath.builder(TEST_PRECISION)
                 .append(xAxis.reverseRayTo(Vector2D.Unit.PLUS_X))
                 .append(Vector2D.of(1, 1))
                 .build();
 
-        LinePath endOpenPath = LinePath.builder(TEST_PRECISION)
+        final LinePath endOpenPath = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.of(0, 1))
                 .append(Vector2D.ZERO)
                 .append(xAxis.rayFrom(Vector2D.ZERO))
                 .build();
 
-        LinePath doubleOpenPath = LinePath.from(yAxis.reverseRayTo(Vector2D.ZERO),
+        final LinePath doubleOpenPath = LinePath.from(yAxis.reverseRayTo(Vector2D.ZERO),
                 xAxis.rayFrom(Vector2D.ZERO));
 
-        LinePath nonOpenPath = LinePath.builder(TEST_PRECISION)
+        final LinePath nonOpenPath = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.ZERO)
                 .append(Vector2D.Unit.PLUS_X)
                 .append(Vector2D.of(1, 1))
                 .build();
 
         // act/assert
-        String emptyStr = empty.toString();
+        final String emptyStr = empty.toString();
         GeometryTestUtils.assertContains("LinePath[empty= true", emptyStr);
 
-        String singleFullStr = singleFullSegment.toString();
+        final String singleFullStr = singleFullSegment.toString();
         GeometryTestUtils.assertContains("LinePath[single= LineSpanningSubset[", singleFullStr);
 
-        String singleFiniteStr = singleFiniteSegment.toString();
+        final String singleFiniteStr = singleFiniteSegment.toString();
         GeometryTestUtils.assertContains("LinePath[single= Segment[", singleFiniteStr);
 
-        String startOpenStr = startOpenPath.toString();
+        final String startOpenStr = startOpenPath.toString();
         GeometryTestUtils.assertContains("LinePath[startDirection= ", startOpenStr);
         GeometryTestUtils.assertContains("vertexSequence=", startOpenStr);
 
-        String endOpenStr = endOpenPath.toString();
+        final String endOpenStr = endOpenPath.toString();
         GeometryTestUtils.assertContains("LinePath[vertexSequence= ", endOpenStr);
         GeometryTestUtils.assertContains("endDirection= ", endOpenStr);
 
-        String doubleOpenStr = doubleOpenPath.toString();
+        final String doubleOpenStr = doubleOpenPath.toString();
         GeometryTestUtils.assertContains("startDirection= ", doubleOpenStr);
         GeometryTestUtils.assertContains("vertexSequence= ", doubleOpenStr);
         GeometryTestUtils.assertContains("endDirection= ", doubleOpenStr);
 
-        String nonOpenStr = nonOpenPath.toString();
+        final String nonOpenStr = nonOpenPath.toString();
         GeometryTestUtils.assertContains("LinePath[vertexSequence= ", nonOpenStr);
     }
 
     @Test
     public void testBuilder_prependAndAppend_segments() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
-        Vector2D p4 = Vector2D.of(1, 0);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p4 = Vector2D.of(1, 0);
 
-        Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
-        Segment b = Lines.segmentFromPoints(p2, p3, TEST_PRECISION);
-        Segment c = Lines.segmentFromPoints(p3, p4, TEST_PRECISION);
-        Segment d = Lines.segmentFromPoints(p4, p1, TEST_PRECISION);
+        final Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
+        final Segment b = Lines.segmentFromPoints(p2, p3, TEST_PRECISION);
+        final Segment c = Lines.segmentFromPoints(p3, p4, TEST_PRECISION);
+        final Segment d = Lines.segmentFromPoints(p4, p1, TEST_PRECISION);
 
-        Builder builder = LinePath.builder(null);
+        final Builder builder = LinePath.builder(null);
 
         // act
         builder.prepend(b)
@@ -1031,10 +1031,10 @@ public class LinePathTest {
             .prepend(a)
             .append(d);
 
-        LinePath path = builder.build();
+        final LinePath path = builder.build();
 
         // assert
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(4, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -1045,9 +1045,9 @@ public class LinePathTest {
     @Test
     public void testBuilder_prependAndAppend_disconnectedSegments() {
         // arrange
-        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
-        Builder builder = LinePath.builder(null);
+        final Builder builder = LinePath.builder(null);
         builder.append(a);
 
         // act
@@ -1063,12 +1063,12 @@ public class LinePathTest {
     @Test
     public void testBuilder_prependAndAppend_vertices() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
-        Vector2D p4 = Vector2D.of(1, 0);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p4 = Vector2D.of(1, 0);
 
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
@@ -1077,10 +1077,10 @@ public class LinePathTest {
             .append(p4)
             .append(p1);
 
-        LinePath path = builder.build();
+        final LinePath path = builder.build();
 
         // assert
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1091,10 +1091,10 @@ public class LinePathTest {
     @Test
     public void testBuilder_prependAndAppend_noPrecisionSpecified() {
         // arrange
-        Vector2D p = Vector2D.ZERO;
-        Builder builder = LinePath.builder(null);
+        final Vector2D p = Vector2D.ZERO;
+        final Builder builder = LinePath.builder(null);
 
-        String msg = "Unable to create line segment: no vertex precision specified";
+        final String msg = "Unable to create line segment: no vertex precision specified";
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1109,8 +1109,8 @@ public class LinePathTest {
     @Test
     public void testBuilder_prependAndAppend_addingToInfinitePath() {
         // arrange
-        Vector2D p = Vector2D.Unit.PLUS_X;
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Vector2D p = Vector2D.Unit.PLUS_X;
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         builder.append(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span());
 
@@ -1127,9 +1127,9 @@ public class LinePathTest {
     @Test
     public void testBuilder_prependAndAppend_ignoresEquivalentVertices() {
         // arrange
-        Vector2D p = Vector2D.ZERO;
+        final Vector2D p = Vector2D.ZERO;
 
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
         builder.append(p);
 
         // act
@@ -1141,9 +1141,9 @@ public class LinePathTest {
         builder.append(Vector2D.Unit.PLUS_X);
 
         // assert
-        LinePath path = builder.build();
+        final LinePath path = builder.build();
 
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(1, segments.size());
         assertFiniteSegment(segments.get(0), p, Vector2D.Unit.PLUS_X);
     }
@@ -1151,15 +1151,15 @@ public class LinePathTest {
     @Test
     public void testBuilder_prependAndAppend_mixedVerticesAndSegments() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
-        Vector2D p4 = Vector2D.of(0, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p4 = Vector2D.of(0, 1);
 
-        Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
-        Segment c = Lines.segmentFromPoints(p3, p4, TEST_PRECISION);
+        final Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
+        final Segment c = Lines.segmentFromPoints(p3, p4, TEST_PRECISION);
 
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
@@ -1168,10 +1168,10 @@ public class LinePathTest {
             .prepend(a)
             .append(p1);
 
-        LinePath path = builder.build();
+        final LinePath path = builder.build();
 
         // assert
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1182,21 +1182,21 @@ public class LinePathTest {
     @Test
     public void testBuilder_appendVertices() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
-        Vector2D p4 = Vector2D.of(0, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p4 = Vector2D.of(0, 1);
 
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         // act
         builder.appendVertices(p1, p2)
             .appendVertices(Arrays.asList(p3, p4, p1));
 
-        LinePath path = builder.build();
+        final LinePath path = builder.build();
 
         // assert
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1207,21 +1207,21 @@ public class LinePathTest {
     @Test
     public void testBuilder_prependVertices() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
-        Vector2D p4 = Vector2D.of(0, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p4 = Vector2D.of(0, 1);
 
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         // act
         builder.prependVertices(p3, p4, p1)
             .prependVertices(Arrays.asList(p1, p2));
 
-        LinePath path = builder.build();
+        final LinePath path = builder.build();
 
         // assert
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1232,21 +1232,21 @@ public class LinePathTest {
     @Test
     public void testBuilder_close_notYetClosed() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
 
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         // act
         builder.append(p1)
             .append(p2)
             .append(p3);
 
-        LinePath path = builder.close();
+        final LinePath path = builder.close();
 
         // assert
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1256,11 +1256,11 @@ public class LinePathTest {
     @Test
     public void testBuilder_close_alreadyClosed() {
         // arrange
-        Vector2D p1 = Vector2D.ZERO;
-        Vector2D p2 = Vector2D.of(1, 0);
-        Vector2D p3 = Vector2D.of(1, 1);
+        final Vector2D p1 = Vector2D.ZERO;
+        final Vector2D p2 = Vector2D.of(1, 0);
+        final Vector2D p3 = Vector2D.of(1, 1);
 
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         // act
         builder.append(p1)
@@ -1268,10 +1268,10 @@ public class LinePathTest {
             .append(p3)
             .append(p1);
 
-        LinePath path = builder.close();
+        final LinePath path = builder.close();
 
         // assert
-        List<LineConvexSubset> segments = path.getElements();
+        final List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1281,7 +1281,7 @@ public class LinePathTest {
     @Test
     public void testBuilder_close_infiniteSegmentAtStart() {
         // arrange
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         builder.append(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION)
                 .reverseRayTo(1))
@@ -1296,7 +1296,7 @@ public class LinePathTest {
     @Test
     public void testBuilder_close_infiniteSegmentAtEnd() {
         // arrange
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         builder
             .append(Vector2D.ZERO)
@@ -1313,10 +1313,10 @@ public class LinePathTest {
     @Test
     public void testBuilder_close_emptyPath() {
         // arrange
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
 
         // act
-        LinePath path = builder.close();
+        final LinePath path = builder.close();
 
         // assert
         Assert.assertEquals(0, path.getElements().size());
@@ -1325,11 +1325,11 @@ public class LinePathTest {
     @Test
     public void testBuilder_close_obtuseTriangle() {
         // arrange
-        Builder builder = LinePath.builder(TEST_PRECISION);
+        final Builder builder = LinePath.builder(TEST_PRECISION);
         builder.appendVertices(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1));
 
         // act
-        LinePath path = builder.close();
+        final LinePath path = builder.close();
 
         // assert
         Assert.assertEquals(3, path.getElements().size());
@@ -1338,7 +1338,7 @@ public class LinePathTest {
         assertFiniteSegment(path.getElements().get(2), Vector2D.of(2, 1), Vector2D.ZERO);
     }
 
-    private static void assertFiniteSegment(LineConvexSubset segment, Vector2D start, Vector2D end) {
+    private static void assertFiniteSegment(final LineConvexSubset segment, final Vector2D start, final Vector2D end) {
         Assert.assertFalse(segment.isInfinite());
         Assert.assertTrue(segment.isFinite());
 

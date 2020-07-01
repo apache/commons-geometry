@@ -38,11 +38,11 @@ public class Segment3DTest {
     @Test
     public void testFromPoints() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 1, 2);
-        Vector3D p2 = Vector3D.of(1, 3, 2);
+        final Vector3D p1 = Vector3D.of(1, 1, 2);
+        final Vector3D p2 = Vector3D.of(1, 3, 2);
 
         // act
-        Segment3D seg = Lines3D.segmentFromPoints(p1, p2, TEST_PRECISION);
+        final Segment3D seg = Lines3D.segmentFromPoints(p1, p2, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(seg.isInfinite());
@@ -57,7 +57,7 @@ public class Segment3DTest {
         Assert.assertEquals(2, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 2), seg.getCentroid(), TEST_EPS);
-        Bounds3D bounds = seg.getBounds();
+        final Bounds3D bounds = seg.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 2), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 2), bounds.getMax(), TEST_EPS);
     }
@@ -65,8 +65,8 @@ public class Segment3DTest {
     @Test
     public void testFromPoints_invalidArgs() {
         // arrange
-        Vector3D p1 = Vector3D.of(0, 2, 4);
-        Vector3D p2 = Vector3D.of(1e-17, 2, 4);
+        final Vector3D p1 = Vector3D.of(0, 2, 4);
+        final Vector3D p2 = Vector3D.of(1e-17, 2, 4);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -81,13 +81,13 @@ public class Segment3DTest {
     @Test
     public void testFromPoints_givenLine() {
         // arrange
-        Vector3D p1 = Vector3D.of(-1, -1, 2);
-        Vector3D p2 = Vector3D.of(3, 3, 3);
+        final Vector3D p1 = Vector3D.of(-1, -1, 2);
+        final Vector3D p2 = Vector3D.of(3, 3, 3);
 
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Segment3D seg = Lines3D.segmentFromPoints(line, p2, p1); // reverse location order
+        final Segment3D seg = Lines3D.segmentFromPoints(line, p2, p1); // reverse location order
 
         // assert
         Assert.assertFalse(seg.isInfinite());
@@ -102,7 +102,7 @@ public class Segment3DTest {
         Assert.assertEquals(4, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 2), seg.getCentroid(), TEST_EPS);
-        Bounds3D bounds = seg.getBounds();
+        final Bounds3D bounds = seg.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 2), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 2), bounds.getMax(), TEST_EPS);
     }
@@ -110,12 +110,12 @@ public class Segment3DTest {
     @Test
     public void testFromPoints_givenLine_singlePoint() {
         // arrange
-        Vector3D p1 = Vector3D.of(-1, 2, 0);
+        final Vector3D p1 = Vector3D.of(-1, 2, 0);
 
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Segment3D seg = Lines3D.segmentFromPoints(line, p1, p1);
+        final Segment3D seg = Lines3D.segmentFromPoints(line, p1, p1);
 
         // assert
         Assert.assertFalse(seg.isInfinite());
@@ -130,7 +130,7 @@ public class Segment3DTest {
         Assert.assertEquals(0, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), seg.getCentroid(), TEST_EPS);
-        Bounds3D bounds = seg.getBounds();
+        final Bounds3D bounds = seg.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), bounds.getMax(), TEST_EPS);
     }
@@ -138,10 +138,10 @@ public class Segment3DTest {
     @Test
     public void testFromPoints_givenLine_invalidArgs() {
         // arrange
-        Vector3D p0 = Vector3D.of(1, 0, 0);
-        Vector3D p1 = Vector3D.of(2, 0, 0);
+        final Vector3D p0 = Vector3D.of(1, 0, 0);
+        final Vector3D p1 = Vector3D.of(2, 0, 0);
 
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -164,10 +164,10 @@ public class Segment3DTest {
     @Test
     public void testFromLocations() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Segment3D seg = Lines3D.segmentFromLocations(line, -1, 2);
+        final Segment3D seg = Lines3D.segmentFromLocations(line, -1, 2);
 
         // assert
         Assert.assertFalse(seg.isInfinite());
@@ -182,7 +182,7 @@ public class Segment3DTest {
         Assert.assertEquals(3, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0.5), seg.getCentroid(), TEST_EPS);
-        Bounds3D bounds = seg.getBounds();
+        final Bounds3D bounds = seg.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 2), bounds.getMax(), TEST_EPS);
     }
@@ -190,10 +190,10 @@ public class Segment3DTest {
     @Test
     public void testFromLocations_reversedLocationOrder() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Segment3D seg = Lines3D.segmentFromLocations(line, 2, -1);
+        final Segment3D seg = Lines3D.segmentFromLocations(line, 2, -1);
 
         // assert
         Assert.assertFalse(seg.isInfinite());
@@ -208,7 +208,7 @@ public class Segment3DTest {
         Assert.assertEquals(3, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0.5), seg.getCentroid(), TEST_EPS);
-        Bounds3D bounds = seg.getBounds();
+        final Bounds3D bounds = seg.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 2), bounds.getMax(), TEST_EPS);
     }
@@ -216,10 +216,10 @@ public class Segment3DTest {
     @Test
     public void testFromLocations_singlePoint() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Segment3D seg = Lines3D.segmentFromLocations(line, 1, 1);
+        final Segment3D seg = Lines3D.segmentFromLocations(line, 1, 1);
 
         // assert
         Assert.assertFalse(seg.isInfinite());
@@ -234,7 +234,7 @@ public class Segment3DTest {
         Assert.assertEquals(0, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), seg.getCentroid(), TEST_EPS);
-        Bounds3D bounds = seg.getBounds();
+        final Bounds3D bounds = seg.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMax(), TEST_EPS);
     }
@@ -242,7 +242,7 @@ public class Segment3DTest {
     @Test
     public void testFromLocations_invalidArgs() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -265,14 +265,14 @@ public class Segment3DTest {
     @Test
     public void testTransform() {
         // arrange
-        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+        final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
                 .translate(Vector3D.Unit.PLUS_Y);
 
-        Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0), TEST_PRECISION);
+        final Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0), TEST_PRECISION);
 
         // act
-        Segment3D result = seg.transform(t);
+        final Segment3D result = seg.transform(t);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, -1), result.getStartPoint(), TEST_EPS);
@@ -282,15 +282,15 @@ public class Segment3DTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+        final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
                 .translate(Vector3D.Unit.PLUS_Y)
                 .scale(1, 1, -2);
 
-        Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0), TEST_PRECISION);
+        final Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0), TEST_PRECISION);
 
         // act
-        Segment3D result = seg.transform(t);
+        final Segment3D result = seg.transform(t);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 2), result.getStartPoint(), TEST_EPS);
@@ -300,12 +300,12 @@ public class Segment3DTest {
     @Test
     public void testContains() {
         // arrange
-        Vector3D p0 = Vector3D.of(1, 1, 1);
-        Vector3D p1 = Vector3D.of(3, 1, 1);
+        final Vector3D p0 = Vector3D.of(1, 1, 1);
+        final Vector3D p1 = Vector3D.of(3, 1, 1);
 
-        Vector3D delta = Vector3D.of(1e-12, 1e-12, 1e-12);
+        final Vector3D delta = Vector3D.of(1e-12, 1e-12, 1e-12);
 
-        Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
+        final Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
 
         // act/assert
         Assert.assertFalse(seg.contains(Vector3D.of(2, 2, 2)));
@@ -324,10 +324,10 @@ public class Segment3DTest {
     @Test
     public void testGetInterval() {
         // arrange
-        Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(2, -1, 3), Vector3D.of(2, 2, 3), TEST_PRECISION);
+        final Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(2, -1, 3), Vector3D.of(2, 2, 3), TEST_PRECISION);
 
         // act
-        Interval interval = seg.getInterval();
+        final Interval interval = seg.getInterval();
 
         // assert
         Assert.assertEquals(-1, interval.getMin(), TEST_EPS);
@@ -339,11 +339,11 @@ public class Segment3DTest {
     @Test
     public void testGetInterval_singlePoint() {
         // arrange
-        Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
-        Segment3D seg = Lines3D.segmentFromLocations(line, 1, 1);
+        final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        final Segment3D seg = Lines3D.segmentFromLocations(line, 1, 1);
 
         // act
-        Interval interval = seg.getInterval();
+        final Interval interval = seg.getInterval();
 
         // assert
         Assert.assertEquals(1, interval.getMin(), TEST_EPS);
@@ -356,10 +356,10 @@ public class Segment3DTest {
     @Test
     public void testToString() {
         // arrange
-        Segment3D seg = Lines3D.segmentFromPoints(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
+        final Segment3D seg = Lines3D.segmentFromPoints(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
 
         // act
-        String str = seg.toString();
+        final String str = seg.toString();
 
         // assert
         GeometryTestUtils.assertContains("Segment3D[startPoint= (0", str);

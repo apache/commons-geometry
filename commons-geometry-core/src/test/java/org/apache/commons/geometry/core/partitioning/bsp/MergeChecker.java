@@ -63,13 +63,13 @@ class MergeChecker {
     private boolean expectedEmpty = false;
 
     /** Points expected to lie in the inside of the region */
-    private List<TestPoint2D> insidePoints = new ArrayList<>();
+    private final List<TestPoint2D> insidePoints = new ArrayList<>();
 
     /** Points expected to lie on the outside of the region */
-    private List<TestPoint2D> outsidePoints = new ArrayList<>();
+    private final List<TestPoint2D> outsidePoints = new ArrayList<>();
 
     /** Points expected to lie on the  boundary of the region */
-    private List<TestPoint2D> boundaryPoints = new ArrayList<>();
+    private final List<TestPoint2D> boundaryPoints = new ArrayList<>();
 
     /** Construct a new instance that will verify the output of performing the given merge operation
      * on the input trees.
@@ -125,7 +125,7 @@ class MergeChecker {
      *      region
      * @return this instance
      */
-    public MergeChecker inside(TestPoint2D... points) {
+    public MergeChecker inside(final TestPoint2D... points) {
         insidePoints.addAll(Arrays.asList(points));
         return this;
     }
@@ -135,7 +135,7 @@ class MergeChecker {
      *      region
      * @return this instance
      */
-    public MergeChecker outside(TestPoint2D... points) {
+    public MergeChecker outside(final TestPoint2D... points) {
         outsidePoints.addAll(Arrays.asList(points));
         return this;
     }
@@ -145,7 +145,7 @@ class MergeChecker {
      *      region
      * @return this instance
      */
-    public MergeChecker boundary(TestPoint2D... points) {
+    public MergeChecker boundary(final TestPoint2D... points) {
         boundaryPoints.addAll(Arrays.asList(points));
         return this;
     }

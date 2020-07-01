@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  */
 final class BoundarySourceBoundsBuilder2D {
 
-    /** Get a {@link Bounds3D} instance containing all vertices in the given boundary source.
+    /** Get a {@link Bounds2D} instance containing all vertices in the given boundary source.
      * Null is returned if any encountered boundaries were not finite or no vertices were found.
      * @param src boundary source to compute the bounds of
      * @return the bounds of the argument or null if no valid bounds could be determined

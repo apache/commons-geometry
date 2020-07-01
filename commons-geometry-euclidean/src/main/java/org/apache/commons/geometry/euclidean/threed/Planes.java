@@ -536,10 +536,10 @@ public final class Planes {
 
         final List<Triangle3D> triangles = new ArrayList<>(size - 2);
 
-        int fanIdx = findBestTriangleFanIndex(vertices);
+        final int fanIdx = findBestTriangleFanIndex(vertices);
         int vertexIdx = (fanIdx + 1) % size;
 
-        Vector3D fanBase = vertices.get(fanIdx);
+        final Vector3D fanBase = vertices.get(fanIdx);
         Vector3D vertexA = vertices.get(vertexIdx);
         Vector3D vertexB;
 
@@ -569,7 +569,7 @@ public final class Planes {
         Vector3D curPt = it.next();
         Vector3D nextPt;
 
-        Vector3D lastVec = vertices.get(vertices.size() - 1).directionTo(curPt);
+        final Vector3D lastVec = vertices.get(vertices.size() - 1).directionTo(curPt);
         Vector3D incomingVec = lastVec;
         Vector3D outgoingVec;
 
@@ -828,7 +828,7 @@ public final class Planes {
          * @return the boundaries of the extruded region
          */
         public List<PlaneConvexSubset> extrude(final RegionBSPTree2D subspaceRegion) {
-            List<PlaneConvexSubset> extrudedBoundaries = new ArrayList<>();
+            final List<PlaneConvexSubset> extrudedBoundaries = new ArrayList<>();
 
             // add the boundaries
             addEnds(subspaceRegion, extrudedBoundaries);
@@ -915,7 +915,7 @@ public final class Planes {
             final Vector3D linePt = basePlane.toSpace(subLinePt);
             final Vector3D lineDir = linePt.vectorTo(basePlane.toSpace(subLinePt.add(subLineDir)));
 
-            EmbeddingPlane sidePlane;
+            final EmbeddingPlane sidePlane;
             if (extrudingOnPlusSide) {
                 sidePlane = fromPointAndPlaneVectors(linePt, lineDir, extrusionVector, precision);
             } else {

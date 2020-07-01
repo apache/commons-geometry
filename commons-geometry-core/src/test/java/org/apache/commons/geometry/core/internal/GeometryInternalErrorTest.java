@@ -24,10 +24,10 @@ public class GeometryInternalErrorTest {
     @Test
     public void testMessage() {
         // act
-        GeometryInternalError err = new GeometryInternalError();
+        final GeometryInternalError err = new GeometryInternalError();
 
         // assert
-        String msg = "An internal geometry error occurred. This most often indicates an " +
+        final String msg = "An internal geometry error occurred. This most often indicates an " +
                 "error in the algorithm implementation than in the calling code or data. Please file a bug report " +
                 "with the developers.";
 

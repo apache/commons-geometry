@@ -241,7 +241,7 @@ public abstract class AbstractLinePathConnector
 
         /** {@inheritDoc} */
         @Override
-        public int compareTo(ConnectableLineSubset other) {
+        public int compareTo(final ConnectableLineSubset other) {
             // sort by coordinates
             int cmp = Vector2D.COORDINATE_ASCENDING_ORDER.compare(start, other.start);
             if (cmp == 0) {

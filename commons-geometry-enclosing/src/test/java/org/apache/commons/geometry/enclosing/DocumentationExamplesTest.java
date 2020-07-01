@@ -36,9 +36,9 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testWelzlEncloser3DExample() {
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
 
-        List<Vector3D> points = Arrays.asList(
+        final List<Vector3D> points = Arrays.asList(
                     Vector3D.of(0, 0, 1),
                     Vector3D.of(0.75, 0, 1),
                     Vector3D.of(2, 0, 1),
@@ -46,15 +46,15 @@ public class DocumentationExamplesTest {
                 );
 
         // compute the enclosing ball
-        WelzlEncloser3D encloser = new WelzlEncloser3D(precision);
+        final WelzlEncloser3D encloser = new WelzlEncloser3D(precision);
 
-        EnclosingBall<Vector3D> sphere = encloser.enclose(points);
+        final EnclosingBall<Vector3D> sphere = encloser.enclose(points);
 
         // check the generated ball
-        Vector3D center = sphere.getCenter(); // (1, 0, 1)
-        double radius = sphere.getRadius(); // 1.0
-        boolean containsCenter = sphere.contains(center); // true
-        boolean containsOrigin = sphere.contains(Vector3D.ZERO); // false
+        final Vector3D center = sphere.getCenter(); // (1, 0, 1)
+        final double radius = sphere.getRadius(); // 1.0
+        final boolean containsCenter = sphere.contains(center); // true
+        final boolean containsOrigin = sphere.contains(Vector3D.ZERO); // false
 
         // ----------
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 1), center, TEST_EPS);

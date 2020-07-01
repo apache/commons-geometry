@@ -91,7 +91,7 @@ public class AbstractRegionBSPTreeBooleanTest {
             .boundary(TestPoint2D.ZERO)
             .count(5)
             .check(t -> {
-                TestLineSegment seg = (TestLineSegment) t.getRoot().getPlus().getCut();
+                final TestLineSegment seg = (TestLineSegment) t.getRoot().getPlus().getCut();
 
                 PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.NEGATIVE_INFINITY), seg.getStartPoint());
                 PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, seg.getEndPoint());
@@ -101,16 +101,16 @@ public class AbstractRegionBSPTreeBooleanTest {
     @Test
     public void testUnion_mixedCutRules() {
         // arrange
-        Supplier<TestRegionBSPTree> r1 = () -> {
-            TestRegionBSPTree tree = new TestRegionBSPTree(false);
+        final Supplier<TestRegionBSPTree> r1 = () -> {
+            final TestRegionBSPTree tree = new TestRegionBSPTree(false);
             tree.insert(TestLine.X_AXIS.span(), RegionCutRule.PLUS_INSIDE);
             tree.insert(new TestLine(new TestPoint2D(5, 0), new TestPoint2D(5, 1)).span(), RegionCutRule.INHERIT);
 
             return tree;
         };
 
-        Supplier<TestRegionBSPTree> r2 = () -> {
-            TestRegionBSPTree tree = new TestRegionBSPTree(false);
+        final Supplier<TestRegionBSPTree> r2 = () -> {
+            final TestRegionBSPTree tree = new TestRegionBSPTree(false);
             tree.insert(TestLine.Y_AXIS.span(), RegionCutRule.MINUS_INSIDE);
 
             return tree;
@@ -127,7 +127,7 @@ public class AbstractRegionBSPTreeBooleanTest {
             .boundary(TestPoint2D.ZERO)
             .count(7)
             .check(t -> {
-                TestLineSegment seg = (TestLineSegment) t.getRoot().getMinus().getMinus().getCut();
+                final TestLineSegment seg = (TestLineSegment) t.getRoot().getMinus().getMinus().getCut();
 
                 PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, seg.getStartPoint());
                 PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.POSITIVE_INFINITY), seg.getEndPoint());
@@ -137,14 +137,14 @@ public class AbstractRegionBSPTreeBooleanTest {
     @Test
     public void testUnion_boxTreeWithSingleCutTree() {
         // arrange
-        Supplier<TestRegionBSPTree> boxFactory = () -> {
-            TestRegionBSPTree box = fullTree();
+        final Supplier<TestRegionBSPTree> boxFactory = () -> {
+            final TestRegionBSPTree box = fullTree();
             insertBox(box, TestPoint2D.ZERO, new TestPoint2D(2, -4));
             return box;
         };
 
-        Supplier<TestRegionBSPTree> horizonalFactory = () -> {
-            TestRegionBSPTree horizontal = fullTree();
+        final Supplier<TestRegionBSPTree> horizonalFactory = () -> {
+            final TestRegionBSPTree horizontal = fullTree();
             horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, 2), new TestPoint2D(0, 2)));
 
             return horizontal;
@@ -162,14 +162,14 @@ public class AbstractRegionBSPTreeBooleanTest {
     @Test
     public void testUnion_treeWithComplement() {
         // arrange
-        Supplier<TestRegionBSPTree> treeFactory = () -> {
-            TestRegionBSPTree t = fullTree();
+        final Supplier<TestRegionBSPTree> treeFactory = () -> {
+            final TestRegionBSPTree t = fullTree();
             insertSkewedBowtie(t);
 
             return t;
         };
-        Supplier<TestRegionBSPTree> complementFactory = () -> {
-            TestRegionBSPTree t = treeFactory.get();
+        final Supplier<TestRegionBSPTree> complementFactory = () -> {
+            final TestRegionBSPTree t = treeFactory.get();
             t.complement();
 
             return t;
@@ -252,7 +252,7 @@ public class AbstractRegionBSPTreeBooleanTest {
             .boundary(TestPoint2D.ZERO)
             .count(5)
             .check(t -> {
-                TestLineSegment seg = (TestLineSegment) t.getRoot().getMinus().getCut();
+                final TestLineSegment seg = (TestLineSegment) t.getRoot().getMinus().getCut();
 
                 PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, seg.getStartPoint());
                 PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.POSITIVE_INFINITY), seg.getEndPoint());
@@ -262,14 +262,14 @@ public class AbstractRegionBSPTreeBooleanTest {
     @Test
     public void testIntersection_boxTreeWithSingleCutTree() {
         // arrange
-        Supplier<TestRegionBSPTree> boxFactory = () -> {
-            TestRegionBSPTree box = fullTree();
+        final Supplier<TestRegionBSPTree> boxFactory = () -> {
+            final TestRegionBSPTree box = fullTree();
             insertBox(box, TestPoint2D.ZERO, new TestPoint2D(2, -4));
             return box;
         };
 
-        Supplier<TestRegionBSPTree> horizonalFactory = () -> {
-            TestRegionBSPTree horizontal = fullTree();
+        final Supplier<TestRegionBSPTree> horizonalFactory = () -> {
+            final TestRegionBSPTree horizontal = fullTree();
             horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, -2), new TestPoint2D(0, -2)));
 
             return horizontal;
@@ -289,14 +289,14 @@ public class AbstractRegionBSPTreeBooleanTest {
     @Test
     public void testIntersection_treeWithComplement() {
         // arrange
-        Supplier<TestRegionBSPTree> treeFactory = () -> {
-            TestRegionBSPTree t = fullTree();
+        final Supplier<TestRegionBSPTree> treeFactory = () -> {
+            final TestRegionBSPTree t = fullTree();
             insertSkewedBowtie(t);
 
             return t;
         };
-        Supplier<TestRegionBSPTree> complementFactory = () -> {
-            TestRegionBSPTree t = treeFactory.get();
+        final Supplier<TestRegionBSPTree> complementFactory = () -> {
+            final TestRegionBSPTree t = treeFactory.get();
             t.complement();
 
             return t;
@@ -379,7 +379,7 @@ public class AbstractRegionBSPTreeBooleanTest {
             .boundary(TestPoint2D.ZERO)
             .count(5)
             .check(t -> {
-                TestLineSegment seg = (TestLineSegment) t.getRoot().getMinus().getCut();
+                final TestLineSegment seg = (TestLineSegment) t.getRoot().getMinus().getCut();
 
                 PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, seg.getStartPoint());
                 PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.POSITIVE_INFINITY), seg.getEndPoint());
@@ -389,14 +389,14 @@ public class AbstractRegionBSPTreeBooleanTest {
     @Test
     public void testDifference_boxTreeWithSingleCutTree() {
         // arrange
-        Supplier<TestRegionBSPTree> boxFactory = () -> {
-            TestRegionBSPTree box = fullTree();
+        final Supplier<TestRegionBSPTree> boxFactory = () -> {
+            final TestRegionBSPTree box = fullTree();
             insertBox(box, TestPoint2D.ZERO, new TestPoint2D(2, -4));
             return box;
         };
 
-        Supplier<TestRegionBSPTree> horizonalFactory = () -> {
-            TestRegionBSPTree horizontal = fullTree();
+        final Supplier<TestRegionBSPTree> horizonalFactory = () -> {
+            final TestRegionBSPTree horizontal = fullTree();
             horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, -2), new TestPoint2D(0, -2)));
 
             return horizontal;
@@ -418,8 +418,8 @@ public class AbstractRegionBSPTreeBooleanTest {
     @Test
     public void testDifference_treeWithCopy() {
         // arrange
-        Supplier<TestRegionBSPTree> treeFactory = () -> {
-            TestRegionBSPTree t = fullTree();
+        final Supplier<TestRegionBSPTree> treeFactory = () -> {
+            final TestRegionBSPTree t = fullTree();
             insertSkewedBowtie(t);
 
             return t;
@@ -508,12 +508,12 @@ public class AbstractRegionBSPTreeBooleanTest {
             .boundary(TestPoint2D.ZERO)
             .count(7)
             .check(t -> {
-                TestLineSegment minusSeg = (TestLineSegment) t.getRoot().getMinus().getCut();
+                final TestLineSegment minusSeg = (TestLineSegment) t.getRoot().getMinus().getCut();
 
                 PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, minusSeg.getStartPoint());
                 PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.POSITIVE_INFINITY), minusSeg.getEndPoint());
 
-                TestLineSegment plusSeg = (TestLineSegment) t.getRoot().getPlus().getCut();
+                final TestLineSegment plusSeg = (TestLineSegment) t.getRoot().getPlus().getCut();
 
                 PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.NEGATIVE_INFINITY), plusSeg.getStartPoint());
                 PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, plusSeg.getEndPoint());
@@ -523,14 +523,14 @@ public class AbstractRegionBSPTreeBooleanTest {
     @Test
     public void testXor_boxTreeWithSingleCutTree() {
         // arrange
-        Supplier<TestRegionBSPTree> boxFactory = () -> {
-            TestRegionBSPTree box = fullTree();
+        final Supplier<TestRegionBSPTree> boxFactory = () -> {
+            final TestRegionBSPTree box = fullTree();
             insertBox(box, TestPoint2D.ZERO, new TestPoint2D(2, -4));
             return box;
         };
 
-        Supplier<TestRegionBSPTree> horizonalFactory = () -> {
-            TestRegionBSPTree horizontal = fullTree();
+        final Supplier<TestRegionBSPTree> horizonalFactory = () -> {
+            final TestRegionBSPTree horizontal = fullTree();
             horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, -2), new TestPoint2D(0, -2)));
 
             return horizontal;
@@ -553,14 +553,14 @@ public class AbstractRegionBSPTreeBooleanTest {
     @Test
     public void testXor_treeWithComplement() {
         // arrange
-        Supplier<TestRegionBSPTree> treeFactory = () -> {
-            TestRegionBSPTree t = fullTree();
+        final Supplier<TestRegionBSPTree> treeFactory = () -> {
+            final TestRegionBSPTree t = fullTree();
             insertSkewedBowtie(t);
 
             return t;
         };
-        Supplier<TestRegionBSPTree> complementFactory = () -> {
-            TestRegionBSPTree t = treeFactory.get();
+        final Supplier<TestRegionBSPTree> complementFactory = () -> {
+            final TestRegionBSPTree t = treeFactory.get();
             t.complement();
 
             return t;
@@ -583,14 +583,14 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     private static TestRegionBSPTree xAxisTree() {
-        TestRegionBSPTree tree = fullTree();
+        final TestRegionBSPTree tree = fullTree();
         tree.getRoot().cut(TestLine.X_AXIS);
 
         return tree;
     }
 
     private static TestRegionBSPTree yAxisTree() {
-        TestRegionBSPTree tree = fullTree();
+        final TestRegionBSPTree tree = fullTree();
         tree.getRoot().cut(TestLine.Y_AXIS);
 
         return tree;
@@ -624,14 +624,14 @@ public class AbstractRegionBSPTreeBooleanTest {
             final Supplier<TestRegionBSPTree> r1,
             final Supplier<TestRegionBSPTree> r2) {
 
-        MergeChecker.Operation constOperation = (a, b) -> {
-            TestRegionBSPTree result = fullTree();
+        final MergeChecker.Operation constOperation = (a, b) -> {
+            final TestRegionBSPTree result = fullTree();
             result.union(a, b);
 
             return result;
         };
 
-        MergeChecker.Operation inPlaceOperation = (a, b) -> {
+        final MergeChecker.Operation inPlaceOperation = (a, b) -> {
             a.union(b);
             return a;
         };
@@ -643,13 +643,13 @@ public class AbstractRegionBSPTreeBooleanTest {
             final Supplier<TestRegionBSPTree> tree1Factory,
             final Supplier<TestRegionBSPTree> tree2Factory) {
 
-        MergeChecker.Operation constOperation = (a, b) -> {
-            TestRegionBSPTree result = fullTree();
+        final MergeChecker.Operation constOperation = (a, b) -> {
+            final TestRegionBSPTree result = fullTree();
             result.intersection(a, b);
             return result;
         };
 
-        MergeChecker.Operation inPlaceOperation = (a, b) -> {
+        final MergeChecker.Operation inPlaceOperation = (a, b) -> {
             a.intersection(b);
             return a;
         };
@@ -661,13 +661,13 @@ public class AbstractRegionBSPTreeBooleanTest {
             final Supplier<TestRegionBSPTree> tree1Factory,
             final Supplier<TestRegionBSPTree> tree2Factory) {
 
-        MergeChecker.Operation constOperation = (a, b) -> {
-            TestRegionBSPTree result = fullTree();
+        final MergeChecker.Operation constOperation = (a, b) -> {
+            final TestRegionBSPTree result = fullTree();
             result.difference(a, b);
             return result;
         };
 
-        MergeChecker.Operation inPlaceOperation = (a, b) -> {
+        final MergeChecker.Operation inPlaceOperation = (a, b) -> {
             a.difference(b);
             return a;
         };
@@ -679,13 +679,13 @@ public class AbstractRegionBSPTreeBooleanTest {
             final Supplier<TestRegionBSPTree> tree1Factory,
             final Supplier<TestRegionBSPTree> tree2Factory) {
 
-        MergeChecker.Operation constOperation = (a, b) -> {
-            TestRegionBSPTree result = fullTree();
+        final MergeChecker.Operation constOperation = (a, b) -> {
+            final TestRegionBSPTree result = fullTree();
             result.xor(a, b);
             return result;
         };
 
-        MergeChecker.Operation inPlaceOperation = (a, b) -> {
+        final MergeChecker.Operation inPlaceOperation = (a, b) -> {
             a.xor(b);
             return a;
         };

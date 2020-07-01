@@ -34,15 +34,15 @@ public class DiskGeneratorTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private DiskGenerator generator = new DiskGenerator();
+    private final DiskGenerator generator = new DiskGenerator();
 
     @Test
     public void testSupport0Point() {
         // arrange
-        List<Vector2D> support = Arrays.asList(new Vector2D[0]);
+        final List<Vector2D> support = Arrays.asList(new Vector2D[0]);
 
         // act
-        EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
+        final EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
 
         // assert
         Assert.assertTrue(disk.getRadius() < 0);
@@ -53,12 +53,12 @@ public class DiskGeneratorTest {
     @Test
     public void testSupport1Point() {
         // arrange
-        DoublePrecisionContext lowPrecision = new EpsilonDoublePrecisionContext(0.5);
-        DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(0.001);
-        List<Vector2D> support = Arrays.asList(Vector2D.of(1, 2));
+        final DoublePrecisionContext lowPrecision = new EpsilonDoublePrecisionContext(0.5);
+        final DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(0.001);
+        final List<Vector2D> support = Arrays.asList(Vector2D.of(1, 2));
 
         // act
-        EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
+        final EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
 
         // assert
         Assert.assertEquals(0.0, disk.getRadius(), TEST_EPS);
@@ -78,17 +78,17 @@ public class DiskGeneratorTest {
     @Test
     public void testSupport2Points() {
         // arrange
-        List<Vector2D> support = Arrays.asList(Vector2D.of(1, 0),
+        final List<Vector2D> support = Arrays.asList(Vector2D.of(1, 0),
                                                Vector2D.of(3, 0));
 
         // act
-        EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
+        final EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
 
         // assert
         Assert.assertEquals(1.0, disk.getRadius(), TEST_EPS);
 
         int i = 0;
-        for (Vector2D v : support) {
+        for (final Vector2D v : support) {
             Assert.assertTrue(disk.contains(v));
             Assert.assertEquals(1.0, v.distance(disk.getCenter()), TEST_EPS);
             Assert.assertEquals(v, disk.getSupport().get(i++));
@@ -103,18 +103,18 @@ public class DiskGeneratorTest {
     @Test
     public void testSupport3Points() {
         // arrange
-        List<Vector2D> support = Arrays.asList(Vector2D.of(1, 0),
+        final List<Vector2D> support = Arrays.asList(Vector2D.of(1, 0),
                                                Vector2D.of(3, 0),
                                                Vector2D.of(2, 2));
 
         // act
-        EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
+        final EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
 
         // assert
         Assert.assertEquals(5.0 / 4.0, disk.getRadius(), TEST_EPS);
 
         int i = 0;
-        for (Vector2D v : support) {
+        for (final Vector2D v : support) {
             Assert.assertTrue(disk.contains(v));
             Assert.assertEquals(5.0 / 4.0, v.distance(disk.getCenter()), TEST_EPS);
             Assert.assertEquals(v, disk.getSupport().get(i++));
@@ -136,16 +136,16 @@ public class DiskGeneratorTest {
                                                                  0x12faa818373ffe90L);
         final UnitSphereSampler sr = new UnitSphereSampler(2, random);
         for (int i = 0; i < 500; ++i) {
-            double d = 25 * random.nextDouble();
-            double refRadius = 10 * random.nextDouble();
-            Vector2D refCenter = Vector2D.linearCombination(d, Vector2D.of(sr.nextVector()));
-            List<Vector2D> support = new ArrayList<>();
+            final double d = 25 * random.nextDouble();
+            final double refRadius = 10 * random.nextDouble();
+            final Vector2D refCenter = Vector2D.linearCombination(d, Vector2D.of(sr.nextVector()));
+            final List<Vector2D> support = new ArrayList<>();
             for (int j = 0; j < 3; ++j) {
                 support.add(Vector2D.linearCombination(1.0, refCenter, refRadius, Vector2D.of(sr.nextVector())));
             }
 
             // act
-            EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
+            final EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
 
             // assert
             Assert.assertEquals(0.0, refCenter.distance(disk.getCenter()), 3e-9 * refRadius);

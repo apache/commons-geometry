@@ -29,8 +29,8 @@ public class AbstractHyperplaneTest {
     @Test
     public void testGetPrecision() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
-        StubHyperplane hyper = new StubHyperplane(precision);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final StubHyperplane hyper = new StubHyperplane(precision);
 
         // act/assert
         Assert.assertSame(precision, hyper.getPrecision());
@@ -39,8 +39,8 @@ public class AbstractHyperplaneTest {
     @Test
     public void testClassify() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
-        StubHyperplane hyper = new StubHyperplane(precision);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final StubHyperplane hyper = new StubHyperplane(precision);
 
         // act/assert
         Assert.assertEquals(HyperplaneLocation.MINUS, hyper.classify(new TestPoint2D(1, 1)));
@@ -55,8 +55,8 @@ public class AbstractHyperplaneTest {
     @Test
     public void testContains() {
         // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
-        StubHyperplane hyper = new StubHyperplane(precision);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final StubHyperplane hyper = new StubHyperplane(precision);
 
         // act/assert
         Assert.assertFalse(hyper.contains(new TestPoint2D(1, 1)));
@@ -70,17 +70,17 @@ public class AbstractHyperplaneTest {
 
     public static class StubHyperplane extends AbstractHyperplane<TestPoint2D> {
 
-        public StubHyperplane(DoublePrecisionContext precision) {
+        public StubHyperplane(final DoublePrecisionContext precision) {
             super(precision);
         }
 
         @Override
-        public double offset(TestPoint2D point) {
+        public double offset(final TestPoint2D point) {
             return TestLine.X_AXIS.offset(point);
         }
 
         @Override
-        public TestPoint2D project(TestPoint2D point) {
+        public TestPoint2D project(final TestPoint2D point) {
             return null;
         }
 
@@ -90,12 +90,12 @@ public class AbstractHyperplaneTest {
         }
 
         @Override
-        public Hyperplane<TestPoint2D> transform(Transform<TestPoint2D> transform) {
+        public Hyperplane<TestPoint2D> transform(final Transform<TestPoint2D> transform) {
             return null;
         }
 
         @Override
-        public boolean similarOrientation(Hyperplane<TestPoint2D> other) {
+        public boolean similarOrientation(final Hyperplane<TestPoint2D> other) {
             return false;
         }
 

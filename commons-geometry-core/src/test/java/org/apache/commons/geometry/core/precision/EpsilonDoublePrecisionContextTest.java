@@ -25,10 +25,10 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testGetters() {
         // arrange
-        double eps = 1e-6;
+        final double eps = 1e-6;
 
         // act
-        EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
+        final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
         // assert
         Assert.assertEquals(eps, ctx.getEpsilon(), 0.0);
@@ -58,9 +58,9 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testSign() {
         // arrange
-        double eps = 1e-2;
+        final double eps = 1e-2;
 
-        EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
+        final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
         // act/assert
         Assert.assertEquals(0, ctx.sign(0.0));
@@ -80,9 +80,9 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testCompare_compareToZero() {
         // arrange
-        double eps = 1e-2;
+        final double eps = 1e-2;
 
-        EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
+        final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
         // act/assert
         Assert.assertEquals(0, ctx.compare(0.0, 0.0));
@@ -103,11 +103,11 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testCompare_compareNonZero() {
         // arrange
-        double eps = 1e-5;
-        double small = 1e-3;
-        double big = 1e100;
+        final double eps = 1e-5;
+        final double small = 1e-3;
+        final double big = 1e100;
 
-        EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
+        final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
         // act/assert
         Assert.assertEquals(0, ctx.compare(eps, 2 * eps));
@@ -129,7 +129,7 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testCompare_NaN() {
         // arrange
-        EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(1e-6);
+        final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(1e-6);
 
         // act/assert
         Assert.assertEquals(1, ctx.compare(0, Double.NaN));
@@ -146,7 +146,7 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testCompare_infinity() {
         // arrange
-        EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(1e-6);
+        final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(1e-6);
 
         // act/assert
         Assert.assertEquals(-1, ctx.compare(0, Double.POSITIVE_INFINITY));
@@ -161,11 +161,11 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testGetMaxZero_isZeroEqualityThreshold() {
         // arrange
-        double eps = 1e-2;
+        final double eps = 1e-2;
 
-        EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
+        final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
-        double maxZero = ctx.getMaxZero();
+        final double maxZero = ctx.getMaxZero();
 
         // act/assert
         Assert.assertTrue(ctx.eqZero(maxZero));
@@ -180,9 +180,9 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testHashCode() {
         // arrange
-        EpsilonDoublePrecisionContext a = new EpsilonDoublePrecisionContext(1e-6);
-        EpsilonDoublePrecisionContext b = new EpsilonDoublePrecisionContext(1e-7);
-        EpsilonDoublePrecisionContext c = new EpsilonDoublePrecisionContext(1e-6);
+        final EpsilonDoublePrecisionContext a = new EpsilonDoublePrecisionContext(1e-6);
+        final EpsilonDoublePrecisionContext b = new EpsilonDoublePrecisionContext(1e-7);
+        final EpsilonDoublePrecisionContext c = new EpsilonDoublePrecisionContext(1e-6);
 
         // act/assert
         Assert.assertEquals(a.hashCode(), a.hashCode());
@@ -194,9 +194,9 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testEquals() {
         // arrange
-        EpsilonDoublePrecisionContext a = new EpsilonDoublePrecisionContext(1e-6);
-        EpsilonDoublePrecisionContext b = new EpsilonDoublePrecisionContext(1e-7);
-        EpsilonDoublePrecisionContext c = new EpsilonDoublePrecisionContext(1e-6);
+        final EpsilonDoublePrecisionContext a = new EpsilonDoublePrecisionContext(1e-6);
+        final EpsilonDoublePrecisionContext b = new EpsilonDoublePrecisionContext(1e-7);
+        final EpsilonDoublePrecisionContext c = new EpsilonDoublePrecisionContext(1e-6);
 
         // act/assert
         Assert.assertFalse(a.equals(null));
@@ -211,10 +211,10 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testToString() {
         // arrange
-        EpsilonDoublePrecisionContext a = new EpsilonDoublePrecisionContext(1d);
+        final EpsilonDoublePrecisionContext a = new EpsilonDoublePrecisionContext(1d);
 
         // act
-        String str = a.toString();
+        final String str = a.toString();
 
         // assert
         Assert.assertTrue(str.contains("EpsilonDoublePrecisionContext"));
@@ -228,7 +228,7 @@ public class EpsilonDoublePrecisionContextTest {
      * @param count
      * @return
      */
-    private static double nextUp(double n, int count) {
+    private static double nextUp(final double n, final int count) {
         double result = n;
         for (int i = 0; i < count; ++i) {
             result = Math.nextUp(result);
@@ -244,7 +244,7 @@ public class EpsilonDoublePrecisionContextTest {
      * @param count
      * @return
      */
-    private static double nextDown(double n, int count) {
+    private static double nextDown(final double n, final int count) {
         double result = n;
         for (int i = 0; i < count; ++i) {
             result = Math.nextDown(result);

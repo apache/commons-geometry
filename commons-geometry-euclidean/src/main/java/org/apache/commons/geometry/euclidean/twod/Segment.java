@@ -157,9 +157,9 @@ public final class Segment extends LineConvexSubset {
     @Override
     RegionLocation classifyAbscissa(final double abscissa) {
         final DoublePrecisionContext precision = getPrecision();
-        int startCmp = precision.compare(abscissa, getSubspaceStart());
+        final int startCmp = precision.compare(abscissa, getSubspaceStart());
         if (startCmp > 0) {
-            int endCmp = precision.compare(abscissa, getSubspaceEnd());
+            final int endCmp = precision.compare(abscissa, getSubspaceEnd());
             if (endCmp < 0) {
                 return RegionLocation.INSIDE;
             } else if (endCmp == 0) {
