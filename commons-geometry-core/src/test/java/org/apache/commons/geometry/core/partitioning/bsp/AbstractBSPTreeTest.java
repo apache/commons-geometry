@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.Transform;
@@ -725,7 +726,7 @@ public class AbstractBSPTreeTest {
         final TestLineSegment d = new TestLineSegment(1, 1, -1, 1);
         final TestLineSegment e = new TestLineSegment(-1, 1, -1, -1);
 
-        final BoundarySource<TestLineSegment> src = () -> Arrays.asList(a, b, c, d, e).stream();
+        final BoundarySource<TestLineSegment> src = () -> Stream.of(a, b, c, d, e);
 
         // act
         tree.insert(src);
@@ -758,7 +759,7 @@ public class AbstractBSPTreeTest {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
-        final BoundarySource<TestLineSegment> src = () -> new ArrayList<TestLineSegment>().stream();
+        final BoundarySource<TestLineSegment> src = Stream::empty;
 
         // act
         tree.insert(src);

@@ -339,8 +339,8 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D empty = RegionBSPTree3D.empty();
 
         // act/assert
-        Assert.assertEquals(0, full.triangleStream().collect(Collectors.toList()).size());
-        Assert.assertEquals(0, empty.triangleStream().collect(Collectors.toList()).size());
+        Assert.assertEquals(0, full.triangleStream().count());
+        Assert.assertEquals(0, empty.triangleStream().count());
     }
 
     @Test

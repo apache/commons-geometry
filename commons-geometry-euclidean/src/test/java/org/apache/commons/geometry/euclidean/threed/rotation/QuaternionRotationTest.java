@@ -16,11 +16,11 @@
  */
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -967,7 +967,7 @@ public class QuaternionRotationTest {
     }
 
     private List<AxisSequence> getAxes(final AxisSequenceType type) {
-        return Arrays.asList(AxisSequence.values()).stream()
+        return Stream.of(AxisSequence.values())
                 .filter(a -> type.equals(a.getType()))
                 .collect(Collectors.toList());
     }

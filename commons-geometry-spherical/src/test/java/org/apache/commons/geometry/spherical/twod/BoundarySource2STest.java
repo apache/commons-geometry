@@ -19,6 +19,7 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -50,7 +51,7 @@ public class BoundarySource2STest {
     @Test
     public void testToTree_noBoundaries() {
         // act
-        final BoundarySource2S src = () -> new ArrayList<GreatArc>().stream();
+        final BoundarySource2S src = Stream::empty;
 
         // act
         final RegionBSPTree2S tree = src.toTree();

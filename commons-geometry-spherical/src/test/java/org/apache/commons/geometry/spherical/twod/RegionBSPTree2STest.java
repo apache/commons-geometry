@@ -317,7 +317,7 @@ public class RegionBSPTree2STest {
         // assert
         Assert.assertEquals(2, result.size());
 
-        final double size = result.stream().collect(Collectors.summingDouble(a -> a.getSize()));
+        final double size = result.stream().mapToDouble(ConvexArea2S::getSize).sum();
         Assert.assertEquals(PlaneAngleRadians.TWO_PI, size, TEST_EPS);
     }
 
@@ -338,7 +338,7 @@ public class RegionBSPTree2STest {
         // assert
         Assert.assertEquals(2, result.size());
 
-        final double size = result.stream().collect(Collectors.summingDouble(a -> a.getSize()));
+        final double size = result.stream().mapToDouble(ConvexArea2S::getSize).sum();
         Assert.assertEquals(PlaneAngleRadians.TWO_PI, size, TEST_EPS);
     }
 

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -147,9 +148,7 @@ public class AbstractRegionBSPTreeTest {
     @Test
     public void testInsert_boundarySource_mixedCutRules() {
         // arrange
-        final Function<TestLineSegment, BoundarySource<TestLineSegment>> factory = seg -> {
-            return () -> Arrays.asList(seg).stream();
-        };
+        final Function<TestLineSegment, BoundarySource<TestLineSegment>> factory = seg -> () -> Stream.of(seg);
 
         // act/assert
         checkMixedCutRuleInsertion(segs -> {
