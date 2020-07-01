@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
@@ -1013,7 +1014,7 @@ public class Vector2DTest {
     public void testMax() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-100, 1),
-                Vector2D.max(Arrays.asList(Vector2D.of(-100, 1))), EPS);
+                Vector2D.max(Collections.singletonList(Vector2D.of(-100, 1))), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1),
                 Vector2D.max(Arrays.asList(Vector2D.of(-100, 1), Vector2D.of(0, 1))), EPS);
@@ -1037,7 +1038,7 @@ public class Vector2DTest {
     public void testMin() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-100, 1),
-                Vector2D.min(Arrays.asList(Vector2D.of(-100, 1))), EPS);
+                Vector2D.min(Collections.singletonList(Vector2D.of(-100, 1))), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-100, 1),
                 Vector2D.min(Arrays.asList(Vector2D.of(-100, 1), Vector2D.of(0, 1))), EPS);
@@ -1068,7 +1069,7 @@ public class Vector2DTest {
                         Vector2D.of(3, 4), Vector2D.of(4, 5)), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2),
-                Vector2D.centroid(Arrays.asList(Vector2D.of(1, 2))), EPS);
+                Vector2D.centroid(Collections.singletonList(Vector2D.of(1, 2))), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 1),
                 Vector2D.centroid(Arrays.asList(Vector2D.of(1, 2), Vector2D.of(1, 2),

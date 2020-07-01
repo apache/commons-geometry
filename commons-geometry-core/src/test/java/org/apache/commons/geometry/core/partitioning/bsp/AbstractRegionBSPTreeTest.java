@@ -18,6 +18,7 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -112,11 +113,11 @@ public class AbstractRegionBSPTreeTest {
     public void testInsert_hyperplaneSubsets_mixedCutRules() {
         // act/assert
         checkMixedCutRuleInsertion(segs -> {
-            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[0])), RegionCutRule.PLUS_INSIDE);
-            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[1]))); // default rule
-            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[2])), RegionCutRule.PLUS_INSIDE);
-            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[3])), RegionCutRule.MINUS_INSIDE);
-            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[4])), RegionCutRule.INHERIT);
+            tree.insert(new TestLineSegmentCollection(Collections.singletonList(segs[0])), RegionCutRule.PLUS_INSIDE);
+            tree.insert(new TestLineSegmentCollection(Collections.singletonList(segs[1]))); // default rule
+            tree.insert(new TestLineSegmentCollection(Collections.singletonList(segs[2])), RegionCutRule.PLUS_INSIDE);
+            tree.insert(new TestLineSegmentCollection(Collections.singletonList(segs[3])), RegionCutRule.MINUS_INSIDE);
+            tree.insert(new TestLineSegmentCollection(Collections.singletonList(segs[4])), RegionCutRule.INHERIT);
         });
 
     }
@@ -137,11 +138,11 @@ public class AbstractRegionBSPTreeTest {
     public void testInsert_hyperplaneConvexSubsetList_mixedCutRules() {
         // act/assert
         checkMixedCutRuleInsertion(segs -> {
-            tree.insert(Arrays.asList(segs[0]), RegionCutRule.PLUS_INSIDE);
-            tree.insert(Arrays.asList(segs[1])); // default rule
-            tree.insert(Arrays.asList(segs[2]), RegionCutRule.PLUS_INSIDE);
-            tree.insert(Arrays.asList(segs[3]), RegionCutRule.MINUS_INSIDE);
-            tree.insert(Arrays.asList(segs[4]), RegionCutRule.INHERIT);
+            tree.insert(Collections.singletonList(segs[0]), RegionCutRule.PLUS_INSIDE);
+            tree.insert(Collections.singletonList(segs[1])); // default rule
+            tree.insert(Collections.singletonList(segs[2]), RegionCutRule.PLUS_INSIDE);
+            tree.insert(Collections.singletonList(segs[3]), RegionCutRule.MINUS_INSIDE);
+            tree.insert(Collections.singletonList(segs[4]), RegionCutRule.INHERIT);
         });
     }
 

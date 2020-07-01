@@ -16,11 +16,7 @@
  */
 package org.apache.commons.geometry.core.internal;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,7 +38,7 @@ public class IteratorTransformTest {
     @Test(expected = NoSuchElementException.class)
     public void testThrowsNoSuchElement() {
         // arrange
-        final List<Integer> input = Arrays.asList();
+        final List<Integer> input = Collections.emptyList();
         final EvenCharIterator it = new EvenCharIterator(input.iterator());
 
         // act/assert

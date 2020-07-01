@@ -182,11 +182,11 @@ public class PlanesTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Planes.convexPolygonFromVertices(Arrays.asList(), TEST_PRECISION);
+            Planes.convexPolygonFromVertices(Collections.emptyList(), TEST_PRECISION);
         }, IllegalArgumentException.class, nonPlanarPattern);
 
         GeometryTestUtils.assertThrows(() -> {
-            Planes.convexPolygonFromVertices(Arrays.asList(Vector3D.ZERO), TEST_PRECISION);
+            Planes.convexPolygonFromVertices(Collections.singletonList(Vector3D.ZERO), TEST_PRECISION);
         }, IllegalArgumentException.class, nonPlanarPattern);
 
         GeometryTestUtils.assertThrows(() -> {
@@ -667,7 +667,7 @@ public class PlanesTest {
         }, IllegalArgumentException.class, baseMsg + "0");
 
         GeometryTestUtils.assertThrows(() -> {
-            Planes.convexPolygonToTriangleFan(plane, Arrays.asList(Vector3D.ZERO));
+            Planes.convexPolygonToTriangleFan(plane, Collections.singletonList(Vector3D.ZERO));
         }, IllegalArgumentException.class, baseMsg + "1");
 
         GeometryTestUtils.assertThrows(() -> {
@@ -823,7 +823,7 @@ public class PlanesTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Planes.extrudeVertexLoop(Arrays.asList(Vector2D.ZERO), plane, extrusionVector, TEST_PRECISION);
+            Planes.extrudeVertexLoop(Collections.singletonList(Vector2D.ZERO), plane, extrusionVector, TEST_PRECISION);
         }, IllegalStateException.class);
 
         GeometryTestUtils.assertThrows(() -> {

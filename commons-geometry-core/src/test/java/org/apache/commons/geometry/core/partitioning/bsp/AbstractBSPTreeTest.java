@@ -1946,16 +1946,16 @@ public class AbstractBSPTreeTest {
 
     /** Check that transformed points resolve to the same tree nodes that were found when the original
      * points were resolved in the untransformed tree.
-     * @param transformed
+     * @param transformedTree
      * @param transform
      * @param pointNodeMap
      */
     private static void checkTransformedPointNodeMap(final TestBSPTree transformedTree, final Transform<TestPoint2D> transform,
                                                      final Map<TestPoint2D, TestNode> pointNodeMap) {
 
-        for (final TestPoint2D pt : pointNodeMap.keySet()) {
-            final TestNode expectedNode = pointNodeMap.get(pt);
-            final TestPoint2D transformedPt = transform.apply(pt);
+        for (final Map.Entry<TestPoint2D, TestNode> entry : pointNodeMap.entrySet()) {
+            final TestNode expectedNode = entry.getValue();
+            final TestPoint2D transformedPt = transform.apply(entry.getKey());
 
             final String msg = "Expected transformed point " + transformedPt + " to resolve to node " + expectedNode;
             Assert.assertSame(msg, expectedNode, transformedTree.findNode(transformedPt, FindNodeCutRule.NODE));

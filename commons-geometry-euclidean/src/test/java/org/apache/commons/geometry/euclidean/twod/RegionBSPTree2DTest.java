@@ -16,11 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -533,8 +529,8 @@ public class RegionBSPTree2DTest {
         final List<ConvexArea> result = tree.toConvex();
 
         // assert
-        Collections.sort(result, (a, b) ->
-            Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getCentroid(), b.getCentroid()));
+        result.sort((a, b) ->
+                Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getCentroid(), b.getCentroid()));
 
         Assert.assertEquals(2, result.size());
 
@@ -588,13 +584,13 @@ public class RegionBSPTree2DTest {
         final Vector2D h = Vector2D.of(1, -1);
 
         // act/assert
-        checkConvexArea(root.getNodeRegion(), Arrays.asList(origin, a, b, c, d, e, f, g, h), Arrays.asList());
+        checkConvexArea(root.getNodeRegion(), Arrays.asList(origin, a, b, c, d, e, f, g, h), Collections.emptyList());
 
         checkConvexArea(minus.getNodeRegion(), Arrays.asList(b, c, d), Arrays.asList(f, g, h));
         checkConvexArea(root.getPlus().getNodeRegion(), Arrays.asList(f, g, h), Arrays.asList(b, c, d));
 
-        checkConvexArea(minus.getMinus().getNodeRegion(), Arrays.asList(d), Arrays.asList(a, b, f, g, h));
-        checkConvexArea(minus.getPlus().getNodeRegion(), Arrays.asList(b), Arrays.asList(d, e, f, g, h));
+        checkConvexArea(minus.getMinus().getNodeRegion(), Collections.singletonList(d), Arrays.asList(a, b, f, g, h));
+        checkConvexArea(minus.getPlus().getNodeRegion(), Collections.singletonList(b), Arrays.asList(d, e, f, g, h));
     }
 
     @Test
@@ -824,7 +820,7 @@ public class RegionBSPTree2DTest {
         final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Assert.assertEquals(2, segments.size());
 
-        Collections.sort(segments, SEGMENT_COMPARATOR);
+        segments.sort(SEGMENT_COMPARATOR);
 
         final LineConvexSubset firstSegment = segments.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, firstSegment.getStartPoint(), TEST_EPS);
@@ -901,7 +897,7 @@ public class RegionBSPTree2DTest {
         final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Assert.assertEquals(2, segments.size());
 
-        Collections.sort(segments, SEGMENT_COMPARATOR);
+        segments.sort(SEGMENT_COMPARATOR);
 
         final LineConvexSubset firstSegment = segments.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, firstSegment.getStartPoint(), TEST_EPS);
@@ -937,7 +933,7 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
         final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
-        Collections.sort(segments, SEGMENT_COMPARATOR);
+        segments.sort(SEGMENT_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
 
@@ -968,7 +964,7 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
         final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
-        Collections.sort(segments, SEGMENT_COMPARATOR);
+        segments.sort(SEGMENT_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
 
@@ -1077,9 +1073,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testFrom_boundaries_noBoundaries() {
         // act/assert
-        Assert.assertTrue(RegionBSPTree2D.from(Arrays.asList()).isEmpty());
-        Assert.assertTrue(RegionBSPTree2D.from(Arrays.asList(), true).isFull());
-        Assert.assertTrue(RegionBSPTree2D.from(Arrays.asList(), false).isEmpty());
+        Assert.assertTrue(RegionBSPTree2D.from(Collections.emptyList()).isEmpty());
+        Assert.assertTrue(RegionBSPTree2D.from(Collections.emptyList(), true).isFull());
+        Assert.assertTrue(RegionBSPTree2D.from(Collections.emptyList(), false).isEmpty());
     }
 
     @Test

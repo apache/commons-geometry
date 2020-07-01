@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -593,9 +594,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testFrom_boundaries_noBoundaries() {
         // act/assert
-        Assert.assertTrue(RegionBSPTree3D.from(Arrays.asList()).isEmpty());
-        Assert.assertTrue(RegionBSPTree3D.from(Arrays.asList(), true).isFull());
-        Assert.assertTrue(RegionBSPTree3D.from(Arrays.asList(), false).isEmpty());
+        Assert.assertTrue(RegionBSPTree3D.from(Collections.emptyList()).isEmpty());
+        Assert.assertTrue(RegionBSPTree3D.from(Collections.emptyList(), true).isFull());
+        Assert.assertTrue(RegionBSPTree3D.from(Collections.emptyList(), false).isEmpty());
     }
 
     @Test

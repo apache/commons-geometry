@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -287,11 +288,11 @@ public class PlaneTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Arrays.asList(), TEST_PRECISION);
+            Planes.fromPoints(Collections.emptyList(), TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Arrays.asList(a), TEST_PRECISION);
+            Planes.fromPoints(Collections.singletonList(a), TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {

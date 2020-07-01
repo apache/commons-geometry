@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.BiFunction;
 import java.util.function.ToDoubleFunction;
 import java.util.regex.Pattern;
@@ -80,7 +81,7 @@ public class Bounds3DTest {
         final Vector3D p1 = Vector3D.of(-1, 2, -3);
 
         // act
-        final Bounds3D b = Bounds3D.from(Arrays.asList(p1));
+        final Bounds3D b = Bounds3D.from(Collections.singletonList(p1));
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(p1, b.getMin(), TEST_EPS);

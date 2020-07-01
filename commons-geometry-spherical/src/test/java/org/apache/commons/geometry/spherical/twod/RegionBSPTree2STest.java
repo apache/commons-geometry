@@ -18,6 +18,7 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,9 +114,9 @@ public class RegionBSPTree2STest {
     @Test
     public void testFrom_boundaries_noBoundaries() {
         // act/assert
-        Assert.assertTrue(RegionBSPTree2S.from(Arrays.asList()).isEmpty());
-        Assert.assertTrue(RegionBSPTree2S.from(Arrays.asList(), true).isFull());
-        Assert.assertTrue(RegionBSPTree2S.from(Arrays.asList(), false).isEmpty());
+        Assert.assertTrue(RegionBSPTree2S.from(Collections.emptyList()).isEmpty());
+        Assert.assertTrue(RegionBSPTree2S.from(Collections.emptyList(), true).isFull());
+        Assert.assertTrue(RegionBSPTree2S.from(Collections.emptyList(), false).isEmpty());
     }
 
     @Test

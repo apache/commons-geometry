@@ -55,7 +55,7 @@ public class AbstractGreatArcPathConnectorTest {
     @Test
     public void testConnectAll_singleFullArc() {
         // act
-        connector.add(Arrays.asList(XY_PLANE.span()));
+        connector.add(Collections.singletonList(XY_PLANE.span()));
         final List<GreatArcPath> paths = connector.connectAll();
 
         // assert
@@ -70,7 +70,7 @@ public class AbstractGreatArcPathConnectorTest {
     public void testConnectAll_twoFullArcs() {
         // act
         connector.add(XZ_PLANE.span());
-        final List<GreatArcPath> paths = connector.connectAll(Arrays.asList(XY_PLANE.span()));
+        final List<GreatArcPath> paths = connector.connectAll(Collections.singletonList(XY_PLANE.span()));
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -244,7 +244,7 @@ public class AbstractGreatArcPathConnectorTest {
                     arcA
                 ));
 
-        connector.connect(Arrays.asList(arcC));
+        connector.connect(Collections.singletonList(arcC));
 
         final List<GreatArcPath> paths = connector.connectAll();
 
@@ -267,8 +267,8 @@ public class AbstractGreatArcPathConnectorTest {
         final GreatArc b = GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
 
         // act
-        final List<GreatArcPath> path1 = connector.connectAll(Arrays.asList(a));
-        final List<GreatArcPath> path2 = connector.connectAll(Arrays.asList(b));
+        final List<GreatArcPath> path1 = connector.connectAll(Collections.singletonList(a));
+        final List<GreatArcPath> path2 = connector.connectAll(Collections.singletonList(b));
 
         // assert
         Assert.assertEquals(1, path1.size());

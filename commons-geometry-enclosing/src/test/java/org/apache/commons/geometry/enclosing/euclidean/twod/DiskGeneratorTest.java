@@ -18,6 +18,7 @@ package org.apache.commons.geometry.enclosing.euclidean.twod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -39,7 +40,7 @@ public class DiskGeneratorTest {
     @Test
     public void testSupport0Point() {
         // arrange
-        final List<Vector2D> support = Arrays.asList(new Vector2D[0]);
+        final List<Vector2D> support = Collections.emptyList();
 
         // act
         final EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);
@@ -55,7 +56,7 @@ public class DiskGeneratorTest {
         // arrange
         final DoublePrecisionContext lowPrecision = new EpsilonDoublePrecisionContext(0.5);
         final DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(0.001);
-        final List<Vector2D> support = Arrays.asList(Vector2D.of(1, 2));
+        final List<Vector2D> support = Collections.singletonList(Vector2D.of(1, 2));
 
         // act
         final EnclosingBall<Vector2D> disk = generator.ballOnSupport(support);

@@ -18,7 +18,6 @@ package org.apache.commons.geometry.hull.euclidean.twod;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -66,7 +65,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
         final List<Vector2D> pointsSortedByXAxis = new ArrayList<>(points);
 
         // sort the points in increasing order on the x-axis
-        Collections.sort(pointsSortedByXAxis, (o1, o2) -> {
+        pointsSortedByXAxis.sort((o1, o2) -> {
             final DoublePrecisionContext precision = getPrecision();
             // need to take the tolerance value into account, otherwise collinear points
             // will not be handled correctly when building the upper/lower hull

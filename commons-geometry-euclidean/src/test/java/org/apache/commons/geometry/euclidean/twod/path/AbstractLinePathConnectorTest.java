@@ -62,7 +62,7 @@ public class AbstractLinePathConnectorTest {
         final LineConvexSubset segment = Y_AXIS.span();
 
         // act
-        final List<LinePath> paths = connector.connectAll(Arrays.asList(segment));
+        final List<LinePath> paths = connector.connectAll(Collections.singletonList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -78,7 +78,7 @@ public class AbstractLinePathConnectorTest {
         final LineConvexSubset segment = Y_AXIS.rayFrom(Vector2D.ZERO);
 
         // act
-        final List<LinePath> paths = connector.connectAll(Arrays.asList(segment));
+        final List<LinePath> paths = connector.connectAll(Collections.singletonList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -94,7 +94,7 @@ public class AbstractLinePathConnectorTest {
         final LineConvexSubset segment = Y_AXIS.reverseRayTo(Vector2D.ZERO);
 
         // act
-        final List<LinePath> paths = connector.connectAll(Arrays.asList(segment));
+        final List<LinePath> paths = connector.connectAll(Collections.singletonList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -247,7 +247,7 @@ public class AbstractLinePathConnectorTest {
         // arrange
         final Vector2D p0 = Vector2D.ZERO;
 
-        final List<LineConvexSubset> segments = Arrays.asList(Lines.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0));
+        final List<LineConvexSubset> segments = Collections.singletonList(Lines.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0));
 
         // act
         final List<LinePath> paths = connector.connectAll(segments);
@@ -437,8 +437,8 @@ public class AbstractLinePathConnectorTest {
         final LineConvexSubset b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        final List<LinePath> firstPaths = connector.connectAll(Arrays.asList(a));
-        final List<LinePath> secondPaths = connector.connectAll(Arrays.asList(b));
+        final List<LinePath> firstPaths = connector.connectAll(Collections.singletonList(a));
+        final List<LinePath> secondPaths = connector.connectAll(Collections.singletonList(b));
 
         // assert
         Assert.assertEquals(1, firstPaths.size());
@@ -457,7 +457,7 @@ public class AbstractLinePathConnectorTest {
 
         // act
         connector.add(Arrays.asList(a, b));
-        connector.add(Arrays.asList(c));
+        connector.add(Collections.singletonList(c));
 
         final List<LinePath> paths = connector.connectAll();
 
@@ -477,7 +477,7 @@ public class AbstractLinePathConnectorTest {
 
         // act
         connector.connect(Arrays.asList(a, b));
-        connector.connect(Arrays.asList(c));
+        connector.connect(Collections.singletonList(c));
 
         final List<LinePath> paths = connector.connectAll();
 

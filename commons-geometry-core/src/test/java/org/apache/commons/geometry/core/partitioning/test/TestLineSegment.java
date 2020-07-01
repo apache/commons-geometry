@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.core.partitioning.test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
@@ -175,7 +176,7 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
     /** {@inheritDoc} */
     @Override
     public List<HyperplaneConvexSubset<TestPoint2D>> toConvex() {
-        return Arrays.asList(this);
+        return Collections.singletonList(this);
     }
 
     /** {@inheritDoc} */

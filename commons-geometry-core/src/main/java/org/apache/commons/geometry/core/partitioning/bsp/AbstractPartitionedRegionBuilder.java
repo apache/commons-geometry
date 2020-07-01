@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.core.partitioning.bsp;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -199,7 +198,7 @@ public abstract class AbstractPartitionedRegionBuilder<
      */
     private boolean propagateRegionInterior() {
         final List<N> outsidePartitionedLeaves = getOutsidePartitionedLeaves();
-        Collections.sort(outsidePartitionedLeaves, DEEPEST_FIRST_ORDER);
+        outsidePartitionedLeaves.sort(DEEPEST_FIRST_ORDER);
 
         int changeCount = 0;
 

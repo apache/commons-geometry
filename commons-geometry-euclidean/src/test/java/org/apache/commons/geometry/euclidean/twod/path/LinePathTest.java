@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod.path;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -215,7 +216,7 @@ public class LinePathTest {
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
 
-        Assert.assertEquals(Arrays.asList(Vector2D.of(1, 0)), path.getVertexSequence());
+        Assert.assertEquals(Collections.singletonList(Vector2D.of(1, 0)), path.getVertexSequence());
     }
 
     @Test
@@ -317,7 +318,7 @@ public class LinePathTest {
     public void testFromVertices_singleVertex_failsToCreatePath() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            LinePath.fromVertices(Arrays.asList(Vector2D.ZERO), TEST_PRECISION);
+            LinePath.fromVertices(Collections.singletonList(Vector2D.ZERO), TEST_PRECISION);
         }, IllegalStateException.class);
     }
 
@@ -428,7 +429,7 @@ public class LinePathTest {
     public void testFromVertexLoop_singleVertex_failsToCreatePath() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            LinePath.fromVertexLoop(Arrays.asList(Vector2D.ZERO), TEST_PRECISION);
+            LinePath.fromVertexLoop(Collections.singletonList(Vector2D.ZERO), TEST_PRECISION);
         }, IllegalStateException.class);
     }
 
@@ -514,7 +515,7 @@ public class LinePathTest {
     public void testGetElements_listIsNotModifiable() {
         // arrange
         final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        final List<LineConvexSubset> inputSegments = new ArrayList<>(Arrays.asList(a));
+        final List<LineConvexSubset> inputSegments = new ArrayList<>(Collections.singletonList(a));
 
         // act
         final LinePath path = LinePath.from(inputSegments);
@@ -534,7 +535,7 @@ public class LinePathTest {
     public void testBoundaryStream() {
         // arrange
         final Segment seg = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        final LinePath path = LinePath.from(Arrays.asList(seg));
+        final LinePath path = LinePath.from(Collections.singletonList(seg));
 
         // act
         final List<LineConvexSubset> segments = path.boundaryStream().collect(Collectors.toList());

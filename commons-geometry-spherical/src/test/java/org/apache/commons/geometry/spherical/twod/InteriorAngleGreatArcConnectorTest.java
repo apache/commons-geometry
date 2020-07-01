@@ -18,6 +18,7 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -55,9 +56,9 @@ public class InteriorAngleGreatArcConnectorTest {
     public void testConnectAll_singlePath() {
         runWithMaxAndMin(connector -> {
             // arrange
-            final List<GreatArc> arcs = Arrays.asList(
-                        GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION)
-                    );
+            final List<GreatArc> arcs = Collections.singletonList(
+                    GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION)
+            );
             connector.add(arcs);
 
             // act

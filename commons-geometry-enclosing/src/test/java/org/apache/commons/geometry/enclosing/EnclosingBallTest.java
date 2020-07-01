@@ -74,7 +74,7 @@ public class EnclosingBallTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testGetSupport_listCannotBeModified() {
         // arrange
-        final List<Vector2D> support = new ArrayList<>(Arrays.asList(Vector2D.ZERO));
+        final List<Vector2D> support = new ArrayList<>(Collections.singletonList(Vector2D.ZERO));
 
         final EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.of(1, 1), 4, support);
 
@@ -141,7 +141,7 @@ public class EnclosingBallTest {
     @Test
     public void testToString() {
         // arrange
-        final EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.ZERO, 1, Arrays.asList(Vector2D.Unit.PLUS_X));
+        final EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.ZERO, 1, Collections.singletonList(Vector2D.Unit.PLUS_X));
 
         // act
         final String str = ball.toString();

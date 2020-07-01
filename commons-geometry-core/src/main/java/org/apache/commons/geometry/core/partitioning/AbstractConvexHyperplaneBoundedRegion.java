@@ -225,8 +225,8 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             final Function<List<S>, R> factory) {
 
         if (isFull()) {
-            final R minus = factory.apply(Arrays.asList(boundaryType.cast(splitter.span())));
-            final R plus = factory.apply(Arrays.asList(boundaryType.cast(splitter.reverse().span())));
+            final R minus = factory.apply(Collections.singletonList(boundaryType.cast(splitter.span())));
+            final R plus = factory.apply(Collections.singletonList(boundaryType.cast(splitter.reverse().span())));
 
             return new Split<>(minus, plus);
         } else {

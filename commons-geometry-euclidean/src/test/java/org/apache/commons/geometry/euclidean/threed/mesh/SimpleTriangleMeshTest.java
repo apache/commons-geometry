@@ -195,9 +195,7 @@ public class SimpleTriangleMeshTest {
             Vector3D.of(0, 1, 0)
         );
 
-        final List<int[]> faceIndices = Arrays.asList(
-            new int[] {0, 1, 2}
-        );
+        final List<int[]> faceIndices = Collections.singletonList(new int[]{0, 1, 2});
 
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(vertices, faceIndices, TEST_PRECISION);
 
@@ -576,7 +574,7 @@ public class SimpleTriangleMeshTest {
         }, IllegalStateException.class, msg);
 
         GeometryTestUtils.assertThrows(() -> {
-            builder.addVertices(Arrays.asList(Vector3D.ZERO));
+            builder.addVertices(Collections.singletonList(Vector3D.ZERO));
         }, IllegalStateException.class, msg);
 
         GeometryTestUtils.assertThrows(() -> {
@@ -592,7 +590,7 @@ public class SimpleTriangleMeshTest {
         }, IllegalStateException.class, msg);
 
         GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(Arrays.asList(new int[] {0, 1, 2}));
+            builder.addFaces(Collections.singletonList(new int[]{0, 1, 2}));
         }, IllegalStateException.class, msg);
 
         GeometryTestUtils.assertThrows(() -> {

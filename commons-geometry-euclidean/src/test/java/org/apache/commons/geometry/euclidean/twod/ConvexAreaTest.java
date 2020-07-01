@@ -865,11 +865,11 @@ public class ConvexAreaTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.convexPolygonFromVertices(Arrays.asList(), precision);
+            ConvexArea.convexPolygonFromVertices(Collections.emptyList(), precision);
         }, IllegalArgumentException.class, unclosedPattern);
 
         GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.convexPolygonFromVertices(Arrays.asList(Vector2D.ZERO), precision);
+            ConvexArea.convexPolygonFromVertices(Collections.singletonList(Vector2D.ZERO), precision);
         }, IllegalStateException.class, singleVertexPattern);
 
         GeometryTestUtils.assertThrows(() -> {

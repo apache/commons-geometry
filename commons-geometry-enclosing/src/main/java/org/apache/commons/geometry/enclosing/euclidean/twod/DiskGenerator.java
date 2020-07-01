@@ -37,7 +37,7 @@ public class DiskGenerator implements SupportBallGenerator<Vector2D> {
         }
         final Vector2D vA = support.get(0);
         if (support.size() < 2) {
-            return new EnclosingBall<>(vA, 0, Arrays.asList(vA));
+            return new EnclosingBall<>(vA, 0, Collections.singletonList(vA));
         }
         final Vector2D vB = support.get(1);
         if (support.size() < 3) {

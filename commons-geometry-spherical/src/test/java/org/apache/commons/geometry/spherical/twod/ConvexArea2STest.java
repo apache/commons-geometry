@@ -481,7 +481,7 @@ public class ConvexArea2STest {
     public void testFromVertices_invalidArguments() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            ConvexArea2S.fromVertices(Arrays.asList(Point2S.PLUS_I), TEST_PRECISION);
+            ConvexArea2S.fromVertices(Collections.singletonList(Point2S.PLUS_I), TEST_PRECISION);
         }, IllegalStateException.class);
 
         GeometryTestUtils.assertThrows(() -> {
@@ -762,8 +762,8 @@ public class ConvexArea2STest {
     private static List<GreatArc> sortArcs(final List<GreatArc> arcs) {
         final List<GreatArc> result = new ArrayList<>(arcs);
 
-        Collections.sort(result, (a, b) ->
-            Point2S.POLAR_AZIMUTH_ASCENDING_ORDER.compare(a.getStartPoint(), b.getStartPoint()));
+        result.sort((a, b) ->
+                Point2S.POLAR_AZIMUTH_ASCENDING_ORDER.compare(a.getStartPoint(), b.getStartPoint()));
 
         return result;
     }

@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.threed.line;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
@@ -73,7 +72,7 @@ public class LinecastPoint3D extends AbstractLinecastPoint<Vector3D, Vector3D.Un
      * @param pts list of points to sort and filter
      */
     public static void sortAndFilter(final List<LinecastPoint3D> pts) {
-        Collections.sort(pts, ABSCISSA_ORDER);
+        pts.sort(ABSCISSA_ORDER);
 
         double currentAbscissa = Double.POSITIVE_INFINITY;
         final List<LinecastPoint3D> abscissaList = new ArrayList<>();

@@ -18,6 +18,7 @@ package org.apache.commons.geometry.enclosing.euclidean.threed;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -42,7 +43,7 @@ public class SphereGeneratorTest {
     @Test
     public void testSupport0Point() {
         // arrange
-        final List<Vector3D> support = Arrays.asList(new Vector3D[0]);
+        final List<Vector3D> support = Collections.emptyList();
 
         // act
         final EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);
@@ -58,7 +59,7 @@ public class SphereGeneratorTest {
         // arrange
         final DoublePrecisionContext lowPrecision = new EpsilonDoublePrecisionContext(0.5);
         final DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(0.001);
-        final List<Vector3D> support = Arrays.asList(Vector3D.of(1, 2, 3));
+        final List<Vector3D> support = Collections.singletonList(Vector3D.of(1, 2, 3));
 
         // act
         final EnclosingBall<Vector3D> sphere = generator.ballOnSupport(support);

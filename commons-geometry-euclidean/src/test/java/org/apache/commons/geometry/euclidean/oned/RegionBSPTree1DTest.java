@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -1166,7 +1167,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testFromIntervals_iterable_noItervals() {
         // act
-        final RegionBSPTree1D tree = RegionBSPTree1D.from(Arrays.asList());
+        final RegionBSPTree1D tree = RegionBSPTree1D.from(Collections.emptyList());
 
         // assert
         Assert.assertFalse(tree.isFull());

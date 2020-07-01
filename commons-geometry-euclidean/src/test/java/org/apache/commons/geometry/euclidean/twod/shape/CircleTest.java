@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.twod.shape;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -286,7 +285,7 @@ public class CircleTest {
         checkBasicApproximationProperties(c, tree);
 
         final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
-        Collections.sort(segments, SEGMENT_DIRECTION_COMPARATOR);
+        segments.sort(SEGMENT_DIRECTION_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
 
@@ -316,7 +315,7 @@ public class CircleTest {
         checkBasicApproximationProperties(c, tree);
 
         final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
-        Collections.sort(segments, SEGMENT_DIRECTION_COMPARATOR);
+        segments.sort(SEGMENT_DIRECTION_COMPARATOR);
 
         Assert.assertEquals(4, segments.size());
 

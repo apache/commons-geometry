@@ -62,9 +62,9 @@ public class InteriorAngleLinePathConnectorTest {
     public void testConnectAll_singleFiniteSegment() {
         runWithMaxAndMin(connector -> {
             // arrange
-            final List<LineConvexSubset> segments = Arrays.asList(
-                        Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION)
-                    );
+            final List<LineConvexSubset> segments = Collections.singletonList(
+                    Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION)
+            );
 
             // act
             final List<LinePath> paths = connector.connectAll(segments);
@@ -118,8 +118,7 @@ public class InteriorAngleLinePathConnectorTest {
     public void testConnectAll_disjointPaths() {
         runWithMaxAndMin(connector -> {
             // arrange
-            final List<LineConvexSubset> segments = new ArrayList<>();
-            segments.addAll(createSquare(Vector2D.ZERO, 1, 1));
+            final List<LineConvexSubset> segments = new ArrayList<>(createSquare(Vector2D.ZERO, 1, 1));
 
             final Vector2D pt = Vector2D.of(0, 2);
             final ReverseRay a = Lines.fromPointAndAngle(pt, 0.0, TEST_PRECISION).reverseRayTo(pt);

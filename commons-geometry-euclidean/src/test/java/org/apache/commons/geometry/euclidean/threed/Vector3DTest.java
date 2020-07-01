@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
@@ -1201,7 +1202,7 @@ public class Vector3DTest {
     public void testMax() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-100, 1, 100),
-                Vector3D.max(Arrays.asList(Vector3D.of(-100, 1, 100))), EPS);
+                Vector3D.max(Collections.singletonList(Vector3D.of(-100, 1, 100))), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 100),
                 Vector3D.max(Arrays.asList(Vector3D.of(-100, 1, 100), Vector3D.of(0, 1, 0))), EPS);
@@ -1225,7 +1226,7 @@ public class Vector3DTest {
     public void testMin() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-100, 1, 100),
-                Vector3D.min(Arrays.asList(Vector3D.of(-100, 1, 100))), EPS);
+                Vector3D.min(Collections.singletonList(Vector3D.of(-100, 1, 100))), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-100, 1, 0),
                 Vector3D.min(Arrays.asList(Vector3D.of(-100, 1, 100), Vector3D.of(0, 1, 0))), EPS);
@@ -1256,7 +1257,7 @@ public class Vector3DTest {
                         Vector3D.of(3, 4, 5), Vector3D.of(4, 5, 6)), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3),
-                Vector3D.centroid(Arrays.asList(Vector3D.of(1, 2, 3))), EPS);
+                Vector3D.centroid(Collections.singletonList(Vector3D.of(1, 2, 3))), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 1, 1.5),
                 Vector3D.centroid(Arrays.asList(Vector3D.of(1, 2, 3), Vector3D.of(1, 2, 3),
