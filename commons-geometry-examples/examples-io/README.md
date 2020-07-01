@@ -83,7 +83,7 @@ There are some guidelines which will make applying PRs easier for us:
 + Provide JUnit tests for your changes and make sure your changes don't break any existing tests by running ```mvn clean test```.
 
 If you plan to contribute on a regular basis, please consider filing a [contributor license agreement](https://www.apache.org/licenses/#clas).
-You can learn more about contributing via GitHub in our [contribution guidelines](CONTRIBUTING.md).
+You can learn more about contributing via GitHub in our [contribution guidelines](../../CONTRIBUTING.md).
 
 License
 -------
