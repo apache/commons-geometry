@@ -32,8 +32,11 @@ import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.Lines;
+import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 
 /** Class containing factory methods for constructing {@link Plane} and {@link PlaneSubset} instances.
  */
@@ -338,6 +341,61 @@ public final class Planes {
         }
 
         return polygons;
+    }
+
+    /** Get the boundaries of a 3D region created by extruding a polygon defined by a list of vertices. The ends
+     * ("top" and "bottom") of the extruded 3D region are flat while the sides follow the boundaries of the original
+     * 2D region.
+     * @param vertices vertices forming the 2D polygon to extrude
+     * @param plane plane to extrude the 2D polygon from
+     * @param extrusionVector vector to extrude the polygon vertices through
+     * @param precision precision context used to construct the 3D region boundaries
+     * @return the boundaries of the extruded 3D region
+     * @throws IllegalStateException if {@code vertices} contains only a single unique vertex
+     * @throws IllegalArgumentException if regions of non-zero size cannot be produced with the
+     *      given plane and extrusion vector. This occurs when the extrusion vector has zero length
+     *      or is orthogonal to the plane normal
+     * @see LinePath#fromVertexLoop(Collection, DoublePrecisionContext)
+     * @see #extrude(LinePath, EmbeddingPlane, Vector3D, DoublePrecisionContext)
+     */
+    public static List<PlaneConvexSubset> extrudeVertexLoop(final List<Vector2D> vertices,
+            final EmbeddingPlane plane, final Vector3D extrusionVector, final DoublePrecisionContext precision) {
+        final LinePath path = LinePath.fromVertexLoop(vertices, precision);
+        return extrude(path, plane, extrusionVector, precision);
+    }
+
+    /** Get the boundaries of the 3D region created by extruding a 2D line path. The ends ("top" and "bottom") of
+     * the extruded 3D region are flat while the sides follow the boundaries of the original 2D region. The path is
+     * converted to a BSP tree before extrusion.
+     * @param path path to extrude
+     * @param plane plane to extrude the path from
+     * @param extrusionVector vector to extrude the polygon points through
+     * @param precision precision precision context used to construct the 3D region boundaries
+     * @return the boundaries of the extruded 3D region
+     * @throws IllegalArgumentException if regions of non-zero size cannot be produced with the
+     *      given plane and extrusion vector. This occurs when the extrusion vector has zero length
+     *      or is orthogonal to the plane normal
+     * @see #extrude(RegionBSPTree2D, EmbeddingPlane, Vector3D, DoublePrecisionContext)
+     */
+    public static List<PlaneConvexSubset> extrude(final LinePath path, final EmbeddingPlane plane,
+            final Vector3D extrusionVector, final DoublePrecisionContext precision) {
+        return extrude(path.toTree(), plane, extrusionVector, precision);
+    }
+
+    /** Get the boundaries of the 3D region created by extruding a 2D region. The ends ("top" and "bottom") of
+     * the extruded 3D region are flat while the sides follow the boundaries of the original 2D region.
+     * @param region region to extrude
+     * @param plane plane to extrude the region from
+     * @param extrusionVector vector to extrude the region points through
+     * @param precision precision precision context used to construct the 3D region boundaries
+     * @return the boundaries of the extruded 3D region
+     * @throws IllegalArgumentException if regions of non-zero size cannot be produced with the
+     *      given plane and extrusion vector. This occurs when the extrusion vector has zero length
+     *      or is orthogonal to the plane normal
+     */
+    public static List<PlaneConvexSubset> extrude(final RegionBSPTree2D region, final EmbeddingPlane plane,
+            final Vector3D extrusionVector, final DoublePrecisionContext precision) {
+        return new PlaneRegionExtruder(plane, extrusionVector, precision).extrude(region);
     }
 
     /** Get the unique intersection of the plane subset with the given line. Null is
@@ -717,6 +775,189 @@ public final class Planes {
          */
         private IllegalArgumentException nonConvex() {
             return new IllegalArgumentException("Points do not define a convex region: " + pts);
+        }
+    }
+
+    /** Class designed to create 3D regions by taking a 2D region and extruding from a base plane
+     * through an extrusion vector. The ends ("top" and "bottom") of the extruded 3D region are flat
+     * while the sides follow the boundaries of the original 2D region.
+     */
+    private static final class PlaneRegionExtruder {
+        /** Base plane to extrude from. */
+        private final EmbeddingPlane basePlane;
+
+        /** Extruded plane; this forms the end of the 3D region opposite the base plane. */
+        private final EmbeddingPlane extrudedPlane;
+
+        /** Vector to extrude along; the extruded plane is translated from the base plane by this amount. */
+        private final Vector3D extrusionVector;
+
+        /** True if the extrusion vector points to the plus side of the base plane. */
+        private final boolean extrudingOnPlusSide;
+
+        /** Precision context used to create boundaries. */
+        private final DoublePrecisionContext precision;
+
+        /** Construct a new instance that performs extrusions from {@code basePlane} along {@code extrusionVector}.
+         * @param basePlane base plane to extrude from
+         * @param extrusionVector vector to extrude along
+         * @param precision precision context used to construct boundaries
+         * @throws IllegalArgumentException if the given extrusion vector and plane produce regions
+         *      of zero size
+         */
+        PlaneRegionExtruder(final EmbeddingPlane basePlane, final Vector3D extrusionVector,
+                final DoublePrecisionContext precision) {
+
+            this.basePlane = basePlane;
+            this.extrudedPlane = basePlane.translate(extrusionVector);
+
+            if (basePlane.contains(extrudedPlane)) {
+                throw new IllegalArgumentException(
+                        "Extrusion vector produces regions of zero size: extrusionVector= " +
+                                extrusionVector + ",  plane= " + basePlane);
+            }
+
+            this.extrusionVector = extrusionVector;
+            this.extrudingOnPlusSide = basePlane.getNormal().dot(extrusionVector) > 0;
+
+            this.precision = precision;
+        }
+
+        /** Extrude the given 2D BSP tree using the configured base plane and extrusion vector.
+         * @param subspaceRegion region to extrude
+         * @return the boundaries of the extruded region
+         */
+        public List<PlaneConvexSubset> extrude(final RegionBSPTree2D subspaceRegion) {
+            List<PlaneConvexSubset> extrudedBoundaries = new ArrayList<>();
+
+            // add the boundaries
+            addEnds(subspaceRegion, extrudedBoundaries);
+            addSides(subspaceRegion, extrudedBoundaries);
+
+            return extrudedBoundaries;
+        }
+
+        /** Add the end ("top" and "bottom") of the extruded subspace region to the result list.
+         * @param subspaceRegion subspace region being extruded.
+         * @param result list to add the boundary results to
+         */
+        private void addEnds(final RegionBSPTree2D subspaceRegion, final List<PlaneConvexSubset> result) {
+            // add the base boundaries
+            final List<ConvexArea> baseAreas = subspaceRegion.toConvex();
+
+            final List<PlaneConvexSubset> baseList = new ArrayList<>(baseAreas.size());
+            final List<PlaneConvexSubset> extrudedList = new ArrayList<>(baseAreas.size());
+
+            final AffineTransformMatrix3D extrudeTransform = AffineTransformMatrix3D.createTranslation(extrusionVector);
+
+            PlaneConvexSubset base;
+            for (final ConvexArea area : baseAreas) {
+                base = subsetFromConvexArea(basePlane, area);
+                if (extrudingOnPlusSide) {
+                    base = base.reverse();
+                }
+
+                baseList.add(base);
+                extrudedList.add(base.transform(extrudeTransform).reverse());
+            }
+
+            result.addAll(baseList);
+            result.addAll(extrudedList);
+        }
+
+        /** Add the side boundaries of the extruded region to the result list.
+         * @param subspaceRegion subspace region being extruded.
+         * @param result list to add the boundary results to
+         */
+        private void addSides(final RegionBSPTree2D subspaceRegion, final List<PlaneConvexSubset> result) {
+            Vector2D subStartPt;
+            Vector2D subEndPt;
+
+            PlaneConvexSubset boundary;
+            for (final LinePath path : subspaceRegion.getBoundaryPaths()) {
+                for (final LineConvexSubset lineSubset : path.getElements()) {
+                    subStartPt = lineSubset.getStartPoint();
+                    subEndPt = lineSubset.getEndPoint();
+
+                    boundary = (subStartPt != null && subEndPt != null) ?
+                            extrudeSideFinite(basePlane.toSpace(subStartPt), basePlane.toSpace(subEndPt)) :
+                            extrudeSideInfinite(lineSubset);
+
+                    result.add(boundary);
+                }
+            }
+        }
+
+        /** Extrude a single, finite boundary forming one of the sides of the extruded region.
+         * @param startPt start point of the boundary
+         * @param endPt end point of the boundary
+         * @return the extruded region side boundary
+         */
+        private ConvexPolygon3D extrudeSideFinite(final Vector3D startPt, final Vector3D endPt) {
+            final Vector3D extrudedStartPt = startPt.add(extrusionVector);
+            final Vector3D extrudedEndPt = endPt.add(extrusionVector);
+
+            final List<Vector3D> vertices = extrudingOnPlusSide ?
+                    Arrays.asList(startPt, endPt, extrudedEndPt, extrudedStartPt) :
+                    Arrays.asList(startPt, extrudedStartPt, extrudedEndPt, endPt);
+
+            return convexPolygonFromVertices(vertices, precision);
+        }
+
+        /** Extrude a single, infinite boundary forming one of the sides of the extruded region.
+         * @param lineSubset line subset to extrude
+         * @return the extruded region side boundary
+         */
+        private PlaneConvexSubset extrudeSideInfinite(final LineConvexSubset lineSubset) {
+            final Vector2D subLinePt = lineSubset.getLine().getOrigin();
+            final Vector2D subLineDir = lineSubset.getLine().getDirection();
+
+            final Vector3D linePt = basePlane.toSpace(subLinePt);
+            final Vector3D lineDir = linePt.vectorTo(basePlane.toSpace(subLinePt.add(subLineDir)));
+
+            EmbeddingPlane sidePlane;
+            if (extrudingOnPlusSide) {
+                sidePlane = fromPointAndPlaneVectors(linePt, lineDir, extrusionVector, precision);
+            } else {
+                sidePlane = fromPointAndPlaneVectors(linePt, extrusionVector, lineDir, precision);
+            }
+
+            final Vector2D sideLineOrigin = sidePlane.toSubspace(linePt);
+            final Vector2D sideLineDir = sideLineOrigin.vectorTo(sidePlane.toSubspace(linePt.add(lineDir)));
+
+            final Vector2D extrudedSideLineOrigin = sidePlane.toSubspace(linePt.add(extrusionVector));
+
+            final Vector2D sideExtrusionDir = sidePlane.toSubspace(sidePlane.getOrigin().add(extrusionVector))
+                    .normalize();
+
+            // construct a list of lines forming the bounds of the extruded subspace region
+            final List<Line> lines = new ArrayList<>();
+
+            // add the top and bottom lines (original and extruded)
+            if (extrudingOnPlusSide) {
+                lines.add(Lines.fromPointAndDirection(sideLineOrigin, sideLineDir, precision));
+                lines.add(Lines.fromPointAndDirection(extrudedSideLineOrigin, sideLineDir.negate(), precision));
+            } else {
+                lines.add(Lines.fromPointAndDirection(sideLineOrigin, sideLineDir.negate(), precision));
+                lines.add(Lines.fromPointAndDirection(extrudedSideLineOrigin, sideLineDir, precision));
+            }
+
+            // if we have a point on the original line, then connect the two
+            final Vector2D startPt = lineSubset.getStartPoint();
+            final Vector2D endPt = lineSubset.getEndPoint();
+            if (startPt != null) {
+                lines.add(Lines.fromPointAndDirection(
+                        sidePlane.toSubspace(basePlane.toSpace(startPt)),
+                        extrudingOnPlusSide ? sideExtrusionDir.negate() : sideExtrusionDir,
+                        precision));
+            } else if (endPt != null) {
+                lines.add(Lines.fromPointAndDirection(
+                        sidePlane.toSubspace(basePlane.toSpace(endPt)),
+                        extrudingOnPlusSide ? sideExtrusionDir : sideExtrusionDir.negate(),
+                        precision));
+            }
+
+            return subsetFromConvexArea(sidePlane, ConvexArea.fromBounds(lines));
         }
     }
 }

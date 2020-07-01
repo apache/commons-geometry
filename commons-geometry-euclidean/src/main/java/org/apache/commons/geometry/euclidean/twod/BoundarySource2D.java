@@ -26,10 +26,13 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
  */
 public interface BoundarySource2D extends BoundarySource<LineConvexSubset>, Linecastable2D {
 
-    /** Return a BSP tree constructed from the boundaries contained in this
-     * instance. The default implementation creates a new, empty tree
-     * and inserts the boundaries from this instance.
+    /** Return a BSP tree constructed from the boundaries contained in this instance. This is
+     * a convenience method for quickly constructing BSP trees and may produce unbalanced trees
+     * with unacceptable performance characteristics when used with large numbers of boundaries.
+     * In these cases, alternate tree construction approaches should be used, such as
+     * {@link RegionBSPTree2D.PartitionedRegionBuilder2D}.
      * @return a BSP tree constructed from the boundaries in this instance
+     * @see RegionBSPTree2D#partitionedRegionBuilder()
      */
     default RegionBSPTree2D toTree() {
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();

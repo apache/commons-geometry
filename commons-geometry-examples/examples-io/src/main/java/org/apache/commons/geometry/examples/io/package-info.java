@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-/**
- * <h3>Persistent storage of shapes.</h3>
+/** Persistent storage of shapes.
  */
 package org.apache.commons.geometry.examples.io;

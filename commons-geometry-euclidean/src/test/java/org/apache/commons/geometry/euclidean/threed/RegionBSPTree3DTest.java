@@ -31,10 +31,12 @@ import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D.PartitionedRegionBuilder3D;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D.RegionNode3D;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
+import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -112,6 +114,159 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(100, 100, 100),
                 Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
+    }
+
+    @Test
+    public void testPartitionedRegionBuilder_halfSpace() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.partitionedRegionBuilder()
+                .insertPartition(
+                    Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION))
+                .insertBoundary(
+                        Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION).span())
+                .build();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isInfinite());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(0, 0, 1));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, Vector3D.ZERO);
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE, Vector3D.of(0, 0, -1));
+    }
+
+    @Test
+    public void testPartitionedRegionBuilder_cube() {
+        // arrange
+        Parallelepiped cube = Parallelepiped.unitCube(TEST_PRECISION);
+        List<PlaneConvexSubset> boundaries = cube.getBoundaries();
+
+        Vector3D lowerBound = Vector3D.of(-2, -2, -2);
+
+        int maxUpper = 5;
+        int maxLevel = 4;
+
+        // act/assert
+        Bounds3D bounds;
+        for (int u = 0; u <= maxUpper; ++u) {
+            for (int level = 0; level <= maxLevel; ++level) {
+                bounds = Bounds3D.from(lowerBound, Vector3D.of(u, u, u));
+
+                checkFinitePartitionedRegion(bounds, level, cube);
+                checkFinitePartitionedRegion(bounds, level, boundaries);
+            }
+        }
+    }
+
+    @Test
+    public void testPartitionedRegionBuilder_nonConvex() {
+        // arrange
+        RegionBSPTree3D src = Parallelepiped.unitCube(TEST_PRECISION).toTree();
+        src.union(Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION).toTree());
+
+        List<PlaneConvexSubset> boundaries = src.getBoundaries();
+
+        Vector3D lowerBound = Vector3D.of(-2, -2, -2);
+
+        int maxUpper = 5;
+        int maxLevel = 4;
+
+        // act/assert
+        Bounds3D bounds;
+        for (int u = 0; u <= maxUpper; ++u) {
+            for (int level = 0; level <= maxLevel; ++level) {
+                bounds = Bounds3D.from(lowerBound, Vector3D.of(u, u, u));
+
+                checkFinitePartitionedRegion(bounds, level, src);
+                checkFinitePartitionedRegion(bounds, level, boundaries);
+            }
+        }
+    }
+
+    /** Check that a partitioned BSP tree behaves the same as a non-partitioned tree when
+     * constructed with the given boundary source.
+     * @param bounds
+     * @param level
+     * @param src
+     */
+    private void checkFinitePartitionedRegion(Bounds3D bounds, int level, BoundarySource3D src) {
+        // arrange
+        String msg = "Partitioned region check failed with bounds= " + bounds + " and level= " + level;
+
+        RegionBSPTree3D standard = RegionBSPTree3D.from(src.boundaryStream().collect(Collectors.toList()));
+
+        // act
+        RegionBSPTree3D partitioned = RegionBSPTree3D.partitionedRegionBuilder()
+                .insertAxisAlignedGrid(bounds, level, TEST_PRECISION)
+                .insertBoundaries(src)
+                .build();
+
+        // assert
+        Assert.assertEquals(msg, standard.getSize(), partitioned.getSize(), TEST_EPS);
+        Assert.assertEquals(msg, standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(standard.getCentroid(), partitioned.getCentroid(), TEST_EPS);
+
+        RegionBSPTree3D diff = RegionBSPTree3D.empty();
+        diff.difference(partitioned, standard);
+        Assert.assertTrue(msg, diff.isEmpty());
+    }
+
+    /** Check that a partitioned BSP tree behaves the same as a non-partitioned tree when
+     * constructed with the given boundaries.
+     * @param bounds
+     * @param level
+     * @param boundaries
+     */
+    private void checkFinitePartitionedRegion(Bounds3D bounds, int level,
+            List<? extends PlaneConvexSubset> boundaries) {
+        // arrange
+        String msg = "Partitioned region check failed with bounds= " + bounds + " and level= " + level;
+
+        RegionBSPTree3D standard = RegionBSPTree3D.from(boundaries);
+
+        // act
+        RegionBSPTree3D partitioned = RegionBSPTree3D.partitionedRegionBuilder()
+                .insertAxisAlignedGrid(bounds, level, TEST_PRECISION)
+                .insertBoundaries(boundaries)
+                .build();
+
+        // assert
+        Assert.assertEquals(msg, standard.getSize(), partitioned.getSize(), TEST_EPS);
+        Assert.assertEquals(msg, standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(standard.getCentroid(), partitioned.getCentroid(), TEST_EPS);
+
+        RegionBSPTree3D diff = RegionBSPTree3D.empty();
+        diff.difference(partitioned, standard);
+        Assert.assertTrue(msg, diff.isEmpty());
+    }
+
+    @Test
+    public void testPartitionedRegionBuilder_insertPartitionAfterBoundary() {
+        // arrange
+        PartitionedRegionBuilder3D builder = RegionBSPTree3D.partitionedRegionBuilder();
+        builder.insertBoundary(Planes.triangleFromVertices(
+                Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION));
+
+        Plane partition = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
+        String msg = "Cannot insert partitions after boundaries have been inserted";
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            builder.insertPartition(partition);
+        }, IllegalStateException.class, msg);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.insertPartition(partition.span());
+        }, IllegalStateException.class, msg);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.insertAxisAlignedPartitions(Vector3D.ZERO, TEST_PRECISION);
+        }, IllegalStateException.class, msg);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.insertAxisAlignedGrid(Bounds3D.from(Vector3D.ZERO, Vector3D.of(1, 1, 1)), 1, TEST_PRECISION);
+        }, IllegalStateException.class, msg);
     }
 
     @Test
@@ -217,6 +372,68 @@ public class RegionBSPTree3DTest {
         // assert
         Assert.assertEquals(15.0 / 8.0, result.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.75, 0.75, 0.75), result.getCentroid(), TEST_EPS);
+    }
+
+    @Test
+    public void testToTriangleMesh() {
+        // arrange
+        RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
+
+        // act
+        TriangleMesh mesh = tree.toTriangleMesh(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(8, mesh.getVertexCount());
+        Assert.assertEquals(12, mesh.getFaceCount());
+
+        Bounds3D bounds = mesh.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), bounds.getMax(), TEST_EPS);
+
+        RegionBSPTree3D otherTree = mesh.toTree();
+        Assert.assertEquals(1, otherTree.getSize(), TEST_EPS);
+        Assert.assertEquals(6, otherTree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), otherTree.getCentroid(), TEST_EPS);
+    }
+
+    @Test
+    public void testToTriangleMesh_empty() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+
+        // act
+        TriangleMesh mesh = tree.toTriangleMesh(TEST_PRECISION);
+
+        // assert
+        // no boundaries
+        Assert.assertEquals(0, mesh.getVertexCount());
+        Assert.assertEquals(0, mesh.getFaceCount());
+    }
+
+    @Test
+    public void testToTriangleMesh_full() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.full();
+
+        // act
+        TriangleMesh mesh = tree.toTriangleMesh(TEST_PRECISION);
+
+        // assert
+        // no boundaries
+        Assert.assertEquals(0, mesh.getVertexCount());
+        Assert.assertEquals(0, mesh.getFaceCount());
+    }
+
+    @Test
+    public void testToTriangleMesh_infiniteBoundary() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.getRoot().insertCut(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            tree.toTriangleMesh(TEST_PRECISION);
+        }, IllegalStateException.class);
     }
 
     @Test

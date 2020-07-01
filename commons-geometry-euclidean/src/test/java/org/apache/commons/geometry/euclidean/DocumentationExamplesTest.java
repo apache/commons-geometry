@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.testio.TestOBJWriter;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexPolygon3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
@@ -39,8 +41,10 @@ import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
 import org.apache.commons.geometry.euclidean.threed.line.Ray3D;
+import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
+import org.apache.commons.geometry.euclidean.threed.shape.Sphere;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
@@ -67,28 +71,28 @@ public class DocumentationExamplesTest {
         // construct a precision context to handle floating-point comparisons
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        // create a binary space partitioning (BSP) tree representing the unit cube
-        // centered on the origin
-        RegionBSPTree3D region = Parallelepiped.builder(precision)
-                .setPosition(Vector3D.ZERO)
-                .build()
-                .toTree();
+        // create a BSP tree representing the unit cube
+        RegionBSPTree3D tree = Parallelepiped.unitCube(precision).toTree();
 
-        // create a rotated copy of the region
-        RegionBSPTree3D copy = region.copy();
-        copy.transform(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Math.PI));
+        // create a sphere centered on the origin
+        Sphere sphere = Sphere.from(Vector3D.ZERO, 0.65, precision);
 
-        // compute the intersection of the regions, storing the result back into the caller
-        // (the result could also have been placed into a third region)
-        region.intersection(copy);
+        // subtract a BSP tree approximation of the sphere containing 512 facets
+        // from the cube, modifying the cube tree in place
+        tree.difference(sphere.toTree(3));
 
-        // compute some properties of the intersection region
-        double size = region.getSize(); // 0.8284271247461903
-        Vector3D centroid = region.getCentroid(); // (0, 0, 0)
+        // compute some properties of the resulting region
+        double size = tree.getSize(); // 0.11509505362599505
+        Vector3D centroid = tree.getCentroid(); // (0, 0, 0)
+
+        // convert to a triangle mesh for output to other programs
+        TriangleMesh mesh = tree.toTriangleMesh(precision);
 
         // -----------
-        Assert.assertEquals(0.8284271247461903, size, TEST_EPS);
+        Assert.assertEquals(0.11509505362599505, size, TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, centroid, TEST_EPS);
+
+        TestOBJWriter.write(mesh, new File("target/index-page-example.obj"));
     }
 
     @Test

@@ -31,7 +31,12 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
+import org.apache.commons.geometry.euclidean.twod.Lines;
+import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
+import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -668,6 +673,701 @@ public class PlanesTest {
         GeometryTestUtils.assertThrows(() -> {
             Planes.convexPolygonToTriangleFan(plane, Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0)));
         }, IllegalArgumentException.class, baseMsg + "2");
+    }
+
+    @Test
+    public void testExtrudeVertexLoop_convex() {
+        // arrange
+        List<Vector2D> vertices = Arrays.asList(
+                Vector2D.of(2, 1),
+                Vector2D.of(3, 1),
+                Vector2D.of(2, 3)
+            );
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(1, 0, 1);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrudeVertexLoop(vertices, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(5, boundaries.size());
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(boundaries);
+
+        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(
+                Vector3D.of(-5.0 / 3.0, 7.0 / 3.0, 1).add(extrusionVector.multiply(0.5)), tree.getCentroid(), TEST_EPS);
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(-1.5, 2.5, 1.25), tree.getCentroid());
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(-2, 2, 1), Vector3D.of(-1, 2, 1), Vector3D.of(-1, 3, 1),
+                Vector3D.of(-1, 2, 2), Vector3D.of(0, 2, 2), Vector3D.of(0, 3, 2));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1.5, 2.5, 0.9), Vector3D.of(-1.5, 2.5, 2.1));
+    }
+
+    @Test
+    public void testExtrudeVertexLoop_nonConvex() {
+        // arrange
+        List<Vector2D> vertices = Arrays.asList(
+                Vector2D.of(1, 2),
+                Vector2D.of(1, -2),
+                Vector2D.of(4, -2),
+                Vector2D.of(4, -1),
+                Vector2D.of(2, -1),
+                Vector2D.of(2, 1),
+                Vector2D.of(4, 1),
+                Vector2D.of(4, 2),
+                Vector2D.of(1, 2)
+            );
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrudeVertexLoop(vertices, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(14, boundaries.size());
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(boundaries);
+
+        Assert.assertEquals(16, tree.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2.25, 0, 0), tree.getCentroid(), TEST_EPS);
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(1.5, 0, 0), Vector3D.of(3, 1.5, 0), Vector3D.of(3, -1.5, 0));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(1.5, 0, -1), Vector3D.of(3, 1.5, -1), Vector3D.of(3, -1.5, -1),
+                Vector3D.of(1.5, 0, 1), Vector3D.of(3, 1.5, 1), Vector3D.of(3, -1.5, 1),
+                Vector3D.of(1, 0, 0), Vector3D.of(2.5, -2, 0), Vector3D.of(4, -1.5, 0),
+                Vector3D.of(3, -1, 0), Vector3D.of(2, 0, 0), Vector3D.of(3, 1, 0),
+                Vector3D.of(4, 1.5, 0), Vector3D.of(2.5, 2, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                tree.getCentroid(), Vector3D.ZERO, Vector3D.of(5, 0, 0));
+    }
+
+    @Test
+    public void testExtrudeVertexLoop_noVertices() {
+        // arrange
+        List<Vector2D> vertices = new ArrayList<>();
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrudeVertexLoop(vertices, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(0, boundaries.size());
+    }
+
+    @Test
+    public void testExtrudeVertexLoop_twoVertices_producesInfiniteRegion() {
+        // arrange
+        List<Vector2D> vertices = Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 1));
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrudeVertexLoop(vertices, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(3, boundaries.size());
+
+        PlaneConvexSubset bottom = boundaries.get(0);
+        Assert.assertTrue(bottom.isInfinite());
+        Assert.assertTrue(bottom.getPlane().contains(Vector3D.of(0, 0, -1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), bottom.getPlane().getNormal(), TEST_EPS);
+
+        PlaneConvexSubset top = boundaries.get(1);
+        Assert.assertTrue(top.isInfinite());
+        Assert.assertTrue(top.getPlane().contains(Vector3D.of(0, 0, 1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), top.getPlane().getNormal(), TEST_EPS);
+
+        PlaneConvexSubset side = boundaries.get(2);
+        Assert.assertTrue(side.isInfinite());
+        Assert.assertTrue(side.getPlane().contains(Vector3D.ZERO));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 0).normalize(),
+                side.getPlane().getNormal(), TEST_EPS);
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(boundaries);
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isInfinite());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 1, 0), Vector3D.of(-1, 0, 0), Vector3D.of(-2, -1, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(1, 1, 0), Vector3D.of(0, 0, 0), Vector3D.of(-1, -1, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(2, 1, 0), Vector3D.of(1, 0, 0), Vector3D.of(0, -1, 0));
+    }
+
+    @Test
+    public void testExtrudeVertexLoop_invalidVertexList() {
+        // arrange
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrudeVertexLoop(Arrays.asList(Vector2D.ZERO), plane, extrusionVector, TEST_PRECISION);
+        }, IllegalStateException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrudeVertexLoop(Arrays.asList(Vector2D.ZERO, Vector2D.of(0, 1e-16)), plane,
+                    extrusionVector, TEST_PRECISION);
+        }, IllegalStateException.class);
+    }
+
+    @Test
+    public void testExtrudeVertexLoop_regionsConsistentBetweenExtrusionPlanes() {
+        // arrange
+        List<Vector2D> vertices = Arrays.asList(
+                Vector2D.of(1, 2),
+                Vector2D.of(1, -2),
+                Vector2D.of(4, -2),
+                Vector2D.of(4, -1),
+                Vector2D.of(2, -1),
+                Vector2D.of(2, 1),
+                Vector2D.of(4, 1),
+                Vector2D.of(4, 2),
+                Vector2D.of(1, 2)
+            );
+
+        RegionBSPTree2D subspaceTree = LinePath.fromVertexLoop(vertices, TEST_PRECISION).toTree();
+
+        double subspaceSize = subspaceTree.getSize();
+        Vector2D subspaceCentroid = subspaceTree.getCentroid();
+
+        double extrusionLength = 2;
+        double expectedSize = subspaceSize * extrusionLength;
+
+        Vector3D planePt = Vector3D.of(-1, 2, -3);
+
+        EuclideanTestUtils.permuteSkipZero(-2, 2, 1, (x, y, z) -> {
+            Vector3D normal = Vector3D.of(x, y, z);
+            EmbeddingPlane plane = Planes.fromPointAndNormal(planePt, normal, TEST_PRECISION).getEmbedding();
+
+            Vector3D baseCentroid = plane.toSpace(subspaceCentroid);
+
+            Vector3D plusExtrusionVector = normal.withNorm(extrusionLength);
+            Vector3D minusExtrusionVector = plusExtrusionVector.negate();
+
+            // act
+            RegionBSPTree3D extrudePlus = RegionBSPTree3D.from(
+                    Planes.extrudeVertexLoop(vertices, plane, plusExtrusionVector, TEST_PRECISION));
+            RegionBSPTree3D extrudeMinus = RegionBSPTree3D.from(
+                    Planes.extrudeVertexLoop(vertices, plane, minusExtrusionVector, TEST_PRECISION));
+
+            // assert
+            Assert.assertEquals(expectedSize, extrudePlus.getSize(), TEST_EPS);
+            EuclideanTestUtils.assertCoordinatesEqual(baseCentroid.add(plusExtrusionVector.multiply(0.5)),
+                    extrudePlus.getCentroid(), TEST_EPS);
+
+            Assert.assertEquals(expectedSize, extrudeMinus.getSize(), TEST_EPS);
+            EuclideanTestUtils.assertCoordinatesEqual(baseCentroid.add(minusExtrusionVector.multiply(0.5)),
+                    extrudeMinus.getCentroid(), TEST_EPS);
+        });
+    }
+
+    @Test
+    public void testExtrude_vertexLoop_clockwiseWinding() {
+        // arrange
+        List<Vector2D> vertices = Arrays.asList(
+            Vector2D.of(0, 1),
+            Vector2D.of(1, 0),
+            Vector2D.of(0, -1),
+            Vector2D.of(-1, 0));
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrudeVertexLoop(vertices, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        RegionBSPTree3D resultTree = RegionBSPTree3D.from(boundaries);
+
+        Assert.assertTrue(resultTree.isInfinite());
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.INSIDE,
+                Vector3D.of(1, 1, 0), Vector3D.of(-1, 1, 0), Vector3D.of(-1, -1, 0), Vector3D.of(1, -1, 0));
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.OUTSIDE, Vector3D.ZERO);
+    }
+
+    @Test
+    public void testExtrude_linePath_emptyPath() {
+        // arrange
+        LinePath path = LinePath.empty();
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(path, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(0, boundaries.size());
+    }
+
+    @Test
+    public void testExtrude_linePath_singleSegment_producesInfiniteRegion_extrudingOnMinus() {
+        // arrange
+        LinePath path = LinePath.builder(TEST_PRECISION)
+                .append(Vector2D.ZERO)
+                .append(Vector2D.of(1, 1))
+                .build();
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, -2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(path, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(3, boundaries.size());
+
+        PlaneConvexSubset top = boundaries.get(0);
+        Assert.assertTrue(top.isInfinite());
+        Assert.assertTrue(top.getPlane().contains(Vector3D.of(0, 0, 1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), top.getPlane().getNormal(), TEST_EPS);
+
+        PlaneConvexSubset bottom = boundaries.get(1);
+        Assert.assertTrue(bottom.isInfinite());
+        Assert.assertTrue(bottom.getPlane().contains(Vector3D.of(0, 0, -1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), bottom.getPlane().getNormal(), TEST_EPS);
+
+        PlaneConvexSubset side = boundaries.get(2);
+        Assert.assertTrue(side.isInfinite());
+        Assert.assertTrue(side.getPlane().contains(Vector3D.ZERO));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 0).normalize(),
+                side.getPlane().getNormal(), TEST_EPS);
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(boundaries);
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isInfinite());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 1, 0), Vector3D.of(-1, 0, 0), Vector3D.of(-2, -1, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(1, 1, 0), Vector3D.of(0, 0, 0), Vector3D.of(-1, -1, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(2, 1, 0), Vector3D.of(1, 0, 0), Vector3D.of(0, -1, 0));
+    }
+
+    @Test
+    public void testExtrude_linePath_singleSegment_producesInfiniteRegion_extrudingOnPlus() {
+        // arrange
+        LinePath path = LinePath.builder(TEST_PRECISION)
+                .append(Vector2D.ZERO)
+                .append(Vector2D.of(1, 1))
+                .build();
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(path, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(3, boundaries.size());
+
+        PlaneConvexSubset bottom = boundaries.get(0);
+        Assert.assertTrue(bottom.isInfinite());
+        Assert.assertTrue(bottom.getPlane().contains(Vector3D.of(0, 0, -1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), bottom.getPlane().getNormal(), TEST_EPS);
+
+        PlaneConvexSubset top = boundaries.get(1);
+        Assert.assertTrue(top.isInfinite());
+        Assert.assertTrue(top.getPlane().contains(Vector3D.of(0, 0, 1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), top.getPlane().getNormal(), TEST_EPS);
+
+        PlaneConvexSubset side = boundaries.get(2);
+        Assert.assertTrue(side.isInfinite());
+        Assert.assertTrue(side.getPlane().contains(Vector3D.ZERO));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 0).normalize(),
+                side.getPlane().getNormal(), TEST_EPS);
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(boundaries);
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isInfinite());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 1, 0), Vector3D.of(-1, 0, 0), Vector3D.of(-2, -1, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(1, 1, 0), Vector3D.of(0, 0, 0), Vector3D.of(-1, -1, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(2, 1, 0), Vector3D.of(1, 0, 0), Vector3D.of(0, -1, 0));
+    }
+
+    @Test
+    public void testExtrude_linePath_singleSpan_producesInfiniteRegion() {
+        // arrange
+        LinePath path = LinePath.from(Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).span());
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(path, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(3, boundaries.size());
+
+        PlaneConvexSubset bottom = boundaries.get(0);
+        Assert.assertTrue(bottom.isInfinite());
+        Assert.assertTrue(bottom.getPlane().contains(Vector3D.of(0, 0, -1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), bottom.getPlane().getNormal(), TEST_EPS);
+
+        PlaneConvexSubset top = boundaries.get(1);
+        Assert.assertTrue(top.isInfinite());
+        Assert.assertTrue(top.getPlane().contains(Vector3D.of(0, 0, 1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), top.getPlane().getNormal(), TEST_EPS);
+
+        PlaneConvexSubset side = boundaries.get(2);
+        Assert.assertTrue(side.isInfinite());
+        Assert.assertTrue(side.getPlane().contains(Vector3D.ZERO));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 0).normalize(),
+                side.getPlane().getNormal(), TEST_EPS);
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(boundaries);
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isInfinite());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 1, 0), Vector3D.of(-1, 0, 0), Vector3D.of(-2, -1, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(1, 1, 0), Vector3D.of(0, 0, 0), Vector3D.of(-1, -1, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(2, 1, 0), Vector3D.of(1, 0, 0), Vector3D.of(0, -1, 0));
+    }
+
+    @Test
+    public void testExtrude_linePath_intersectingInfiniteLines_extrudingOnPlus() {
+        // arrange
+        Vector2D intersectionPt = Vector2D.of(1, 0);
+
+        LinePath path = LinePath.from(
+                Lines.fromPointAndAngle(intersectionPt, 0, TEST_PRECISION).reverseRayTo(intersectionPt),
+                Lines.fromPointAndAngle(intersectionPt, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+                    .rayFrom(intersectionPt));
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(path, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(4, boundaries.size());
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(boundaries);
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isInfinite());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 1, 0), Vector3D.of(-1, 1, 0), Vector3D.of(0, 2, 0), Vector3D.of(-1, 2, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(-1, 0, 0), Vector3D.of(0, 0, 0), Vector3D.of(1, 0, 0),
+                Vector3D.of(1, 1, 0), Vector3D.of(1, 2, 0), Vector3D.of(-2, 2, 1),
+                Vector3D.of(-2, 2, -1));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, -1, 0), Vector3D.of(1, -1, 0), Vector3D.of(3, 1, 0), Vector3D.of(3, -1, 0),
+                Vector3D.of(-2, -2, -2), Vector3D.of(-2, -2, 2));
+    }
+
+    @Test
+    public void testExtrude_linePath_intersectingInfiniteLines_extrudingOnMinus() {
+        // arrange
+        Vector2D intersectionPt = Vector2D.of(1, 0);
+
+        LinePath path = LinePath.from(
+                Lines.fromPointAndAngle(intersectionPt, 0, TEST_PRECISION).reverseRayTo(intersectionPt),
+                Lines.fromPointAndAngle(intersectionPt, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+                    .rayFrom(intersectionPt));
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, -2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(path, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(4, boundaries.size());
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(boundaries);
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isInfinite());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 1, 0), Vector3D.of(-1, 1, 0), Vector3D.of(0, 2, 0), Vector3D.of(-1, 2, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(-1, 0, 0), Vector3D.of(0, 0, 0), Vector3D.of(1, 0, 0),
+                Vector3D.of(1, 1, 0), Vector3D.of(1, 2, 0), Vector3D.of(-2, 2, 1),
+                Vector3D.of(-2, 2, -1));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, -1, 0), Vector3D.of(1, -1, 0), Vector3D.of(3, 1, 0), Vector3D.of(3, -1, 0),
+                Vector3D.of(-2, -2, -2), Vector3D.of(-2, -2, 2));
+    }
+
+    @Test
+    public void testExtrude_linePath_infiniteNonConvex() {
+        // arrange
+        LinePath path = LinePath.builder(TEST_PRECISION)
+                .append(Vector2D.of(1, -5))
+                .append(Vector2D.of(1, 1))
+                .append(Vector2D.of(0, 0))
+                .append(Vector2D.of(-1, 1))
+                .append(Vector2D.of(-1, -5))
+                .build();
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, -2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(path, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(8, boundaries.size());
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(boundaries);
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isInfinite());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, -1, 0), Vector3D.of(0, -100, 0));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(-1, 1, 0), Vector3D.of(0, 0, 0), Vector3D.of(1, 1, 0),
+                Vector3D.of(-1, -100, 0), Vector3D.of(1, -100, 0),
+                Vector3D.of(0, -100, 1), Vector3D.of(0, -100, -1));
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-2, 0, 0), Vector3D.of(2, 0, 0), Vector3D.of(0, 0.5, 0),
+                Vector3D.of(0, -100, -2), Vector3D.of(0, -100, 2));
+    }
+
+    @Test
+    public void testExtrude_linePath_clockwiseWinding() {
+        // arrange
+        LinePath path = LinePath.builder(TEST_PRECISION)
+                .append(Vector2D.of(0, 1))
+                .append(Vector2D.of(1, 0))
+                .append(Vector2D.of(0, -1))
+                .append(Vector2D.of(-1, 0))
+                .close();
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(path, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        RegionBSPTree3D resultTree = RegionBSPTree3D.from(boundaries);
+
+        Assert.assertTrue(resultTree.isInfinite());
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.INSIDE,
+                Vector3D.of(1, 1, 0), Vector3D.of(-1, 1, 0), Vector3D.of(-1, -1, 0), Vector3D.of(1, -1, 0));
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.OUTSIDE, Vector3D.ZERO);
+    }
+
+    @Test
+    public void testExtrude_region_empty() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, -2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(tree, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(0, boundaries.size());
+    }
+
+    @Test
+    public void testExtrude_region_full() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.full();
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, -2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(tree, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(2, boundaries.size());
+
+        Assert.assertTrue(boundaries.get(0).isFull());
+        Assert.assertTrue(boundaries.get(1).isFull());
+
+        RegionBSPTree3D resultTree = RegionBSPTree3D.from(boundaries);
+
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.INSIDE,
+                Vector3D.of(1, 1, 0), Vector3D.of(-1, 1, 0), Vector3D.of(-1, -1, 0), Vector3D.of(1, -1, 0));
+
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.BOUNDARY,
+                Vector3D.of(1, 1, 1), Vector3D.of(-1, 1, 1), Vector3D.of(-1, -1, 1), Vector3D.of(1, -1, 1),
+                Vector3D.of(1, 1, -1), Vector3D.of(-1, 1, -1), Vector3D.of(-1, -1, -1), Vector3D.of(1, -1, -1));
+
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.OUTSIDE,
+                Vector3D.of(1, 1, 2), Vector3D.of(-1, 1, 2), Vector3D.of(-1, -1, 2), Vector3D.of(1, -1, 2),
+                Vector3D.of(1, 1, -2), Vector3D.of(-1, 1, -2), Vector3D.of(-1, -1, -2), Vector3D.of(1, -1, -2));
+    }
+
+    @Test
+    public void testExtrude_region_disjointRegions() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        tree.insert(Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
+        tree.insert(Parallelogram.axisAligned(Vector2D.of(2, 2), Vector2D.of(3, 3), TEST_PRECISION));
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, -2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(tree, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(12, boundaries.size());
+
+        RegionBSPTree3D resultTree = RegionBSPTree3D.from(boundaries);
+
+        Assert.assertEquals(4, resultTree.getSize(), TEST_EPS);
+        Assert.assertEquals(20, resultTree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 1.5, 0), resultTree.getCentroid(), TEST_EPS);
+
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.INSIDE,
+                Vector3D.of(0.5, 0.5, 0), Vector3D.of(2.5, 2.5, 0));
+
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.BOUNDARY,
+                Vector3D.ZERO, Vector3D.of(1, 1, 0), Vector3D.of(2, 2, 0), Vector3D.of(3, 3, 0),
+                Vector3D.of(0.5, 0.5, -1), Vector3D.of(0.5, 0.5, 1), Vector3D.of(2.5, 2.5, -1),
+                Vector3D.of(2.5, 2.5, 1));
+
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, -1, 0), Vector3D.of(1.5, 1.5, 0), Vector3D.of(4, 4, 0),
+                Vector3D.of(0.5, 0.5, -2), Vector3D.of(0.5, 0.5, 2), Vector3D.of(2.5, 2.5, -2),
+                Vector3D.of(2.5, 2.5, 2));
+    }
+
+    @Test
+    public void testExtrude_region_starWithCutout() {
+        // arrange
+        // NOTE: this is pretty messed-up looking star :-)
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        tree.insert(LinePath.builder(TEST_PRECISION)
+                .append(Vector2D.of(0, 4))
+                .append(Vector2D.of(-1.5, 1))
+                .append(Vector2D.of(-4, 1))
+                .append(Vector2D.of(-2, -1))
+                .append(Vector2D.of(-3, -4))
+                .append(Vector2D.of(0, -2))
+                .append(Vector2D.of(3, -4))
+                .append(Vector2D.of(2, -1))
+                .append(Vector2D.of(4, 1))
+                .append(Vector2D.of(1.5, 1))
+                .close());
+        tree.insert(LinePath.builder(TEST_PRECISION)
+                .append(Vector2D.of(0, 1))
+                .append(Vector2D.of(1, 0))
+                .append(Vector2D.of(0, -1))
+                .append(Vector2D.of(-1, 0))
+                .close());
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Vector3D extrusionVector = Vector3D.of(0, 0, 2);
+
+        // act
+        List<PlaneConvexSubset> boundaries = Planes.extrude(tree, plane, extrusionVector, TEST_PRECISION);
+
+        // assert
+        RegionBSPTree3D resultTree = RegionBSPTree3D.from(boundaries);
+
+        Assert.assertTrue(resultTree.isFinite());
+        EuclideanTestUtils.assertRegionLocation(resultTree, RegionLocation.OUTSIDE, resultTree.getCentroid());
+    }
+
+    @Test
+    public void testExtrude_invalidExtrusionVector() {
+        // arrange
+        List<Vector2D> vertices = new ArrayList<>();
+        LinePath path = LinePath.empty();
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+        EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+
+        Pattern errorPattern = Pattern.compile("^Extrusion vector produces regions of zero size.*");
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrudeVertexLoop(vertices, plane, Vector3D.of(1e-16, 0, 0), TEST_PRECISION);
+        }, IllegalArgumentException.class, errorPattern);
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrudeVertexLoop(vertices, plane, Vector3D.of(4, 1e-16, 0), TEST_PRECISION);
+        }, IllegalArgumentException.class, errorPattern);
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrudeVertexLoop(vertices, plane, Vector3D.of(1e-16, 5, 0), TEST_PRECISION);
+        }, IllegalArgumentException.class, errorPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrude(path, plane, Vector3D.of(1e-16, 0, 0), TEST_PRECISION);
+        }, IllegalArgumentException.class, errorPattern);
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrude(path, plane, Vector3D.of(4, 1e-16, 0), TEST_PRECISION);
+        }, IllegalArgumentException.class, errorPattern);
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrude(path, plane, Vector3D.of(1e-16, 5, 0), TEST_PRECISION);
+        }, IllegalArgumentException.class, errorPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrude(tree, plane, Vector3D.of(1e-16, 0, 0), TEST_PRECISION);
+        }, IllegalArgumentException.class, errorPattern);
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrude(tree, plane, Vector3D.of(4, 1e-16, 0), TEST_PRECISION);
+        }, IllegalArgumentException.class, errorPattern);
+        GeometryTestUtils.assertThrows(() -> {
+            Planes.extrude(tree, plane, Vector3D.of(1e-16, 5, 0), TEST_PRECISION);
+        }, IllegalArgumentException.class, errorPattern);
     }
 
     private static void checkPlane(Plane plane, Vector3D origin, Vector3D u, Vector3D v) {

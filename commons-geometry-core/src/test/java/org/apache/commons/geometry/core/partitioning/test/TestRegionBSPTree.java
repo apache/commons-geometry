@@ -52,7 +52,7 @@ public final class TestRegionBSPTree extends AbstractRegionBSPTree<TestPoint2D, 
     /** {@inheritDoc} */
     @Override
     protected RegionSizeProperties<TestPoint2D> computeRegionSizeProperties() {
-     // return a set of stub values
+        // return a set of stub values
         return new RegionSizeProperties<>(1234, new TestPoint2D(12, 34));
     }
 

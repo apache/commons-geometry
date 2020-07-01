@@ -16,7 +16,7 @@
  */
 
 /**
- * <h3>Performance benchmarks</h3>
+ * <strong>Performance benchmarks</strong>
  *
  * <p>
  * This package contains code to perform a

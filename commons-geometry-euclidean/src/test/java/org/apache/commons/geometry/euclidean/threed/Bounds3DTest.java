@@ -500,23 +500,23 @@ public class Bounds3DTest {
     }
 
     @Test
-    public void testBuilder_containsBounds() {
+    public void testBuilder_hasBounds() {
         // act/assert
-        Assert.assertFalse(Bounds3D.builder().containsBounds());
+        Assert.assertFalse(Bounds3D.builder().hasBounds());
 
-        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(Double.NaN, 1, 1)).containsBounds());
-        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, Double.NaN, 1)).containsBounds());
-        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, 1, Double.NaN)).containsBounds());
+        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(Double.NaN, 1, 1)).hasBounds());
+        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, Double.NaN, 1)).hasBounds());
+        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, 1, Double.NaN)).hasBounds());
 
-        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(Double.POSITIVE_INFINITY, 1, 1)).containsBounds());
-        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, Double.POSITIVE_INFINITY, 1)).containsBounds());
-        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, 1, Double.POSITIVE_INFINITY)).containsBounds());
+        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(Double.POSITIVE_INFINITY, 1, 1)).hasBounds());
+        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, Double.POSITIVE_INFINITY, 1)).hasBounds());
+        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, 1, Double.POSITIVE_INFINITY)).hasBounds());
 
-        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(Double.NEGATIVE_INFINITY, 1, 1)).containsBounds());
-        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, Double.NEGATIVE_INFINITY, 1)).containsBounds());
-        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, 1, Double.NEGATIVE_INFINITY)).containsBounds());
+        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(Double.NEGATIVE_INFINITY, 1, 1)).hasBounds());
+        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, Double.NEGATIVE_INFINITY, 1)).hasBounds());
+        Assert.assertFalse(Bounds3D.builder().add(Vector3D.of(1, 1, Double.NEGATIVE_INFINITY)).hasBounds());
 
-        Assert.assertTrue(Bounds3D.builder().add(Vector3D.ZERO).containsBounds());
+        Assert.assertTrue(Bounds3D.builder().add(Vector3D.ZERO).hasBounds());
     }
 
     private static void checkBounds(Bounds3D b, Vector3D min, Vector3D max) {

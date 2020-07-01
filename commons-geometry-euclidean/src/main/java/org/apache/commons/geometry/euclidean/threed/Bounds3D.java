@@ -255,7 +255,7 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D> {
         /** Return true if this builder contains valid min and max coordinate values.
          * @return true if this builder contains valid min and max coordinate values
          */
-        public boolean containsBounds() {
+        public boolean hasBounds() {
             return Double.isFinite(minX) &&
                     Double.isFinite(minY) &&
                     Double.isFinite(minZ) &&
@@ -269,13 +269,13 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D> {
          * @return a new bounds instance
          * @throws IllegalStateException if no points were given to the builder or any of the computed
          *      min and max coordinate values are NaN or infinite
-         * @see #containsBounds()
+         * @see #hasBounds()
          */
         public Bounds3D build() {
             final Vector3D min = Vector3D.of(minX, minY, minZ);
             final Vector3D max = Vector3D.of(maxX, maxY, maxZ);
 
-            if (!containsBounds()) {
+            if (!hasBounds()) {
                 if (Double.isInfinite(minX) && minX > 0 &&
                         Double.isInfinite(maxX) && maxX < 0) {
                     throw new IllegalStateException("Cannot construct bounds: no points given");

@@ -123,8 +123,7 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
         return splitInternal(splitter, this, PlaneConvexSubset.class, ConvexVolume::new);
     }
 
-    /** Return a BSP tree representing the same region as this instance.
-     */
+    /** {@inheritDoc} */
     @Override
     public RegionBSPTree3D toTree() {
         return RegionBSPTree3D.from(getBoundaries(), true);

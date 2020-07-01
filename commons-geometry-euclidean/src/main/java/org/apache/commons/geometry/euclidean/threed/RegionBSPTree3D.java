@@ -26,9 +26,11 @@ import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
+import org.apache.commons.geometry.core.partitioning.bsp.AbstractPartitionedRegionBuilder;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
@@ -49,7 +51,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @param full whether or not the region should contain the entire
      *      3D space or be empty
      */
-    public RegionBSPTree3D(boolean full) {
+    public RegionBSPTree3D(final boolean full) {
         super(full);
     }
 
@@ -222,6 +224,14 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         return tree;
     }
 
+    /** Create a new {@link PartitionedRegionBuilder3D} instance which can be used to build balanced
+     * BSP trees from region boundaries.
+     * @return a new {@link PartitionedRegionBuilder3D} instance
+     */
+    public static PartitionedRegionBuilder3D partitionedRegionBuilder() {
+        return new PartitionedRegionBuilder3D();
+    }
+
     /** BSP tree node for three dimensional Euclidean space.
      */
     public static final class RegionNode3D extends AbstractRegionBSPTree.AbstractRegionNode<Vector3D, RegionNode3D> {
@@ -258,6 +268,171 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         @Override
         protected RegionNode3D getSelf() {
             return this;
+        }
+    }
+
+    /** Class used to build regions in Euclidean 3D space by inserting boundaries into a BSP
+     * tree containing "partitions", i.e. structural cuts where both sides of the cut have the same region location.
+     * When partitions are chosen that effectively divide the region boundaries at each partition level, the
+     * constructed tree is shallower and more balanced than one constructed from the region boundaries alone,
+     * resulting in improved performance. For example, consider a mesh approximation of a sphere. The region is
+     * convex so each boundary has all of the other boundaries on its minus side; the plus sides are all empty.
+     * When these boundaries are inserted directly into a tree, the tree degenerates into a simple linked list of
+     * nodes with a height directly proportional to the number of boundaries. This means that many operations on the
+     * tree, such as inside/outside testing of points, involve iterating through each and every region boundary. In
+     * contrast, if a partition is first inserted that passes through the sphere center, the first BSP tree node
+     * contains region nodes on its plus <em>and</em> minus sides, cutting the height of the tree in half. Operations
+     * such as inside/outside testing are then able to skip half of the tree nodes with a single test on the
+     * root node, resulting in drastically improved performance. Insertion of additional partitions (using a grid
+     * layout, for example) can produce even shallower trees, although there is a point unique to each boundary set at
+     * which the addition of more partitions begins to decrease instead of increase performance.
+     *
+     * <h2>Usage</h2>
+     * <p>Usage of this class consists of two phases: (1) <em>partition insertion</em> and (2) <em>boundary
+     * insertion</em>. Instances begin in the <em>partition insertion</em> phase. Here, partitions can be inserted
+     * into the empty tree using {@link PartitionedRegionBuilder3D#insertPartition(PlaneConvexSubset) insertPartition}
+     * or similar methods. The {@link org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule#INHERIT INHERIT}
+     * cut rule is used internally to insert the cut so the represented region remains empty even as partitions are
+     * inserted.
+     * </p>
+     *
+     * <p>The instance moves into the <em>boundary insertion</em> phase when the caller inserts the first region
+     * boundary, using {@link PartitionedRegionBuilder3D#insertBoundary(PlaneConvexSubset) insertBoundary} or
+     * similar methods. Attempting to insert a partition after this point results in an {@code IllegalStateException}.
+     * This ensures that partitioning cuts are always located higher up the tree than boundary cuts.</p>
+     *
+     * <p>After all boundaries are inserted, the {@link PartitionedRegionBuilder3D#build() build} method is used
+     * to perform final processing and return the computed tree.</p>
+     */
+    public static final class PartitionedRegionBuilder3D
+        extends AbstractPartitionedRegionBuilder<Vector3D, RegionNode3D> {
+
+        /** Construct a new builder instance.
+         */
+        private PartitionedRegionBuilder3D() {
+            super(RegionBSPTree3D.empty());
+        }
+
+        /** Insert a partition plane.
+         * @param partition partition to insert
+         * @return this instance
+         * @throws IllegalStateException if a boundary has previously been inserted
+         */
+        public PartitionedRegionBuilder3D insertPartition(final Plane partition) {
+            return insertPartition(partition.span());
+        }
+
+        /** Insert a plane convex subset as a partition.
+         * @param partition partition to insert
+         * @return this instance
+         * @throws IllegalStateException if a boundary has previously been inserted
+         */
+        public PartitionedRegionBuilder3D insertPartition(final PlaneConvexSubset partition) {
+            insertPartitionInternal(partition);
+
+            return this;
+        }
+
+        /** Insert a set of three axis aligned planes intersecting at the given point as partitions.
+         * The planes all contain the {@code center} point and have the normals {@code +x}, {@code +y},
+         * and {@code +z} in that order. If inserted into an empty tree, this will partition the space
+         * into 8 sections.
+         * @param center center point for the partitions; all 3 inserted planes intersect at this point
+         * @param precision precision context used to construct the planes
+         * @return this instance
+         * @throws IllegalStateException if a boundary has previously been inserted
+         */
+        public PartitionedRegionBuilder3D insertAxisAlignedPartitions(final Vector3D center,
+                final DoublePrecisionContext precision) {
+
+            insertPartition(Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_X, precision));
+            insertPartition(Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_Y, precision));
+            insertPartition(Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_Z, precision));
+
+            return this;
+        }
+
+        /** Insert a 3D grid of partitions. The partitions are constructed recursively: at each level a set of
+         * three axis-aligned partitioning planes are inserted using
+         * {@link #insertAxisAlignedPartitions(Vector3D, DoublePrecisionContext) insertAxisAlignedPartitions}.
+         * The algorithm then recurses using bounding boxes from the min point to the center and from the center
+         * point to the max. Note that this means no partitions are ever inserted directly on the boundaries of
+         * the given bounding box. This is intentional and done to allow this method to be called directly with the
+         * bounding box from a set of boundaries to be inserted without unnecessarily adding partitions that will
+         * never have region boundaries on both sides.
+         * @param bounds bounding box for the grid
+         * @param level recursion level for the grid; each level subdivides each grid cube into 8 sections, making the
+         *      total number of grid cubes equal to {@code 8 ^ level}
+         * @param precision precision context used to construct the partition planes
+         * @return this instance
+         * @throws IllegalStateException if a boundary has previously been inserted
+         */
+        public PartitionedRegionBuilder3D insertAxisAlignedGrid(final Bounds3D bounds, final int level,
+                final DoublePrecisionContext precision) {
+
+            insertAxisAlignedGridRecursive(bounds.getMin(), bounds.getMax(), level, precision);
+
+            return this;
+        }
+
+        /** Recursively insert axis-aligned grid partitions.
+         * @param min min point for the grid cube to partition
+         * @param max max point for the grid cube to partition
+         * @param level current recursion level
+         * @param precision precision context used to construct the partition planes
+         */
+        private void insertAxisAlignedGridRecursive(final Vector3D min, final Vector3D max, final int level,
+                final DoublePrecisionContext precision) {
+            if (level > 0) {
+                final Vector3D center = min.lerp(max, 0.5);
+
+                insertAxisAlignedPartitions(center, precision);
+
+                final int nextLevel = level - 1;
+                insertAxisAlignedGridRecursive(min, center, nextLevel, precision);
+                insertAxisAlignedGridRecursive(center, max, nextLevel, precision);
+            }
+        }
+
+        /** Insert a region boundary.
+         * @param boundary region boundary to insert
+         * @return this instance
+         */
+        public PartitionedRegionBuilder3D insertBoundary(final PlaneConvexSubset boundary) {
+            insertBoundaryInternal(boundary);
+
+            return this;
+        }
+
+        /** Insert a collection of region boundaries.
+         * @param boundaries boundaries to insert
+         * @return this instance
+         */
+        public PartitionedRegionBuilder3D insertBoundaries(final Iterable<? extends PlaneConvexSubset> boundaries) {
+            for (final PlaneConvexSubset boundary : boundaries) {
+                insertBoundaryInternal(boundary);
+            }
+
+            return this;
+        }
+
+        /** Insert all boundaries from the given source.
+         * @param boundarySrc source of boundaries to insert
+         * @return this instance
+         */
+        public PartitionedRegionBuilder3D insertBoundaries(final BoundarySource3D boundarySrc) {
+            try (Stream<PlaneConvexSubset> stream = boundarySrc.boundaryStream()) {
+                stream.forEach(this::insertBoundaryInternal);
+            }
+
+            return this;
+        }
+
+        /** Build and return the region BSP tree.
+         * @return the region BSP tree
+         */
+        public RegionBSPTree3D build() {
+            return (RegionBSPTree3D) buildInternal();
         }
     }
 

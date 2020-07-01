@@ -472,20 +472,20 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testBuilder_containsBounds() {
+    public void testBuilder_hasBounds() {
         // act/assert
-        Assert.assertFalse(Bounds2D.builder().containsBounds());
+        Assert.assertFalse(Bounds2D.builder().hasBounds());
 
-        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(Double.NaN, 1)).containsBounds());
-        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(1, Double.NaN)).containsBounds());
+        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(Double.NaN, 1)).hasBounds());
+        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(1, Double.NaN)).hasBounds());
 
-        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(Double.POSITIVE_INFINITY, 1)).containsBounds());
-        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(1, Double.POSITIVE_INFINITY)).containsBounds());
+        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(Double.POSITIVE_INFINITY, 1)).hasBounds());
+        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(1, Double.POSITIVE_INFINITY)).hasBounds());
 
-        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(Double.NEGATIVE_INFINITY, 1)).containsBounds());
-        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(1, Double.NEGATIVE_INFINITY)).containsBounds());
+        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(Double.NEGATIVE_INFINITY, 1)).hasBounds());
+        Assert.assertFalse(Bounds2D.builder().add(Vector2D.of(1, Double.NEGATIVE_INFINITY)).hasBounds());
 
-        Assert.assertTrue(Bounds2D.builder().add(Vector2D.ZERO).containsBounds());
+        Assert.assertTrue(Bounds2D.builder().add(Vector2D.ZERO).hasBounds());
     }
 
     private static void checkBounds(Bounds2D b, Vector2D min, Vector2D max) {

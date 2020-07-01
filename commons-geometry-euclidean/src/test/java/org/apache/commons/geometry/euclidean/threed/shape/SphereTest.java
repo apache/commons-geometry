@@ -27,6 +27,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
@@ -36,6 +37,7 @@ import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
+import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -440,6 +442,67 @@ public class SphereTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             s.toTree(-1);
+        }, IllegalArgumentException.class,
+                "Number of sphere approximation subdivisions must be greater than or equal to zero; was -1");
+    }
+
+    @Test
+    public void testToMesh_zeroSubdivisions() {
+        // arrange
+        Sphere s = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
+
+        // act
+        TriangleMesh mesh = s.toTriangleMesh(0);
+
+        // assert
+        Assert.assertEquals(6, mesh.getVertexCount());
+        Assert.assertEquals(8, mesh.getFaceCount());
+
+        Bounds3D bounds = mesh.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(3, 4, 5), bounds.getMax(), TEST_EPS);
+
+        Assert.assertTrue(mesh.toTree().isFinite());
+    }
+
+    @Test
+    public void testToMesh_manySubdivisions() {
+        // arrange
+        Sphere s = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
+        int subdivisions = 5;
+
+        // act
+        TriangleMesh mesh = s.toTriangleMesh(subdivisions);
+
+        // assert
+        Assert.assertEquals((int) (8 * Math.pow(4, subdivisions)), mesh.getFaceCount());
+
+        Bounds3D bounds = mesh.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(3, 4, 5), bounds.getMax(), TEST_EPS);
+
+        RegionBSPTree3D tree = RegionBSPTree3D.partitionedRegionBuilder()
+                .insertAxisAlignedGrid(bounds, 3, TEST_PRECISION)
+                .insertBoundaries(mesh)
+                .build();
+
+        Assert.assertTrue(tree.isFinite());
+
+        double approximationEps = 0.1;
+        Assert.assertEquals(s.getSize(), tree.getSize(), approximationEps);
+        Assert.assertEquals(s.getBoundarySize(), tree.getBoundarySize(), approximationEps);
+
+        EuclideanTestUtils.assertCoordinatesEqual(s.getCentroid(), tree.getCentroid(), TEST_EPS);
+    }
+
+    @Test
+    public void testToMesh_invalidArgs() {
+        // arrange
+        Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            s.toTriangleMesh(-1);
         }, IllegalArgumentException.class,
                 "Number of sphere approximation subdivisions must be greater than or equal to zero; was -1");
     }

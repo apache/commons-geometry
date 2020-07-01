@@ -238,7 +238,7 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D> {
         /** Return true if this builder contains valid min and max coordinate values.
          * @return true if this builder contains valid min and max coordinate values
          */
-        public boolean containsBounds() {
+        public boolean hasBounds() {
             return Double.isFinite(minX) &&
                     Double.isFinite(minY) &&
                     Double.isFinite(maxX) &&
@@ -250,13 +250,13 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D> {
          * @return a new bounds instance
          * @throws IllegalStateException if no points were given to the builder or any of the computed
          *      min and max coordinate values are NaN or infinite
-         * @see #containsBounds()
+         * @see #hasBounds()
          */
         public Bounds2D build() {
             final Vector2D min = Vector2D.of(minX, minY);
             final Vector2D max = Vector2D.of(maxX, maxY);
 
-            if (!containsBounds()) {
+            if (!hasBounds()) {
                 if (Double.isInfinite(minX) && minX > 0 &&
                         Double.isInfinite(maxX) && maxX < 0) {
                     throw new IllegalStateException("Cannot construct bounds: no points given");

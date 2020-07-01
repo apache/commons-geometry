@@ -25,7 +25,7 @@ import java.util.stream.Stream;
  * the vertices of each boundary in turn. Null is returned if any boundaries are
  * infinite or no vertices are present.
  */
-class BoundarySourceBoundsBuilder3D {
+final class BoundarySourceBoundsBuilder3D {
 
     /** Get a {@link Bounds3D} instance containing all vertices in the given boundary source.
      * Null is returned if any encountered boundaries were not finite or no vertices were found.
@@ -50,7 +50,7 @@ class BoundarySourceBoundsBuilder3D {
             }
         }
 
-        return builder.containsBounds() ?
+        return builder.hasBounds() ?
                 builder.build() :
                 null;
     }

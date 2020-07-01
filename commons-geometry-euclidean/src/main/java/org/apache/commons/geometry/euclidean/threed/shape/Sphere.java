@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed.shape;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,10 +33,16 @@ import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
+import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
+import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 
 /** Class representing a 3 dimensional sphere in Euclidean space.
  */
 public final class Sphere extends AbstractNSphere<Vector3D> implements Linecastable3D {
+
+    /** Message used when requesting a sphere approximation with an invalid subdivision number. */
+    private static final String INVALID_SUBDIVISION_MESSAGE =
+        "Number of sphere approximation subdivisions must be greater than or equal to zero; was {0}";
 
     /** Constant equal to {@code 4 * pi}. */
     private static final double FOUR_PI = 4.0 * Math.PI;
@@ -113,14 +120,60 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
      * @return a BSP tree containing an approximation of the sphere
      * @throws IllegalArgumentException if {@code subdivisions} is less than zero
      * @throws IllegalStateException if tree creation fails for the given subdivision count
+     * @see #toTriangleMesh(int)
      */
     public RegionBSPTree3D toTree(final int subdivisions) {
         if (subdivisions < 0) {
-            throw new IllegalArgumentException(
-                    "Number of sphere approximation subdivisions must be greater than or equal to zero; was " +
-                            subdivisions);
+            throw new IllegalArgumentException(MessageFormat.format(INVALID_SUBDIVISION_MESSAGE, subdivisions));
         }
-        return new SphereApproximationBuilder(this, subdivisions).build();
+        return new SphereTreeApproximationBuilder(this, subdivisions).build();
+    }
+
+    /** Build an approximation of this sphere using a {@link TriangleMesh}. The approximation is constructed by
+     * taking an octahedron (8-sided polyhedron with triangular faces) inscribed in the sphere and subdividing each
+     * triangular face {@code subdivisions} number of times, each time projecting the newly created vertices onto the
+     * sphere surface. Each triangle subdivision produces 4 triangles, meaning that the total number of triangles
+     * in the returned mesh is equal to \(8 \times 4^s\), where \(s\) is the number of subdivisions. For
+     * example, calling this method with {@code subdivisions} equal to {@code 3} will produce a mesh having
+     * \(8 \times 4^3 = 512\) triangular facets inserted. See the table below for other examples.
+     *
+     * <table>
+     *  <caption>Subdivisions to Triangle Counts</caption>
+     *  <thead>
+     *      <tr>
+     *          <th>Subdivisions</th>
+     *          <th>Triangles</th>
+     *      </tr>
+     *  </thead>
+     *  <tbody>
+     *      <tr><td>0</td><td>8</td></tr>
+     *      <tr><td>1</td><td>32</td></tr>
+     *      <tr><td>2</td><td>128</td></tr>
+     *      <tr><td>3</td><td>512</td></tr>
+     *      <tr><td>4</td><td>2048</td></tr>
+     *      <tr><td>5</td><td>8192</td></tr>
+     *  </tbody>
+     * </table>
+     *
+     * <p><strong>BSP Tree Conversion</strong></p>
+     * <p>Inserting the boundaries of a sphere mesh approximation directly into a BSP tree will invariably result
+     * in poor performance: since the region is convex the constructed BSP tree degenerates into a simple linked
+     * list of nodes. If a BSP tree is needed, users should prefer the {@link #toTree(int)} method, which creates
+     * balanced tree approximations directly, or the {@link RegionBSPTree3D.PartitionedRegionBuilder3D} class,
+     * which can be used to insert the mesh faces into a pre-partitioned tree.
+     * </p>
+     * @param subdivisions the number of triangle subdivisions to use when creating the mesh; the total number of
+     *      triangular faces in the returned mesh is equal to \(8 \times 4^s\), where \(s\) is the number
+     *      of subdivisions
+     * @return a triangle mesh approximation of the sphere
+     * @throws IllegalArgumentException if {@code subdivisions} is less than zero
+     * @see #toTree(int)
+     */
+    public TriangleMesh toTriangleMesh(final int subdivisions) {
+        if (subdivisions < 0) {
+            throw new IllegalArgumentException(MessageFormat.format(INVALID_SUBDIVISION_MESSAGE, subdivisions));
+        }
+        return new SphereMeshApproximationBuilder(this, subdivisions).build();
     }
 
     /** Get the intersections of the given line with this sphere. The returned list will
@@ -192,10 +245,11 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
         return new Sphere(center, radius, precision);
     }
 
-    /** Internal class used to construct hyperplane-bounded approximations of spheres. The class begins with an
-     * octahedron inscribed in the sphere and then subdivides each triangular face a specified number of times.
+    /** Internal class used to construct hyperplane-bounded approximations of spheres as BSP trees. The class
+     * begins with an octahedron inscribed in the sphere and then subdivides each triangular face a specified
+     * number of times.
      */
-    private static final class SphereApproximationBuilder {
+    private static final class SphereTreeApproximationBuilder {
 
         /** Threshold used to determine when to stop inserting structural cuts and begin adding facets. */
         private static final int PARTITION_THRESHOLD = 2;
@@ -210,7 +264,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
          * @param sphere the sphere to create an approximation of
          * @param subdivisions the number of triangle subdivisions to use in tree creation
          */
-        SphereApproximationBuilder(final Sphere sphere, final int subdivisions) {
+        SphereTreeApproximationBuilder(final Sphere sphere, final int subdivisions) {
             this.sphere = sphere;
             this.subdivisions = subdivisions;
         }
@@ -366,6 +420,92 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
         private void checkedCut(final RegionNode3D node, final Plane cutter, final RegionCutRule cutRule) {
             if (!node.insertCut(cutter)) {
                 throw new IllegalStateException("Failed to cut BSP tree node with plane: " + cutter);
+            }
+        }
+    }
+
+    /** Internal class used to construct geodesic mesh sphere approximations. The class begins with an octahedron
+     * inscribed in the sphere and then subdivides each triangular face a specified number of times.
+     */
+    private static final class SphereMeshApproximationBuilder {
+
+        /** The sphere that an approximation is being created for. */
+        private final Sphere sphere;
+
+        /** The number of triangular subdivisions to use. */
+        private final int subdivisions;
+
+        /** Mesh builder object. */
+        private final SimpleTriangleMesh.Builder builder;
+
+        /** Construct a new builder for creating a mesh approximation of the given sphere.
+         * @param sphere the sphere to create an approximation of
+         * @param subdivisions the number of triangle subdivisions to use in mesh creation
+         */
+        SphereMeshApproximationBuilder(final Sphere sphere, final int subdivisions) {
+            this.sphere = sphere;
+            this.subdivisions = subdivisions;
+            this.builder = SimpleTriangleMesh.builder(sphere.getPrecision());
+        }
+
+        /** Build the mesh approximation of the configured sphere.
+         * @return the mesh approximation of the configured sphere
+         */
+        public SimpleTriangleMesh build() {
+            final Vector3D center = sphere.getCenter();
+            final double radius = sphere.getRadius();
+
+            // create the vertices for the octahedron
+            final double cx = center.getX();
+            final double cy = center.getY();
+            final double cz = center.getZ();
+
+            Vector3D maxX = Vector3D.of(cx + radius, cy, cz);
+            Vector3D minX = Vector3D.of(cx - radius, cy, cz);
+
+            Vector3D maxY = Vector3D.of(cx, cy + radius, cz);
+            Vector3D minY = Vector3D.of(cx, cy - radius, cz);
+
+            Vector3D maxZ = Vector3D.of(cx, cy, cz + radius);
+            Vector3D minZ = Vector3D.of(cx, cy, cz - radius);
+
+            addSubdivided(minX, minZ, minY, 0);
+            addSubdivided(minX, minY, maxZ, 0);
+
+            addSubdivided(minX, maxY, minZ, 0);
+            addSubdivided(minX, maxZ, maxY, 0);
+
+            addSubdivided(maxX, minY, minZ, 0);
+            addSubdivided(maxX, maxZ, minY, 0);
+
+            addSubdivided(maxX, minZ, maxY, 0);
+            addSubdivided(maxX, maxY, maxZ, 0);
+
+            return builder.build();
+        }
+
+        /** Recursively subdivide and add triangular faces between the given outer boundary points.
+         * @param p1 first point
+         * @param p2 second point
+         * @param p3 third point
+         * @param level recursion level; counts up
+         */
+        private void addSubdivided(final Vector3D p1, final Vector3D p2, final Vector3D p3, int level) {
+            if (level >= subdivisions) {
+                // base case
+                builder.addFaceUsingVertices(p1, p2, p3);
+            } else {
+                // subdivide
+                final int nextLevel = level + 1;
+
+                final Vector3D m1 = sphere.project(p1.lerp(p2, 0.5));
+                final Vector3D m2 = sphere.project(p2.lerp(p3, 0.5));
+                final Vector3D m3 = sphere.project(p3.lerp(p1, 0.5));
+
+                addSubdivided(p1, m1, m3, nextLevel);
+                addSubdivided(m1, p2, m2, nextLevel);
+                addSubdivided(m3, m2, p3, nextLevel);
+                addSubdivided(m1, m2, m3, nextLevel);
             }
         }
     }

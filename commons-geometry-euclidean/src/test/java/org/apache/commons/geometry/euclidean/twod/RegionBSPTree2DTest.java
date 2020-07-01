@@ -32,6 +32,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.PartitionedRegionBuilder2D;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
@@ -106,6 +107,158 @@ public class RegionBSPTree2DTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertTrue(tree.isEmpty());
         Assert.assertEquals(1, tree.count());
+    }
+
+    @Test
+    public void testPartitionedRegionBuilder_halfSpace() {
+        // act
+        RegionBSPTree2D tree = RegionBSPTree2D.partitionedRegionBuilder()
+                .insertPartition(
+                    Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION))
+                .insertBoundary(
+                    Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.MINUS_X, TEST_PRECISION).span())
+                .build();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isInfinite());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector2D.of(0, -1));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, Vector2D.ZERO);
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE, Vector2D.of(0, 1));
+    }
+
+    @Test
+    public void testPartitionedRegionBuilder_square() {
+        // arrange
+        Parallelogram square = Parallelogram.unitSquare(TEST_PRECISION);
+        List<LineConvexSubset> boundaries = square.getBoundaries();
+
+        Vector2D lowerBound = Vector2D.of(-2, -2);
+
+        int maxUpper = 5;
+        int maxLevel = 4;
+
+        // act/assert
+        Bounds2D bounds;
+        for (int u = 0; u <= maxUpper; ++u) {
+            for (int level = 0; level <= maxLevel; ++level) {
+                bounds = Bounds2D.from(lowerBound, Vector2D.of(u, u));
+
+                checkFinitePartitionedRegion(bounds, level, square);
+                checkFinitePartitionedRegion(bounds, level, boundaries);
+            }
+        }
+    }
+
+    @Test
+    public void testPartitionedRegionBuilder_nonConvex() {
+        // arrange
+        RegionBSPTree2D src = Parallelogram.unitSquare(TEST_PRECISION).toTree();
+        src.union(Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).toTree());
+
+        List<LineConvexSubset> boundaries = src.getBoundaries();
+
+        Vector2D lowerBound = Vector2D.of(-2, -2);
+
+        int maxUpper = 5;
+        int maxLevel = 4;
+
+        // act/assert
+        Bounds2D bounds;
+        for (int u = 0; u <= maxUpper; ++u) {
+            for (int level = 0; level <= maxLevel; ++level) {
+                bounds = Bounds2D.from(lowerBound, Vector2D.of(u, u));
+
+                checkFinitePartitionedRegion(bounds, level, src);
+                checkFinitePartitionedRegion(bounds, level, boundaries);
+            }
+        }
+    }
+
+    /** Check that a partitioned BSP tree behaves the same as a non-partitioned tree when
+     * constructed with the given boundary source.
+     * @param bounds
+     * @param level
+     * @param src
+     */
+    private void checkFinitePartitionedRegion(Bounds2D bounds, int level, BoundarySource2D src) {
+        // arrange
+        String msg = "Partitioned region check failed with bounds= " + bounds + " and level= " + level;
+
+        RegionBSPTree2D standard = RegionBSPTree2D.from(src.boundaryStream().collect(Collectors.toList()));
+
+        // act
+        RegionBSPTree2D partitioned = RegionBSPTree2D.partitionedRegionBuilder()
+                .insertAxisAlignedGrid(bounds, level, TEST_PRECISION)
+                .insertBoundaries(src)
+                .build();
+
+        // assert
+        Assert.assertEquals(msg, standard.getSize(), partitioned.getSize(), TEST_EPS);
+        Assert.assertEquals(msg, standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(standard.getCentroid(), partitioned.getCentroid(), TEST_EPS);
+
+        RegionBSPTree2D diff = RegionBSPTree2D.empty();
+        diff.difference(partitioned, standard);
+        Assert.assertTrue(msg, diff.isEmpty());
+    }
+
+    /** Check that a partitioned BSP tree behaves the same as a non-partitioned tree when
+     * constructed with the given boundaries.
+     * @param bounds
+     * @param level
+     * @param boundaries
+     */
+    private void checkFinitePartitionedRegion(Bounds2D bounds, int level,
+            List<? extends LineConvexSubset> boundaries) {
+        // arrange
+        String msg = "Partitioned region check failed with bounds= " + bounds + " and level= " + level;
+
+        RegionBSPTree2D standard = RegionBSPTree2D.from(boundaries);
+
+        // act
+        RegionBSPTree2D partitioned = RegionBSPTree2D.partitionedRegionBuilder()
+                .insertAxisAlignedGrid(bounds, level, TEST_PRECISION)
+                .insertBoundaries(boundaries)
+                .build();
+
+        // assert
+        Assert.assertEquals(msg, standard.getSize(), partitioned.getSize(), TEST_EPS);
+        Assert.assertEquals(msg, standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(standard.getCentroid(), partitioned.getCentroid(), TEST_EPS);
+
+        RegionBSPTree2D diff = RegionBSPTree2D.empty();
+        diff.difference(partitioned, standard);
+        Assert.assertTrue(msg, diff.isEmpty());
+    }
+
+    @Test
+    public void testPartitionedRegionBuilder_insertPartitionAfterBoundary() {
+        // arrange
+        PartitionedRegionBuilder2D builder = RegionBSPTree2D.partitionedRegionBuilder();
+        builder.insertBoundary(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION));
+
+        Line partition = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+
+        String msg = "Cannot insert partitions after boundaries have been inserted";
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            builder.insertPartition(partition);
+        }, IllegalStateException.class, msg);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.insertPartition(partition.span());
+        }, IllegalStateException.class, msg);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.insertAxisAlignedPartitions(Vector2D.ZERO, TEST_PRECISION);
+        }, IllegalStateException.class, msg);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.insertAxisAlignedGrid(Bounds2D.from(Vector2D.ZERO, Vector2D.of(1, 1)), 1, TEST_PRECISION);
+        }, IllegalStateException.class, msg);
     }
 
     @Test
