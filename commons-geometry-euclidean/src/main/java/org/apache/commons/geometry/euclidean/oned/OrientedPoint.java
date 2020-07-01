@@ -37,8 +37,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  * @see OrientedPoints
  */
-public final class OrientedPoint extends AbstractHyperplane<Vector1D>
-    implements Hyperplane<Vector1D> {
+public final class OrientedPoint extends AbstractHyperplane<Vector1D> {
     /** Hyperplane location as a point. */
     private final Vector1D point;
 

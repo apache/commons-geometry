@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.Transform;
 /** Internal {@link ConvexPolygon3D} implementation class that uses a list of vertices
  * to represent the plane subset.
  */
-final class VertexListConvexPolygon3D extends AbstractConvexPolygon3D implements ConvexPolygon3D {
+final class VertexListConvexPolygon3D extends AbstractConvexPolygon3D {
 
     /** Vertex loop defining the convex polygon. */
     private final List<Vector3D> vertices;

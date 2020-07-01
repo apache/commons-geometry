@@ -43,7 +43,7 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  * @see Planes
  */
-public class Plane extends AbstractHyperplane<Vector3D> implements Hyperplane<Vector3D> {
+public class Plane extends AbstractHyperplane<Vector3D> {
 
     /** Plane normal. */
     private final Vector3D.Unit normal;
