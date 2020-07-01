@@ -30,14 +30,13 @@ public class BoundarySource2STest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final DoublePrecisionContext TEST_PRECISION = new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
     public void testToTree() {
         // act
-        final List<GreatArc> arcs = Arrays.asList(GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION));
-        final BoundarySource2S src = () -> arcs.stream();
+        final BoundarySource2S src = () -> Stream.of(
+                GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION));
 
         // act
         final RegionBSPTree2S tree = src.toTree();

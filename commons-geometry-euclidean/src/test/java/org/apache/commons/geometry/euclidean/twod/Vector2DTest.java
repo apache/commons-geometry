@@ -50,14 +50,10 @@ public class Vector2DTest {
     @Test
     public void testConstants_normalize() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.normalize(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.normalize(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.normalize(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.normalize(),
-                IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.ZERO::normalize, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.NaN::normalize, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.POSITIVE_INFINITY::normalize, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.NEGATIVE_INFINITY::normalize, IllegalArgumentException.class);
 
         Assert.assertSame(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X.normalize());
         Assert.assertSame(Vector2D.Unit.MINUS_X, Vector2D.Unit.MINUS_X.normalize());
@@ -335,14 +331,10 @@ public class Vector2DTest {
     @Test
     public void testNormalize_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.normalize(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.normalize(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.normalize(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.normalize(),
-                IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.ZERO::normalize, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.NaN::normalize, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.POSITIVE_INFINITY::normalize, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.NEGATIVE_INFINITY::normalize, IllegalArgumentException.class);
     }
 
     @Test
@@ -484,14 +476,10 @@ public class Vector2DTest {
     @Test
     public void testOrthogonal_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.orthogonal(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.orthogonal(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.orthogonal(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.orthogonal(),
-                IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.ZERO::orthogonal, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.NaN::orthogonal, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.POSITIVE_INFINITY::orthogonal, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector2D.NEGATIVE_INFINITY::orthogonal, IllegalArgumentException.class);
     }
 
     @Test

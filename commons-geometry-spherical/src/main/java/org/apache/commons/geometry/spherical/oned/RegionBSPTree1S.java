@@ -38,7 +38,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTree1S.RegionNode1S> {
     /** Comparator used to sort BoundaryPairs by ascending azimuth.  */
     private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR =
-        (a, b) -> Double.compare(a.getMinValue(), b.getMinValue());
+            Comparator.comparingDouble(BoundaryPair::getMinValue);
 
     /** Create a new, empty instance.
      */

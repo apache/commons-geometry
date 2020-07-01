@@ -36,7 +36,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, RegionBSPTree1D.RegionNode1D> {
     /** Comparator used to sort BoundaryPairs by ascending location.  */
     private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR =
-        (a, b) -> Double.compare(a.getMinValue(), b.getMinValue());
+            Comparator.comparingDouble(BoundaryPair::getMinValue);
 
     /** Create a new, empty region.
      */

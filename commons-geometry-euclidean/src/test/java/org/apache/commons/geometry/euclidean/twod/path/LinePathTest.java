@@ -1288,9 +1288,8 @@ public class LinePathTest {
             .append(Vector2D.of(1, 1));
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            builder.close();
-        }, IllegalStateException.class, "Unable to close line path: line path is infinite");
+        GeometryTestUtils.assertThrows(builder::close, IllegalStateException.class,
+                "Unable to close line path: line path is infinite");
     }
 
     @Test
@@ -1305,9 +1304,8 @@ public class LinePathTest {
                 .rayFrom(0));
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            builder.close();
-        }, IllegalStateException.class, "Unable to close line path: line path is infinite");
+        GeometryTestUtils.assertThrows(builder::close, IllegalStateException.class,
+                "Unable to close line path: line path is infinite");
     }
 
     @Test

@@ -45,14 +45,10 @@ public class Vector1DTest {
     @Test
     public void testConstants_normalize() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector1D.ZERO.normalize(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.NaN.normalize(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.POSITIVE_INFINITY.normalize(),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.NEGATIVE_INFINITY.normalize(),
-                IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector1D.ZERO::normalize, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector1D.NaN::normalize, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector1D.POSITIVE_INFINITY::normalize, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(Vector1D.NEGATIVE_INFINITY::normalize, IllegalArgumentException.class);
 
         Assert.assertSame(Vector1D.Unit.PLUS, Vector1D.Unit.PLUS.normalize());
         Assert.assertSame(Vector1D.Unit.MINUS, Vector1D.Unit.MINUS.normalize());
