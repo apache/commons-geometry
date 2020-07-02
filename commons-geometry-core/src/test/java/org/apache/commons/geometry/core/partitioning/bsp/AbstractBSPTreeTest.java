@@ -32,12 +32,12 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.FindNodeCutRule;
 import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partitioning.test.TestBSPTree;
+import org.apache.commons.geometry.core.partitioning.test.TestBSPTree.TestNode;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
 import org.apache.commons.geometry.core.partitioning.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
-import org.apache.commons.geometry.core.partitioning.test.TestBSPTree.TestNode;
 import org.junit.Assert;
 import org.junit.Test;
 

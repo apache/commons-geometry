@@ -19,10 +19,10 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.partitioning.test.AttributeBSPTree;
+import org.apache.commons.geometry.core.partitioning.test.AttributeBSPTree.AttributeNode;
 import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
-import org.apache.commons.geometry.core.partitioning.test.AttributeBSPTree.AttributeNode;
 import org.junit.Assert;
 import org.junit.Test;
 

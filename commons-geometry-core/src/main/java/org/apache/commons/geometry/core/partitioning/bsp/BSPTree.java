@@ -18,8 +18,8 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 
 /** Interface for Binary Space Partitioning (BSP) trees. BSP trees are spatial data
  * structures that recursively subdivide a space using hyperplanes. They can be used

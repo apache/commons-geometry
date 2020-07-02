@@ -16,9 +16,9 @@
  */
 package org.apache.commons.geometry.core.precision;
 
-import org.apache.commons.numbers.core.Precision;
-
 import java.io.Serializable;
+
+import org.apache.commons.numbers.core.Precision;
 
 /** Simple {@link DoublePrecisionContext} subclass that uses an absolute epsilon value to
  * determine equality between doubles.

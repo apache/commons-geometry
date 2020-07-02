@@ -16,9 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;

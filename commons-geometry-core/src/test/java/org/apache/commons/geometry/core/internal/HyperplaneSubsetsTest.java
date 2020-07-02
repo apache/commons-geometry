@@ -17,13 +17,13 @@
 package org.apache.commons.geometry.core.internal;
 
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint1D;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.Split;
 import org.junit.Assert;
 import org.junit.Test;
 
