@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+  -->
+<svg height="375" version="1.1" width="750" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="geometry-area">
+            <rect height="365.0" width="365.0" x="5.0" y="5.0"/>
+        </clipPath>
+    </defs>
+    <style>
+text {
+   font-size: 14px;
+}
+.node-name {
+    text-anchor: middle;
+    font-family: "Courier New", Courier, monospace;
+}
+.geometry-border {
+    fill: none;
+    stroke: gray;
+    stroke-width: 1;
+}
+.arrow {
+    fill: none;
+    stroke: blue;
+    stroke-width: 1;
+}
+.cut {
+    fill: none;
+    stroke: blue;
+    stroke-width: 1;
+    stroke-dasharray: 5,3;
+}
+.region-boundary {
+    stroke: orange;
+    stroke-width: 2;
+}
+.inside {
+    fill: #aaa;
+    opacity: 0.2;
+}
+.tree-path {
+    fill: none;
+    stroke: gray;
+    stroke-width: 1;
+}
+.inside-node {
+    font-weight: bold;
+}
+</style>
+    <g class="geometry" clip-path="url(#geometry-area)">
+        <g class="paths">
+            <path class="cut" d="M5.0 187.5 L370.0 187.5"/>
+            <path class="arrow" d="M363.5278640450004 192.2022820183398 L370.0 187.5 L363.5278640450004 182.7977179816602"/>
+        </g>
+        <g class="labels">
+            <text class="node-name" dominant-baseline="middle" x="187.5" y="187.5">a</text>
+            <text class="node-name" dominant-baseline="middle" x="187.5" y="96.25">b</text>
+            <text class="node-name" dominant-baseline="middle" x="187.5" y="278.75">c</text>
+        </g>
+    </g>
+    <rect class="geometry-border" height="365.0" width="365.0" x="5.0" y="5.0"/>
+    <g class="tree" transform="translate(380.0 5.0)">
+        <g class="node-a">
+            <text class="node-name" dominant-baseline="middle" x="182.5" y="160.0">a</text>
+        </g>
+        <g class="node-b outside-node">
+            <text class="node-name" dominant-baseline="middle" x="91.25" y="205.0">b</text>
+            <path class="tree-path" d="M100.21870870577568 200.57707515879554 L173.5312912942243 164.42292484120446"/>
+        </g>
+        <g class="node-c outside-node">
+            <text class="node-name" dominant-baseline="middle" x="273.75" y="205.0">c</text>
+            <path class="tree-path" d="M264.78129129422433 200.57707515879554 L191.4687087057757 164.42292484120446"/>
+        </g>
+    </g>
+</svg>

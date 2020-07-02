@@ -32,8 +32,9 @@
 
   <description>Examples of use of the "Commons Geometry" library.
   Codes in this module and its sub-modules are not part of the library.
-  They provide checking, benchmarking tools to enhance the documentation
-  and to help ensure correctness of the implementations.</description>
+  They provide code examples, checking, and benchmarking tools to enhance
+  the documentation and to help ensure correctness of the implementations.
+  </description>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -74,5 +75,6 @@
   <modules>
     <module>examples-jmh</module>
     <module>examples-io</module>
+    <module>examples-tutorials</module>
   </modules>
 </project>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+  -->
+<svg height="375" version="1.1" width="750" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="geometry-area">
+            <rect height="365.0" width="365.0" x="5.0" y="5.0"/>
+        </clipPath>
+    </defs>
+    <style>
+text {
+   font-size: 14px;
+}
+.node-name {
+    text-anchor: middle;
+    font-family: "Courier New", Courier, monospace;
+}
+.geometry-border {
+    fill: none;
+    stroke: gray;
+    stroke-width: 1;
+}
+.arrow {
+    fill: none;
+    stroke: blue;
+    stroke-width: 1;
+}
+.cut {
+    fill: none;
+    stroke: blue;
+    stroke-width: 1;
+    stroke-dasharray: 5,3;
+}
+.region-boundary {
+    stroke: orange;
+    stroke-width: 2;
+}
+.inside {
+    fill: #aaa;
+    opacity: 0.2;
+}
+.tree-path {
+    fill: none;
+    stroke: gray;
+    stroke-width: 1;
+}
+.inside-node {
+    font-weight: bold;
+}
+</style>
+    <g class="geometry" clip-path="url(#geometry-area)">
+        <g class="paths">
+            <path class="cut" d="M370.0 255.9375 L5.0 73.4375"/>
+            <path class="arrow" d="M12.891778830476365 72.12607829404685 L5.0 73.4375 L8.685929933523296 80.53777608795299"/>
+            <path class="region-boundary" d="M233.125 187.5 L187.5 164.6875"/>
+            <path class="region-boundary" d="M187.5 164.6875 L96.25 119.06249999999999"/>
+            <path class="cut" d="M96.25 119.06249999999999 L96.25 370.0"/>
+            <path class="arrow" d="M91.54771798166021 363.5278640450004 L96.25 370.0 L100.95228201833979 363.5278640450004"/>
+            <path class="region-boundary" d="M96.25 164.6875 L96.25 255.9375"/>
+            <path class="region-boundary" d="M96.25 119.06249999999999 L96.25 164.6875"/>
+            <path class="cut" d="M96.25 255.9375 L233.125 187.5"/>
+            <path class="arrow" d="M229.43907006647672 194.60027608795298 L233.125 187.5 L225.23322116952363 186.18857829404683"/>
+            <path class="region-boundary" d="M187.5 210.3125 L233.125 187.5"/>
+            <path class="region-boundary" d="M96.25 255.9375 L187.5 210.3125"/>
+            <path class="cut" d="M96.25 164.6875 L187.5 210.3125"/>
+            <path class="arrow" d="M179.60822116952363 211.62392170595317 L187.5 210.3125 L183.81407006647672 203.21222391204702"/>
+            <path class="region-boundary" d="M141.875 187.5 L187.5 210.3125"/>
+            <path class="cut" d="M187.5 164.6875 L141.875 187.5"/>
+            <path class="arrow" d="M145.56092993352328 180.39972391204702 L141.875 187.5 L149.76677883047637 188.81142170595317"/>
+            <path class="region-boundary" d="M187.5 164.6875 L141.875 187.5"/>
+            <path class="inside" d="M96.25 164.6875 L141.875 187.5 L187.5 164.6875 L96.25 119.06249999999999 L96.25 164.6875"/>
+            <path class="inside" d="M96.25 255.9375 L187.5 210.3125 L96.25 164.6875 L96.25 255.9375"/>
+            <path class="cut" d="M187.5 210.3125 L370.0 301.5625"/>
+            <path class="arrow" d="M362.10822116952363 302.87392170595314 L370.0 301.5625 L366.3140700664767 294.462223912047"/>
+            <path class="region-boundary" d="M187.5 210.3125 L278.75 255.9375"/>
+            <path class="cut" d="M278.75 255.9375 L278.75 210.3125"/>
+            <path class="arrow" d="M283.45228201833976 216.78463595499957 L278.75 210.3125 L274.04771798166024 216.78463595499957"/>
+            <path class="region-boundary" d="M278.75 255.9375 L278.75 210.3125"/>
+            <path class="inside" d="M187.5 210.3125 L278.75 255.9375 L278.75 210.3125 L233.125 187.5 L187.5 210.3125"/>
+            <path class="cut" d="M278.75 210.3125 L278.75 5.0"/>
+            <path class="arrow" d="M283.45228201833976 11.47213595499958 L278.75 5.0 L274.04771798166024 11.47213595499958"/>
+            <path class="region-boundary" d="M278.75 210.3125 L278.75 119.06249999999999"/>
+            <path class="cut" d="M278.75 119.06249999999999 L187.5 164.6875"/>
+            <path class="arrow" d="M191.18592993352328 157.58722391204702 L187.5 164.6875 L195.39177883047637 165.99892170595317"/>
+            <path class="region-boundary" d="M278.75 119.06249999999999 L187.5 164.6875"/>
+            <path class="inside" d="M187.5 164.6875 L278.75 210.3125 L278.75 119.06249999999999 L187.5 164.6875"/>
+        </g>
+        <g class="labels">
+            <text class="node-name" dominant-baseline="middle" x="187.5" y="164.6875">a</text>
+            <text class="node-name" dominant-baseline="middle" x="96.25" y="244.53125">b</text>
+            <text class="node-name" dominant-baseline="middle" x="164.6875" y="221.71875">d</text>
+            <text class="node-name" dominant-baseline="middle" x="141.875" y="187.5">h</text>
+            <text class="node-name" dominant-baseline="middle" x="164.6875" y="176.09375">l</text>
+            <text class="node-name" dominant-baseline="middle" x="187.5" y="187.5">p</text>
+            <text class="node-name" dominant-baseline="middle" x="131.73611111111111" y="157.08333333333334">q</text>
+            <text class="node-name" dominant-baseline="middle" x="126.66666666666667" y="210.3125">m</text>
+            <text class="node-name" dominant-baseline="middle" x="278.75" y="255.9375">i</text>
+            <text class="node-name" dominant-baseline="middle" x="278.75" y="233.125">n</text>
+            <text class="node-name" dominant-baseline="middle" x="243.26388888888889" y="217.91666666666666">r</text>
+            <text class="node-name" dominant-baseline="middle" x="324.375" y="255.9375">s</text>
+            <text class="node-name" dominant-baseline="middle" x="220.76822916666666" y="306.552734375">o</text>
+            <text class="node-name" dominant-baseline="middle" x="49.357638888888886" y="232.80815972222223">e</text>
+            <text class="node-name" dominant-baseline="middle" x="278.75" y="107.65625">c</text>
+            <text class="node-name" dominant-baseline="middle" x="233.125" y="141.875">f</text>
+            <text class="node-name" dominant-baseline="middle" x="248.33333333333331" y="164.6875">j</text>
+            <text class="node-name" dominant-baseline="middle" x="154.23177083333334" y="68.447265625">k</text>
+            <text class="node-name" dominant-baseline="middle" x="325.8958333333333" y="119.44270833333333">g</text>
+        </g>
+    </g>
+    <rect class="geometry-border" height="365.0" width="365.0" x="5.0" y="5.0"/>
+    <g class="tree" transform="translate(380.0 5.0)">
+        <g class="node-a">
+            <text class="node-name" dominant-baseline="middle" x="182.5" y="70.0">a</text>
+        </g>
+        <g class="node-b">
+            <text class="node-name" dominant-baseline="middle" x="91.25" y="115.0">b</text>
+            <path class="tree-path" d="M100.21870870577568 110.57707515879555 L173.5312912942243 74.42292484120445"/>
+        </g>
+        <g class="node-d">
+            <text class="node-name" dominant-baseline="middle" x="45.625" y="160.0">d</text>
+            <path class="tree-path" d="M52.744664484531626 152.9778651659414 L84.13033551546837 122.02213483405859"/>
+        </g>
+        <g class="node-h">
+            <text class="node-name" dominant-baseline="middle" x="22.8125" y="205.0">h</text>
+            <path class="tree-path" d="M27.33411931646686 196.08064134833936 L41.10338068353314 168.91935865166064"/>
+        </g>
+        <g class="node-l">
+            <text class="node-name" dominant-baseline="middle" x="11.40625" y="250.0">l</text>
+            <path class="tree-path" d="M13.863271274196281 240.30654620591056 L20.35547872580372 214.69345379408944"/>
+        </g>
+        <g class="node-p outside-node">
+            <text class="node-name" dominant-baseline="middle" x="5.703125" y="295.0">p</text>
+            <path class="tree-path" d="M6.960428901121775 285.07935551991585 L10.148946098878225 259.92064448008415"/>
+        </g>
+        <g class="node-q inside-node">
+            <text class="node-name" dominant-baseline="middle" x="17.109375" y="295.0">q</text>
+            <path class="tree-path" d="M15.852071098878225 285.07935551991585 L12.663553901121775 259.92064448008415"/>
+        </g>
+        <g class="node-m inside-node">
+            <text class="node-name" dominant-baseline="middle" x="34.21875" y="250.0">m</text>
+            <path class="tree-path" d="M31.76172872580372 240.30654620591056 L25.26952127419628 214.69345379408944"/>
+        </g>
+        <g class="node-i">
+            <text class="node-name" dominant-baseline="middle" x="68.4375" y="205.0">i</text>
+            <path class="tree-path" d="M63.91588068353314 196.08064134833936 L50.14661931646686 168.91935865166064"/>
+        </g>
+        <g class="node-n">
+            <text class="node-name" dominant-baseline="middle" x="57.03125" y="250.0">n</text>
+            <path class="tree-path" d="M59.48827127419628 240.30654620591056 L65.98047872580372 214.69345379408944"/>
+        </g>
+        <g class="node-r inside-node">
+            <text class="node-name" dominant-baseline="middle" x="51.328125" y="295.0">r</text>
+            <path class="tree-path" d="M52.58542890112177 285.07935551991585 L55.77394609887823 259.92064448008415"/>
+        </g>
+        <g class="node-s outside-node">
+            <text class="node-name" dominant-baseline="middle" x="62.734375" y="295.0">s</text>
+            <path class="tree-path" d="M61.47707109887823 285.07935551991585 L58.28855390112177 259.92064448008415"/>
+        </g>
+        <g class="node-o outside-node">
+            <text class="node-name" dominant-baseline="middle" x="79.84375" y="250.0">o</text>
+            <path class="tree-path" d="M77.38672872580372 240.30654620591056 L70.89452127419628 214.69345379408944"/>
+        </g>
+        <g class="node-e outside-node">
+            <text class="node-name" dominant-baseline="middle" x="136.875" y="160.0">e</text>
+            <path class="tree-path" d="M129.75533551546837 152.9778651659414 L98.36966448453163 122.02213483405859"/>
+        </g>
+        <g class="node-c">
+            <text class="node-name" dominant-baseline="middle" x="273.75" y="115.0">c</text>
+            <path class="tree-path" d="M264.78129129422433 110.57707515879555 L191.4687087057757 74.42292484120445"/>
+        </g>
+        <g class="node-f">
+            <text class="node-name" dominant-baseline="middle" x="228.125" y="160.0">f</text>
+            <path class="tree-path" d="M235.24466448453163 152.9778651659414 L266.6303355154684 122.02213483405859"/>
+        </g>
+        <g class="node-j inside-node">
+            <text class="node-name" dominant-baseline="middle" x="205.3125" y="205.0">j</text>
+            <path class="tree-path" d="M209.83411931646685 196.08064134833936 L223.60338068353315 168.91935865166064"/>
+        </g>
+        <g class="node-k outside-node">
+            <text class="node-name" dominant-baseline="middle" x="250.9375" y="205.0">k</text>
+            <path class="tree-path" d="M246.41588068353315 196.08064134833936 L232.64661931646685 168.91935865166064"/>
+        </g>
+        <g class="node-g outside-node">
+            <text class="node-name" dominant-baseline="middle" x="319.375" y="160.0">g</text>
+            <path class="tree-path" d="M312.2553355154684 152.9778651659414 L280.8696644845316 122.02213483405859"/>
+        </g>
+    </g>
+</svg>

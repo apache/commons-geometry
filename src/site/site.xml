@@ -78,6 +78,9 @@
       <item name="Convex Hull" href="/userguide/index.html#hull"/>
       <item name="Enclosing" href="/userguide/index.html#enclosing"/>
     </menu>
+    <menu name="Tutorials">
+      <item name="BSP Trees" href="/tutorials/bsp-tree.html" />
+    </menu>
   </body>
 
   <custom>

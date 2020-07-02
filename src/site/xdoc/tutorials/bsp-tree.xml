@@ -1,0 +1,440 @@
+<?xml version="1.0"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+  -->
+<document>
+  <properties>
+    <title>BSP Tree Tutorial</title>
+  </properties>
+
+  <body>
+
+    <h1>Binary Space Partitioning Tree Tutorial</h1>
+    <section name="Contents" id="toc">
+      <ul>
+        <li>
+          <a href="#overview">Overview</a>
+        </li>
+        <li>
+          <a href="#introduction">Introduction</a>
+        </li>
+        <li>
+          <a href="#bottom-up">Bottom-Up Construction</a>
+        </li>
+        <li>
+          <a href="#top-down">Top-Down Construction</a>
+        </li>
+        <li>
+          <a href="#convex">Convex Regions and Tree Performance</a>
+        </li>
+        <li>
+          <a href="#boolean">Boolean Operations</a>
+        </li>
+      </ul>
+    </section>
+
+    <section name="Overview" id="overview">
+      <p>
+        This tutorial gives a brief introduction to the
+        <a target="_blank" href="https://en.wikipedia.org/wiki/Binary_space_partitioning">BSP tree</a> data structure and its use in
+        <em>Commons Geometry.</em> All sample code in this tutorial can be found in the
+        <a class="code" href="../commons-geometry-examples/commons-geometry-examples-tutorials/apidocs/org/apache/commons/geometry/examples/tutorials/bsp/package-summary.html"
+        >org.apache.commons.geometry.examples.tutorials.bsp</a> package.
+      </p>
+    </section>
+
+    <section name="Introduction" id="introduction">
+      <p>
+        Binary space partitioning (BSP) trees are a geometric data structure used throughout <em>Commons Geometry</em>.
+        They can be used for many purposes but are primarily used in this library to represent regions of space, such
+        as polygons in 2D and polyhedrons in 3D. The data structure is very flexible and, unlike some other geometric
+        data structures, can be used to represent infinite as well as finite regions in Euclidean and other spaces.
+      </p>
+      <p>
+        The main function of BSP trees is the recursive partitioning of space. The partitioning is performed by
+        <a target="_blank" href="https://en.wikipedia.org/wiki/Hyperplane">hyperplanes</a>, which can be pictured as
+        generalizations of the idea of planes in Euclidean 3D space. For example, lines in Euclidean 2D space and great
+        circles in spherical 2D space are both hyperplanes. Hyperplanes split the space around them into 3 parts:
+        (1) points that lie on the "plus" side of the hyperplane, (2) points that lie on the "minus" side, and
+        (3) points that lie on the hyperplane itself. Each node in a BSP tree can be associated with a hyperplane that
+        splits the space of the node into two smaller spaces, each of which is assigned to a child node. This splitting
+        hyperplane is called the node's "cut" hyperplane. If a node does not have a cut, it is a leaf node. In the case
+        of BSP trees representing regions, each node is also assigned a location attribute indicating whether or not that
+        node lies inside or outside of the region being represented. The full region then consists of the union of all
+        of the spaces represented by the "inside" leaf nodes.
+      </p>
+      <p>
+        The best way to get a feel for BSP trees is to see how they are constructed. The next two sections construct the
+        same 2D region using two separate approaches: direct cutting of tree nodes (bottom-up) and insertion of region
+        boundaries (top-down). We will use Euclidean 2D space since it is the easiest to visualize, however, the techniques
+        demonstrated apply to all spaces and dimensions in <em>Commons Geometry</em>.
+      </p>
+    </section>
+
+    <section name="Bottom-Up Construction" id="bottom-up">
+      <p>
+        In this section, we will construct a BSP tree representing a 2D shape that I refer to as a "skewed bow tie".
+        This will give us a good idea of how BSP trees work and how their internal structure is used to represent
+        regions of space.
+      </p>
+
+      <p>
+        We will start our BSP tree building adventure by constructing a simple but essential object:
+        a <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html"
+        >DoublePrecisionContext</a>. Nearly all code that uses <em>Commons Geometry</em> begins with this step.
+        Precision context instances are used to perform floating point comparisons and smooth over floating point
+        errors that accumulate during computations. This allows points and other values that are close but not exact
+        to be considered equal for the purposes of the geometric operation. Without this fuzzy comparison, values that
+        should be equal analytically, such as \(\pi \over 4\) and \(\arcsin{1 \over \sqrt{2}}\), may not be evaluated
+        as equal.
+      </p>
+      <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);</source>
+
+      <p>
+        Our next step is to create an actual BSP tree instance. We will use the
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/RegionBSPTree2D.html">RegionBSPTree2D</a>
+        class since we want to represent a region in Euclidean 2D space. Our tree will start out empty, meaning that
+        it contains only a single node (the root node) with a region location of "outside".
+      </p>
+      <source>
+RegionBSPTree2D tree = RegionBSPTree2D.empty();</source>
+      <p>
+        The image below shows a visualization of our tree. The portion on the left shows the region represented by the
+        tree with the "inside" parts of the region shaded in gray. The portion on the right shows the internal structure
+        of the tree. As you can see, our tree has only one node, which we've labeled <var>a</var>, and the
+        represented region is completely empty.
+      </p>
+      <img src="../images/tutorials/bsp-tree/bu-cut-0.svg" />
+
+      <p>
+        Now, let's add an inside to our region. We will use the
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Lines.html">Lines</a>
+        factory class to create a 2D hyperplane (a
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Line.html">Line</a>)
+        and use it to cut the root node of our tree.
+      </p>
+      <source>
+Line rootCut = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
+RegionNode2D a = tree.getRoot();
+a.cut(rootCut);</source>
+      <p>
+        Our tree now looks like this:
+      </p>
+      <img src="../images/tutorials/bsp-tree/bu-cut-1.svg" />
+
+      <p>
+        We now have something moderately interesting to look at. Our root node <var>a</var> is now cut with a line
+        along the x axis and we have two new child nodes, <var>b</var> and <var>c</var>, with region locations of
+        inside and outside respectively. There are two very important things to note at this point:
+        <ul>
+          <li>The cut of <var>a</var> is <strong>infinite</strong>. Even though the image shows a line segment, the cutting line
+          subset extends to infinity in both directions. This is a very important point: <strong>when a node is cut, the
+          cut partitions the node's <em>entire</em> space.</strong> Since the root node represents the entire
+          2D space, which is infinite, the root node cut is also infinite.</li>
+          <li>The inside of the region lies on the left side of the line when looking in the line direction. This is a convention
+          and not a geometric property. When a cut is inserted into a tree, the convention is to mark the node on the
+          minus side of the hyperplane as being inside and the node on the plus side of the hyperplane as being outside.
+          It just so happens that the left side of a line is considered to be the minus side (see
+          <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Line.html">Line</a>),
+          so <var>b</var> is marked as inside. This behavior can be changed by explicitly passing a
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/RegionCutRule.html">RegionCutRule</a>
+          when cutting the node.
+          </li>
+        </ul>
+      </p>
+
+      <p>
+      Continuing with tree construction, we can cut the <var>b</var> node to add the upper left boundary
+      of our "skewed bow tie".
+      </p>
+      <source>
+b.insertCut(Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(-1, 1), precision));</source>
+      <img src="../images/tutorials/bsp-tree/bu-cut-2.svg" />
+      <p>
+      Our inside region is now restricted to only the <var>d</var> node, and once again the region is infinite. We can
+      also see that the region boundary (indicated with a orange line) no longer travels the full length of <var>a</var>'s
+      cut. Rather, only a portion of the cut forms a boundary between an inside part of the region and an outside part.
+      </p>
+
+      <p>Adding another line, we finally obtain a finite region.</p>
+      <source>
+d.insertCut(Lines.fromPointAndDirection(Vector2D.of(-5, 1), Vector2D.Unit.MINUS_Y, precision));</source>
+      <img src="../images/tutorials/bsp-tree/bu-cut-3.svg" />
+
+      <p>
+      The next two cuts produce similar results on the plus side of the root node.
+      </p>
+      <source>
+c.insertCut(Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(1, -1), precision));</source>
+      <img src="../images/tutorials/bsp-tree/bu-cut-4.svg" />
+
+      <source>
+h.insertCut(Lines.fromPointAndDirection(Vector2D.of(5, -1), Vector2D.Unit.PLUS_Y, precision));</source>
+      <img src="../images/tutorials/bsp-tree/bu-cut-5.svg" />
+
+      <p>
+        We now have a nicely balanced tree representing our non-convex "skewed bow tie" region.
+      </p>
+
+      <p>
+        Before moving on to top-down tree construction, let's take another look at the orange lines representing the
+        region boundaries. Note that the region boundaries always lie directly on the cut hyperplane of an internal
+        node. However, as mentioned before, they do not necessarily extend the entire length of the cut. In fact,
+        the root node <var>a</var> has two disjoint portions serving as region boundaries: one with the outside of
+        the region on the plus side of the node cut (an "outside facing" boundary) and one with the inside of the
+        region on the plus side of the node cut (an "inside facing" boundary). Both types of boundaries
+        can be directly accessed on nodes with the
+        <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/AbstractRegionBSPTree.AbstractRegionNode.html#getCutBoundary()">getCutBoundary()</a>
+        method.
+      </p>
+    </section>
+
+    <section name="Top-Down Construction" id="top-down">
+      <p>
+      In the previous section, we constructed a BSP tree using the bottom-up approach of cutting leaf nodes with
+      hyperplanes. In this section, we will construct the same region using the top-down approach of inserting hyperplane
+      convex subsets into the top of the tree. This is the most typical construction technique.
+      </p>
+
+      <p>
+      The first question you may ask here is "What is a hyperplane convex subset?" That is a very good question.
+      The name is quite long only because it is intended to be very generic and apply equally well to all spaces and
+      dimensions. Taking the name exactly at face value it means a subset of a hyperplane that is convex, i.e. the
+      shortest path between any two points in the subset also lies in the subset. Since our 2D hyperplanes are
+      <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Line.html">Line</a>s, our
+      hyperplane convex subsets include
+      <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Segment.html">Segment</a>s
+      and
+      <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Ray.html">Ray</a>s
+      along with the less frequently used
+      <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/ReverseRay.html">ReverseRay</a>s
+      and subsets containing an entire line, created with
+      <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Line.html#span()">Line.span()</a>.
+      </p>
+
+      <p>
+      In order to construct our wonderful "skewed bow tie" this time, we will insert hyperplane convex subsets representing
+      the region boundaries into the top of the tree. These will propagate down through the tree, being split as needed
+      at each internal node, until they hit a leaf node. That leaf node (or nodes) will then be cut as demonstrated in the
+      bottom-up construction section using the hyperplane of the hyperplane convex subset. Let's start by constructing
+      our precision context and empty tree and inserting our first boundary, which will be the line segment <code>[(-5, 0), (-1, 0)]</code>.
+      </p>
+      <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+Segment firstBoundary = Lines.segmentFromPoints(Vector2D.of(-5, 0), Vector2D.of(-1, 0), precision);
+tree.insert(firstBoundary);</source>
+      <p>
+      This first boundary insertion gives us the following BSP tree:
+      </p>
+      <img src="../images/tutorials/bsp-tree/td-1.svg" />
+
+      <p>
+        "Wait a minute!" you may be saying. "I specifically requested that a line segment be inserted into the tree and
+        now I have an entire line span!" This is true. However, if we go back to one of the important notes from the previous
+        section, we will be reminded that node cuts always fill the <em>entire</em> space of the node being cut. That
+        is a crucial part of a tree's geometric consistency. Since we ended up cutting the root node when we inserted
+        our segment, we ended up with an entire line span for a cut. Another way to look at this is that <strong><em>inserted
+        hyperplane subsets always expand to fill the node they land in.</em></strong> Our little segment landed in the
+        eternal expanse of the root node and so became infinite.
+      </p>
+
+      <p>
+        Let's continue inserting boundaries for the left side of the shape and we will begin to feel our sanity returning.
+      </p>
+      <source>
+tree.insert(Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(-5, 3), precision));
+tree.insert(Lines.segmentFromPoints(Vector2D.of(-5, 3), Vector2D.of(-5, 0), precision));</source>
+      <img src="../images/tutorials/bsp-tree/td-2.svg" />
+
+      <p>
+        The tree now looks exactly as it did halfway through our bottom-up construction exercise. Let's insert the
+        remainder of the tree boundaries, this time using a
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/path/LinePath.html">LinePath</a>
+        to simplify construction of the line segments.
+      </p>
+      <source>
+LinePath path = LinePath.fromVertices(Arrays.asList(
+        Vector2D.of(-1, 0),
+        Vector2D.of(5, -3),
+        Vector2D.of(5, 0),
+        Vector2D.of(1, 0)), precision);
+tree.insert(path);</source>
+
+      <img src="../images/tutorials/bsp-tree/td-3.svg" />
+
+      <p>
+        We have now completed our "skewed bow tie" shape. The represented region and the internal BSP tree structure
+        are identical to that constructed in the previous section but required far less code. Unless a very specific
+        internal tree structure is required, this top-down construction approach will generally be the preferred one.
+      </p>
+    </section>
+
+    <section name="Convex Regions and Tree Performance" id="convex">
+      <p>
+        Astute observers may notice something interesting in our examples after the first triangle portion of the
+        shape is inserted: the tree is completely unbalanced. All of the internal nodes lie
+        on the minus side of their parent, effectively converting the tree into a linked list. This property is not
+        unique to this example but in fact occurs any time region boundaries are used to construct a BSP tree for a convex
+        region. For example, take the hexagon below. No matter what order the region boundaries are inserted, the resulting
+        tree will always degenerate into a simple linked list.
+      </p>
+      <img src="../images/tutorials/bsp-tree/hex-unbalanced.svg" />
+
+      <p>
+        This unbalanced hexagon example will not cause any performance issues because it only contains a small number of nodes.
+        However, if we were to construct a convex polygon with a much larger number of sides (1000, for example)
+        then we will most definitely run into issues. This is due to the fact that most BSP tree operations
+        require some sort of traversal from a node to the root or vice versa. When the tree becomes very tall, performance
+        suffers, with the amount of degradation directly related to the height of the tree.
+      </p>
+
+      <p>
+        So, how do we improve performance here? The main thing we want to do is decrease the height of
+        the tree while keeping the represented region intact. We can do this by inserting cuts into the tree that do not affect
+        the region but only serve to partition the space so the tree is more balanced. We can call such cuts
+        "structural cuts". We will first insert these cuts directly and then take a look at a helper class designed
+        for just this issue.
+      </p>
+
+      <p>
+        If you recall earlier, we discussed how the
+        <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/RegionCutRule.html">RegionCutRule</a>
+        enum can be used to specify which side of a cut node is marked as inside and which side is marked as outside.
+        The default value for cut operations is
+        <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/RegionCutRule.html#MINUS_INSIDE">MINUS_INSIDE</a>
+        which marks the minus side of the cut as inside. There is also the special value
+        <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/RegionCutRule.html#INHERIT">INHERIT</a>,
+        which is specifically designed for our use case here. When cutting nodes with this rule, both the plus and
+        minus sides of the cut are assigned the same region location as the parent node. This means that the cut does
+        not affect the region represented by the tree. In order to construct a more balanced version of our hexagon above, we will
+        start by inserting a cut using this rule that will split our hexagon in two.
+      </p>
+      <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+tree.insert(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision).span(),
+        RegionCutRule.INHERIT);</source>
+      <img src="../images/tutorials/bsp-tree/hex-struct-0.svg" />
+
+      <p>
+        As you can see, we now have a cut in our tree but the represented region is still completely
+        empty. If we insert the hexagon boundaries now, we end up with a more balanced, and therefore more performant,
+        tree than before.
+      </p>
+      <img src="../images/tutorials/bsp-tree/hex-struct-1.svg" />
+
+      <p>
+        One issue with directly inserting structural cuts is that if a region boundary lies directly
+        on a structural cut, the child nodes for that boundary will not be set correctly. Therefore, direct insertion
+        of structural cuts as demonstrated above is only practical when we have knowledge of the boundaries to be inserted and can
+        guarantee that no boundaries lie on a structural cut. In other situations, we can use the
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/RegionBSPTree2D.PartitionedRegionBuilder2D.html">PartitionedRegionBuilder2D</a>
+        class. This builder class allows arbitrary structural cuts to be inserted before region boundaries and handles
+        edge cases like the one just described that may affect the region output. The example below uses this
+        builder class to insert a grid of structural cuts centered on the shape centroid before inserting the region boundaries.
+      </p>
+      <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+LinePath path = LinePath.fromVertexLoop(Arrays.asList(
+        Vector2D.of(-4, 0),
+        Vector2D.of(-2, -3),
+        Vector2D.of(2, -3),
+        Vector2D.of(4, 0),
+        Vector2D.of(2, 3),
+        Vector2D.of(-2, 3)
+    ), precision);
+
+RegionBSPTree2D tree = RegionBSPTree2D.partitionedRegionBuilder()
+        .insertAxisAlignedGrid(path.getBounds(), 1, precision)
+        .insertBoundaries(path)
+        .build();</source>
+        <img src="../images/tutorials/bsp-tree/hex-partitioned.svg" />
+
+    </section>
+
+    <section name="Boolean Operations" id="boolean">
+      <p>
+        A highly useful feature of the region BSP trees in <em>Commons Geometry</em> is their support for
+        boolean operations, e.g. complement, union, intersection, difference, and xor. The implementation of this
+        feature is based on the paper by Bruce Naylor, John Amanatides and William Thibault
+        <a target="_blank" href="http://www.cs.yorku.ca/~amana/research/bsptSetOp.pdf">Merging BSP Trees Yields Polyhedral Set Operations</a>,
+        Proc. Siggraph '90, Computer Graphics 24(4), August 1990, pp 115-124, published by the
+        Association for Computing Machinery (ACM). This paper provides a wealth of information about the boolean
+        algorithms as well as BSP trees in general and is highly recommended.
+      </p>
+
+      <p>
+        The example below computes the union of two triangles to form a non-convex region, which we might call a
+        "standard bow tie". A convenience method is used to directly convert the
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/path/LinePath.html">LinePath</a>
+         instances to BSP trees. The result of the operation is written to
+        <var>result</var>, leaving the two input trees <var>a</var> and <var>b</var> unmodified.
+      </p>
+      <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+RegionBSPTree2D a = LinePath.fromVertexLoop(Arrays.asList(
+        Vector2D.of(2, 0),
+        Vector2D.of(-4, 3),
+        Vector2D.of(-4, -3)
+    ), precision).toTree();
+
+RegionBSPTree2D b = LinePath.fromVertexLoop(Arrays.asList(
+        Vector2D.of(-2, 0),
+        Vector2D.of(4, -3),
+        Vector2D.of(4, 3)
+    ), precision).toTree();
+
+RegionBSPTree2D result = RegionBSPTree2D.empty();
+
+result.union(a, b);
+      </source>
+      <img src="../images/tutorials/bsp-tree/union.svg" />
+
+      <p>
+        In the above example, the input trees were left unmodified. If we no longer need one of the input trees
+        in its original form, we can save some memory by writing the result of the operation back into one of the inputs.
+        The next example uses this approach to perform an xor operation.
+      </p>
+      <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+RegionBSPTree2D result = LinePath.fromVertexLoop(Arrays.asList(
+        Vector2D.of(2, 0),
+        Vector2D.of(-4, 3),
+        Vector2D.of(-4, -3)
+    ), precision).toTree();
+
+RegionBSPTree2D other = LinePath.fromVertexLoop(Arrays.asList(
+        Vector2D.of(-2, 0),
+        Vector2D.of(4, -3),
+        Vector2D.of(4, 3)
+    ), precision).toTree();
+
+result.xor(other);
+      </source>
+      <img src="../images/tutorials/bsp-tree/xor.svg" />
+    </section>
+
+  </body>
+</document>
