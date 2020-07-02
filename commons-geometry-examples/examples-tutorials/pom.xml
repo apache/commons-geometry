@@ -24,9 +24,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.commons</groupId>
   <artifactId>commons-geometry-examples-tutorials</artifactId>
-  <version>1.0-SNAPSHOT</version>
   <name>Apache Commons Geometry Tutorials</name>
 
   <description>Contains code used in project tutorials. Code in this module is not part of the public API.</description>
