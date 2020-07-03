@@ -205,7 +205,7 @@ public class Point1STest {
         Assert.assertEquals(d, a);
 
         Assert.assertNotEquals(a, e);
-        Assert.assertEquals(e, Point1S.NaN);
+        Assert.assertEquals(Point1S.NaN, e);
     }
 
     @Test
