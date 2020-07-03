@@ -75,7 +75,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     /** Classify a point location with respect to the region.
      * @param x the point to classify
      * @return the location of the point with respect to the region
-     * @see #classify(Vector1D)
+     * @see #classify(org.apache.commons.geometry.core.Point)
      */
     public RegionLocation classify(final double x) {
         return classify(Vector1D.of(x));
