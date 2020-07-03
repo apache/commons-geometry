@@ -19,7 +19,9 @@ package org.apache.commons.geometry.euclidean.threed.mesh;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -248,6 +250,31 @@ public class SimpleTriangleMeshTest {
         Assert.assertSame(vertices.get(3), f2.getPoint3());
         Assert.assertEquals(Arrays.asList(vertices.get(0), vertices.get(2), vertices.get(3)), f2.getVertices());
         Assert.assertTrue(f2.definesPolygon());
+    }
+
+    @Test
+    public void testFaces_iterator() {
+        // arrange
+        final List<Vector3D> vertices = Arrays.asList(
+            Vector3D.ZERO,
+            Vector3D.of(1, 0, 0),
+            Vector3D.of(0, 1, 0)
+        );
+
+        final List<int[]> faceIndices = Arrays.asList(
+            new int[] {0, 1, 2}
+        );
+
+        final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(vertices, faceIndices, TEST_PRECISION);
+
+        // act/assert
+        final Iterator<TriangleMesh.Face> it = mesh.faces().iterator();
+
+        Assert.assertTrue(it.hasNext());
+        Assert.assertEquals(0, it.next().getIndex());
+        Assert.assertFalse(it.hasNext());
+
+        GeometryTestUtils.assertThrows(() -> it.next(), NoSuchElementException.class);
     }
 
     @Test

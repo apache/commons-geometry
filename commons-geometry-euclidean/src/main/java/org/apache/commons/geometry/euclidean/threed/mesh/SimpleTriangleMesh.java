@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -398,8 +399,11 @@ public final class SimpleTriangleMesh implements TriangleMesh {
         /** {@inheritDoc} */
         @Override
         public T next() {
-            final Face face = getFace(index++);
-            return fn.apply(face);
+            if (hasNext()) {
+                final Face face = getFace(index++);
+                return fn.apply(face);
+            }
+            throw new NoSuchElementException();
         }
     }
 
