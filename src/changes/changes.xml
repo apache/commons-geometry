@@ -51,16 +51,17 @@ If the output is not quite correct, check for invisible trailing spaces!
   </properties>
   <body>
 
-    <release version="1.0" date="TBD" description="
-This is the first release of Apache Commons Geometry.
+    <release version="1.0-beta1" date="2020-07-08" description="
+This is a beta release of Apache Commons Geometry. No guarantees are
+made regarding the stability of the API or compatibility with future
+releases.
 
-Apache Commons RNG 1.0 contains the following modules:
-  commons-geometry-core (requires Java 8)
-  commons-geometry-bsp (requires Java 8)
-  commons-geometry-hull (requires Java 8)
-  commons-geometry-enclosing (requires Java 8)
-  commons-geometry-spherical (requires Java 8)
-  commons-geometry-euclidean (requires Java 8)
+Apache Commons Geometry 1.0-beta1 contains the following library modules:
+  commons-geometry-core (requires Java 8+)
+  commons-geometry-euclidean (requires Java 8+)
+  commons-geometry-spherical (requires Java 8+)
+  commons-geometry-hull (requires Java 8+)
+  commons-geometry-enclosing (requires Java 8+)
 ">
     </release>
 

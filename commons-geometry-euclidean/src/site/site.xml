@@ -28,10 +28,9 @@
       <item name="Overview" href="/index.html"/>
       <item name="Latest API docs (development)"
             href="apidocs/index.html"/>
-      <!-- <item name="Javadoc (1.0 release)"
-                 href="https://commons.apache.org/geometry/commons-geometry-euclidean/javadocs/api-1.0/index.html"/> -->
+      <item name="Javadoc (1.0-beta1 release)"
+            href="https://commons.apache.org/geometry/commons-geometry-euclidean/javadocs/api-1.0-beta1/index.html"/>
     </menu>
-
 
     <head>
       <![CDATA[<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
