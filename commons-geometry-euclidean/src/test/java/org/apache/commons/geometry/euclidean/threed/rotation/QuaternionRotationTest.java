@@ -1464,7 +1464,7 @@ public class QuaternionRotationTest {
         checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYZ, 0, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
     }
 
-    /** Helper method for verifying that a {@link RelativeEulerAngles} instance constructed with the given arguments
+    /** Helper method for verifying that a relative euler angles instance constructed with the given arguments
      * is correctly converted to a QuaternionRotation that matches the given operator.
      * @param rotation
      * @param axes
@@ -1556,7 +1556,7 @@ public class QuaternionRotationTest {
         checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYZ, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
     }
 
-    /** Helper method for verifying that an {@link AbsoluteEulerAngles} instance constructed with the given arguments
+    /** Helper method for verifying that an absolute euler angles instance constructed with the given arguments
      * is correctly converted to a QuaternionRotation that matches the given operator.
      * @param rotation
      * @param axes

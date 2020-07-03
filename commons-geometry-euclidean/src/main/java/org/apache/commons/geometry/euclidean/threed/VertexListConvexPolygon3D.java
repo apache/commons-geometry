@@ -36,7 +36,7 @@ final class VertexListConvexPolygon3D extends AbstractConvexPolygon3D {
      * vertices should not contain the duplicated first endpoint. No validation is performed.
      * @param plane plane containing convex polygon
      * @param vertices vertices defining the convex polygon
-     * @throw IllegalArgumentException if fewer than 3 vertices are given
+     * @throws IllegalArgumentException if fewer than 3 vertices are given
      */
     VertexListConvexPolygon3D(final Plane plane, final List<Vector3D> vertices) {
         super(plane);

@@ -51,8 +51,8 @@ class LinecastChecker3D {
     }
 
     /** Configure the instance to expect no results (an empty list from linecast() and null from
-     * linecastFirst()) from the next linecast operation performed by {@link #whenGiven(Line)}
-     * or {@link #whenGiven(Segment)}.
+     * linecastFirst()) from the next linecast operation performed by {@link #whenGiven(Line3D)}
+     * or {@link #whenGiven(LineConvexSubset3D)}.
      * @return
      */
     public LinecastChecker3D expectNothing() {
@@ -74,7 +74,7 @@ class LinecastChecker3D {
         return this;
     }
 
-    /** Fluent API alias for {@link #returns(Vector3D, Vector3D)}.
+    /** Fluent API alias for {@link #expect(Vector3D, Vector3D)}.
      * @param point
      * @param normal
      * @return
@@ -83,7 +83,7 @@ class LinecastChecker3D {
         return expect(point, normal);
     }
 
-    /** Perform {@link Linecastable2D#linecast(Line)} and {@link Linecastable2D#linecastFirst(Line)}
+    /** Perform {@link Linecastable3D#linecast(Line3D)} and {@link Linecastable3D#linecastFirst(Line3D)}
      * operations using the given line and assert that the results match the configured expected
      * values.
      * @param line
@@ -93,7 +93,7 @@ class LinecastChecker3D {
         checkLinecastFirstResult(target.linecastFirst(line), line);
     }
 
-    /** Perform {@link Linecastable2D#linecast(Segment)} and {@link Linecastable2D#linecastFirst(Segment)}
+    /** Perform {@link Linecastable3D#linecast(LineConvexSubset3D)} and {@link Linecastable3D#linecastFirst(LineConvexSubset3D)}
      * operations using the given line segment and assert that the results match the configured
      * expected results.
      * @param segment
@@ -152,8 +152,8 @@ class LinecastChecker3D {
     }
 
     /** Return true if the given linecast points are equivalent according to the test precision.
-     * @param expected
-     * @param actual
+     * @param a
+     * @param b
      * @return
      */
     private static boolean eq(final LinecastPoint3D a, final LinecastPoint3D b) {
@@ -163,7 +163,7 @@ class LinecastChecker3D {
                 TEST_PRECISION.eq(a.getAbscissa(), b.getAbscissa());
     }
 
-    /** Convert an {@link ExpectedResult} struct to a {@link LinecastPoint2D} instance
+    /** Convert an {@link ExpectedResult} struct to a {@link org.apache.commons.geometry.euclidean.twod.LinecastPoint2D} instance
      * using the given line.
      * @param expected
      * @param line

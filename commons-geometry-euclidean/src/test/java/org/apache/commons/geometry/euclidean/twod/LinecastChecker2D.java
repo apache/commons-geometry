@@ -48,7 +48,7 @@ public class LinecastChecker2D {
 
     /** Configure the instance to expect no results (an empty list from linecast() and null from
      * linecastFirst()) from the next linecast operation performed by {@link #whenGiven(Line)}
-     * or {@link #whenGiven(Segment)}.
+     * or {@link #whenGiven(LineConvexSubset)}.
      * @return
      */
     public LinecastChecker2D expectNothing() {
@@ -70,7 +70,7 @@ public class LinecastChecker2D {
         return this;
     }
 
-    /** Fluent API alias for {@link #returns(Vector2D, Vector2D)}.
+    /** Fluent API alias for {@link #expect(Vector2D, Vector2D)}.
      * @param point
      * @param normal
      * @return
@@ -89,7 +89,7 @@ public class LinecastChecker2D {
         checkLinecastFirstResult(target.linecastFirst(line), line);
     }
 
-    /** Perform {@link Linecastable2D#linecast(Segment)} and {@link Linecastable2D#linecastFirst(Segment)}
+    /** Perform {@link Linecastable2D#linecast(LineConvexSubset)} and {@link Linecastable2D#linecastFirst(LineConvexSubset)}
      * operations using the given line segment and assert that the results match the configured
      * expected results.
      * @param segment
@@ -148,8 +148,8 @@ public class LinecastChecker2D {
     }
 
     /** Return true if the given linecast points are equivalent according to the test precision.
-     * @param expected
-     * @param actual
+     * @param a
+     * @param b
      * @return
      */
     private static boolean eq(final LinecastPoint2D a, final LinecastPoint2D b) {
