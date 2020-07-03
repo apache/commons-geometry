@@ -747,7 +747,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void tetsGetCutBoundary_singleCut() {
+    public void testGetCutBoundary_singleCut() {
         // arrange
         tree.insert(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
 
@@ -762,7 +762,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void tetsGetCutBoundary_singleCut_leafNode() {
+    public void testGetCutBoundary_singleCut_leafNode() {
         // arrange
         tree.insert(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
 
@@ -774,7 +774,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void tetsGetCutBoundary_singleCorner() {
+    public void testGetCutBoundary_singleCorner() {
         // arrange
         tree.insert(new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)));
         tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
@@ -793,7 +793,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void tetsGetCutBoundary_leafNode() {
+    public void testGetCutBoundary_leafNode() {
         // arrange
         tree.insert(new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)));
         tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));

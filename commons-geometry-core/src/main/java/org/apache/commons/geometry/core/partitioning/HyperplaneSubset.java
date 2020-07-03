@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.Transform;
 /** Interface representing a subset of the points lying in a hyperplane. Examples include
  * rays and line segments in Euclidean 2D space and triangular facets in Euclidean 3D space.
  * Hyperplane subsets can have finite or infinite size and can represent contiguous regions
- * of the hyperplane (as in the examples aboves); multiple, disjoint regions; or the
+ * of the hyperplane (as in the examples above); multiple, disjoint regions; or the
  * {@link Hyperplane#span() entire hyperplane}.
  *
  * <p>This interface is very similar to the {@link org.apache.commons.geometry.core.Region Region}

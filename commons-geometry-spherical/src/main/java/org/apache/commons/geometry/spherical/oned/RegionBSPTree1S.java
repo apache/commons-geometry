@@ -466,8 +466,8 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             return max;
         }
 
-        /** Get the minumum value of the interval or zero if no minimum value exists.
-         * @return the minumum value of the interval or zero
+        /** Get the minimum value of the interval or zero if no minimum value exists.
+         * @return the minimum value of the interval or zero
          *      if no minimum value exists.
          */
         public double getMinValue() {

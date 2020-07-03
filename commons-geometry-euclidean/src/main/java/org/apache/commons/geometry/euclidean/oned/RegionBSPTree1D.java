@@ -438,9 +438,9 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
             return max;
         }
 
-        /** Get the minumum value of the interval or {@link Double#NEGATIVE_INFINITY}
+        /** Get the minimum value of the interval or {@link Double#NEGATIVE_INFINITY}
          * if no minimum value exists.
-         * @return the minumum value of the interval or {@link Double#NEGATIVE_INFINITY}
+         * @return the minimum value of the interval or {@link Double#NEGATIVE_INFINITY}
          *      if no minimum value exists.
          */
         public double getMinValue() {

@@ -621,7 +621,7 @@ public final class Planes {
         /** The previous point from the point sequence. */
         private Vector3D prevPt;
 
-        /** The previous vector from the point sequence, preceeding from the {@code startPt} to {@code prevPt}. */
+        /** The previous vector from the point sequence, preceding from the {@code startPt} to {@code prevPt}. */
         private Vector3D prevVector;
 
         /** The computed {@code normal} vector for the plane. */
