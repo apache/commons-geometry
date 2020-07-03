@@ -73,8 +73,8 @@ class MergeChecker {
 
     /** Construct a new instance that will verify the output of performing the given merge operation
      * on the input trees.
-     * @param tree1 first tree in the merge operation
-     * @param tree2 second tree in the merge operation
+     * @param tree1Factory first tree factory in the merge operation
+     * @param tree2Factory second tree factory in the merge operation
      * @param constOperation object that performs the merge operation in a form that
      *      leaves both argument unmodified
      * @param inPlaceOperation object that performs the merge operation in a form
