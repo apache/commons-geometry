@@ -586,7 +586,8 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
             this.firstOnly = firstOnly;
         }
 
-        /** Get the first {@link org.apache.commons.geometry.euclidean.twod.LinecastPoint2D} resulting from the linecast operation.
+        /** Get the first {@link org.apache.commons.geometry.euclidean.twod.LinecastPoint2D}
+         * resulting from the linecast operation.
          * @return the first linecast result point
          */
         public LinecastPoint3D getFirstResult() {
