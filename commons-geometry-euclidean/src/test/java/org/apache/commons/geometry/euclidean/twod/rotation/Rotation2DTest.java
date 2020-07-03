@@ -103,6 +103,19 @@ public class Rotation2DTest {
     @Test
     public void testInverse_apply() {
         // arrange
+        final Rotation2D orig = Rotation2D.of(100.0);
+        final Rotation2D inv = orig.inverse();
+
+        final Vector2D v1 = Vector2D.of(1, 2);
+        final Vector2D v2 = Vector2D.of(-3, 4);
+        final Vector2D v3 = Vector2D.of(-5, -6);
+        final Vector2D v4 = Vector2D.of(7, -8);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(v1, orig.apply(inv.apply(v1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(v2, inv.apply(orig.apply(v2)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(v3, orig.apply(inv.apply(v3)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(v4, inv.apply(orig.apply(v4)), TEST_EPS);
     }
 
     @Test
