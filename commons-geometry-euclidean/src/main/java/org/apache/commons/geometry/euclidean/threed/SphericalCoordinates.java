@@ -282,7 +282,7 @@ public final class SphericalCoordinates implements Spatial {
      * For example, a polar angle of {@code -pi/2} and one of {@code +pi/2} will both
      * normalize to {@code pi/2}.
      * @param polar polar value in radians
-     * @return equalivalent polar value in the range {@code [0, +pi]}
+     * @return equivalent polar value in the range {@code [0, +pi]}
      */
     public static double normalizePolar(double polar) {
         // normalize the polar angle; this is the angle between the polar vector and the point ray

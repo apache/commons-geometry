@@ -168,7 +168,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_mutipleSegmentsAtVertex_maximize() {
+    public void testConnectAll_multipleSegmentsAtVertex_maximize() {
         // arrange
         final Maximize connector = new Maximize();
 
@@ -217,7 +217,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_mutipleSegmentsAtVertex_minimize() {
+    public void testConnectAll_multipleSegmentsAtVertex_minimize() {
         // arrange
         final Minimize connector = new Minimize();
 

@@ -65,7 +65,7 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
     /** Construct a line segment based on an existing line.
      * @param start abscissa of the line segment start point
      * @param end abscissa of the line segment end point
-     * @param line the underyling line
+     * @param line the underlying line
      */
     public TestLineSegment(final double start, final double end, final TestLine line) {
         this.start = Math.min(start, end);
