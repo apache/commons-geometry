@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -102,9 +101,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
     /** {@inheritDoc} */
     @Override
     public Iterable<TriangleMesh.Face> faces() {
-        return () -> {
-            return new FaceIterator<Face>(Function.identity());
-        };
+        return () -> new FaceIterator<>(Function.identity());
     }
 
     /** {@inheritDoc} */
@@ -163,10 +160,15 @@ public final class SimpleTriangleMesh implements TriangleMesh {
     public SimpleTriangleMesh transform(final Transform<Vector3D> transform) {
         // only the vertices and bounds are modified; the faces are the same
         final Bounds3D.Builder boundsBuilder = Bounds3D.builder();
-        final List<Vector3D> tVertices = vertices.stream()
-                .map(transform)
-                .peek(boundsBuilder::add)
-                .collect(Collectors.toList());
+        final List<Vector3D> tVertices = new ArrayList<>(vertices.size());
+
+        Vector3D tVertex;
+        for (final Vector3D vertex : vertices) {
+            tVertex = transform.apply(vertex);
+
+            boundsBuilder.add(tVertex);
+            tVertices.add(tVertex);
+        }
 
         final Bounds3D tBounds = boundsBuilder.hasBounds() ?
                 boundsBuilder.build() :
@@ -269,12 +271,10 @@ public final class SimpleTriangleMesh implements TriangleMesh {
     public static SimpleTriangleMesh from(final BoundarySource3D boundarySrc, final DoublePrecisionContext precision) {
         final Builder builder = builder(precision);
         try (Stream<Triangle3D> stream = boundarySrc.triangleStream()) {
-            stream.forEach(tri -> {
-                builder.addFaceUsingVertices(
-                        tri.getPoint1(),
-                        tri.getPoint2(),
-                        tri.getPoint3());
-            });
+            stream.forEach(tri -> builder.addFaceUsingVertices(
+                tri.getPoint1(),
+                tri.getPoint2(),
+                tri.getPoint3()));
         }
 
         return builder.build();
