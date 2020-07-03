@@ -386,12 +386,6 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testToTree_largeNumberOfFaces() {
-        // arrange
-        // TODO
-    }
-
-    @Test
     public void testTransform() {
         // arrange
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(Parallelepiped.unitCube(TEST_PRECISION), TEST_PRECISION);
