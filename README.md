@@ -45,8 +45,10 @@ Apache Commons Geometry
 
 [![Build Status](https://travis-ci.org/apache/commons-geometry.svg)](https://travis-ci.org/apache/commons-geometry)
 [![Coverage Status](https://coveralls.io/repos/apache/commons-geometry/badge.svg)](https://coveralls.io/r/apache/commons-geometry)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=commons-geometry&metric=alert_status)](https://sonarcloud.io/dashboard?id=commons-geometry)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-parent/)
 [![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-parent/1.0-beta1.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-parent/1.0-beta1)
+[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 The Apache Commons Geometry project provides geometric types and utilities.
 

@@ -47,6 +47,7 @@ Apache Commons Geometry Hull
 [![Coverage Status](https://coveralls.io/repos/apache/commons-geometry/badge.svg)](https://coveralls.io/r/apache/commons-geometry)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/)
 [![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-hull/1.0-beta1.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-hull/1.0-beta1)
+[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 Algorithms for computing convex hulls.
 
