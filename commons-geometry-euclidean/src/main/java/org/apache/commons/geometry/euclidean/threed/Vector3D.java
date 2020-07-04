@@ -433,7 +433,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
                 return this.isNaN();
             }
 
-            return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
+            return Double.compare(x, rhs.x) == 0 &&
+                    Double.compare(y, rhs.y) == 0 &&
+                    Double.compare(z, rhs.z) == 0;
         }
         return false;
     }

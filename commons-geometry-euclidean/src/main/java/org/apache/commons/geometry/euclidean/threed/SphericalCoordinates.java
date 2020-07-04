@@ -188,7 +188,9 @@ public final class SphericalCoordinates implements Spatial {
                 return this.isNaN();
             }
 
-            return (radius == rhs.radius) && (azimuth == rhs.azimuth) && (polar == rhs.polar);
+            return Double.compare(radius, rhs.radius) == 0 &&
+                    Double.compare(azimuth, rhs.azimuth) == 0 &&
+                    Double.compare(polar, rhs.polar) == 0;
         }
         return false;
     }

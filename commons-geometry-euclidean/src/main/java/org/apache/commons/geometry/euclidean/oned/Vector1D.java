@@ -224,7 +224,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         final double sig2 = Math.signum(v.x);
 
         // the angle is 0 if the x value signs are the same and pi if not
-        return (sig1 == sig2) ? 0.0 : PlaneAngleRadians.PI;
+        return Double.compare(sig1, sig2) == 0 ? 0.0 : PlaneAngleRadians.PI;
     }
 
     /** Convenience method to apply a function to this vector. This
@@ -288,7 +288,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
                 return this.isNaN();
             }
 
-            return x == rhs.x;
+            return Double.compare(x, rhs.x) == 0;
         }
         return false;
     }

@@ -158,7 +158,8 @@ public final class PolarCoordinates implements Spatial {
                 return this.isNaN();
             }
 
-            return (radius == rhs.radius) && (azimuth == rhs.azimuth);
+            return Double.compare(radius, rhs.radius) == 0 &&
+                    Double.compare(azimuth, rhs.azimuth) == 0;
         }
         return false;
     }

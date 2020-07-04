@@ -376,7 +376,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
                 return this.isNaN();
             }
 
-            return (x == rhs.x) && (y == rhs.y);
+            return Double.compare(x, rhs.x) == 0 &&
+                    Double.compare(y, rhs.y) == 0;
         }
         return false;
     }

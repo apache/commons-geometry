@@ -33,7 +33,7 @@ public final class Vectors {
      *      false
      */
     public static boolean isRealNonZero(final double value) {
-        return Double.isFinite(value) && value != 0.0;
+        return Double.isFinite(value) && Double.compare(value, 0.0) != 0;
     }
 
     /** Throws an {@link IllegalArgumentException} if the given norm value
