@@ -1103,6 +1103,24 @@ public class Vector3DTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final Vector3D a = Vector3D.of(0.0, -0.0, 0.0);
+        final Vector3D b = Vector3D.of(-0.0, 0.0, -0.0);
+        final Vector3D c = Vector3D.of(0.0, -0.0, 0.0);
+        final Vector3D d = Vector3D.of(-0.0, 0.0, -0.0);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         final Vector3D v = Vector3D.of(1, 2, 3);

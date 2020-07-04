@@ -254,6 +254,24 @@ public class PolarCoordinatesTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final PolarCoordinates a = PolarCoordinates.of(0.0, -0.0);
+        final PolarCoordinates b = PolarCoordinates.of(-0.0, 0.0);
+        final PolarCoordinates c = PolarCoordinates.of(0.0, -0.0);
+        final PolarCoordinates d = PolarCoordinates.of(-0.0, 0.0);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToCartesian() {
         // arrange
         final double sqrt2 = Math.sqrt(2);

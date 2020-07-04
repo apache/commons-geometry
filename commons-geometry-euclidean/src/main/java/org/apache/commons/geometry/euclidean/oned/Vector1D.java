@@ -277,18 +277,16 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      */
     @Override
     public boolean equals(final Object other) {
-
         if (this == other) {
             return true;
         }
-
         if (other instanceof Vector1D) {
             final Vector1D rhs = (Vector1D) other;
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
 
-            return x == rhs.x;
+            return Double.compare(x, rhs.x) == 0;
         }
         return false;
     }

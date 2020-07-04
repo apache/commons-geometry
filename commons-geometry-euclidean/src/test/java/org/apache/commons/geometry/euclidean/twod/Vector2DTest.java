@@ -919,6 +919,24 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final Vector2D a = Vector2D.of(0.0, 0.0);
+        final Vector2D b = Vector2D.of(-0.0, -0.0);
+        final Vector2D c = Vector2D.of(0.0, 0.0);
+        final Vector2D d = Vector2D.of(-0.0, -0.0);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         final Vector2D v = Vector2D.of(1, 2);

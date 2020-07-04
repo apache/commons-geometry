@@ -599,6 +599,25 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final Vector1D a = Vector1D.of(0.0);
+        final Vector1D b = Vector1D.of(-0.0);
+        final Vector1D c = Vector1D.of(0.0);
+        final Vector1D d = Vector1D.of(-0.0);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         final Vector1D v = Vector1D.of(3);

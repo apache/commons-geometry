@@ -734,6 +734,24 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(0.0, -0.0);
+        final AffineTransformMatrix1D b = AffineTransformMatrix1D.of(-0.0, 0.0);
+        final AffineTransformMatrix1D c = AffineTransformMatrix1D.of(0.0, -0.0);
+        final AffineTransformMatrix1D d = AffineTransformMatrix1D.of(-0.0, 0.0);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(1, 2);
