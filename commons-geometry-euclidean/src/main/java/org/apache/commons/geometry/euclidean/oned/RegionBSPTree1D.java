@@ -75,7 +75,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     /** Classify a point location with respect to the region.
      * @param x the point to classify
      * @return the location of the point with respect to the region
-     * @see #classify(Point)
+     * @see #classify(org.apache.commons.geometry.core.Point)
      */
     public RegionLocation classify(final double x) {
         return classify(Vector1D.of(x));
@@ -85,7 +85,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * of the region.
      * @param x the location to test
      * @return true if the location is on the inside or boundary of the region
-     * @see #contains(Point)
+     * @see #contains(org.apache.commons.geometry.core.Point)
      */
     public boolean contains(final double x) {
         return contains(Vector1D.of(x));
@@ -438,9 +438,9 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
             return max;
         }
 
-        /** Get the minumum value of the interval or {@link Double#NEGATIVE_INFINITY}
+        /** Get the minimum value of the interval or {@link Double#NEGATIVE_INFINITY}
          * if no minimum value exists.
-         * @return the minumum value of the interval or {@link Double#NEGATIVE_INFINITY}
+         * @return the minimum value of the interval or {@link Double#NEGATIVE_INFINITY}
          *      if no minimum value exists.
          */
         public double getMinValue() {

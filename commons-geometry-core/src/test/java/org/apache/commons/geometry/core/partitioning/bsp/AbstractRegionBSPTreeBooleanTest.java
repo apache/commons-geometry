@@ -143,7 +143,7 @@ public class AbstractRegionBSPTreeBooleanTest {
             return box;
         };
 
-        final Supplier<TestRegionBSPTree> horizonalFactory = () -> {
+        final Supplier<TestRegionBSPTree> horizontalFactory = () -> {
             final TestRegionBSPTree horizontal = fullTree();
             horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, 2), new TestPoint2D(0, 2)));
 
@@ -151,7 +151,7 @@ public class AbstractRegionBSPTreeBooleanTest {
         };
 
         // act/assert
-        unionChecker(horizonalFactory, boxFactory)
+        unionChecker(horizontalFactory, boxFactory)
             .count(3)
             .inside(TestPoint2D.ZERO, new TestPoint2D(1, 1), new TestPoint2D(1, -1))
             .outside(new TestPoint2D(0, 3), new TestPoint2D(3, 3))
@@ -268,7 +268,7 @@ public class AbstractRegionBSPTreeBooleanTest {
             return box;
         };
 
-        final Supplier<TestRegionBSPTree> horizonalFactory = () -> {
+        final Supplier<TestRegionBSPTree> horizontalFactory = () -> {
             final TestRegionBSPTree horizontal = fullTree();
             horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, -2), new TestPoint2D(0, -2)));
 
@@ -276,7 +276,7 @@ public class AbstractRegionBSPTreeBooleanTest {
         };
 
         // act/assert
-        intersectionChecker(horizonalFactory, boxFactory)
+        intersectionChecker(horizontalFactory, boxFactory)
             .inside(new TestPoint2D(1, -3))
             .outside(new TestPoint2D(1, -1), new TestPoint2D(-1, -3),
                     new TestPoint2D(1, -5), new TestPoint2D(3, -3))
@@ -395,7 +395,7 @@ public class AbstractRegionBSPTreeBooleanTest {
             return box;
         };
 
-        final Supplier<TestRegionBSPTree> horizonalFactory = () -> {
+        final Supplier<TestRegionBSPTree> horizontalFactory = () -> {
             final TestRegionBSPTree horizontal = fullTree();
             horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, -2), new TestPoint2D(0, -2)));
 
@@ -403,7 +403,7 @@ public class AbstractRegionBSPTreeBooleanTest {
         };
 
         // act/assert
-        differenceChecker(horizonalFactory, boxFactory)
+        differenceChecker(horizontalFactory, boxFactory)
             .inside(new TestPoint2D(-1, -3), new TestPoint2D(-1, -5),
                     new TestPoint2D(1, -5), new TestPoint2D(3, -5),
                     new TestPoint2D(4, -3))
@@ -529,7 +529,7 @@ public class AbstractRegionBSPTreeBooleanTest {
             return box;
         };
 
-        final Supplier<TestRegionBSPTree> horizonalFactory = () -> {
+        final Supplier<TestRegionBSPTree> horizontalFactory = () -> {
             final TestRegionBSPTree horizontal = fullTree();
             horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, -2), new TestPoint2D(0, -2)));
 
@@ -537,7 +537,7 @@ public class AbstractRegionBSPTreeBooleanTest {
         };
 
         // act/assert
-        xorChecker(horizonalFactory, boxFactory)
+        xorChecker(horizontalFactory, boxFactory)
             .inside(new TestPoint2D(-1, -3), new TestPoint2D(-1, -5),
                     new TestPoint2D(1, -5), new TestPoint2D(3, -5),
                     new TestPoint2D(4, -3), new TestPoint2D(1, -1))

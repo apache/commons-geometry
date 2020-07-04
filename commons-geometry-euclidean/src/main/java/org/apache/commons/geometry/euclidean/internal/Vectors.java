@@ -26,7 +26,7 @@ public final class Vectors {
     /** Private constructor. */
     private Vectors() {}
 
-    /** Returns true if the given value is real (ie, not NaN or inifinite)
+    /** Returns true if the given value is real (ie, not NaN or infinite)
      * and not equal to zero.
      * @param value the value to test
      * @return true if {@code value} is not NaN, infinite, or zero; otherwise

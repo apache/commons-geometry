@@ -163,6 +163,7 @@ public class WelzlEncloser2DTest {
             for (final Vector2D rs : refSupport) {
                 if (s == rs) {
                     found = true;
+                    break;
                 }
             }
             Assert.assertTrue(found);

@@ -328,8 +328,8 @@ public final class Planes {
                         i, face.length));
             }
 
-            for (int j = 0; j < face.length; ++j) {
-                faceVertices.add(vertices.get(face[j]));
+            for (final int vertexIndex : face) {
+                faceVertices.add(vertices.get(vertexIndex));
             }
 
             polygons.add(convexPolygonFromVertices(
@@ -621,7 +621,7 @@ public final class Planes {
         /** The previous point from the point sequence. */
         private Vector3D prevPt;
 
-        /** The previous vector from the point sequence, preceeding from the {@code startPt} to {@code prevPt}. */
+        /** The previous vector from the point sequence, preceding from the {@code startPt} to {@code prevPt}. */
         private Vector3D prevVector;
 
         /** The computed {@code normal} vector for the plane. */
@@ -653,7 +653,7 @@ public final class Planes {
 
         /** Build a plane from the configured point sequence.
          * @return a plane built from the configured point sequence
-         * @throw IllegalArgumentException if the points do not define a plane
+         * @throws IllegalArgumentException if the points do not define a plane
          */
         Plane build() {
             if (pts.size() < 3) {
@@ -669,7 +669,7 @@ public final class Planes {
          * and adding all discovered unique points to the given list.
          * @param vertexOutput list that unique points discovered in the point sequence will be added to
          * @return a plane created from the configured point sequence
-         * @throw IllegalArgumentException if the points do not define a plane or the {@code requireConvex}
+         * @throws IllegalArgumentException if the points do not define a plane or the {@code requireConvex}
          *      flag is true and the points do not define a convex area
          */
         Plane buildForConvexPolygon(final List<Vector3D> vertexOutput) {
@@ -681,7 +681,7 @@ public final class Planes {
 
         /** Process a point from the point sequence.
          * @param pt
-         * @throw IllegalArgumentException if the points do not define a plane or the {@code requireConvex}
+         * @throws IllegalArgumentException if the points do not define a plane or the {@code requireConvex}
          *      flag is true and the points do not define a convex area
          */
         private void processPoint(final Vector3D pt) {
@@ -712,7 +712,7 @@ public final class Planes {
         /** Process the computed cross product of two vectors from the input point sequence. The vectors
          * start at the first point in the sequence and point to adjacent points later in the sequence.
          * @param cross the cross product of two vectors from the input point sequence
-         * @throw IllegalArgumentException if the points do not define a plane or the {@code requireConvex}
+         * @throws IllegalArgumentException if the points do not define a plane or the {@code requireConvex}
          *      flag is true and the points do not define a convex area
          */
         private void processCrossProduct(final Vector3D cross) {
@@ -743,7 +743,7 @@ public final class Planes {
 
         /** Construct the plane instance using the value gathered during point processing.
          * @return the created plane instance
-         * @throw IllegalArgumentException if the point do not define a plane
+         * @throws IllegalArgumentException if the point do not define a plane
          */
         private Plane createPlane() {
             if (normal == null) {
@@ -786,9 +786,6 @@ public final class Planes {
         /** Base plane to extrude from. */
         private final EmbeddingPlane basePlane;
 
-        /** Extruded plane; this forms the end of the 3D region opposite the base plane. */
-        private final EmbeddingPlane extrudedPlane;
-
         /** Vector to extrude along; the extruded plane is translated from the base plane by this amount. */
         private final Vector3D extrusionVector;
 
@@ -809,7 +806,9 @@ public final class Planes {
                 final DoublePrecisionContext precision) {
 
             this.basePlane = basePlane;
-            this.extrudedPlane = basePlane.translate(extrusionVector);
+
+            // Extruded plane; this forms the end of the 3D region opposite the base plane.
+            EmbeddingPlane extrudedPlane = basePlane.translate(extrusionVector);
 
             if (basePlane.contains(extrudedPlane)) {
                 throw new IllegalArgumentException(

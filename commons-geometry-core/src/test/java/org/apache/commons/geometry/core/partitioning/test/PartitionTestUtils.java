@@ -52,7 +52,7 @@ public final class PartitionTestUtils {
         Assert.assertEquals(msg, expected.getY(), actual.getY(), EPS);
     }
 
-    /** Assert that two line segemtns are equal using the default test epsilon.
+    /** Assert that two line segments are equal using the default test epsilon.
      * @param expected
      * @param actual
      */

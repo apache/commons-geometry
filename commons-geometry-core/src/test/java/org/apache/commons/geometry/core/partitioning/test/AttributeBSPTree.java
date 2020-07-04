@@ -20,7 +20,7 @@ import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 
-/** Simple {@link BSPTree} implementation allowing arbitrary values to be
+/** Simple {@link org.apache.commons.geometry.core.partitioning.bsp.BSPTree} implementation allowing arbitrary values to be
  * associated with each node.
  * @param <P> Point implementation type
  * @param <T> Tree node attribute type
@@ -59,7 +59,7 @@ public class AttributeBSPTree<P extends Point<P>, T>
         dst.setAttribute(src.getAttribute());
     }
 
-    /** {@link BSPTree.Node} implementation for use with {@link AttributeBSPTree}s.
+    /** {@link org.apache.commons.geometry.core.partitioning.bsp.BSPTree.Node} implementation for use with {@link AttributeBSPTree}s.
      * @param <P> Point implementation type
      * @param <T> Tree node attribute type
      */

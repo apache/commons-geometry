@@ -467,7 +467,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      *  of each pyramid is calculated using the fact that it is located 3/4 of the way along the
      *  line from the apex to the base. The region centroid then becomes the volume-weighted
      *  average of these pyramid centers.
-     *  @see https://en.wikipedia.org/wiki/Polyhedron#Volume
+     *  @see <a href="https://en.wikipedia.org/wiki/Polyhedron#Volume">Polyhedron#Volume</a>
      */
     private static final class RegionSizePropertiesVisitor implements BSPTreeVisitor<Vector3D, RegionNode3D> {
 
@@ -586,7 +586,8 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
             this.firstOnly = firstOnly;
         }
 
-        /** Get the first {@link LinecastPoint2D} resulting from the linecast operation.
+        /** Get the first {@link org.apache.commons.geometry.euclidean.twod.LinecastPoint2D}
+         * resulting from the linecast operation.
          * @return the first linecast result point
          */
         public LinecastPoint3D getFirstResult() {

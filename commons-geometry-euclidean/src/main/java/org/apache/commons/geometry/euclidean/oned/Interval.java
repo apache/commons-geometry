@@ -180,7 +180,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      * of the region.
      * @param x the location to test
      * @return true if the location is on the inside or boundary of the region
-     * @see #contains(Point)
+     * @see #contains(org.apache.commons.geometry.core.Point)
      */
     public boolean contains(final double x) {
         return classify(x) != RegionLocation.OUTSIDE;

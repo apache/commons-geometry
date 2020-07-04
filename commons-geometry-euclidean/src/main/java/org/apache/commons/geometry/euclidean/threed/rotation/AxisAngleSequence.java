@@ -121,8 +121,8 @@ public final class AxisAngleSequence {
         return angle2;
     }
 
-    /** Get the angle of rotation around the thrid axis, in radians.
-     * @return angle of rotation around the thrid axis, in radians
+    /** Get the angle of rotation around the third axis, in radians.
+     * @return angle of rotation around the third axis, in radians
      */
     public double getAngle3() {
         return angle3;

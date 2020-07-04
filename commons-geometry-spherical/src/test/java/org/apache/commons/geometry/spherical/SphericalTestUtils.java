@@ -52,7 +52,7 @@ public final class SphericalTestUtils {
         Assert.assertEquals(msg, expected.getPolar(), actual.getPolar(), tolerance);
     }
 
-    /** Assert that the given points are equalivalent, using the specified tolerance value.
+    /** Assert that the given points are equivalent, using the specified tolerance value.
      * @param expected
      * @param actual
      * @param tolerance

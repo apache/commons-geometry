@@ -243,9 +243,9 @@ public final class TestOBJWriter implements AutoCloseable {
 
         writer.write('f');
 
-        for (int i = 0; i < vertexIndices.length; ++i) {
+        for (final int vertexIndex : vertexIndices) {
             writer.write(SPACE);
-            writer.write(String.valueOf(vertexIndices[i] + vertexOffset));
+            writer.write(String.valueOf(vertexIndex + vertexOffset));
         }
 
         writer.write(lineSeparator);
