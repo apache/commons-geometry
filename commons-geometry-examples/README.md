@@ -46,12 +46,12 @@ Apache Commons Geometry Examples
 [![Build Status](https://travis-ci.org/apache/commons-geometry.svg)](https://travis-ci.org/apache/commons-geometry)
 [![Coverage Status](https://coveralls.io/repos/apache/commons-geometry/badge.svg)](https://coveralls.io/r/apache/commons-geometry)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples/)
-[![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-examples/1.0.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-examples/1.0)
+[![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-examples/1.0-beta1.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-examples/1.0-beta1)
 
 Examples of use of the "Commons Geometry" library.
   Codes in this module and its sub-modules are not part of the library.
-  They provide checking, benchmarking tools to enhance the documentation
-  and to help ensure correctness of the implementations.
+  They provide code examples, checking, and benchmarking tools to enhance
+  the documentation and to help ensure correctness of the implementations.
 
 Documentation
 -------------
@@ -70,7 +70,7 @@ Alternatively you can pull it from the central Maven repositories:
 <dependency>
   <groupId>org.apache.commons</groupId>
   <artifactId>commons-geometry-examples</artifactId>
-  <version>1.0</version>
+  <version>1.0-beta1</version>
 </dependency>
 ```
 
@@ -85,7 +85,7 @@ There are some guidelines which will make applying PRs easier for us:
 + Provide JUnit tests for your changes and make sure your changes don't break any existing tests by running ```mvn clean test```.
 
 If you plan to contribute on a regular basis, please consider filing a [contributor license agreement](https://www.apache.org/licenses/#clas).
-You can learn more about contributing via GitHub in our [contribution guidelines](../CONTRIBUTING.md).
+You can learn more about contributing via GitHub in our [contribution guidelines](CONTRIBUTING.md).
 
 License
 -------

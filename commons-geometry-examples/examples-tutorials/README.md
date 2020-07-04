@@ -46,9 +46,9 @@ Apache Commons Geometry Tutorials
 [![Build Status](https://travis-ci.org/apache/commons-geometry.svg)](https://travis-ci.org/apache/commons-geometry)
 [![Coverage Status](https://coveralls.io/repos/apache/commons-geometry/badge.svg)](https://coveralls.io/r/apache/commons-geometry)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples-tutorials/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples-tutorials/)
-[![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-examples-tutorials/1.0.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-examples-tutorials/1.0)
+[![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-examples-tutorials/1.0-beta1.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-examples-tutorials/1.0-beta1)
 
-Contains code used in project tutorials.
+Contains code used in project tutorials. Code in this module is not part of the public API.
 
 Documentation
 -------------
@@ -67,7 +67,7 @@ Alternatively you can pull it from the central Maven repositories:
 <dependency>
   <groupId>org.apache.commons</groupId>
   <artifactId>commons-geometry-examples-tutorials</artifactId>
-  <version>1.0</version>
+  <version>1.0-beta1</version>
 </dependency>
 ```
 
@@ -82,7 +82,7 @@ There are some guidelines which will make applying PRs easier for us:
 + Provide JUnit tests for your changes and make sure your changes don't break any existing tests by running ```mvn clean test```.
 
 If you plan to contribute on a regular basis, please consider filing a [contributor license agreement](https://www.apache.org/licenses/#clas).
-You can learn more about contributing via GitHub in our [contribution guidelines](../../CONTRIBUTING.md).
+You can learn more about contributing via GitHub in our [contribution guidelines](CONTRIBUTING.md).
 
 License
 -------

@@ -25,7 +25,7 @@
  | commons-build-plugin/trunk/src/main/resources/commons-xdoc-templates |
  +======================================================================+
  |                                                                      |
- | 1) Re-generate using: mvn commons:readme-md                          |
+ | 1) Re-generate using: mvn commons-build:readme-md                    |
  |                                                                      |
  | 2) Set the following properties in the component's pom:              |
  |    - commons.componentid (required, alphabetic, lower case)          |
@@ -43,10 +43,10 @@
 Apache Commons Geometry Core
 ===================
 
-[![Build Status](https://travis-ci.org/apache/commons-geometry-core.svg?branch=master)](https://travis-ci.org/apache/commons-geometry-core)
-[![Coverage Status](https://coveralls.io/repos/apache/commons-geometry-core/badge.svg?branch=master)](https://coveralls.io/r/apache/commons-geometry-core)
+[![Build Status](https://travis-ci.org/apache/commons-geometry.svg)](https://travis-ci.org/apache/commons-geometry)
+[![Coverage Status](https://coveralls.io/repos/apache/commons-geometry/badge.svg)](https://coveralls.io/r/apache/commons-geometry)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/)
-[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-core/1.0-beta1.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-core/1.0-beta1)
 
 Core interfaces and classes for Apache Commons Geometry.
 
@@ -54,7 +54,7 @@ Documentation
 -------------
 
 More information can be found on the [Apache Commons Geometry Core homepage](https://commons.apache.org/proper/commons-geometry).
-The [JavaDoc](https://commons.apache.org/proper/commons-geometry/javadocs/api-release) can be browsed.
+The [Javadoc](https://commons.apache.org/proper/commons-geometry/apidocs) can be browsed.
 Questions related to the usage of Apache Commons Geometry Core should be posted to the [user mailing list][ml].
 
 Where can I get the latest release?
@@ -67,7 +67,7 @@ Alternatively you can pull it from the central Maven repositories:
 <dependency>
   <groupId>org.apache.commons</groupId>
   <artifactId>commons-geometry-core</artifactId>
-  <version>1.0</version>
+  <version>1.0-beta1</version>
 </dependency>
 ```
 

@@ -40,23 +40,23 @@
  |                                                                      |
  +======================================================================+
 --->
-Persistent storage examples
+Apache Commons Geometry IO Examples
 ===================
 
 [![Build Status](https://travis-ci.org/apache/commons-geometry.svg)](https://travis-ci.org/apache/commons-geometry)
 [![Coverage Status](https://coveralls.io/repos/apache/commons-geometry/badge.svg)](https://coveralls.io/r/apache/commons-geometry)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples-io/)
-[![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-examples-io/1.0.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-examples-io/1.0)
+[![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-examples-io/1.0-beta1.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-examples-io/1.0-beta1)
 
-Contains examples for saving shapes to persistent storage.
+Contains code examples for reading and writing geometric objects to persistent storage.
   Code in this module is not part of the public API.
 
 Documentation
 -------------
 
-More information can be found on the [Persistent storage examples homepage](https://commons.apache.org/proper/commons-geometry).
+More information can be found on the [Apache Commons Geometry IO Examples homepage](https://commons.apache.org/proper/commons-geometry).
 The [Javadoc](https://commons.apache.org/proper/commons-geometry/apidocs) can be browsed.
-Questions related to the usage of Persistent storage examples should be posted to the [user mailing list][ml].
+Questions related to the usage of Apache Commons Geometry IO Examples should be posted to the [user mailing list][ml].
 
 Where can I get the latest release?
 -----------------------------------
@@ -68,7 +68,7 @@ Alternatively you can pull it from the central Maven repositories:
 <dependency>
   <groupId>org.apache.commons</groupId>
   <artifactId>commons-geometry-examples-io</artifactId>
-  <version>1.0</version>
+  <version>1.0-beta1</version>
 </dependency>
 ```
 
@@ -83,7 +83,7 @@ There are some guidelines which will make applying PRs easier for us:
 + Provide JUnit tests for your changes and make sure your changes don't break any existing tests by running ```mvn clean test```.
 
 If you plan to contribute on a regular basis, please consider filing a [contributor license agreement](https://www.apache.org/licenses/#clas).
-You can learn more about contributing via GitHub in our [contribution guidelines](../../CONTRIBUTING.md).
+You can learn more about contributing via GitHub in our [contribution guidelines](CONTRIBUTING.md).
 
 License
 -------
@@ -93,7 +93,7 @@ See the `NOTICE.txt` file for required notices and attributions.
 
 Donations
 ---------
-You like Persistent storage examples? Then [donate back to the ASF](https://www.apache.org/foundation/contributing.html) to support the development.
+You like Apache Commons Geometry IO Examples? Then [donate back to the ASF](https://www.apache.org/foundation/contributing.html) to support the development.
 
 Additional Resources
 --------------------
