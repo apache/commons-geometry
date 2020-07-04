@@ -786,9 +786,6 @@ public final class Planes {
         /** Base plane to extrude from. */
         private final EmbeddingPlane basePlane;
 
-        /** Extruded plane; this forms the end of the 3D region opposite the base plane. */
-        private final EmbeddingPlane extrudedPlane;
-
         /** Vector to extrude along; the extruded plane is translated from the base plane by this amount. */
         private final Vector3D extrusionVector;
 
@@ -809,7 +806,9 @@ public final class Planes {
                 final DoublePrecisionContext precision) {
 
             this.basePlane = basePlane;
-            this.extrudedPlane = basePlane.translate(extrusionVector);
+
+            // Extruded plane; this forms the end of the 3D region opposite the base plane.
+            EmbeddingPlane extrudedPlane = basePlane.translate(extrusionVector);
 
             if (basePlane.contains(extrudedPlane)) {
                 throw new IllegalArgumentException(
