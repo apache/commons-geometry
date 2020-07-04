@@ -19,12 +19,12 @@ package org.apache.commons.geometry.core.internal;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class GeometryInternalErrorTest {
+public class GeometryInternalExceptionTest {
 
     @Test
     public void testMessage() {
         // act
-        final GeometryInternalError err = new GeometryInternalError();
+        final GeometryInternalException err = new GeometryInternalException();
 
         // assert
         final String msg = "An internal geometry error occurred. This most often indicates an " +
