@@ -328,8 +328,8 @@ public final class Planes {
                         i, face.length));
             }
 
-            for (int j = 0; j < face.length; ++j) {
-                faceVertices.add(vertices.get(face[j]));
+            for (int faceJ : face) {
+                faceVertices.add(vertices.get(faceJ));
             }
 
             polygons.add(convexPolygonFromVertices(
