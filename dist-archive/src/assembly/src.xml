@@ -32,6 +32,7 @@ limitations under the License.
         <exclude>**/.project/**</exclude>
         <exclude>**/.classpath</exclude>
         <exclude>**/.checkstyle</exclude>
+        <exclude>**/.travis.yml</exclude>
         <exclude>**/site-content/**</exclude>
         <exclude>**/target/**</exclude>
       </excludes>
