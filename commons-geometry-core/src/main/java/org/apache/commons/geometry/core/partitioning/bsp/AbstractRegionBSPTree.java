@@ -1079,7 +1079,7 @@ public abstract class AbstractRegionBSPTree<
             final RegionLocation minusLocation = condenseRecursive(node.getMinus());
             final RegionLocation plusLocation = condenseRecursive(node.getPlus());
 
-            if (minusLocation != null && plusLocation != null && minusLocation == plusLocation) {
+            if (minusLocation == plusLocation && minusLocation != null) {
                 node.setLocationValue(minusLocation);
                 node.clearCut();
 
