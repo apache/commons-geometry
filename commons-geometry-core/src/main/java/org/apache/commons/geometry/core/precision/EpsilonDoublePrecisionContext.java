@@ -94,7 +94,7 @@ public class EpsilonDoublePrecisionContext extends DoublePrecisionContext implem
 
         final EpsilonDoublePrecisionContext other = (EpsilonDoublePrecisionContext) obj;
 
-        return this.epsilon == other.epsilon;
+        return Double.compare(this.epsilon, other.epsilon) == 0;
     }
 
     /** {@inheritDoc} **/

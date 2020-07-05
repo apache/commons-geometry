@@ -19,8 +19,6 @@ package org.apache.commons.geometry.euclidean.threed.rotation;
 import java.util.Arrays;
 import java.util.Objects;
 
-import org.apache.commons.numbers.core.Precision;
-
 /** <p>
  * Class representing a sequence of axis-angle rotations. These types of
  * rotations are commonly called <em>Euler angles</em>, <em>Tait-Bryan angles</em>,
@@ -158,9 +156,9 @@ public final class AxisAngleSequence {
 
         return this.referenceFrame == other.referenceFrame &&
                 this.axisSequence == other.axisSequence &&
-                Precision.equals(this.angle1, other.angle1) &&
-                Precision.equals(this.angle2, other.angle2) &&
-                Precision.equals(this.angle3, other.angle3);
+                Double.compare(this.angle1, other.angle1) == 0 &&
+                Double.compare(this.angle2, other.angle2) == 0 &&
+                Double.compare(this.angle3, other.angle3) == 0;
     }
 
     /** {@inheritDoc} */

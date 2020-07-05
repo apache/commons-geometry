@@ -24,7 +24,6 @@ import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
 import org.apache.commons.numbers.arrays.LinearCombination;
-import org.apache.commons.numbers.core.Precision;
 
 /** Class using a matrix to represent affine transformations in 2 dimensional Euclidean space.
 *
@@ -397,13 +396,13 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
 
         final AffineTransformMatrix2D other = (AffineTransformMatrix2D) obj;
 
-        return Precision.equals(this.m00, other.m00) &&
-                Precision.equals(this.m01, other.m01) &&
-                Precision.equals(this.m02, other.m02) &&
+        return Double.compare(this.m00, other.m00) == 0 &&
+                Double.compare(this.m01, other.m01) == 0 &&
+                Double.compare(this.m02, other.m02) == 0 &&
 
-                Precision.equals(this.m10, other.m10) &&
-                Precision.equals(this.m11, other.m11) &&
-                Precision.equals(this.m12, other.m12);
+                Double.compare(this.m10, other.m10) == 0 &&
+                Double.compare(this.m11, other.m11) == 0 &&
+                Double.compare(this.m12, other.m12) == 0;
     }
 
     /** {@inheritDoc} */

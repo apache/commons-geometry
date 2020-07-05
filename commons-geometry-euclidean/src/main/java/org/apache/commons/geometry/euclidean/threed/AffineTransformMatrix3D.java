@@ -24,7 +24,6 @@ import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.arrays.LinearCombination;
-import org.apache.commons.numbers.core.Precision;
 
 /** Class using a matrix to represent affine transformations in 3 dimensional Euclidean space.
  *
@@ -442,20 +441,20 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
 
         final AffineTransformMatrix3D other = (AffineTransformMatrix3D) obj;
 
-        return Precision.equals(this.m00, other.m00) &&
-                Precision.equals(this.m01, other.m01) &&
-                Precision.equals(this.m02, other.m02) &&
-                Precision.equals(this.m03, other.m03) &&
+        return Double.compare(this.m00, other.m00) == 0 &&
+                Double.compare(this.m01, other.m01) == 0 &&
+                Double.compare(this.m02, other.m02) == 0 &&
+                Double.compare(this.m03, other.m03) == 0 &&
 
-                Precision.equals(this.m10, other.m10) &&
-                Precision.equals(this.m11, other.m11) &&
-                Precision.equals(this.m12, other.m12) &&
-                Precision.equals(this.m13, other.m13) &&
+                Double.compare(this.m10, other.m10) == 0 &&
+                Double.compare(this.m11, other.m11) == 0 &&
+                Double.compare(this.m12, other.m12) == 0 &&
+                Double.compare(this.m13, other.m13) == 0 &&
 
-                Precision.equals(this.m20, other.m20) &&
-                Precision.equals(this.m21, other.m21) &&
-                Precision.equals(this.m22, other.m22) &&
-                Precision.equals(this.m23, other.m23);
+                Double.compare(this.m20, other.m20) == 0 &&
+                Double.compare(this.m21, other.m21) == 0 &&
+                Double.compare(this.m22, other.m22) == 0 &&
+                Double.compare(this.m23, other.m23) == 0;
     }
 
     /** {@inheritDoc} */

@@ -209,6 +209,25 @@ public class EpsilonDoublePrecisionContextTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final EpsilonDoublePrecisionContext a = new EpsilonDoublePrecisionContext(0.0);
+        final EpsilonDoublePrecisionContext b = new EpsilonDoublePrecisionContext(-0.0);
+        final EpsilonDoublePrecisionContext c = new EpsilonDoublePrecisionContext(0.0);
+        final EpsilonDoublePrecisionContext d = new EpsilonDoublePrecisionContext(-0.0);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         final EpsilonDoublePrecisionContext a = new EpsilonDoublePrecisionContext(1d);

@@ -1181,6 +1181,35 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final double[] arrWithPosZero = {
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+        };
+        final double[] arrWithNegZero = {
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, -0.0,
+        };
+        final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(arrWithPosZero);
+        final AffineTransformMatrix3D b = AffineTransformMatrix3D.of(arrWithNegZero);
+        final AffineTransformMatrix3D c = AffineTransformMatrix3D.of(arrWithPosZero);
+        final AffineTransformMatrix3D d = AffineTransformMatrix3D.of(arrWithNegZero);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(

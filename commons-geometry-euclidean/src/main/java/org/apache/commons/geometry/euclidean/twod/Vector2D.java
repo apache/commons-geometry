@@ -342,7 +342,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         if (isNaN()) {
             return 542;
         }
-        return 122 * (76 * Double.hashCode(x) +  Double.hashCode(y));
+        return 122 * (76 * Double.hashCode(x) + Double.hashCode(y));
     }
 
     /**
@@ -369,14 +369,14 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         if (this == other) {
             return true;
         }
-
         if (other instanceof Vector2D) {
             final Vector2D rhs = (Vector2D) other;
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
 
-            return (x == rhs.x) && (y == rhs.y);
+            return Double.compare(x, rhs.x) == 0 &&
+                    Double.compare(y, rhs.y) == 0;
         }
         return false;
     }

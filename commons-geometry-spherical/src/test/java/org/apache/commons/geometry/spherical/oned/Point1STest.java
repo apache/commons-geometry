@@ -209,6 +209,25 @@ public class Point1STest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final Point1S a = Point1S.of(0.0);
+        final Point1S b = Point1S.of(-0.0);
+        final Point1S c = Point1S.of(0.0);
+        final Point1S d = Point1S.of(-0.0);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testEq() {
         // arrange
         final DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(1e-10);

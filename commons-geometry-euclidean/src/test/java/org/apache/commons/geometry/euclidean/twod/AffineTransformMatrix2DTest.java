@@ -1188,6 +1188,33 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final double[] arrWithPosZero = {
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0
+        };
+        final double[] arrWithNegZero = {
+            1.0, 0.0, 0.0,
+            0.0, 1.0, -0.0
+        };
+        final AffineTransformMatrix2D a = AffineTransformMatrix2D.of(arrWithPosZero);
+        final AffineTransformMatrix2D b = AffineTransformMatrix2D.of(arrWithNegZero);
+        final AffineTransformMatrix2D c = AffineTransformMatrix2D.of(arrWithPosZero);
+        final AffineTransformMatrix2D d = AffineTransformMatrix2D.of(arrWithNegZero);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         final AffineTransformMatrix2D a = AffineTransformMatrix2D.of(

@@ -399,10 +399,10 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         if (isNaN()) {
             return 642;
         }
-        return 643 * (164 * Double.hashCode(x) +  3 * Double.hashCode(y) +  Double.hashCode(z));
+        return 643 * (164 * Double.hashCode(x) + 3 * Double.hashCode(y) + Double.hashCode(z));
     }
 
-    /**
+    /**d
      * Test for the equality of two vector instances.
      * <p>
      * If all coordinates of two vectors are exactly the same, and none are
@@ -426,14 +426,15 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         if (this == other) {
             return true;
         }
-
         if (other instanceof Vector3D) {
             final Vector3D rhs = (Vector3D) other;
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
 
-            return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
+            return Double.compare(x, rhs.x) == 0 &&
+                    Double.compare(y, rhs.y) == 0 &&
+                    Double.compare(z, rhs.z) == 0;
         }
         return false;
     }

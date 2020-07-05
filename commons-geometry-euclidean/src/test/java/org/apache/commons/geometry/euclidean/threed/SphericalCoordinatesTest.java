@@ -321,6 +321,25 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final SphericalCoordinates a = SphericalCoordinates.of(0.0, -0.0, 0.0);
+        final SphericalCoordinates b = SphericalCoordinates.of(-0.0, 0.0, -0.0);
+        final SphericalCoordinates c = SphericalCoordinates.of(0.0, -0.0, 0.0);
+        final SphericalCoordinates d = SphericalCoordinates.of(-0.0, 0.0, -0.0);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         final SphericalCoordinates sph = SphericalCoordinates.of(1, 2, 3);

@@ -81,6 +81,29 @@ public class AxisAngleSequenceTest {
     }
 
     @Test
+    public void testEqualsAndHashCode_signedZeroConsistency() {
+        // arrange
+        final AxisAngleSequence a = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ,
+                0.0, -0.0, 0.0);
+        final AxisAngleSequence b = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ,
+                -0.0, 0.0, -0.0);
+        final AxisAngleSequence c = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ,
+                0.0, -0.0, 0.0);
+        final AxisAngleSequence d = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ,
+                -0.0, 0.0, -0.0);
+
+        // act/assert
+        Assert.assertFalse(a.equals(b));
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+
+        Assert.assertTrue(a.equals(c));
+        Assert.assertEquals(a.hashCode(), c.hashCode());
+
+        Assert.assertTrue(b.equals(d));
+        Assert.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         final AxisAngleSequence seq = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3);

@@ -181,14 +181,15 @@ public final class SphericalCoordinates implements Spatial {
         if (this == other) {
             return true;
         }
-
         if (other instanceof SphericalCoordinates) {
             final SphericalCoordinates rhs = (SphericalCoordinates) other;
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
 
-            return (radius == rhs.radius) && (azimuth == rhs.azimuth) && (polar == rhs.polar);
+            return Double.compare(radius, rhs.radius) == 0 &&
+                    Double.compare(azimuth, rhs.azimuth) == 0 &&
+                    Double.compare(polar, rhs.polar) == 0;
         }
         return false;
     }

@@ -151,14 +151,14 @@ public final class PolarCoordinates implements Spatial {
         if (this == other) {
             return true;
         }
-
         if (other instanceof PolarCoordinates) {
             final PolarCoordinates rhs = (PolarCoordinates) other;
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
 
-            return (radius == rhs.radius) && (azimuth == rhs.azimuth);
+            return Double.compare(radius, rhs.radius) == 0 &&
+                    Double.compare(azimuth, rhs.azimuth) == 0;
         }
         return false;
     }
