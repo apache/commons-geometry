@@ -28,7 +28,7 @@
   <!-- allow Vector3D.linearCombination() methods -->
   <suppress checks="ParameterNumber" files=".*[/\\]threed[/\\]Vector3D" />
   <!-- allow internal, non-array QuaterionRotation.orthogonalRotationMatrixToQuaternion() method -->
-  <suppress checks="ParameterNumber" files=".*[/\\]threed/rotation[/\\]QuaternionRotation" />
+  <suppress checks="ParameterNumber" files=".*[/\\]threed[/\\]rotation[/\\]QuaternionRotation" />
   <!-- allow Vector2D.linearCombination() methods -->
   <suppress checks="ParameterNumber" files=".*[/\\]twod[/\\]Vector2D" />
   <!-- Prevent subclass error on generic package-private methods (checkstyle parsing issue?) -->
