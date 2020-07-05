@@ -29,7 +29,7 @@
   <artifactId>commons-geometry-euclidean</artifactId>
   <name>Apache Commons Geometry Euclidean</name>
 
-  <description>Geometric primitives for euclidean space.</description>
+  <description>Geometric primitives for Euclidean space.</description>
 
   <properties>
     <!-- OSGi -->
