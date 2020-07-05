@@ -228,7 +228,7 @@ public class ConvexArea2STest {
     @Test
     public void testFromBounds_triangle_small() {
         // arrange
-        final double azMin = 1.125 * PlaneAngleRadians.PI;
+        final double azMin = 1.12 * PlaneAngleRadians.PI;
         final double azMax = 1.375 * PlaneAngleRadians.PI;
         final double azMid = 0.5 * (azMin + azMax);
         final double polarTop = 0.1;
