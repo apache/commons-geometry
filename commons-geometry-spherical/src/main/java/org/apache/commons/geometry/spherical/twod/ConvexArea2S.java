@@ -141,26 +141,14 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      *  <em>The Centroid and Inertia Tensor for a Spherical Triangle</em> - John E. Brock</a>
      */
     Vector3D getWeightedCentroidVector() {
-        final List<GreatArc> arcs = getBoundaries();
-        switch (arcs.size()) {
-        case 0:
-            // full space; no centroid
-            return null;
-        case 1:
-            // hemisphere; centroid is the pole of the hemisphere
-            final GreatArc singleArc = arcs.get(0);
-            return singleArc.getCircle().getPole().withNorm(singleArc.getSize());
-        default:
-            // 2 or more sides; use an extension of the approach outlined here:
-            // https://archive.org/details/centroidinertiat00broc
-            // In short, the centroid is the sum of the pole vectors of each side
-            // multiplied by their arc lengths.
-            Vector3D centroid = Vector3D.ZERO;
-            for (final GreatArc arc : getBoundaries()) {
-                centroid = centroid.add(arc.getCircle().getPole().withNorm(arc.getSize()));
-            }
-            return centroid;
-        }
+        // 2 or more sides; use an extension of the approach outlined here:
+        // https://archive.org/details/centroidinertiat00broc
+        // In short, the centroid is the sum of the pole vectors of each side
+        // multiplied by their arc lengths.
+        return getBoundaries().stream()
+                .map(arc -> arc.getCircle().getPole().withNorm(arc.getSize()))
+                .reduce(Vector3D::add)
+                .orElse(null); // full space; no centroid
     }
 
     /** {@inheritDoc} */
