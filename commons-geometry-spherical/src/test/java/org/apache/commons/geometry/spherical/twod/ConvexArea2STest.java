@@ -538,6 +538,76 @@ public class ConvexArea2STest {
     }
 
     @Test
+    public void testGetCentroid_diminishingLunes() {
+        // arrange
+        final double eps = 1e-14;
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
+
+        final double centerAz = 1;
+        final double centerPolar = 0.5 * Math.PI;
+        final Point2S center = Point2S.of(centerAz, centerPolar);
+        final Point2S pole = Point2S.PLUS_K;
+
+        final double startOffset = PlaneAngleRadians.PI_OVER_TWO;
+        final double minOffset = 1e-14;
+
+        ConvexArea2S area;
+        Point2S p1;
+        Point2S p2;
+        Point2S centroid;
+        for (double offset = startOffset; offset > minOffset; offset *= 0.5) {
+            p1 = Point2S.of(centerAz - offset, centerPolar);
+            p2 = Point2S.of(centerAz + offset, centerPolar);
+
+            area = ConvexArea2S.fromBounds(
+                    GreatCircles.fromPoints(pole, p1, precision),
+                    GreatCircles.fromPoints(p2, pole, precision));
+
+            // act
+            centroid = area.getCentroid();
+
+            // assert
+            Assert.assertTrue(area.contains(centroid));
+            SphericalTestUtils.assertPointsEq(center, centroid, TEST_EPS);
+        }
+    }
+
+    @Test
+    public void testGetCentroid_diminishingSquares() {
+        // arrange
+        final double eps = 1e-14;
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
+
+        final double centerAz = 1;
+        final double centerPolar = 0.5 * Math.PI;
+        final Point2S center = Point2S.of(centerAz, centerPolar);
+
+        final double minOffset = 1e-14;
+
+        ConvexArea2S area;
+        Point2S p1;
+        Point2S p2;
+        Point2S p3;
+        Point2S p4;
+        Point2S centroid;
+        for (double offset = 0.5; offset > minOffset; offset *= 0.5) {
+            p1 = Point2S.of(centerAz, centerPolar - offset);
+            p2 = Point2S.of(centerAz - offset, centerPolar);
+            p3 = Point2S.of(centerAz, centerPolar + offset);
+            p4 = Point2S.of(centerAz + offset, centerPolar);
+
+            area = ConvexArea2S.fromVertexLoop(Arrays.asList(p1, p2, p3, p4), precision);
+
+            // act
+            centroid = area.getCentroid();
+
+            // assert
+            Assert.assertTrue(area.contains(centroid));
+            SphericalTestUtils.assertPointsEq(center, centroid, TEST_EPS);
+        }
+    }
+
+    @Test
     public void testBoundaryStream() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
@@ -823,8 +893,10 @@ public class ConvexArea2STest {
             final ConvexArea2S plus = split.getPlus();
             final double plusSize = plus.getSize();
 
-            final Point2S computedCentroid = Point2S.from(minus.getWeightedCentroidVector()
-                    .add(plus.getWeightedCentroidVector()));
+            final Vector3D minusWeightedCentroid = minus.getWeightedCentroidVector();
+            final Vector3D plusWeightedCentroid = plus.getWeightedCentroidVector();
+
+            final Point2S computedCentroid = Point2S.from(minusWeightedCentroid.add(plusWeightedCentroid));
 
             Assert.assertEquals(size, minusSize + plusSize, TEST_EPS);
             SphericalTestUtils.assertPointsEq(centroid, computedCentroid, TEST_EPS);

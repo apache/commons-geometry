@@ -32,7 +32,8 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * intersection of a sphere with a plane that passes through its center. It is
  * the largest diameter circle that can be drawn on the sphere and partitions the
  * sphere into two hemispheres. The vectors {@code u} and {@code v} lie in the great
- * circle plane, while the vector {@code w} (the pole) is perpendicular to it.
+ * circle plane, while the vector {@code w} (the pole) is perpendicular to it. The
+ * pole vector points toward the <em>minus</em> side of the hyperplane.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  * @see GreatCircles

@@ -171,16 +171,32 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         final DoublePrecisionContext precision = ((GreatArc) getRoot().getCut()).getPrecision();
 
         double sizeSum = 0;
-        Vector3D centroidVector = Vector3D.ZERO;
+        Vector3D centroidVectorSum = Vector3D.ZERO;
+
+        Vector3D centroidVector;
+        double maxCentroidVectorWeightSq = 0.0;
 
         for (final ConvexArea2S area : areas) {
             sizeSum += area.getSize();
-            centroidVector = centroidVector.add(area.getWeightedCentroidVector());
+
+            centroidVector = area.getWeightedCentroidVector();
+            maxCentroidVectorWeightSq = Math.max(maxCentroidVectorWeightSq, centroidVector.normSq());
+
+            centroidVectorSum = centroidVectorSum.add(centroidVector);
         }
 
-        final Point2S centroid = centroidVector.eq(Vector3D.ZERO, precision) ?
-                null :
-                Point2S.from(centroidVector);
+        // Convert the weighted centroid vector to a point on the sphere surface. If the centroid vector
+        // length is less than the max length of the combined convex areas and the vector itself is
+        // equivalent to zero, then we know that there are opposing and approximately equal areas in the
+        // region, resulting in an indeterminate centroid. This would occur, for example, if there were
+        // equal areas around each pole.
+        final Point2S centroid;
+        if (centroidVectorSum.normSq() < maxCentroidVectorWeightSq &&
+                centroidVectorSum.eq(Vector3D.ZERO, precision)) {
+            centroid = null;
+        } else {
+            centroid = Point2S.from(centroidVectorSum);
+        }
 
         return new RegionSizeProperties<>(sizeSum, centroid);
     }

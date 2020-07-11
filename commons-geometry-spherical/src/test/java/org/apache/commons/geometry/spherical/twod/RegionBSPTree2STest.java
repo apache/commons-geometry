@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -361,7 +362,11 @@ public class RegionBSPTree2STest {
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_I,
                 tree.project(Point2S.of(PlaneAngleRadians.PI + 0.5, PlaneAngleRadians.PI_OVER_TWO)), TEST_EPS);
 
-        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.project(tree.getCentroid()), TEST_EPS);
+        final Point2S centroid = tree.getCentroid();
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K,
+                tree.project(centroid.slerp(Point2S.PLUS_K, 1e-10)), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_J,
+                tree.project(centroid.slerp(Point2S.PLUS_J, 1e-10)), TEST_EPS);
     }
 
     @Test
@@ -560,6 +565,42 @@ public class RegionBSPTree2STest {
     }
 
     @Test
+    public void testGeometricProperties_polygonWithHole_small() {
+        // arrange
+        final Point2S center = Point2S.of(0.5, 2);
+
+        final double outerRadius = 1e-5;
+        final double innerRadius = 1e-7;
+
+        final RegionBSPTree2S outer = buildDiamond(center, outerRadius);
+        final RegionBSPTree2S inner = buildDiamond(center, innerRadius);
+
+        // rotate the inner diamond a quarter turn to become a square
+        inner.transform(Transform2S.createRotation(center, 0.25 * Math.PI));
+
+        // act
+        final RegionBSPTree2S tree = RegionBSPTree2S.empty();
+        tree.difference(outer, inner);
+
+        // assert
+
+        // use Euclidean approximations of the area and boundary size since those will be more accurate
+        // at these sizes
+        final double area = (2 * outerRadius * outerRadius) - (2 * innerRadius * innerRadius);
+        Assert.assertEquals(area, tree.getSize(), TEST_EPS);
+
+        final double outerSideLength = Math.hypot(outerRadius, outerRadius);
+        final double innerSideLength = Math.hypot(innerRadius, innerRadius);
+        final double boundarySize = 4 * (outerSideLength + innerSideLength);
+        Assert.assertEquals(boundarySize, tree.getBoundarySize(), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(center, tree.getCentroid(), TEST_EPS);
+        checkCentroidConsistency(tree);
+
+        SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE, center);
+    }
+
+    @Test
     public void testGeometricProperties_polygonWithHole_complex() {
         // arrange
         final Point2S center = Point2S.of(0.5, 2);
@@ -599,6 +640,59 @@ public class RegionBSPTree2STest {
         checkCentroidConsistency(tree);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE, center);
+    }
+
+    @Test
+    public void testGeometricProperties_smallRightTriangle() {
+        // arrange
+        final double azOffset = 1e-5;
+        final double polarOffset = 1e-6;
+
+        final double minAz = 0;
+        final double maxAz = minAz + azOffset;
+        final double maxPolar = PlaneAngleRadians.PI_OVER_TWO;
+        final double minPolar = maxPolar - polarOffset;
+
+        final Point2S p0 = Point2S.of(minAz, maxPolar);
+        final Point2S p1 = Point2S.of(maxAz, maxPolar);
+        final Point2S p2 = Point2S.of(maxAz, minPolar);
+
+        // act
+        final RegionBSPTree2S tree = GreatArcPath.fromVertexLoop(Arrays.asList(p0, p1, p2), TEST_PRECISION)
+                .toTree();
+
+        // assert
+
+        // use Euclidean approximations of the area and boundary size since those will be more accurate
+        // at these sizes
+        final double expectedArea = 0.5 * azOffset * polarOffset;
+        Assert.assertEquals(expectedArea, tree.getSize(), TEST_EPS);
+
+        final double expectedBoundarySize = azOffset + polarOffset + Math.hypot(azOffset, polarOffset);
+        Assert.assertEquals(expectedBoundarySize, tree.getBoundarySize(), TEST_EPS);
+
+        Assert.assertTrue(tree.contains(tree.getCentroid()));
+        checkCentroidConsistency(tree);
+
+        SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE,
+                tree.getCentroid(),
+                Point2S.of(minAz + (0.75 * azOffset), minPolar + (0.75 * polarOffset)));
+
+        SphericalTestUtils.checkClassify(tree, RegionLocation.BOUNDARY,
+                p0, p1, p2, p0.slerp(p1, 0.5), p1.slerp(p2, 0.5), p2.slerp(p0, 0.5));
+
+        final double midAz = minAz + (0.5 * azOffset);
+        final double pastMinAz = minAz - azOffset;
+        final double pastMaxAz = maxAz + azOffset;
+
+        final double midPolar = minPolar + (0.5 * polarOffset);
+        final double pastMinPolar = minPolar - polarOffset;
+        final double pastMaxPolar = maxPolar + polarOffset;
+
+        SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
+                tree.getCentroid().antipodal(),
+                Point2S.of(pastMinAz, midPolar), Point2S.of(pastMaxAz, midPolar),
+                Point2S.of(midAz, pastMinPolar), Point2S.of(midAz, pastMaxPolar));
     }
 
     @Test
@@ -761,7 +855,7 @@ public class RegionBSPTree2STest {
     @Test
     public void testGeographicMap() {
         // arrange
-        final RegionBSPTree2S continental = latLongToTree(new double[][] {
+        final RegionBSPTree2S continental = latLongToTree(TEST_PRECISION, new double[][] {
                 {51.14850,  2.51357}, {50.94660,  1.63900}, {50.12717,  1.33876}, {49.34737, -0.98946},
                 {49.77634, -1.93349}, {48.64442, -1.61651}, {48.90169, -3.29581}, {48.68416, -4.59234},
                 {47.95495, -4.49155}, {47.57032, -2.96327}, {46.01491, -1.19379}, {44.02261, -1.38422},
@@ -771,7 +865,7 @@ public class RegionBSPTree2STest {
                 {46.27298,  6.02260}, {46.72577,  6.03738}, {47.62058,  7.46675}, {49.01778,  8.09927},
                 {49.20195,  6.65822}, {49.44266,  5.89775}, {49.98537,  4.79922}
             });
-        final RegionBSPTree2S corsica = latLongToTree(new double[][] {
+        final RegionBSPTree2S corsica = latLongToTree(TEST_PRECISION, new double[][] {
                 {42.15249,  9.56001}, {43.00998,  9.39000}, {42.62812,  8.74600}, {42.25651,  8.54421},
                 {41.58361,  8.77572}, {41.38000,  9.22975}
             });
@@ -797,11 +891,12 @@ public class RegionBSPTree2STest {
         final int numPts = 200;
 
         // counterclockwise
-        final RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
-        SphericalTestUtils.assertPointsEq(center, ccw.getCentroid(), CENTROID_EPS);
+        final RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false, TEST_PRECISION);
+        SphericalTestUtils.assertPointsEq(center, ccw.getCentroid(), TEST_EPS);
 
         // clockwise; centroid should just be antipodal for the circle center
-        final RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
+        final RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true, TEST_PRECISION);
+
         SphericalTestUtils.assertPointsEq(center.antipodal(), cw.getCentroid(), CENTROID_EPS);
     }
 
@@ -815,10 +910,10 @@ public class RegionBSPTree2STest {
         final double ccwArea = 4.0 * PlaneAngleRadians.PI * Math.pow(Math.sin(radius / 2.0), 2.0);
         final double cwArea = 4.0 * PlaneAngleRadians.PI - ccwArea;
 
-        final RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
+        final RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false, TEST_PRECISION);
         Assert.assertEquals("Counterclockwise size", ccwArea, ccw.getSize(), TEST_EPS);
 
-        final RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
+        final RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true, TEST_PRECISION);
         Assert.assertEquals("Clockwise size", cwArea, cw.getSize(), TEST_EPS);
     }
 
@@ -831,11 +926,57 @@ public class RegionBSPTree2STest {
         // boundary size is independent from winding
         final double boundary = PlaneAngleRadians.TWO_PI * Math.sin(radius);
 
-        final RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
+        final RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false, TEST_PRECISION);
         Assert.assertEquals("Counterclockwise boundary size", boundary, ccw.getBoundarySize(), 1.0e-7);
 
-        final RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
+        final RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true, TEST_PRECISION);
         Assert.assertEquals("Clockwise boundary size", boundary, cw.getBoundarySize(), 1.0e-7);
+    }
+
+    @Test
+    public void testSmallCircleToPolygon() {
+        // arrange
+        final double radius = 5.0e-8;
+        final Point2S center = Point2S.of(0.5, 1.5);
+        final int numPts = 100;
+
+        // act
+        final RegionBSPTree2S circle = circleToPolygon(center, radius, numPts, false, TEST_PRECISION);
+
+        // assert
+        // https://en.wikipedia.org/wiki/Spherical_cap
+        final double area = 4.0 * PlaneAngleRadians.PI * Math.pow(Math.sin(radius / 2.0), 2.0);
+        final double boundary = PlaneAngleRadians.TWO_PI * Math.sin(radius);
+
+        SphericalTestUtils.assertPointsEq(center, circle.getCentroid(), TEST_EPS);
+        Assert.assertEquals(area, circle.getSize(), TEST_EPS);
+        Assert.assertEquals(boundary, circle.getBoundarySize(), TEST_EPS);
+    }
+
+    @Test
+    public void testSmallGeographicalRectangle() {
+        // arrange
+        final double[][] vertices = {
+            {42.656216727628696, -70.61919768884546},
+            {42.65612858998112, -70.61938607250165},
+            {42.65579098923594, -70.61909615581666},
+            {42.655879126692355, -70.61890777301083}
+        };
+
+        // act
+        final RegionBSPTree2S rectangle = latLongToTree(TEST_PRECISION, vertices);
+
+        // assert
+        // approximate the centroid as average of vertices
+        final double avgLat = Stream.of(vertices).mapToDouble(v -> v[0]).average().getAsDouble();
+        final double avgLon = Stream.of(vertices).mapToDouble(v -> v[1]).average().getAsDouble();
+        final Point2S expectedCentroid = latLongToPoint(avgLat, avgLon);
+
+        SphericalTestUtils.assertPointsEq(expectedCentroid, rectangle.getCentroid(), TEST_EPS);
+
+        // expected results computed using GeographicLib (https://geographiclib.sourceforge.io/)
+        Assert.assertEquals(1.997213869978027E-11, rectangle.getSize(), TEST_EPS);
+        Assert.assertEquals(1.9669710464585642E-5, rectangle.getBoundarySize(), TEST_EPS);
     }
 
     /**
@@ -875,8 +1016,8 @@ public class RegionBSPTree2STest {
         }
     }
 
-    private static RegionBSPTree2S latLongToTree(final double[][] points) {
-        final GreatArcPath.Builder pathBuilder = GreatArcPath.builder(TEST_PRECISION);
+    private static RegionBSPTree2S latLongToTree(final DoublePrecisionContext precision, final double[][] points) {
+        final GreatArcPath.Builder pathBuilder = GreatArcPath.builder(precision);
 
         for (int i = 0; i < points.length; ++i) {
             pathBuilder.append(latLongToPoint(points[i][0], points[i][1]));
@@ -972,10 +1113,11 @@ public class RegionBSPTree2STest {
         final double angleB = Math.asin(Math.sin(b) / sinC);
 
         // use Girard's theorem
-        return angleA + angleB  - (0.5 * PlaneAngleRadians.PI);
+        return angleA + angleB - PlaneAngleRadians.PI_OVER_TWO;
     }
 
-    private static RegionBSPTree2S circleToPolygon(final Point2S center, final double radius, final int numPts, final boolean clockwise) {
+    private static RegionBSPTree2S circleToPolygon(final Point2S center, final double radius, final int numPts,
+                                                   final boolean clockwise, final DoublePrecisionContext precision) {
         final List<Point2S> pts = new ArrayList<>(numPts);
 
         // get an arbitrary point on the circle boundary
@@ -990,6 +1132,6 @@ public class RegionBSPTree2STest {
             pts.add(rotate.apply(pts.get(i - 1)));
         }
 
-        return GreatArcPath.fromVertexLoop(pts, TEST_PRECISION).toTree();
+        return GreatArcPath.fromVertexLoop(pts, precision).toTree();
     }
 }

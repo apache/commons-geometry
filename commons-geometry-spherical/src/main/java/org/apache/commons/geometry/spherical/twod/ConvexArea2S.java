@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,6 +47,12 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
 
     /** Constant containing the area of half of the spherical space. */
     private static final double HALF_SIZE = PlaneAngleRadians.TWO_PI;
+
+    /** Empirically determined threshold for computing the weighted centroid vector using the
+     * triangle fan approach. Areas with boundary sizes under this value use the triangle fan
+     * method to increase centroid accuracy.
+     */
+    private static final double TRIANGLE_FAN_CENTROID_COMPUTE_THRESHOLD = 1e-2;
 
     /** Construct an instance from its boundaries. Callers are responsible for ensuring
      * that the given path represents the boundary of a convex area. No validation is
@@ -132,34 +139,35 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         return weighted == null ? null : Point2S.from(weighted);
     }
 
-    /** Returns the weighted vector for the centroid. This vector is computed by scaling the
-     * pole vector of the great circle of each boundary arc by the size of the arc and summing
-     * the results. By combining the weighted centroid vectors of multiple areas, a single
-     * centroid can be computed for the whole group.
+    /** Return the weighted centroid vector of the area. The returned vector points in the direction of the
+     * centroid point on the surface of the unit sphere with the length of the vector proportional to the
+     * effective mass of the area at the centroid. By adding the weighted centroid vectors of multiple
+     * convex areas, a single centroid can be computed for the combined area.
      * @return weighted centroid vector.
      * @see <a href="https://archive.org/details/centroidinertiat00broc">
      *  <em>The Centroid and Inertia Tensor for a Spherical Triangle</em> - John E. Brock</a>
      */
     Vector3D getWeightedCentroidVector() {
         final List<GreatArc> arcs = getBoundaries();
-        switch (arcs.size()) {
+        final int numBoundaries = arcs.size();
+
+        switch (numBoundaries) {
         case 0:
             // full space; no centroid
             return null;
         case 1:
-            // hemisphere; centroid is the pole of the hemisphere
-            final GreatArc singleArc = arcs.get(0);
-            return singleArc.getCircle().getPole().withNorm(singleArc.getSize());
+            // hemisphere
+            return computeHemisphereWeightedCentroidVector(arcs.get(0));
+        case 2:
+            // lune
+            return computeLuneWeightedCentroidVector(arcs.get(0), arcs.get(1));
         default:
-            // 2 or more sides; use an extension of the approach outlined here:
-            // https://archive.org/details/centroidinertiat00broc
-            // In short, the centroid is the sum of the pole vectors of each side
-            // multiplied by their arc lengths.
-            Vector3D centroid = Vector3D.ZERO;
-            for (final GreatArc arc : getBoundaries()) {
-                centroid = centroid.add(arc.getCircle().getPole().withNorm(arc.getSize()));
+            // triangle or other convex polygon
+            if (getBoundarySize() < TRIANGLE_FAN_CENTROID_COMPUTE_THRESHOLD) {
+                return computeTriangleFanWeightedCentroidVector(arcs);
             }
-            return centroid;
+
+            return computeArcPoleWeightedCentroidVector(arcs);
         }
     }
 
@@ -312,5 +320,132 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         return arcs.isEmpty() ?
                 full() :
                 new ConvexArea2S(arcs);
+    }
+
+    /** Compute the weighted centroid vector for the hemisphere formed by the given arc.
+     * @param arc arc defining the hemisphere
+     * @return the weighted centroid vector for the hemisphere
+     * @see #getWeightedCentroidVector()
+     */
+    private static Vector3D computeHemisphereWeightedCentroidVector(final GreatArc arc) {
+        return arc.getCircle().getPole().withNorm(HALF_SIZE);
+    }
+
+    /** Compute the weighted centroid vector for the lune formed by the given arcs.
+     * @param a first arc for the lune
+     * @param b second arc for the lune
+     * @return the weighted centroid vector for the lune
+     * @see #getWeightedCentroidVector()
+     */
+    private static Vector3D computeLuneWeightedCentroidVector(final GreatArc a, final GreatArc b) {
+        final Point2S aMid = a.getCentroid();
+        final Point2S bMid = b.getCentroid();
+
+        // compute the centroid vector as the exact center of the lune to avoid inaccurate
+        // results with very small regions
+        final Vector3D.Unit centroid = aMid.slerp(bMid, 0.5).getVector();
+
+        // compute the weight using the reverse of the algorithm from computeArcPoleWeightedCentroidVector()
+        final double weight =
+            (a.getSize() * centroid.dot(a.getCircle().getPole())) +
+            (b.getSize() * centroid.dot(b.getCircle().getPole()));
+
+        return centroid.withNorm(weight);
+    }
+
+    /** Compute the weighted centroid vector for the triangle or polygon formed by the given arcs
+     * by adding together the arc pole vectors multiplied by their respective arc lengths. This
+     * algorithm is described in the paper <a href="https://archive.org/details/centroidinertiat00broc">
+     * <em>The Centroid and Inertia Tensor for a Spherical Triangle</em></a> by John E Brock.
+     *
+     * <p>Note: This algorithm works well in general but is susceptible to floating point errors
+     * on very small areas. In these cases, the computed centroid may not be in the expected location
+     * and may even be outside of the area. The {@link #computeTriangleFanWeightedCentroidVector(List)}
+     * method can produce more accurate results in these cases.</p>
+     * @param arcs boundary arcs for the area
+     * @return the weighted centroid vector for the area
+     * @see #computeTriangleFanWeightedCentroidVector(List)
+     */
+    private static Vector3D computeArcPoleWeightedCentroidVector(final List<GreatArc> arcs) {
+        Vector3D centroid = Vector3D.ZERO;
+
+        Vector3D arcContribution;
+        for (final GreatArc arc : arcs) {
+            arcContribution = arc.getCircle().getPole().withNorm(arc.getSize());
+
+            centroid = centroid.add(arcContribution);
+        }
+
+        return centroid;
+    }
+
+    /** Compute the weighted centroid vector for the triangle or polygon formed by the given arcs
+     * using a triangle fan approach. This method is specifically designed for use with areas of very small size,
+     * where use of the standard algorithm from {@link ##computeArcPoleWeightedCentroidVector(List))} can produce
+     * inaccurate results. The algorithm proceeds as follows:
+     * <ol>
+     *  <li>The polygon is divided into spherical triangles using a triangle fan.</li>
+     *  <li>For each triangle, the vectors of the 3 spherical points are added together to approximate the direction
+     *      of the spherical centroid. This ensures that the computed centroid lies within the area.</li>
+     *  <li>The length of the weighted centroid vector is determined by computing the sum of the contributions that
+     *      each arc in the triangle would make to the centroid using the algorithm from
+     *      {@link ##computeArcPoleWeightedCentroidVector(List)}. This essentially performs part of that algorithm in
+     *      reverse: given a centroid direction, compute the contribution that each arc makes.</li>
+     *  <li>The sum of the weighted centroid vectors for each triangle is computed and returned.</li>
+     * </ol>
+     * @param arcs boundary arcs for the area; must contain at least 3 arcs
+     * @return the weighted centroid vector for the area
+     * @see ##computeArcPoleWeightedCentroidVector(List)
+     */
+    private static Vector3D computeTriangleFanWeightedCentroidVector(final List<GreatArc> arcs) {
+        final Iterator<GreatArc> arcIt = arcs.iterator();
+
+        final Point2S p0 = arcIt.next().getStartPoint();
+        final Vector3D.Unit v0 = p0.getVector();
+
+        Vector3D areaCentroid = Vector3D.ZERO;
+
+        GreatArc arc;
+        Point2S p1;
+        Point2S p2;
+        Vector3D.Unit v1;
+        Vector3D.Unit v2;
+        Vector3D.Unit triangleCentroid;
+        double triangleCentroidLen;
+        while (arcIt.hasNext()) {
+            arc = arcIt.next();
+
+            if (!arc.contains(p0)) {
+                p1 = arc.getStartPoint();
+                p2 = arc.getEndPoint();
+
+                v1 = p1.getVector();
+                v2 = p2.getVector();
+
+                triangleCentroid = v0.add(v1).add(v2).normalize();
+                triangleCentroidLen =
+                        computeArcCentroidContribution(v0, v1, triangleCentroid) +
+                        computeArcCentroidContribution(v1, v2, triangleCentroid) +
+                        computeArcCentroidContribution(v2, v0, triangleCentroid);
+
+                areaCentroid = areaCentroid.add(triangleCentroid.withNorm(triangleCentroidLen));
+            }
+        }
+
+        return areaCentroid;
+    }
+
+    /** Compute the contribution made by a single arc to a weighted centroid vector.
+     * @param a first point in the arc
+     * @param b second point in the arc
+     * @param triangleCentroid the centroid vector for the area
+     * @return the contribution made by the arc {@code ab} to the length of the weighted centroid vector
+     */
+    private static double computeArcCentroidContribution(final Vector3D.Unit a, final Vector3D.Unit b,
+            final Vector3D.Unit triangleCentroid) {
+        final double arcLength = a.angle(b);
+        final Vector3D.Unit planeNormal = a.cross(b).normalize();
+
+        return arcLength * triangleCentroid.dot(planeNormal);
     }
 }
