@@ -51,7 +51,7 @@ If the output is not quite correct, check for invisible trailing spaces!
   </properties>
   <body>
 
-    <release version="1.0-beta1" date="2020-07-08" description="
+    <release version="1.0-beta1" date="2020-07-20" description="
 This is a beta release of Apache Commons Geometry. No guarantees are
 made regarding the stability of the API or compatibility with future
 releases.
