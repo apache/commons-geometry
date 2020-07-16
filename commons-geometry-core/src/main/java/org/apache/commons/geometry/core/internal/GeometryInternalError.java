@@ -20,7 +20,7 @@ package org.apache.commons.geometry.core.internal;
  * This class is not intended to be part of the public API and should
  * never be seen by the user when algorithms are functioning correctly.
  */
-public class GeometryInternalException extends IllegalStateException {
+public class GeometryInternalError extends IllegalStateException {
 
     /** Error message used for exceptions of this type. */
     private static final String ERROR_MSG = "An internal geometry error occurred. This most often indicates an " +
@@ -32,7 +32,7 @@ public class GeometryInternalException extends IllegalStateException {
 
     /** Simple constructor with a default error message.
      */
-    public GeometryInternalException() {
+    public GeometryInternalError() {
         super(ERROR_MSG);
     }
 }

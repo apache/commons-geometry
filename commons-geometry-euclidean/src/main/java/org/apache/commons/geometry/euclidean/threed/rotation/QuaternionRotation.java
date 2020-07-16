@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.threed.rotation;
 import java.util.Objects;
 import java.util.function.DoubleFunction;
 
-import org.apache.commons.geometry.core.internal.GeometryInternalException;
+import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -382,7 +382,7 @@ public final class QuaternionRotation implements Rotation3D {
         }
 
         // all possibilities should have been covered above
-        throw new GeometryInternalException();
+        throw new GeometryInternalError();
     }
 
     /** Get a sequence of angles around the given Tait-Bryan axes that produce a rotation equivalent
