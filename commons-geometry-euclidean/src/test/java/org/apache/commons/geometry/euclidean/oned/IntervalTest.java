@@ -100,6 +100,8 @@ public class IntervalTest {
     @Test
     public void testOf_hyperplanes() {
         // act/assert
+        Assert.assertSame(Interval.full(), Interval.of(null, null));
+
         checkInterval(Interval.of(
                 OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION),
                 OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION)), 1, 1);
@@ -169,6 +171,11 @@ public class IntervalTest {
         GeometryTestUtils.assertThrows(
             () -> Interval.of(
                     OrientedPoints.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
+                    OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
+
+        GeometryTestUtils.assertThrows(
+            () -> Interval.of(
+                    null,
                     OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
     }
 

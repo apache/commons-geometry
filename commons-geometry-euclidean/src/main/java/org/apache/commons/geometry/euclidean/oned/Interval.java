@@ -407,46 +407,22 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      *      the negative-facing hyperplane)
      */
     public static Interval of(final OrientedPoint a, final OrientedPoint b) {
-        // determine the ordering of the hyperplanes
-        OrientedPoint minBoundary = null;
-        OrientedPoint maxBoundary = null;
 
-        if (a != null && b != null) {
-            // both hyperplanes are present, so validate then against each other
-            if (a.isPositiveFacing() == b.isPositiveFacing()) {
-                throw new IllegalArgumentException(
-                        MessageFormat.format("Invalid interval: hyperplanes have same orientation: {0}, {1}", a, b));
-            }
+        validateBoundaryRelationship(a, b);
 
-            if (a.classify(b.getPoint()) == HyperplaneLocation.PLUS ||
-                    b.classify(a.getPoint()) == HyperplaneLocation.PLUS) {
-                throw new IllegalArgumentException(
-                        MessageFormat.format("Invalid interval: hyperplanes do not form interval: {0}, {1}", a, b));
-            }
+        final boolean hasA = a != null;
+        final boolean hasB = b != null;
 
-            // min boundary faces -infinity, max boundary faces +infinity
-            minBoundary = a.isPositiveFacing() ? b : a;
-            maxBoundary = a.isPositiveFacing() ? a : b;
-        } else if (a == null) {
-            if (b == null) {
-                // no boundaries; return the full number line
-                return FULL;
-            }
-
-            if (b.isPositiveFacing()) {
-                maxBoundary = b;
-            } else {
-                minBoundary = b;
-            }
-        } else {
-            if (a.isPositiveFacing()) {
-                maxBoundary = a;
-            } else {
-                minBoundary = a;
-            }
+        if (!hasA && !hasB) {
+            // both boundaries null; return the full space
+            return FULL;
         }
 
-        // validate the boundary locations
+        // determine the ordering of the hyperplanes; we know that at least one is non-null
+        final OrientedPoint minBoundary = ((hasA && !a.isPositiveFacing()) || (hasB && b.isPositiveFacing())) ? a : b;
+        final OrientedPoint maxBoundary = ((hasA && a.isPositiveFacing()) || (hasB && !b.isPositiveFacing())) ? a : b;
+
+        // validate the boundary locations; this will ensure that we don't have NaN values
         final double minLoc = (minBoundary != null) ? minBoundary.getLocation() : Double.NEGATIVE_INFINITY;
         final double maxLoc = (maxBoundary != null) ? maxBoundary.getLocation() : Double.POSITIVE_INFINITY;
 
@@ -492,6 +468,28 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      */
     public static Interval full() {
         return FULL;
+    }
+
+    /** Validate that the orientations and positions of the arguments may be used to create an interval.
+     * The arguments may be given in any order. Does nothing if one or both arguments are null.
+     * @param a first boundary; may be null
+     * @param b second boundary may be null
+     * @throws IllegalArgumentException is {@code a} and {@code b} have the same orientation or one does
+     *      not lie on the plus side of the other.
+     */
+    private static void validateBoundaryRelationship(final OrientedPoint a, final OrientedPoint b) {
+        if (a != null && b != null) {
+            if (a.isPositiveFacing() == b.isPositiveFacing()) {
+                throw new IllegalArgumentException(
+                        MessageFormat.format("Invalid interval: hyperplanes have same orientation: {0}, {1}", a, b));
+            }
+
+            if (a.classify(b.getPoint()) == HyperplaneLocation.PLUS ||
+                    b.classify(a.getPoint()) == HyperplaneLocation.PLUS) {
+                throw new IllegalArgumentException(
+                        MessageFormat.format("Invalid interval: hyperplanes do not form interval: {0}, {1}", a, b));
+            }
+        }
     }
 
     /** Validate that the given value can be used to construct an interval. The values

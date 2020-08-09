@@ -18,6 +18,7 @@ package org.apache.commons.geometry.core.partitioning;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -223,55 +224,85 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             final Hyperplane<P> splitter, final R thisInstance, final Class<S> boundaryType,
             final Function<List<S>, R> factory) {
 
-        if (isFull()) {
-            final R minus = factory.apply(Collections.singletonList(boundaryType.cast(splitter.span())));
-            final R plus = factory.apply(Collections.singletonList(boundaryType.cast(splitter.reverse().span())));
+        return isFull() ?
+                splitInternalFull(splitter, thisInstance, boundaryType, factory) :
+                splitInternalNonFull(splitter, thisInstance, boundaryType, factory);
+    }
 
-            return new Split<>(minus, plus);
-        } else {
-            final HyperplaneConvexSubset<P> trimmedSplitter = trim(splitter.span());
+    /** Internal split method for use with full regions, i.e. regions that cover the entire space.
+     * @param splitter splitting hyperplane
+     * @param thisInstance a reference to the current instance; this is passed as
+     *      an argument in order to allow it to be a generic type
+     * @param boundaryType the type used for the boundary hyperplane subsets
+     * @param factory function used to create new convex region instances
+     * @param <R> Region implementation type
+     * @return the result of the split operation
+     */
+    private <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> Split<R> splitInternalFull(
+            final Hyperplane<P> splitter, final R thisInstance, final Class<S> boundaryType,
+            final Function<List<S>, R> factory) {
 
-            if (trimmedSplitter == null) {
-                // The splitter lies entirely outside of the region; we need
-                // to determine whether we lie on the plus or minus side of the splitter.
+        final R minus = factory.apply(Collections.singletonList(boundaryType.cast(splitter.span())));
+        final R plus = factory.apply(Collections.singletonList(boundaryType.cast(splitter.reverse().span())));
 
-                final SplitLocation regionLoc = determineRegionPlusMinusLocation(splitter);
-                return regionLoc == SplitLocation.MINUS ?
-                        new Split<>(thisInstance, null) :
-                        new Split<>(null, thisInstance);
-            }
+        return new Split<>(minus, plus);
+    }
 
-            // the splitter passes through the region; split the other region boundaries
-            // by the splitter
-            final ArrayList<S> minusBoundaries = new ArrayList<>();
-            final ArrayList<S> plusBoundaries = new ArrayList<>();
+    /** Internal split method for use with non-full regions, i.e. regions that do not cover the entire space.
+     * @param splitter splitting hyperplane
+     * @param thisInstance a reference to the current instance; this is passed as
+     *      an argument in order to allow it to be a generic type
+     * @param boundaryType the type used for the boundary hyperplane subsets
+     * @param factory function used to create new convex region instances
+     * @param <R> Region implementation type
+     * @return the result of the split operation
+     */
+    private <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> Split<R> splitInternalNonFull(
+            final Hyperplane<P> splitter, final R thisInstance, final Class<S> boundaryType,
+            final Function<List<S>, R> factory) {
 
-            splitBoundaries(splitter, boundaryType, minusBoundaries, plusBoundaries);
+        final HyperplaneConvexSubset<P> trimmedSplitter = trim(splitter.span());
 
-            // if the splitter was trimmed by the region boundaries, double-check that the split boundaries
-            // actually lie on both sides of the splitter; this is another case where floating point errors
-            // can cause a discrepancy between the results of splitting the splitter by the boundaries and
-            // splitting the boundaries by the splitter
-            if (!trimmedSplitter.isFull()) {
-                if (minusBoundaries.isEmpty()) {
-                    if (plusBoundaries.isEmpty()) {
-                        return new Split<>(null, null);
-                    }
-                    return new Split<>(null, thisInstance);
-                } else if (plusBoundaries.isEmpty()) {
-                    return new Split<>(thisInstance, null);
-                }
-            }
+        if (trimmedSplitter == null) {
+            // The splitter lies entirely outside of the region; we need
+            // to determine whether we lie on the plus or minus side of the splitter.
 
-            // we have a consistent region split; create the new plus and minus regions
-            minusBoundaries.add(boundaryType.cast(trimmedSplitter));
-            plusBoundaries.add(boundaryType.cast(trimmedSplitter.reverse()));
-
-            minusBoundaries.trimToSize();
-            plusBoundaries.trimToSize();
-
-            return new Split<>(factory.apply(minusBoundaries), factory.apply(plusBoundaries));
+            final SplitLocation regionLoc = determineRegionPlusMinusLocation(splitter);
+            return regionLoc == SplitLocation.MINUS ?
+                    new Split<>(thisInstance, null) :
+                    new Split<>(null, thisInstance);
         }
+
+        // the splitter passes through the region; split the other region boundaries
+        // by the splitter
+        final ArrayList<S> minusBoundaries = new ArrayList<>();
+        final ArrayList<S> plusBoundaries = new ArrayList<>();
+
+        splitBoundaries(splitter, boundaryType, minusBoundaries, plusBoundaries);
+
+        // if the splitter was trimmed by the region boundaries, double-check that the split boundaries
+        // actually lie on both sides of the splitter; this is another case where floating point errors
+        // can cause a discrepancy between the results of splitting the splitter by the boundaries and
+        // splitting the boundaries by the splitter
+        if (!trimmedSplitter.isFull()) {
+            if (minusBoundaries.isEmpty()) {
+                if (plusBoundaries.isEmpty()) {
+                    return new Split<>(null, null);
+                }
+                return new Split<>(null, thisInstance);
+            } else if (plusBoundaries.isEmpty()) {
+                return new Split<>(thisInstance, null);
+            }
+        }
+
+        // we have a consistent region split; create the new plus and minus regions
+        minusBoundaries.add(boundaryType.cast(trimmedSplitter));
+        plusBoundaries.add(boundaryType.cast(trimmedSplitter.reverse()));
+
+        minusBoundaries.trimToSize();
+        plusBoundaries.trimToSize();
+
+        return new Split<>(factory.apply(minusBoundaries), factory.apply(plusBoundaries));
     }
 
     /** Determine whether the region lies on the plus or minus side of the given splitter. It is assumed
@@ -385,7 +416,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             final List<S> boundaries = new ArrayList<>();
 
             // cut each hyperplane by every other hyperplane in order to get the region boundaries
-            int boundIdx = 0;
+            int boundIdx = -1;
             HyperplaneConvexSubset<P> boundary;
 
             for (final Hyperplane<P> currentBound : bounds) {
@@ -419,8 +450,13 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
 
             HyperplaneConvexSubset<P> boundary = currentBound.span();
 
-            int splitterIdx = 0;
-            for (final Hyperplane<P> splitter : bounds) {
+            final Iterator<? extends Hyperplane<P>> boundsIt = bounds.iterator();
+
+            Hyperplane<P> splitter;
+            int splitterIdx = -1;
+
+            while (boundsIt.hasNext() && boundary != null) {
+                splitter = boundsIt.next();
                 ++splitterIdx;
 
                 if (currentBound == splitter) {
@@ -435,27 +471,19 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
                     // split the boundary
                     final Split<? extends HyperplaneConvexSubset<P>> split = boundary.split(splitter);
 
-                    if (split.getLocation() == SplitLocation.NEITHER) {
-                        // the boundary lies directly on the splitter
-
-                        if (!currentBound.similarOrientation(splitter)) {
-                            // two or more splitters are coincident and have opposite
-                            // orientations, meaning that no area is on the minus side
-                            // of both
-                            throw nonConvexException(bounds);
-                        } else if (currentBoundIdx > splitterIdx) {
-                            // two or more hyperplanes are equivalent; only use the boundary
-                            // from the first one and return null for this one
-                            return null;
-                        }
-                    } else {
+                    if (split.getLocation() != SplitLocation.NEITHER) {
                         // retain the minus portion of the split
                         boundary = split.getMinus();
+                    } else if (!currentBound.similarOrientation(splitter)) {
+                        // two or more splitters are coincident and have opposite
+                        // orientations, meaning that no area is on the minus side
+                        // of both
+                        throw nonConvexException(bounds);
+                    } else if (currentBoundIdx > splitterIdx) {
+                        // two or more hyperplanes are equivalent; only use the boundary
+                        // from the first one and return null for this one
+                        return null;
                     }
-                }
-
-                if (boundary == null) {
-                    break;
                 }
             }
 

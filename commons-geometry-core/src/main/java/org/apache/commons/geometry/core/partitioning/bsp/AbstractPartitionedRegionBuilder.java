@@ -149,45 +149,70 @@ public abstract class AbstractPartitionedRegionBuilder<
     private void insertBoundaryRecursive(final N node, final HyperplaneConvexSubset<P> insert,
             final HyperplaneConvexSubset<P> trimmed, final BiConsumer<N, HyperplaneConvexSubset<P>> leafFn) {
         if (node.isLeaf()) {
-            leafFn.accept(node, trimmed);
+            insertBoundaryRecursiveLeafNode(node, insert, trimmed, leafFn);
         } else {
-            final Split<? extends HyperplaneConvexSubset<P>> insertSplit =
-                    insert.split(node.getCutHyperplane());
+            insertBoundaryRecursiveInternalNode(node, insert, trimmed, leafFn);
+        }
+    }
 
-            final HyperplaneConvexSubset<P> minus = insertSplit.getMinus();
-            final HyperplaneConvexSubset<P> plus = insertSplit.getPlus();
+    /** Recursive boundary insertion method for leaf nodes.
+     * @param node node to insert into
+     * @param insert the hyperplane convex subset to insert
+     * @param trimmed version of the hyperplane convex subset filling the entire space of {@code node}
+     * @param leafFn function to apply to leaf nodes
+     * @see #insertBoundaryRecursive(AbstractRegionNode, HyperplaneConvexSubset, HyperplaneConvexSubset, BiConsumer)
+     */
+    private void insertBoundaryRecursiveLeafNode(final N node, final HyperplaneConvexSubset<P> insert,
+            final HyperplaneConvexSubset<P> trimmed, final BiConsumer<N, HyperplaneConvexSubset<P>> leafFn) {
+        leafFn.accept(node, trimmed);
+    }
 
-            if (minus == null && plus == null && isPartitionNode(node)) {
-                // the inserted boundary lies directly on a partition; proceed down the tree with the
-                // rest of the insertion algorithm but instead of cutting the final leaf nodes, just
-                // set the location
+    /** Recursive boundary insertion method for internal nodes.
+     * @param node node to insert into
+     * @param insert the hyperplane convex subset to insert
+     * @param trimmed version of the hyperplane convex subset filling the entire space of {@code node}
+     * @param leafFn function to apply to leaf nodes
+     * @see #insertBoundaryRecursive(AbstractRegionNode, HyperplaneConvexSubset, HyperplaneConvexSubset, BiConsumer)
+     */
+    private void insertBoundaryRecursiveInternalNode(final N node, final HyperplaneConvexSubset<P> insert,
+            final HyperplaneConvexSubset<P> trimmed, final BiConsumer<N, HyperplaneConvexSubset<P>> leafFn) {
 
-                // remove this node from the set of partition nodes since this is now a boundary cut
-                partitionNodes.remove(node);
+        final Split<? extends HyperplaneConvexSubset<P>> insertSplit =
+                insert.split(node.getCutHyperplane());
 
-                final boolean sameOrientation = node.getCutHyperplane().similarOrientation(insert.getHyperplane());
-                final N insertMinus = sameOrientation ? node.getMinus() : node.getPlus();
-                final N insertPlus = sameOrientation ? node.getPlus() : node.getMinus();
+        final HyperplaneConvexSubset<P> minus = insertSplit.getMinus();
+        final HyperplaneConvexSubset<P> plus = insertSplit.getPlus();
 
-                insertBoundaryRecursive(insertMinus, insert, trimmed,
-                    (leaf, cut) -> leaf.setLocation(RegionLocation.INSIDE));
+        if (minus == null && plus == null && isPartitionNode(node)) {
+            // the inserted boundary lies directly on a partition; proceed down the tree with the
+            // rest of the insertion algorithm but instead of cutting the final leaf nodes, just
+            // set the location
 
-                insertBoundaryRecursive(insertPlus, insert, trimmed,
-                    (leaf, cut) -> leaf.setLocation(RegionLocation.OUTSIDE));
+            // remove this node from the set of partition nodes since this is now a boundary cut
+            partitionNodes.remove(node);
 
-            } else if (minus != null || plus != null) {
-                final Split<? extends HyperplaneConvexSubset<P>> trimmedSplit =
-                        trimmed.split(node.getCutHyperplane());
+            final boolean sameOrientation = node.getCutHyperplane().similarOrientation(insert.getHyperplane());
+            final N insertMinus = sameOrientation ? node.getMinus() : node.getPlus();
+            final N insertPlus = sameOrientation ? node.getPlus() : node.getMinus();
 
-                final HyperplaneConvexSubset<P> trimmedMinus = trimmedSplit.getMinus();
-                final HyperplaneConvexSubset<P> trimmedPlus = trimmedSplit.getPlus();
+            insertBoundaryRecursive(insertMinus, insert, trimmed,
+                (leaf, cut) -> leaf.setLocation(RegionLocation.INSIDE));
 
-                if (minus != null) {
-                    insertBoundaryRecursive(node.getMinus(), minus, trimmedMinus, leafFn);
-                }
-                if (plus != null) {
-                    insertBoundaryRecursive(node.getPlus(), plus, trimmedPlus, leafFn);
-                }
+            insertBoundaryRecursive(insertPlus, insert, trimmed,
+                (leaf, cut) -> leaf.setLocation(RegionLocation.OUTSIDE));
+
+        } else if (minus != null || plus != null) {
+            final Split<? extends HyperplaneConvexSubset<P>> trimmedSplit =
+                    trimmed.split(node.getCutHyperplane());
+
+            final HyperplaneConvexSubset<P> trimmedMinus = trimmedSplit.getMinus();
+            final HyperplaneConvexSubset<P> trimmedPlus = trimmedSplit.getPlus();
+
+            if (minus != null) {
+                insertBoundaryRecursive(node.getMinus(), minus, trimmedMinus, leafFn);
+            }
+            if (plus != null) {
+                insertBoundaryRecursive(node.getPlus(), plus, trimmedPlus, leafFn);
             }
         }
     }
