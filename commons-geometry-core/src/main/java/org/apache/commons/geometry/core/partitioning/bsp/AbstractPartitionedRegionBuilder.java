@@ -149,22 +149,10 @@ public abstract class AbstractPartitionedRegionBuilder<
     private void insertBoundaryRecursive(final N node, final HyperplaneConvexSubset<P> insert,
             final HyperplaneConvexSubset<P> trimmed, final BiConsumer<N, HyperplaneConvexSubset<P>> leafFn) {
         if (node.isLeaf()) {
-            insertBoundaryRecursiveLeafNode(node, insert, trimmed, leafFn);
+            leafFn.accept(node, trimmed);
         } else {
             insertBoundaryRecursiveInternalNode(node, insert, trimmed, leafFn);
         }
-    }
-
-    /** Recursive boundary insertion method for leaf nodes.
-     * @param node node to insert into
-     * @param insert the hyperplane convex subset to insert
-     * @param trimmed version of the hyperplane convex subset filling the entire space of {@code node}
-     * @param leafFn function to apply to leaf nodes
-     * @see #insertBoundaryRecursive(AbstractRegionNode, HyperplaneConvexSubset, HyperplaneConvexSubset, BiConsumer)
-     */
-    private void insertBoundaryRecursiveLeafNode(final N node, final HyperplaneConvexSubset<P> insert,
-            final HyperplaneConvexSubset<P> trimmed, final BiConsumer<N, HyperplaneConvexSubset<P>> leafFn) {
-        leafFn.accept(node, trimmed);
     }
 
     /** Recursive boundary insertion method for internal nodes.

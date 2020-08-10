@@ -214,22 +214,8 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
         final int boundaryPairCount = insideBoundaryPairs.size();
 
-        // Find the index of the first boundary pair that is not connected to pair before it.
-        // This will be our start point for merging intervals together.
-        int startOffset = 0;
-        if (boundaryPairCount > 1) {
-            BoundaryPair current = null;
-            BoundaryPair previous = insideBoundaryPairs.get(boundaryPairCount - 1);
-
-            for (int i = 0; i < boundaryPairCount; ++i, previous = current) {
-                current = insideBoundaryPairs.get(i);
-
-                if (!Objects.equals(current.getMin(), previous.getMax())) {
-                    startOffset = i;
-                    break;
-                }
-            }
-        }
+        // Get the start point for merging intervals together.
+        int startOffset = getIntervalStartIndex(insideBoundaryPairs);
 
         // Go through the pairs starting at the start offset and create intervals
         // for each set of adjacent pairs.
@@ -263,6 +249,32 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         }
 
         return intervals;
+    }
+
+    /** Get the index that should be used as the starting point for combining adjacent boundary pairs
+     * into contiguous intervals. This is computed as the first boundary pair found that is not connected
+     * to the pair before it, or {@code 0} if no such entry exists.
+     * @param boundaryPairs list of boundary pairs to search; must be ordered by increasing azimuth
+     * @return the index to use as a starting place for combining adjacent boundary pairs
+     *      into contiguous intervals
+     */
+    private int getIntervalStartIndex(final List<BoundaryPair> boundaryPairs) {
+        final int size = boundaryPairs.size();
+
+        if (size > 0) {
+            BoundaryPair current = null;
+            BoundaryPair previous = boundaryPairs.get(size - 1);
+
+            for (int i = 0; i < size; ++i, previous = current) {
+                current = boundaryPairs.get(i);
+
+                if (!Objects.equals(current.getMin(), previous.getMax())) {
+                    return i;
+                }
+            }
+        }
+
+        return 0;
     }
 
     /** Create an interval instance from the min boundary from the start boundary pair and

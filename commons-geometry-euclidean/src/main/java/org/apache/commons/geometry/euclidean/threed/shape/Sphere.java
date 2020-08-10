@@ -419,7 +419,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
          * @throws IllegalStateException if no portion of the cutter plane intersects the node
          */
         private void checkedCut(final RegionNode3D node, final Plane cutter, final RegionCutRule cutRule) {
-            if (!node.insertCut(cutter)) {
+            if (!node.insertCut(cutter, cutRule)) {
                 throw new IllegalStateException("Failed to cut BSP tree node with plane: " + cutter);
             }
         }

@@ -230,8 +230,8 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
                     "Cannot construct convex polygon from path with less than 3 elements: " + path);
         }
 
-        // go through the elements and validate that the produced area is convex and finite;
-        // use the precision context from the first path element
+        // go through the elements and validate that the produced area is convex and finite
+        // using the precision context from the first path element
         final LineConvexSubset startElement = elements.get(0);
         final Vector2D startVertex = startElement.getStartPoint();
         final DoublePrecisionContext precision = startElement.getPrecision();

@@ -225,22 +225,19 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             final Function<List<S>, R> factory) {
 
         return isFull() ?
-                splitInternalFull(splitter, thisInstance, boundaryType, factory) :
+                splitInternalFull(splitter, boundaryType, factory) :
                 splitInternalNonFull(splitter, thisInstance, boundaryType, factory);
     }
 
     /** Internal split method for use with full regions, i.e. regions that cover the entire space.
      * @param splitter splitting hyperplane
-     * @param thisInstance a reference to the current instance; this is passed as
-     *      an argument in order to allow it to be a generic type
      * @param boundaryType the type used for the boundary hyperplane subsets
      * @param factory function used to create new convex region instances
      * @param <R> Region implementation type
      * @return the result of the split operation
      */
     private <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> Split<R> splitInternalFull(
-            final Hyperplane<P> splitter, final R thisInstance, final Class<S> boundaryType,
-            final Function<List<S>, R> factory) {
+            final Hyperplane<P> splitter, final Class<S> boundaryType, final Function<List<S>, R> factory) {
 
         final R minus = factory.apply(Collections.singletonList(boundaryType.cast(splitter.span())));
         final R plus = factory.apply(Collections.singletonList(boundaryType.cast(splitter.reverse().span())));
