@@ -234,10 +234,7 @@ public class Transform2STest {
         final Transform2S d = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);

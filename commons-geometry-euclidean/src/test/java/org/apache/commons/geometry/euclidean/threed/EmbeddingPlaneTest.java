@@ -449,10 +449,7 @@ public class EmbeddingPlaneTest {
         final Plane stdPlane = Planes.fromPointAndNormal(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);

@@ -31,14 +31,13 @@ public class LinecastPoint3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final DoublePrecisionContext TEST_PRECISION = new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final Line3D X_AXIS =
-            Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+    private static final Line3D X_AXIS = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X,
+            TEST_PRECISION);
 
-    private static final Line3D Y_AXIS =
-            Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+    private static final Line3D Y_AXIS = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_Y,
+            TEST_PRECISION);
 
     @Test
     public void testProperties() {
@@ -104,10 +103,7 @@ public class LinecastPoint3DTest {
         final LinecastPoint3D e = new LinecastPoint3D(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, X_AXIS);
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);
@@ -123,7 +119,8 @@ public class LinecastPoint3DTest {
         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, precision);
-        final Line3D otherLine = Lines3D.fromPointAndDirection(Vector3D.of(1e-4, 1e-4, 1e-4), Vector3D.Unit.PLUS_X, precision);
+        final Line3D otherLine = Lines3D.fromPointAndDirection(Vector3D.of(1e-4, 1e-4, 1e-4), Vector3D.Unit.PLUS_X,
+                precision);
 
         final LinecastPoint3D a = new LinecastPoint3D(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, line);
 
@@ -131,8 +128,8 @@ public class LinecastPoint3DTest {
         final LinecastPoint3D c = new LinecastPoint3D(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y, line);
 
         final LinecastPoint3D d = new LinecastPoint3D(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, line);
-        final LinecastPoint3D e = new LinecastPoint3D(
-                Vector3D.of(1 + 1e-3, 1 + 1e-3, 1 + 1e-3), Vector3D.Unit.from(1 + 1e-3, 1e-3, 1e-3), otherLine);
+        final LinecastPoint3D e = new LinecastPoint3D(Vector3D.of(1 + 1e-3, 1 + 1e-3, 1 + 1e-3),
+                Vector3D.Unit.from(1 + 1e-3, 1e-3, 1e-3), otherLine);
 
         // act/assert
         Assert.assertTrue(a.eq(a, precision));
@@ -174,15 +171,18 @@ public class LinecastPoint3DTest {
         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, precision);
-        final Line3D eqLine = Lines3D.fromPointAndDirection(Vector3D.of(1e-3, 1e-3, 1e-3), Vector3D.Unit.PLUS_X, precision);
+        final Line3D eqLine = Lines3D.fromPointAndDirection(Vector3D.of(1e-3, 1e-3, 1e-3), Vector3D.Unit.PLUS_X,
+                precision);
         final Line3D diffLine = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, precision);
 
         final LinecastPoint3D a = new LinecastPoint3D(Vector3D.ZERO, Vector3D.Unit.MINUS_Y, line);
         final LinecastPoint3D aDup1 = new LinecastPoint3D(Vector3D.of(1e-3, 0, 0), Vector3D.Unit.MINUS_Y, line);
-        final LinecastPoint3D aDup2 = new LinecastPoint3D(Vector3D.of(1e-3, 1e-3, 1e-3), Vector3D.of(1e-3, -1, 0), eqLine);
+        final LinecastPoint3D aDup2 = new LinecastPoint3D(Vector3D.of(1e-3, 1e-3, 1e-3), Vector3D.of(1e-3, -1, 0),
+                eqLine);
 
         final LinecastPoint3D b = new LinecastPoint3D(Vector3D.ZERO, Vector3D.Unit.MINUS_X, diffLine);
-        final LinecastPoint3D bDup = new LinecastPoint3D(Vector3D.of(-1e-3, 1e-4, 1e-4), Vector3D.Unit.MINUS_X, diffLine);
+        final LinecastPoint3D bDup = new LinecastPoint3D(Vector3D.of(-1e-3, 1e-4, 1e-4), Vector3D.Unit.MINUS_X,
+                diffLine);
 
         final LinecastPoint3D c = new LinecastPoint3D(Vector3D.of(0.5, 0, 0), Vector3D.Unit.MINUS_Y, line);
 

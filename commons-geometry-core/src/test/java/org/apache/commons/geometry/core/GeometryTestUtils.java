@@ -26,8 +26,10 @@ import org.junit.Assert;
 
 /** Class containing various geometry-related test utilities.
  */
+
 public final class GeometryTestUtils {
 
+    /** Utility class; no instantiation. */
     private GeometryTestUtils() {}
 
     /** Asserts that the given value is positive infinity.
@@ -112,6 +114,27 @@ public final class GeometryTestUtils {
     public static void assertContains(final String substr, final String actual) {
         final String msg = "Expected string to contain [" + substr + "] but was [" + actual + "]";
         Assert.assertTrue(msg, actual.contains(substr));
+    }
+
+    /** Assert that the {@code equals} method of the argument meets the following requirements:
+     * <ol>
+     *  <li>{@code obj} is not equal to null</li>
+     *  <li>{@code obj} is not equal to an instance of a supertype ({@code java.lang.Object})</li>
+     *  <li>{@code obj} is equal to itself</li>
+     * </ol>
+     * @param obj object to test the {@code equals} method of
+     */
+    public static void assertSimpleEqualsCases(final Object obj) {
+        // Use the JUnit boolean assertions here to ensure that the equals methods are actually
+        // invoked and no assertion shortcuts are taken
+
+        Assert.assertFalse("Object should not equal null", obj.equals(null));
+
+        if (obj.getClass().getSuperclass() != null) {
+            Assert.assertFalse("Object should not equal an instance of different type", obj.equals(new Object()));
+        }
+
+        Assert.assertTrue("Object should equal itself", obj.equals(obj));
     }
 
     /**

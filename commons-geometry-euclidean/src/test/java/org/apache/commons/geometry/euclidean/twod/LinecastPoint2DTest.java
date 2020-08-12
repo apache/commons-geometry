@@ -103,10 +103,7 @@ public class LinecastPoint2DTest {
         final LinecastPoint2D e = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);

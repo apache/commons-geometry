@@ -1199,12 +1199,9 @@ public class LineTest {
         final Line e = Lines.fromPointAndDirection(p, v, precision1);
 
         // act/assert
-        Assert.assertEquals(a, a);
+        GeometryTestUtils.assertSimpleEqualsCases(a);
         Assert.assertEquals(a, e);
         Assert.assertEquals(e, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);

@@ -194,27 +194,6 @@ public class Transform1STest {
         final Transform1S c = Transform1S.identity().negate().rotate(-PlaneAngleRadians.PI_OVER_TWO);
         final Transform1S d = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
 
-        // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
-
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-
-        Assert.assertEquals(a, d);
-        Assert.assertEquals(d, a);
-    }
-
-    @Test
-    public void testEquals() {
-        // arrange
-        final Transform1S a = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
-        final Transform1S b = Transform1S.identity().rotate(PlaneAngleRadians.PI_OVER_TWO);
-        final Transform1S c = Transform1S.identity().negate().rotate(-PlaneAngleRadians.PI_OVER_TWO);
-        final Transform1S d = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
-
         // act
         final int hash = a.hashCode();
 
@@ -225,6 +204,24 @@ public class Transform1STest {
         Assert.assertNotEquals(hash, c.hashCode());
 
         Assert.assertEquals(hash, d.hashCode());
+    }
+
+    @Test
+    public void testEquals() {
+        // arrange
+        final Transform1S a = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
+        final Transform1S b = Transform1S.identity().rotate(PlaneAngleRadians.PI_OVER_TWO);
+        final Transform1S c = Transform1S.identity().negate().rotate(-PlaneAngleRadians.PI_OVER_TWO);
+        final Transform1S d = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
+
+        // act/assert
+        GeometryTestUtils.assertSimpleEqualsCases(a);
+
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(a, c);
+
+        Assert.assertEquals(a, d);
+        Assert.assertEquals(d, a);
     }
 
     @Test

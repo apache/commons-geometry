@@ -549,10 +549,7 @@ public class Line3DTest {
         final Line3D e = Lines3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), new EpsilonDoublePrecisionContext(TEST_EPS));
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);

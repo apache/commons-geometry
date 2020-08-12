@@ -307,14 +307,12 @@ public class OrientedPointTest {
         final OrientedPoint g = OrientedPoints.fromPointAndDirection(Vector1D.of(1.0), true, precisionA);
 
         // act/assert
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(c, d);
         Assert.assertNotEquals(e, f);
 
-        Assert.assertEquals(a, a);
         Assert.assertEquals(a, g);
         Assert.assertEquals(g, a);
     }

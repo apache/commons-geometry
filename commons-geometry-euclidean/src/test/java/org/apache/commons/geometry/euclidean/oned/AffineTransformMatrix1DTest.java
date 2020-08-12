@@ -724,10 +724,7 @@ public class AffineTransformMatrix1DTest {
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(1, 2);
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, AffineTransformMatrix1D.of(0, 2));
         Assert.assertNotEquals(a, AffineTransformMatrix1D.of(1, 0));

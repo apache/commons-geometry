@@ -234,10 +234,7 @@ public class Rotation2DTest {
         final Rotation2D d = Rotation2D.of(1.0);
 
         // act/assert
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
-
-        Assert.assertEquals(a, a);
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);

@@ -1171,10 +1171,7 @@ public class AffineTransformMatrix2DTest {
         final AffineTransformMatrix2D a = AffineTransformMatrix2D.of(values);
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         double[] temp;
         for (int i = 0; i < values.length; ++i) {

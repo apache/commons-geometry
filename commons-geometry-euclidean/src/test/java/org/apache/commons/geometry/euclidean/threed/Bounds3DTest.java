@@ -452,10 +452,7 @@ public class Bounds3DTest {
         final Bounds3D b6 = Bounds3D.from(Vector3D.of(1, 1, 1), Vector3D.of(2, 2, 2));
 
         // act/assert
-        Assert.assertEquals(b1, b1);
-
-        Assert.assertFalse(b1.equals(null));
-        Assert.assertFalse(b1.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(b1);
 
         Assert.assertNotEquals(b1, b2);
         Assert.assertNotEquals(b1, b3);

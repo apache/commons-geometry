@@ -19,6 +19,7 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.Comparator;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -305,10 +306,7 @@ public class Point2STest {
         final Point2S d = Point2S.of(1.0, 2.0);
 
         // act/assert
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
-
-        Assert.assertEquals(a, a);
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);

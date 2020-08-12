@@ -584,10 +584,7 @@ public class Vector1DTest {
         final Vector1D u2 = Vector1D.of(1);
 
         // act/assert
-        Assert.assertFalse(u1.equals(null));
-        Assert.assertFalse(u1.equals(new Object()));
-
-        Assert.assertEquals(u1, u1);
+        GeometryTestUtils.assertSimpleEqualsCases(u1);
         Assert.assertEquals(u1, u2);
 
         Assert.assertNotEquals(u1, Vector1D.of(-1));

@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -67,8 +68,7 @@ public class AxisAngleSequenceTest {
         final AxisAngleSequence seq = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3);
 
         // act/assert
-        Assert.assertFalse(seq.equals(null));
-        Assert.assertNotEquals(seq, new Object());
+        GeometryTestUtils.assertSimpleEqualsCases(seq);
 
         Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3));
         Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.ZYX, 1, 2, 3));
@@ -76,7 +76,6 @@ public class AxisAngleSequenceTest {
         Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 9, 3));
         Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 9));
 
-        Assert.assertEquals(seq, seq);
         Assert.assertEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3));
     }
 

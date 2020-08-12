@@ -190,10 +190,7 @@ public class Point1STest {
         final Point1S e = Point1S.of(Double.NaN);
 
         // assert
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
-
-        Assert.assertEquals(a, a);
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(b, a);

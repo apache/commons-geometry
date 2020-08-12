@@ -199,12 +199,10 @@ public class EpsilonDoublePrecisionContextTest {
         final EpsilonDoublePrecisionContext c = new EpsilonDoublePrecisionContext(1e-6);
 
         // act/assert
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(b, a);
 
-        Assert.assertEquals(a, a);
         Assert.assertEquals(a, c);
     }
 

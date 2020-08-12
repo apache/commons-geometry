@@ -543,10 +543,7 @@ public class SphereTest {
         final Sphere e = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);

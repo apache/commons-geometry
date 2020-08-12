@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -232,10 +233,7 @@ public class PolarCoordinatesTest {
         final PolarCoordinates e = PolarCoordinates.of(1, 2);
 
         // act/assert
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
-
-        Assert.assertEquals(a, a);
+        GeometryTestUtils.assertSimpleEqualsCases(a);
         Assert.assertEquals(a, e);
 
         Assert.assertNotEquals(a, b);

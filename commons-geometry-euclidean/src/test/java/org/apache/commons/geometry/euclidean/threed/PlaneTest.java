@@ -994,10 +994,7 @@ public class PlaneTest {
         final Plane e = Planes.fromPointAndNormal(pt, normal, TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);

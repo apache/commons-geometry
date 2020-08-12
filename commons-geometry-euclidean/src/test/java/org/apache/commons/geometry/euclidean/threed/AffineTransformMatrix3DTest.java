@@ -1164,10 +1164,7 @@ public class AffineTransformMatrix3DTest {
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(values);
 
         // act/assert
-        Assert.assertEquals(a, a);
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
         double[] temp;
         for (int i = 0; i < values.length; ++i) {

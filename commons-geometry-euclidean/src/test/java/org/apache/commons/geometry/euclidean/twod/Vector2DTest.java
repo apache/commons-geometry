@@ -899,10 +899,7 @@ public class Vector2DTest {
         final Vector2D u2 = Vector2D.of(1, 2);
 
         // act/assert
-        Assert.assertFalse(u1.equals(null));
-        Assert.assertFalse(u1.equals(new Object()));
-
-        Assert.assertEquals(u1, u1);
+        GeometryTestUtils.assertSimpleEqualsCases(u1);
         Assert.assertEquals(u1, u2);
 
         Assert.assertNotEquals(u1, Vector2D.of(-1, -2));

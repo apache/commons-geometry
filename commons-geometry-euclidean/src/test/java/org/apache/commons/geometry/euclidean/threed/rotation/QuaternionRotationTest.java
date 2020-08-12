@@ -1038,10 +1038,7 @@ public class QuaternionRotationTest {
         final QuaternionRotation q2 = QuaternionRotation.of(1, 2, 3, 4);
 
         // act/assert
-        Assert.assertFalse(q1.equals(null));
-        Assert.assertNotEquals(q1, new Object());
-
-        Assert.assertEquals(q1, q1);
+        GeometryTestUtils.assertSimpleEqualsCases(q1);
         Assert.assertEquals(q1, q2);
 
         Assert.assertNotEquals(q1, QuaternionRotation.of(-1, -2, -3, 4));
