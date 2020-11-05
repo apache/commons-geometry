@@ -38,7 +38,7 @@ public abstract class IteratorTransform<I, T> implements Iterator<T> {
     /** Create a new instance that uses the given iterator as the input source.
      * @param inputIterator iterator supplying input values
      */
-    public IteratorTransform(final Iterator<I> inputIterator) {
+    protected IteratorTransform(final Iterator<I> inputIterator) {
         this.inputIterator = inputIterator;
     }
 

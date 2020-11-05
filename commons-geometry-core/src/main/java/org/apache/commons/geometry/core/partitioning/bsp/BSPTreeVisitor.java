@@ -110,7 +110,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
         /** Simple constructor.
          * @param target the point serving as the target for the tree traversal
          */
-        public TargetPointVisitor(final P target) {
+        protected TargetPointVisitor(final P target) {
             this.target = target;
         }
 
@@ -135,7 +135,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
         /** Simple constructor.
          * @param target the point serving as the target for the traversal
          */
-        public ClosestFirstVisitor(final P target) {
+        protected ClosestFirstVisitor(final P target) {
             super(target);
         }
 
@@ -162,7 +162,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
         /** Simple constructor.
          * @param target the point serving as the target for the traversal
          */
-        public FarthestFirstVisitor(final P target) {
+        protected FarthestFirstVisitor(final P target) {
             super(target);
         }
 
