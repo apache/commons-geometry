@@ -81,6 +81,12 @@
     <implementation.build>${git.revision}; ${maven.build.timestamp}</implementation.build>
 
     <!--
+      Temporarily disable Clirr during beta version development since backwards compatibility is not
+      guaranteed for these versions. This check must be re-enabled once the full 1.0 release is made.
+    -->
+    <clirr.skip>true</clirr.skip>
+
+    <!--
         Override so that "mvn commons:download-page" will generates a web page
         referring to the files created by the "dist-archive" module.
         Temporary workaround?
