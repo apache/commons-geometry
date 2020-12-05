@@ -32,8 +32,8 @@ import org.apache.commons.geometry.spherical.twod.GreatCircles;
 import org.apache.commons.geometry.spherical.twod.Point2S;
 import org.apache.commons.geometry.spherical.twod.RegionBSPTree2S;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** This class contains code listed as examples in the user guide and other documentation.
  * If any portion of this code changes, the corresponding examples in the documentation <em>must</em> be updated.
@@ -58,11 +58,11 @@ public class DocumentationExamplesTest {
         final RegionLocation bLocZero = b.classify(Point1S.ZERO); // RegionLocation.INSIDE
 
         // -------------------
-        Assert.assertTrue(a.contains(Point1S.of(0.25 * Math.PI)));
-        Assert.assertTrue(b.contains(Point1S.of(0.25 * Math.PI)));
+        Assertions.assertTrue(a.contains(Point1S.of(0.25 * Math.PI)));
+        Assertions.assertTrue(b.contains(Point1S.of(0.25 * Math.PI)));
 
-        Assert.assertEquals(RegionLocation.BOUNDARY, aLocZero);
-        Assert.assertEquals(RegionLocation.INSIDE, bLocZero);
+        Assertions.assertEquals(RegionLocation.BOUNDARY, aLocZero);
+        Assertions.assertEquals(RegionLocation.INSIDE, bLocZero);
     }
 
     @Test
@@ -82,8 +82,8 @@ public class DocumentationExamplesTest {
         final List<AngularInterval> intervals = tree.toIntervals(); //size = 2
 
         // ---------------
-        Assert.assertEquals(1.25 * Math.PI, size, TEST_EPS);
-        Assert.assertEquals(2, intervals.size());
+        Assertions.assertEquals(1.25 * Math.PI, size, TEST_EPS);
+        Assertions.assertEquals(2, intervals.size());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class DocumentationExamplesTest {
         final List<GreatArcPath> minusPaths = minus.getBoundaryPaths(); // size = 1
 
         // ---------------------
-        Assert.assertEquals(Math.PI / 4, minusSize, TEST_EPS);
-        Assert.assertEquals(1, minusPaths.size());
+        Assertions.assertEquals(Math.PI / 4, minusSize, TEST_EPS);
+        Assertions.assertEquals(1, minusPaths.size());
     }
 }

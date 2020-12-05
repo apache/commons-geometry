@@ -32,8 +32,8 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class PlaneConvexSubsetTest {
 
@@ -52,8 +52,8 @@ public class PlaneConvexSubsetTest {
         final List<PlaneConvexSubset> convex = sp.toConvex();
 
         // assert
-        Assert.assertEquals(1, convex.size());
-        Assert.assertSame(sp, convex.get(0));
+        Assertions.assertEquals(1, convex.size());
+        Assertions.assertSame(sp, convex.get(0));
     }
 
     @Test
@@ -69,10 +69,10 @@ public class PlaneConvexSubsetTest {
         final PlaneConvexSubset reversed = sp.reverse();
 
         // assert
-        Assert.assertEquals(sp.getPlane().reverse(), reversed.getPlane());
+        Assertions.assertEquals(sp.getPlane().reverse(), reversed.getPlane());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_Z, reversed.getPlane().getNormal(), TEST_EPS);
 
-        Assert.assertEquals(0.5, reversed.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.5, reversed.getSize(), TEST_EPS);
 
         checkVertices(reversed, p1, p3, p2);
 
@@ -95,8 +95,8 @@ public class PlaneConvexSubsetTest {
         final PlaneConvexSubset transformed = sp.transform(transform);
 
         // assert
-        Assert.assertTrue(transformed.isFull());
-        Assert.assertFalse(transformed.isEmpty());
+        Assertions.assertTrue(transformed.isFull());
+        Assertions.assertFalse(transformed.isEmpty());
 
         checkPlane(transformed.getPlane(), Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z);
     }
@@ -115,8 +115,8 @@ public class PlaneConvexSubsetTest {
         final PlaneConvexSubset transformed = sp.transform(transform);
 
         // assert
-        Assert.assertFalse(transformed.isFull());
-        Assert.assertFalse(transformed.isEmpty());
+        Assertions.assertFalse(transformed.isFull());
+        Assertions.assertFalse(transformed.isEmpty());
 
         checkPlane(transformed.getPlane(), Vector3D.ZERO, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_Y);
     }
@@ -181,16 +181,16 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = sp.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final PlaneConvexSubset minus = split.getMinus();
-        Assert.assertEquals(1, minus.getEmbedded().getSubspaceRegion().getBoundaries().size());
+        Assertions.assertEquals(1, minus.getEmbedded().getSubspaceRegion().getBoundaries().size());
         checkPoints(minus, RegionLocation.BOUNDARY, Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Y);
         checkPoints(minus, RegionLocation.INSIDE, Vector3D.Unit.MINUS_X);
         checkPoints(minus, RegionLocation.OUTSIDE, Vector3D.Unit.PLUS_X);
 
         final PlaneConvexSubset plus = split.getPlus();
-        Assert.assertEquals(1, plus.getEmbedded().getSubspaceRegion().getBoundaries().size());
+        Assertions.assertEquals(1, plus.getEmbedded().getSubspaceRegion().getBoundaries().size());
         checkPoints(plus, RegionLocation.BOUNDARY, Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Y);
         checkPoints(plus, RegionLocation.INSIDE, Vector3D.Unit.PLUS_X);
         checkPoints(plus, RegionLocation.OUTSIDE, Vector3D.Unit.MINUS_X);
@@ -209,7 +209,7 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = sp.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final PlaneConvexSubset minus = split.getMinus();
         checkVertices(minus, Vector3D.of(1, 1, 0), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0));
@@ -231,9 +231,9 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = sp.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
+        Assertions.assertNull(split.getMinus());
 
         final PlaneConvexSubset plus = split.getPlus();
         checkVertices(plus, Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0));
@@ -252,12 +252,12 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = sp.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
         final PlaneConvexSubset minus = split.getMinus();
         checkVertices(minus, Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0));
 
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -273,10 +273,10 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = sp.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -293,10 +293,10 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = sp.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(sp, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(sp, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -313,10 +313,10 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = sp.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(sp, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(sp, split.getPlus());
     }
 
     @Test
@@ -332,10 +332,10 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = sp.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -352,10 +352,10 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = sp.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(sp, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(sp, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -372,10 +372,10 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(ps, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(ps, split.getPlus());
     }
 
     @Test
@@ -396,19 +396,19 @@ public class PlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertTrue(ps.isInfinite());
+        Assertions.assertTrue(ps.isInfinite());
 
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final PlaneConvexSubset plus = split.getPlus();
-        Assert.assertNotNull(plus);
-        Assert.assertTrue(plus.isInfinite());
-        Assert.assertFalse(plus instanceof ConvexPolygon3D);
+        Assertions.assertNotNull(plus);
+        Assertions.assertTrue(plus.isInfinite());
+        Assertions.assertFalse(plus instanceof ConvexPolygon3D);
 
         final PlaneConvexSubset minus = split.getMinus();
-        Assert.assertNotNull(minus);
-        Assert.assertFalse(minus.isInfinite());
-        Assert.assertTrue(minus instanceof ConvexPolygon3D);
+        Assertions.assertNotNull(minus);
+        Assertions.assertFalse(minus.isInfinite());
+        Assertions.assertTrue(minus instanceof ConvexPolygon3D);
     }
 
     @Test
@@ -425,10 +425,10 @@ public class PlaneConvexSubsetTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 2),
                 ps.intersection(Lines3D.fromPoints(Vector3D.of(1, 1, 2), Vector3D.of(1, 1, 0), TEST_PRECISION)), TEST_EPS);
 
-        Assert.assertNull(ps.intersection(Lines3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION)));
-        Assert.assertNull(ps.intersection(Lines3D.fromPoints(Vector3D.of(0, 0, 2), Vector3D.of(1, 1, 2), TEST_PRECISION)));
+        Assertions.assertNull(ps.intersection(Lines3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION)));
+        Assertions.assertNull(ps.intersection(Lines3D.fromPoints(Vector3D.of(0, 0, 2), Vector3D.of(1, 1, 2), TEST_PRECISION)));
 
-        Assert.assertNull(ps.intersection(Lines3D.fromPoints(Vector3D.of(4, 4, 2), Vector3D.of(4, 4, 0), TEST_PRECISION)));
+        Assertions.assertNull(ps.intersection(Lines3D.fromPoints(Vector3D.of(4, 4, 2), Vector3D.of(4, 4, 0), TEST_PRECISION)));
     }
 
     @Test
@@ -445,12 +445,12 @@ public class PlaneConvexSubsetTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 2),
                 sp.intersection(Lines3D.segmentFromPoints(Vector3D.of(1, 1, 2), Vector3D.of(1, 1, 0), TEST_PRECISION)), TEST_EPS);
 
-        Assert.assertNull(sp.intersection(Lines3D.segmentFromPoints(Vector3D.of(0.5, 0.5, 4), Vector3D.of(0.5, 0.5, 3), TEST_PRECISION)));
+        Assertions.assertNull(sp.intersection(Lines3D.segmentFromPoints(Vector3D.of(0.5, 0.5, 4), Vector3D.of(0.5, 0.5, 3), TEST_PRECISION)));
 
-        Assert.assertNull(sp.intersection(Lines3D.segmentFromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION)));
-        Assert.assertNull(sp.intersection(Lines3D.segmentFromPoints(Vector3D.of(0, 0, 2), Vector3D.of(1, 1, 2), TEST_PRECISION)));
+        Assertions.assertNull(sp.intersection(Lines3D.segmentFromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION)));
+        Assertions.assertNull(sp.intersection(Lines3D.segmentFromPoints(Vector3D.of(0, 0, 2), Vector3D.of(1, 1, 2), TEST_PRECISION)));
 
-        Assert.assertNull(sp.intersection(Lines3D.segmentFromPoints(Vector3D.of(4, 4, 2), Vector3D.of(4, 4, 0), TEST_PRECISION)));
+        Assertions.assertNull(sp.intersection(Lines3D.segmentFromPoints(Vector3D.of(4, 4, 2), Vector3D.of(4, 4, 0), TEST_PRECISION)));
     }
 
     private static void checkPlane(final Plane plane, final Vector3D origin, Vector3D u, Vector3D v) {
@@ -459,19 +459,19 @@ public class PlaneConvexSubsetTest {
         final Vector3D w = u.cross(v);
 
         EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getOrigin(), TEST_EPS);
-        Assert.assertTrue(plane.contains(origin));
+        Assertions.assertTrue(plane.contains(origin));
 
         EuclideanTestUtils.assertCoordinatesEqual(w, plane.getNormal(), TEST_EPS);
-        Assert.assertEquals(1.0, plane.getNormal().norm(), TEST_EPS);
+        Assertions.assertEquals(1.0, plane.getNormal().norm(), TEST_EPS);
 
         final double offset = plane.getOriginOffset();
-        Assert.assertEquals(Vector3D.ZERO.distance(plane.getOrigin()), Math.abs(offset), TEST_EPS);
+        Assertions.assertEquals(Vector3D.ZERO.distance(plane.getOrigin()), Math.abs(offset), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getNormal().multiply(-offset), TEST_EPS);
     }
 
     private static void checkPoints(final PlaneConvexSubset sp, final RegionLocation loc, final Vector3D... pts) {
         for (final Vector3D pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, sp.classify(pt));
+            Assertions.assertEquals(loc, sp.classify(pt), "Unexpected location for point " + pt);
         }
     }
 

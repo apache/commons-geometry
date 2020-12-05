@@ -23,8 +23,8 @@ import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class IntervalTest {
 
@@ -100,7 +100,7 @@ public class IntervalTest {
     @Test
     public void testOf_hyperplanes() {
         // act/assert
-        Assert.assertSame(Interval.full(), Interval.of(null, null));
+        Assertions.assertSame(Interval.full(), Interval.of(null, null));
 
         checkInterval(Interval.of(
                 OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION),
@@ -250,21 +250,21 @@ public class IntervalTest {
     @Test
     public void testIsInfinite() {
         // act/assert
-        Assert.assertFalse(Interval.of(1, 2, TEST_PRECISION).isInfinite());
+        Assertions.assertFalse(Interval.of(1, 2, TEST_PRECISION).isInfinite());
 
-        Assert.assertTrue(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION).isInfinite());
-        Assert.assertTrue(Interval.of(2, Double.POSITIVE_INFINITY, TEST_PRECISION).isInfinite());
-        Assert.assertTrue(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).isInfinite());
+        Assertions.assertTrue(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION).isInfinite());
+        Assertions.assertTrue(Interval.of(2, Double.POSITIVE_INFINITY, TEST_PRECISION).isInfinite());
+        Assertions.assertTrue(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).isInfinite());
     }
 
     @Test
     public void testIsFinite() {
         // act/assert
-        Assert.assertTrue(Interval.of(1, 2, TEST_PRECISION).isFinite());
+        Assertions.assertTrue(Interval.of(1, 2, TEST_PRECISION).isFinite());
 
-        Assert.assertFalse(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION).isFinite());
-        Assert.assertFalse(Interval.of(2, Double.POSITIVE_INFINITY, TEST_PRECISION).isFinite());
-        Assert.assertFalse(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).isFinite());
+        Assertions.assertFalse(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION).isFinite());
+        Assertions.assertFalse(Interval.of(2, Double.POSITIVE_INFINITY, TEST_PRECISION).isFinite());
+        Assertions.assertFalse(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).isFinite());
     }
 
     @Test
@@ -377,38 +377,38 @@ public class IntervalTest {
     @Test
     public void testIsFull() {
         // act/assert
-        Assert.assertFalse(Interval.of(1, 1, TEST_PRECISION).isFull());
-        Assert.assertFalse(Interval.of(-2, 2, TEST_PRECISION).isFull());
+        Assertions.assertFalse(Interval.of(1, 1, TEST_PRECISION).isFull());
+        Assertions.assertFalse(Interval.of(-2, 2, TEST_PRECISION).isFull());
 
-        Assert.assertFalse(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).isFull());
-        Assert.assertFalse(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).isFull());
+        Assertions.assertFalse(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).isFull());
+        Assertions.assertFalse(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).isFull());
 
-        Assert.assertTrue(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).isFull());
+        Assertions.assertTrue(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).isFull());
     }
 
     @Test
     public void testGetSize() {
         // act/assert
-        Assert.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).getSize(), TEST_EPS);
+        Assertions.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).getSize(), TEST_EPS);
 
-        Assert.assertEquals(4, Interval.of(-2, 2, TEST_PRECISION).getSize(), TEST_EPS);
-        Assert.assertEquals(5, Interval.of(2, -3, TEST_PRECISION).getSize(), TEST_EPS);
+        Assertions.assertEquals(4, Interval.of(-2, 2, TEST_PRECISION).getSize(), TEST_EPS);
+        Assertions.assertEquals(5, Interval.of(2, -3, TEST_PRECISION).getSize(), TEST_EPS);
 
-        Assert.assertEquals(Double.POSITIVE_INFINITY,
+        Assertions.assertEquals(Double.POSITIVE_INFINITY,
                 Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).getSize(), TEST_EPS);
-        Assert.assertEquals(Double.POSITIVE_INFINITY,
+        Assertions.assertEquals(Double.POSITIVE_INFINITY,
                 Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).getSize(), TEST_EPS);
 
-        Assert.assertEquals(Double.POSITIVE_INFINITY,
+        Assertions.assertEquals(Double.POSITIVE_INFINITY,
                 Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).getSize(), TEST_EPS);
     }
 
     @Test
     public void testGetBoundarySize() {
         // act/assert
-        Assert.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0, Interval.of(-2, 5, TEST_PRECISION).getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0, Interval.full().getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0, Interval.of(-2, 5, TEST_PRECISION).getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0, Interval.full().getBoundarySize(), TEST_EPS);
     }
 
     @Test
@@ -424,9 +424,9 @@ public class IntervalTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-1),
                 Interval.of(-2, 0, TEST_PRECISION).getCentroid(), TEST_EPS);
 
-        Assert.assertNull(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).getCentroid());
-        Assert.assertNull(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).getCentroid());
-        Assert.assertNull(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).getCentroid());
+        Assertions.assertNull(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).getCentroid());
+        Assertions.assertNull(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).getCentroid());
+        Assertions.assertNull(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).getCentroid());
     }
 
     @Test
@@ -439,7 +439,7 @@ public class IntervalTest {
         final RegionBSPTree1D tree = interval.toTree();
 
         // assert
-        Assert.assertEquals(5, tree.count());
+        Assertions.assertEquals(5, tree.count());
 
         checkClassify(tree, RegionLocation.OUTSIDE,
                 Double.NEGATIVE_INFINITY, -2, -1.1,
@@ -464,7 +464,7 @@ public class IntervalTest {
         final RegionBSPTree1D tree = interval.toTree();
 
         // assert
-        Assert.assertEquals(5, tree.count());
+        Assertions.assertEquals(5, tree.count());
 
         checkClassify(tree, RegionLocation.OUTSIDE,
                 Double.NEGATIVE_INFINITY, 0, 0.9, 1.1, 2, Double.POSITIVE_INFINITY);
@@ -485,7 +485,7 @@ public class IntervalTest {
         final RegionBSPTree1D tree = interval.toTree();
 
         // assert
-        Assert.assertEquals(3, tree.count());
+        Assertions.assertEquals(3, tree.count());
 
         checkClassify(tree, RegionLocation.OUTSIDE,
                 Double.NEGATIVE_INFINITY, -2, -1.1);
@@ -509,7 +509,7 @@ public class IntervalTest {
         final RegionBSPTree1D tree = interval.toTree();
 
         // assert
-        Assert.assertEquals(3, tree.count());
+        Assertions.assertEquals(3, tree.count());
 
         checkClassify(tree, RegionLocation.INSIDE,
                 Double.NEGATIVE_INFINITY, 0, 0.9);
@@ -533,7 +533,7 @@ public class IntervalTest {
         final RegionBSPTree1D tree = interval.toTree();
 
         // assert
-        Assert.assertEquals(1, tree.count());
+        Assertions.assertEquals(1, tree.count());
 
         checkClassify(tree, RegionLocation.INSIDE,
                 Double.NEGATIVE_INFINITY, -1, 0, 1, Double.POSITIVE_INFINITY);
@@ -548,9 +548,9 @@ public class IntervalTest {
 
 
         // act/assert
-        Assert.assertNull(full.project(Vector1D.of(Double.NEGATIVE_INFINITY)));
-        Assert.assertNull(full.project(Vector1D.of(0)));
-        Assert.assertNull(full.project(Vector1D.of(Double.POSITIVE_INFINITY)));
+        Assertions.assertNull(full.project(Vector1D.of(Double.NEGATIVE_INFINITY)));
+        Assertions.assertNull(full.project(Vector1D.of(0)));
+        Assertions.assertNull(full.project(Vector1D.of(Double.POSITIVE_INFINITY)));
     }
 
     @Test
@@ -669,7 +669,7 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), Double.NEGATIVE_INFINITY, 1);
         checkInterval(split.getPlus(), 1, Double.POSITIVE_INFINITY);
@@ -686,7 +686,7 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), Double.NEGATIVE_INFINITY, 1);
         checkInterval(split.getPlus(), 1, Double.POSITIVE_INFINITY);
@@ -703,7 +703,7 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), 1, Double.POSITIVE_INFINITY);
         checkInterval(split.getPlus(), -1, 1);
@@ -721,7 +721,7 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), 1, Double.POSITIVE_INFINITY);
         checkInterval(split.getPlus(), -1, 1);
@@ -738,9 +738,9 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertSame(interval, split.getPlus());
+        Assertions.assertSame(interval, split.getPlus());
     }
 
     @Test
@@ -754,9 +754,9 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(interval, split.getMinus());
+        Assertions.assertSame(interval, split.getMinus());
     }
 
     @Test
@@ -770,9 +770,9 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(interval, split.getMinus());
+        Assertions.assertSame(interval, split.getMinus());
     }
 
     @Test
@@ -786,9 +786,9 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertSame(interval, split.getPlus());
+        Assertions.assertSame(interval, split.getPlus());
     }
 
     @Test
@@ -802,10 +802,10 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
         checkInterval(split.getMinus(), 2, 2);
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -819,9 +819,9 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
+        Assertions.assertNull(split.getMinus());
         checkInterval(split.getPlus(), 2, 2);
     }
 
@@ -836,10 +836,10 @@ public class IntervalTest {
         final Split<Interval> split = interval.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -851,9 +851,9 @@ public class IntervalTest {
         final String str = interval.toString();
 
         // assert
-        Assert.assertTrue(str.contains("Interval"));
-        Assert.assertTrue(str.contains("min= 1.0"));
-        Assert.assertTrue(str.contains("max= 2.0"));
+        Assertions.assertTrue(str.contains("Interval"));
+        Assertions.assertTrue(str.contains("min= 1.0"));
+        Assertions.assertTrue(str.contains("max= 2.0"));
     }
 
     @Test
@@ -862,22 +862,22 @@ public class IntervalTest {
         final Interval full = Interval.full();
 
         // assert
-        Assert.assertTrue(full.isFull());
-        Assert.assertFalse(full.isEmpty());
-        Assert.assertFalse(full.hasMinBoundary());
-        Assert.assertFalse(full.hasMaxBoundary());
-        Assert.assertTrue(full.isInfinite());
+        Assertions.assertTrue(full.isFull());
+        Assertions.assertFalse(full.isEmpty());
+        Assertions.assertFalse(full.hasMinBoundary());
+        Assertions.assertFalse(full.hasMaxBoundary());
+        Assertions.assertTrue(full.isInfinite());
 
-        Assert.assertEquals(RegionLocation.INSIDE, full.classify(Double.NEGATIVE_INFINITY));
-        Assert.assertEquals(RegionLocation.INSIDE, full.classify(Double.POSITIVE_INFINITY));
+        Assertions.assertEquals(RegionLocation.INSIDE, full.classify(Double.NEGATIVE_INFINITY));
+        Assertions.assertEquals(RegionLocation.INSIDE, full.classify(Double.POSITIVE_INFINITY));
     }
 
     private static void checkContains(final Interval interval, final boolean contains, final double... points) {
         for (final double x : points) {
             final String msg = "Unexpected contains status for point " + x;
 
-            Assert.assertEquals(msg, contains, interval.contains(x));
-            Assert.assertEquals(msg, contains, interval.contains(Vector1D.of(x)));
+            Assertions.assertEquals(contains, interval.contains(x), msg);
+            Assertions.assertEquals(contains, interval.contains(Vector1D.of(x)), msg);
         }
     }
 
@@ -885,8 +885,8 @@ public class IntervalTest {
         for (final double x : points) {
             final String msg = "Unexpected location for point " + x;
 
-            Assert.assertEquals(msg, loc, interval.classify(x));
-            Assert.assertEquals(msg, loc, interval.classify(Vector1D.of(x)));
+            Assertions.assertEquals(loc, interval.classify(x), msg);
+            Assertions.assertEquals(loc, interval.classify(Vector1D.of(x)), msg);
         }
     }
 
@@ -894,8 +894,8 @@ public class IntervalTest {
         for (final double x : points) {
             final String msg = "Unexpected location for point " + x;
 
-            Assert.assertEquals(msg, loc, tree.classify(x));
-            Assert.assertEquals(msg, loc, tree.classify(Vector1D.of(x)));
+            Assertions.assertEquals(loc, tree.classify(x), msg);
+            Assertions.assertEquals(loc, tree.classify(Vector1D.of(x)), msg);
         }
     }
 
@@ -904,7 +904,7 @@ public class IntervalTest {
 
         final Vector1D proj = interval.project(pt);
 
-        Assert.assertEquals(projectedLocation, proj.getX(), TEST_EPS);
+        Assertions.assertEquals(projectedLocation, proj.getX(), TEST_EPS);
     }
 
     /** Check that the given interval matches the arguments and is internally consistent.
@@ -923,27 +923,27 @@ public class IntervalTest {
      * @param precision
      */
     private static void checkInterval(final Interval interval, final double min, final double max, final DoublePrecisionContext precision) {
-        Assert.assertEquals(min, interval.getMin(), TEST_EPS);
-        Assert.assertEquals(max, interval.getMax(), TEST_EPS);
+        Assertions.assertEquals(min, interval.getMin(), TEST_EPS);
+        Assertions.assertEquals(max, interval.getMax(), TEST_EPS);
 
         final boolean finiteMin = Double.isFinite(min);
         final boolean finiteMax = Double.isFinite(max);
 
-        Assert.assertEquals(finiteMin, interval.hasMinBoundary());
-        Assert.assertEquals(finiteMax, interval.hasMaxBoundary());
+        Assertions.assertEquals(finiteMin, interval.hasMinBoundary());
+        Assertions.assertEquals(finiteMax, interval.hasMaxBoundary());
 
         if (finiteMin) {
-            Assert.assertEquals(min, interval.getMinBoundary().getLocation(), TEST_EPS);
+            Assertions.assertEquals(min, interval.getMinBoundary().getLocation(), TEST_EPS);
         } else {
-            Assert.assertNull(interval.getMinBoundary());
+            Assertions.assertNull(interval.getMinBoundary());
         }
 
         if (finiteMax) {
-            Assert.assertEquals(max, interval.getMaxBoundary().getLocation(), TEST_EPS);
+            Assertions.assertEquals(max, interval.getMaxBoundary().getLocation(), TEST_EPS);
         } else {
-            Assert.assertNull(interval.getMaxBoundary());
+            Assertions.assertNull(interval.getMaxBoundary());
         }
 
-        Assert.assertFalse(interval.isEmpty()); // always false
+        Assertions.assertFalse(interval.isEmpty()); // always false
     }
 }

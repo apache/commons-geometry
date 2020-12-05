@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BoundarySourceLinecaster2DTest {
 

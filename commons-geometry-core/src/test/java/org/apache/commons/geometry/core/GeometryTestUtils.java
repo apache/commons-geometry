@@ -22,7 +22,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /** Class containing various geometry-related test utilities.
  */
@@ -37,8 +37,8 @@ public final class GeometryTestUtils {
      */
     public static void assertPositiveInfinity(final double value) {
         final String msg = "Expected value to be positive infinity but was " + value;
-        Assert.assertTrue(msg, Double.isInfinite(value));
-        Assert.assertTrue(msg, value > 0);
+        Assertions.assertTrue(Double.isInfinite(value), msg);
+        Assertions.assertTrue(value > 0, msg);
     }
 
     /** Asserts that the given value is negative infinity..
@@ -46,8 +46,8 @@ public final class GeometryTestUtils {
      */
     public static void assertNegativeInfinity(final double value) {
         final String msg = "Expected value to be negative infinity but was " + value;
-        Assert.assertTrue(msg, Double.isInfinite(value));
-        Assert.assertTrue(msg, value < 0);
+        Assertions.assertTrue(Double.isInfinite(value), msg);
+        Assertions.assertTrue(value < 0, msg);
     }
 
     /** Asserts that the given Runnable throws an exception of the given type.
@@ -68,15 +68,15 @@ public final class GeometryTestUtils {
     public static void assertThrows(final Runnable r, final Class<?> exceptionType, final String message) {
         try {
             r.run();
-            Assert.fail("Operation should have thrown an exception");
+            Assertions.fail("Operation should have thrown an exception");
         } catch (final Exception exc) {
             final Class<?> actualType = exc.getClass();
 
-            Assert.assertTrue("Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName(),
-                    exceptionType.isAssignableFrom(actualType));
+            Assertions.assertTrue(exceptionType.isAssignableFrom(actualType),
+                    "Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName());
 
             if (message != null) {
-                Assert.assertEquals(message, exc.getMessage());
+                Assertions.assertEquals(message, exc.getMessage());
             }
         }
     }
@@ -91,18 +91,18 @@ public final class GeometryTestUtils {
     public static void assertThrows(final Runnable r, final Class<?> exceptionType, final Pattern pattern) {
         try {
             r.run();
-            Assert.fail("Operation should have thrown an exception");
+            Assertions.fail("Operation should have thrown an exception");
         } catch (final Exception exc) {
             final Class<?> actualType = exc.getClass();
 
-            Assert.assertTrue("Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName(),
-                    exceptionType.isAssignableFrom(actualType));
+            Assertions.assertTrue(exceptionType.isAssignableFrom(actualType),
+                    "Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName());
 
             if (pattern != null) {
                 final String message = exc.getMessage();
 
                 final String err = "Expected exception message to match /" + pattern + "/ but was [" + message + "]";
-                Assert.assertTrue(err, pattern.matcher(message).matches());
+                Assertions.assertTrue(pattern.matcher(message).matches(), err);
             }
         }
     }
@@ -113,7 +113,7 @@ public final class GeometryTestUtils {
      */
     public static void assertContains(final String substr, final String actual) {
         final String msg = "Expected string to contain [" + substr + "] but was [" + actual + "]";
-        Assert.assertTrue(msg, actual.contains(substr));
+        Assertions.assertTrue(actual.contains(substr), msg);
     }
 
     /** Assert that the {@code equals} method of the argument meets the following requirements:
@@ -128,13 +128,13 @@ public final class GeometryTestUtils {
         // Use the JUnit boolean assertions here to ensure that the equals methods are actually
         // invoked and no assertion shortcuts are taken
 
-        Assert.assertFalse("Object should not equal null", obj.equals(null));
+        Assertions.assertFalse(obj.equals(null), "Object should not equal null");
 
         if (obj.getClass().getSuperclass() != null) {
-            Assert.assertFalse("Object should not equal an instance of different type", obj.equals(new Object()));
+            Assertions.assertFalse(obj.equals(new Object()), "Object should not equal an instance of different type");
         }
 
-        Assert.assertTrue("Object should equal itself", obj.equals(obj));
+        Assertions.assertTrue(obj.equals(obj), "Object should equal itself");
     }
 
     /**

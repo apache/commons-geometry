@@ -21,8 +21,8 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class Transform2STest {
 
@@ -34,8 +34,8 @@ public class Transform2STest {
         final Transform2S t = Transform2S.identity();
 
         // assert
-        Assert.assertTrue(t.preservesOrientation());
-        Assert.assertArrayEquals(new double[] {
+        Assertions.assertTrue(t.preservesOrientation());
+        Assertions.assertArrayEquals(new double[] {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0
@@ -132,7 +132,7 @@ public class Transform2STest {
         final Transform2S t = Transform2S.createReflection(Point2S.PLUS_I);
 
         // assert
-        Assert.assertFalse(t.preservesOrientation());
+        Assertions.assertFalse(t.preservesOrientation());
 
         SphericalTestUtils.assertPointsEqual(Point2S.MINUS_I, t.apply(Point2S.PLUS_I), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(Point2S.PLUS_J, t.apply(Point2S.PLUS_J), TEST_EPS);
@@ -160,7 +160,7 @@ public class Transform2STest {
         final Transform2S t = Transform2S.createReflection(Vector3D.Unit.PLUS_Y);
 
         // assert
-        Assert.assertFalse(t.preservesOrientation());
+        Assertions.assertFalse(t.preservesOrientation());
 
         SphericalTestUtils.assertPointsEqual(Point2S.PLUS_I, t.apply(Point2S.PLUS_I), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(Point2S.MINUS_J, t.apply(Point2S.PLUS_J), TEST_EPS);
@@ -190,7 +190,7 @@ public class Transform2STest {
                 .reflect(Vector3D.Unit.PLUS_Y);
 
         // assert
-        Assert.assertTrue(t.preservesOrientation());
+        Assertions.assertTrue(t.preservesOrientation());
 
         SphericalTestUtils.assertPointsEqual(Point2S.MINUS_I, t.apply(Point2S.PLUS_I), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(Point2S.MINUS_J, t.apply(Point2S.PLUS_J), TEST_EPS);
@@ -217,12 +217,12 @@ public class Transform2STest {
         final int hash = a.hashCode();
 
         // assert
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, b.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
 
-        Assert.assertEquals(hash, d.hashCode());
+        Assertions.assertEquals(hash, d.hashCode());
     }
 
     @Test
@@ -236,11 +236,11 @@ public class Transform2STest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
 
-        Assert.assertEquals(a, d);
-        Assert.assertEquals(d, a);
+        Assertions.assertEquals(a, d);
+        Assertions.assertEquals(d, a);
     }
 
     @Test

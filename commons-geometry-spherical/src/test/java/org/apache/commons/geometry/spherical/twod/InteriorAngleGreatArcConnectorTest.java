@@ -27,8 +27,8 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.twod.InteriorAngleGreatArcConnector.Maximize;
 import org.apache.commons.geometry.spherical.twod.InteriorAngleGreatArcConnector.Minimize;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class InteriorAngleGreatArcConnectorTest {
 
@@ -48,7 +48,7 @@ public class InteriorAngleGreatArcConnectorTest {
             final List<GreatArcPath> paths = connector.connectAll();
 
             // assert
-            Assert.assertEquals(0, paths.size());
+            Assertions.assertEquals(0, paths.size());
         });
     }
 
@@ -65,10 +65,10 @@ public class InteriorAngleGreatArcConnectorTest {
             final List<GreatArcPath> paths = connector.connectAll();
 
             // assert
-            Assert.assertEquals(1, paths.size());
+            Assertions.assertEquals(1, paths.size());
 
             final GreatArcPath a = paths.get(0);
-            Assert.assertEquals(1, a.getArcs().size());
+            Assertions.assertEquals(1, a.getArcs().size());
             assertPathPoints(a, Point2S.PLUS_I, Point2S.PLUS_J);
         });
     }
@@ -90,7 +90,7 @@ public class InteriorAngleGreatArcConnectorTest {
         final List<GreatArcPath> paths = connector.connectAll(Arrays.asList(b3, b1, a1, a3, b2, a2));
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         assertPathPoints(paths.get(0),
             Point2S.PLUS_K,
@@ -119,7 +119,7 @@ public class InteriorAngleGreatArcConnectorTest {
                 Arrays.asList(b3, b1, a1, a3, b2, a2));
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         assertPathPoints(paths.get(0),
             Point2S.PLUS_K,
@@ -149,7 +149,7 @@ public class InteriorAngleGreatArcConnectorTest {
         final List<GreatArcPath> paths = connector.connectAll(Arrays.asList(b3, b1, a1, a3, b2, a2));
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertPathPoints(paths.get(0),
             Point2S.PLUS_K,
@@ -182,7 +182,7 @@ public class InteriorAngleGreatArcConnectorTest {
                 Arrays.asList(b3, b1, a1, a3, b2, a2));
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertPathPoints(paths.get(0),
             Point2S.PLUS_K,
@@ -213,7 +213,7 @@ public class InteriorAngleGreatArcConnectorTest {
         final List<Point2S> actualPoints = path.getVertices();
 
         final String msg = "Expected path points to equal " + expectedPoints + " but was " + actualPoints;
-        Assert.assertEquals(msg, expectedPoints.size(), actualPoints.size());
+        Assertions.assertEquals(expectedPoints.size(), actualPoints.size(), msg);
 
         for (int i = 0; i < expectedPoints.size(); ++i) {
             SphericalTestUtils.assertPointsEq(expectedPoints.get(i), actualPoints.get(i), TEST_EPS);

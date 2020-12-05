@@ -28,8 +28,10 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Vector2DTest {
 
@@ -56,11 +58,11 @@ public class Vector2DTest {
         GeometryTestUtils.assertThrows(Vector2D.POSITIVE_INFINITY::normalize, IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(Vector2D.NEGATIVE_INFINITY::normalize, IllegalArgumentException.class);
 
-        Assert.assertSame(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X.normalize());
-        Assert.assertSame(Vector2D.Unit.MINUS_X, Vector2D.Unit.MINUS_X.normalize());
+        Assertions.assertSame(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X.normalize());
+        Assertions.assertSame(Vector2D.Unit.MINUS_X, Vector2D.Unit.MINUS_X.normalize());
 
-        Assert.assertSame(Vector2D.Unit.PLUS_Y, Vector2D.Unit.PLUS_Y.normalize());
-        Assert.assertSame(Vector2D.Unit.MINUS_Y, Vector2D.Unit.MINUS_Y.normalize());
+        Assertions.assertSame(Vector2D.Unit.PLUS_Y, Vector2D.Unit.PLUS_Y.normalize());
+        Assertions.assertSame(Vector2D.Unit.MINUS_Y, Vector2D.Unit.MINUS_Y.normalize());
     }
 
     @Test
@@ -69,17 +71,17 @@ public class Vector2DTest {
         final Comparator<Vector2D> cmp = Vector2D.COORDINATE_ASCENDING_ORDER;
 
         // act/assert
-        Assert.assertEquals(0, cmp.compare(Vector2D.of(1, 2), Vector2D.of(1, 2)));
+        Assertions.assertEquals(0, cmp.compare(Vector2D.of(1, 2), Vector2D.of(1, 2)));
 
-        Assert.assertEquals(-1, cmp.compare(Vector2D.of(0, 2), Vector2D.of(1, 2)));
-        Assert.assertEquals(-1, cmp.compare(Vector2D.of(1, 1), Vector2D.of(1, 2)));
+        Assertions.assertEquals(-1, cmp.compare(Vector2D.of(0, 2), Vector2D.of(1, 2)));
+        Assertions.assertEquals(-1, cmp.compare(Vector2D.of(1, 1), Vector2D.of(1, 2)));
 
-        Assert.assertEquals(1, cmp.compare(Vector2D.of(2, 2), Vector2D.of(1, 2)));
-        Assert.assertEquals(1, cmp.compare(Vector2D.of(1, 3), Vector2D.of(1, 2)));
+        Assertions.assertEquals(1, cmp.compare(Vector2D.of(2, 2), Vector2D.of(1, 2)));
+        Assertions.assertEquals(1, cmp.compare(Vector2D.of(1, 3), Vector2D.of(1, 2)));
 
-        Assert.assertEquals(-1, cmp.compare(Vector2D.of(1, 3), null));
-        Assert.assertEquals(1, cmp.compare(null, Vector2D.of(1, 2)));
-        Assert.assertEquals(0, cmp.compare(null, null));
+        Assertions.assertEquals(-1, cmp.compare(Vector2D.of(1, 3), null));
+        Assertions.assertEquals(1, cmp.compare(null, Vector2D.of(1, 2)));
+        Assertions.assertEquals(0, cmp.compare(null, null));
     }
 
     @Test
@@ -88,8 +90,8 @@ public class Vector2DTest {
         final Vector2D v = Vector2D.of(1, 2);
 
         // act/assert
-        Assert.assertEquals(1.0, v.getX(), EPS);
-        Assert.assertEquals(2.0, v.getY(), EPS);
+        Assertions.assertEquals(1.0, v.getX(), EPS);
+        Assertions.assertEquals(2.0, v.getY(), EPS);
     }
 
     @Test
@@ -101,9 +103,9 @@ public class Vector2DTest {
         final double[] array = oneTwo.toArray();
 
         // assert
-        Assert.assertEquals(2, array.length);
-        Assert.assertEquals(1.0, array[0], EPS);
-        Assert.assertEquals(2.0, array[1], EPS);
+        Assertions.assertEquals(2, array.length);
+        Assertions.assertEquals(1.0, array[0], EPS);
+        Assertions.assertEquals(2.0, array[1], EPS);
     }
 
     @Test
@@ -112,52 +114,52 @@ public class Vector2DTest {
         final Vector2D v = Vector2D.of(1, 2);
 
         // act/assert
-        Assert.assertEquals(2, v.getDimension());
+        Assertions.assertEquals(2, v.getDimension());
     }
 
     @Test
     public void testNaN() {
         // act/assert
-        Assert.assertTrue(Vector2D.of(0, Double.NaN).isNaN());
-        Assert.assertTrue(Vector2D.of(Double.NaN, 0).isNaN());
+        Assertions.assertTrue(Vector2D.of(0, Double.NaN).isNaN());
+        Assertions.assertTrue(Vector2D.of(Double.NaN, 0).isNaN());
 
-        Assert.assertFalse(Vector2D.of(1, 1).isNaN());
-        Assert.assertFalse(Vector2D.of(1, Double.NEGATIVE_INFINITY).isNaN());
-        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, 1).isNaN());
+        Assertions.assertFalse(Vector2D.of(1, 1).isNaN());
+        Assertions.assertFalse(Vector2D.of(1, Double.NEGATIVE_INFINITY).isNaN());
+        Assertions.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, 1).isNaN());
     }
 
     @Test
     public void testInfinite() {
         // act/assert
-        Assert.assertTrue(Vector2D.of(0, Double.NEGATIVE_INFINITY).isInfinite());
-        Assert.assertTrue(Vector2D.of(Double.NEGATIVE_INFINITY, 0).isInfinite());
-        Assert.assertTrue(Vector2D.of(0, Double.POSITIVE_INFINITY).isInfinite());
-        Assert.assertTrue(Vector2D.of(Double.POSITIVE_INFINITY, 0).isInfinite());
+        Assertions.assertTrue(Vector2D.of(0, Double.NEGATIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(Vector2D.of(Double.NEGATIVE_INFINITY, 0).isInfinite());
+        Assertions.assertTrue(Vector2D.of(0, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(Vector2D.of(Double.POSITIVE_INFINITY, 0).isInfinite());
 
-        Assert.assertFalse(Vector2D.of(1, 1).isInfinite());
-        Assert.assertFalse(Vector2D.of(0, Double.NaN).isInfinite());
-        Assert.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
-        Assert.assertFalse(Vector2D.of(Double.NaN, Double.NEGATIVE_INFINITY).isInfinite());
-        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, Double.NaN).isInfinite());
-        Assert.assertFalse(Vector2D.of(Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertFalse(Vector2D.of(1, 1).isInfinite());
+        Assertions.assertFalse(Vector2D.of(0, Double.NaN).isInfinite());
+        Assertions.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
+        Assertions.assertFalse(Vector2D.of(Double.NaN, Double.NEGATIVE_INFINITY).isInfinite());
+        Assertions.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, Double.NaN).isInfinite());
+        Assertions.assertFalse(Vector2D.of(Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
     }
 
     @Test
     public void testFinite() {
         // act/assert
-        Assert.assertTrue(Vector2D.ZERO.isFinite());
-        Assert.assertTrue(Vector2D.of(1, 1).isFinite());
+        Assertions.assertTrue(Vector2D.ZERO.isFinite());
+        Assertions.assertTrue(Vector2D.of(1, 1).isFinite());
 
-        Assert.assertFalse(Vector2D.of(0, Double.NEGATIVE_INFINITY).isFinite());
-        Assert.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, 0).isFinite());
-        Assert.assertFalse(Vector2D.of(0, Double.POSITIVE_INFINITY).isFinite());
-        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, 0).isFinite());
+        Assertions.assertFalse(Vector2D.of(0, Double.NEGATIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, 0).isFinite());
+        Assertions.assertFalse(Vector2D.of(0, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, 0).isFinite());
 
-        Assert.assertFalse(Vector2D.of(0, Double.NaN).isFinite());
-        Assert.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
-        Assert.assertFalse(Vector2D.of(Double.NaN, Double.NEGATIVE_INFINITY).isFinite());
-        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, Double.NaN).isFinite());
-        Assert.assertFalse(Vector2D.of(Double.NaN, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Vector2D.of(0, Double.NaN).isFinite());
+        Assertions.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
+        Assertions.assertFalse(Vector2D.of(Double.NaN, Double.NEGATIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, Double.NaN).isFinite());
+        Assertions.assertFalse(Vector2D.of(Double.NaN, Double.POSITIVE_INFINITY).isFinite());
     }
 
     @Test
@@ -169,14 +171,14 @@ public class Vector2DTest {
     @Test
     public void testNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).norm(), EPS);
+        Assertions.assertEquals(0.0, Vector2D.of(0, 0).norm(), EPS);
 
-        Assert.assertEquals(5.0, Vector2D.of(3, 4).norm(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(3, -4).norm(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(-3, 4).norm(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(-3, -4).norm(), EPS);
+        Assertions.assertEquals(5.0, Vector2D.of(3, 4).norm(), EPS);
+        Assertions.assertEquals(5.0, Vector2D.of(3, -4).norm(), EPS);
+        Assertions.assertEquals(5.0, Vector2D.of(-3, 4).norm(), EPS);
+        Assertions.assertEquals(5.0, Vector2D.of(-3, -4).norm(), EPS);
 
-        Assert.assertEquals(Math.sqrt(5.0), Vector2D.of(-1, -2).norm(), EPS);
+        Assertions.assertEquals(Math.sqrt(5.0), Vector2D.of(-1, -2).norm(), EPS);
     }
 
     @Test
@@ -185,20 +187,20 @@ public class Vector2DTest {
         final Vector2D v = Vector2D.of(2.0, 3.0).normalize();
 
         // act/assert
-        Assert.assertEquals(1.0, v.norm(), 0.0);
+        Assertions.assertEquals(1.0, v.norm(), 0.0);
     }
 
     @Test
     public void testNormSq() {
         // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).normSq(), EPS);
+        Assertions.assertEquals(0.0, Vector2D.of(0, 0).normSq(), EPS);
 
-        Assert.assertEquals(25.0, Vector2D.of(3, 4).normSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(3, -4).normSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(-3, 4).normSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(-3, -4).normSq(), EPS);
+        Assertions.assertEquals(25.0, Vector2D.of(3, 4).normSq(), EPS);
+        Assertions.assertEquals(25.0, Vector2D.of(3, -4).normSq(), EPS);
+        Assertions.assertEquals(25.0, Vector2D.of(-3, 4).normSq(), EPS);
+        Assertions.assertEquals(25.0, Vector2D.of(-3, -4).normSq(), EPS);
 
-        Assert.assertEquals(5.0, Vector2D.of(-1, -2).normSq(), EPS);
+        Assertions.assertEquals(5.0, Vector2D.of(-1, -2).normSq(), EPS);
     }
 
     @Test
@@ -207,7 +209,7 @@ public class Vector2DTest {
         final Vector2D v = Vector2D.of(2.0, 3.0).normalize();
 
         // act/assert
-        Assert.assertEquals(1.0, v.normSq(), 0.0);
+        Assertions.assertEquals(1.0, v.normSq(), 0.0);
     }
 
     @Test
@@ -247,7 +249,7 @@ public class Vector2DTest {
         checkVector(Vector2D.Unit.MINUS_Y.withNorm(3.14), 0.0, -3.14);
 
         for (int i = -10; i <= 10; i++) {
-            Assert.assertEquals(Math.abs((double) i), v.withNorm(i).norm(), eps);
+            Assertions.assertEquals(Math.abs((double) i), v.withNorm(i).norm(), eps);
         }
     }
 
@@ -345,7 +347,7 @@ public class Vector2DTest {
         final Vector2D v = Vector2D.of(2, 2).normalize();
 
         // act/assert
-        Assert.assertSame(v, v.normalize());
+        Assertions.assertSame(v, v.normalize());
         checkVector(v.normalize(), invSqrt2, invSqrt2);
     }
 
@@ -390,13 +392,13 @@ public class Vector2DTest {
         final Vector2D v3 = Vector2D.of(-1, 0);
 
         // act/assert
-        Assert.assertEquals(0, v1.distance(v1), EPS);
+        Assertions.assertEquals(0, v1.distance(v1), EPS);
 
-        Assert.assertEquals(5, v1.distance(v2), EPS);
-        Assert.assertEquals(5, v2.distance(v1), EPS);
+        Assertions.assertEquals(5, v1.distance(v2), EPS);
+        Assertions.assertEquals(5, v2.distance(v1), EPS);
 
-        Assert.assertEquals(Math.sqrt(5), v1.distance(v3), EPS);
-        Assert.assertEquals(Math.sqrt(5), v3.distance(v1), EPS);
+        Assertions.assertEquals(Math.sqrt(5), v1.distance(v3), EPS);
+        Assertions.assertEquals(Math.sqrt(5), v3.distance(v1), EPS);
     }
 
     @Test
@@ -407,13 +409,13 @@ public class Vector2DTest {
         final Vector2D v3 = Vector2D.of(-1, 0);
 
         // act/assert
-        Assert.assertEquals(0, v1.distanceSq(v1), EPS);
+        Assertions.assertEquals(0, v1.distanceSq(v1), EPS);
 
-        Assert.assertEquals(25, v1.distanceSq(v2), EPS);
-        Assert.assertEquals(25, v2.distanceSq(v1), EPS);
+        Assertions.assertEquals(25, v1.distanceSq(v2), EPS);
+        Assertions.assertEquals(25, v2.distanceSq(v1), EPS);
 
-        Assert.assertEquals(5, v1.distanceSq(v3), EPS);
-        Assert.assertEquals(5, v3.distanceSq(v1), EPS);
+        Assertions.assertEquals(5, v1.distanceSq(v3), EPS);
+        Assertions.assertEquals(5, v3.distanceSq(v1), EPS);
     }
 
     @Test
@@ -424,20 +426,20 @@ public class Vector2DTest {
         final Vector2D v3 = Vector2D.of(-1, 0);
 
         // act/assert
-        Assert.assertEquals(2, v1.dot(v1), EPS);
-        Assert.assertEquals(41, v2.dot(v2), EPS);
-        Assert.assertEquals(1, v3.dot(v3), EPS);
+        Assertions.assertEquals(2, v1.dot(v1), EPS);
+        Assertions.assertEquals(41, v2.dot(v2), EPS);
+        Assertions.assertEquals(1, v3.dot(v3), EPS);
 
-        Assert.assertEquals(9, v1.dot(v2), EPS);
-        Assert.assertEquals(9, v2.dot(v1), EPS);
+        Assertions.assertEquals(9, v1.dot(v2), EPS);
+        Assertions.assertEquals(9, v2.dot(v1), EPS);
 
-        Assert.assertEquals(-1, v1.dot(v3), EPS);
-        Assert.assertEquals(-1, v3.dot(v1), EPS);
+        Assertions.assertEquals(-1, v1.dot(v3), EPS);
+        Assertions.assertEquals(-1, v3.dot(v1), EPS);
 
-        Assert.assertEquals(1, Vector2D.Unit.PLUS_X.dot(Vector2D.Unit.PLUS_X), EPS);
-        Assert.assertEquals(0, Vector2D.Unit.PLUS_X.dot(Vector2D.Unit.PLUS_Y), EPS);
-        Assert.assertEquals(-1, Vector2D.Unit.PLUS_X.dot(Vector2D.Unit.MINUS_X), EPS);
-        Assert.assertEquals(0, Vector2D.Unit.PLUS_X.dot(Vector2D.Unit.MINUS_Y), EPS);
+        Assertions.assertEquals(1, Vector2D.Unit.PLUS_X.dot(Vector2D.Unit.PLUS_X), EPS);
+        Assertions.assertEquals(0, Vector2D.Unit.PLUS_X.dot(Vector2D.Unit.PLUS_Y), EPS);
+        Assertions.assertEquals(-1, Vector2D.Unit.PLUS_X.dot(Vector2D.Unit.MINUS_X), EPS);
+        Assertions.assertEquals(0, Vector2D.Unit.PLUS_X.dot(Vector2D.Unit.MINUS_Y), EPS);
     }
 
     @Test
@@ -469,8 +471,8 @@ public class Vector2DTest {
             final Vector2D ortho = v.orthogonal();
 
             // assert
-            Assert.assertEquals(1.0, ortho.norm(), EPS);
-            Assert.assertEquals(0.0, v.dot(ortho), EPS);
+            Assertions.assertEquals(1.0, ortho.norm(), EPS);
+            Assertions.assertEquals(0.0, v.dot(ortho), EPS);
         }
     }
 
@@ -534,16 +536,16 @@ public class Vector2DTest {
     @Test
     public void testAngle() {
         // act/assert
-        Assert.assertEquals(0, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_X), EPS);
+        Assertions.assertEquals(0, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_X), EPS);
 
-        Assert.assertEquals(PlaneAngleRadians.PI, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_X), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_Y), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_Y), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_X), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_Y), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_Y), EPS);
 
-        Assert.assertEquals(PlaneAngleRadians.PI / 4, Vector2D.of(1, 1).angle(Vector2D.of(1, 0)), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI / 4, Vector2D.of(1, 0).angle(Vector2D.of(1, 1)), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI / 4, Vector2D.of(1, 1).angle(Vector2D.of(1, 0)), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI / 4, Vector2D.of(1, 0).angle(Vector2D.of(1, 1)), EPS);
 
-        Assert.assertEquals(0.004999958333958323, Vector2D.of(20.0, 0.0).angle(Vector2D.of(20.0, 0.1)), EPS);
+        Assertions.assertEquals(0.004999958333958323, Vector2D.of(20.0, 0.0).angle(Vector2D.of(20.0, 0.1)), EPS);
     }
 
 
@@ -583,19 +585,19 @@ public class Vector2DTest {
         final Vector2D d = Vector2D.of(-1, 1).withNorm(3.0);
 
         // act/assert
-        Assert.assertEquals(1.0, a.signedArea(b), eps);
-        Assert.assertEquals(-1.0, b.signedArea(a), eps);
+        Assertions.assertEquals(1.0, a.signedArea(b), eps);
+        Assertions.assertEquals(-1.0, b.signedArea(a), eps);
 
         final double xAxisAndCArea = 2 * Math.cos(0.25 * PlaneAngleRadians.PI);
-        Assert.assertEquals(xAxisAndCArea, a.signedArea(c), eps);
-        Assert.assertEquals(-xAxisAndCArea, c.signedArea(a), eps);
+        Assertions.assertEquals(xAxisAndCArea, a.signedArea(c), eps);
+        Assertions.assertEquals(-xAxisAndCArea, c.signedArea(a), eps);
 
         final double xAxisAndDArea = 3 * Math.cos(0.25 * PlaneAngleRadians.PI);
-        Assert.assertEquals(xAxisAndDArea, a.signedArea(d), eps);
-        Assert.assertEquals(-xAxisAndDArea, d.signedArea(a), eps);
+        Assertions.assertEquals(xAxisAndDArea, a.signedArea(d), eps);
+        Assertions.assertEquals(-xAxisAndDArea, d.signedArea(a), eps);
 
-        Assert.assertEquals(6.0, c.signedArea(d), eps);
-        Assert.assertEquals(-6.0, d.signedArea(c), eps);
+        Assertions.assertEquals(6.0, c.signedArea(d), eps);
+        Assertions.assertEquals(-6.0, d.signedArea(c), eps);
     }
 
     @Test
@@ -606,13 +608,13 @@ public class Vector2DTest {
         final Vector2D c = Vector2D.of(-3, 8);
 
         // act/assert
-        Assert.assertEquals(0.0, a.signedArea(a), EPS);
-        Assert.assertEquals(0.0, b.signedArea(b), EPS);
-        Assert.assertEquals(0.0, c.signedArea(c), EPS);
+        Assertions.assertEquals(0.0, a.signedArea(a), EPS);
+        Assertions.assertEquals(0.0, b.signedArea(b), EPS);
+        Assertions.assertEquals(0.0, c.signedArea(c), EPS);
 
-        Assert.assertEquals(0.0, a.signedArea(a.multiply(100.0)), EPS);
-        Assert.assertEquals(0.0, b.signedArea(b.negate()), EPS);
-        Assert.assertEquals(0.0, c.signedArea(c.multiply(-0.03)), EPS);
+        Assertions.assertEquals(0.0, a.signedArea(a.multiply(100.0)), EPS);
+        Assertions.assertEquals(0.0, b.signedArea(b.negate()), EPS);
+        Assertions.assertEquals(0.0, c.signedArea(c.multiply(-0.03)), EPS);
     }
 
     @Test
@@ -720,16 +722,16 @@ public class Vector2DTest {
             // be undefined when the angle between the original vector and the
             // base is pi/2 (which means that the projection is the zero vector)
             if (angle < PlaneAngleRadians.PI_OVER_TWO) {
-                Assert.assertEquals(0.0, proj.angle(base), eps);
+                Assertions.assertEquals(0.0, proj.angle(base), eps);
             } else if (angle > PlaneAngleRadians.PI_OVER_TWO) {
-                Assert.assertEquals(PlaneAngleRadians.PI, proj.angle(base), eps);
+                Assertions.assertEquals(PlaneAngleRadians.PI, proj.angle(base), eps);
             }
 
             // check the angle between the rejection and the base; this should
             // always be pi/2 except for when the angle between the original vector
             // and the base is 0 or pi, in which case the rejection is the zero vector.
             if (angle > 0.0 && angle < PlaneAngleRadians.PI) {
-                Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, rej.angle(base), eps);
+                Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, rej.angle(base), eps);
             }
         }
     }
@@ -835,20 +837,20 @@ public class Vector2DTest {
         final Vector2D vec = Vector2D.of(1, -2);
 
         // act/assert
-        Assert.assertTrue(vec.eq(vec, smallEps));
-        Assert.assertTrue(vec.eq(vec, largeEps));
+        Assertions.assertTrue(vec.eq(vec, smallEps));
+        Assertions.assertTrue(vec.eq(vec, largeEps));
 
-        Assert.assertTrue(vec.eq(Vector2D.of(1.0000007, -2.0000009), smallEps));
-        Assert.assertTrue(vec.eq(Vector2D.of(1.0000007, -2.0000009), largeEps));
+        Assertions.assertTrue(vec.eq(Vector2D.of(1.0000007, -2.0000009), smallEps));
+        Assertions.assertTrue(vec.eq(Vector2D.of(1.0000007, -2.0000009), largeEps));
 
-        Assert.assertFalse(vec.eq(Vector2D.of(1.004, -2), smallEps));
-        Assert.assertFalse(vec.eq(Vector2D.of(1, -2.004), smallEps));
-        Assert.assertTrue(vec.eq(Vector2D.of(1.004, -2.004), largeEps));
+        Assertions.assertFalse(vec.eq(Vector2D.of(1.004, -2), smallEps));
+        Assertions.assertFalse(vec.eq(Vector2D.of(1, -2.004), smallEps));
+        Assertions.assertTrue(vec.eq(Vector2D.of(1.004, -2.004), largeEps));
 
-        Assert.assertFalse(vec.eq(Vector2D.of(1, -3), smallEps));
-        Assert.assertFalse(vec.eq(Vector2D.of(2, -2), smallEps));
-        Assert.assertFalse(vec.eq(Vector2D.of(1, -3), largeEps));
-        Assert.assertFalse(vec.eq(Vector2D.of(2, -2), largeEps));
+        Assertions.assertFalse(vec.eq(Vector2D.of(1, -3), smallEps));
+        Assertions.assertFalse(vec.eq(Vector2D.of(2, -2), smallEps));
+        Assertions.assertFalse(vec.eq(Vector2D.of(1, -3), largeEps));
+        Assertions.assertFalse(vec.eq(Vector2D.of(2, -2), largeEps));
     }
 
     @Test
@@ -858,22 +860,22 @@ public class Vector2DTest {
         final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
 
         // act/assert
-        Assert.assertTrue(Vector2D.of(0.0, -0.0).isZero(smallEps));
-        Assert.assertTrue(Vector2D.of(-0.0, 0.0).isZero(largeEps));
+        Assertions.assertTrue(Vector2D.of(0.0, -0.0).isZero(smallEps));
+        Assertions.assertTrue(Vector2D.of(-0.0, 0.0).isZero(largeEps));
 
-        Assert.assertTrue(Vector2D.of(-1e-7, 1e-7).isZero(smallEps));
-        Assert.assertTrue(Vector2D.of(1e-7, 1e-7).isZero(largeEps));
+        Assertions.assertTrue(Vector2D.of(-1e-7, 1e-7).isZero(smallEps));
+        Assertions.assertTrue(Vector2D.of(1e-7, 1e-7).isZero(largeEps));
 
-        Assert.assertFalse(Vector2D.of(1e-2, 0.0).isZero(smallEps));
-        Assert.assertFalse(Vector2D.of(0.0, 1e-2).isZero(smallEps));
-        Assert.assertTrue(Vector2D.of(1e-2, -1e-2).isZero(largeEps));
+        Assertions.assertFalse(Vector2D.of(1e-2, 0.0).isZero(smallEps));
+        Assertions.assertFalse(Vector2D.of(0.0, 1e-2).isZero(smallEps));
+        Assertions.assertTrue(Vector2D.of(1e-2, -1e-2).isZero(largeEps));
 
-        Assert.assertFalse(Vector2D.of(0.2, 0.0).isZero(smallEps));
-        Assert.assertFalse(Vector2D.of(0.0, 0.2).isZero(smallEps));
-        Assert.assertFalse(Vector2D.of(0.2, 0.2).isZero(smallEps));
-        Assert.assertFalse(Vector2D.of(-0.2, 0.0).isZero(largeEps));
-        Assert.assertFalse(Vector2D.of(0.0, -0.2).isZero(largeEps));
-        Assert.assertFalse(Vector2D.of(-0.2, -0.2).isZero(largeEps));
+        Assertions.assertFalse(Vector2D.of(0.2, 0.0).isZero(smallEps));
+        Assertions.assertFalse(Vector2D.of(0.0, 0.2).isZero(smallEps));
+        Assertions.assertFalse(Vector2D.of(0.2, 0.2).isZero(smallEps));
+        Assertions.assertFalse(Vector2D.of(-0.2, 0.0).isZero(largeEps));
+        Assertions.assertFalse(Vector2D.of(0.0, -0.2).isZero(largeEps));
+        Assertions.assertFalse(Vector2D.of(-0.2, -0.2).isZero(largeEps));
     }
 
     @Test
@@ -884,12 +886,12 @@ public class Vector2DTest {
         final Vector2D w = Vector2D.of(1, 1);
 
         // act/assert
-        Assert.assertTrue(u.hashCode() != v.hashCode());
-        Assert.assertEquals(u.hashCode(), w.hashCode());
+        Assertions.assertTrue(u.hashCode() != v.hashCode());
+        Assertions.assertEquals(u.hashCode(), w.hashCode());
 
-        Assert.assertEquals(Vector2D.of(0, Double.NaN).hashCode(), Vector2D.NaN.hashCode());
-        Assert.assertEquals(Vector2D.of(Double.NaN, 0).hashCode(), Vector2D.NaN.hashCode());
-        Assert.assertEquals(Vector2D.of(0, Double.NaN).hashCode(), Vector2D.of(Double.NaN, 0).hashCode());
+        Assertions.assertEquals(Vector2D.of(0, Double.NaN).hashCode(), Vector2D.NaN.hashCode());
+        Assertions.assertEquals(Vector2D.of(Double.NaN, 0).hashCode(), Vector2D.NaN.hashCode());
+        Assertions.assertEquals(Vector2D.of(0, Double.NaN).hashCode(), Vector2D.of(Double.NaN, 0).hashCode());
     }
 
     @Test
@@ -900,19 +902,19 @@ public class Vector2DTest {
 
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(u1);
-        Assert.assertEquals(u1, u2);
+        Assertions.assertEquals(u1, u2);
 
-        Assert.assertNotEquals(u1, Vector2D.of(-1, -2));
-        Assert.assertNotEquals(u1, Vector2D.of(1 + 10 * Precision.EPSILON, 2));
-        Assert.assertNotEquals(u1, Vector2D.of(1, 2 + 10 * Precision.EPSILON));
+        Assertions.assertNotEquals(u1, Vector2D.of(-1, -2));
+        Assertions.assertNotEquals(u1, Vector2D.of(1 + 10 * Precision.EPSILON, 2));
+        Assertions.assertNotEquals(u1, Vector2D.of(1, 2 + 10 * Precision.EPSILON));
 
-        Assert.assertEquals(Vector2D.of(0, Double.NaN), Vector2D.of(Double.NaN, 0));
+        Assertions.assertEquals(Vector2D.of(0, Double.NaN), Vector2D.of(Double.NaN, 0));
 
-        Assert.assertEquals(Vector2D.of(0, Double.POSITIVE_INFINITY), Vector2D.of(0, Double.POSITIVE_INFINITY));
-        Assert.assertNotEquals(Vector2D.of(Double.POSITIVE_INFINITY, 0), Vector2D.of(0, Double.POSITIVE_INFINITY));
+        Assertions.assertEquals(Vector2D.of(0, Double.POSITIVE_INFINITY), Vector2D.of(0, Double.POSITIVE_INFINITY));
+        Assertions.assertNotEquals(Vector2D.of(Double.POSITIVE_INFINITY, 0), Vector2D.of(0, Double.POSITIVE_INFINITY));
 
-        Assert.assertEquals(Vector2D.of(Double.NEGATIVE_INFINITY, 0), Vector2D.of(Double.NEGATIVE_INFINITY, 0));
-        Assert.assertNotEquals(Vector2D.of(0, Double.NEGATIVE_INFINITY), Vector2D.of(Double.NEGATIVE_INFINITY, 0));
+        Assertions.assertEquals(Vector2D.of(Double.NEGATIVE_INFINITY, 0), Vector2D.of(Double.NEGATIVE_INFINITY, 0));
+        Assertions.assertNotEquals(Vector2D.of(0, Double.NEGATIVE_INFINITY), Vector2D.of(Double.NEGATIVE_INFINITY, 0));
     }
 
     @Test
@@ -924,13 +926,13 @@ public class Vector2DTest {
         final Vector2D d = Vector2D.of(-0.0, -0.0);
 
         // act/assert
-        Assert.assertFalse(a.equals(b));
+        Assertions.assertFalse(a.equals(b));
 
-        Assert.assertTrue(a.equals(c));
-        Assert.assertEquals(a.hashCode(), c.hashCode());
+        Assertions.assertTrue(a.equals(c));
+        Assertions.assertEquals(a.hashCode(), c.hashCode());
 
-        Assert.assertTrue(b.equals(d));
-        Assert.assertEquals(b.hashCode(), d.hashCode());
+        Assertions.assertTrue(b.equals(d));
+        Assertions.assertEquals(b.hashCode(), d.hashCode());
     }
 
     @Test
@@ -943,8 +945,7 @@ public class Vector2DTest {
         final String str = v.toString();
 
         // assert
-        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
-                    pattern.matcher(str).matches());
+        Assertions.assertTrue(pattern.matcher(str).matches(), "Expected string " + str + " to match regex " + pattern);
     }
 
     @Test
@@ -961,10 +962,10 @@ public class Vector2DTest {
         checkVector(Vector2D.parse(Vector2D.Unit.MINUS_X.toString()), -1, 0);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_failure() {
         // act/assert
-        Vector2D.parse("abc");
+        assertThrows(IllegalArgumentException.class, () -> Vector2D.parse("abc"));
     }
 
     @Test
@@ -985,10 +986,10 @@ public class Vector2DTest {
         checkVector(Vector2D.of(new double[] {Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector2D.of(new double[] {0.0});
+        assertThrows(IllegalArgumentException.class,     () -> Vector2D.of(new double[] {0.0}));
     }
 
     @Test
@@ -1010,7 +1011,7 @@ public class Vector2DTest {
 
         // act/assert
         checkVector(Vector2D.Unit.from(vec), invSqrt2, -invSqrt2);
-        Assert.assertSame(unitVec, Vector2D.Unit.from(unitVec));
+        Assertions.assertSame(unitVec, Vector2D.Unit.from(unitVec));
     }
 
     @Test
@@ -1157,7 +1158,7 @@ public class Vector2DTest {
     public void testUnitFactoryOptimization() {
         // An already normalized vector will avoid unnecessary creation.
         final Vector2D v = Vector2D.of(4, 5).normalize();
-        Assert.assertSame(v, v.normalize());
+        Assertions.assertSame(v, v.normalize());
     }
 
     private void checkVector(final Vector2D v, final double x, final double y) {
@@ -1165,7 +1166,7 @@ public class Vector2DTest {
     }
 
     private void checkVector(final Vector2D v, final double x, final double y, final double eps) {
-        Assert.assertEquals(x, v.getX(), eps);
-        Assert.assertEquals(y, v.getY(), eps);
+        Assertions.assertEquals(x, v.getX(), eps);
+        Assertions.assertEquals(y, v.getY(), eps);
     }
 }

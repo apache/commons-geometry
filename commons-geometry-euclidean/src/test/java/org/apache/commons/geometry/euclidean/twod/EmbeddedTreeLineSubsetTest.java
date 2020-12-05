@@ -27,8 +27,8 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EmbeddedTreeLineSubsetTest {
 
@@ -46,16 +46,16 @@ public class EmbeddedTreeLineSubsetTest {
         final EmbeddedTreeLineSubset sub = new EmbeddedTreeLineSubset(DEFAULT_TEST_LINE);
 
         // assert
-        Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
-        Assert.assertSame(TEST_PRECISION, sub.getPrecision());
+        Assertions.assertSame(DEFAULT_TEST_LINE, sub.getLine());
+        Assertions.assertSame(TEST_PRECISION, sub.getPrecision());
 
-        Assert.assertFalse(sub.isFull());
-        Assert.assertTrue(sub.isEmpty());
-        Assert.assertFalse(sub.isInfinite());
-        Assert.assertTrue(sub.isFinite());
+        Assertions.assertFalse(sub.isFull());
+        Assertions.assertTrue(sub.isEmpty());
+        Assertions.assertFalse(sub.isInfinite());
+        Assertions.assertTrue(sub.isFinite());
 
-        Assert.assertEquals(0, sub.getSize(), TEST_EPS);
-        Assert.assertNull(sub.getCentroid());
+        Assertions.assertEquals(0, sub.getSize(), TEST_EPS);
+        Assertions.assertNull(sub.getCentroid());
     }
 
     @Test
@@ -64,16 +64,16 @@ public class EmbeddedTreeLineSubsetTest {
         final EmbeddedTreeLineSubset sub = new EmbeddedTreeLineSubset(DEFAULT_TEST_LINE, true);
 
         // assert
-        Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
-        Assert.assertSame(TEST_PRECISION, sub.getPrecision());
+        Assertions.assertSame(DEFAULT_TEST_LINE, sub.getLine());
+        Assertions.assertSame(TEST_PRECISION, sub.getPrecision());
 
-        Assert.assertTrue(sub.isFull());
-        Assert.assertFalse(sub.isEmpty());
-        Assert.assertTrue(sub.isInfinite());
-        Assert.assertFalse(sub.isFinite());
+        Assertions.assertTrue(sub.isFull());
+        Assertions.assertFalse(sub.isEmpty());
+        Assertions.assertTrue(sub.isInfinite());
+        Assertions.assertFalse(sub.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(sub.getSize());
-        Assert.assertNull(sub.getCentroid());
+        Assertions.assertNull(sub.getCentroid());
     }
 
     @Test
@@ -85,17 +85,17 @@ public class EmbeddedTreeLineSubsetTest {
         final EmbeddedTreeLineSubset sub = new EmbeddedTreeLineSubset(DEFAULT_TEST_LINE, tree);
 
         // assert
-        Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
-        Assert.assertSame(tree, sub.getSubspaceRegion());
-        Assert.assertSame(TEST_PRECISION, sub.getPrecision());
+        Assertions.assertSame(DEFAULT_TEST_LINE, sub.getLine());
+        Assertions.assertSame(tree, sub.getSubspaceRegion());
+        Assertions.assertSame(TEST_PRECISION, sub.getPrecision());
 
-        Assert.assertTrue(sub.isFull());
-        Assert.assertFalse(sub.isEmpty());
-        Assert.assertTrue(sub.isInfinite());
-        Assert.assertFalse(sub.isFinite());
+        Assertions.assertTrue(sub.isFull());
+        Assertions.assertFalse(sub.isEmpty());
+        Assertions.assertTrue(sub.isInfinite());
+        Assertions.assertFalse(sub.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(sub.getSize());
-        Assert.assertNull(sub.getCentroid());
+        Assertions.assertNull(sub.getCentroid());
     }
 
     @Test
@@ -107,10 +107,10 @@ public class EmbeddedTreeLineSubsetTest {
         final List<LineConvexSubset> segments = sub.toConvex();
 
         // assert
-        Assert.assertEquals(1, segments.size());
+        Assertions.assertEquals(1, segments.size());
 
         final LineConvexSubset seg = segments.get(0);
-        Assert.assertTrue(seg.isFull());
+        Assertions.assertTrue(seg.isFull());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class EmbeddedTreeLineSubsetTest {
         final List<LineConvexSubset> segments = sub.toConvex();
 
         // assert
-        Assert.assertEquals(0, segments.size());
+        Assertions.assertEquals(0, segments.size());
     }
 
     @Test
@@ -137,9 +137,9 @@ public class EmbeddedTreeLineSubsetTest {
         final List<LineConvexSubset> segments = sub.toConvex();
 
         // assert
-        Assert.assertEquals(2, segments.size());
+        Assertions.assertEquals(2, segments.size());
 
-        Assert.assertNull(segments.get(0).getStartPoint());
+        Assertions.assertNull(segments.get(0).getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2, 1), segments.get(0).getEndPoint(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), segments.get(1).getStartPoint(), TEST_EPS);
@@ -160,8 +160,8 @@ public class EmbeddedTreeLineSubsetTest {
         subset.add(Lines.segmentFromPoints(Vector2D.of(-3, 1), Vector2D.of(-1, 1), TEST_PRECISION));
 
         // assert
-        Assert.assertFalse(subset.isFull());
-        Assert.assertFalse(subset.isEmpty());
+        Assertions.assertFalse(subset.isFull());
+        Assertions.assertFalse(subset.isEmpty());
 
         final List<LineConvexSubset> segments = subset.toConvex();
 
@@ -171,7 +171,7 @@ public class EmbeddedTreeLineSubsetTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), segments.get(1).getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4, 1), segments.get(1).getEndPoint(), TEST_EPS);
 
-        Assert.assertEquals(5, subset.getSize(), TEST_EPS);
+        Assertions.assertEquals(5, subset.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.7, 1), subset.getCentroid(), TEST_EPS);
     }
 
@@ -200,24 +200,24 @@ public class EmbeddedTreeLineSubsetTest {
         subset.add(b);
 
         // assert
-        Assert.assertFalse(subset.isFull());
-        Assert.assertFalse(subset.isEmpty());
+        Assertions.assertFalse(subset.isFull());
+        Assertions.assertFalse(subset.isEmpty());
 
         final List<LineConvexSubset> segments = subset.toConvex();
 
-        Assert.assertEquals(2, segments.size());
+        Assertions.assertEquals(2, segments.size());
 
-        Assert.assertNull(segments.get(0).getStartPoint());
+        Assertions.assertNull(segments.get(0).getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2, 1), segments.get(0).getEndPoint(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), segments.get(1).getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4, 1), segments.get(1).getEndPoint(), TEST_EPS);
 
-        Assert.assertEquals(aTreeCount, aTree.count());
-        Assert.assertEquals(bTreeCount, bTree.count());
+        Assertions.assertEquals(aTreeCount, aTree.count());
+        Assertions.assertEquals(bTreeCount, bTree.count());
 
         GeometryTestUtils.assertPositiveInfinity(subset.getSize());
-        Assert.assertNull(subset.getCentroid());
+        Assertions.assertNull(subset.getCentroid());
     }
 
     @Test
@@ -248,9 +248,9 @@ public class EmbeddedTreeLineSubsetTest {
         final EmbeddedTreeLineSubset halfFull = new EmbeddedTreeLineSubset(line, Interval.min(1.0, TEST_PRECISION).toTree());
 
         // act/assert
-        Assert.assertNull(full.getBounds());
-        Assert.assertNull(empty.getBounds());
-        Assert.assertNull(halfFull.getBounds());
+        Assertions.assertNull(full.getBounds());
+        Assertions.assertNull(empty.getBounds());
+        Assertions.assertNull(halfFull.getBounds());
     }
 
     @Test
@@ -288,14 +288,14 @@ public class EmbeddedTreeLineSubsetTest {
         final Split<EmbeddedTreeLineSubset> split = subset.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final List<LineConvexSubset> minusSegments = split.getMinus().toConvex();
-        Assert.assertEquals(1, minusSegments.size());
+        Assertions.assertEquals(1, minusSegments.size());
         checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
 
         final List<LineConvexSubset> plusSegments = split.getPlus().toConvex();
-        Assert.assertEquals(2, plusSegments.size());
+        Assertions.assertEquals(2, plusSegments.size());
         checkFiniteSegment(plusSegments.get(0), Vector2D.of(1, 0), Vector2D.of(2, 0));
         checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
     }
@@ -316,15 +316,15 @@ public class EmbeddedTreeLineSubsetTest {
         final Split<EmbeddedTreeLineSubset> split = subset.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final List<LineConvexSubset> minusSegments = split.getMinus().toConvex();
-        Assert.assertEquals(2, minusSegments.size());
+        Assertions.assertEquals(2, minusSegments.size());
         checkFiniteSegment(minusSegments.get(0), Vector2D.of(1, 0), Vector2D.of(2, 0));
         checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
 
         final List<LineConvexSubset> plusSegments = split.getPlus().toConvex();
-        Assert.assertEquals(1, plusSegments.size());
+        Assertions.assertEquals(1, plusSegments.size());
         checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
     }
 
@@ -344,10 +344,10 @@ public class EmbeddedTreeLineSubsetTest {
         final Split<EmbeddedTreeLineSubset> split = subset.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(subset, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(subset, split.getPlus());
     }
 
     @Test
@@ -366,10 +366,10 @@ public class EmbeddedTreeLineSubsetTest {
         final Split<EmbeddedTreeLineSubset> split = subset.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(subset, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(subset, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -388,10 +388,10 @@ public class EmbeddedTreeLineSubsetTest {
         final Split<EmbeddedTreeLineSubset> split = subset.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(subset, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(subset, split.getPlus());
     }
 
     @Test
@@ -410,10 +410,10 @@ public class EmbeddedTreeLineSubsetTest {
         final Split<EmbeddedTreeLineSubset> split = subset.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(subset, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(subset, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -432,10 +432,10 @@ public class EmbeddedTreeLineSubsetTest {
         final Split<EmbeddedTreeLineSubset> split = subset.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -454,10 +454,10 @@ public class EmbeddedTreeLineSubsetTest {
         final Split<EmbeddedTreeLineSubset> split = subset.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -475,19 +475,19 @@ public class EmbeddedTreeLineSubsetTest {
         final EmbeddedTreeLineSubset transformed = subset.transform(mat);
 
         // assert
-        Assert.assertNotSame(subset, transformed);
+        Assertions.assertNotSame(subset, transformed);
 
         final List<LineConvexSubset> originalSegments = subset.toConvex();
-        Assert.assertEquals(2, originalSegments.size());
+        Assertions.assertEquals(2, originalSegments.size());
         checkFiniteSegment(originalSegments.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 0), originalSegments.get(1).getStartPoint(), TEST_EPS);
-        Assert.assertNull(originalSegments.get(1).getEndPoint());
+        Assertions.assertNull(originalSegments.get(1).getEndPoint());
 
         final List<LineConvexSubset> transformedSegments = transformed.toConvex();
-        Assert.assertEquals(2, transformedSegments.size());
+        Assertions.assertEquals(2, transformedSegments.size());
         checkFiniteSegment(transformedSegments.get(0), Vector2D.of(3, 2), Vector2D.of(3, 4));
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 8), transformedSegments.get(1).getStartPoint(), TEST_EPS);
-        Assert.assertNull(transformedSegments.get(1).getEndPoint());
+        Assertions.assertNull(transformedSegments.get(1).getEndPoint());
     }
 
     @Test
@@ -503,14 +503,14 @@ public class EmbeddedTreeLineSubsetTest {
         final EmbeddedTreeLineSubset transformed = subset.transform(mat);
 
         // assert
-        Assert.assertNotSame(subset, transformed);
+        Assertions.assertNotSame(subset, transformed);
 
         final List<LineConvexSubset> originalSegments = subset.toConvex();
-        Assert.assertEquals(1, originalSegments.size());
+        Assertions.assertEquals(1, originalSegments.size());
         checkFiniteSegment(originalSegments.get(0), Vector2D.of(0, 1), Vector2D.of(1, 1));
 
         final List<LineConvexSubset> transformedSegments = transformed.toConvex();
-        Assert.assertEquals(1, transformedSegments.size());
+        Assertions.assertEquals(1, transformedSegments.size());
         checkFiniteSegment(transformedSegments.get(0), Vector2D.of(0, 2), Vector2D.of(-1, 2));
     }
 
@@ -523,13 +523,13 @@ public class EmbeddedTreeLineSubsetTest {
         final String str = sub.toString();
 
         // assert
-        Assert.assertTrue(str.contains("EmbeddedTreeLineSubset[lineOrigin= "));
-        Assert.assertTrue(str.contains(", lineDirection= "));
-        Assert.assertTrue(str.contains(", region= "));
+        Assertions.assertTrue(str.contains("EmbeddedTreeLineSubset[lineOrigin= "));
+        Assertions.assertTrue(str.contains(", lineDirection= "));
+        Assertions.assertTrue(str.contains(", region= "));
     }
 
     private static void checkFiniteSegment(final LineConvexSubset segment, final Vector2D start, final Vector2D end) {
-        Assert.assertFalse(segment.isInfinite());
+        Assertions.assertFalse(segment.isInfinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);

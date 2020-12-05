@@ -20,8 +20,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SphericalCoordinatesTest {
 
@@ -203,57 +205,57 @@ public class SphericalCoordinatesTest {
         final SphericalCoordinates s = SphericalCoordinates.of(0, 0, 0);
 
         // act/assert
-        Assert.assertEquals(3, s.getDimension());
+        Assertions.assertEquals(3, s.getDimension());
     }
 
     @Test
     public void testNaN() {
         // act/assert
-        Assert.assertTrue(SphericalCoordinates.of(0, 0, Double.NaN).isNaN());
-        Assert.assertTrue(SphericalCoordinates.of(0, Double.NaN, 0).isNaN());
-        Assert.assertTrue(SphericalCoordinates.of(Double.NaN, 0, 0).isNaN());
+        Assertions.assertTrue(SphericalCoordinates.of(0, 0, Double.NaN).isNaN());
+        Assertions.assertTrue(SphericalCoordinates.of(0, Double.NaN, 0).isNaN());
+        Assertions.assertTrue(SphericalCoordinates.of(Double.NaN, 0, 0).isNaN());
 
-        Assert.assertFalse(SphericalCoordinates.of(1, 1, 1).isNaN());
-        Assert.assertFalse(SphericalCoordinates.of(1, 1, Double.NEGATIVE_INFINITY).isNaN());
-        Assert.assertFalse(SphericalCoordinates.of(1, Double.POSITIVE_INFINITY, 1).isNaN());
-        Assert.assertFalse(SphericalCoordinates.of(Double.NEGATIVE_INFINITY, 1, 1).isNaN());
+        Assertions.assertFalse(SphericalCoordinates.of(1, 1, 1).isNaN());
+        Assertions.assertFalse(SphericalCoordinates.of(1, 1, Double.NEGATIVE_INFINITY).isNaN());
+        Assertions.assertFalse(SphericalCoordinates.of(1, Double.POSITIVE_INFINITY, 1).isNaN());
+        Assertions.assertFalse(SphericalCoordinates.of(Double.NEGATIVE_INFINITY, 1, 1).isNaN());
     }
 
     @Test
     public void testInfinite() {
         // act/assert
-        Assert.assertTrue(SphericalCoordinates.of(0, 0, Double.NEGATIVE_INFINITY).isInfinite());
-        Assert.assertTrue(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, 0).isInfinite());
-        Assert.assertTrue(SphericalCoordinates.of(Double.NEGATIVE_INFINITY, 0, 0).isInfinite());
-        Assert.assertTrue(SphericalCoordinates.of(0, 0, Double.POSITIVE_INFINITY).isInfinite());
-        Assert.assertTrue(SphericalCoordinates.of(0, Double.POSITIVE_INFINITY, 0).isInfinite());
-        Assert.assertTrue(SphericalCoordinates.of(Double.POSITIVE_INFINITY, 0, 0).isInfinite());
+        Assertions.assertTrue(SphericalCoordinates.of(0, 0, Double.NEGATIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, 0).isInfinite());
+        Assertions.assertTrue(SphericalCoordinates.of(Double.NEGATIVE_INFINITY, 0, 0).isInfinite());
+        Assertions.assertTrue(SphericalCoordinates.of(0, 0, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(SphericalCoordinates.of(0, Double.POSITIVE_INFINITY, 0).isInfinite());
+        Assertions.assertTrue(SphericalCoordinates.of(Double.POSITIVE_INFINITY, 0, 0).isInfinite());
 
-        Assert.assertFalse(SphericalCoordinates.of(1, 1, 1).isInfinite());
-        Assert.assertFalse(SphericalCoordinates.of(0, 0, Double.NaN).isInfinite());
-        Assert.assertFalse(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
-        Assert.assertFalse(SphericalCoordinates.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isInfinite());
-        Assert.assertFalse(SphericalCoordinates.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isInfinite());
-        Assert.assertFalse(SphericalCoordinates.of(0, Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertFalse(SphericalCoordinates.of(1, 1, 1).isInfinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, 0, Double.NaN).isInfinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
+        Assertions.assertFalse(SphericalCoordinates.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isInfinite());
+        Assertions.assertFalse(SphericalCoordinates.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isInfinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
     }
 
     @Test
     public void testFinite() {
         // act/assert
-        Assert.assertTrue(SphericalCoordinates.of(1, 1, 1).isFinite());
+        Assertions.assertTrue(SphericalCoordinates.of(1, 1, 1).isFinite());
 
-        Assert.assertFalse(SphericalCoordinates.of(0, 0, Double.NEGATIVE_INFINITY).isFinite());
-        Assert.assertFalse(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, 0).isFinite());
-        Assert.assertFalse(SphericalCoordinates.of(Double.NEGATIVE_INFINITY, 0, 0).isFinite());
-        Assert.assertFalse(SphericalCoordinates.of(0, 0, Double.POSITIVE_INFINITY).isFinite());
-        Assert.assertFalse(SphericalCoordinates.of(0, Double.POSITIVE_INFINITY, 0).isFinite());
-        Assert.assertFalse(SphericalCoordinates.of(Double.POSITIVE_INFINITY, 0, 0).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, 0, Double.NEGATIVE_INFINITY).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, 0).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(Double.NEGATIVE_INFINITY, 0, 0).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, 0, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, Double.POSITIVE_INFINITY, 0).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(Double.POSITIVE_INFINITY, 0, 0).isFinite());
 
-        Assert.assertFalse(SphericalCoordinates.of(0, 0, Double.NaN).isFinite());
-        Assert.assertFalse(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
-        Assert.assertFalse(SphericalCoordinates.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isFinite());
-        Assert.assertFalse(SphericalCoordinates.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isFinite());
-        Assert.assertFalse(SphericalCoordinates.of(0, Double.NaN, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, 0, Double.NaN).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isFinite());
+        Assertions.assertFalse(SphericalCoordinates.of(0, Double.NaN, Double.POSITIVE_INFINITY).isFinite());
     }
 
     @Test
@@ -267,12 +269,12 @@ public class SphericalCoordinatesTest {
         final SphericalCoordinates e = SphericalCoordinates.of(1, 2, 3);
 
         // act/assert
-        Assert.assertEquals(a.hashCode(), a.hashCode());
-        Assert.assertEquals(a.hashCode(), e.hashCode());
+        Assertions.assertEquals(a.hashCode(), a.hashCode());
+        Assertions.assertEquals(a.hashCode(), e.hashCode());
 
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
-        Assert.assertNotEquals(a.hashCode(), c.hashCode());
-        Assert.assertNotEquals(a.hashCode(), d.hashCode());
+        Assertions.assertNotEquals(a.hashCode(), b.hashCode());
+        Assertions.assertNotEquals(a.hashCode(), c.hashCode());
+        Assertions.assertNotEquals(a.hashCode(), d.hashCode());
     }
 
     @Test
@@ -283,8 +285,8 @@ public class SphericalCoordinatesTest {
         final SphericalCoordinates c = SphericalCoordinates.of(Double.NaN, 2, 3);
 
         // act/assert
-        Assert.assertEquals(a.hashCode(), b.hashCode());
-        Assert.assertEquals(b.hashCode(), c.hashCode());
+        Assertions.assertEquals(a.hashCode(), b.hashCode());
+        Assertions.assertEquals(b.hashCode(), c.hashCode());
     }
 
     @Test
@@ -299,11 +301,11 @@ public class SphericalCoordinatesTest {
 
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
-        Assert.assertEquals(a, e);
+        Assertions.assertEquals(a, e);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-        Assert.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
     }
 
     @Test
@@ -314,8 +316,8 @@ public class SphericalCoordinatesTest {
         final SphericalCoordinates c = SphericalCoordinates.of(Double.NaN, 2, 3);
 
         // act/assert
-        Assert.assertEquals(a, b);
-        Assert.assertEquals(b, c);
+        Assertions.assertEquals(a, b);
+        Assertions.assertEquals(b, c);
     }
 
     @Test
@@ -327,14 +329,14 @@ public class SphericalCoordinatesTest {
         final SphericalCoordinates d = SphericalCoordinates.of(-0.0, 0.0, -0.0);
 
         // act/assert
-        Assert.assertFalse(a.equals(b));
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+        Assertions.assertFalse(a.equals(b));
+        Assertions.assertNotEquals(a.hashCode(), b.hashCode());
 
-        Assert.assertTrue(a.equals(c));
-        Assert.assertEquals(a.hashCode(), c.hashCode());
+        Assertions.assertTrue(a.equals(c));
+        Assertions.assertEquals(a.hashCode(), c.hashCode());
 
-        Assert.assertTrue(b.equals(d));
-        Assert.assertEquals(b.hashCode(), d.hashCode());
+        Assertions.assertTrue(b.equals(d));
+        Assertions.assertEquals(b.hashCode(), d.hashCode());
     }
 
     @Test
@@ -347,8 +349,7 @@ public class SphericalCoordinatesTest {
         final String str = sph.toString();
 
         // assert
-        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
-                    pattern.matcher(str).matches());
+        Assertions.assertTrue(pattern.matcher(str).matches(), "Expected string " + str + " to match regex " + pattern);
     }
 
     @Test
@@ -359,69 +360,69 @@ public class SphericalCoordinatesTest {
         checkSpherical(SphericalCoordinates.parse("(NaN,Infinity,-Infinity)"), Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_failure() {
         // act/assert
-        SphericalCoordinates.parse("abc");
+        assertThrows(IllegalArgumentException.class, () -> SphericalCoordinates.parse("abc"));
     }
 
     @Test
     public void testNormalizeAzimuth() {
         // act/assert
-        Assert.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(0), EPS);
+        Assertions.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(0), EPS);
 
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.PI), EPS);
-        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), EPS);
-        Assert.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), EPS);
+        Assertions.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), EPS);
 
-        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), EPS);
     }
 
     @Test
     public void testNormalizeAzimuth_NaNAndInfinite() {
         // act/assert
-        Assert.assertEquals(Double.NaN, SphericalCoordinates.normalizeAzimuth(Double.NaN), EPS);
-        Assert.assertEquals(Double.NEGATIVE_INFINITY, SphericalCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), EPS);
-        Assert.assertEquals(Double.POSITIVE_INFINITY, SphericalCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), EPS);
+        Assertions.assertEquals(Double.NaN, SphericalCoordinates.normalizeAzimuth(Double.NaN), EPS);
+        Assertions.assertEquals(Double.NEGATIVE_INFINITY, SphericalCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), EPS);
+        Assertions.assertEquals(Double.POSITIVE_INFINITY, SphericalCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), EPS);
     }
 
     @Test
     public void testNormalizePolar() {
         // act/assert
-        Assert.assertEquals(0.0, SphericalCoordinates.normalizePolar(0), EPS);
+        Assertions.assertEquals(0.0, SphericalCoordinates.normalizePolar(0), EPS);
 
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI + PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(0.0, SphericalCoordinates.normalizePolar(PlaneAngleRadians.TWO_PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI + PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(0.0, SphericalCoordinates.normalizePolar(PlaneAngleRadians.TWO_PI), EPS);
 
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(0.0, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.TWO_PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(0.0, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.TWO_PI), EPS);
     }
 
     @Test
     public void testNormalizePolar_NaNAndInfinite() {
         // act/assert
-        Assert.assertEquals(Double.NaN, SphericalCoordinates.normalizePolar(Double.NaN), EPS);
-        Assert.assertEquals(Double.NEGATIVE_INFINITY, SphericalCoordinates.normalizePolar(Double.NEGATIVE_INFINITY), EPS);
-        Assert.assertEquals(Double.POSITIVE_INFINITY, SphericalCoordinates.normalizePolar(Double.POSITIVE_INFINITY), EPS);
+        Assertions.assertEquals(Double.NaN, SphericalCoordinates.normalizePolar(Double.NaN), EPS);
+        Assertions.assertEquals(Double.NEGATIVE_INFINITY, SphericalCoordinates.normalizePolar(Double.NEGATIVE_INFINITY), EPS);
+        Assertions.assertEquals(Double.POSITIVE_INFINITY, SphericalCoordinates.normalizePolar(Double.POSITIVE_INFINITY), EPS);
     }
 
     private void checkSpherical(final SphericalCoordinates c, final double radius, final double azimuth, final double polar) {
-        Assert.assertEquals(radius, c.getRadius(), EPS);
-        Assert.assertEquals(azimuth, c.getAzimuth(), EPS);
-        Assert.assertEquals(polar, c.getPolar(), EPS);
+        Assertions.assertEquals(radius, c.getRadius(), EPS);
+        Assertions.assertEquals(azimuth, c.getAzimuth(), EPS);
+        Assertions.assertEquals(polar, c.getPolar(), EPS);
     }
 
     private void checkVector(final Vector3D v, final double x, final double y, final double z) {
-        Assert.assertEquals(x, v.getX(), EPS);
-        Assert.assertEquals(y, v.getY(), EPS);
-        Assert.assertEquals(z, v.getZ(), EPS);
+        Assertions.assertEquals(x, v.getX(), EPS);
+        Assertions.assertEquals(y, v.getY(), EPS);
+        Assertions.assertEquals(z, v.getZ(), EPS);
     }
 }

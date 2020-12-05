@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.examples.tutorials.bsp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BSPTreeTutorialsTest {
 

@@ -24,8 +24,8 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.euclidean.threed.WelzlEncloser3D;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** This class contains code listed as examples in the user guide and other documentation.
  * If any portion of this code changes, the corresponding examples in the documentation <em>must</em> be updated.
@@ -58,8 +58,8 @@ public class DocumentationExamplesTest {
 
         // ----------
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 1), center, TEST_EPS);
-        Assert.assertEquals(1.0, radius, TEST_EPS);
-        Assert.assertTrue(containsCenter);
-        Assert.assertFalse(containsOrigin);
+        Assertions.assertEquals(1.0, radius, TEST_EPS);
+        Assertions.assertTrue(containsCenter);
+        Assertions.assertFalse(containsOrigin);
     }
 }

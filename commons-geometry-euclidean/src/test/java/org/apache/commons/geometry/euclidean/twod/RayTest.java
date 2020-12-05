@@ -24,8 +24,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class RayTest {
 
@@ -44,20 +44,20 @@ public class RayTest {
         final Ray ray = Lines.rayFromPointAndDirection(p0, p0.vectorTo(p1), TEST_PRECISION);
 
         // assert
-        Assert.assertFalse(ray.isFull());
-        Assert.assertFalse(ray.isEmpty());
-        Assert.assertTrue(ray.isInfinite());
-        Assert.assertFalse(ray.isFinite());
+        Assertions.assertFalse(ray.isFull());
+        Assertions.assertFalse(ray.isEmpty());
+        Assertions.assertTrue(ray.isInfinite());
+        Assertions.assertFalse(ray.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0, ray.getStartPoint(), TEST_EPS);
-        Assert.assertNull(ray.getEndPoint());
+        Assertions.assertNull(ray.getEndPoint());
 
-        Assert.assertEquals(1, ray.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(1, ray.getSubspaceStart(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
-        Assert.assertNull(ray.getCentroid());
-        Assert.assertNull(ray.getBounds());
+        Assertions.assertNull(ray.getCentroid());
+        Assertions.assertNull(ray.getBounds());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0.vectorTo(p1), ray.getDirection(), TEST_EPS);
     }
@@ -87,20 +87,20 @@ public class RayTest {
         final Ray ray = Lines.rayFromPoint(line, p3);
 
         // assert
-        Assert.assertFalse(ray.isFull());
-        Assert.assertFalse(ray.isEmpty());
-        Assert.assertTrue(ray.isInfinite());
-        Assert.assertFalse(ray.isFinite());
+        Assertions.assertFalse(ray.isFull());
+        Assertions.assertFalse(ray.isEmpty());
+        Assertions.assertTrue(ray.isInfinite());
+        Assertions.assertFalse(ray.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 3), ray.getStartPoint(), TEST_EPS);
-        Assert.assertNull(ray.getEndPoint());
+        Assertions.assertNull(ray.getEndPoint());
 
-        Assert.assertEquals(3, ray.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(3, ray.getSubspaceStart(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
-        Assert.assertNull(ray.getCentroid());
-        Assert.assertNull(ray.getBounds());
+        Assertions.assertNull(ray.getCentroid());
+        Assertions.assertNull(ray.getBounds());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0.vectorTo(p1), ray.getDirection(), TEST_EPS);
     }
@@ -138,20 +138,20 @@ public class RayTest {
         final Ray ray = Lines.rayFromLocation(line, -2);
 
         // assert
-        Assert.assertFalse(ray.isFull());
-        Assert.assertFalse(ray.isEmpty());
-        Assert.assertTrue(ray.isInfinite());
-        Assert.assertFalse(ray.isFinite());
+        Assertions.assertFalse(ray.isFull());
+        Assertions.assertFalse(ray.isEmpty());
+        Assertions.assertTrue(ray.isInfinite());
+        Assertions.assertFalse(ray.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, -2), ray.getStartPoint(), TEST_EPS);
-        Assert.assertNull(ray.getEndPoint());
+        Assertions.assertNull(ray.getEndPoint());
 
-        Assert.assertEquals(-2, ray.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(-2, ray.getSubspaceStart(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
-        Assert.assertNull(ray.getCentroid());
-        Assert.assertNull(ray.getBounds());
+        Assertions.assertNull(ray.getCentroid());
+        Assertions.assertNull(ray.getBounds());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0.vectorTo(p1), ray.getDirection(), TEST_EPS);
     }
@@ -225,7 +225,7 @@ public class RayTest {
 
             // assert
             EuclideanTestUtils.assertCoordinatesEqual(ray.getLine().getOrigin(), rev.getLine().getOrigin(), TEST_EPS);
-            Assert.assertEquals(-1, ray.getLine().getDirection().dot(rev.getLine().getDirection()), TEST_EPS);
+            Assertions.assertEquals(-1, ray.getLine().getDirection().dot(rev.getLine().getDirection()), TEST_EPS);
 
             EuclideanTestUtils.assertCoordinatesEqual(ray.getStartPoint(), rev.getEndPoint(), TEST_EPS);
         });
@@ -335,10 +335,10 @@ public class RayTest {
         final Split<LineConvexSubset> split = ray.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(ray, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(ray, split.getPlus());
     }
 
     @Test
@@ -350,10 +350,10 @@ public class RayTest {
         final Interval interval = ray.getInterval();
 
         // assert
-        Assert.assertEquals(2, interval.getMin(), TEST_EPS);
+        Assertions.assertEquals(2, interval.getMin(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(interval.getMax());
 
-        Assert.assertSame(ray.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
+        Assertions.assertSame(ray.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
     }
 
     @Test
@@ -374,7 +374,7 @@ public class RayTest {
 
         final LineConvexSubset minus = split.getMinus();
         if (minusStart == null && minusEnd == null) {
-            Assert.assertNull(minus);
+            Assertions.assertNull(minus);
         } else {
             checkPoint(minusStart, minus.getStartPoint());
             checkPoint(minusEnd, minus.getEndPoint());
@@ -383,7 +383,7 @@ public class RayTest {
 
         final LineConvexSubset plus = split.getPlus();
         if (plusStart == null && plusEnd == null) {
-            Assert.assertNull(plus);
+            Assertions.assertNull(plus);
         } else {
             checkPoint(plusStart, plus.getStartPoint());
             checkPoint(plusEnd, plus.getEndPoint());
@@ -392,7 +392,7 @@ public class RayTest {
 
     private static void checkPoint(final Vector2D expected, final Vector2D pt) {
         if (expected == null) {
-            Assert.assertNull(pt);
+            Assertions.assertNull(pt);
         } else {
             EuclideanTestUtils.assertCoordinatesEqual(expected, pt, TEST_EPS);
         }

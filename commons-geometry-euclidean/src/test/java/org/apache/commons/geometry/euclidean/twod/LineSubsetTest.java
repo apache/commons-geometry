@@ -20,7 +20,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LineSubsetTest {
 

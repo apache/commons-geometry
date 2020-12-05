@@ -60,6 +60,13 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- testing -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
 </project>

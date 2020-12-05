@@ -35,8 +35,8 @@ import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EmbeddedTreePlaneSubsetTest {
 
@@ -54,10 +54,10 @@ public class EmbeddedTreePlaneSubsetTest {
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE);
 
         // assert
-        Assert.assertFalse(ps.isFull());
-        Assert.assertTrue(ps.isEmpty());
+        Assertions.assertFalse(ps.isFull());
+        Assertions.assertTrue(ps.isEmpty());
 
-        Assert.assertEquals(0, ps.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, ps.getSize(), TEST_EPS);
     }
 
     @Test
@@ -66,10 +66,10 @@ public class EmbeddedTreePlaneSubsetTest {
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
 
         // assert
-        Assert.assertFalse(ps.isFull());
-        Assert.assertTrue(ps.isEmpty());
+        Assertions.assertFalse(ps.isFull());
+        Assertions.assertTrue(ps.isEmpty());
 
-        Assert.assertEquals(0, ps.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, ps.getSize(), TEST_EPS);
     }
 
     @Test
@@ -78,8 +78,8 @@ public class EmbeddedTreePlaneSubsetTest {
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, true);
 
         // assert
-        Assert.assertTrue(ps.isFull());
-        Assert.assertFalse(ps.isEmpty());
+        Assertions.assertTrue(ps.isFull());
+        Assertions.assertFalse(ps.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(ps.getSize());
     }
@@ -106,8 +106,8 @@ public class EmbeddedTreePlaneSubsetTest {
         final List<PlaneConvexSubset> convex = ps.toConvex();
 
         // assert
-        Assert.assertEquals(1, convex.size());
-        Assert.assertTrue(convex.get(0).isFull());
+        Assertions.assertEquals(1, convex.size());
+        Assertions.assertTrue(convex.get(0).isFull());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class EmbeddedTreePlaneSubsetTest {
         final List<PlaneConvexSubset> convex = ps.toConvex();
 
         // assert
-        Assert.assertEquals(0, convex.size());
+        Assertions.assertEquals(0, convex.size());
     }
 
     @Test
@@ -142,9 +142,9 @@ public class EmbeddedTreePlaneSubsetTest {
         final List<PlaneConvexSubset> convex = ps.toConvex();
 
         // assert
-        Assert.assertEquals(2, convex.size());
-        Assert.assertEquals(1, convex.get(0).getSize(), TEST_EPS);
-        Assert.assertEquals(1, convex.get(1).getSize(), TEST_EPS);
+        Assertions.assertEquals(2, convex.size());
+        Assertions.assertEquals(1, convex.get(0).getSize(), TEST_EPS);
+        Assertions.assertEquals(1, convex.get(1).getSize(), TEST_EPS);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class EmbeddedTreePlaneSubsetTest {
         final List<Triangle3D> tris = ps.toTriangles();
 
         // assert
-        Assert.assertEquals(0, tris.size());
+        Assertions.assertEquals(0, tris.size());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class EmbeddedTreePlaneSubsetTest {
         final List<Triangle3D> tris = ps.toTriangles();
 
         // assert
-        Assert.assertEquals(2, tris.size());
+        Assertions.assertEquals(2, tris.size());
 
         EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p4, p1, p2),
                 tris.get(0).getVertices(), TEST_PRECISION);
@@ -230,7 +230,7 @@ public class EmbeddedTreePlaneSubsetTest {
         final List<Triangle3D> tris = ps.toTriangles();
 
         // assert
-        Assert.assertEquals(3, tris.size());
+        Assertions.assertEquals(3, tris.size());
     }
 
     @Test
@@ -246,9 +246,9 @@ public class EmbeddedTreePlaneSubsetTest {
         halfPlane.getSubspaceRegion().getRoot().insertCut(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION));
 
         // act/assert
-        Assert.assertNull(full.getBounds());
-        Assert.assertNull(empty.getBounds());
-        Assert.assertNull(halfPlane.getBounds());
+        Assertions.assertNull(full.getBounds());
+        Assertions.assertNull(empty.getBounds());
+        Assertions.assertNull(halfPlane.getBounds());
     }
 
     @Test
@@ -281,10 +281,10 @@ public class EmbeddedTreePlaneSubsetTest {
         final Split<EmbeddedTreePlaneSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -300,7 +300,7 @@ public class EmbeddedTreePlaneSubsetTest {
         final Split<EmbeddedTreePlaneSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final EmbeddedTreePlaneSubset minus = split.getMinus();
         checkPoints(minus, RegionLocation.INSIDE, Vector3D.of(-1, 1, 0));
@@ -324,7 +324,7 @@ public class EmbeddedTreePlaneSubsetTest {
         final Split<EmbeddedTreePlaneSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final EmbeddedTreePlaneSubset minus = split.getMinus();
         checkPoints(minus, RegionLocation.INSIDE, Vector3D.of(-0.5, 0, 0));
@@ -352,10 +352,10 @@ public class EmbeddedTreePlaneSubsetTest {
         final Split<EmbeddedTreePlaneSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(ps, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(ps, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -371,10 +371,10 @@ public class EmbeddedTreePlaneSubsetTest {
         final Split<EmbeddedTreePlaneSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(ps, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(ps, split.getPlus());
     }
 
     @Test
@@ -390,10 +390,10 @@ public class EmbeddedTreePlaneSubsetTest {
         final Split<EmbeddedTreePlaneSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(ps, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(ps, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -409,10 +409,10 @@ public class EmbeddedTreePlaneSubsetTest {
         final Split<EmbeddedTreePlaneSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(ps, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(ps, split.getPlus());
     }
 
     @Test
@@ -426,10 +426,10 @@ public class EmbeddedTreePlaneSubsetTest {
         final Split<EmbeddedTreePlaneSubset> split = ps.split(ps.getPlane());
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -443,14 +443,14 @@ public class EmbeddedTreePlaneSubsetTest {
         final EmbeddedTreePlaneSubset result = ps.transform(transform);
 
         // assert
-        Assert.assertNotSame(ps, result);
+        Assertions.assertNotSame(ps, result);
 
         final Plane resultPlane = result.getPlane();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), resultPlane.getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, resultPlane.getNormal(), TEST_EPS);
 
-        Assert.assertFalse(result.isFull());
-        Assert.assertTrue(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
+        Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
@@ -464,14 +464,14 @@ public class EmbeddedTreePlaneSubsetTest {
         final EmbeddedTreePlaneSubset result = ps.transform(transform);
 
         // assert
-        Assert.assertNotSame(ps, result);
+        Assertions.assertNotSame(ps, result);
 
         final Plane resultPlane = result.getPlane();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), resultPlane.getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, resultPlane.getNormal(), TEST_EPS);
 
-        Assert.assertTrue(result.isFull());
-        Assert.assertFalse(result.isEmpty());
+        Assertions.assertTrue(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
     }
 
     @Test
@@ -491,7 +491,7 @@ public class EmbeddedTreePlaneSubsetTest {
         final EmbeddedTreePlaneSubset result = ps.transform(transform);
 
         // assert
-        Assert.assertNotSame(ps, result);
+        Assertions.assertNotSame(ps, result);
 
         final Plane resultPlane = result.getPlane();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 0, 0), resultPlane.getOrigin(), TEST_EPS);
@@ -519,7 +519,7 @@ public class EmbeddedTreePlaneSubsetTest {
         final EmbeddedTreePlaneSubset result = ps.transform(transform);
 
         // assert
-        Assert.assertNotSame(ps, result);
+        Assertions.assertNotSame(ps, result);
 
         final Plane resultPlane = result.getPlane();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), resultPlane.getOrigin(), TEST_EPS);
@@ -551,12 +551,12 @@ public class EmbeddedTreePlaneSubsetTest {
         ps.add(new EmbeddedTreePlaneSubset(plane, tree));
 
         // assert
-        Assert.assertFalse(ps.isFull());
-        Assert.assertFalse(ps.isEmpty());
-        Assert.assertTrue(ps.isFinite());
-        Assert.assertFalse(ps.isInfinite());
+        Assertions.assertFalse(ps.isFull());
+        Assertions.assertFalse(ps.isEmpty());
+        Assertions.assertTrue(ps.isFinite());
+        Assertions.assertFalse(ps.isInfinite());
 
-        Assert.assertEquals(1, ps.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, ps.getSize(), TEST_EPS);
 
         checkPoints(ps, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 1));
         checkPoints(ps, RegionLocation.BOUNDARY,
@@ -592,7 +592,7 @@ public class EmbeddedTreePlaneSubsetTest {
         ps.add(Planes.subsetFromConvexArea(otherPlane2, area));
 
         // assert
-        Assert.assertEquals(4, ps.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, ps.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), ps.getCentroid(), TEST_EPS);
 
         final Bounds3D bounds = ps.getBounds();
@@ -619,7 +619,7 @@ public class EmbeddedTreePlaneSubsetTest {
         ps.add(Planes.subsetFromConvexArea(otherPlane1, area));
 
         // assert
-        Assert.assertEquals(2, ps.getSize(), TEST_EPS);
+        Assertions.assertEquals(2, ps.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0.5, 1), ps.getCentroid(), TEST_EPS);
 
         final Bounds3D bounds = ps.getBounds();
@@ -646,7 +646,7 @@ public class EmbeddedTreePlaneSubsetTest {
         ps.add(new EmbeddedTreePlaneSubset(otherPlane1, area.toTree()));
 
         // assert
-        Assert.assertEquals(2, ps.getSize(), TEST_EPS);
+        Assertions.assertEquals(2, ps.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.5, -1, 1), ps.getCentroid(), TEST_EPS);
 
         final Bounds3D bounds = ps.getBounds();
@@ -689,7 +689,7 @@ public class EmbeddedTreePlaneSubsetTest {
 
     private static void checkPoints(final EmbeddedTreePlaneSubset ps, final RegionLocation loc, final Vector3D... pts) {
         for (final Vector3D pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, ps.classify(pt));
+            Assertions.assertEquals(loc, ps.classify(pt), "Unexpected location for point " + pt);
         }
     }
 }

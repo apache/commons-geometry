@@ -28,8 +28,8 @@ import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class DefaultModelIOHandlerRegistryTest {
 
@@ -46,14 +46,14 @@ public class DefaultModelIOHandlerRegistryTest {
         List<ModelIOHandler> handlers = registry.getHandlers();
 
         // assert
-        Assert.assertEquals(1, handlers.size());
+        Assertions.assertEquals(1, handlers.size());
     }
 
     @Test
     public void testSupportedTypes() {
         // act/assert
-        Assert.assertTrue(registry.handlesType("obj"));
-        Assert.assertTrue(registry.handlesType("OBJ"));
+        Assertions.assertTrue(registry.handlesType("obj"));
+        Assertions.assertTrue(registry.handlesType("OBJ"));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class DefaultModelIOHandlerRegistryTest {
 
         // assert
         List<Triangle3D> tris = result.triangleStream().collect(Collectors.toList());
-        Assert.assertEquals(1, tris.size());
+        Assertions.assertEquals(1, tris.size());
 
         Triangle3D tri = tris.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tri.getPoint1(), TEST_EPS);

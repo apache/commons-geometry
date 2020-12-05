@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.core.internal;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SimpleTupleFormatTest {
 
@@ -56,9 +56,9 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat("|", "{", "}");
 
         // assert
-        Assert.assertEquals("|", formatter.getSeparator());
-        Assert.assertEquals("{", formatter.getPrefix());
-        Assert.assertEquals("}", formatter.getSuffix());
+        Assertions.assertEquals("|", formatter.getSeparator());
+        Assertions.assertEquals("{", formatter.getPrefix());
+        Assertions.assertEquals("}", formatter.getSuffix());
     }
 
     @Test
@@ -67,9 +67,9 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat("{", "}");
 
         // assert
-        Assert.assertEquals(",", formatter.getSeparator());
-        Assert.assertEquals("{", formatter.getPrefix());
-        Assert.assertEquals("}", formatter.getSuffix());
+        Assertions.assertEquals(",", formatter.getSeparator());
+        Assertions.assertEquals("{", formatter.getPrefix());
+        Assertions.assertEquals("}", formatter.getSuffix());
     }
 
     @Test
@@ -78,11 +78,11 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        Assert.assertEquals("(1.0)", formatter.format(1.0));
-        Assert.assertEquals("(-1.0)", formatter.format(-1.0));
-        Assert.assertEquals("(NaN)", formatter.format(Double.NaN));
-        Assert.assertEquals("(-Infinity)", formatter.format(Double.NEGATIVE_INFINITY));
-        Assert.assertEquals("(Infinity)", formatter.format(Double.POSITIVE_INFINITY));
+        Assertions.assertEquals("(1.0)", formatter.format(1.0));
+        Assertions.assertEquals("(-1.0)", formatter.format(-1.0));
+        Assertions.assertEquals("(NaN)", formatter.format(Double.NaN));
+        Assertions.assertEquals("(-Infinity)", formatter.format(Double.NEGATIVE_INFINITY));
+        Assertions.assertEquals("(Infinity)", formatter.format(Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -91,11 +91,11 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
-        Assert.assertEquals("1.0", formatter.format(1.0));
-        Assert.assertEquals("-1.0", formatter.format(-1.0));
-        Assert.assertEquals("NaN", formatter.format(Double.NaN));
-        Assert.assertEquals("-Infinity", formatter.format(Double.NEGATIVE_INFINITY));
-        Assert.assertEquals("Infinity", formatter.format(Double.POSITIVE_INFINITY));
+        Assertions.assertEquals("1.0", formatter.format(1.0));
+        Assertions.assertEquals("-1.0", formatter.format(-1.0));
+        Assertions.assertEquals("NaN", formatter.format(Double.NaN));
+        Assertions.assertEquals("-Infinity", formatter.format(Double.NEGATIVE_INFINITY));
+        Assertions.assertEquals("Infinity", formatter.format(Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -104,10 +104,10 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        Assert.assertEquals("(1.0, -1.0)", formatter.format(1.0, -1.0));
-        Assert.assertEquals("(-1.0, 1.0)", formatter.format(-1.0, 1.0));
-        Assert.assertEquals("(NaN, -Infinity)", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY));
-        Assert.assertEquals("(-Infinity, Infinity)", formatter.format(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assertions.assertEquals("(1.0, -1.0)", formatter.format(1.0, -1.0));
+        Assertions.assertEquals("(-1.0, 1.0)", formatter.format(-1.0, 1.0));
+        Assertions.assertEquals("(NaN, -Infinity)", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY));
+        Assertions.assertEquals("(-Infinity, Infinity)", formatter.format(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -116,10 +116,10 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
-        Assert.assertEquals("1.0, -1.0", formatter.format(1.0, -1.0));
-        Assert.assertEquals("-1.0, 1.0", formatter.format(-1.0, 1.0));
-        Assert.assertEquals("NaN, -Infinity", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY));
-        Assert.assertEquals("-Infinity, Infinity", formatter.format(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assertions.assertEquals("1.0, -1.0", formatter.format(1.0, -1.0));
+        Assertions.assertEquals("-1.0, 1.0", formatter.format(-1.0, 1.0));
+        Assertions.assertEquals("NaN, -Infinity", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY));
+        Assertions.assertEquals("-Infinity, Infinity", formatter.format(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -128,9 +128,9 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        Assert.assertEquals("(1.0, 0.0, -1.0)", formatter.format(1.0, 0.0, -1.0));
-        Assert.assertEquals("(-1.0, 1.0, 0.0)", formatter.format(-1.0, 1.0, 0.0));
-        Assert.assertEquals("(NaN, -Infinity, Infinity)", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assertions.assertEquals("(1.0, 0.0, -1.0)", formatter.format(1.0, 0.0, -1.0));
+        Assertions.assertEquals("(-1.0, 1.0, 0.0)", formatter.format(-1.0, 1.0, 0.0));
+        Assertions.assertEquals("(NaN, -Infinity, Infinity)", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -139,9 +139,9 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
-        Assert.assertEquals("1.0, 0.0, -1.0", formatter.format(1.0, 0.0, -1.0));
-        Assert.assertEquals("-1.0, 1.0, 0.0", formatter.format(-1.0, 1.0, 0.0));
-        Assert.assertEquals("NaN, -Infinity, Infinity", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assertions.assertEquals("1.0, 0.0, -1.0", formatter.format(1.0, 0.0, -1.0));
+        Assertions.assertEquals("-1.0, 1.0, 0.0", formatter.format(-1.0, 1.0, 0.0));
+        Assertions.assertEquals("NaN, -Infinity, Infinity", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -150,9 +150,9 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        Assert.assertEquals("(1.0, 0.0, -1.0, 2.0)", formatter.format(1.0, 0.0, -1.0, 2.0));
-        Assert.assertEquals("(-1.0, 1.0, 0.0, 2.0)", formatter.format(-1.0, 1.0, 0.0, 2.0));
-        Assert.assertEquals("(NaN, -Infinity, Infinity, NaN)", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN));
+        Assertions.assertEquals("(1.0, 0.0, -1.0, 2.0)", formatter.format(1.0, 0.0, -1.0, 2.0));
+        Assertions.assertEquals("(-1.0, 1.0, 0.0, 2.0)", formatter.format(-1.0, 1.0, 0.0, 2.0));
+        Assertions.assertEquals("(NaN, -Infinity, Infinity, NaN)", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN));
     }
 
     @Test
@@ -161,9 +161,9 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
-        Assert.assertEquals("1.0, 0.0, -1.0, 2.0", formatter.format(1.0, 0.0, -1.0, 2.0));
-        Assert.assertEquals("-1.0, 1.0, 0.0, 2.0", formatter.format(-1.0, 1.0, 0.0, 2.0));
-        Assert.assertEquals("NaN, -Infinity, Infinity, NaN", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN));
+        Assertions.assertEquals("1.0, 0.0, -1.0, 2.0", formatter.format(1.0, 0.0, -1.0, 2.0));
+        Assertions.assertEquals("-1.0, 1.0, 0.0, 2.0", formatter.format(-1.0, 1.0, 0.0, 2.0));
+        Assertions.assertEquals("NaN, -Infinity, Infinity, NaN", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN));
     }
 
     @Test
@@ -172,9 +172,9 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
         // act/assert
-        Assert.assertEquals("<<1.0>>", formatter.format(1.0));
-        Assert.assertEquals("<<1.0|| 2.0>>", formatter.format(1.0, 2.0));
-        Assert.assertEquals("<<1.0|| 2.0|| 3.0>>", formatter.format(1.0, 2.0, 3.0));
+        Assertions.assertEquals("<<1.0>>", formatter.format(1.0));
+        Assertions.assertEquals("<<1.0|| 2.0>>", formatter.format(1.0, 2.0));
+        Assertions.assertEquals("<<1.0|| 2.0|| 3.0>>", formatter.format(1.0, 2.0, 3.0));
     }
 
     @Test
@@ -394,64 +394,63 @@ public class SimpleTupleFormatTest {
         final SimpleTupleFormat formatter = SimpleTupleFormat.getDefault();
 
         // assert
-        Assert.assertEquals(",", formatter.getSeparator());
-        Assert.assertEquals("(", formatter.getPrefix());
-        Assert.assertEquals(")", formatter.getSuffix());
+        Assertions.assertEquals(",", formatter.getSeparator());
+        Assertions.assertEquals("(", formatter.getPrefix());
+        Assertions.assertEquals(")", formatter.getSuffix());
 
-        Assert.assertEquals("(1.0, 2.0)", formatter.format(1, 2));
+        Assertions.assertEquals("(1.0, 2.0)", formatter.format(1, 2));
     }
 
     private void checkParse1D(final SimpleTupleFormat formatter, final String str, final double v) {
         final Stub1D result = formatter.parse(str, FACTORY_1D);
 
-        Assert.assertEquals(v, result.v, EPS);
+        Assertions.assertEquals(v, result.v, EPS);
     }
 
     private void checkParse1DFailure(final SimpleTupleFormat formatter, final String str, final String msgSubstr) {
         try {
             formatter.parse(str, FACTORY_1D);
-            Assert.fail("Operation should have failed");
+            Assertions.fail("Operation should have failed");
         } catch (final IllegalArgumentException exc) {
             final String excMsg = exc.getMessage();
-            Assert.assertTrue("Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]",
-                    excMsg.contains(msgSubstr));
+            Assertions.assertTrue(excMsg.contains(msgSubstr), "Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]");
         }
     }
 
     private void checkParse2D(final SimpleTupleFormat formatter, final String str, final double v1, final double v2) {
         final Stub2D result = formatter.parse(str, FACTORY_2D);
 
-        Assert.assertEquals(v1, result.v1, EPS);
-        Assert.assertEquals(v2, result.v2, EPS);
+        Assertions.assertEquals(v1, result.v1, EPS);
+        Assertions.assertEquals(v2, result.v2, EPS);
     }
 
     private void checkParse2DFailure(final SimpleTupleFormat formatter, final String str, final String msgSubstr) {
         try {
             formatter.parse(str, FACTORY_2D);
-            Assert.fail("Operation should have failed");
+            Assertions.fail("Operation should have failed");
         } catch (final IllegalArgumentException exc) {
             final String excMsg = exc.getMessage();
-            Assert.assertTrue("Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]",
-                    excMsg.contains(msgSubstr));
+            Assertions.assertTrue(excMsg.contains(msgSubstr),
+                    "Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]");
         }
     }
 
     private void checkParse3D(final SimpleTupleFormat formatter, final String str, final double v1, final double v2, final double v3) {
         final Stub3D result = formatter.parse(str, FACTORY_3D);
 
-        Assert.assertEquals(v1, result.v1, EPS);
-        Assert.assertEquals(v2, result.v2, EPS);
-        Assert.assertEquals(v3, result.v3, EPS);
+        Assertions.assertEquals(v1, result.v1, EPS);
+        Assertions.assertEquals(v2, result.v2, EPS);
+        Assertions.assertEquals(v3, result.v3, EPS);
     }
 
     private void checkParse3DFailure(final SimpleTupleFormat formatter, final String str, final String msgSubstr) {
         try {
             formatter.parse(str, FACTORY_3D);
-            Assert.fail("Operation should have failed");
+            Assertions.fail("Operation should have failed");
         } catch (final IllegalArgumentException exc) {
             final String excMsg = exc.getMessage();
-            Assert.assertTrue("Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]",
-                    excMsg.contains(msgSubstr));
+            Assertions.assertTrue(excMsg.contains(msgSubstr),
+                    "Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]");
         }
     }
 

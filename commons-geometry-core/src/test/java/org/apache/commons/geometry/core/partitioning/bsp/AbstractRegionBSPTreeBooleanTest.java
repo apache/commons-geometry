@@ -24,7 +24,7 @@ import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AbstractRegionBSPTreeBooleanTest {
 

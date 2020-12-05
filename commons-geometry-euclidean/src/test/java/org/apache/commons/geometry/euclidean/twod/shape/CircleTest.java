@@ -34,8 +34,8 @@ import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class CircleTest {
 
@@ -58,15 +58,15 @@ public class CircleTest {
         final Circle c = Circle.from(center, 3, TEST_PRECISION);
 
         // act/assert
-        Assert.assertFalse(c.isFull());
-        Assert.assertFalse(c.isEmpty());
+        Assertions.assertFalse(c.isFull());
+        Assertions.assertFalse(c.isEmpty());
 
-        Assert.assertSame(center, c.getCenter());
-        Assert.assertSame(center, c.getCentroid());
+        Assertions.assertSame(center, c.getCenter());
+        Assertions.assertSame(center, c.getCentroid());
 
-        Assert.assertEquals(3, c.getRadius(), 0.0);
+        Assertions.assertEquals(3, c.getRadius(), 0.0);
 
-        Assert.assertSame(TEST_PRECISION, c.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, c.getPrecision());
     }
 
     @Test
@@ -104,8 +104,8 @@ public class CircleTest {
         final Circle c = Circle.from(Vector2D.of(1, 2), r, TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(2 * Math.PI * r, c.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(Math.PI * r * r, c.getSize(), TEST_EPS);
+        Assertions.assertEquals(2 * Math.PI * r, c.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(Math.PI * r * r, c.getSize(), TEST_EPS);
     }
 
     @Test
@@ -172,7 +172,7 @@ public class CircleTest {
             final Vector2D projection = c.project(pt);
 
             // assert
-            Assert.assertEquals(radius, center.distance(projection), TEST_EPS);
+            Assertions.assertEquals(radius, center.distance(projection), TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(center.directionTo(pt),
                     center.directionTo(projection), TEST_EPS);
         });
@@ -287,7 +287,7 @@ public class CircleTest {
         final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         segments.sort(SEGMENT_DIRECTION_COMPARATOR);
 
-        Assert.assertEquals(3, segments.size());
+        Assertions.assertEquals(3, segments.size());
 
         final double inc = PlaneAngleRadians.TWO_PI / 3.0;
         final Vector2D p0 = Vector2D.of(4, 1);
@@ -317,7 +317,7 @@ public class CircleTest {
         final List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         segments.sort(SEGMENT_DIRECTION_COMPARATOR);
 
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
         final Vector2D p0 = Vector2D.of(4, 1);
         final Vector2D p1 = Vector2D.of(2, 3);
@@ -352,7 +352,7 @@ public class CircleTest {
 
             // check that we get closer and closer to the correct size as we add more segments
             sizeDiff = c.getSize() - tree.getSize();
-            Assert.assertTrue("Expected size difference to decrease", sizeDiff < prevSizeDiff);
+            Assertions.assertTrue(sizeDiff < prevSizeDiff, "Expected size difference to decrease");
 
             prevSizeDiff = sizeDiff;
         }
@@ -370,8 +370,8 @@ public class CircleTest {
         checkBasicApproximationProperties(c, tree);
 
         final double eps = 5e-3;
-        Assert.assertEquals(c.getSize(), tree.getSize(), eps);
-        Assert.assertEquals(c.getBoundarySize(), tree.getBoundarySize(), eps);
+        Assertions.assertEquals(c.getSize(), tree.getSize(), eps);
+        Assertions.assertEquals(c.getBoundarySize(), tree.getBoundarySize(), eps);
         EuclideanTestUtils.assertCoordinatesEqual(c.getCentroid(), tree.getCentroid(), eps);
     }
 
@@ -405,13 +405,13 @@ public class CircleTest {
         final int hash = a.hashCode();
 
         // act/assert
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
-        Assert.assertNotEquals(hash, d.hashCode());
+        Assertions.assertNotEquals(hash, b.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, d.hashCode());
 
-        Assert.assertEquals(hash, e.hashCode());
+        Assertions.assertEquals(hash, e.hashCode());
     }
 
     @Test
@@ -428,11 +428,11 @@ public class CircleTest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-        Assert.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
 
-        Assert.assertEquals(a, e);
+        Assertions.assertEquals(a, e);
     }
 
     @Test
@@ -444,13 +444,13 @@ public class CircleTest {
         final String str = c.toString();
 
         // assert
-        Assert.assertEquals("Circle[center= (1.0, 2.0), radius= 3.0]", str);
+        Assertions.assertEquals("Circle[center= (1.0, 2.0), radius= 3.0]", str);
     }
 
     private static void checkContains(final Circle circle, final boolean contains, final Vector2D... pts) {
         for (final Vector2D pt : pts) {
-            Assert.assertEquals("Expected circle to " + (contains ? "" : "not") + "contain point " + pt,
-                    contains, circle.contains(pt));
+            Assertions.assertEquals(contains, circle.contains(pt),
+                    "Expected circle to " + (contains ? "" : "not") + "contain point " + pt);
         }
     }
 
@@ -467,34 +467,34 @@ public class CircleTest {
         final int len = expectedPts.length;
 
         // check the lists
-        Assert.assertEquals(len, actualPtsForward.size());
-        Assert.assertEquals(len, actualPtsReverse.size());
+        Assertions.assertEquals(len, actualPtsForward.size());
+        Assertions.assertEquals(len, actualPtsReverse.size());
 
         for (int i = 0; i < len; ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(expectedPts[i], actualPtsForward.get(i), TEST_EPS);
-            Assert.assertEquals(circle.getRadius(), circle.getCenter().distance(actualPtsForward.get(i)), TEST_EPS);
+            Assertions.assertEquals(circle.getRadius(), circle.getCenter().distance(actualPtsForward.get(i)), TEST_EPS);
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedPts[len - i - 1], actualPtsReverse.get(i), TEST_EPS);
-            Assert.assertEquals(circle.getRadius(), circle.getCenter().distance(actualPtsReverse.get(i)), TEST_EPS);
+            Assertions.assertEquals(circle.getRadius(), circle.getCenter().distance(actualPtsReverse.get(i)), TEST_EPS);
         }
 
         // check the single intersection points
         if (len > 0) {
-            Assert.assertNotNull(actualFirstForward);
-            Assert.assertNotNull(actualFirstReverse);
+            Assertions.assertNotNull(actualFirstForward);
+            Assertions.assertNotNull(actualFirstReverse);
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedPts[0], actualFirstForward, TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(expectedPts[len - 1], actualFirstReverse, TEST_EPS);
         } else {
-            Assert.assertNull(actualFirstForward);
-            Assert.assertNull(actualFirstReverse);
+            Assertions.assertNull(actualFirstForward);
+            Assertions.assertNull(actualFirstReverse);
         }
     }
 
     private static void checkLinecast(final Circle c, final LineConvexSubset segment, final Vector2D... expectedPts) {
         // check linecast
         final List<LinecastPoint2D> results = c.linecast(segment);
-        Assert.assertEquals(expectedPts.length, results.size());
+        Assertions.assertEquals(expectedPts.length, results.size());
 
         LinecastPoint2D actual;
         Vector2D expected;
@@ -504,15 +504,15 @@ public class CircleTest {
 
             EuclideanTestUtils.assertCoordinatesEqual(expected, actual.getPoint(), TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(c.getCenter().directionTo(expected), actual.getNormal(), TEST_EPS);
-            Assert.assertSame(segment.getLine(), actual.getLine());
+            Assertions.assertSame(segment.getLine(), actual.getLine());
         }
 
         // check linecastFirst
         final LinecastPoint2D firstResult = c.linecastFirst(segment);
         if (expectedPts.length > 0) {
-            Assert.assertEquals(results.get(0), firstResult);
+            Assertions.assertEquals(results.get(0), firstResult);
         } else {
-            Assert.assertNull(firstResult);
+            Assertions.assertNull(firstResult);
         }
     }
 
@@ -520,30 +520,30 @@ public class CircleTest {
      * Check a number of standard properties for bsp trees generated as circle approximations.
      */
     private static void checkBasicApproximationProperties(final Circle c, final RegionBSPTree2D tree) {
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         // all vertices must be inside the circle or on the boundary
         final List<LinePath> paths = tree.getBoundaryPaths();
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final LinePath path = paths.get(0);
-        Assert.assertTrue(path.isFinite());
+        Assertions.assertTrue(path.isFinite());
 
         for (final Vector2D vertex : path.getVertexSequence()) {
-            Assert.assertTrue("Expected vertex to be contained in circle: " + vertex, c.contains(vertex));
+            Assertions.assertTrue(c.contains(vertex), "Expected vertex to be contained in circle: " + vertex);
         }
 
         // circle must contain centroid
         EuclideanTestUtils.assertRegionLocation(c, RegionLocation.INSIDE, tree.getCentroid());
 
         // area must be less than the circle
-        Assert.assertTrue("Expected approximation area to be less than circle", tree.getSize() < c.getSize());
+        Assertions.assertTrue(tree.getSize() < c.getSize(), "Expected approximation area to be less than circle");
     }
 
     private static void assertFiniteSegment(final LineConvexSubset segment, final Vector2D start, final Vector2D end) {
-        Assert.assertFalse(segment.isInfinite());
-        Assert.assertTrue(segment.isFinite());
+        Assertions.assertFalse(segment.isInfinite());
+        Assertions.assertTrue(segment.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);

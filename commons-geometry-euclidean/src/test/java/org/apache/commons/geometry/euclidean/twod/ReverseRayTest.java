@@ -24,8 +24,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ReverseRayTest {
 
@@ -44,20 +44,20 @@ public class ReverseRayTest {
         final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(p0, p0.vectorTo(p1), TEST_PRECISION);
 
         // assert
-        Assert.assertFalse(revRay.isFull());
-        Assert.assertFalse(revRay.isEmpty());
-        Assert.assertTrue(revRay.isInfinite());
-        Assert.assertFalse(revRay.isFinite());
+        Assertions.assertFalse(revRay.isFull());
+        Assertions.assertFalse(revRay.isEmpty());
+        Assertions.assertTrue(revRay.isInfinite());
+        Assertions.assertFalse(revRay.isFinite());
 
-        Assert.assertNull(revRay.getStartPoint());
+        Assertions.assertNull(revRay.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(p0, revRay.getEndPoint(), TEST_EPS);
 
         GeometryTestUtils.assertNegativeInfinity(revRay.getSubspaceStart());
-        Assert.assertEquals(1, revRay.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(1, revRay.getSubspaceEnd(), TEST_EPS);
 
         GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
-        Assert.assertNull(revRay.getCentroid());
-        Assert.assertNull(revRay.getBounds());
+        Assertions.assertNull(revRay.getCentroid());
+        Assertions.assertNull(revRay.getBounds());
     }
 
     @Test
@@ -85,20 +85,20 @@ public class ReverseRayTest {
         final ReverseRay revRay = Lines.reverseRayFromPoint(line, p3);
 
         // assert
-        Assert.assertFalse(revRay.isFull());
-        Assert.assertFalse(revRay.isEmpty());
-        Assert.assertTrue(revRay.isInfinite());
-        Assert.assertFalse(revRay.isFinite());
+        Assertions.assertFalse(revRay.isFull());
+        Assertions.assertFalse(revRay.isEmpty());
+        Assertions.assertTrue(revRay.isInfinite());
+        Assertions.assertFalse(revRay.isFinite());
 
-        Assert.assertNull(revRay.getStartPoint());
+        Assertions.assertNull(revRay.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 3), revRay.getEndPoint(), TEST_EPS);
 
         GeometryTestUtils.assertNegativeInfinity(revRay.getSubspaceStart());
-        Assert.assertEquals(3, revRay.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(3, revRay.getSubspaceEnd(), TEST_EPS);
 
         GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
-        Assert.assertNull(revRay.getCentroid());
-        Assert.assertNull(revRay.getBounds());
+        Assertions.assertNull(revRay.getCentroid());
+        Assertions.assertNull(revRay.getBounds());
     }
 
     @Test
@@ -134,20 +134,20 @@ public class ReverseRayTest {
         final ReverseRay revRay = Lines.reverseRayFromLocation(line, -2);
 
         // assert
-        Assert.assertFalse(revRay.isFull());
-        Assert.assertFalse(revRay.isEmpty());
-        Assert.assertTrue(revRay.isInfinite());
-        Assert.assertFalse(revRay.isFinite());
+        Assertions.assertFalse(revRay.isFull());
+        Assertions.assertFalse(revRay.isEmpty());
+        Assertions.assertTrue(revRay.isInfinite());
+        Assertions.assertFalse(revRay.isFinite());
 
-        Assert.assertNull(revRay.getStartPoint());
+        Assertions.assertNull(revRay.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, -2), revRay.getEndPoint(), TEST_EPS);
 
         GeometryTestUtils.assertNegativeInfinity(revRay.getSubspaceStart());
-        Assert.assertEquals(-2, revRay.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(-2, revRay.getSubspaceEnd(), TEST_EPS);
 
         GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
-        Assert.assertNull(revRay.getCentroid());
-        Assert.assertNull(revRay.getBounds());
+        Assertions.assertNull(revRay.getCentroid());
+        Assertions.assertNull(revRay.getBounds());
     }
 
     @Test
@@ -218,7 +218,7 @@ public class ReverseRayTest {
 
             // assert
             EuclideanTestUtils.assertCoordinatesEqual(revRay.getLine().getOrigin(), rev.getLine().getOrigin(), TEST_EPS);
-            Assert.assertEquals(-1, revRay.getLine().getDirection().dot(rev.getLine().getDirection()), TEST_EPS);
+            Assertions.assertEquals(-1, revRay.getLine().getDirection().dot(rev.getLine().getDirection()), TEST_EPS);
 
             EuclideanTestUtils.assertCoordinatesEqual(revRay.getEndPoint(), rev.getStartPoint(), TEST_EPS);
         });
@@ -330,10 +330,10 @@ public class ReverseRayTest {
         final Split<LineConvexSubset> split = revRay.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(revRay, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(revRay, split.getPlus());
     }
 
     @Test
@@ -346,9 +346,9 @@ public class ReverseRayTest {
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(interval.getMin());
-        Assert.assertEquals(2, interval.getMax(), TEST_EPS);
+        Assertions.assertEquals(2, interval.getMax(), TEST_EPS);
 
-        Assert.assertSame(revRay.getLine().getPrecision(), interval.getMaxBoundary().getPrecision());
+        Assertions.assertSame(revRay.getLine().getPrecision(), interval.getMaxBoundary().getPrecision());
     }
 
     @Test
@@ -369,7 +369,7 @@ public class ReverseRayTest {
 
         final LineConvexSubset minus = split.getMinus();
         if (minusStart == null && minusEnd == null) {
-            Assert.assertNull(minus);
+            Assertions.assertNull(minus);
         } else {
             checkPoint(minusStart, minus.getStartPoint());
             checkPoint(minusEnd, minus.getEndPoint());
@@ -378,7 +378,7 @@ public class ReverseRayTest {
 
         final LineConvexSubset plus = split.getPlus();
         if (plusStart == null && plusEnd == null) {
-            Assert.assertNull(plus);
+            Assertions.assertNull(plus);
         } else {
             checkPoint(plusStart, plus.getStartPoint());
             checkPoint(plusEnd, plus.getEndPoint());
@@ -387,7 +387,7 @@ public class ReverseRayTest {
 
     private static void checkPoint(final Vector2D expected, final Vector2D pt) {
         if (expected == null) {
-            Assert.assertNull(pt);
+            Assertions.assertNull(pt);
         } else {
             EuclideanTestUtils.assertCoordinatesEqual(expected, pt, TEST_EPS);
         }

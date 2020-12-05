@@ -41,8 +41,8 @@ import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SphereTest {
 
@@ -60,15 +60,15 @@ public class SphereTest {
         final Sphere s = Sphere.from(center, 3, TEST_PRECISION);
 
         // act/assert
-        Assert.assertFalse(s.isFull());
-        Assert.assertFalse(s.isEmpty());
+        Assertions.assertFalse(s.isFull());
+        Assertions.assertFalse(s.isEmpty());
 
-        Assert.assertSame(center, s.getCenter());
-        Assert.assertSame(center, s.getCentroid());
+        Assertions.assertSame(center, s.getCenter());
+        Assertions.assertSame(center, s.getCentroid());
 
-        Assert.assertEquals(3, s.getRadius(), 0.0);
+        Assertions.assertEquals(3, s.getRadius(), 0.0);
 
-        Assert.assertSame(TEST_PRECISION, s.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, s.getPrecision());
     }
 
     @Test
@@ -108,8 +108,8 @@ public class SphereTest {
         final Sphere s = Sphere.from(Vector3D.of(1, 2, 3), r, TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(4 * Math.PI * r * r, s.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals((4.0 * Math.PI * r * r * r) / 3.0, s.getSize(), TEST_EPS);
+        Assertions.assertEquals(4 * Math.PI * r * r, s.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals((4.0 * Math.PI * r * r * r) / 3.0, s.getSize(), TEST_EPS);
     }
 
     @Test
@@ -176,7 +176,7 @@ public class SphereTest {
             final Vector3D projection = s.project(pt);
 
             // assert
-            Assert.assertEquals(radius, center.distance(projection), TEST_EPS);
+            Assertions.assertEquals(radius, center.distance(projection), TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(center.directionTo(pt),
                     center.directionTo(projection), TEST_EPS);
         });
@@ -304,13 +304,13 @@ public class SphereTest {
         checkBasicApproximationProperties(s, tree);
 
         final List<PlaneConvexSubset> boundaries = tree.getBoundaries();
-        Assert.assertEquals(8, boundaries.size());
+        Assertions.assertEquals(8, boundaries.size());
 
         final List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
-        Assert.assertEquals(8, triangles.size());
+        Assertions.assertEquals(8, triangles.size());
 
         final double expectedSize = (4.0 / 3.0) * r * r * r;
-        Assert.assertEquals(expectedSize, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(expectedSize, tree.getSize(), TEST_EPS);
     }
 
     @Test
@@ -326,12 +326,12 @@ public class SphereTest {
         checkBasicApproximationProperties(s, tree);
 
         final List<PlaneConvexSubset> boundaries = tree.getBoundaries();
-        Assert.assertEquals(32, boundaries.size());
+        Assertions.assertEquals(32, boundaries.size());
 
         final List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
-        Assert.assertEquals(32, triangles.size());
+        Assertions.assertEquals(32, triangles.size());
 
-        Assert.assertTrue(tree.getSize() <= s.getSize());
+        Assertions.assertTrue(tree.getSize() <= s.getSize());
     }
 
     @Test
@@ -356,15 +356,15 @@ public class SphereTest {
 
             final int expectedTriangles = (int) (8 * Math.pow(4, n));
             final List<PlaneConvexSubset> boundaries = tree.getBoundaries();
-            Assert.assertEquals(expectedTriangles, boundaries.size());
+            Assertions.assertEquals(expectedTriangles, boundaries.size());
 
             final List<Triangle3D> triangles = tree.triangleStream().collect(Collectors.toList());
-            Assert.assertEquals(expectedTriangles, triangles.size());
+            Assertions.assertEquals(expectedTriangles, triangles.size());
 
             // check that we get closer and closer to the correct size as we add more segments
             sizeDiff = s.getSize() - tree.getSize();
-            Assert.assertTrue("Expected size difference to decrease: n= " +
-                    n + ", prevSizeDiff= " + prevSizeDiff + ", sizeDiff= " + sizeDiff, sizeDiff < prevSizeDiff);
+            Assertions.assertTrue(sizeDiff < prevSizeDiff, "Expected size difference to decrease: n= " +
+                    n + ", prevSizeDiff= " + prevSizeDiff + ", sizeDiff= " + sizeDiff);
 
             prevSizeDiff = sizeDiff;
         }
@@ -395,10 +395,10 @@ public class SphereTest {
                 final RegionBSPTree3D tree = sphere.toTree(s);
 
                 // assert
-                Assert.assertEquals((int)(8 * Math.pow(4, s)), tree.getBoundaries().size());
-                Assert.assertTrue(tree.isFinite());
-                Assert.assertFalse(tree.isEmpty());
-                Assert.assertTrue(tree.getSize() < sphere.getSize());
+                Assertions.assertEquals((int) (8 * Math.pow(4, s)), tree.getBoundaries().size());
+                Assertions.assertTrue(tree.isFinite());
+                Assertions.assertFalse(tree.isEmpty());
+                Assertions.assertTrue(tree.getSize() < sphere.getSize());
             }
         }
     }
@@ -415,9 +415,9 @@ public class SphereTest {
         checkBasicApproximationProperties(s, tree);
 
         final double eps = 1e-3;
-        Assert.assertTrue(tree.isFinite());
-        Assert.assertEquals(s.getSize(), tree.getSize(), eps);
-        Assert.assertEquals(s.getBoundarySize(), tree.getBoundarySize(), eps);
+        Assertions.assertTrue(tree.isFinite());
+        Assertions.assertEquals(s.getSize(), tree.getSize(), eps);
+        Assertions.assertEquals(s.getBoundarySize(), tree.getBoundarySize(), eps);
         EuclideanTestUtils.assertCoordinatesEqual(s.getCentroid(), tree.getCentroid(), eps);
     }
 
@@ -455,14 +455,14 @@ public class SphereTest {
         final TriangleMesh mesh = s.toTriangleMesh(0);
 
         // assert
-        Assert.assertEquals(6, mesh.getVertexCount());
-        Assert.assertEquals(8, mesh.getFaceCount());
+        Assertions.assertEquals(6, mesh.getVertexCount());
+        Assertions.assertEquals(8, mesh.getFaceCount());
 
         final Bounds3D bounds = mesh.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(3, 4, 5), bounds.getMax(), TEST_EPS);
 
-        Assert.assertTrue(mesh.toTree().isFinite());
+        Assertions.assertTrue(mesh.toTree().isFinite());
     }
 
     @Test
@@ -475,7 +475,7 @@ public class SphereTest {
         final TriangleMesh mesh = s.toTriangleMesh(subdivisions);
 
         // assert
-        Assert.assertEquals((int) (8 * Math.pow(4, subdivisions)), mesh.getFaceCount());
+        Assertions.assertEquals((int) (8 * Math.pow(4, subdivisions)), mesh.getFaceCount());
 
         final Bounds3D bounds = mesh.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMin(), TEST_EPS);
@@ -486,11 +486,11 @@ public class SphereTest {
                 .insertBoundaries(mesh)
                 .build();
 
-        Assert.assertTrue(tree.isFinite());
+        Assertions.assertTrue(tree.isFinite());
 
         final double approximationEps = 0.1;
-        Assert.assertEquals(s.getSize(), tree.getSize(), approximationEps);
-        Assert.assertEquals(s.getBoundarySize(), tree.getBoundarySize(), approximationEps);
+        Assertions.assertEquals(s.getSize(), tree.getSize(), approximationEps);
+        Assertions.assertEquals(s.getBoundarySize(), tree.getBoundarySize(), approximationEps);
 
         EuclideanTestUtils.assertCoordinatesEqual(s.getCentroid(), tree.getCentroid(), TEST_EPS);
     }
@@ -522,13 +522,13 @@ public class SphereTest {
         final int hash = a.hashCode();
 
         // act/assert
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
-        Assert.assertNotEquals(hash, d.hashCode());
+        Assertions.assertNotEquals(hash, b.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, d.hashCode());
 
-        Assert.assertEquals(hash, e.hashCode());
+        Assertions.assertEquals(hash, e.hashCode());
     }
 
     @Test
@@ -545,11 +545,11 @@ public class SphereTest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-        Assert.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
 
-        Assert.assertEquals(a, e);
+        Assertions.assertEquals(a, e);
     }
 
     @Test
@@ -561,13 +561,13 @@ public class SphereTest {
         final String str = c.toString();
 
         // assert
-        Assert.assertEquals("Sphere[center= (1.0, 2.0, 3.0), radius= 3.0]", str);
+        Assertions.assertEquals("Sphere[center= (1.0, 2.0, 3.0), radius= 3.0]", str);
     }
 
     private static void checkContains(final Sphere sphere, final boolean contains, final Vector3D... pts) {
         for (final Vector3D pt : pts) {
-            Assert.assertEquals("Expected circle to " + (contains ? "" : "not") + "contain point " + pt,
-                    contains, sphere.contains(pt));
+            Assertions.assertEquals(contains, sphere.contains(pt),
+                    "Expected circle to " + (contains ? "" : "not") + "contain point " + pt);
         }
     }
 
@@ -584,34 +584,34 @@ public class SphereTest {
         final int len = expectedPts.length;
 
         // check the lists
-        Assert.assertEquals(len, actualPtsForward.size());
-        Assert.assertEquals(len, actualPtsReverse.size());
+        Assertions.assertEquals(len, actualPtsForward.size());
+        Assertions.assertEquals(len, actualPtsReverse.size());
 
         for (int i = 0; i < len; ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(expectedPts[i], actualPtsForward.get(i), TEST_EPS);
-            Assert.assertEquals(sphere.getRadius(), sphere.getCenter().distance(actualPtsForward.get(i)), TEST_EPS);
+            Assertions.assertEquals(sphere.getRadius(), sphere.getCenter().distance(actualPtsForward.get(i)), TEST_EPS);
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedPts[len - i - 1], actualPtsReverse.get(i), TEST_EPS);
-            Assert.assertEquals(sphere.getRadius(), sphere.getCenter().distance(actualPtsReverse.get(i)), TEST_EPS);
+            Assertions.assertEquals(sphere.getRadius(), sphere.getCenter().distance(actualPtsReverse.get(i)), TEST_EPS);
         }
 
         // check the single intersection points
         if (len > 0) {
-            Assert.assertNotNull(actualFirstForward);
-            Assert.assertNotNull(actualFirstReverse);
+            Assertions.assertNotNull(actualFirstForward);
+            Assertions.assertNotNull(actualFirstReverse);
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedPts[0], actualFirstForward, TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(expectedPts[len - 1], actualFirstReverse, TEST_EPS);
         } else {
-            Assert.assertNull(actualFirstForward);
-            Assert.assertNull(actualFirstReverse);
+            Assertions.assertNull(actualFirstForward);
+            Assertions.assertNull(actualFirstReverse);
         }
     }
 
     private static void checkLinecast(final Sphere s, final LineConvexSubset3D segment, final Vector3D... expectedPts) {
         // check linecast
         final List<LinecastPoint3D> results = s.linecast(segment);
-        Assert.assertEquals(expectedPts.length, results.size());
+        Assertions.assertEquals(expectedPts.length, results.size());
 
         LinecastPoint3D actual;
         Vector3D expected;
@@ -621,15 +621,15 @@ public class SphereTest {
 
             EuclideanTestUtils.assertCoordinatesEqual(expected, actual.getPoint(), TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(s.getCenter().directionTo(expected), actual.getNormal(), TEST_EPS);
-            Assert.assertSame(segment.getLine(), actual.getLine());
+            Assertions.assertSame(segment.getLine(), actual.getLine());
         }
 
         // check linecastFirst
         final LinecastPoint3D firstResult = s.linecastFirst(segment);
         if (expectedPts.length > 0) {
-            Assert.assertEquals(results.get(0), firstResult);
+            Assertions.assertEquals(results.get(0), firstResult);
         } else {
-            Assert.assertNull(firstResult);
+            Assertions.assertNull(firstResult);
         }
     }
 
@@ -637,20 +637,20 @@ public class SphereTest {
      * Check a number of standard properties for bsp trees generated as sphere approximations.
      */
     private static void checkBasicApproximationProperties(final Sphere s, final RegionBSPTree3D tree) {
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertTrue(tree.isFinite());
-        Assert.assertFalse(tree.isInfinite());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertTrue(tree.isFinite());
+        Assertions.assertFalse(tree.isInfinite());
 
         // volume must be less than the sphere
-        Assert.assertTrue("Expected approximation volume to be less than circle", tree.getSize() < s.getSize());
+        Assertions.assertTrue(tree.getSize() < s.getSize(), "Expected approximation volume to be less than circle");
 
         // all vertices must be inside the sphere or on the boundary
         for (final PlaneConvexSubset boundary : tree.getBoundaries()) {
-            Assert.assertTrue(boundary.isFinite());
+            Assertions.assertTrue(boundary.isFinite());
 
             for (final Vector3D vertex : boundary.getVertices()) {
-                Assert.assertTrue("Expected vertex to be contained in sphere: " + vertex, s.contains(vertex));
+                Assertions.assertTrue(s.contains(vertex), "Expected vertex to be contained in sphere: " + vertex);
             }
         }
 

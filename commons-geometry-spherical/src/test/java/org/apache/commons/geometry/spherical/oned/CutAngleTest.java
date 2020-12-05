@@ -27,8 +27,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class CutAngleTest {
 
@@ -174,17 +174,17 @@ public class CutAngleTest {
         final CutAngle pt = CutAngles.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act/assert
-        Assert.assertFalse(pt.contains(Point1S.ZERO));
-        Assert.assertFalse(pt.contains(Point1S.of(PlaneAngleRadians.TWO_PI)));
+        Assertions.assertFalse(pt.contains(Point1S.ZERO));
+        Assertions.assertFalse(pt.contains(Point1S.of(PlaneAngleRadians.TWO_PI)));
 
-        Assert.assertFalse(pt.contains(Point1S.of(PlaneAngleRadians.PI)));
-        Assert.assertFalse(pt.contains(Point1S.of(0.25 * PlaneAngleRadians.PI)));
-        Assert.assertFalse(pt.contains(Point1S.of(-0.25 * PlaneAngleRadians.PI)));
+        Assertions.assertFalse(pt.contains(Point1S.of(PlaneAngleRadians.PI)));
+        Assertions.assertFalse(pt.contains(Point1S.of(0.25 * PlaneAngleRadians.PI)));
+        Assertions.assertFalse(pt.contains(Point1S.of(-0.25 * PlaneAngleRadians.PI)));
 
-        Assert.assertTrue(pt.contains(Point1S.of(PlaneAngleRadians.PI_OVER_TWO)));
-        Assert.assertTrue(pt.contains(Point1S.of(PlaneAngleRadians.PI_OVER_TWO + 1e-11)));
-        Assert.assertTrue(pt.contains(Point1S.of(2.5 * PlaneAngleRadians.PI)));
-        Assert.assertTrue(pt.contains(Point1S.of(-3.5 * PlaneAngleRadians.PI)));
+        Assertions.assertTrue(pt.contains(Point1S.of(PlaneAngleRadians.PI_OVER_TWO)));
+        Assertions.assertTrue(pt.contains(Point1S.of(PlaneAngleRadians.PI_OVER_TWO + 1e-11)));
+        Assertions.assertTrue(pt.contains(Point1S.of(2.5 * PlaneAngleRadians.PI)));
+        Assertions.assertTrue(pt.contains(Point1S.of(-3.5 * PlaneAngleRadians.PI)));
     }
 
     @Test
@@ -197,7 +197,7 @@ public class CutAngleTest {
 
         // assert
         checkCutAngle(result, PlaneAngleRadians.PI_OVER_TWO, true);
-        Assert.assertSame(TEST_PRECISION, result.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, result.getPrecision());
 
         checkCutAngle(result.reverse(), PlaneAngleRadians.PI_OVER_TWO, false);
     }
@@ -209,7 +209,7 @@ public class CutAngleTest {
 
         // act/assert
         for (double az = -PlaneAngleRadians.TWO_PI; az <= PlaneAngleRadians.TWO_PI; az += 0.2) {
-            Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, pt.project(Point1S.of(az)).getAzimuth(), TEST_EPS);
+            Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, pt.project(Point1S.of(az)).getAzimuth(), TEST_EPS);
         }
     }
 
@@ -221,9 +221,9 @@ public class CutAngleTest {
         final CutAngle c = CutAngles.createPositiveFacing(-PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(a.similarOrientation(a));
-        Assert.assertFalse(a.similarOrientation(b));
-        Assert.assertTrue(a.similarOrientation(c));
+        Assertions.assertTrue(a.similarOrientation(a));
+        Assertions.assertFalse(a.similarOrientation(b));
+        Assertions.assertTrue(a.similarOrientation(c));
     }
 
     @Test
@@ -269,7 +269,7 @@ public class CutAngleTest {
         final HyperplaneConvexSubset<Point1S> result = pt.span();
 
         // assert
-        Assert.assertSame(pt, result.getHyperplane());
+        Assertions.assertSame(pt, result.getHyperplane());
     }
 
     @Test
@@ -289,16 +289,16 @@ public class CutAngleTest {
         final CutAngle h = CutAngles.fromPointAndDirection(Point1S.of(-1e-4), true, precision);
 
         // act/assert
-        Assert.assertTrue(a.eq(a, precision));
+        Assertions.assertTrue(a.eq(a, precision));
 
-        Assert.assertFalse(a.eq(b, precision));
-        Assert.assertFalse(a.eq(c, precision));
+        Assertions.assertFalse(a.eq(b, precision));
+        Assertions.assertFalse(a.eq(c, precision));
 
-        Assert.assertTrue(a.eq(d, precision));
-        Assert.assertTrue(a.eq(e, precision));
-        Assert.assertTrue(a.eq(f, precision));
-        Assert.assertTrue(a.eq(g, precision));
-        Assert.assertTrue(a.eq(h, precision));
+        Assertions.assertTrue(a.eq(d, precision));
+        Assertions.assertTrue(a.eq(e, precision));
+        Assertions.assertTrue(a.eq(f, precision));
+        Assertions.assertTrue(a.eq(g, precision));
+        Assertions.assertTrue(a.eq(h, precision));
     }
 
     @Test
@@ -315,13 +315,13 @@ public class CutAngleTest {
         final int hash = a.hashCode();
 
         // act/assert
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
-        Assert.assertNotEquals(hash, d.hashCode());
+        Assertions.assertNotEquals(hash, b.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, d.hashCode());
 
-        Assert.assertEquals(hash, e.hashCode());
+        Assertions.assertEquals(hash, e.hashCode());
     }
 
     @Test
@@ -338,11 +338,11 @@ public class CutAngleTest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-        Assert.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
 
-        Assert.assertEquals(a, e);
+        Assertions.assertEquals(a, e);
     }
 
     @Test
@@ -354,8 +354,8 @@ public class CutAngleTest {
         final String str = pt.toString();
 
         // assert
-        Assert.assertTrue(str.startsWith("CutAngle["));
-        Assert.assertTrue(str.contains("point= ") && str.contains("positiveFacing= "));
+        Assertions.assertTrue(str.startsWith("CutAngle["));
+        Assertions.assertTrue(str.contains("point= ") && str.contains("positiveFacing= "));
     }
 
     @Test
@@ -381,8 +381,8 @@ public class CutAngleTest {
     private void checkSplit(final HyperplaneConvexSubset<Point1S> sub, final CutAngle splitter, final boolean minus, final boolean plus) {
         final Split<? extends HyperplaneConvexSubset<Point1S>> split = sub.split(splitter);
 
-        Assert.assertSame(minus ? sub : null, split.getMinus());
-        Assert.assertSame(plus ? sub : null, split.getPlus());
+        Assertions.assertSame(minus ? sub : null, split.getMinus());
+        Assertions.assertSame(plus ? sub : null, split.getPlus());
     }
 
     @Test
@@ -392,17 +392,17 @@ public class CutAngleTest {
         final HyperplaneConvexSubset<Point1S> sub = pt.span();
 
         // act/assert
-        Assert.assertSame(pt, sub.getHyperplane());
-        Assert.assertFalse(sub.isFull());
-        Assert.assertFalse(sub.isEmpty());
-        Assert.assertFalse(sub.isInfinite());
-        Assert.assertTrue(sub.isFinite());
-        Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);
+        Assertions.assertSame(pt, sub.getHyperplane());
+        Assertions.assertFalse(sub.isFull());
+        Assertions.assertFalse(sub.isEmpty());
+        Assertions.assertFalse(sub.isInfinite());
+        Assertions.assertTrue(sub.isFinite());
+        Assertions.assertEquals(0.0, sub.getSize(), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(Point1S.of(1), sub.getCentroid(), TEST_EPS);
 
         final List<? extends HyperplaneConvexSubset<Point1S>> list = sub.toConvex();
-        Assert.assertEquals(1, list.size());
-        Assert.assertSame(sub, list.get(0));
+        Assertions.assertEquals(1, list.size());
+        Assertions.assertSame(sub, list.get(0));
     }
 
     @Test
@@ -413,15 +413,15 @@ public class CutAngleTest {
         final HyperplaneConvexSubset<Point1S> sub = pt.span();
 
         // act/assert
-        Assert.assertEquals(RegionLocation.BOUNDARY, sub.classify(Point1S.of(0.95)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, sub.classify(Point1S.of(1)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, sub.classify(Point1S.of(1.05)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classify(Point1S.of(0.95)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classify(Point1S.of(1)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classify(Point1S.of(1.05)));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Point1S.of(1.11)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Point1S.of(0.89)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Point1S.of(1.11)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Point1S.of(0.89)));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Point1S.of(-3)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Point1S.of(10)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Point1S.of(-3)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Point1S.of(10)));
     }
 
     @Test
@@ -432,15 +432,15 @@ public class CutAngleTest {
         final HyperplaneConvexSubset<Point1S> sub = pt.span();
 
         // act/assert
-        Assert.assertTrue(sub.contains(Point1S.of(0.95)));
-        Assert.assertTrue(sub.contains(Point1S.of(1)));
-        Assert.assertTrue(sub.contains(Point1S.of(1.05)));
+        Assertions.assertTrue(sub.contains(Point1S.of(0.95)));
+        Assertions.assertTrue(sub.contains(Point1S.of(1)));
+        Assertions.assertTrue(sub.contains(Point1S.of(1.05)));
 
-        Assert.assertFalse(sub.contains(Point1S.of(1.11)));
-        Assert.assertFalse(sub.contains(Point1S.of(0.89)));
+        Assertions.assertFalse(sub.contains(Point1S.of(1.11)));
+        Assertions.assertFalse(sub.contains(Point1S.of(0.89)));
 
-        Assert.assertFalse(sub.contains(Point1S.of(-3)));
-        Assert.assertFalse(sub.contains(Point1S.of(10)));
+        Assertions.assertFalse(sub.contains(Point1S.of(-3)));
+        Assertions.assertFalse(sub.contains(Point1S.of(10)));
     }
 
     @Test
@@ -453,11 +453,11 @@ public class CutAngleTest {
         final Point1S expected = Point1S.of(1);
 
         // act/assert
-        Assert.assertEquals(expected, sub.closest(Point1S.ZERO));
-        Assert.assertEquals(expected, sub.closest(Point1S.of(PlaneAngleRadians.PI_OVER_TWO)));
-        Assert.assertEquals(expected, sub.closest(Point1S.PI));
-        Assert.assertEquals(expected, sub.closest(Point1S.of(-PlaneAngleRadians.PI_OVER_TWO)));
-        Assert.assertEquals(expected, sub.closest(Point1S.of(PlaneAngleRadians.TWO_PI)));
+        Assertions.assertEquals(expected, sub.closest(Point1S.ZERO));
+        Assertions.assertEquals(expected, sub.closest(Point1S.of(PlaneAngleRadians.PI_OVER_TWO)));
+        Assertions.assertEquals(expected, sub.closest(Point1S.PI));
+        Assertions.assertEquals(expected, sub.closest(Point1S.of(-PlaneAngleRadians.PI_OVER_TWO)));
+        Assertions.assertEquals(expected, sub.closest(Point1S.of(PlaneAngleRadians.TWO_PI)));
     }
 
     @Test
@@ -484,10 +484,10 @@ public class CutAngleTest {
         final HyperplaneConvexSubset<Point1S> result = sub.reverse();
 
         // assert
-        Assert.assertEquals(2.0, ((CutAngle) result.getHyperplane()).getAzimuth(), TEST_EPS);
-        Assert.assertFalse(((CutAngle) result.getHyperplane()).isPositiveFacing());
+        Assertions.assertEquals(2.0, ((CutAngle) result.getHyperplane()).getAzimuth(), TEST_EPS);
+        Assertions.assertFalse(((CutAngle) result.getHyperplane()).isPositiveFacing());
 
-        Assert.assertEquals(sub.getHyperplane(), result.reverse().getHyperplane());
+        Assertions.assertEquals(sub.getHyperplane(), result.reverse().getHyperplane());
     }
 
     @Test
@@ -500,9 +500,9 @@ public class CutAngleTest {
         final String str = sub.toString();
 
         //assert
-        Assert.assertTrue(str.contains("CutAngleConvexSubset["));
-        Assert.assertTrue(str.contains("point= "));
-        Assert.assertTrue(str.contains("positiveFacing= "));
+        Assertions.assertTrue(str.contains("CutAngleConvexSubset["));
+        Assertions.assertTrue(str.contains("point= "));
+        Assertions.assertTrue(str.contains("positiveFacing= "));
     }
 
     private static void checkCutAngle(final CutAngle angle, final double az, final boolean positiveFacing) {
@@ -510,21 +510,21 @@ public class CutAngleTest {
     }
 
     private static void checkCutAngle(final CutAngle angle, final double az, final boolean positiveFacing, final DoublePrecisionContext precision) {
-        Assert.assertEquals(az, angle.getAzimuth(), TEST_EPS);
-        Assert.assertEquals(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(az), angle.getNormalizedAzimuth(), TEST_EPS);
-        Assert.assertEquals(az, angle.getPoint().getAzimuth(), TEST_EPS);
-        Assert.assertEquals(positiveFacing, angle.isPositiveFacing());
+        Assertions.assertEquals(az, angle.getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(az), angle.getNormalizedAzimuth(), TEST_EPS);
+        Assertions.assertEquals(az, angle.getPoint().getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(positiveFacing, angle.isPositiveFacing());
 
-        Assert.assertSame(precision, angle.getPrecision());
+        Assertions.assertSame(precision, angle.getPrecision());
     }
 
     private static void checkOffset(final CutAngle pt, final double az, final double offset) {
-        Assert.assertEquals(offset, pt.offset(Point1S.of(az)), TEST_EPS);
+        Assertions.assertEquals(offset, pt.offset(Point1S.of(az)), TEST_EPS);
     }
 
     private static void checkClassify(final CutAngle pt, final HyperplaneLocation loc, final double... azimuths) {
         for (final double az : azimuths) {
-            Assert.assertEquals("Unexpected location for azimuth " + az, loc, pt.classify(Point1S.of(az)));
+            Assertions.assertEquals(loc, pt.classify(Point1S.of(az)), "Unexpected location for azimuth " + az);
         }
     }
 }

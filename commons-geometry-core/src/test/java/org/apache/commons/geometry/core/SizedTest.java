@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.core;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SizedTest {
 
@@ -29,14 +29,14 @@ public class SizedTest {
         final Sized nan = new StubSized(Double.NaN);
 
         // act/assert
-        Assert.assertTrue(finite.isFinite());
-        Assert.assertFalse(finite.isInfinite());
+        Assertions.assertTrue(finite.isFinite());
+        Assertions.assertFalse(finite.isInfinite());
 
-        Assert.assertFalse(infinite.isFinite());
-        Assert.assertTrue(infinite.isInfinite());
+        Assertions.assertFalse(infinite.isFinite());
+        Assertions.assertTrue(infinite.isInfinite());
 
-        Assert.assertFalse(nan.isFinite());
-        Assert.assertFalse(nan.isInfinite());
+        Assertions.assertFalse(nan.isFinite());
+        Assertions.assertFalse(nan.isInfinite());
     }
 
     private static class StubSized implements Sized {

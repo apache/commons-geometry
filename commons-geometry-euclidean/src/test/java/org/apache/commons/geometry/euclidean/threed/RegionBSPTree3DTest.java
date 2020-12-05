@@ -41,8 +41,8 @@ import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class RegionBSPTree3DTest {
 
@@ -57,8 +57,8 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D tree = new RegionBSPTree3D();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
     }
 
     @Test
@@ -68,11 +68,11 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D b = new RegionBSPTree3D(false);
 
         // assert
-        Assert.assertTrue(a.isFull());
-        Assert.assertFalse(a.isEmpty());
+        Assertions.assertTrue(a.isFull());
+        Assertions.assertFalse(a.isEmpty());
 
-        Assert.assertFalse(b.isFull());
-        Assert.assertTrue(b.isEmpty());
+        Assertions.assertFalse(b.isFull());
+        Assertions.assertTrue(b.isEmpty());
     }
 
     @Test
@@ -81,12 +81,12 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D tree = RegionBSPTree3D.empty();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
 
-        Assert.assertNull(tree.getCentroid());
-        Assert.assertEquals(0.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertNull(tree.getCentroid());
+        Assertions.assertEquals(0.0, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
@@ -102,12 +102,12 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D tree = RegionBSPTree3D.full();
 
         // assert
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertTrue(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
-        Assert.assertNull(tree.getCentroid());
+        Assertions.assertNull(tree.getCentroid());
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
-        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
@@ -128,8 +128,8 @@ public class RegionBSPTree3DTest {
                 .build();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isInfinite());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isInfinite());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(0, 0, 1));
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, Vector3D.ZERO);
@@ -203,13 +203,13 @@ public class RegionBSPTree3DTest {
                 .build();
 
         // assert
-        Assert.assertEquals(msg, standard.getSize(), partitioned.getSize(), TEST_EPS);
-        Assert.assertEquals(msg, standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(standard.getSize(), partitioned.getSize(), TEST_EPS, msg);
+        Assertions.assertEquals(standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS, msg);
         EuclideanTestUtils.assertCoordinatesEqual(standard.getCentroid(), partitioned.getCentroid(), TEST_EPS);
 
         final RegionBSPTree3D diff = RegionBSPTree3D.empty();
         diff.difference(partitioned, standard);
-        Assert.assertTrue(msg, diff.isEmpty());
+        Assertions.assertTrue(diff.isEmpty(), msg);
     }
 
     /** Check that a partitioned BSP tree behaves the same as a non-partitioned tree when
@@ -232,13 +232,13 @@ public class RegionBSPTree3DTest {
                 .build();
 
         // assert
-        Assert.assertEquals(msg, standard.getSize(), partitioned.getSize(), TEST_EPS);
-        Assert.assertEquals(msg, standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(standard.getSize(), partitioned.getSize(), TEST_EPS, msg);
+        Assertions.assertEquals(standard.getBoundarySize(), partitioned.getBoundarySize(), TEST_EPS, msg);
         EuclideanTestUtils.assertCoordinatesEqual(standard.getCentroid(), partitioned.getCentroid(), TEST_EPS);
 
         final RegionBSPTree3D diff = RegionBSPTree3D.empty();
         diff.difference(partitioned, standard);
-        Assert.assertTrue(msg, diff.isEmpty());
+        Assertions.assertTrue(diff.isEmpty(), msg);
     }
 
     @Test
@@ -280,8 +280,8 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D copy = tree.copy();
 
         // assert
-        Assert.assertNotSame(tree, copy);
-        Assert.assertEquals(3, copy.count());
+        Assertions.assertNotSame(tree, copy);
+        Assertions.assertEquals(3, copy.count());
     }
 
     @Test
@@ -294,7 +294,7 @@ public class RegionBSPTree3DTest {
         tree.boundaries().forEach(facets::add);
 
         // assert
-        Assert.assertEquals(6, facets.size());
+        Assertions.assertEquals(6, facets.size());
     }
 
     @Test
@@ -306,7 +306,7 @@ public class RegionBSPTree3DTest {
         final List<PlaneConvexSubset> facets = tree.getBoundaries();
 
         // assert
-        Assert.assertEquals(6, facets.size());
+        Assertions.assertEquals(6, facets.size());
     }
 
     @Test
@@ -318,7 +318,7 @@ public class RegionBSPTree3DTest {
         final List<PlaneConvexSubset> facets = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
-        Assert.assertEquals(6, facets.size());
+        Assertions.assertEquals(6, facets.size());
     }
 
     @Test
@@ -330,7 +330,7 @@ public class RegionBSPTree3DTest {
         final List<PlaneConvexSubset> facets = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
-        Assert.assertEquals(0, facets.size());
+        Assertions.assertEquals(0, facets.size());
     }
 
     @Test
@@ -340,8 +340,8 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D empty = RegionBSPTree3D.empty();
 
         // act/assert
-        Assert.assertEquals(0, full.triangleStream().count());
-        Assert.assertEquals(0, empty.triangleStream().count());
+        Assertions.assertEquals(0, full.triangleStream().count());
+        Assertions.assertEquals(0, empty.triangleStream().count());
     }
 
     @Test
@@ -353,7 +353,7 @@ public class RegionBSPTree3DTest {
         final List<Triangle3D> tris = tree.triangleStream().collect(Collectors.toList());
 
         // assert
-        Assert.assertEquals(12, tris.size());
+        Assertions.assertEquals(12, tris.size());
     }
 
     @Test
@@ -371,7 +371,7 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D result = RegionBSPTree3D.from(tris);
 
         // assert
-        Assert.assertEquals(15.0 / 8.0, result.getSize(), TEST_EPS);
+        Assertions.assertEquals(15.0 / 8.0, result.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.75, 0.75, 0.75), result.getCentroid(), TEST_EPS);
     }
 
@@ -384,16 +384,16 @@ public class RegionBSPTree3DTest {
         final TriangleMesh mesh = tree.toTriangleMesh(TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(8, mesh.getVertexCount());
-        Assert.assertEquals(12, mesh.getFaceCount());
+        Assertions.assertEquals(8, mesh.getVertexCount());
+        Assertions.assertEquals(12, mesh.getFaceCount());
 
         final Bounds3D bounds = mesh.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), bounds.getMax(), TEST_EPS);
 
         final RegionBSPTree3D otherTree = mesh.toTree();
-        Assert.assertEquals(1, otherTree.getSize(), TEST_EPS);
-        Assert.assertEquals(6, otherTree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, otherTree.getSize(), TEST_EPS);
+        Assertions.assertEquals(6, otherTree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), otherTree.getCentroid(), TEST_EPS);
     }
 
@@ -407,8 +407,8 @@ public class RegionBSPTree3DTest {
 
         // assert
         // no boundaries
-        Assert.assertEquals(0, mesh.getVertexCount());
-        Assert.assertEquals(0, mesh.getFaceCount());
+        Assertions.assertEquals(0, mesh.getVertexCount());
+        Assertions.assertEquals(0, mesh.getFaceCount());
     }
 
     @Test
@@ -421,8 +421,8 @@ public class RegionBSPTree3DTest {
 
         // assert
         // no boundaries
-        Assert.assertEquals(0, mesh.getVertexCount());
-        Assert.assertEquals(0, mesh.getFaceCount());
+        Assertions.assertEquals(0, mesh.getVertexCount());
+        Assertions.assertEquals(0, mesh.getFaceCount());
     }
 
     @Test
@@ -453,12 +453,12 @@ public class RegionBSPTree3DTest {
     @Test
     public void testGetBounds_noBounds() {
         // act/assert
-        Assert.assertNull(RegionBSPTree3D.empty().getBounds());
-        Assert.assertNull(RegionBSPTree3D.full().getBounds());
+        Assertions.assertNull(RegionBSPTree3D.empty().getBounds());
+        Assertions.assertNull(RegionBSPTree3D.full().getBounds());
 
         final RegionBSPTree3D halfFull = RegionBSPTree3D.empty();
         halfFull.getRoot().insertCut(Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION));
-        Assert.assertNull(halfFull.getBounds());
+        Assertions.assertNull(halfFull.getBounds());
     }
 
     @Test
@@ -467,7 +467,7 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 2, 1));
 
         // act/assert
-        Assert.assertSame(tree, tree.toTree());
+        Assertions.assertSame(tree, tree.toTree());
     }
 
     @Test
@@ -477,12 +477,12 @@ public class RegionBSPTree3DTest {
         tree.insert(Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, TEST_PRECISION).span());
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
         EuclideanTestUtils.assertPositiveInfinity(tree.getSize());
         EuclideanTestUtils.assertPositiveInfinity(tree.getBoundarySize());
-        Assert.assertNull(tree.getCentroid());
+        Assertions.assertNull(tree.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
@@ -529,11 +529,11 @@ public class RegionBSPTree3DTest {
             .getPlus().cut(midCut, RegionCutRule.INHERIT);
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 0.5));
@@ -556,10 +556,10 @@ public class RegionBSPTree3DTest {
                 ));
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(1, 1, -1), Vector3D.of(-1, 1, -1));
@@ -579,10 +579,10 @@ public class RegionBSPTree3DTest {
                 ), true);
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
-        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.getRoot().getLocation());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(1, 1, -1), Vector3D.of(-1, 1, -1));
@@ -594,9 +594,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testFrom_boundaries_noBoundaries() {
         // act/assert
-        Assert.assertTrue(RegionBSPTree3D.from(Collections.emptyList()).isEmpty());
-        Assert.assertTrue(RegionBSPTree3D.from(Collections.emptyList(), true).isFull());
-        Assert.assertTrue(RegionBSPTree3D.from(Collections.emptyList(), false).isEmpty());
+        Assertions.assertTrue(RegionBSPTree3D.from(Collections.emptyList()).isEmpty());
+        Assertions.assertTrue(RegionBSPTree3D.from(Collections.emptyList(), true).isFull());
+        Assertions.assertTrue(RegionBSPTree3D.from(Collections.emptyList(), false).isEmpty());
     }
 
     @Test
@@ -606,10 +606,10 @@ public class RegionBSPTree3DTest {
 
         // act
         final RegionBSPTree3D tree = volume.toTree();
-        Assert.assertNull(tree.getCentroid());
+        Assertions.assertNull(tree.getCentroid());
 
         // assert
-        Assert.assertTrue(tree.isFull());
+        Assertions.assertTrue(tree.isFull());
     }
 
     @Test
@@ -623,7 +623,7 @@ public class RegionBSPTree3DTest {
         // assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
-        Assert.assertNull(tree.getCentroid());
+        Assertions.assertNull(tree.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE, Vector3D.of(0, 0, 1));
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, Vector3D.ZERO);
@@ -647,8 +647,8 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D tree = volume.toTree();
 
         // assert
-        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
@@ -816,7 +816,7 @@ public class RegionBSPTree3DTest {
                 tree.linecastFirst(xPlus.rayFrom(Vector3D.of(-1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0),
                 tree.linecastFirst(xPlus.rayFrom(Vector3D.of(-0.9, 0, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(xPlus.rayFrom(Vector3D.of(1.1, 0, 0))));
+        Assertions.assertNull(tree.linecastFirst(xPlus.rayFrom(Vector3D.of(1.1, 0, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0),
                 tree.linecastFirst(xMinus.rayFrom(Vector3D.of(1.1, 0, 0))).getNormal(), TEST_EPS);
@@ -824,7 +824,7 @@ public class RegionBSPTree3DTest {
                 tree.linecastFirst(xMinus.rayFrom(Vector3D.of(1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0),
                 tree.linecastFirst(xMinus.rayFrom(Vector3D.of(0.9, 0, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(xMinus.rayFrom(Vector3D.of(-1.1, 0, 0))));
+        Assertions.assertNull(tree.linecastFirst(xMinus.rayFrom(Vector3D.of(-1.1, 0, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -1, 0),
                 tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, -1.1, 0))).getNormal(), TEST_EPS);
@@ -832,7 +832,7 @@ public class RegionBSPTree3DTest {
                 tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, -1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0),
                 tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, -0.9, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, 1.1, 0))));
+        Assertions.assertNull(tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, 1.1, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0),
                 tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, 1.1, 0))).getNormal(), TEST_EPS);
@@ -840,7 +840,7 @@ public class RegionBSPTree3DTest {
                 tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, 1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -1, 0),
                 tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, 0.9, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, -1.1, 0))));
+        Assertions.assertNull(tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, -1.1, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1),
                 tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, -1.1))).getNormal(), TEST_EPS);
@@ -848,7 +848,7 @@ public class RegionBSPTree3DTest {
                 tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, -1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1),
                 tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, -0.9))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, 1.1))));
+        Assertions.assertNull(tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, 1.1))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1),
                 tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, 1.1))).getNormal(), TEST_EPS);
@@ -856,7 +856,7 @@ public class RegionBSPTree3DTest {
                 tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, 1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1),
                 tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, 0.9))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, -1.1))));
+        Assertions.assertNull(tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, -1.1))));
     }
 
     // issue GEOMETRY-38
@@ -874,19 +874,19 @@ public class RegionBSPTree3DTest {
 
         // act/assert
         final LinecastPoint3D upFromOutsideResult = tree.linecastFirst(upDiagonal.rayFrom(Vector3D.of(-1, -1, -1)));
-        Assert.assertNotNull(upFromOutsideResult);
+        Assertions.assertNotNull(upFromOutsideResult);
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, upFromOutsideResult.getPoint(), TEST_EPS);
 
         final LinecastPoint3D upFromCenterResult = tree.linecastFirst(upDiagonal.rayFrom(center));
-        Assert.assertNotNull(upFromCenterResult);
+        Assertions.assertNotNull(upFromCenterResult);
         EuclideanTestUtils.assertCoordinatesEqual(upperCorner, upFromCenterResult.getPoint(), TEST_EPS);
 
         final LinecastPoint3D downFromOutsideResult = tree.linecastFirst(downDiagonal.rayFrom(Vector3D.of(2, 2, 2)));
-        Assert.assertNotNull(downFromOutsideResult);
+        Assertions.assertNotNull(downFromOutsideResult);
         EuclideanTestUtils.assertCoordinatesEqual(upperCorner, downFromOutsideResult.getPoint(), TEST_EPS);
 
         final LinecastPoint3D downFromCenterResult = tree.linecastFirst(downDiagonal.rayFrom(center));
-        Assert.assertNotNull(downFromCenterResult);
+        Assertions.assertNotNull(downFromCenterResult);
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, downFromCenterResult.getPoint(), TEST_EPS);
     }
 
@@ -908,13 +908,13 @@ public class RegionBSPTree3DTest {
 
         // act/assert
         LinecastPoint3D bottom = tree.linecastFirst(bottomLine.rayFrom(firstPointOnLine));
-        Assert.assertNotNull(bottom);
+        Assertions.assertNotNull(bottom);
         EuclideanTestUtils.assertCoordinatesEqual(expectedIntersection1, bottom.getPoint(), TEST_EPS);
 
         bottom = tree.linecastFirst(bottomLine.rayFrom(Vector3D.of(0.5, 0.1, 0.0)));
-        Assert.assertNotNull(bottom);
+        Assertions.assertNotNull(bottom);
         final Vector3D intersection = bottom.getPoint();
-        Assert.assertNotNull(intersection);
+        Assertions.assertNotNull(intersection);
         EuclideanTestUtils.assertCoordinatesEqual(expectedIntersection2, intersection, TEST_EPS);
     }
 
@@ -983,9 +983,9 @@ public class RegionBSPTree3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X,
                 tree.linecastFirst(line.segment(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(1, 0.5, 0.5))).getNormal(), TEST_EPS);
 
-        Assert.assertNull(tree.linecastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(-1, 0.5, 0.5))));
-        Assert.assertNull(tree.linecastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(-1, 0.5, 0.5))));
-        Assert.assertNull(tree.linecastFirst(line.segment(Vector3D.of(0.25, 0.5, 0.5), Vector3D.of(0.75, 0.5, 0.5))));
+        Assertions.assertNull(tree.linecastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(-1, 0.5, 0.5))));
+        Assertions.assertNull(tree.linecastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(-1, 0.5, 0.5))));
+        Assertions.assertNull(tree.linecastFirst(line.segment(Vector3D.of(0.25, 0.5, 0.5), Vector3D.of(0.75, 0.5, 0.5))));
     }
 
     @Test
@@ -997,12 +997,12 @@ public class RegionBSPTree3DTest {
         tree.complement();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
         EuclideanTestUtils.assertPositiveInfinity(tree.getSize());
-        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(tree.getCentroid());
+        Assertions.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertNull(tree.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
@@ -1019,11 +1019,11 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D tree = createRect(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5));
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(1.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(6.0, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1.0, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(6.0, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
@@ -1081,11 +1081,11 @@ public class RegionBSPTree3DTest {
         tree.union(createRect(Vector3D.of(1.5, -0.5, -0.5), Vector3D.of(2.5, 0.5, 0.5)));
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(2.0, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
@@ -1106,11 +1106,11 @@ public class RegionBSPTree3DTest {
         tree.union(createRect(Vector3D.of(0.5, -0.5, -0.5), Vector3D.of(1.5, 0.5, 0.5)));
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(10.0, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(2.0, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(10.0, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, 0), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
@@ -1134,11 +1134,11 @@ public class RegionBSPTree3DTest {
         tree.union(createRect(Vector3D.of(0.5 + 1e-7, -0.5, -0.5), Vector3D.of(1.5 + 1e-7, 0.5, 0.5), precision));
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(2.0, tree.getSize(), eps);
-        Assert.assertEquals(10.0, tree.getBoundarySize(), eps);
+        Assertions.assertEquals(2.0, tree.getSize(), eps);
+        Assertions.assertEquals(10.0, tree.getBoundarySize(), eps);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5.4166e-8, 0, 0), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
@@ -1158,11 +1158,11 @@ public class RegionBSPTree3DTest {
         tree.union(createRect(Vector3D.of(0.5, 0.5, -0.5), Vector3D.of(1.5, 1.5, 0.5)));
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(2.0, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), tree.getCentroid(), TEST_EPS);
 
 
@@ -1185,11 +1185,11 @@ public class RegionBSPTree3DTest {
         tree.union(createRect(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(1.5, 1.5, 1.5)));
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(2.0, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
@@ -1223,8 +1223,8 @@ public class RegionBSPTree3DTest {
         tree.insert(boundaries);
 
         // assert
-        Assert.assertEquals(1.0 / 3.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(2.0 * Math.sqrt(3.0), tree.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1.0 / 3.0, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(2.0 * Math.sqrt(3.0), tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), tree.getCentroid(), TEST_EPS);
 
         final double third = 1.0 / 3.0;
@@ -1254,11 +1254,11 @@ public class RegionBSPTree3DTest {
         final RegionBSPTree3D tree = createSphere(Vector3D.of(1, 2, 3), radius, 8, 16);
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(sphereVolume(radius), tree.getSize(), approximationTolerance);
-        Assert.assertEquals(sphereSurface(radius), tree.getBoundarySize(), approximationTolerance);
+        Assertions.assertEquals(sphereVolume(radius), tree.getSize(), approximationTolerance);
+        Assertions.assertEquals(sphereSurface(radius), tree.getBoundarySize(), approximationTolerance);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
@@ -1326,12 +1326,12 @@ public class RegionBSPTree3DTest {
         result.union(box, sphere);
 
         // assert
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals(cubeVolume(size) + (sphereVolume(radius) * 0.5),
+        Assertions.assertEquals(cubeVolume(size) + (sphereVolume(radius) * 0.5),
                 result.getSize(), tolerance);
-        Assert.assertEquals(cubeSurface(size) - circleSurface(radius) + (0.5 * sphereSurface(radius)),
+        Assertions.assertEquals(cubeSurface(size) - circleSurface(radius) + (0.5 * sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
@@ -1367,11 +1367,11 @@ public class RegionBSPTree3DTest {
         result.union(sphere, copy);
 
         // assert
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
-        Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
+        Assertions.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
+        Assertions.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
@@ -1406,11 +1406,11 @@ public class RegionBSPTree3DTest {
         result.intersection(box, sphere);
 
         // assert
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals(sphereVolume(radius) * 0.5, result.getSize(), tolerance);
-        Assert.assertEquals(circleSurface(radius) + (0.5 * sphereSurface(radius)),
+        Assertions.assertEquals(sphereVolume(radius) * 0.5, result.getSize(), tolerance);
+        Assertions.assertEquals(circleSurface(radius) + (0.5 * sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
@@ -1445,11 +1445,11 @@ public class RegionBSPTree3DTest {
         result.intersection(sphere, copy);
 
         // assert
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
-        Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
+        Assertions.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
+        Assertions.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
@@ -1482,11 +1482,11 @@ public class RegionBSPTree3DTest {
         result.xor(box1, box2);
 
         // assert
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals((2 * cubeVolume(size)) - (2 * cubeVolume(size * 0.5)), result.getSize(), TEST_EPS);
-        Assert.assertEquals(2 * cubeSurface(size), result.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals((2 * cubeVolume(size)) - (2 * cubeVolume(size * 0.5)), result.getSize(), TEST_EPS);
+        Assertions.assertEquals(2 * cubeSurface(size), result.getBoundarySize(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.1, -0.1, -0.1),
@@ -1520,11 +1520,11 @@ public class RegionBSPTree3DTest {
         result.xor(box, sphere);
 
         // assert
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals(cubeVolume(size), result.getSize(), tolerance);
-        Assert.assertEquals(cubeSurface(size) + (sphereSurface(radius)),
+        Assertions.assertEquals(cubeVolume(size), result.getSize(), tolerance);
+        Assertions.assertEquals(cubeSurface(size) + (sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
@@ -1559,12 +1559,12 @@ public class RegionBSPTree3DTest {
         result.xor(sphere, copy);
 
         // assert
-        Assert.assertTrue(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertTrue(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals(0.0, result.getSize(), TEST_EPS);
-        Assert.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(result.getCentroid());
+        Assertions.assertEquals(0.0, result.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
+        Assertions.assertNull(result.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
@@ -1596,11 +1596,11 @@ public class RegionBSPTree3DTest {
         result.difference(box, sphere);
 
         // assert
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals(cubeVolume(size) - (sphereVolume(radius) * 0.5), result.getSize(), tolerance);
-        Assert.assertEquals(cubeSurface(size) - circleSurface(radius) + (0.5 * sphereSurface(radius)),
+        Assertions.assertEquals(cubeVolume(size) - (sphereVolume(radius) * 0.5), result.getSize(), tolerance);
+        Assertions.assertEquals(cubeSurface(size) - circleSurface(radius) + (0.5 * sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
@@ -1633,12 +1633,12 @@ public class RegionBSPTree3DTest {
         result.difference(sphere, copy);
 
         // assert
-        Assert.assertTrue(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertTrue(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals(0.0, result.getSize(), TEST_EPS);
-        Assert.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(result.getCentroid());
+        Assertions.assertEquals(0.0, result.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
+        Assertions.assertNull(result.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
@@ -1674,12 +1674,12 @@ public class RegionBSPTree3DTest {
         result.difference(sphereToRemove2);
 
         // assert
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertFalse(result.isFull());
 
-        Assert.assertEquals(cubeVolume(size) - (sphereVolume(radius) * 0.5),
+        Assertions.assertEquals(cubeVolume(size) - (sphereVolume(radius) * 0.5),
                 result.getSize(), tolerance);
-        Assert.assertEquals(cubeSurface(size) - (3.0 * circleSurface(radius)) + (1.5 * sphereSurface(radius)),
+        Assertions.assertEquals(cubeSurface(size) - (3.0 * circleSurface(radius)) + (1.5 * sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
@@ -1705,7 +1705,7 @@ public class RegionBSPTree3DTest {
         final List<ConvexVolume> result = RegionBSPTree3D.empty().toConvex();
 
         // assert
-        Assert.assertEquals(0, result.size());
+        Assertions.assertEquals(0, result.size());
     }
 
     @Test
@@ -1717,10 +1717,10 @@ public class RegionBSPTree3DTest {
         final List<ConvexVolume> result = tree.toConvex();
 
         // assert
-        Assert.assertEquals(1, result.size());
+        Assertions.assertEquals(1, result.size());
 
         final ConvexVolume vol = result.get(0);
-        Assert.assertEquals(1, vol.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, vol.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), vol.getCentroid(), TEST_EPS);
     }
 
@@ -1734,17 +1734,17 @@ public class RegionBSPTree3DTest {
         final List<ConvexVolume> result = tree.toConvex();
 
         // assert
-        Assert.assertEquals(2, result.size());
+        Assertions.assertEquals(2, result.size());
 
         final boolean smallFirst = result.get(0).getSize() < result.get(1).getSize();
 
         final ConvexVolume small = smallFirst ? result.get(0) : result.get(1);
         final ConvexVolume large = smallFirst ? result.get(1) : result.get(0);
 
-        Assert.assertEquals(1, small.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, small.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(4.5, 5.5, 6.5), small.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(2, large.getSize(), TEST_EPS);
+        Assertions.assertEquals(2, large.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0.5, 0.5), large.getCentroid(), TEST_EPS);
     }
 
@@ -1759,14 +1759,14 @@ public class RegionBSPTree3DTest {
         final Split<RegionBSPTree3D> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final RegionBSPTree3D minus = split.getMinus();
-        Assert.assertEquals(0.5, minus.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.5, minus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.25, 0, 0), minus.getCentroid(), TEST_EPS);
 
         final RegionBSPTree3D plus = split.getPlus();
-        Assert.assertEquals(0.5, plus.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.5, plus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.25, 0, 0), plus.getCentroid(), TEST_EPS);
     }
 
@@ -1778,14 +1778,14 @@ public class RegionBSPTree3DTest {
         // act/assert
         final ConvexVolume rootVol = tree.getRoot().getNodeRegion();
         GeometryTestUtils.assertPositiveInfinity(rootVol.getSize());
-        Assert.assertNull(rootVol.getCentroid());
+        Assertions.assertNull(rootVol.getCentroid());
 
         final ConvexVolume plusVol = tree.getRoot().getPlus().getNodeRegion();
         GeometryTestUtils.assertPositiveInfinity(plusVol.getSize());
-        Assert.assertNull(plusVol.getCentroid());
+        Assertions.assertNull(plusVol.getCentroid());
 
         final ConvexVolume centerVol = tree.findNode(Vector3D.of(0.5, 0.5, 0.5)).getNodeRegion();
-        Assert.assertEquals(1, centerVol.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, centerVol.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), centerVol.getCentroid(), TEST_EPS);
     }
 
@@ -1820,8 +1820,8 @@ public class RegionBSPTree3DTest {
         tree.insert(faces);
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(2, 1, 1));
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,

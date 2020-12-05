@@ -24,8 +24,8 @@ import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LineTest {
 
@@ -110,7 +110,7 @@ public class LineTest {
             final Line line = Lines.fromPointAndAngle(vec, theta, TEST_PRECISION);
 
             // act/assert
-            Assert.assertEquals(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(theta),
+            Assertions.assertEquals(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(theta),
                     line.getAngle(), TEST_EPS);
         }
     }
@@ -121,13 +121,13 @@ public class LineTest {
         final Vector2D vec = Vector2D.of(-1, -2);
 
         // act/assert
-        Assert.assertEquals(0, Lines.fromPointAndAngle(vec, 0.0, TEST_PRECISION).getAngle(), TEST_EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, Lines.fromPointAndAngle(vec, PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
-        Assert.assertEquals(0, Lines.fromPointAndAngle(vec, PlaneAngleRadians.TWO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assertions.assertEquals(0, Lines.fromPointAndAngle(vec, 0.0, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI, Lines.fromPointAndAngle(vec, PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assertions.assertEquals(0, Lines.fromPointAndAngle(vec, PlaneAngleRadians.TWO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
 
-        Assert.assertEquals(0, Lines.fromPointAndAngle(vec, -2 * PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, Lines.fromPointAndAngle(vec, -3 * PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
-        Assert.assertEquals(0, Lines.fromPointAndAngle(vec, -4 * PlaneAngleRadians.TWO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assertions.assertEquals(0, Lines.fromPointAndAngle(vec, -2 * PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI, Lines.fromPointAndAngle(vec, -3 * PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assertions.assertEquals(0, Lines.fromPointAndAngle(vec, -4 * PlaneAngleRadians.TWO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
     }
 
     @Test
@@ -208,28 +208,28 @@ public class LineTest {
         final double sqrt2 = Math.sqrt(2);
 
         // act/assert
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                 Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                 Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(-1, -1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
 
-        Assert.assertEquals(sqrt2,
+        Assertions.assertEquals(sqrt2,
                 Lines.fromPoints(Vector2D.of(-1, 1), Vector2D.of(0, 2), TEST_PRECISION).getOriginOffset(), TEST_EPS);
-        Assert.assertEquals(-sqrt2,
+        Assertions.assertEquals(-sqrt2,
                 Lines.fromPoints(Vector2D.of(0, -2), Vector2D.of(1, -1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
 
-        Assert.assertEquals(-sqrt2,
+        Assertions.assertEquals(-sqrt2,
                 Lines.fromPoints(Vector2D.of(0, 2), Vector2D.of(-1, 1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
-        Assert.assertEquals(sqrt2,
+        Assertions.assertEquals(sqrt2,
                 Lines.fromPoints(Vector2D.of(1, -1), Vector2D.of(0, -2), TEST_PRECISION).getOriginOffset(), TEST_EPS);
     }
 
     @Test
     public void testGetPrecision() {
         // act/assert
-        Assert.assertSame(TEST_PRECISION, Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
-        Assert.assertSame(TEST_PRECISION, Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
-        Assert.assertSame(TEST_PRECISION, Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).getPrecision());
+        Assertions.assertSame(TEST_PRECISION, Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
+        Assertions.assertSame(TEST_PRECISION, Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
+        Assertions.assertSame(TEST_PRECISION, Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).getPrecision());
     }
 
     @Test
@@ -245,10 +245,10 @@ public class LineTest {
 
         // assert
         checkLine(reversed, pt, dir.negate());
-        Assert.assertEquals(-1, reversed.getOriginOffset(), TEST_EPS);
+        Assertions.assertEquals(-1, reversed.getOriginOffset(), TEST_EPS);
 
         checkLine(doubleReversed, pt, dir);
-        Assert.assertEquals(1, doubleReversed.getOriginOffset(), TEST_EPS);
+        Assertions.assertEquals(1, doubleReversed.getOriginOffset(), TEST_EPS);
     }
 
     @Test
@@ -257,10 +257,10 @@ public class LineTest {
         final Line line = Lines.fromPoints(Vector2D.of(-2, -2), Vector2D.of(2, 1), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0.0, line.abscissa(Vector2D.of(-3, 4)), TEST_EPS);
-        Assert.assertEquals(0.0, line.abscissa(Vector2D.of(3, -4)), TEST_EPS);
-        Assert.assertEquals(5.0, line.abscissa(Vector2D.of(7, -1)), TEST_EPS);
-        Assert.assertEquals(-5.0, line.abscissa(Vector2D.of(-1, -7)), TEST_EPS);
+        Assertions.assertEquals(0.0, line.abscissa(Vector2D.of(-3, 4)), TEST_EPS);
+        Assertions.assertEquals(0.0, line.abscissa(Vector2D.of(3, -4)), TEST_EPS);
+        Assertions.assertEquals(5.0, line.abscissa(Vector2D.of(7, -1)), TEST_EPS);
+        Assertions.assertEquals(-5.0, line.abscissa(Vector2D.of(-1, -7)), TEST_EPS);
     }
 
     @Test
@@ -269,10 +269,10 @@ public class LineTest {
         final Line line = Lines.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0.0, line.toSubspace(Vector2D.of(-3, 4)).getX(), TEST_EPS);
-        Assert.assertEquals(0.0, line.toSubspace(Vector2D.of(3, -4)).getX(), TEST_EPS);
-        Assert.assertEquals(-5.0, line.toSubspace(Vector2D.of(7, -1)).getX(), TEST_EPS);
-        Assert.assertEquals(5.0, line.toSubspace(Vector2D.of(-1, -7)).getX(), TEST_EPS);
+        Assertions.assertEquals(0.0, line.toSubspace(Vector2D.of(-3, 4)).getX(), TEST_EPS);
+        Assertions.assertEquals(0.0, line.toSubspace(Vector2D.of(3, -4)).getX(), TEST_EPS);
+        Assertions.assertEquals(-5.0, line.toSubspace(Vector2D.of(7, -1)).getX(), TEST_EPS);
+        Assertions.assertEquals(5.0, line.toSubspace(Vector2D.of(-1, -7)).getX(), TEST_EPS);
     }
 
     @Test
@@ -357,11 +357,11 @@ public class LineTest {
         final Line d = Lines.fromPointAndDirection(Vector2D.of(0, -1), Vector2D.of(2, 1), TEST_PRECISION);
 
         // act/assert
-        Assert.assertNull(a.intersection(b));
-        Assert.assertNull(b.intersection(a));
+        Assertions.assertNull(a.intersection(b));
+        Assertions.assertNull(b.intersection(a));
 
-        Assert.assertNull(c.intersection(d));
-        Assert.assertNull(d.intersection(c));
+        Assertions.assertNull(c.intersection(d));
+        Assertions.assertNull(d.intersection(c));
     }
 
     @Test
@@ -374,11 +374,11 @@ public class LineTest {
         final Line d = Lines.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(2, 1), TEST_PRECISION);
 
         // act/assert
-        Assert.assertNull(a.intersection(b));
-        Assert.assertNull(b.intersection(a));
+        Assertions.assertNull(a.intersection(b));
+        Assertions.assertNull(b.intersection(a));
 
-        Assert.assertNull(c.intersection(d));
-        Assert.assertNull(d.intersection(c));
+        Assertions.assertNull(c.intersection(d));
+        Assertions.assertNull(d.intersection(c));
     }
 
     @Test
@@ -389,17 +389,17 @@ public class LineTest {
         final Line c = Lines.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0.0, a.angle(a), TEST_EPS);
-        Assert.assertEquals(-PlaneAngleRadians.PI, a.angle(b), TEST_EPS);
-        Assert.assertEquals(0.25 * PlaneAngleRadians.PI, a.angle(c), TEST_EPS);
+        Assertions.assertEquals(0.0, a.angle(a), TEST_EPS);
+        Assertions.assertEquals(-PlaneAngleRadians.PI, a.angle(b), TEST_EPS);
+        Assertions.assertEquals(0.25 * PlaneAngleRadians.PI, a.angle(c), TEST_EPS);
 
-        Assert.assertEquals(0.0, b.angle(b), TEST_EPS);
-        Assert.assertEquals(-PlaneAngleRadians.PI, b.angle(a), TEST_EPS);
-        Assert.assertEquals(-0.75 * PlaneAngleRadians.PI, b.angle(c), TEST_EPS);
+        Assertions.assertEquals(0.0, b.angle(b), TEST_EPS);
+        Assertions.assertEquals(-PlaneAngleRadians.PI, b.angle(a), TEST_EPS);
+        Assertions.assertEquals(-0.75 * PlaneAngleRadians.PI, b.angle(c), TEST_EPS);
 
-        Assert.assertEquals(0.0, c.angle(c), TEST_EPS);
-        Assert.assertEquals(-0.25 * PlaneAngleRadians.PI, c.angle(a), TEST_EPS);
-        Assert.assertEquals(0.75 * PlaneAngleRadians.PI, c.angle(b), TEST_EPS);
+        Assertions.assertEquals(0.0, c.angle(c), TEST_EPS);
+        Assertions.assertEquals(-0.25 * PlaneAngleRadians.PI, c.angle(a), TEST_EPS);
+        Assertions.assertEquals(0.75 * PlaneAngleRadians.PI, c.angle(b), TEST_EPS);
     }
 
     @Test
@@ -420,11 +420,11 @@ public class LineTest {
             EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, y), yAxis.project(pt), TEST_EPS);
 
             final Vector2D diagonalPt = diagonal.project(pt);
-            Assert.assertTrue(diagonal.contains(diagonalPt));
-            Assert.assertEquals(diagonal.distance(pt), pt.distance(diagonalPt), TEST_EPS);
+            Assertions.assertTrue(diagonal.contains(diagonalPt));
+            Assertions.assertEquals(diagonal.distance(pt), pt.distance(diagonalPt), TEST_EPS);
 
             // check that y = mx + b is true
-            Assert.assertEquals(diagonalPt.getY(),
+            Assertions.assertEquals(diagonalPt.getY(),
                     (diagonalDir.getY() * diagonalPt.getX() / diagonalDir.getX()) + diagonalYIntercept, TEST_EPS);
         });
     }
@@ -438,8 +438,8 @@ public class LineTest {
         final LineConvexSubset result = line.span();
 
         // assert
-        Assert.assertSame(line, result.getHyperplane());
-        Assert.assertSame(line, result.getLine());
+        Assertions.assertSame(line, result.getHyperplane());
+        Assertions.assertSame(line, result.getLine());
     }
 
     @Test
@@ -451,7 +451,7 @@ public class LineTest {
         final Segment segment = line.segment(1, 2);
 
         // assert
-        Assert.assertSame(line, segment.getLine());
+        Assertions.assertSame(line, segment.getLine());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getEndPoint(), TEST_EPS);
     }
@@ -465,7 +465,7 @@ public class LineTest {
         final Segment segment = line.segment(Vector2D.of(3, 1), Vector2D.of(2, 1));
 
         // assert
-        Assert.assertSame(line, segment.getLine());
+        Assertions.assertSame(line, segment.getLine());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 1), segment.getEndPoint(), TEST_EPS);
     }
@@ -479,7 +479,7 @@ public class LineTest {
         final Segment segment = line.segment(Vector2D.of(-3, 2), Vector2D.of(2, -1));
 
         // assert
-        Assert.assertSame(line, segment.getLine());
+        Assertions.assertSame(line, segment.getLine());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getEndPoint(), TEST_EPS);
     }
@@ -493,13 +493,13 @@ public class LineTest {
         final ReverseRay halfLine = line.reverseRayTo(Vector2D.of(-3, 1));
 
         // assert
-        Assert.assertSame(line, halfLine.getLine());
-        Assert.assertTrue(halfLine.isInfinite());
-        Assert.assertNull(halfLine.getStartPoint());
+        Assertions.assertSame(line, halfLine.getLine());
+        Assertions.assertTrue(halfLine.isInfinite());
+        Assertions.assertNull(halfLine.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertTrue(halfLine.contains(Vector2D.of(1, 1)));
-        Assert.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
+        Assertions.assertTrue(halfLine.contains(Vector2D.of(1, 1)));
+        Assertions.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
@@ -511,13 +511,13 @@ public class LineTest {
         final ReverseRay halfLine = line.reverseRayTo(Vector2D.of(-3, 5));
 
         // assert
-        Assert.assertSame(line, halfLine.getLine());
-        Assert.assertTrue(halfLine.isInfinite());
-        Assert.assertNull(halfLine.getStartPoint());
+        Assertions.assertSame(line, halfLine.getLine());
+        Assertions.assertTrue(halfLine.isInfinite());
+        Assertions.assertNull(halfLine.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertTrue(halfLine.contains(Vector2D.of(1, 1)));
-        Assert.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
+        Assertions.assertTrue(halfLine.contains(Vector2D.of(1, 1)));
+        Assertions.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
@@ -529,13 +529,13 @@ public class LineTest {
         final ReverseRay halfLine = line.reverseRayTo(-1);
 
         // assert
-        Assert.assertSame(line, halfLine.getLine());
-        Assert.assertTrue(halfLine.isInfinite());
-        Assert.assertNull(halfLine.getStartPoint());
+        Assertions.assertSame(line, halfLine.getLine());
+        Assertions.assertTrue(halfLine.isInfinite());
+        Assertions.assertNull(halfLine.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertTrue(halfLine.contains(Vector2D.of(2, 1)));
-        Assert.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
+        Assertions.assertTrue(halfLine.contains(Vector2D.of(2, 1)));
+        Assertions.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
@@ -547,13 +547,13 @@ public class LineTest {
         final Ray ray = line.rayFrom(Vector2D.of(-3, 1));
 
         // assert
-        Assert.assertSame(line, ray.getLine());
-        Assert.assertTrue(ray.isInfinite());
+        Assertions.assertSame(line, ray.getLine());
+        Assertions.assertTrue(ray.isInfinite());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), ray.getStartPoint(), TEST_EPS);
-        Assert.assertNull(ray.getEndPoint());
+        Assertions.assertNull(ray.getEndPoint());
 
-        Assert.assertFalse(ray.contains(Vector2D.of(1, 1)));
-        Assert.assertTrue(ray.contains(Vector2D.of(-4, 1)));
+        Assertions.assertFalse(ray.contains(Vector2D.of(1, 1)));
+        Assertions.assertTrue(ray.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
@@ -565,13 +565,13 @@ public class LineTest {
         final Ray ray = line.rayFrom(Vector2D.of(-3, 5));
 
         // assert
-        Assert.assertSame(line, ray.getLine());
-        Assert.assertTrue(ray.isInfinite());
+        Assertions.assertSame(line, ray.getLine());
+        Assertions.assertTrue(ray.isInfinite());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), ray.getStartPoint(), TEST_EPS);
-        Assert.assertNull(ray.getEndPoint());
+        Assertions.assertNull(ray.getEndPoint());
 
-        Assert.assertFalse(ray.contains(Vector2D.of(1, 1)));
-        Assert.assertTrue(ray.contains(Vector2D.of(-4, 1)));
+        Assertions.assertFalse(ray.contains(Vector2D.of(1, 1)));
+        Assertions.assertTrue(ray.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
@@ -583,13 +583,13 @@ public class LineTest {
         final Ray ray = line.rayFrom(-1);
 
         // assert
-        Assert.assertSame(line, ray.getLine());
-        Assert.assertTrue(ray.isInfinite());
+        Assertions.assertSame(line, ray.getLine());
+        Assertions.assertTrue(ray.isInfinite());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), ray.getStartPoint(), TEST_EPS);
-        Assert.assertNull(ray.getEndPoint());
+        Assertions.assertNull(ray.getEndPoint());
 
-        Assert.assertFalse(ray.contains(Vector2D.of(2, 1)));
-        Assert.assertTrue(ray.contains(Vector2D.of(-4, 1)));
+        Assertions.assertFalse(ray.contains(Vector2D.of(2, 1)));
+        Assertions.assertTrue(ray.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
@@ -603,14 +603,14 @@ public class LineTest {
         final Line d = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, -2), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(-dist, a.offset(b), TEST_EPS);
-        Assert.assertEquals(dist, b.offset(a), TEST_EPS);
+        Assertions.assertEquals(-dist, a.offset(b), TEST_EPS);
+        Assertions.assertEquals(dist, b.offset(a), TEST_EPS);
 
-        Assert.assertEquals(dist, a.offset(c), TEST_EPS);
-        Assert.assertEquals(-dist, c.offset(a), TEST_EPS);
+        Assertions.assertEquals(dist, a.offset(c), TEST_EPS);
+        Assertions.assertEquals(-dist, c.offset(a), TEST_EPS);
 
-        Assert.assertEquals(3 * dist, a.offset(d), TEST_EPS);
-        Assert.assertEquals(3 * dist, d.offset(a), TEST_EPS);
+        Assertions.assertEquals(3 * dist, a.offset(d), TEST_EPS);
+        Assertions.assertEquals(3 * dist, d.offset(a), TEST_EPS);
     }
 
     @Test
@@ -621,13 +621,13 @@ public class LineTest {
         final Line c = b.reverse();
 
         // act/assert
-        Assert.assertEquals(0, a.offset(a), TEST_EPS);
+        Assertions.assertEquals(0, a.offset(a), TEST_EPS);
 
-        Assert.assertEquals(0, a.offset(b), TEST_EPS);
-        Assert.assertEquals(0, b.offset(a), TEST_EPS);
+        Assertions.assertEquals(0, a.offset(b), TEST_EPS);
+        Assertions.assertEquals(0, b.offset(a), TEST_EPS);
 
-        Assert.assertEquals(0, a.offset(c), TEST_EPS);
-        Assert.assertEquals(0, c.offset(a), TEST_EPS);
+        Assertions.assertEquals(0, a.offset(c), TEST_EPS);
+        Assertions.assertEquals(0, c.offset(a), TEST_EPS);
     }
 
     @Test
@@ -639,14 +639,14 @@ public class LineTest {
         final Line d = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, 4), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0, a.offset(b), TEST_EPS);
-        Assert.assertEquals(0, b.offset(a), TEST_EPS);
+        Assertions.assertEquals(0, a.offset(b), TEST_EPS);
+        Assertions.assertEquals(0, b.offset(a), TEST_EPS);
 
-        Assert.assertEquals(0, a.offset(c), TEST_EPS);
-        Assert.assertEquals(0, c.offset(a), TEST_EPS);
+        Assertions.assertEquals(0, a.offset(c), TEST_EPS);
+        Assertions.assertEquals(0, c.offset(a), TEST_EPS);
 
-        Assert.assertEquals(0, a.offset(d), TEST_EPS);
-        Assert.assertEquals(0, d.offset(a), TEST_EPS);
+        Assertions.assertEquals(0, a.offset(d), TEST_EPS);
+        Assertions.assertEquals(0, d.offset(a), TEST_EPS);
     }
 
     @Test
@@ -656,17 +656,17 @@ public class LineTest {
         final Line reversed = line.reverse();
 
         // act/assert
-        Assert.assertEquals(0.0, line.offset(Vector2D.of(-0.5, 1)), TEST_EPS);
-        Assert.assertEquals(0.0, line.offset(Vector2D.of(-1.5, -1)), TEST_EPS);
-        Assert.assertEquals(0.0, line.offset(Vector2D.of(0.5, 3)), TEST_EPS);
+        Assertions.assertEquals(0.0, line.offset(Vector2D.of(-0.5, 1)), TEST_EPS);
+        Assertions.assertEquals(0.0, line.offset(Vector2D.of(-1.5, -1)), TEST_EPS);
+        Assertions.assertEquals(0.0, line.offset(Vector2D.of(0.5, 3)), TEST_EPS);
 
         final double d = Math.sin(Math.atan2(2, 1));
 
-        Assert.assertEquals(d, line.offset(Vector2D.ZERO), TEST_EPS);
-        Assert.assertEquals(-d, line.offset(Vector2D.of(-1, 2)), TEST_EPS);
+        Assertions.assertEquals(d, line.offset(Vector2D.ZERO), TEST_EPS);
+        Assertions.assertEquals(-d, line.offset(Vector2D.of(-1, 2)), TEST_EPS);
 
-        Assert.assertEquals(-d, reversed.offset(Vector2D.ZERO), TEST_EPS);
-        Assert.assertEquals(d, reversed.offset(Vector2D.of(-1, 2)), TEST_EPS);
+        Assertions.assertEquals(-d, reversed.offset(Vector2D.ZERO), TEST_EPS);
+        Assertions.assertEquals(d, reversed.offset(Vector2D.of(-1, 2)), TEST_EPS);
     }
 
     @Test
@@ -686,7 +686,7 @@ public class LineTest {
             final double dot = vec.dot(line.getOffsetDirection());
             final double expected = Math.signum(dot) * vec.norm();
 
-            Assert.assertEquals(expected, offset, TEST_EPS);
+            Assertions.assertEquals(expected, offset, TEST_EPS);
         });
     }
 
@@ -703,24 +703,24 @@ public class LineTest {
         final Line g = Lines.fromPointAndAngle(Vector2D.of(6, -3), -0.8 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(a.similarOrientation(a));
-        Assert.assertTrue(a.similarOrientation(b));
-        Assert.assertTrue(b.similarOrientation(a));
-        Assert.assertTrue(a.similarOrientation(c));
-        Assert.assertTrue(c.similarOrientation(a));
-        Assert.assertTrue(a.similarOrientation(d));
-        Assert.assertTrue(d.similarOrientation(a));
+        Assertions.assertTrue(a.similarOrientation(a));
+        Assertions.assertTrue(a.similarOrientation(b));
+        Assertions.assertTrue(b.similarOrientation(a));
+        Assertions.assertTrue(a.similarOrientation(c));
+        Assertions.assertTrue(c.similarOrientation(a));
+        Assertions.assertTrue(a.similarOrientation(d));
+        Assertions.assertTrue(d.similarOrientation(a));
 
-        Assert.assertFalse(c.similarOrientation(d));
-        Assert.assertFalse(d.similarOrientation(c));
+        Assertions.assertFalse(c.similarOrientation(d));
+        Assertions.assertFalse(d.similarOrientation(c));
 
-        Assert.assertTrue(e.similarOrientation(f));
-        Assert.assertTrue(f.similarOrientation(e));
-        Assert.assertTrue(e.similarOrientation(g));
-        Assert.assertTrue(g.similarOrientation(e));
+        Assertions.assertTrue(e.similarOrientation(f));
+        Assertions.assertTrue(f.similarOrientation(e));
+        Assertions.assertTrue(e.similarOrientation(g));
+        Assertions.assertTrue(g.similarOrientation(e));
 
-        Assert.assertFalse(a.similarOrientation(e));
-        Assert.assertFalse(e.similarOrientation(a));
+        Assertions.assertFalse(a.similarOrientation(e));
+        Assertions.assertFalse(e.similarOrientation(a));
     }
 
     @Test
@@ -731,10 +731,10 @@ public class LineTest {
         final Line c = Lines.fromPointAndDirection(Vector2D.of(-4, -5), Vector2D.Unit.MINUS_Y, TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(a.similarOrientation(b));
-        Assert.assertTrue(b.similarOrientation(a));
-        Assert.assertTrue(a.similarOrientation(c));
-        Assert.assertTrue(c.similarOrientation(a));
+        Assertions.assertTrue(a.similarOrientation(b));
+        Assertions.assertTrue(b.similarOrientation(a));
+        Assertions.assertTrue(a.similarOrientation(c));
+        Assertions.assertTrue(c.similarOrientation(a));
     }
 
     @Test
@@ -748,14 +748,14 @@ public class LineTest {
         final Line d = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, -2), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(dist, a.distance(b), TEST_EPS);
-        Assert.assertEquals(dist, b.distance(a), TEST_EPS);
+        Assertions.assertEquals(dist, a.distance(b), TEST_EPS);
+        Assertions.assertEquals(dist, b.distance(a), TEST_EPS);
 
-        Assert.assertEquals(dist, a.distance(c), TEST_EPS);
-        Assert.assertEquals(dist, c.distance(a), TEST_EPS);
+        Assertions.assertEquals(dist, a.distance(c), TEST_EPS);
+        Assertions.assertEquals(dist, c.distance(a), TEST_EPS);
 
-        Assert.assertEquals(3 * dist, a.distance(d), TEST_EPS);
-        Assert.assertEquals(3 * dist, d.distance(a), TEST_EPS);
+        Assertions.assertEquals(3 * dist, a.distance(d), TEST_EPS);
+        Assertions.assertEquals(3 * dist, d.distance(a), TEST_EPS);
     }
 
     @Test
@@ -766,13 +766,13 @@ public class LineTest {
         final Line c = b.reverse();
 
         // act/assert
-        Assert.assertEquals(0, a.distance(a), TEST_EPS);
+        Assertions.assertEquals(0, a.distance(a), TEST_EPS);
 
-        Assert.assertEquals(0, a.distance(b), TEST_EPS);
-        Assert.assertEquals(0, b.distance(a), TEST_EPS);
+        Assertions.assertEquals(0, a.distance(b), TEST_EPS);
+        Assertions.assertEquals(0, b.distance(a), TEST_EPS);
 
-        Assert.assertEquals(0, a.distance(c), TEST_EPS);
-        Assert.assertEquals(0, c.distance(a), TEST_EPS);
+        Assertions.assertEquals(0, a.distance(c), TEST_EPS);
+        Assertions.assertEquals(0, c.distance(a), TEST_EPS);
     }
 
     @Test
@@ -784,14 +784,14 @@ public class LineTest {
         final Line d = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, 4), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0, a.distance(b), TEST_EPS);
-        Assert.assertEquals(0, b.distance(a), TEST_EPS);
+        Assertions.assertEquals(0, a.distance(b), TEST_EPS);
+        Assertions.assertEquals(0, b.distance(a), TEST_EPS);
 
-        Assert.assertEquals(0, a.distance(c), TEST_EPS);
-        Assert.assertEquals(0, c.distance(a), TEST_EPS);
+        Assertions.assertEquals(0, a.distance(c), TEST_EPS);
+        Assertions.assertEquals(0, c.distance(a), TEST_EPS);
 
-        Assert.assertEquals(0, a.distance(d), TEST_EPS);
-        Assert.assertEquals(0, d.distance(a), TEST_EPS);
+        Assertions.assertEquals(0, a.distance(d), TEST_EPS);
+        Assertions.assertEquals(0, d.distance(a), TEST_EPS);
     }
 
     @Test
@@ -800,9 +800,9 @@ public class LineTest {
         final Line line = Lines.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0, line.distance(line.getOrigin()), TEST_EPS);
-        Assert.assertEquals(+5.0, line.distance(Vector2D.of(5, -3)), TEST_EPS);
-        Assert.assertEquals(+5.0, line.distance(Vector2D.of(-5, 2)), TEST_EPS);
+        Assertions.assertEquals(0, line.distance(line.getOrigin()), TEST_EPS);
+        Assertions.assertEquals(+5.0, line.distance(Vector2D.of(5, -3)), TEST_EPS);
+        Assertions.assertEquals(+5.0, line.distance(Vector2D.of(-5, 2)), TEST_EPS);
     }
 
     @Test
@@ -836,8 +836,8 @@ public class LineTest {
                 final Vector2D point = line.pointAt(abscissa, offset);
 
                 // assert
-                Assert.assertEquals(abscissa, line.toSubspace(point).getX(), TEST_EPS);
-                Assert.assertEquals(offset, line.offset(point), TEST_EPS);
+                Assertions.assertEquals(abscissa, line.toSubspace(point).getX(), TEST_EPS);
+                Assertions.assertEquals(offset, line.offset(point), TEST_EPS);
             }
         }
     }
@@ -856,17 +856,17 @@ public class LineTest {
         final Line f = Lines.fromPointAndDirection(pt, dir.negate(), TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(a.contains(a));
+        Assertions.assertTrue(a.contains(a));
 
-        Assert.assertTrue(a.contains(e));
-        Assert.assertTrue(e.contains(a));
+        Assertions.assertTrue(a.contains(e));
+        Assertions.assertTrue(e.contains(a));
 
-        Assert.assertTrue(a.contains(f));
-        Assert.assertTrue(f.contains(a));
+        Assertions.assertTrue(a.contains(f));
+        Assertions.assertTrue(f.contains(a));
 
-        Assert.assertFalse(a.contains(b));
-        Assert.assertFalse(a.contains(c));
-        Assert.assertFalse(a.contains(d));
+        Assertions.assertFalse(a.contains(b));
+        Assertions.assertFalse(a.contains(c));
+        Assertions.assertFalse(a.contains(d));
     }
 
     @Test
@@ -883,14 +883,14 @@ public class LineTest {
         final Vector2D offset1 = Vector2D.of(0, 1e-4);
         final Vector2D offset2 = Vector2D.of(0, 2e-3);
 
-        Assert.assertTrue(line.contains(Lines.fromPointAndAngle(p.add(offset1), 0.0, precision)));
-        Assert.assertTrue(line.contains(Lines.fromPointAndAngle(p.subtract(offset1), 0.0, precision)));
+        Assertions.assertTrue(line.contains(Lines.fromPointAndAngle(p.add(offset1), 0.0, precision)));
+        Assertions.assertTrue(line.contains(Lines.fromPointAndAngle(p.subtract(offset1), 0.0, precision)));
 
-        Assert.assertFalse(line.contains(Lines.fromPointAndAngle(p.add(offset2), 0.0, precision)));
-        Assert.assertFalse(line.contains(Lines.fromPointAndAngle(p.subtract(offset2), 0.0, precision)));
+        Assertions.assertFalse(line.contains(Lines.fromPointAndAngle(p.add(offset2), 0.0, precision)));
+        Assertions.assertFalse(line.contains(Lines.fromPointAndAngle(p.subtract(offset2), 0.0, precision)));
 
-        Assert.assertTrue(line.contains(Lines.fromPointAndAngle(p, 1e-4, precision)));
-        Assert.assertFalse(line.contains(Lines.fromPointAndAngle(p, 1e-2, precision)));
+        Assertions.assertTrue(line.contains(Lines.fromPointAndAngle(p, 1e-4, precision)));
+        Assertions.assertFalse(line.contains(Lines.fromPointAndAngle(p, 1e-2, precision)));
     }
 
     @Test
@@ -901,11 +901,11 @@ public class LineTest {
         final Line line = Lines.fromPoints(p1, p2, TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(line.contains(p1));
-        Assert.assertTrue(line.contains(p2));
+        Assertions.assertTrue(line.contains(p1));
+        Assertions.assertTrue(line.contains(p2));
 
-        Assert.assertFalse(line.contains(Vector2D.ZERO));
-        Assert.assertFalse(line.contains(Vector2D.of(100, 79)));
+        Assertions.assertFalse(line.contains(Vector2D.ZERO));
+        Assertions.assertFalse(line.contains(Vector2D.of(100, 79)));
 
         final Vector2D offset1 = Vector2D.of(0.1, 0);
         final Vector2D offset2 = Vector2D.of(0, -0.1);
@@ -913,10 +913,10 @@ public class LineTest {
         for (double t = -2; t <= 2; t += 0.1) {
             v = p1.lerp(p2, t);
 
-            Assert.assertTrue(line.contains(v));
+            Assertions.assertTrue(line.contains(v));
 
-            Assert.assertFalse(line.contains(v.add(offset1)));
-            Assert.assertFalse(line.contains(v.add(offset2)));
+            Assertions.assertFalse(line.contains(v.add(offset1)));
+            Assertions.assertFalse(line.contains(v.add(offset2)));
         }
     }
 
@@ -934,11 +934,11 @@ public class LineTest {
         final Vector2D dir = line.getOffsetDirection();
 
         // act/assert
-        Assert.assertTrue(line.contains(mid.add(dir.multiply(1e-4))));
-        Assert.assertTrue(line.contains(mid.add(dir.multiply(-1e-4))));
+        Assertions.assertTrue(line.contains(mid.add(dir.multiply(1e-4))));
+        Assertions.assertTrue(line.contains(mid.add(dir.multiply(-1e-4))));
 
-        Assert.assertFalse(line.contains(mid.add(dir.multiply(2e-3))));
-        Assert.assertFalse(line.contains(mid.add(dir.multiply(-2e-3))));
+        Assertions.assertFalse(line.contains(mid.add(dir.multiply(2e-3))));
+        Assertions.assertFalse(line.contains(mid.add(dir.multiply(-2e-3))));
     }
 
     @Test
@@ -948,17 +948,17 @@ public class LineTest {
         final Line reversed = line.reverse();
 
         // act/assert
-        Assert.assertEquals(0.0, line.distance(Vector2D.of(-0.5, 1)), TEST_EPS);
-        Assert.assertEquals(0.0, line.distance(Vector2D.of(-1.5, -1)), TEST_EPS);
-        Assert.assertEquals(0.0, line.distance(Vector2D.of(0.5, 3)), TEST_EPS);
+        Assertions.assertEquals(0.0, line.distance(Vector2D.of(-0.5, 1)), TEST_EPS);
+        Assertions.assertEquals(0.0, line.distance(Vector2D.of(-1.5, -1)), TEST_EPS);
+        Assertions.assertEquals(0.0, line.distance(Vector2D.of(0.5, 3)), TEST_EPS);
 
         final double d = Math.sin(Math.atan2(2, 1));
 
-        Assert.assertEquals(d, line.distance(Vector2D.ZERO), TEST_EPS);
-        Assert.assertEquals(d, line.distance(Vector2D.of(-1, 2)), TEST_EPS);
+        Assertions.assertEquals(d, line.distance(Vector2D.ZERO), TEST_EPS);
+        Assertions.assertEquals(d, line.distance(Vector2D.of(-1, 2)), TEST_EPS);
 
-        Assert.assertEquals(d, reversed.distance(Vector2D.ZERO), TEST_EPS);
-        Assert.assertEquals(d, reversed.distance(Vector2D.of(-1, 2)), TEST_EPS);
+        Assertions.assertEquals(d, reversed.distance(Vector2D.ZERO), TEST_EPS);
+        Assertions.assertEquals(d, reversed.distance(Vector2D.of(-1, 2)), TEST_EPS);
     }
 
     @Test
@@ -975,7 +975,7 @@ public class LineTest {
 
             // arrange
             final Vector2D vec = lineOrigin.vectorTo(pt).reject(line.getDirection());
-            Assert.assertEquals(vec.norm(), dist, TEST_EPS);
+            Assertions.assertEquals(vec.norm(), dist, TEST_EPS);
         });
     }
 
@@ -989,16 +989,16 @@ public class LineTest {
         final Line d = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(a.isParallel(a));
+        Assertions.assertTrue(a.isParallel(a));
 
-        Assert.assertTrue(a.isParallel(b));
-        Assert.assertTrue(b.isParallel(a));
+        Assertions.assertTrue(a.isParallel(b));
+        Assertions.assertTrue(b.isParallel(a));
 
-        Assert.assertTrue(a.isParallel(c));
-        Assert.assertTrue(c.isParallel(a));
+        Assertions.assertTrue(a.isParallel(c));
+        Assertions.assertTrue(c.isParallel(a));
 
-        Assert.assertFalse(a.isParallel(d));
-        Assert.assertFalse(d.isParallel(a));
+        Assertions.assertFalse(a.isParallel(d));
+        Assertions.assertFalse(d.isParallel(a));
     }
 
     @Test
@@ -1013,8 +1013,8 @@ public class LineTest {
         final Line line = Lines.fromPointAndAngle(p1, 0.0, precision);
 
         // act/assert
-        Assert.assertTrue(line.isParallel(Lines.fromPointAndAngle(p2, 1e-4, precision)));
-        Assert.assertFalse(line.isParallel(Lines.fromPointAndAngle(p2, 1e-2, precision)));
+        Assertions.assertTrue(line.isParallel(Lines.fromPointAndAngle(p2, 1e-4, precision)));
+        Assertions.assertFalse(line.isParallel(Lines.fromPointAndAngle(p2, 1e-2, precision)));
     }
 
     @Test
@@ -1034,7 +1034,7 @@ public class LineTest {
         final Line diagonal = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
         // act/assert
-        Assert.assertSame(TEST_PRECISION, horizontal.transform(scale).getPrecision());
+        Assertions.assertSame(TEST_PRECISION, horizontal.transform(scale).getPrecision());
 
         checkLine(horizontal.transform(scale), Vector2D.of(0, 3), Vector2D.Unit.PLUS_X);
         checkLine(vertical.transform(scale), Vector2D.of(2, 0), Vector2D.Unit.PLUS_Y);
@@ -1142,19 +1142,19 @@ public class LineTest {
         final Line f = Lines.fromPointAndAngle(p, angle + 1e-4, precision);
 
         // act/assert
-        Assert.assertTrue(a.eq(a, precision));
+        Assertions.assertTrue(a.eq(a, precision));
 
-        Assert.assertTrue(a.eq(d, precision));
-        Assert.assertTrue(d.eq(a, precision));
+        Assertions.assertTrue(a.eq(d, precision));
+        Assertions.assertTrue(d.eq(a, precision));
 
-        Assert.assertTrue(a.eq(e, precision));
-        Assert.assertTrue(e.eq(a, precision));
+        Assertions.assertTrue(a.eq(e, precision));
+        Assertions.assertTrue(e.eq(a, precision));
 
-        Assert.assertTrue(a.eq(f, precision));
-        Assert.assertTrue(f.eq(a, precision));
+        Assertions.assertTrue(a.eq(f, precision));
+        Assertions.assertTrue(f.eq(a, precision));
 
-        Assert.assertFalse(a.eq(b, precision));
-        Assert.assertFalse(a.eq(c, precision));
+        Assertions.assertFalse(a.eq(b, precision));
+        Assertions.assertFalse(a.eq(c, precision));
     }
 
     @Test
@@ -1175,12 +1175,12 @@ public class LineTest {
         // act/assert
         final int aHash = a.hashCode();
 
-        Assert.assertEquals(aHash, a.hashCode());
-        Assert.assertEquals(aHash, e.hashCode());
+        Assertions.assertEquals(aHash, a.hashCode());
+        Assertions.assertEquals(aHash, e.hashCode());
 
-        Assert.assertNotEquals(aHash, b.hashCode());
-        Assert.assertNotEquals(aHash, c.hashCode());
-        Assert.assertNotEquals(aHash, d.hashCode());
+        Assertions.assertNotEquals(aHash, b.hashCode());
+        Assertions.assertNotEquals(aHash, c.hashCode());
+        Assertions.assertNotEquals(aHash, d.hashCode());
     }
 
     @Test
@@ -1200,12 +1200,12 @@ public class LineTest {
 
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
-        Assert.assertEquals(a, e);
-        Assert.assertEquals(e, a);
+        Assertions.assertEquals(a, e);
+        Assertions.assertEquals(e, a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-        Assert.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
     }
 
     @Test
@@ -1217,9 +1217,9 @@ public class LineTest {
         final String str = line.toString();
 
         // assert
-        Assert.assertTrue(str.contains("Line"));
-        Assert.assertTrue(str.contains("origin= (0.0, 0.0)"));
-        Assert.assertTrue(str.contains("direction= (1.0, 0.0)"));
+        Assertions.assertTrue(str.contains("Line"));
+        Assertions.assertTrue(str.contains("origin= (0.0, 0.0)"));
+        Assertions.assertTrue(str.contains("direction= (1.0, 0.0)"));
     }
 
     /**

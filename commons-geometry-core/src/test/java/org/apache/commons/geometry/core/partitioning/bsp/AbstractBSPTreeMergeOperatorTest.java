@@ -23,8 +23,8 @@ import org.apache.commons.geometry.core.partitioning.test.AttributeBSPTree.Attri
 import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AbstractBSPTreeMergeOperatorTest {
 
@@ -45,20 +45,20 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(1, a.count());
-        Assert.assertEquals(1, b.count());
-        Assert.assertEquals(1, c.count());
+        Assertions.assertEquals(1, a.count());
+        Assertions.assertEquals(1, b.count());
+        Assertions.assertEquals(1, c.count());
 
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -85,20 +85,20 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(3, a.count());
-        Assert.assertEquals(1, b.count());
-        Assert.assertEquals(3, c.count());
+        Assertions.assertEquals(3, a.count());
+        Assertions.assertEquals(1, b.count());
+        Assertions.assertEquals(3, c.count());
 
-        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("Ba", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("Ba", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("BA", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("BA", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("Ba", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("Ba", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("BA", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("BA", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -125,20 +125,20 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(1, a.count());
-        Assert.assertEquals(3, b.count());
-        Assert.assertEquals(3, c.count());
+        Assertions.assertEquals(1, a.count());
+        Assertions.assertEquals(3, b.count());
+        Assertions.assertEquals(3, c.count());
 
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("b", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -168,20 +168,20 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(3, a.count());
-        Assert.assertEquals(3, b.count());
-        Assert.assertEquals(7, c.count());
+        Assertions.assertEquals(3, a.count());
+        Assertions.assertEquals(3, b.count());
+        Assertions.assertEquals(7, c.count());
 
-        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(1, 0)).getAttribute());
-        Assert.assertEquals("b", b.findNode(new TestPoint2D(-1, 0)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(1, 0)).getAttribute());
+        Assertions.assertEquals("b", b.findNode(new TestPoint2D(-1, 0)).getAttribute());
 
-        Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -211,20 +211,20 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(3, a.count());
-        Assert.assertEquals(3, b.count());
-        Assert.assertEquals(3, c.count());
+        Assertions.assertEquals(3, a.count());
+        Assertions.assertEquals(3, b.count());
+        Assertions.assertEquals(3, c.count());
 
-        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("b", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -254,20 +254,20 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(3, a.count());
-        Assert.assertEquals(3, b.count());
-        Assert.assertEquals(3, c.count());
+        Assertions.assertEquals(3, a.count());
+        Assertions.assertEquals(3, b.count());
+        Assertions.assertEquals(3, c.count());
 
-        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("b", b.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -297,23 +297,23 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(3, a.count());
-        Assert.assertEquals(3, b.count());
-        Assert.assertEquals(5, c.count());
+        Assertions.assertEquals(3, a.count());
+        Assertions.assertEquals(3, b.count());
+        Assertions.assertEquals(5, c.count());
 
-        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, -1)).getAttribute());
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -3)).getAttribute());
+        Assertions.assertEquals("b", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, -3)).getAttribute());
 
-        Assert.assertEquals("ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -3)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -3)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(-1, -3)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(1, -3)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -343,23 +343,23 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(3, a.count());
-        Assert.assertEquals(3, b.count());
-        Assert.assertEquals(5, c.count());
+        Assertions.assertEquals(3, a.count());
+        Assertions.assertEquals(3, b.count());
+        Assertions.assertEquals(5, c.count());
 
-        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
-        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, -3)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("b", b.findNode(new TestPoint2D(0, -3)).getAttribute());
 
-        Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -3)).getAttribute());
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -3)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -3)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(1, -3)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -389,23 +389,23 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(3, a.count());
-        Assert.assertEquals(3, b.count());
-        Assert.assertEquals(5, c.count());
+        Assertions.assertEquals(3, a.count());
+        Assertions.assertEquals(3, b.count());
+        Assertions.assertEquals(5, c.count());
 
-        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, 3)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("b", b.findNode(new TestPoint2D(0, 3)).getAttribute());
 
-        Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
-        Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 3)).getAttribute());
-        Assert.assertEquals("ab", c.findNode(new TestPoint2D(1, 3)).getAttribute());
+        Assertions.assertEquals("ab", c.findNode(new TestPoint2D(-1, 3)).getAttribute());
+        Assertions.assertEquals("ab", c.findNode(new TestPoint2D(1, 3)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -435,23 +435,23 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, c);
 
         // assert
-        Assert.assertEquals(3, a.count());
-        Assert.assertEquals(3, b.count());
-        Assert.assertEquals(5, c.count());
+        Assertions.assertEquals(3, a.count());
+        Assertions.assertEquals(3, b.count());
+        Assertions.assertEquals(5, c.count());
 
-        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 3)).getAttribute());
+        Assertions.assertEquals("b", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(0, 3)).getAttribute());
 
-        Assert.assertEquals("ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
 
-        Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 3)).getAttribute());
-        Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 3)).getAttribute());
+        Assertions.assertEquals("aB", c.findNode(new TestPoint2D(-1, 3)).getAttribute());
+        Assertions.assertEquals("aB", c.findNode(new TestPoint2D(1, 3)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -479,16 +479,16 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, a);
 
         // assert
-        Assert.assertEquals(7, a.count());
-        Assert.assertEquals(3, b.count());
+        Assertions.assertEquals(7, a.count());
+        Assertions.assertEquals(3, b.count());
 
-        Assert.assertEquals("B", b.findNode(new TestPoint2D(1, 0)).getAttribute());
-        Assert.assertEquals("b", b.findNode(new TestPoint2D(-1, 0)).getAttribute());
+        Assertions.assertEquals("B", b.findNode(new TestPoint2D(1, 0)).getAttribute());
+        Assertions.assertEquals("b", b.findNode(new TestPoint2D(-1, 0)).getAttribute());
 
-        Assert.assertEquals("aB", a.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("ab", a.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("Ab", a.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("AB", a.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("aB", a.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("ab", a.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("Ab", a.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("AB", a.findNode(new TestPoint2D(1, -1)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);
@@ -515,16 +515,16 @@ public class AbstractBSPTreeMergeOperatorTest {
         mergeOp.apply(a, b, b);
 
         // assert
-        Assert.assertEquals(3, a.count());
-        Assert.assertEquals(7, b.count());
+        Assertions.assertEquals(3, a.count());
+        Assertions.assertEquals(7, b.count());
 
-        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
-        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assertions.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assertions.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
 
-        Assert.assertEquals("aB", b.findNode(new TestPoint2D(1, 1)).getAttribute());
-        Assert.assertEquals("ab", b.findNode(new TestPoint2D(-1, 1)).getAttribute());
-        Assert.assertEquals("Ab", b.findNode(new TestPoint2D(-1, -1)).getAttribute());
-        Assert.assertEquals("AB", b.findNode(new TestPoint2D(1, -1)).getAttribute());
+        Assertions.assertEquals("aB", b.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assertions.assertEquals("ab", b.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assertions.assertEquals("Ab", b.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assertions.assertEquals("AB", b.findNode(new TestPoint2D(1, -1)).getAttribute());
 
         PartitionTestUtils.assertTreeStructure(a);
         PartitionTestUtils.assertTreeStructure(b);

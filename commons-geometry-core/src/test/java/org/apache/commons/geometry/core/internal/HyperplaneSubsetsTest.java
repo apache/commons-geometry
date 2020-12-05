@@ -24,8 +24,8 @@ import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint1D;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HyperplaneSubsetsTest {
 
@@ -36,16 +36,16 @@ public class HyperplaneSubsetsTest {
         final StubRegion1D region = new StubRegion1D();
 
         // act/assert
-        Assert.assertEquals(RegionLocation.INSIDE,
+        Assertions.assertEquals(RegionLocation.INSIDE,
                 HyperplaneSubsets.classifyAgainstEmbeddedRegion(new TestPoint2D(-1, 0), line, region));
-        Assert.assertEquals(RegionLocation.BOUNDARY,
+        Assertions.assertEquals(RegionLocation.BOUNDARY,
                 HyperplaneSubsets.classifyAgainstEmbeddedRegion(new TestPoint2D(0, 0), line, region));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE,
+        Assertions.assertEquals(RegionLocation.OUTSIDE,
                 HyperplaneSubsets.classifyAgainstEmbeddedRegion(new TestPoint2D(0, 1), line, region));
-        Assert.assertEquals(RegionLocation.OUTSIDE,
+        Assertions.assertEquals(RegionLocation.OUTSIDE,
                 HyperplaneSubsets.classifyAgainstEmbeddedRegion(new TestPoint2D(-1, 1), line, region));
-        Assert.assertEquals(RegionLocation.OUTSIDE,
+        Assertions.assertEquals(RegionLocation.OUTSIDE,
                 HyperplaneSubsets.classifyAgainstEmbeddedRegion(new TestPoint2D(-1, -1), line, region));
     }
 
@@ -74,7 +74,7 @@ public class HyperplaneSubsetsTest {
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(-1, 0),
                 HyperplaneSubsets.closestToEmbeddedRegion(new TestPoint2D(-1, -1), line, region));
 
-        Assert.assertNull(HyperplaneSubsets.closestToEmbeddedRegion(TestPoint2D.ZERO, line, emptyRegion));
+        Assertions.assertNull(HyperplaneSubsets.closestToEmbeddedRegion(TestPoint2D.ZERO, line, emptyRegion));
     }
 
     /** Stub region implementation. Negative numbers are on the inside of the region.

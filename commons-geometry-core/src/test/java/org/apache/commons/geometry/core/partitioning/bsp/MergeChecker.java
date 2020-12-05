@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /** Helper class with a fluent API used to construct assert conditions on tree merge operations.
  */
@@ -193,26 +193,26 @@ class MergeChecker {
         PartitionTestUtils.assertTreeStructure(result);
 
         // check full/empty status
-        Assert.assertEquals("Unexpected tree 'full' property", expectedFull, result.isFull());
-        Assert.assertEquals("Unexpected tree 'empty' property", expectedEmpty, result.isEmpty());
+        Assertions.assertEquals(expectedFull, result.isFull(), "Unexpected tree 'full' property");
+        Assertions.assertEquals(expectedEmpty, result.isEmpty(), "Unexpected tree 'empty' property");
 
         // check the node count
         if (expectedCount > -1) {
-            Assert.assertEquals("Unexpected node count", expectedCount, result.count());
+            Assertions.assertEquals(expectedCount, result.count(), "Unexpected node count");
         }
 
         // check in place or not
         if (inPlace) {
-            Assert.assertSame("Expected merge operation to be in place", tree1, result);
+            Assertions.assertSame(tree1, result, "Expected merge operation to be in place");
         } else {
-            Assert.assertNotSame("Expected merge operation to return a new instance", tree1, result);
+            Assertions.assertNotSame(tree1, result, "Expected merge operation to return a new instance");
 
             // make sure that tree1 wasn't modified
-            Assert.assertEquals("Tree 1 node count should not have changed", tree1BeforeCount, tree1.count());
+            Assertions.assertEquals(tree1BeforeCount, tree1.count(), "Tree 1 node count should not have changed");
         }
 
         // make sure that tree2 wasn't modified
-        Assert.assertEquals("Tree 2 node count should not have changed", tree2BeforeCount, tree2.count());
+        Assertions.assertEquals(tree2BeforeCount, tree2.count(), "Tree 2 node count should not have changed");
 
         // check region point locations
         PartitionTestUtils.assertPointLocations(result, RegionLocation.INSIDE, insidePoints);

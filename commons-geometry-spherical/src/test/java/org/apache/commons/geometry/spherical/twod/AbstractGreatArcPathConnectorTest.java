@@ -25,8 +25,8 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AbstractGreatArcPathConnectorTest {
 
@@ -49,7 +49,7 @@ public class AbstractGreatArcPathConnectorTest {
         final List<GreatArcPath> paths = connector.connectAll(Collections.emptyList());
 
         // assert
-        Assert.assertEquals(0, paths.size());
+        Assertions.assertEquals(0, paths.size());
     }
 
     @Test
@@ -59,11 +59,11 @@ public class AbstractGreatArcPathConnectorTest {
         final List<GreatArcPath> paths = connector.connectAll();
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final GreatArcPath a = paths.get(0);
-        Assert.assertEquals(1, a.getArcs().size());
-        Assert.assertSame(XY_PLANE, a.getStartArc().getCircle());
+        Assertions.assertEquals(1, a.getArcs().size());
+        Assertions.assertSame(XY_PLANE, a.getStartArc().getCircle());
     }
 
     @Test
@@ -73,15 +73,15 @@ public class AbstractGreatArcPathConnectorTest {
         final List<GreatArcPath> paths = connector.connectAll(Collections.singletonList(XY_PLANE.span()));
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         final GreatArcPath a = paths.get(0);
-        Assert.assertEquals(1, a.getArcs().size());
-        Assert.assertSame(XY_PLANE, a.getStartArc().getCircle());
+        Assertions.assertEquals(1, a.getArcs().size());
+        Assertions.assertSame(XY_PLANE, a.getStartArc().getCircle());
 
         final GreatArcPath b = paths.get(1);
-        Assert.assertEquals(1, b.getArcs().size());
-        Assert.assertSame(XZ_PLANE, b.getStartArc().getCircle());
+        Assertions.assertEquals(1, b.getArcs().size());
+        Assertions.assertSame(XZ_PLANE, b.getStartArc().getCircle());
     }
 
     @Test
@@ -97,12 +97,12 @@ public class AbstractGreatArcPathConnectorTest {
         final List<GreatArcPath> paths = connector.connectAll();
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final GreatArcPath a = paths.get(0);
-        Assert.assertEquals(2, a.getArcs().size());
-        Assert.assertSame(XY_PLANE, a.getStartArc().getCircle());
-        Assert.assertSame(upperBound, a.getEndArc().getCircle());
+        Assertions.assertEquals(2, a.getArcs().size());
+        Assertions.assertSame(XY_PLANE, a.getStartArc().getCircle());
+        Assertions.assertSame(upperBound, a.getEndArc().getCircle());
     }
 
     @Test
@@ -118,15 +118,15 @@ public class AbstractGreatArcPathConnectorTest {
         final List<GreatArcPath> paths = connector.connectAll();
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         final GreatArcPath a = paths.get(0);
-        Assert.assertEquals(1, a.getArcs().size());
-        Assert.assertSame(XY_PLANE, a.getStartArc().getCircle());
+        Assertions.assertEquals(1, a.getArcs().size());
+        Assertions.assertSame(XY_PLANE, a.getStartArc().getCircle());
 
         final GreatArcPath b = paths.get(1);
-        Assert.assertEquals(1, b.getArcs().size());
-        Assert.assertSame(upperBound, b.getStartArc().getCircle());
+        Assertions.assertEquals(1, b.getArcs().size());
+        Assertions.assertSame(upperBound, b.getStartArc().getCircle());
     }
 
     @Test
@@ -144,10 +144,10 @@ public class AbstractGreatArcPathConnectorTest {
                 ));
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final GreatArcPath a = paths.get(0);
-        Assert.assertEquals(3, a.getArcs().size());
+        Assertions.assertEquals(3, a.getArcs().size());
 
         assertPathPoints(a, p3, p1, p2, p3);
     }
@@ -186,20 +186,20 @@ public class AbstractGreatArcPathConnectorTest {
                 ));
 
         // assert
-        Assert.assertEquals(3, paths.size());
+        Assertions.assertEquals(3, paths.size());
 
         final GreatArcPath triangle = paths.get(0);
-        Assert.assertEquals(3, triangle.getArcs().size());
+        Assertions.assertEquals(3, triangle.getArcs().size());
         assertPathPoints(triangle, p1, p2, p3, p1);
 
         final GreatArcPath lune = paths.get(1);
-        Assert.assertEquals(2, lune.getArcs().size());
-        Assert.assertSame(luneEdge1, lune.getStartArc());
-        Assert.assertSame(luneEdge2, lune.getEndArc());
+        Assertions.assertEquals(2, lune.getArcs().size());
+        Assertions.assertSame(luneEdge1, lune.getStartArc());
+        Assertions.assertSame(luneEdge2, lune.getEndArc());
 
         final GreatArcPath separate = paths.get(2);
-        Assert.assertEquals(1, separate.getArcs().size());
-        Assert.assertSame(separateArc, separate.getStartArc());
+        Assertions.assertEquals(1, separate.getArcs().size());
+        Assertions.assertSame(separateArc, separate.getStartArc());
     }
 
     @Test
@@ -220,14 +220,14 @@ public class AbstractGreatArcPathConnectorTest {
         final List<GreatArcPath> paths = connector.connectAll();
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         final GreatArcPath a = paths.get(0);
-        Assert.assertEquals(2, a.getArcs().size());
+        Assertions.assertEquals(2, a.getArcs().size());
         assertPathPoints(a, p1, p2, p4);
 
         final GreatArcPath b = paths.get(1);
-        Assert.assertEquals(1, b.getArcs().size());
+        Assertions.assertEquals(1, b.getArcs().size());
         assertPathPoints(b, p2, p3);
     }
 
@@ -249,14 +249,14 @@ public class AbstractGreatArcPathConnectorTest {
         final List<GreatArcPath> paths = connector.connectAll();
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         final GreatArcPath a = paths.get(0);
-        Assert.assertEquals(2, a.getArcs().size());
+        Assertions.assertEquals(2, a.getArcs().size());
         assertPathPoints(a, Point2S.PLUS_I, Point2S.PLUS_J, Point2S.MINUS_I);
 
         final GreatArcPath b = paths.get(1);
-        Assert.assertEquals(1, b.getArcs().size());
+        Assertions.assertEquals(1, b.getArcs().size());
         assertPathPoints(b, Point2S.PLUS_J, Point2S.PLUS_K);
     }
 
@@ -271,10 +271,10 @@ public class AbstractGreatArcPathConnectorTest {
         final List<GreatArcPath> path2 = connector.connectAll(Collections.singletonList(b));
 
         // assert
-        Assert.assertEquals(1, path1.size());
+        Assertions.assertEquals(1, path1.size());
         assertPathPoints(path1.get(0), Point2S.PLUS_I, Point2S.PLUS_J);
 
-        Assert.assertEquals(1, path2.size());
+        Assertions.assertEquals(1, path2.size());
         assertPathPoints(path2.get(0), Point2S.MINUS_I, Point2S.MINUS_J);
     }
 
@@ -283,7 +283,7 @@ public class AbstractGreatArcPathConnectorTest {
         final List<Point2S> actualPoints = path.getVertices();
 
         final String msg = "Expected path points to equal " + expectedPoints + " but was " + actualPoints;
-        Assert.assertEquals(msg, expectedPoints.size(), actualPoints.size());
+        Assertions.assertEquals(expectedPoints.size(), actualPoints.size(), msg);
 
         for (int i = 0; i < expectedPoints.size(); ++i) {
             SphericalTestUtils.assertPointsEq(expectedPoints.get(i), actualPoints.get(i), TEST_EPS);

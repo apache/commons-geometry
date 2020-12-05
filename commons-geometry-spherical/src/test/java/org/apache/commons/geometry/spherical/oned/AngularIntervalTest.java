@@ -26,8 +26,8 @@ import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AngularIntervalTest {
 
@@ -251,8 +251,8 @@ public class AngularIntervalTest {
         final AngularInterval interval = AngularInterval.full();
 
         // act/assert
-        Assert.assertNull(interval.project(Point1S.ZERO));
-        Assert.assertNull(interval.project(Point1S.PI));
+        Assertions.assertNull(interval.project(Point1S.ZERO));
+        Assertions.assertNull(interval.project(Point1S.PI));
     }
 
     @Test
@@ -261,16 +261,16 @@ public class AngularIntervalTest {
         final AngularInterval interval = AngularInterval.of(1, 2, TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(1, interval.project(Point1S.ZERO).getAzimuth(), TEST_EPS);
-        Assert.assertEquals(1, interval.project(Point1S.of(1)).getAzimuth(), TEST_EPS);
-        Assert.assertEquals(1, interval.project(Point1S.of(1.5)).getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(1, interval.project(Point1S.ZERO).getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(1, interval.project(Point1S.of(1)).getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(1, interval.project(Point1S.of(1.5)).getAzimuth(), TEST_EPS);
 
-        Assert.assertEquals(2, interval.project(Point1S.of(2)).getAzimuth(), TEST_EPS);
-        Assert.assertEquals(2, interval.project(Point1S.PI).getAzimuth(), TEST_EPS);
-        Assert.assertEquals(2, interval.project(Point1S.of(1.4 + PlaneAngleRadians.PI)).getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(2, interval.project(Point1S.of(2)).getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(2, interval.project(Point1S.PI).getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(2, interval.project(Point1S.of(1.4 + PlaneAngleRadians.PI)).getAzimuth(), TEST_EPS);
 
-        Assert.assertEquals(1, interval.project(Point1S.of(1.5 + PlaneAngleRadians.PI)).getAzimuth(), TEST_EPS);
-        Assert.assertEquals(1, interval.project(Point1S.of(1.6 + PlaneAngleRadians.PI)).getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(1, interval.project(Point1S.of(1.5 + PlaneAngleRadians.PI)).getAzimuth(), TEST_EPS);
+        Assertions.assertEquals(1, interval.project(Point1S.of(1.6 + PlaneAngleRadians.PI)).getAzimuth(), TEST_EPS);
     }
 
     @Test
@@ -302,15 +302,15 @@ public class AngularIntervalTest {
     @Test
     public void testWrapsZero() {
         // act/assert
-        Assert.assertFalse(AngularInterval.full().wrapsZero());
-        Assert.assertFalse(AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).wrapsZero());
-        Assert.assertFalse(AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
-        Assert.assertFalse(AngularInterval.of(PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
-        Assert.assertFalse(AngularInterval.of(1.5 * PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI - 1e-5, TEST_PRECISION).wrapsZero());
+        Assertions.assertFalse(AngularInterval.full().wrapsZero());
+        Assertions.assertFalse(AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).wrapsZero());
+        Assertions.assertFalse(AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
+        Assertions.assertFalse(AngularInterval.of(PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
+        Assertions.assertFalse(AngularInterval.of(1.5 * PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI - 1e-5, TEST_PRECISION).wrapsZero());
 
-        Assert.assertTrue(AngularInterval.of(1.5 * PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI, TEST_PRECISION).wrapsZero());
-        Assert.assertTrue(AngularInterval.of(1.5 * PlaneAngleRadians.PI, 2.5 * PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
-        Assert.assertTrue(AngularInterval.of(-2.5 * PlaneAngleRadians.PI, -1.5 * PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
+        Assertions.assertTrue(AngularInterval.of(1.5 * PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI, TEST_PRECISION).wrapsZero());
+        Assertions.assertTrue(AngularInterval.of(1.5 * PlaneAngleRadians.PI, 2.5 * PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
+        Assertions.assertTrue(AngularInterval.of(-2.5 * PlaneAngleRadians.PI, -1.5 * PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
     }
 
     @Test
@@ -322,8 +322,8 @@ public class AngularIntervalTest {
         final RegionBSPTree1S tree = interval.toTree();
 
         // assert
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertTrue(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         checkClassify(tree, RegionLocation.INSIDE,
                 Point1S.ZERO, Point1S.of(PlaneAngleRadians.PI_OVER_TWO),
@@ -339,8 +339,8 @@ public class AngularIntervalTest {
         final RegionBSPTree1S tree = interval.toTree();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         checkClassify(tree, RegionLocation.BOUNDARY,
                 Point1S.ZERO, Point1S.PI);
@@ -363,8 +363,8 @@ public class AngularIntervalTest {
         final RegionBSPTree1S tree = interval.toTree();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         checkClassify(tree, RegionLocation.BOUNDARY,
                 Point1S.of(PlaneAngleRadians.PI_OVER_TWO), Point1S.PI);
@@ -387,8 +387,8 @@ public class AngularIntervalTest {
         final RegionBSPTree1S tree = interval.toTree();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         checkClassify(tree, RegionLocation.BOUNDARY,
                 Point1S.of(PlaneAngleRadians.PI_OVER_TWO), Point1S.PI);
@@ -411,7 +411,7 @@ public class AngularIntervalTest {
         final List<AngularInterval.Convex> result = interval.toConvex();
 
         // assert
-        Assert.assertEquals(1, result.size());
+        Assertions.assertEquals(1, result.size());
         checkInterval(interval, 0, PlaneAngleRadians.PI_OVER_TWO);
     }
 
@@ -424,7 +424,7 @@ public class AngularIntervalTest {
         final List<AngularInterval.Convex> result = interval.toConvex();
 
         // assert
-        Assert.assertEquals(1, result.size());
+        Assertions.assertEquals(1, result.size());
         checkInterval(interval, PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI);
     }
 
@@ -437,7 +437,7 @@ public class AngularIntervalTest {
         final List<AngularInterval.Convex> result = interval.toConvex();
 
         // assert
-        Assert.assertEquals(2, result.size());
+        Assertions.assertEquals(2, result.size());
         checkInterval(result.get(0), PlaneAngleRadians.PI, 1.75 * PlaneAngleRadians.PI);
         checkInterval(result.get(1), 1.75 * PlaneAngleRadians.PI, 2.5 * PlaneAngleRadians.PI);
     }
@@ -451,7 +451,7 @@ public class AngularIntervalTest {
         final List<AngularInterval.Convex> result = interval.toConvex();
 
         // assert
-        Assert.assertEquals(2, result.size());
+        Assertions.assertEquals(2, result.size());
         checkInterval(result.get(0), 1.25 * PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI);
         checkInterval(result.get(1), PlaneAngleRadians.TWO_PI, 2.75 * PlaneAngleRadians.PI);
     }
@@ -466,7 +466,7 @@ public class AngularIntervalTest {
         final Split<RegionBSPTree1S> split = interval.split(pt);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final RegionBSPTree1S minus = split.getMinus();
         checkClassify(minus, RegionLocation.BOUNDARY, Point1S.of(PlaneAngleRadians.PI_OVER_TWO));
@@ -493,7 +493,7 @@ public class AngularIntervalTest {
         final Split<RegionBSPTree1S> split = interval.split(cut);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final RegionBSPTree1S minus = split.getMinus();
         checkClassify(minus, RegionLocation.BOUNDARY, Point1S.of(PlaneAngleRadians.PI), cut.getPoint());
@@ -519,9 +519,9 @@ public class AngularIntervalTest {
         final String str = interval.toString();
 
         // assert
-        Assert.assertTrue(str.contains("AngularInterval"));
-        Assert.assertTrue(str.contains("min= 1.0"));
-        Assert.assertTrue(str.contains("max= 2.0"));
+        Assertions.assertTrue(str.contains("AngularInterval"));
+        Assertions.assertTrue(str.contains("min= 1.0"));
+        Assertions.assertTrue(str.contains("max= 2.0"));
     }
 
     @Test
@@ -658,12 +658,12 @@ public class AngularIntervalTest {
 
         // act/assert
         result = full.toConvex();
-        Assert.assertEquals(1, result.size());
-        Assert.assertSame(full, result.get(0));
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertSame(full, result.get(0));
 
         result = interval.toConvex();
-        Assert.assertEquals(1, result.size());
-        Assert.assertSame(interval, result.get(0));
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertSame(interval, result.get(0));
     }
 
     @Test
@@ -676,7 +676,7 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = full.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), 1.5 * PlaneAngleRadians.PI, 2.5 * PlaneAngleRadians.PI);
         checkInterval(split.getPlus(), 0.5 * PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI);
@@ -692,7 +692,7 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = full.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), 0, PlaneAngleRadians.PI);
         checkInterval(split.getPlus(), PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI);
@@ -708,10 +708,10 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(interval, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(interval, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -724,10 +724,10 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(interval, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(interval, split.getPlus());
     }
 
     @Test
@@ -740,7 +740,7 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI);
         checkInterval(split.getPlus(), PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI);
@@ -756,7 +756,7 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI);
         checkInterval(split.getPlus(), PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI);
@@ -772,7 +772,7 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI);
         checkInterval(split.getPlus(), PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI);
@@ -788,7 +788,7 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI);
         checkInterval(split.getPlus(), PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI);
@@ -804,10 +804,10 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(interval, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(interval, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -820,10 +820,10 @@ public class AngularIntervalTest {
         final Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(interval, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(interval, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -840,44 +840,44 @@ public class AngularIntervalTest {
     }
 
     private static void checkFull(final AngularInterval interval) {
-        Assert.assertTrue(interval.isFull());
-        Assert.assertFalse(interval.isEmpty());
+        Assertions.assertTrue(interval.isFull());
+        Assertions.assertFalse(interval.isEmpty());
 
-        Assert.assertNull(interval.getMinBoundary());
-        Assert.assertEquals(0, interval.getMin(), TEST_EPS);
-        Assert.assertNull(interval.getMaxBoundary());
-        Assert.assertEquals(PlaneAngleRadians.TWO_PI, interval.getMax(), TEST_EPS);
+        Assertions.assertNull(interval.getMinBoundary());
+        Assertions.assertEquals(0, interval.getMin(), TEST_EPS);
+        Assertions.assertNull(interval.getMaxBoundary());
+        Assertions.assertEquals(PlaneAngleRadians.TWO_PI, interval.getMax(), TEST_EPS);
 
-        Assert.assertNull(interval.getCentroid());
-        Assert.assertNull(interval.getMidPoint());
+        Assertions.assertNull(interval.getCentroid());
+        Assertions.assertNull(interval.getMidPoint());
 
-        Assert.assertEquals(PlaneAngleRadians.TWO_PI, interval.getSize(), TEST_EPS);
-        Assert.assertEquals(0, interval.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(PlaneAngleRadians.TWO_PI, interval.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, interval.getBoundarySize(), TEST_EPS);
 
         checkClassify(interval, RegionLocation.INSIDE, Point1S.ZERO, Point1S.of(PlaneAngleRadians.PI));
     }
 
     private static void checkInterval(final AngularInterval interval, final double min, final double max) {
 
-        Assert.assertFalse(interval.isFull());
-        Assert.assertFalse(interval.isEmpty());
+        Assertions.assertFalse(interval.isFull());
+        Assertions.assertFalse(interval.isEmpty());
 
         final CutAngle minBoundary = interval.getMinBoundary();
-        Assert.assertEquals(min, minBoundary.getAzimuth(), TEST_EPS);
-        Assert.assertFalse(minBoundary.isPositiveFacing());
+        Assertions.assertEquals(min, minBoundary.getAzimuth(), TEST_EPS);
+        Assertions.assertFalse(minBoundary.isPositiveFacing());
 
         final CutAngle maxBoundary = interval.getMaxBoundary();
-        Assert.assertEquals(max, maxBoundary.getAzimuth(), TEST_EPS);
-        Assert.assertTrue(maxBoundary.isPositiveFacing());
+        Assertions.assertEquals(max, maxBoundary.getAzimuth(), TEST_EPS);
+        Assertions.assertTrue(maxBoundary.isPositiveFacing());
 
-        Assert.assertEquals(min, interval.getMin(), TEST_EPS);
-        Assert.assertEquals(max, interval.getMax(), TEST_EPS);
+        Assertions.assertEquals(min, interval.getMin(), TEST_EPS);
+        Assertions.assertEquals(max, interval.getMax(), TEST_EPS);
 
-        Assert.assertEquals(0.5 * (max + min), interval.getMidPoint().getAzimuth(), TEST_EPS);
-        Assert.assertSame(interval.getMidPoint(), interval.getCentroid());
+        Assertions.assertEquals(0.5 * (max + min), interval.getMidPoint().getAzimuth(), TEST_EPS);
+        Assertions.assertSame(interval.getMidPoint(), interval.getCentroid());
 
-        Assert.assertEquals(0, interval.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(max - min, interval.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, interval.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(max - min, interval.getSize(), TEST_EPS);
 
         checkClassify(interval, RegionLocation.INSIDE, interval.getMidPoint());
         checkClassify(interval, RegionLocation.BOUNDARY,
@@ -887,7 +887,7 @@ public class AngularIntervalTest {
 
     private static void checkClassify(final Region<Point1S> region, final RegionLocation loc, final Point1S... pts) {
         for (final Point1S pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
+            Assertions.assertEquals(loc, region.classify(pt), "Unexpected location for point " + pt);
         }
     }
 }

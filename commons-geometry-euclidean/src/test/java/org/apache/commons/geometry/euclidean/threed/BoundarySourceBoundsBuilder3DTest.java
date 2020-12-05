@@ -22,8 +22,8 @@ import java.util.Arrays;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class BoundarySourceBoundsBuilder3DTest {
 
@@ -42,7 +42,7 @@ public class BoundarySourceBoundsBuilder3DTest {
         final Bounds3D b = builder.getBounds(src);
 
         // assert
-        Assert.assertNull(b);
+        Assertions.assertNull(b);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class BoundarySourceBoundsBuilder3DTest {
         // assert
         checkBounds(b, Vector3D.of(1, 0, 1), Vector3D.of(3, 4, 5));
         for (final Vector3D pt : poly.getVertices()) {
-            Assert.assertTrue(b.contains(pt));
+            Assertions.assertTrue(b.contains(pt));
         }
     }
 
@@ -95,7 +95,7 @@ public class BoundarySourceBoundsBuilder3DTest {
 
         src.boundaryStream().forEach(boundary -> {
             for (final Vector3D pt : boundary.getVertices()) {
-                Assert.assertTrue(b.contains(pt));
+                Assertions.assertTrue(b.contains(pt));
             }
         });
     }
@@ -112,7 +112,7 @@ public class BoundarySourceBoundsBuilder3DTest {
         final Bounds3D b = builder.getBounds(src);
 
         // assert
-        Assert.assertNull(b);
+        Assertions.assertNull(b);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class BoundarySourceBoundsBuilder3DTest {
         final Bounds3D b = builder.getBounds(src);
 
         // assert
-        Assert.assertNull(b);
+        Assertions.assertNull(b);
     }
 
     private static void checkBounds(final Bounds3D b, final Vector3D min, final Vector3D max) {

@@ -35,8 +35,8 @@ import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.geometry.euclidean.threed.shape.Sphere;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class OBJWriterTest {
 
@@ -52,8 +52,8 @@ public class OBJWriterTest {
 
         // act/assert
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
-            Assert.assertEquals("\n", meshWriter.getLineSeparator());
-            Assert.assertEquals(6, meshWriter.getDecimalFormat().getMaximumFractionDigits());
+            Assertions.assertEquals("\n", meshWriter.getLineSeparator());
+            Assertions.assertEquals(6, meshWriter.getDecimalFormat().getMaximumFractionDigits());
         }
     }
 
@@ -84,7 +84,7 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
             "# line 1\r\n" +
             "# line 2\r\n" +
             "v 0 0 0\r\n", writer.getBuffer().toString());
@@ -103,7 +103,7 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals("v 01.0 02.0 03.0\n", writer.getBuffer().toString());
+        Assertions.assertEquals("v 01.0 02.0 03.0\n", writer.getBuffer().toString());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
             "# test\n" +
             "#  a\n" +
             "#  multi-line\n" +
@@ -136,7 +136,7 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals("o test-object\n", writer.getBuffer().toString());
+        Assertions.assertEquals("o test-object\n", writer.getBuffer().toString());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals("g test-group\n", writer.getBuffer().toString());
+        Assertions.assertEquals("g test-group\n", writer.getBuffer().toString());
     }
 
     @Test
@@ -169,9 +169,9 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals(1, index1);
-        Assert.assertEquals(2, index2);
-        Assert.assertEquals(
+        Assertions.assertEquals(1, index1);
+        Assertions.assertEquals(2, index2);
+        Assertions.assertEquals(
             "v 1.1 2.1 3\n" +
             "v 0.1 10 12\n", writer.getBuffer().toString());
     }
@@ -193,7 +193,7 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
             "v 0 0 0\n" +
             "v 1 0 0\n" +
             "v 1 1 0\n" +
@@ -233,7 +233,7 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
             "v 0 0 0\n" +
             "v 1 0 0\n" +
             "v 0 1 0\n" +
@@ -258,7 +258,7 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
             "v 0 0 0\n" +
             "v 1 0 0\n" +
             "v 0 1 0\n" +
@@ -283,7 +283,7 @@ public class OBJWriterTest {
         }
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
             "v 0 0 0\n" +
             "v 1 0 0\n" +
             "v 0 1 0\n" +

@@ -28,8 +28,8 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.sampling.UnitSphereSampler;
 import org.apache.commons.rng.simple.RandomSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class WelzlEncloser3DTest {
 
@@ -75,7 +75,7 @@ public class WelzlEncloser3DTest {
         final EnclosingBall<Vector3D> ball = encloser.enclose(list);
 
         // assert
-        Assert.assertTrue(ball.getRadius() > 0);
+        Assertions.assertTrue(ball.getRadius() > 0);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class WelzlEncloser3DTest {
         final EnclosingBall<Vector3D> ball = encloser.enclose(list);
 
         // assert
-        Assert.assertTrue(ball.getRadius() > 0);
+        Assertions.assertTrue(ball.getRadius() > 0);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class WelzlEncloser3DTest {
         final EnclosingBall<Vector3D> sphere = checkSphere(points);
 
         // compare computed sphere with bounding sphere
-        Assert.assertTrue(sphere.getRadius() <= refRadius);
+        Assertions.assertTrue(sphere.getRadius() <= refRadius);
 
         // check removing any point of the support Sphere fails to enclose the point
         for (int i = 0; i < sphere.getSupportSize(); ++i) {
@@ -160,7 +160,7 @@ public class WelzlEncloser3DTest {
                     foundOutside = true;
                 }
             }
-            Assert.assertTrue(foundOutside);
+            Assertions.assertTrue(foundOutside);
         }
     }
 
@@ -170,7 +170,7 @@ public class WelzlEncloser3DTest {
 
         // all points are enclosed
         for (final Vector3D v : points) {
-            Assert.assertTrue(sphere.contains(v, TEST_PRECISION));
+            Assertions.assertTrue(sphere.contains(v, TEST_PRECISION));
         }
 
         // all support points are on the boundary
@@ -178,7 +178,7 @@ public class WelzlEncloser3DTest {
         final double radius = sphere.getRadius();
 
         for (final Vector3D s : sphere.getSupport()) {
-            Assert.assertTrue(TEST_PRECISION.eqZero(center.distance(s) - radius));
+            Assertions.assertTrue(TEST_PRECISION.eqZero(center.distance(s) - radius));
         }
 
         return sphere;

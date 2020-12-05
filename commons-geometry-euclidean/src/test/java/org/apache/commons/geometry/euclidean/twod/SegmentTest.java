@@ -24,8 +24,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SegmentTest {
 
@@ -44,19 +44,19 @@ public class SegmentTest {
         final Segment seg = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
 
         // assert
-        Assert.assertFalse(seg.isFull());
-        Assert.assertFalse(seg.isEmpty());
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isFull());
+        Assertions.assertFalse(seg.isEmpty());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(p1, seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(p2, seg.getEndPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), seg.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(2, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSize(), TEST_EPS);
     }
 
     @Test
@@ -87,19 +87,19 @@ public class SegmentTest {
         final Segment seg = Lines.segmentFromPoints(line, p2, p1); // reverse location order
 
         // assert
-        Assert.assertFalse(seg.isFull());
-        Assert.assertFalse(seg.isEmpty());
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isFull());
+        Assertions.assertFalse(seg.isEmpty());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 3), seg.getEndPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2.5), seg.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(1, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, seg.getSize(), TEST_EPS);
     }
 
     @Test
@@ -113,19 +113,19 @@ public class SegmentTest {
         final Segment seg = Lines.segmentFromPoints(line, p1, p1);
 
         // assert
-        Assert.assertFalse(seg.isFull());
-        Assert.assertFalse(seg.isEmpty());
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isFull());
+        Assertions.assertFalse(seg.isEmpty());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getEndPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(0, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, seg.getSize(), TEST_EPS);
     }
 
     @Test
@@ -163,19 +163,19 @@ public class SegmentTest {
         final Segment seg = Lines.segmentFromLocations(line, -1, 2);
 
         // assert
-        Assert.assertFalse(seg.isFull());
-        Assert.assertFalse(seg.isEmpty());
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isFull());
+        Assertions.assertFalse(seg.isEmpty());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, -1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 2), seg.getEndPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 0.5), seg.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(3, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(3, seg.getSize(), TEST_EPS);
     }
 
     @Test
@@ -187,19 +187,19 @@ public class SegmentTest {
         final Segment seg = Lines.segmentFromLocations(line, 2, -1);
 
         // assert
-        Assert.assertFalse(seg.isFull());
-        Assert.assertFalse(seg.isEmpty());
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isFull());
+        Assertions.assertFalse(seg.isEmpty());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, -1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 2), seg.getEndPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 0.5), seg.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(3, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(3, seg.getSize(), TEST_EPS);
     }
 
     @Test
@@ -211,19 +211,19 @@ public class SegmentTest {
         final Segment seg = Lines.segmentFromLocations(line, 1, 1);
 
         // assert
-        Assert.assertFalse(seg.isFull());
-        Assert.assertFalse(seg.isEmpty());
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isFull());
+        Assertions.assertFalse(seg.isEmpty());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getEndPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(1, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(1, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(0, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, seg.getSize(), TEST_EPS);
     }
 
     @Test
@@ -309,10 +309,10 @@ public class SegmentTest {
             final Segment rev = seg.reverse();
 
             // assert
-            Assert.assertEquals(seg.getSize(), rev.getSize(), TEST_EPS);
+            Assertions.assertEquals(seg.getSize(), rev.getSize(), TEST_EPS);
 
             EuclideanTestUtils.assertCoordinatesEqual(seg.getLine().getOrigin(), rev.getLine().getOrigin(), TEST_EPS);
-            Assert.assertEquals(-1, seg.getLine().getDirection().dot(rev.getLine().getDirection()), TEST_EPS);
+            Assertions.assertEquals(-1, seg.getLine().getDirection().dot(rev.getLine().getDirection()), TEST_EPS);
 
             EuclideanTestUtils.assertCoordinatesEqual(seg.getEndPoint(), rev.getStartPoint(), TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(seg.getStartPoint(), rev.getEndPoint(), TEST_EPS);
@@ -445,10 +445,10 @@ public class SegmentTest {
         final Split<LineConvexSubset> split = seg.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -460,10 +460,10 @@ public class SegmentTest {
         final Interval interval = seg.getInterval();
 
         // assert
-        Assert.assertEquals(-1, interval.getMin(), TEST_EPS);
-        Assert.assertEquals(2, interval.getMax(), TEST_EPS);
+        Assertions.assertEquals(-1, interval.getMin(), TEST_EPS);
+        Assertions.assertEquals(2, interval.getMax(), TEST_EPS);
 
-        Assert.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
+        Assertions.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
     }
 
     @Test
@@ -476,11 +476,11 @@ public class SegmentTest {
         final Interval interval = seg.getInterval();
 
         // assert
-        Assert.assertEquals(1, interval.getMin(), TEST_EPS);
-        Assert.assertEquals(1, interval.getMax(), TEST_EPS);
-        Assert.assertEquals(0, interval.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, interval.getMin(), TEST_EPS);
+        Assertions.assertEquals(1, interval.getMax(), TEST_EPS);
+        Assertions.assertEquals(0, interval.getSize(), TEST_EPS);
 
-        Assert.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
+        Assertions.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
     }
 
     @Test
@@ -504,7 +504,7 @@ public class SegmentTest {
             EuclideanTestUtils.assertCoordinatesEqual(minusStart, minus.getStartPoint(), TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(minusEnd, minus.getEndPoint(), TEST_EPS);
         } else {
-            Assert.assertNull(minus);
+            Assertions.assertNull(minus);
         }
 
         final Segment plus = (Segment) split.getPlus();
@@ -512,7 +512,7 @@ public class SegmentTest {
             EuclideanTestUtils.assertCoordinatesEqual(plusStart, plus.getStartPoint(), TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(plusEnd, plus.getEndPoint(), TEST_EPS);
         } else {
-            Assert.assertNull(plus);
+            Assertions.assertNull(plus);
         }
     }
 }

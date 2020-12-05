@@ -38,8 +38,8 @@ import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
 import org.apache.commons.geometry.core.partitioning.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AbstractBSPTreeTest {
 
@@ -51,14 +51,14 @@ public class AbstractBSPTreeTest {
         // assert
         final TestNode root = tree.getRoot();
 
-        Assert.assertNotNull(root);
-        Assert.assertNull(root.getParent());
+        Assertions.assertNotNull(root);
+        Assertions.assertNull(root.getParent());
 
         PartitionTestUtils.assertIsLeafNode(root);
-        Assert.assertFalse(root.isPlus());
-        Assert.assertFalse(root.isMinus());
+        Assertions.assertFalse(root.isPlus());
+        Assertions.assertFalse(root.isMinus());
 
-        Assert.assertSame(tree, root.getTree());
+        Assertions.assertSame(tree, root.getTree());
     }
 
     @Test
@@ -73,20 +73,20 @@ public class AbstractBSPTreeTest {
         final TestNode minus = root.getMinus();
 
         // act/assert
-        Assert.assertFalse(root.isLeaf());
-        Assert.assertTrue(root.isInternal());
-        Assert.assertFalse(root.isPlus());
-        Assert.assertFalse(root.isMinus());
+        Assertions.assertFalse(root.isLeaf());
+        Assertions.assertTrue(root.isInternal());
+        Assertions.assertFalse(root.isPlus());
+        Assertions.assertFalse(root.isMinus());
 
-        Assert.assertTrue(plus.isLeaf());
-        Assert.assertFalse(plus.isInternal());
-        Assert.assertTrue(plus.isPlus());
-        Assert.assertFalse(plus.isMinus());
+        Assertions.assertTrue(plus.isLeaf());
+        Assertions.assertFalse(plus.isInternal());
+        Assertions.assertTrue(plus.isPlus());
+        Assertions.assertFalse(plus.isMinus());
 
-        Assert.assertTrue(minus.isLeaf());
-        Assert.assertFalse(minus.isInternal());
-        Assert.assertFalse(minus.isPlus());
-        Assert.assertTrue(minus.isMinus());
+        Assertions.assertTrue(minus.isLeaf());
+        Assertions.assertFalse(minus.isInternal());
+        Assertions.assertFalse(minus.isPlus());
+        Assertions.assertTrue(minus.isMinus());
     }
 
     @Test
@@ -99,12 +99,12 @@ public class AbstractBSPTreeTest {
         final boolean result = tree.getRoot().insertCut(line);
 
         // assert
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
         final TestNode root = tree.getRoot();
         PartitionTestUtils.assertIsInternalNode(root);
 
-        Assert.assertSame(line, root.getCut().getHyperplane());
+        Assertions.assertSame(line, root.getCut().getHyperplane());
 
         PartitionTestUtils.assertIsLeafNode(root.getMinus());
         PartitionTestUtils.assertIsLeafNode(root.getPlus());
@@ -125,7 +125,7 @@ public class AbstractBSPTreeTest {
         final boolean result = node.insertCut(new TestLine(0.5, 1.5, 1.5, 0.5));
 
         // assert
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
         PartitionTestUtils.assertIsInternalNode(node);
 
         final TestLineSegment segment = (TestLineSegment) node.getCut();
@@ -149,7 +149,7 @@ public class AbstractBSPTreeTest {
         final boolean result = node.insertCut(new TestLine(-2, 0, 0, -2));
 
         // assert
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
         PartitionTestUtils.assertIsLeafNode(node);
     }
 
@@ -166,7 +166,7 @@ public class AbstractBSPTreeTest {
         final boolean result = node.insertCut(new TestLine(0, -1, 1, -1));
 
         // assert
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
         PartitionTestUtils.assertIsLeafNode(node);
     }
 
@@ -186,7 +186,7 @@ public class AbstractBSPTreeTest {
         final boolean result = node.insertCut(new TestLine(-2, 0, 0, -2));
 
         // assert
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
         PartitionTestUtils.assertIsLeafNode(node);
     }
 
@@ -206,7 +206,7 @@ public class AbstractBSPTreeTest {
         final boolean result = node.insertCut(new TestLine(0, 2, 0, 3));
 
         // assert
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
         PartitionTestUtils.assertIsLeafNode(node);
     }
 
@@ -226,7 +226,7 @@ public class AbstractBSPTreeTest {
         final boolean result = node.insertCut(new TestLine(0, 3, 0, 2));
 
         // assert
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
         PartitionTestUtils.assertIsInternalNode(node);
     }
 
@@ -243,11 +243,11 @@ public class AbstractBSPTreeTest {
         final boolean result = node.insertCut(new TestLine(0, 0, -1, 0));
 
         // assert
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
-        Assert.assertSame(tree.getRoot().getPlus(), tree.findNode(new TestPoint2D(0, -1e-2)));
-        Assert.assertSame(node.getMinus(), tree.findNode(new TestPoint2D(0, 0)));
-        Assert.assertSame(node.getPlus(), tree.findNode(new TestPoint2D(0, 1e-2)));
+        Assertions.assertSame(tree.getRoot().getPlus(), tree.findNode(new TestPoint2D(0, -1e-2)));
+        Assertions.assertSame(node.getMinus(), tree.findNode(new TestPoint2D(0, 0)));
+        Assertions.assertSame(node.getPlus(), tree.findNode(new TestPoint2D(0, 1e-2)));
     }
 
     @Test
@@ -264,10 +264,10 @@ public class AbstractBSPTreeTest {
         final boolean result = node.clearCut();
 
         // assert
-        Assert.assertTrue(result);
-        Assert.assertTrue(node.isLeaf());
-        Assert.assertNull(node.getPlus());
-        Assert.assertNull(node.getMinus());
+        Assertions.assertTrue(result);
+        Assertions.assertTrue(node.isLeaf());
+        Assertions.assertNull(node.getPlus());
+        Assertions.assertNull(node.getMinus());
     }
 
     @Test
@@ -285,10 +285,10 @@ public class AbstractBSPTreeTest {
         final boolean result = node.clearCut();
 
         // assert
-        Assert.assertFalse(result);
-        Assert.assertTrue(node.isLeaf());
-        Assert.assertNull(node.getPlus());
-        Assert.assertNull(node.getMinus());
+        Assertions.assertFalse(result);
+        Assertions.assertTrue(node.isLeaf());
+        Assertions.assertNull(node.getPlus());
+        Assertions.assertNull(node.getMinus());
     }
 
     @Test
@@ -306,12 +306,12 @@ public class AbstractBSPTreeTest {
         final boolean result = tree.getRoot().clearCut();
 
         // assert
-        Assert.assertTrue(result);
-        Assert.assertTrue(node.isLeaf());
-        Assert.assertNull(node.getPlus());
-        Assert.assertNull(node.getMinus());
+        Assertions.assertTrue(result);
+        Assertions.assertTrue(node.isLeaf());
+        Assertions.assertNull(node.getPlus());
+        Assertions.assertNull(node.getMinus());
 
-        Assert.assertEquals(1, tree.count());
+        Assertions.assertEquals(1, tree.count());
     }
 
     @Test
@@ -324,12 +324,12 @@ public class AbstractBSPTreeTest {
         final boolean result = node.clearCut();
 
         // assert
-        Assert.assertFalse(result);
-        Assert.assertTrue(node.isLeaf());
-        Assert.assertNull(node.getPlus());
-        Assert.assertNull(node.getMinus());
+        Assertions.assertFalse(result);
+        Assertions.assertTrue(node.isLeaf());
+        Assertions.assertNull(node.getPlus());
+        Assertions.assertNull(node.getMinus());
 
-        Assert.assertEquals(1, tree.count());
+        Assertions.assertEquals(1, tree.count());
     }
 
     @Test
@@ -352,19 +352,19 @@ public class AbstractBSPTreeTest {
 
         // act/assert
         for (final TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt));
+            Assertions.assertSame(root, tree.findNode(pt));
         }
 
         for (final TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt, FindNodeCutRule.NODE));
+            Assertions.assertSame(root, tree.findNode(pt, FindNodeCutRule.NODE));
         }
 
         for (final TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt, FindNodeCutRule.MINUS));
+            Assertions.assertSame(root, tree.findNode(pt, FindNodeCutRule.MINUS));
         }
 
         for (final TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt, FindNodeCutRule.PLUS));
+            Assertions.assertSame(root, tree.findNode(pt, FindNodeCutRule.PLUS));
         }
     }
 
@@ -391,19 +391,19 @@ public class AbstractBSPTreeTest {
         final TestNode aboveDiagonal = diagonalCut.getMinus();
 
         // act/assert
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 0)));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 0)));
 
-        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(1, 0)));
-        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(1, 1)));
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 1)));
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1)));
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 0)));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1)));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1)));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1)));
+        Assertions.assertSame(underDiagonal, tree.findNode(new TestPoint2D(1, 0)));
+        Assertions.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(1, 1)));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 1)));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1)));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 0)));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1)));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1)));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1)));
 
-        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5)));
-        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3)));
+        Assertions.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5)));
+        Assertions.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3)));
     }
 
     @Test
@@ -431,19 +431,19 @@ public class AbstractBSPTreeTest {
         final FindNodeCutRule cutBehavior = FindNodeCutRule.NODE;
 
         // act/assert
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
+        Assertions.assertSame(root, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
 
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(1, 0), cutBehavior));
-        Assert.assertSame(diagonalCut, tree.findNode(new TestPoint2D(1, 1), cutBehavior));
-        Assert.assertSame(yCut, tree.findNode(new TestPoint2D(0, 1), cutBehavior));
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1), cutBehavior));
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(-1, 0), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1), cutBehavior));
+        Assertions.assertSame(root, tree.findNode(new TestPoint2D(1, 0), cutBehavior));
+        Assertions.assertSame(diagonalCut, tree.findNode(new TestPoint2D(1, 1), cutBehavior));
+        Assertions.assertSame(yCut, tree.findNode(new TestPoint2D(0, 1), cutBehavior));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1), cutBehavior));
+        Assertions.assertSame(root, tree.findNode(new TestPoint2D(-1, 0), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1), cutBehavior));
 
-        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5), cutBehavior));
-        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3), cutBehavior));
+        Assertions.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5), cutBehavior));
+        Assertions.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3), cutBehavior));
     }
 
     @Test
@@ -471,19 +471,19 @@ public class AbstractBSPTreeTest {
         final FindNodeCutRule cutBehavior = FindNodeCutRule.MINUS;
 
         // act/assert
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
 
-        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(1, 0), cutBehavior));
-        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(1, 1), cutBehavior));
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 1), cutBehavior));
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1), cutBehavior));
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 0), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1), cutBehavior));
+        Assertions.assertSame(underDiagonal, tree.findNode(new TestPoint2D(1, 0), cutBehavior));
+        Assertions.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(1, 1), cutBehavior));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 1), cutBehavior));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1), cutBehavior));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 0), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1), cutBehavior));
 
-        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5), cutBehavior));
-        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3), cutBehavior));
+        Assertions.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5), cutBehavior));
+        Assertions.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3), cutBehavior));
     }
 
     @Test
@@ -511,19 +511,19 @@ public class AbstractBSPTreeTest {
         final FindNodeCutRule cutBehavior = FindNodeCutRule.PLUS;
 
         // act/assert
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
 
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, 0), cutBehavior));
-        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(1, 1), cutBehavior));
-        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0, 1), cutBehavior));
-        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, 0), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1), cutBehavior));
-        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(1, 0), cutBehavior));
+        Assertions.assertSame(underDiagonal, tree.findNode(new TestPoint2D(1, 1), cutBehavior));
+        Assertions.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0, 1), cutBehavior));
+        Assertions.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(-1, 0), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1), cutBehavior));
+        Assertions.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1), cutBehavior));
 
-        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5), cutBehavior));
-        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3), cutBehavior));
+        Assertions.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5), cutBehavior));
+        Assertions.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3), cutBehavior));
     }
 
     @Test
@@ -536,9 +536,9 @@ public class AbstractBSPTreeTest {
 
         // assert
         final TestNode root = tree.getRoot();
-        Assert.assertFalse(root.isLeaf());
-        Assert.assertTrue(root.getMinus().isLeaf());
-        Assert.assertTrue(root.getPlus().isLeaf());
+        Assertions.assertFalse(root.isLeaf());
+        Assertions.assertTrue(root.getMinus().isLeaf());
+        Assertions.assertTrue(root.getPlus().isLeaf());
 
         final TestLineSegment seg = (TestLineSegment) root.getCut();
         PartitionTestUtils.assertPointsEqual(
@@ -563,7 +563,7 @@ public class AbstractBSPTreeTest {
 
         // assert
         final TestNode root = tree.getRoot();
-        Assert.assertFalse(root.isLeaf());
+        Assertions.assertFalse(root.isLeaf());
 
         final TestNode node = tree.findNode(new TestPoint2D(0.5, 0.5));
         final TestLineSegment seg = (TestLineSegment) node.getParent().getCut();
@@ -571,8 +571,8 @@ public class AbstractBSPTreeTest {
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), seg.getStartPoint());
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(2, 0), seg.getEndPoint());
 
-        Assert.assertTrue(tree.getRoot().getPlus().isLeaf());
-        Assert.assertTrue(tree.getRoot().getMinus().getMinus().isLeaf());
+        Assertions.assertTrue(tree.getRoot().getPlus().isLeaf());
+        Assertions.assertTrue(tree.getRoot().getMinus().getMinus().isLeaf());
     }
 
     @Test
@@ -589,7 +589,7 @@ public class AbstractBSPTreeTest {
 
         // assert
         final TestNode root = tree.getRoot();
-        Assert.assertFalse(root.isLeaf());
+        Assertions.assertFalse(root.isLeaf());
 
         final TestNode plusXPlusY = tree.getRoot().getMinus().getPlus();
         final TestLineSegment plusXPlusYSeg = (TestLineSegment) plusXPlusY.getCut();
@@ -627,7 +627,7 @@ public class AbstractBSPTreeTest {
         // assert
         final List<TestLineSegment> segments = getLineSegments(tree);
 
-        Assert.assertEquals(3, segments.size());
+        Assertions.assertEquals(3, segments.size());
 
         PartitionTestUtils.assertSegmentsEqual(
                 new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
@@ -655,7 +655,7 @@ public class AbstractBSPTreeTest {
         // assert
         final List<TestLineSegment> segments = getLineSegments(tree);
 
-        Assert.assertEquals(5, segments.size());
+        Assertions.assertEquals(5, segments.size());
 
         PartitionTestUtils.assertSegmentsEqual(
                 new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, new TestLine(-1, -1, 1, -1)),
@@ -695,7 +695,7 @@ public class AbstractBSPTreeTest {
         // assert
         final List<TestLineSegment> segments = getLineSegments(tree);
 
-        Assert.assertEquals(5, segments.size());
+        Assertions.assertEquals(5, segments.size());
 
         PartitionTestUtils.assertSegmentsEqual(
                 new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, new TestLine(-1, -1, 1, -1)),
@@ -734,7 +734,7 @@ public class AbstractBSPTreeTest {
         // assert
         final List<TestLineSegment> segments = getLineSegments(tree);
 
-        Assert.assertEquals(5, segments.size());
+        Assertions.assertEquals(5, segments.size());
 
         PartitionTestUtils.assertSegmentsEqual(
                 new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, new TestLine(-1, -1, 1, -1)),
@@ -765,7 +765,7 @@ public class AbstractBSPTreeTest {
         tree.insert(src);
 
         // assert
-        Assert.assertEquals(1, tree.count());
+        Assertions.assertEquals(1, tree.count());
     }
 
     @Test
@@ -774,28 +774,28 @@ public class AbstractBSPTreeTest {
         final TestBSPTree tree = new TestBSPTree();
 
         // act/assert
-        Assert.assertEquals(1, tree.count());
-        Assert.assertEquals(1, tree.getRoot().count());
+        Assertions.assertEquals(1, tree.count());
+        Assertions.assertEquals(1, tree.getRoot().count());
 
         tree.getRoot().insertCut(TestLine.X_AXIS);
-        Assert.assertEquals(1, tree.getRoot().getMinus().count());
-        Assert.assertEquals(1, tree.getRoot().getPlus().count());
-        Assert.assertEquals(3, tree.count());
+        Assertions.assertEquals(1, tree.getRoot().getMinus().count());
+        Assertions.assertEquals(1, tree.getRoot().getPlus().count());
+        Assertions.assertEquals(3, tree.count());
 
         tree.getRoot().getPlus().insertCut(TestLine.Y_AXIS);
-        Assert.assertEquals(1, tree.getRoot().getMinus().count());
-        Assert.assertEquals(3, tree.getRoot().getPlus().count());
-        Assert.assertEquals(5, tree.count());
+        Assertions.assertEquals(1, tree.getRoot().getMinus().count());
+        Assertions.assertEquals(3, tree.getRoot().getPlus().count());
+        Assertions.assertEquals(5, tree.count());
 
         tree.getRoot().getMinus().insertCut(TestLine.Y_AXIS);
-        Assert.assertEquals(3, tree.getRoot().getMinus().count());
-        Assert.assertEquals(3, tree.getRoot().getPlus().count());
-        Assert.assertEquals(7, tree.count());
+        Assertions.assertEquals(3, tree.getRoot().getMinus().count());
+        Assertions.assertEquals(3, tree.getRoot().getPlus().count());
+        Assertions.assertEquals(7, tree.count());
 
         tree.getRoot().getMinus().insertCut(new TestLine(new TestPoint2D(-1, -1), new TestPoint2D(1, -1)));
-        Assert.assertEquals(1, tree.getRoot().getMinus().count());
-        Assert.assertEquals(3, tree.getRoot().getPlus().count());
-        Assert.assertEquals(5, tree.count());
+        Assertions.assertEquals(1, tree.getRoot().getMinus().count());
+        Assertions.assertEquals(3, tree.getRoot().getPlus().count());
+        Assertions.assertEquals(5, tree.count());
     }
 
     @Test
@@ -804,35 +804,35 @@ public class AbstractBSPTreeTest {
         final TestBSPTree tree = new TestBSPTree();
 
         // act/assert
-        Assert.assertEquals(0, tree.height());
-        Assert.assertEquals(0, tree.getRoot().height());
+        Assertions.assertEquals(0, tree.height());
+        Assertions.assertEquals(0, tree.getRoot().height());
 
         tree.getRoot().insertCut(TestLine.X_AXIS);
-        Assert.assertEquals(0, tree.getRoot().getMinus().height());
-        Assert.assertEquals(0, tree.getRoot().getPlus().height());
-        Assert.assertEquals(1, tree.height());
+        Assertions.assertEquals(0, tree.getRoot().getMinus().height());
+        Assertions.assertEquals(0, tree.getRoot().getPlus().height());
+        Assertions.assertEquals(1, tree.height());
 
         tree.getRoot().getPlus().insertCut(TestLine.Y_AXIS);
-        Assert.assertEquals(0, tree.getRoot().getMinus().height());
-        Assert.assertEquals(1, tree.getRoot().getPlus().height());
-        Assert.assertEquals(2, tree.height());
+        Assertions.assertEquals(0, tree.getRoot().getMinus().height());
+        Assertions.assertEquals(1, tree.getRoot().getPlus().height());
+        Assertions.assertEquals(2, tree.height());
 
         tree.getRoot().getMinus().insertCut(TestLine.Y_AXIS);
-        Assert.assertEquals(1, tree.getRoot().getMinus().height());
-        Assert.assertEquals(1, tree.getRoot().getPlus().height());
-        Assert.assertEquals(2, tree.height());
+        Assertions.assertEquals(1, tree.getRoot().getMinus().height());
+        Assertions.assertEquals(1, tree.getRoot().getPlus().height());
+        Assertions.assertEquals(2, tree.height());
 
         tree.getRoot().getMinus().clearCut();
-        Assert.assertEquals(0, tree.getRoot().getMinus().height());
-        Assert.assertEquals(1, tree.getRoot().getPlus().height());
-        Assert.assertEquals(2, tree.height());
+        Assertions.assertEquals(0, tree.getRoot().getMinus().height());
+        Assertions.assertEquals(1, tree.getRoot().getPlus().height());
+        Assertions.assertEquals(2, tree.height());
 
         tree.getRoot().getPlus().getPlus()
             .insertCut(new TestLine(new TestPoint2D(0, -1), new TestPoint2D(1, -1)));
 
-        Assert.assertEquals(0, tree.getRoot().getMinus().height());
-        Assert.assertEquals(2, tree.getRoot().getPlus().height());
-        Assert.assertEquals(3, tree.height());
+        Assertions.assertEquals(0, tree.getRoot().getMinus().height());
+        Assertions.assertEquals(2, tree.getRoot().getPlus().height());
+        Assertions.assertEquals(3, tree.height());
     }
 
     @Test
@@ -846,13 +846,13 @@ public class AbstractBSPTreeTest {
                     .cut(TestLine.Y_AXIS);
 
         // act/assert
-        Assert.assertEquals(0, root.depth());
+        Assertions.assertEquals(0, root.depth());
 
-        Assert.assertEquals(1, root.getPlus().depth());
+        Assertions.assertEquals(1, root.getPlus().depth());
 
-        Assert.assertEquals(1, root.getMinus().depth());
-        Assert.assertEquals(2, root.getMinus().getPlus().depth());
-        Assert.assertEquals(2, root.getMinus().getMinus().depth());
+        Assertions.assertEquals(1, root.getMinus().depth());
+        Assertions.assertEquals(2, root.getMinus().getPlus().depth());
+        Assertions.assertEquals(2, root.getMinus().getMinus().depth());
     }
 
     @Test
@@ -877,7 +877,7 @@ public class AbstractBSPTreeTest {
         });
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(root, minus, minusMinus, minusPlus, plus),
                 nodes);
     }
@@ -898,37 +898,37 @@ public class AbstractBSPTreeTest {
         // act/assert
         final TestVisitor plusMinusNode = new TestVisitor(BSPTreeVisitor.Order.PLUS_MINUS_NODE);
         tree.accept(plusMinusNode);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(plus, minusPlus, minusMinus, minus, root),
                 plusMinusNode.getVisited());
 
         final TestVisitor plusNodeMinus = new TestVisitor(BSPTreeVisitor.Order.PLUS_NODE_MINUS);
         tree.accept(plusNodeMinus);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(plus, root, minusPlus, minus, minusMinus),
                 plusNodeMinus.getVisited());
 
         final TestVisitor minusPlusNode = new TestVisitor(BSPTreeVisitor.Order.MINUS_PLUS_NODE);
         tree.accept(minusPlusNode);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(minusMinus, minusPlus, minus, plus, root),
                 minusPlusNode.getVisited());
 
         final TestVisitor minusNodePlus = new TestVisitor(BSPTreeVisitor.Order.MINUS_NODE_PLUS);
         tree.accept(minusNodePlus);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(minusMinus, minus, minusPlus, root, plus),
                 minusNodePlus.getVisited());
 
         final TestVisitor nodeMinusPlus = new TestVisitor(BSPTreeVisitor.Order.NODE_MINUS_PLUS);
         tree.accept(nodeMinusPlus);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(root, minus, minusMinus, minusPlus, plus),
                 nodeMinusPlus.getVisited());
 
         final TestVisitor nodePlusMinus = new TestVisitor(BSPTreeVisitor.Order.NODE_PLUS_MINUS);
         tree.accept(nodePlusMinus);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(root, plus, minus, minusPlus, minusMinus),
                 nodePlusMinus.getVisited());
     }
@@ -958,7 +958,7 @@ public class AbstractBSPTreeTest {
         tree.accept(visitor);
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(root, plus),
                 visitor.getVisited());
     }
@@ -988,7 +988,7 @@ public class AbstractBSPTreeTest {
         tree.accept(visitor);
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(root, plus),
                 visitor.getVisited());
     }
@@ -1021,7 +1021,7 @@ public class AbstractBSPTreeTest {
         tree.accept(visitor);
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(minusMinus, minusPlus, minus),
                 visitor.getVisited());
     }
@@ -1054,7 +1054,7 @@ public class AbstractBSPTreeTest {
         tree.accept(visitor);
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(minusMinus, minusPlus, minus),
                 visitor.getVisited());
     }
@@ -1075,37 +1075,37 @@ public class AbstractBSPTreeTest {
         // act/assert
         final TestVisitor plusMinusNode = new TestVisitor(BSPTreeVisitor.Order.PLUS_MINUS_NODE).withTerminationNode(minus);
         tree.accept(plusMinusNode);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(plus, minusPlus, minusMinus, minus),
                 plusMinusNode.getVisited());
 
         final TestVisitor plusNodeMinus = new TestVisitor(BSPTreeVisitor.Order.PLUS_NODE_MINUS).withTerminationNode(minus);
         tree.accept(plusNodeMinus);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(plus, root, minusPlus, minus),
                 plusNodeMinus.getVisited());
 
         final TestVisitor minusPlusNode = new TestVisitor(BSPTreeVisitor.Order.MINUS_PLUS_NODE).withTerminationNode(minus);
         tree.accept(minusPlusNode);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(minusMinus, minusPlus, minus),
                 minusPlusNode.getVisited());
 
         final TestVisitor minusNodePlus = new TestVisitor(BSPTreeVisitor.Order.MINUS_NODE_PLUS).withTerminationNode(minus);
         tree.accept(minusNodePlus);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(minusMinus, minus),
                 minusNodePlus.getVisited());
 
         final TestVisitor nodeMinusPlus = new TestVisitor(BSPTreeVisitor.Order.NODE_MINUS_PLUS).withTerminationNode(minus);
         tree.accept(nodeMinusPlus);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(root, minus),
                 nodeMinusPlus.getVisited());
 
         final TestVisitor nodePlusMinus = new TestVisitor(BSPTreeVisitor.Order.NODE_PLUS_MINUS).withTerminationNode(minus);
         tree.accept(nodePlusMinus);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(root, plus, minus),
                 nodePlusMinus.getVisited());
     }
@@ -1131,7 +1131,7 @@ public class AbstractBSPTreeTest {
         });
 
         // assert
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 Arrays.asList(minus, minusMinus, minusPlus),
                 nodes);
     }
@@ -1148,8 +1148,8 @@ public class AbstractBSPTreeTest {
         }
 
         // assert
-        Assert.assertEquals(1, nodes.size());
-        Assert.assertSame(tree.getRoot(), nodes.get(0));
+        Assertions.assertEquals(1, nodes.size());
+        Assertions.assertSame(tree.getRoot(), nodes.get(0));
     }
 
     @Test
@@ -1173,16 +1173,16 @@ public class AbstractBSPTreeTest {
         }
 
         // assert
-        Assert.assertEquals(7, nodes.size());
-        Assert.assertSame(root, nodes.get(0));
+        Assertions.assertEquals(7, nodes.size());
+        Assertions.assertSame(root, nodes.get(0));
 
-        Assert.assertSame(root.getMinus(), nodes.get(1));
-        Assert.assertSame(root.getMinus().getMinus(), nodes.get(2));
-        Assert.assertSame(root.getMinus().getPlus(), nodes.get(3));
+        Assertions.assertSame(root.getMinus(), nodes.get(1));
+        Assertions.assertSame(root.getMinus().getMinus(), nodes.get(2));
+        Assertions.assertSame(root.getMinus().getPlus(), nodes.get(3));
 
-        Assert.assertSame(root.getPlus(), nodes.get(4));
-        Assert.assertSame(root.getPlus().getMinus(), nodes.get(5));
-        Assert.assertSame(root.getPlus().getPlus(), nodes.get(6));
+        Assertions.assertSame(root.getPlus(), nodes.get(4));
+        Assertions.assertSame(root.getPlus().getMinus(), nodes.get(5));
+        Assertions.assertSame(root.getPlus().getPlus(), nodes.get(6));
     }
 
 
@@ -1197,7 +1197,7 @@ public class AbstractBSPTreeTest {
         // act
         try {
             it.next();
-            Assert.fail("Operation should have thrown an exception");
+            Assertions.fail("Operation should have thrown an exception");
         } catch (final NoSuchElementException exc) {
             // expected
         }
@@ -1219,8 +1219,8 @@ public class AbstractBSPTreeTest {
         }
 
         // assert
-        Assert.assertEquals(1, nodes.size());
-        Assert.assertSame(node, nodes.get(0));
+        Assertions.assertEquals(1, nodes.size());
+        Assertions.assertSame(node, nodes.get(0));
     }
 
     @Test
@@ -1238,10 +1238,10 @@ public class AbstractBSPTreeTest {
         }
 
         // assert
-        Assert.assertEquals(3, nodes.size());
-        Assert.assertSame(node, nodes.get(0));
-        Assert.assertSame(node.getMinus(), nodes.get(1));
-        Assert.assertSame(node.getPlus(), nodes.get(2));
+        Assertions.assertEquals(3, nodes.size());
+        Assertions.assertSame(node, nodes.get(0));
+        Assertions.assertSame(node.getMinus(), nodes.get(1));
+        Assertions.assertSame(node.getPlus(), nodes.get(2));
     }
 
     @Test
@@ -1263,15 +1263,15 @@ public class AbstractBSPTreeTest {
         final TestLineSegment shortSeg = new TestLineSegment(new TestPoint2D(2, 0), new TestPoint2D(2, 2));
 
         // act/assert
-        Assert.assertSame(xAxisSeg, root.trim(xAxisSeg));
-        Assert.assertSame(shortSeg, root.trim(shortSeg));
+        Assertions.assertSame(xAxisSeg, root.trim(xAxisSeg));
+        Assertions.assertSame(shortSeg, root.trim(shortSeg));
 
         PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(0, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
                 (TestLineSegment) plus.trim(xAxisSeg));
-        Assert.assertSame(shortSeg, plus.trim(shortSeg));
+        Assertions.assertSame(shortSeg, plus.trim(shortSeg));
 
-        Assert.assertNull(plusMinus.trim(xAxisSeg));
-        Assert.assertNull(plusMinus.trim(shortSeg));
+        Assertions.assertNull(plusMinus.trim(xAxisSeg));
+        Assertions.assertNull(plusMinus.trim(shortSeg));
 
         PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(0, 3, TestLine.X_AXIS),
                 (TestLineSegment) plusPlusPlus.trim(xAxisSeg));
@@ -1289,10 +1289,10 @@ public class AbstractBSPTreeTest {
         copy.copy(tree);
 
         // assert
-        Assert.assertNotSame(tree, copy);
-        Assert.assertNotSame(tree.getRoot(), copy.getRoot());
+        Assertions.assertNotSame(tree, copy);
+        Assertions.assertNotSame(tree.getRoot(), copy.getRoot());
 
-        Assert.assertEquals(tree.count(), copy.count());
+        Assertions.assertEquals(tree.count(), copy.count());
     }
 
     @Test
@@ -1309,9 +1309,9 @@ public class AbstractBSPTreeTest {
         copy.copy(tree);
 
         // assert
-        Assert.assertNotSame(tree, copy);
+        Assertions.assertNotSame(tree, copy);
         assertNodesCopiedRecursive(tree.getRoot(), copy.getRoot());
-        Assert.assertEquals(tree.count(), copy.count());
+        Assertions.assertEquals(tree.count(), copy.count());
     }
 
     @Test
@@ -1329,8 +1329,8 @@ public class AbstractBSPTreeTest {
         tree.getRoot().clearCut();
 
         // assert
-        Assert.assertEquals(1, tree.count());
-        Assert.assertEquals(5, copy.count());
+        Assertions.assertEquals(1, tree.count());
+        Assertions.assertEquals(5, copy.count());
     }
 
     @Test
@@ -1346,7 +1346,7 @@ public class AbstractBSPTreeTest {
         tree.copy(tree);
 
         // assert
-        Assert.assertEquals(5, tree.count());
+        Assertions.assertEquals(5, tree.count());
     }
 
     @Test
@@ -1361,9 +1361,9 @@ public class AbstractBSPTreeTest {
         result.extract(tree.getRoot());
 
         // assert
-        Assert.assertNotSame(tree.getRoot(), result.getRoot());
-        Assert.assertEquals(1, tree.count());
-        Assert.assertEquals(1, result.count());
+        Assertions.assertNotSame(tree.getRoot(), result.getRoot());
+        Assertions.assertEquals(1, tree.count());
+        Assertions.assertEquals(1, result.count());
 
         PartitionTestUtils.assertTreeStructure(tree);
         PartitionTestUtils.assertTreeStructure(result);
@@ -1382,9 +1382,9 @@ public class AbstractBSPTreeTest {
         result.extract(tree.getRoot());
 
         // assert
-        Assert.assertNotSame(tree.getRoot(), result.getRoot());
-        Assert.assertEquals(1, tree.count());
-        Assert.assertEquals(1, result.count());
+        Assertions.assertNotSame(tree.getRoot(), result.getRoot());
+        Assertions.assertEquals(1, tree.count());
+        Assertions.assertEquals(1, result.count());
 
         PartitionTestUtils.assertTreeStructure(tree);
         PartitionTestUtils.assertTreeStructure(result);
@@ -1408,10 +1408,10 @@ public class AbstractBSPTreeTest {
         result.extract(tree.getRoot().getPlus());
 
         // assert
-        Assert.assertEquals(7, result.count());
+        Assertions.assertEquals(7, result.count());
 
         final List<TestLineSegment> resultSegments = getLineSegments(result);
-        Assert.assertEquals(3, resultSegments.size());
+        Assertions.assertEquals(3, resultSegments.size());
 
         PartitionTestUtils.assertSegmentsEqual(
                 new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
@@ -1423,10 +1423,10 @@ public class AbstractBSPTreeTest {
                 new TestLineSegment(0, Double.POSITIVE_INFINITY, new TestLine(new TestPoint2D(0, -2), new TestPoint2D(1, -2))),
                 resultSegments.get(2));
 
-        Assert.assertEquals(13, tree.count());
+        Assertions.assertEquals(13, tree.count());
 
         final List<TestLineSegment> inputSegment = getLineSegments(tree);
-        Assert.assertEquals(6, inputSegment.size());
+        Assertions.assertEquals(6, inputSegment.size());
 
         PartitionTestUtils.assertTreeStructure(tree);
         PartitionTestUtils.assertTreeStructure(result);
@@ -1454,13 +1454,13 @@ public class AbstractBSPTreeTest {
 
         // assert
         final TestNode resultNode = result.findNode(pt);
-        Assert.assertNotNull(resultNode);
-        Assert.assertNotSame(node, resultNode);
+        Assertions.assertNotNull(resultNode);
+        Assertions.assertNotSame(node, resultNode);
 
-        Assert.assertEquals(7, result.count());
+        Assertions.assertEquals(7, result.count());
 
         final List<TestLineSegment> resultSegments = getLineSegments(result);
-        Assert.assertEquals(3, resultSegments.size());
+        Assertions.assertEquals(3, resultSegments.size());
 
         PartitionTestUtils.assertSegmentsEqual(
                 new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
@@ -1472,10 +1472,10 @@ public class AbstractBSPTreeTest {
                 new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0)),
                 resultSegments.get(2));
 
-        Assert.assertEquals(13, tree.count());
+        Assertions.assertEquals(13, tree.count());
 
         final List<TestLineSegment> inputSegment = getLineSegments(tree);
-        Assert.assertEquals(6, inputSegment.size());
+        Assertions.assertEquals(6, inputSegment.size());
 
         PartitionTestUtils.assertTreeStructure(tree);
         PartitionTestUtils.assertTreeStructure(result);
@@ -1502,13 +1502,13 @@ public class AbstractBSPTreeTest {
 
         // assert
         final TestNode resultNode = tree.findNode(pt);
-        Assert.assertNotNull(resultNode);
-        Assert.assertSame(node, resultNode);
+        Assertions.assertNotNull(resultNode);
+        Assertions.assertSame(node, resultNode);
 
-        Assert.assertEquals(7, tree.count());
+        Assertions.assertEquals(7, tree.count());
 
         final List<TestLineSegment> resultSegments = getLineSegments(tree);
-        Assert.assertEquals(3, resultSegments.size());
+        Assertions.assertEquals(3, resultSegments.size());
 
         PartitionTestUtils.assertSegmentsEqual(
                 new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
@@ -1534,8 +1534,8 @@ public class AbstractBSPTreeTest {
         tree.transform(t);
 
         // assert
-        Assert.assertEquals(1, tree.count());
-        Assert.assertTrue(tree.getRoot().isLeaf());
+        Assertions.assertEquals(1, tree.count());
+        Assertions.assertTrue(tree.getRoot().isLeaf());
     }
 
     @Test
@@ -1550,10 +1550,10 @@ public class AbstractBSPTreeTest {
         tree.transform(t);
 
         // assert
-        Assert.assertEquals(3, tree.count());
+        Assertions.assertEquals(3, tree.count());
 
         final List<TestLineSegment> segments = getLineSegments(tree);
-        Assert.assertEquals(1, segments.size());
+        Assertions.assertEquals(1, segments.size());
 
         final TestLineSegment seg = segments.get(0);
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, 2), seg.getStartPoint());
@@ -1576,10 +1576,10 @@ public class AbstractBSPTreeTest {
         tree.transform(t);
 
         // assert
-        Assert.assertEquals(9, tree.count());
+        Assertions.assertEquals(9, tree.count());
 
         final List<TestLineSegment> segments = getLineSegments(tree);
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
         final TestLineSegment segment1 = segments.get(0);
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, 2), segment1.getStartPoint());
@@ -1619,7 +1619,7 @@ public class AbstractBSPTreeTest {
         checkTransformedPointNodeMap(tree, t, pointNodeMap);
 
         final List<TestLineSegment> segments = getLineSegments(tree);
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
     }
 
     @Test
@@ -1643,7 +1643,7 @@ public class AbstractBSPTreeTest {
         checkTransformedPointNodeMap(tree, t, pointNodeMap);
 
         final List<TestLineSegment> segments = getLineSegments(tree);
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
     }
 
     @Test
@@ -1667,7 +1667,7 @@ public class AbstractBSPTreeTest {
         checkTransformedPointNodeMap(tree, t, pointNodeMap);
 
         final List<TestLineSegment> segments = getLineSegments(tree);
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
     }
 
     @Test
@@ -1682,12 +1682,12 @@ public class AbstractBSPTreeTest {
 
         // assert
         final String[] lines = str.split("\n");
-        Assert.assertEquals(5, lines.length);
-        Assert.assertTrue(lines[0].startsWith("TestNode[cut= TestLineSegment"));
-        Assert.assertTrue(lines[1].startsWith("    [-] TestNode[cut= TestLineSegment"));
-        Assert.assertEquals("        [-] TestNode[cut= null]", lines[2]);
-        Assert.assertEquals("        [+] TestNode[cut= null]", lines[3]);
-        Assert.assertEquals("    [+] TestNode[cut= null]", lines[4]);
+        Assertions.assertEquals(5, lines.length);
+        Assertions.assertTrue(lines[0].startsWith("TestNode[cut= TestLineSegment"));
+        Assertions.assertTrue(lines[1].startsWith("    [-] TestNode[cut= TestLineSegment"));
+        Assertions.assertEquals("        [-] TestNode[cut= null]", lines[2]);
+        Assertions.assertEquals("        [+] TestNode[cut= null]", lines[3]);
+        Assertions.assertEquals("    [+] TestNode[cut= null]", lines[4]);
     }
 
     @Test
@@ -1699,7 +1699,7 @@ public class AbstractBSPTreeTest {
         final String str = tree.treeString();
 
         // assert
-        Assert.assertEquals("TestNode[cut= null]", str);
+        Assertions.assertEquals("TestNode[cut= null]", str);
     }
 
     @Test
@@ -1715,11 +1715,11 @@ public class AbstractBSPTreeTest {
 
         // assert
         final String[] lines = str.split("\n");
-        Assert.assertEquals(4, lines.length);
-        Assert.assertTrue(lines[0].startsWith("TestNode[cut= TestLineSegment"));
-        Assert.assertTrue(lines[1].startsWith("    [-] TestNode[cut= TestLineSegment"));
-        Assert.assertEquals("        ...", lines[2]);
-        Assert.assertEquals("    [+] TestNode[cut= null]", lines[3]);
+        Assertions.assertEquals(4, lines.length);
+        Assertions.assertTrue(lines[0].startsWith("TestNode[cut= TestLineSegment"));
+        Assertions.assertTrue(lines[1].startsWith("    [-] TestNode[cut= TestLineSegment"));
+        Assertions.assertEquals("        ...", lines[2]);
+        Assertions.assertEquals("    [+] TestNode[cut= null]", lines[3]);
     }
 
     @Test
@@ -1735,9 +1735,9 @@ public class AbstractBSPTreeTest {
 
         // assert
         final String[] lines = str.split("\n");
-        Assert.assertEquals(2, lines.length);
-        Assert.assertTrue(lines[0].startsWith("TestNode[cut= TestLineSegment"));
-        Assert.assertTrue(lines[1].startsWith("    ..."));
+        Assertions.assertEquals(2, lines.length);
+        Assertions.assertTrue(lines[0].startsWith("TestNode[cut= TestLineSegment"));
+        Assertions.assertTrue(lines[1].startsWith("    ..."));
     }
 
     @Test
@@ -1752,7 +1752,7 @@ public class AbstractBSPTreeTest {
         final String str = tree.treeString(-1);
 
         // assert
-        Assert.assertEquals("", str);
+        Assertions.assertEquals("", str);
     }
 
     @Test
@@ -1767,9 +1767,9 @@ public class AbstractBSPTreeTest {
         // assert
         final String msg = "Unexpected toString() representation: " + str;
 
-        Assert.assertTrue(msg, str.contains("TestBSPTree"));
-        Assert.assertTrue(msg, str.contains("count= 3"));
-        Assert.assertTrue(msg, str.contains("height= 1"));
+        Assertions.assertTrue(str.contains("TestBSPTree"), msg);
+        Assertions.assertTrue(str.contains("count= 3"), msg);
+        Assertions.assertTrue(str.contains("height= 1"), msg);
     }
 
     @Test
@@ -1782,8 +1782,8 @@ public class AbstractBSPTreeTest {
         final String str = tree.getRoot().toString();
 
         // assert
-        Assert.assertTrue(str.contains("TestNode"));
-        Assert.assertTrue(str.contains("cut= TestLineSegment"));
+        Assertions.assertTrue(str.contains("TestNode"));
+        Assertions.assertTrue(str.contains("cut= TestLineSegment"));
     }
 
     @Test
@@ -1807,23 +1807,23 @@ public class AbstractBSPTreeTest {
         final TestLineSegment splitSegment = new TestLineSegment(Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY, splitter);
 
-        Assert.assertEquals(5, tree.count());
-        Assert.assertEquals(2, tree.height());
+        Assertions.assertEquals(5, tree.count());
+        Assertions.assertEquals(2, tree.height());
 
-        Assert.assertEquals(5, minus.count());
-        Assert.assertEquals(2, minus.height());
+        Assertions.assertEquals(5, minus.count());
+        Assertions.assertEquals(2, minus.height());
 
         final List<TestLineSegment> minusSegments = getLineSegments(minus);
-        Assert.assertEquals(2, minusSegments.size());
+        Assertions.assertEquals(2, minusSegments.size());
         PartitionTestUtils.assertSegmentsEqual(splitSegment, minusSegments.get(0));
         PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(Double.NEGATIVE_INFINITY, 0, TestLine.X_AXIS),
                 minusSegments.get(1));
 
-        Assert.assertEquals(7, plus.count());
-        Assert.assertEquals(3, plus.height());
+        Assertions.assertEquals(7, plus.count());
+        Assertions.assertEquals(3, plus.height());
 
         final List<TestLineSegment> plusSegments = getLineSegments(plus);
-        Assert.assertEquals(3, plusSegments.size());
+        Assertions.assertEquals(3, plusSegments.size());
         PartitionTestUtils.assertSegmentsEqual(splitSegment, plusSegments.get(0));
         PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(0, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
                 plusSegments.get(1));
@@ -1851,14 +1851,14 @@ public class AbstractBSPTreeTest {
         final TestLineSegment splitSegment = new TestLineSegment(Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY, splitter);
 
-        Assert.assertEquals(5, tree.count());
-        Assert.assertEquals(2, tree.height());
+        Assertions.assertEquals(5, tree.count());
+        Assertions.assertEquals(2, tree.height());
 
-        Assert.assertEquals(5, minus.count());
-        Assert.assertEquals(2, minus.height());
+        Assertions.assertEquals(5, minus.count());
+        Assertions.assertEquals(2, minus.height());
 
         final List<TestLineSegment> minusSegments = getLineSegments(minus);
-        Assert.assertEquals(2, minusSegments.size());
+        Assertions.assertEquals(2, minusSegments.size());
         PartitionTestUtils.assertSegmentsEqual(splitSegment, minusSegments.get(0));
         PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(Double.NEGATIVE_INFINITY, 0, TestLine.X_AXIS),
                 minusSegments.get(1));
@@ -1884,14 +1884,14 @@ public class AbstractBSPTreeTest {
         final TestLineSegment splitSegment = new TestLineSegment(Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY, splitter);
 
-        Assert.assertEquals(5, tree.count());
-        Assert.assertEquals(2, tree.height());
+        Assertions.assertEquals(5, tree.count());
+        Assertions.assertEquals(2, tree.height());
 
-        Assert.assertEquals(7, plus.count());
-        Assert.assertEquals(3, plus.height());
+        Assertions.assertEquals(7, plus.count());
+        Assertions.assertEquals(3, plus.height());
 
         final List<TestLineSegment> plusSegments = getLineSegments(plus);
-        Assert.assertEquals(3, plusSegments.size());
+        Assertions.assertEquals(3, plusSegments.size());
         PartitionTestUtils.assertSegmentsEqual(splitSegment, plusSegments.get(0));
         PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(0, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
                 plusSegments.get(1));
@@ -1900,23 +1900,23 @@ public class AbstractBSPTreeTest {
     }
 
     private void assertNodesCopiedRecursive(final TestNode orig, final TestNode copy) {
-        Assert.assertNotSame(orig, copy);
+        Assertions.assertNotSame(orig, copy);
 
-        Assert.assertEquals(orig.getCut(), copy.getCut());
+        Assertions.assertEquals(orig.getCut(), copy.getCut());
 
         if (orig.isLeaf()) {
-            Assert.assertNull(copy.getMinus());
-            Assert.assertNull(copy.getPlus());
+            Assertions.assertNull(copy.getMinus());
+            Assertions.assertNull(copy.getPlus());
         } else {
-            Assert.assertNotSame(orig.getMinus(), copy.getMinus());
-            Assert.assertNotSame(orig.getPlus(), copy.getPlus());
+            Assertions.assertNotSame(orig.getMinus(), copy.getMinus());
+            Assertions.assertNotSame(orig.getPlus(), copy.getPlus());
 
             assertNodesCopiedRecursive(orig.getMinus(), copy.getMinus());
             assertNodesCopiedRecursive(orig.getPlus(), copy.getPlus());
         }
 
-        Assert.assertEquals(orig.depth(), copy.depth());
-        Assert.assertEquals(orig.count(), copy.count());
+        Assertions.assertEquals(orig.depth(), copy.depth());
+        Assertions.assertEquals(orig.count(), copy.count());
     }
 
     private static List<TestLineSegment> getLineSegments(final TestBSPTree tree) {
@@ -1958,7 +1958,7 @@ public class AbstractBSPTreeTest {
             final TestPoint2D transformedPt = transform.apply(entry.getKey());
 
             final String msg = "Expected transformed point " + transformedPt + " to resolve to node " + expectedNode;
-            Assert.assertSame(msg, expectedNode, transformedTree.findNode(transformedPt, FindNodeCutRule.NODE));
+            Assertions.assertSame(expectedNode, transformedTree.findNode(transformedPt, FindNodeCutRule.NODE), msg);
         }
     }
 

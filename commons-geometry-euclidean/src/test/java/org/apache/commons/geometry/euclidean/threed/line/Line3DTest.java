@@ -26,8 +26,10 @@ import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Line3DTest {
 
@@ -44,7 +46,7 @@ public class Line3DTest {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0), line.getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Y, line.getDirection(), TEST_EPS);
-        Assert.assertSame(TEST_PRECISION, line.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, line.getPrecision());
     }
 
     @Test
@@ -57,7 +59,7 @@ public class Line3DTest {
 
         final double invSqrt3 = 1.0 / Math.sqrt(3);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(invSqrt3, invSqrt3, invSqrt3), line.getDirection(), TEST_EPS);
-        Assert.assertSame(TEST_PRECISION, line.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, line.getPrecision());
     }
 
     @Test
@@ -80,13 +82,14 @@ public class Line3DTest {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0), line.getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Y, line.getDirection(), TEST_EPS);
-        Assert.assertSame(TEST_PRECISION, line.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, line.getPrecision());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromPoints_pointsTooClose() {
         // act/assert
-        Lines3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(1, 1, 1 + 1e-16), TEST_PRECISION);
+        assertThrows(IllegalArgumentException.class, () -> Lines3D.fromPoints(Vector3D.of(1, 1, 1),
+                Vector3D.of(1, 1, 1 + 1e-16), TEST_PRECISION));
     }
 
     @Test
@@ -102,7 +105,7 @@ public class Line3DTest {
         final Line3D result = line.transform(mat);
 
         // assert
-        Assert.assertTrue(result.contains(pt));
+        Assertions.assertTrue(result.contains(pt));
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, -1).normalize(), result.getDirection(), TEST_EPS);
     }
 
@@ -117,7 +120,7 @@ public class Line3DTest {
         final Line3D result = line.transform(transform);
 
         // assert
-        Assert.assertTrue(result.contains(Vector3D.of(1, 0, 0)));
+        Assertions.assertTrue(result.contains(Vector3D.of(1, 0, 0)));
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, -1).normalize(), result.getDirection(), TEST_EPS);
     }
 
@@ -132,7 +135,7 @@ public class Line3DTest {
         final Line3D result = line.transform(transform);
 
         // assert
-        Assert.assertTrue(result.contains(Vector3D.of(1, 0, 0)));
+        Assertions.assertTrue(result.contains(Vector3D.of(1, 0, 0)));
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, -1).normalize(), result.getDirection(), TEST_EPS);
     }
 
@@ -147,7 +150,7 @@ public class Line3DTest {
         final Line3D result = line.transform(transform);
 
         // assert
-        Assert.assertTrue(result.contains(Vector3D.of(-1, 0, 0)));
+        Assertions.assertTrue(result.contains(Vector3D.of(-1, 0, 0)));
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, -1, -1).normalize(), result.getDirection(), TEST_EPS);
     }
 
@@ -171,8 +174,8 @@ public class Line3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 0), tLine.getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), tLine.getDirection(), TEST_EPS);
 
-        Assert.assertEquals(0.5, tSub.apply(Vector1D.ZERO).getX(), TEST_EPS);
-        Assert.assertEquals(4.5, tSub.apply(Vector1D.of(2)).getX(), TEST_EPS);
+        Assertions.assertEquals(0.5, tSub.apply(Vector1D.ZERO).getX(), TEST_EPS);
+        Assertions.assertEquals(4.5, tSub.apply(Vector1D.of(2)).getX(), TEST_EPS);
     }
 
     @Test
@@ -181,13 +184,13 @@ public class Line3DTest {
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, -1), Vector3D.of(4, 3, 0), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0.0, line.abscissa(line.getOrigin()), TEST_EPS);
+        Assertions.assertEquals(0.0, line.abscissa(line.getOrigin()), TEST_EPS);
 
-        Assert.assertEquals(5.0, line.abscissa(Vector3D.of(4, 3, 0)), TEST_EPS);
-        Assert.assertEquals(5.0, line.abscissa(Vector3D.of(4, 3, 10)), TEST_EPS);
+        Assertions.assertEquals(5.0, line.abscissa(Vector3D.of(4, 3, 0)), TEST_EPS);
+        Assertions.assertEquals(5.0, line.abscissa(Vector3D.of(4, 3, 10)), TEST_EPS);
 
-        Assert.assertEquals(-5.0, line.abscissa(Vector3D.of(-4, -3, 0)), TEST_EPS);
-        Assert.assertEquals(-5.0, line.abscissa(Vector3D.of(-4, -3, -10)), TEST_EPS);
+        Assertions.assertEquals(-5.0, line.abscissa(Vector3D.of(-4, -3, 0)), TEST_EPS);
+        Assertions.assertEquals(-5.0, line.abscissa(Vector3D.of(-4, -3, -10)), TEST_EPS);
     }
 
     @Test
@@ -196,13 +199,13 @@ public class Line3DTest {
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, -1), Vector3D.of(4, 3, 0), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0.0, line.toSubspace(line.getOrigin()).getX(), TEST_EPS);
+        Assertions.assertEquals(0.0, line.toSubspace(line.getOrigin()).getX(), TEST_EPS);
 
-        Assert.assertEquals(5.0, line.toSubspace(Vector3D.of(4, 3, -1)).getX(), TEST_EPS);
-        Assert.assertEquals(5.0, line.toSubspace(Vector3D.of(4, 3, 10)).getX(), TEST_EPS);
+        Assertions.assertEquals(5.0, line.toSubspace(Vector3D.of(4, 3, -1)).getX(), TEST_EPS);
+        Assertions.assertEquals(5.0, line.toSubspace(Vector3D.of(4, 3, 10)).getX(), TEST_EPS);
 
-        Assert.assertEquals(-5.0, line.toSubspace(Vector3D.of(-4, -3, -1)).getX(), TEST_EPS);
-        Assert.assertEquals(-5.0, line.toSubspace(Vector3D.of(-4, -3, -10)).getX(), TEST_EPS);
+        Assertions.assertEquals(-5.0, line.toSubspace(Vector3D.of(-4, -3, -1)).getX(), TEST_EPS);
+        Assertions.assertEquals(-5.0, line.toSubspace(Vector3D.of(-4, -3, -10)).getX(), TEST_EPS);
     }
 
     @Test
@@ -231,12 +234,12 @@ public class Line3DTest {
     public void testContains() {
         final Vector3D p1 = Vector3D.of(0, 0, 1);
         final Line3D l = Lines3D.fromPoints(p1, Vector3D.of(0, 0, 2), TEST_PRECISION);
-        Assert.assertTrue(l.contains(p1));
-        Assert.assertTrue(l.contains(Vector3D.linearCombination(1.0, p1, 0.3, l.getDirection())));
+        Assertions.assertTrue(l.contains(p1));
+        Assertions.assertTrue(l.contains(Vector3D.linearCombination(1.0, p1, 0.3, l.getDirection())));
         final Vector3D u = l.getDirection().orthogonal();
         final Vector3D v = l.getDirection().cross(u);
         for (double alpha = 0; alpha < 2 * Math.PI; alpha += 0.3) {
-            Assert.assertFalse(l.contains(p1.add(Vector3D.linearCombination(Math.cos(alpha), u,
+            Assertions.assertFalse(l.contains(p1.add(Vector3D.linearCombination(Math.cos(alpha), u,
                     Math.sin(alpha), v))));
         }
     }
@@ -247,39 +250,39 @@ public class Line3DTest {
         final Vector3D p2  = Vector3D.of(3.4, -5.8, 1.2);
         final Line3D lA  = Lines3D.fromPoints(p1, p2, TEST_PRECISION);
         final Line3D lB  = Lines3D.fromPoints(p2, p1, TEST_PRECISION);
-        Assert.assertTrue(lA.isSimilarTo(lB));
-        Assert.assertFalse(lA.isSimilarTo(Lines3D.fromPoints(p1, p1.add(lA.getDirection().orthogonal()), TEST_PRECISION)));
+        Assertions.assertTrue(lA.isSimilarTo(lB));
+        Assertions.assertFalse(lA.isSimilarTo(Lines3D.fromPoints(p1, p1.add(lA.getDirection().orthogonal()), TEST_PRECISION)));
     }
 
     @Test
     public void testPointDistance() {
         final Line3D l = Lines3D.fromPoints(Vector3D.of(0, 1, 1), Vector3D.of(0, 2, 2), TEST_PRECISION);
-        Assert.assertEquals(Math.sqrt(3.0 / 2.0), l.distance(Vector3D.of(1, 0, 1)), TEST_EPS);
-        Assert.assertEquals(0, l.distance(Vector3D.of(0, -4, -4)), TEST_EPS);
+        Assertions.assertEquals(Math.sqrt(3.0 / 2.0), l.distance(Vector3D.of(1, 0, 1)), TEST_EPS);
+        Assertions.assertEquals(0, l.distance(Vector3D.of(0, -4, -4)), TEST_EPS);
     }
 
     @Test
     public void testLineDistance() {
         final Line3D l = Lines3D.fromPoints(Vector3D.of(0, 1, 1), Vector3D.of(0, 2, 2), TEST_PRECISION);
-        Assert.assertEquals(1.0,
+        Assertions.assertEquals(1.0,
                             l.distance(Lines3D.fromPoints(Vector3D.of(1, 0, 1), Vector3D.of(1, 0, 2), TEST_PRECISION)),
                             1.0e-10);
-        Assert.assertEquals(0.5,
+        Assertions.assertEquals(0.5,
                             l.distance(Lines3D.fromPoints(Vector3D.of(-0.5, 0, 0), Vector3D.of(-0.5, -1, -1), TEST_PRECISION)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.distance(l),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.distance(Lines3D.fromPoints(Vector3D.of(0, -4, -4), Vector3D.of(0, -5, -5), TEST_PRECISION)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.distance(Lines3D.fromPoints(Vector3D.of(0, -4, -4), Vector3D.of(0, -3, -4), TEST_PRECISION)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.distance(Lines3D.fromPoints(Vector3D.of(0, -4, -4), Vector3D.of(1, -4, -4), TEST_PRECISION)),
                             1.0e-10);
-        Assert.assertEquals(Math.sqrt(8),
+        Assertions.assertEquals(Math.sqrt(8),
                             l.distance(Lines3D.fromPoints(Vector3D.of(0, -4, 0), Vector3D.of(1, -4, 0), TEST_PRECISION)),
                             1.0e-10);
     }
@@ -287,25 +290,25 @@ public class Line3DTest {
     @Test
     public void testClosest() {
         final Line3D l = Lines3D.fromPoints(Vector3D.of(0, 1, 1), Vector3D.of(0, 2, 2), TEST_PRECISION);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.closest(Lines3D.fromPoints(Vector3D.of(1, 0, 1), Vector3D.of(1, 0, 2), TEST_PRECISION)).distance(Vector3D.of(0, 0, 0)),
                             1.0e-10);
-        Assert.assertEquals(0.5,
+        Assertions.assertEquals(0.5,
                             l.closest(Lines3D.fromPoints(Vector3D.of(-0.5, 0, 0), Vector3D.of(-0.5, -1, -1), TEST_PRECISION)).distance(Vector3D.of(-0.5, 0, 0)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.closest(l).distance(Vector3D.of(0, 0, 0)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.closest(Lines3D.fromPoints(Vector3D.of(0, -4, -4), Vector3D.of(0, -5, -5), TEST_PRECISION)).distance(Vector3D.of(0, 0, 0)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.closest(Lines3D.fromPoints(Vector3D.of(0, -4, -4), Vector3D.of(0, -3, -4), TEST_PRECISION)).distance(Vector3D.of(0, -4, -4)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.closest(Lines3D.fromPoints(Vector3D.of(0, -4, -4), Vector3D.of(1, -4, -4), TEST_PRECISION)).distance(Vector3D.of(0, -4, -4)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.closest(Lines3D.fromPoints(Vector3D.of(0, -4, 0), Vector3D.of(1, -4, 0), TEST_PRECISION)).distance(Vector3D.of(0, -2, -2)),
                             1.0e-10);
     }
@@ -313,21 +316,21 @@ public class Line3DTest {
     @Test
     public void testIntersection() {
         final Line3D l = Lines3D.fromPoints(Vector3D.of(0, 1, 1), Vector3D.of(0, 2, 2), TEST_PRECISION);
-        Assert.assertNull(l.intersection(Lines3D.fromPoints(Vector3D.of(1, 0, 1), Vector3D.of(1, 0, 2), TEST_PRECISION)));
-        Assert.assertNull(l.intersection(Lines3D.fromPoints(Vector3D.of(-0.5, 0, 0), Vector3D.of(-0.5, -1, -1), TEST_PRECISION)));
-        Assert.assertEquals(0.0,
+        Assertions.assertNull(l.intersection(Lines3D.fromPoints(Vector3D.of(1, 0, 1), Vector3D.of(1, 0, 2), TEST_PRECISION)));
+        Assertions.assertNull(l.intersection(Lines3D.fromPoints(Vector3D.of(-0.5, 0, 0), Vector3D.of(-0.5, -1, -1), TEST_PRECISION)));
+        Assertions.assertEquals(0.0,
                             l.intersection(l).distance(Vector3D.of(0, 0, 0)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.intersection(Lines3D.fromPoints(Vector3D.of(0, -4, -4), Vector3D.of(0, -5, -5), TEST_PRECISION)).distance(Vector3D.of(0, 0, 0)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.intersection(Lines3D.fromPoints(Vector3D.of(0, -4, -4), Vector3D.of(0, -3, -4), TEST_PRECISION)).distance(Vector3D.of(0, -4, -4)),
                             1.0e-10);
-        Assert.assertEquals(0.0,
+        Assertions.assertEquals(0.0,
                             l.intersection(Lines3D.fromPoints(Vector3D.of(0, -4, -4), Vector3D.of(1, -4, -4), TEST_PRECISION)).distance(Vector3D.of(0, -4, -4)),
                             1.0e-10);
-        Assert.assertNull(l.intersection(Lines3D.fromPoints(Vector3D.of(0, -4, 0), Vector3D.of(1, -4, 0), TEST_PRECISION)));
+        Assertions.assertNull(l.intersection(Lines3D.fromPoints(Vector3D.of(0, -4, 0), Vector3D.of(1, -4, 0), TEST_PRECISION)));
     }
 
     @Test
@@ -354,22 +357,22 @@ public class Line3DTest {
         final LineConvexSubset3D span = line.span();
 
         // assert
-        Assert.assertTrue(span.isInfinite());
-        Assert.assertFalse(span.isFinite());
+        Assertions.assertTrue(span.isInfinite());
+        Assertions.assertFalse(span.isFinite());
 
-        Assert.assertNull(span.getStartPoint());
-        Assert.assertNull(span.getEndPoint());
+        Assertions.assertNull(span.getStartPoint());
+        Assertions.assertNull(span.getEndPoint());
 
-        Assert.assertNull(span.getCentroid());
-        Assert.assertNull(span.getBounds());
+        Assertions.assertNull(span.getCentroid());
+        Assertions.assertNull(span.getBounds());
 
         GeometryTestUtils.assertNegativeInfinity(span.getSubspaceStart());
         GeometryTestUtils.assertPositiveInfinity(span.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(span.getSize());
 
-        Assert.assertSame(line, span.getLine());
-        Assert.assertTrue(span.getInterval().isFull());
+        Assertions.assertSame(line, span.getLine());
+        Assertions.assertTrue(span.getInterval().isFull());
     }
 
     @Test
@@ -382,11 +385,11 @@ public class Line3DTest {
         for (double x = -10; x <= 10; x += 0.5) {
 
             // act/assert
-            Assert.assertFalse(span.contains(Vector3D.of(0, 1, 0)));
-            Assert.assertFalse(span.contains(Vector3D.of(0, 0, 1)));
+            Assertions.assertFalse(span.contains(Vector3D.of(0, 1, 0)));
+            Assertions.assertFalse(span.contains(Vector3D.of(0, 0, 1)));
 
-            Assert.assertTrue(span.contains(Vector3D.of(x, 0, 0)));
-            Assert.assertTrue(span.contains(Vector3D.of(x + delta, delta, delta)));
+            Assertions.assertTrue(span.contains(Vector3D.of(x, 0, 0)));
+            Assertions.assertTrue(span.contains(Vector3D.of(x + delta, delta, delta)));
         }
     }
 
@@ -404,10 +407,10 @@ public class Line3DTest {
         final LineConvexSubset3D result = span.transform(t);
 
         // assert
-        Assert.assertNull(result.getStartPoint());
-        Assert.assertNull(result.getEndPoint());
+        Assertions.assertNull(result.getStartPoint());
+        Assertions.assertNull(result.getEndPoint());
 
-        Assert.assertTrue(result.contains(Vector3D.of(0, 1, -1)));
+        Assertions.assertTrue(result.contains(Vector3D.of(0, 1, -1)));
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_Z, result.getLine().getDirection(), TEST_EPS);
     }
 
@@ -426,10 +429,10 @@ public class Line3DTest {
         final LineConvexSubset3D result = span.transform(t);
 
         // assert
-        Assert.assertNull(result.getStartPoint());
-        Assert.assertNull(result.getEndPoint());
+        Assertions.assertNull(result.getStartPoint());
+        Assertions.assertNull(result.getEndPoint());
 
-        Assert.assertTrue(result.contains(Vector3D.of(0, 1, 2)));
+        Assertions.assertTrue(result.contains(Vector3D.of(0, 1, 2)));
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, result.getLine().getDirection(), TEST_EPS);
     }
 
@@ -454,33 +457,33 @@ public class Line3DTest {
 
         // act/assert
         final Segment3D doubleArgResult = line.segment(3, 4);
-        Assert.assertSame(line, doubleArgResult.getLine());
+        Assertions.assertSame(line, doubleArgResult.getLine());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(3, 3, 0), doubleArgResult.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(4, 3, 0), doubleArgResult.getEndPoint(), TEST_EPS);
 
         final Segment3D ptArgResult = line.segment(Vector3D.of(0, 4, 0), Vector3D.of(2, 5, 1));
-        Assert.assertSame(line, ptArgResult.getLine());
+        Assertions.assertSame(line, ptArgResult.getLine());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 3, 0), ptArgResult.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 3, 0), ptArgResult.getEndPoint(), TEST_EPS);
 
         final Ray3D rayDoubleResult = line.rayFrom(2);
-        Assert.assertSame(line, rayDoubleResult.getLine());
+        Assertions.assertSame(line, rayDoubleResult.getLine());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 3, 0), rayDoubleResult.getStartPoint(), TEST_EPS);
-        Assert.assertNull(rayDoubleResult.getEndPoint());
+        Assertions.assertNull(rayDoubleResult.getEndPoint());
 
         final Ray3D rayPtResult = line.rayFrom(Vector3D.of(1, 4, 0));
-        Assert.assertSame(line, rayPtResult.getLine());
+        Assertions.assertSame(line, rayPtResult.getLine());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), rayPtResult.getStartPoint(), TEST_EPS);
-        Assert.assertNull(rayPtResult.getEndPoint());
+        Assertions.assertNull(rayPtResult.getEndPoint());
 
         final ReverseRay3D toDoubleResult = line.reverseRayTo(-1);
-        Assert.assertSame(line, toDoubleResult.getLine());
-        Assert.assertNull(toDoubleResult.getStartPoint());
+        Assertions.assertSame(line, toDoubleResult.getLine());
+        Assertions.assertNull(toDoubleResult.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 3, 0), toDoubleResult.getEndPoint(), TEST_EPS);
 
         final ReverseRay3D toPtResult = line.reverseRayTo(Vector3D.of(1, 4, 0));
-        Assert.assertSame(line, toPtResult.getLine());
-        Assert.assertNull(toPtResult.getStartPoint());
+        Assertions.assertSame(line, toPtResult.getLine());
+        Assertions.assertNull(toPtResult.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), toPtResult.getEndPoint(), TEST_EPS);
     }
 
@@ -501,19 +504,19 @@ public class Line3DTest {
         final Line3D f = Lines3D.fromPointAndDirection(p, Vector3D.of(1 + 1e-4, 1e-4, 1e-4), precision);
 
         // act/assert
-        Assert.assertTrue(a.eq(a, precision));
+        Assertions.assertTrue(a.eq(a, precision));
 
-        Assert.assertTrue(a.eq(d, precision));
-        Assert.assertTrue(d.eq(a, precision));
+        Assertions.assertTrue(a.eq(d, precision));
+        Assertions.assertTrue(d.eq(a, precision));
 
-        Assert.assertTrue(a.eq(e, precision));
-        Assert.assertTrue(e.eq(a, precision));
+        Assertions.assertTrue(a.eq(e, precision));
+        Assertions.assertTrue(e.eq(a, precision));
 
-        Assert.assertTrue(a.eq(f, precision));
-        Assert.assertTrue(f.eq(a, precision));
+        Assertions.assertTrue(a.eq(f, precision));
+        Assertions.assertTrue(f.eq(a, precision));
 
-        Assert.assertFalse(a.eq(b, precision));
-        Assert.assertFalse(a.eq(c, precision));
+        Assertions.assertFalse(a.eq(b, precision));
+        Assertions.assertFalse(a.eq(c, precision));
     }
 
     @Test
@@ -529,13 +532,13 @@ public class Line3DTest {
         final int hash = a.hashCode();
 
         // act/assert
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
-        Assert.assertNotEquals(hash, d.hashCode());
+        Assertions.assertNotEquals(hash, b.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, d.hashCode());
 
-        Assert.assertEquals(hash, e.hashCode());
+        Assertions.assertEquals(hash, e.hashCode());
     }
 
     @Test
@@ -551,12 +554,12 @@ public class Line3DTest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-        Assert.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
 
-        Assert.assertEquals(a, e);
-        Assert.assertEquals(e, a);
+        Assertions.assertEquals(a, e);
+        Assertions.assertEquals(e, a);
     }
 
     @Test
@@ -568,8 +571,8 @@ public class Line3DTest {
         final String str = line.toString();
 
         // assert
-        Assert.assertTrue(str.contains("Line3D"));
-        Assert.assertTrue(str.matches(".*origin= \\(0(\\.0)?, 0(\\.0)?, 0(\\.0)?\\).*"));
-        Assert.assertTrue(str.matches(".*direction= \\(1(\\.0)?, 0(\\.0)?, 0(\\.0)?\\).*"));
+        Assertions.assertTrue(str.contains("Line3D"));
+        Assertions.assertTrue(str.matches(".*origin= \\(0(\\.0)?, 0(\\.0)?, 0(\\.0)?\\).*"));
+        Assertions.assertTrue(str.matches(".*direction= \\(1(\\.0)?, 0(\\.0)?, 0(\\.0)?\\).*"));
     }
 }

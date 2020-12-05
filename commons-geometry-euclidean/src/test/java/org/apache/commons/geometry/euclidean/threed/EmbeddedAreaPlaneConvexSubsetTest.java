@@ -34,8 +34,8 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EmbeddedAreaPlaneConvexSubsetTest {
 
@@ -69,17 +69,17 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final EmbeddedAreaPlaneConvexSubset ps = new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, area);
 
         // assert
-        Assert.assertTrue(ps.isFull());
-        Assert.assertFalse(ps.isEmpty());
-        Assert.assertFalse(ps.isFinite());
-        Assert.assertTrue(ps.isInfinite());
+        Assertions.assertTrue(ps.isFull());
+        Assertions.assertFalse(ps.isEmpty());
+        Assertions.assertFalse(ps.isFinite());
+        Assertions.assertTrue(ps.isInfinite());
 
         GeometryTestUtils.assertPositiveInfinity(ps.getSize());
 
-        Assert.assertSame(XY_PLANE_Z1, ps.getPlane());
-        Assert.assertSame(area, ps.getSubspaceRegion());
+        Assertions.assertSame(XY_PLANE_Z1, ps.getPlane());
+        Assertions.assertSame(area, ps.getSubspaceRegion());
 
-        Assert.assertEquals(0, ps.getVertices().size());
+        Assertions.assertEquals(0, ps.getVertices().size());
     }
 
     @Test
@@ -93,15 +93,15 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final EmbeddedAreaPlaneConvexSubset ps = new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, area);
 
         // assert
-        Assert.assertFalse(ps.isFull());
-        Assert.assertFalse(ps.isEmpty());
-        Assert.assertTrue(ps.isFinite());
-        Assert.assertFalse(ps.isInfinite());
+        Assertions.assertFalse(ps.isFull());
+        Assertions.assertFalse(ps.isEmpty());
+        Assertions.assertTrue(ps.isFinite());
+        Assertions.assertFalse(ps.isInfinite());
 
-        Assert.assertEquals(0.5, ps.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.5, ps.getSize(), TEST_EPS);
 
-        Assert.assertSame(XY_PLANE_Z1, ps.getPlane());
-        Assert.assertSame(area, ps.getSubspaceRegion());
+        Assertions.assertSame(XY_PLANE_Z1, ps.getPlane());
+        Assertions.assertSame(area, ps.getSubspaceRegion());
 
         EuclideanTestUtils.assertVertexLoopSequence(
                 Arrays.asList(Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1)),
@@ -121,7 +121,7 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final List<Vector3D> vertices = sp.getVertices();
 
         // assert
-        Assert.assertEquals(0, vertices.size());
+        Assertions.assertEquals(0, vertices.size());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final List<Vector3D> vertices = sp.getVertices();
 
         // assert
-        Assert.assertEquals(2, vertices.size());
+        Assertions.assertEquals(2, vertices.size());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 1), vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), vertices.get(1), TEST_EPS);
@@ -188,7 +188,7 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final List<Triangle3D> tris = ps.toTriangles();
 
         // assert
-        Assert.assertEquals(2, tris.size());
+        Assertions.assertEquals(2, tris.size());
 
         EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p4, p1, p2),
                 tris.get(0).getVertices(), TEST_PRECISION);
@@ -245,8 +245,8 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
                 ConvexArea.fromBounds(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION)));
 
         // act/assert
-        Assert.assertNull(full.getBounds());
-        Assert.assertNull(halfPlane.getBounds());
+        Assertions.assertNull(full.getBounds());
+        Assertions.assertNull(halfPlane.getBounds());
     }
 
     @Test
@@ -286,12 +286,12 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final EmbeddedAreaPlaneConvexSubset result = ps.transform(t);
 
         // assert
-        Assert.assertFalse(result.isFull());
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertTrue(result.isFinite());
-        Assert.assertFalse(result.isInfinite());
+        Assertions.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertTrue(result.isFinite());
+        Assertions.assertFalse(result.isInfinite());
 
-        Assert.assertEquals(8, result.getSize(), TEST_EPS);
+        Assertions.assertEquals(8, result.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X, result.getPlane().getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, result.getPlane().getU(), TEST_EPS);
@@ -314,12 +314,12 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final EmbeddedAreaPlaneConvexSubset result = ps.reverse();
 
         // assert
-        Assert.assertFalse(result.isFull());
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertTrue(result.isFinite());
-        Assert.assertFalse(result.isInfinite());
+        Assertions.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertTrue(result.isFinite());
+        Assertions.assertFalse(result.isInfinite());
 
-        Assert.assertEquals(4, result.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, result.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_Z, result.getPlane().getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Y, result.getPlane().getU(), TEST_EPS);
@@ -342,10 +342,10 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(ps, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(ps, split.getPlus());
     }
 
     @Test
@@ -361,10 +361,10 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(ps, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(ps, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -380,7 +380,7 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final PlaneConvexSubset minus = split.getMinus();
         EuclideanTestUtils.assertVertexLoopSequence(
@@ -406,10 +406,10 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -430,19 +430,19 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final Split<PlaneConvexSubset> split = ps.split(splitter);
 
         // assert
-        Assert.assertTrue(ps.isInfinite());
+        Assertions.assertTrue(ps.isInfinite());
 
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final PlaneConvexSubset plus = split.getPlus();
-        Assert.assertNotNull(plus);
-        Assert.assertTrue(plus.isInfinite());
-        Assert.assertTrue(plus instanceof EmbeddedAreaPlaneConvexSubset);
+        Assertions.assertNotNull(plus);
+        Assertions.assertTrue(plus.isInfinite());
+        Assertions.assertTrue(plus instanceof EmbeddedAreaPlaneConvexSubset);
 
         final PlaneConvexSubset minus = split.getMinus();
-        Assert.assertNotNull(minus);
-        Assert.assertFalse(minus.isInfinite());
-        Assert.assertTrue(minus instanceof SimpleTriangle3D);
+        Assertions.assertNotNull(minus);
+        Assertions.assertFalse(minus.isInfinite());
+        Assertions.assertTrue(minus instanceof SimpleTriangle3D);
     }
 
     @Test
@@ -462,7 +462,7 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
 
     private static void checkPoints(final EmbeddedAreaPlaneConvexSubset ps, final RegionLocation loc, final Vector3D... pts) {
         for (final Vector3D pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, ps.classify(pt));
+            Assertions.assertEquals(loc, ps.classify(pt), "Unexpected location for point " + pt);
         }
     }
 }

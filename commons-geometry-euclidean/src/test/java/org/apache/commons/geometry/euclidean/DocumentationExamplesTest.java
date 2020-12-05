@@ -56,8 +56,8 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** This class contains code listed as examples in the user guide and other documentation.
  * If any portion of this code changes, the corresponding examples in the documentation <em>must</em> be updated.
@@ -89,7 +89,7 @@ public class DocumentationExamplesTest {
         final TriangleMesh mesh = tree.toTriangleMesh(precision);
 
         // -----------
-        Assert.assertEquals(0.11509505362599505, size, TEST_EPS);
+        Assertions.assertEquals(0.11509505362599505, size, TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, centroid, TEST_EPS);
 
         TestOBJWriter.write(mesh, new File("target/index-page-example.obj"));
@@ -109,11 +109,11 @@ public class DocumentationExamplesTest {
         precision.compare(1.002, 1.0); // 1
 
         // ------------------
-        Assert.assertTrue(precision.eq(1.0009, 1.0));
-        Assert.assertFalse(precision.eq(1.002, 1.0));
+        Assertions.assertTrue(precision.eq(1.0009, 1.0));
+        Assertions.assertFalse(precision.eq(1.002, 1.0));
 
-        Assert.assertEquals(0, precision.compare(1.0009, 1.0));
-        Assert.assertEquals(1, precision.compare(1.002, 1.0));
+        Assertions.assertEquals(0, precision.compare(1.0009, 1.0));
+        Assertions.assertEquals(1, precision.compare(1.002, 1.0));
     }
 
     @Test
@@ -132,9 +132,9 @@ public class DocumentationExamplesTest {
         v1.eq(v3, precision); // true - approximately equal according to the given precision context
 
         // ---------------------
-        Assert.assertEquals(v1, v2);
-        Assert.assertNotEquals(v1, v3);
-        Assert.assertTrue(v1.eq(v3, precision));
+        Assertions.assertEquals(v1, v2);
+        Assertions.assertNotEquals(v1, v3);
+        Assertions.assertTrue(v1.eq(v3, precision));
     }
 
     @Test
@@ -174,9 +174,9 @@ public class DocumentationExamplesTest {
         final Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
 
         // ---------
-        Assert.assertEquals(1, size, TEST_EPS);
-        Assert.assertEquals(11, count);
-        Assert.assertEquals(3, height);
+        Assertions.assertEquals(1, size, TEST_EPS);
+        Assertions.assertEquals(11, count);
+        Assertions.assertEquals(3, height);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), centroid, TEST_EPS);
     }
 
@@ -202,9 +202,9 @@ public class DocumentationExamplesTest {
         final Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
 
         // ---------
-        Assert.assertEquals(1, size, TEST_EPS);
-        Assert.assertEquals(9, count);
-        Assert.assertEquals(4, height);
+        Assertions.assertEquals(1, size, TEST_EPS);
+        Assertions.assertEquals(9, count);
+        Assertions.assertEquals(4, height);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), centroid, TEST_EPS);
     }
 
@@ -227,14 +227,14 @@ public class DocumentationExamplesTest {
         final RegionLocation halfOpenThreeLoc = halfOpen.classify(3.0); // RegionLocation.INSIDE
 
         // --------------------
-        Assert.assertFalse(closed.contains(0));
-        Assert.assertFalse(halfOpen.contains(0));
+        Assertions.assertFalse(closed.contains(0));
+        Assertions.assertFalse(halfOpen.contains(0));
 
-        Assert.assertEquals(RegionLocation.BOUNDARY, closedOneLoc);
-        Assert.assertEquals(RegionLocation.BOUNDARY, halfOpenOneLoc);
+        Assertions.assertEquals(RegionLocation.BOUNDARY, closedOneLoc);
+        Assertions.assertEquals(RegionLocation.BOUNDARY, halfOpenOneLoc);
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, closedThreeLoc);
-        Assert.assertEquals(RegionLocation.INSIDE, halfOpenThreeLoc);
+        Assertions.assertEquals(RegionLocation.OUTSIDE, closedThreeLoc);
+        Assertions.assertEquals(RegionLocation.INSIDE, halfOpenThreeLoc);
     }
 
     @Test
@@ -255,8 +255,8 @@ public class DocumentationExamplesTest {
         final List<Interval> intervals = tree.toIntervals(); // size = 2
 
         // ----------------------
-        Assert.assertEquals(3, size, TEST_EPS);
-        Assert.assertEquals(2, intervals.size());
+        Assertions.assertEquals(3, size, TEST_EPS);
+        Assertions.assertEquals(2, intervals.size());
     }
 
     @Test
@@ -274,8 +274,8 @@ public class DocumentationExamplesTest {
 
         // ----------------------------
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), intersection, TEST_EPS);
-        Assert.assertEquals(0.25 * Math.PI, angleAtoB, TEST_EPS);
-        Assert.assertEquals(-0.25 * Math.PI, angleBtoA, TEST_EPS);
+        Assertions.assertEquals(0.25 * Math.PI, angleAtoB, TEST_EPS);
+        Assertions.assertEquals(-0.25 * Math.PI, angleBtoA, TEST_EPS);
     }
 
     @Test
@@ -295,7 +295,7 @@ public class DocumentationExamplesTest {
 
         // ----------------------------
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 0), aIntersection, TEST_EPS);
-        Assert.assertNull(bIntersection);
+        Assertions.assertNull(bIntersection);
     }
 
     @Test
@@ -332,9 +332,9 @@ public class DocumentationExamplesTest {
         final List<LinePath> boundaries = tree.getBoundaryPaths(); // size = 1
 
         // ----------------
-        Assert.assertEquals(1.75, size, TEST_EPS);
+        Assertions.assertEquals(1.75, size, TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.75, 0.75), centroid, TEST_EPS);
-        Assert.assertEquals(1, boundaries.size());
+        Assertions.assertEquals(1, boundaries.size());
     }
 
     @Test
@@ -446,8 +446,8 @@ public class DocumentationExamplesTest {
         final List<PlaneConvexSubset> minusBoundaries = minus.getBoundaries(); // size = 4
 
         // ---------------------
-        Assert.assertEquals(1.0 / 6.0, minusSize, TEST_EPS);
-        Assert.assertEquals(4, minusBoundaries.size());
+        Assertions.assertEquals(1.0 / 6.0, minusSize, TEST_EPS);
+        Assertions.assertEquals(4, minusBoundaries.size());
     }
 
     @Test
@@ -470,7 +470,7 @@ public class DocumentationExamplesTest {
         final Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)
 
         // ----------------
-        Assert.assertEquals(2, intersectionCount);
+        Assertions.assertEquals(2, intersectionCount);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), intersection, TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), normal, TEST_EPS);

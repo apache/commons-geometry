@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SplitTest {
 
@@ -31,8 +31,8 @@ public class SplitTest {
         final Split<Object> split = new Split<>(a, b);
 
         // assert
-        Assert.assertSame(a, split.getMinus());
-        Assert.assertSame(b,  split.getPlus());
+        Assertions.assertSame(a, split.getMinus());
+        Assertions.assertSame(b,  split.getPlus());
     }
 
     @Test
@@ -42,10 +42,10 @@ public class SplitTest {
         final Object b = new Object();
 
         // act/assert
-        Assert.assertEquals(SplitLocation.NEITHER, new Split<Object>(null, null).getLocation());
-        Assert.assertEquals(SplitLocation.MINUS, new Split<Object>(a, null).getLocation());
-        Assert.assertEquals(SplitLocation.PLUS, new Split<Object>(null, b).getLocation());
-        Assert.assertEquals(SplitLocation.BOTH, new Split<Object>(a, b).getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, new Split<Object>(null, null).getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, new Split<Object>(a, null).getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, new Split<Object>(null, b).getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, new Split<Object>(a, b).getLocation());
     }
 
     @Test
@@ -57,6 +57,6 @@ public class SplitTest {
         final String str = split.toString();
 
         // assert
-        Assert.assertEquals("Split[location= BOTH, minus= a, plus= b]", str);
+        Assertions.assertEquals("Split[location= BOTH, minus= a, plus= b]", str);
     }
 }

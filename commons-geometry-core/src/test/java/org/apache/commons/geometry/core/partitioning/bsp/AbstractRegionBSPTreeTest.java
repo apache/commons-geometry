@@ -40,9 +40,9 @@ import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
 import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree.TestRegionNode;
 import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AbstractRegionBSPTreeTest {
 
@@ -50,7 +50,7 @@ public class AbstractRegionBSPTreeTest {
 
     private TestRegionNode root;
 
-    @Before
+    @BeforeEach
     public void setup() {
         tree = new TestRegionBSPTree();
         root = tree.getRoot();
@@ -59,16 +59,16 @@ public class AbstractRegionBSPTreeTest {
     @Test
     public void testDefaultConstructor() {
         // assert
-        Assert.assertNotNull(root);
-        Assert.assertNull(root.getParent());
+        Assertions.assertNotNull(root);
+        Assertions.assertNull(root.getParent());
 
         PartitionTestUtils.assertIsLeafNode(root);
-        Assert.assertFalse(root.isPlus());
-        Assert.assertFalse(root.isMinus());
+        Assertions.assertFalse(root.isPlus());
+        Assertions.assertFalse(root.isMinus());
 
-        Assert.assertSame(tree, root.getTree());
+        Assertions.assertSame(tree, root.getTree());
 
-        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, root.getLocation());
     }
 
     @Test
@@ -78,16 +78,16 @@ public class AbstractRegionBSPTreeTest {
         root = tree.getRoot();
 
         // assert
-        Assert.assertNotNull(root);
-        Assert.assertNull(root.getParent());
+        Assertions.assertNotNull(root);
+        Assertions.assertNull(root.getParent());
 
         PartitionTestUtils.assertIsLeafNode(root);
-        Assert.assertFalse(root.isPlus());
-        Assert.assertFalse(root.isMinus());
+        Assertions.assertFalse(root.isPlus());
+        Assertions.assertFalse(root.isMinus());
 
-        Assert.assertSame(tree, root.getTree());
+        Assertions.assertSame(tree, root.getTree());
 
-        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, root.getLocation());
     }
 
     @Test
@@ -97,16 +97,16 @@ public class AbstractRegionBSPTreeTest {
         root = tree.getRoot();
 
         // assert
-        Assert.assertNotNull(root);
-        Assert.assertNull(root.getParent());
+        Assertions.assertNotNull(root);
+        Assertions.assertNull(root.getParent());
 
         PartitionTestUtils.assertIsLeafNode(root);
-        Assert.assertFalse(root.isPlus());
-        Assert.assertFalse(root.isMinus());
+        Assertions.assertFalse(root.isPlus());
+        Assertions.assertFalse(root.isMinus());
 
-        Assert.assertSame(tree, root.getTree());
+        Assertions.assertSame(tree, root.getTree());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, root.getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, root.getLocation());
     }
 
     @Test
@@ -185,32 +185,32 @@ public class AbstractRegionBSPTreeTest {
 
         // assert
         TestRegionNode node = tree.getRoot();
-        Assert.assertEquals(RegionLocation.OUTSIDE, node.getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, node.getLocation());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, node.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
-
-        node = node.getPlus();
-        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.OUTSIDE, node.getPlus().getLocation());
-
-        node = node.getMinus();
-        Assert.assertEquals(RegionLocation.OUTSIDE, node.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, node.getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
 
         node = node.getPlus();
-        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.OUTSIDE, node.getPlus().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, node.getPlus().getLocation());
 
         node = node.getMinus();
-        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, node.getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
+
+        node = node.getPlus();
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, node.getPlus().getLocation());
+
+        node = node.getMinus();
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
     }
 
     @Test
     public void testGetLocation_emptyRoot() {
         // act/assert
-        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, root.getLocation());
     }
 
     @Test
@@ -219,19 +219,19 @@ public class AbstractRegionBSPTreeTest {
         root.insertCut(TestLine.X_AXIS);
 
         // act/assert
-        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
-        Assert.assertFalse(root.isInside());
-        Assert.assertFalse(root.isOutside());
+        Assertions.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assertions.assertFalse(root.isInside());
+        Assertions.assertFalse(root.isOutside());
 
         final TestRegionNode minus = root.getMinus();
-        Assert.assertEquals(RegionLocation.INSIDE, minus.getLocation());
-        Assert.assertTrue(minus.isInside());
-        Assert.assertFalse(minus.isOutside());
+        Assertions.assertEquals(RegionLocation.INSIDE, minus.getLocation());
+        Assertions.assertTrue(minus.isInside());
+        Assertions.assertFalse(minus.isOutside());
 
         final TestRegionNode plus = root.getPlus();
-        Assert.assertEquals(RegionLocation.OUTSIDE, plus.getLocation());
-        Assert.assertFalse(plus.isInside());
-        Assert.assertTrue(plus.isOutside());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, plus.getLocation());
+        Assertions.assertFalse(plus.isInside());
+        Assertions.assertTrue(plus.isOutside());
     }
 
     @Test
@@ -243,25 +243,25 @@ public class AbstractRegionBSPTreeTest {
                 new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1))));
 
         // act/assert
-        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, root.getLocation());
 
         final TestRegionNode plus = root.getPlus();
-        Assert.assertEquals(RegionLocation.OUTSIDE, plus.getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, plus.getLocation());
 
         final TestRegionNode plusPlus = plus.getPlus();
-        Assert.assertEquals(RegionLocation.OUTSIDE, plusPlus.getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, plusPlus.getLocation());
 
         final TestRegionNode plusMinus = plus.getMinus();
-        Assert.assertEquals(RegionLocation.INSIDE, plusMinus.getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, plusMinus.getLocation());
 
         final TestRegionNode minus = root.getMinus();
-        Assert.assertEquals(RegionLocation.INSIDE, minus.getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, minus.getLocation());
 
         final TestRegionNode minusPlus = minus.getPlus();
-        Assert.assertEquals(RegionLocation.OUTSIDE, minusPlus.getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, minusPlus.getLocation());
 
         final TestRegionNode minusMinus = minus.getMinus();
-        Assert.assertEquals(RegionLocation.INSIDE, minusMinus.getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, minusMinus.getLocation());
     }
 
     @Test
@@ -276,8 +276,8 @@ public class AbstractRegionBSPTreeTest {
         node.setLocation(RegionLocation.OUTSIDE);
 
         // assert
-        Assert.assertEquals(RegionLocation.OUTSIDE, node.getLocation());
-        Assert.assertTrue(tree.isEmpty());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, node.getLocation());
+        Assertions.assertTrue(tree.isEmpty());
     }
 
     @Test
@@ -294,7 +294,7 @@ public class AbstractRegionBSPTreeTest {
         node.setLocation(RegionLocation.OUTSIDE);
 
         // assert
-        Assert.assertNotSame(prevProps, tree.getRegionSizeProperties());
+        Assertions.assertNotSame(prevProps, tree.getRegionSizeProperties());
     }
 
     @Test
@@ -311,7 +311,7 @@ public class AbstractRegionBSPTreeTest {
         node.setLocation(RegionLocation.INSIDE);
 
         // assert
-        Assert.assertSame(prevProps, tree.getRegionSizeProperties());
+        Assertions.assertSame(prevProps, tree.getRegionSizeProperties());
     }
 
     @Test
@@ -334,12 +334,12 @@ public class AbstractRegionBSPTreeTest {
         final boolean result = tree.condense();
 
         // assert
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
-        Assert.assertEquals(3, tree.count());
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getPlus().getLocation());
+        Assertions.assertEquals(3, tree.count());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.getRoot().getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getPlus().getLocation());
     }
 
     @Test
@@ -352,12 +352,12 @@ public class AbstractRegionBSPTreeTest {
         final boolean result = tree.condense();
 
         // assert
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
 
-        Assert.assertEquals(3, tree.count());
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getPlus().getLocation());
+        Assertions.assertEquals(3, tree.count());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.getRoot().getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getPlus().getLocation());
     }
 
     @Test
@@ -373,9 +373,9 @@ public class AbstractRegionBSPTreeTest {
         final boolean result = tree.condense();
 
         // assert
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
-        Assert.assertNotSame(prevProps, tree.getRegionSizeProperties());
+        Assertions.assertNotSame(prevProps, tree.getRegionSizeProperties());
     }
 
     @Test
@@ -389,9 +389,9 @@ public class AbstractRegionBSPTreeTest {
         final boolean result = tree.condense();
 
         // assert
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
 
-        Assert.assertSame(prevProps, tree.getRegionSizeProperties());
+        Assertions.assertSame(prevProps, tree.getRegionSizeProperties());
     }
 
     @Test
@@ -408,28 +408,28 @@ public class AbstractRegionBSPTreeTest {
 
         // assert
         TestRegionNode node = tree.getRoot();
-        Assert.assertEquals(RegionLocation.OUTSIDE, node.getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, node.getLocation());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, node.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, node.getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
 
         node = node.getPlus();
-        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.OUTSIDE, node.getPlus().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, node.getPlus().getLocation());
 
         node = node.getMinus();
-        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
     }
 
     @Test
     public void testBoundaries_fullAndEmpty() {
         // act/assert
         tree.setFull();
-        Assert.assertFalse(tree.boundaries().iterator().hasNext());
+        Assertions.assertFalse(tree.boundaries().iterator().hasNext());
 
         tree.setEmpty();
-        Assert.assertFalse(tree.boundaries().iterator().hasNext());
+        Assertions.assertFalse(tree.boundaries().iterator().hasNext());
     }
 
     @Test
@@ -444,7 +444,7 @@ public class AbstractRegionBSPTreeTest {
         }
 
         // assert
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
         assertContainsSegment(segments, new TestPoint2D(0, 0), new TestPoint2D(1, 0));
         assertContainsSegment(segments, new TestPoint2D(1, 0), new TestPoint2D(1, 1));
@@ -465,7 +465,7 @@ public class AbstractRegionBSPTreeTest {
         }
 
         // assert
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
         assertContainsSegment(segments, new TestPoint2D(0, 0), new TestPoint2D(0, 1));
         assertContainsSegment(segments, new TestPoint2D(0, 1), new TestPoint2D(1, 1));
@@ -477,10 +477,10 @@ public class AbstractRegionBSPTreeTest {
     public void testGetBoundaries_fullAndEmpty() {
         // act/assert
         tree.setFull();
-        Assert.assertEquals(0, tree.getBoundaries().size());
+        Assertions.assertEquals(0, tree.getBoundaries().size());
 
         tree.setEmpty();
-        Assert.assertEquals(0, tree.getBoundaries().size());
+        Assertions.assertEquals(0, tree.getBoundaries().size());
     }
 
     @Test
@@ -495,7 +495,7 @@ public class AbstractRegionBSPTreeTest {
         }
 
         // assert
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
         assertContainsSegment(segments, new TestPoint2D(0, 0), new TestPoint2D(1, 0));
         assertContainsSegment(segments, new TestPoint2D(1, 0), new TestPoint2D(1, 1));
@@ -516,7 +516,7 @@ public class AbstractRegionBSPTreeTest {
         }
 
         // assert
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
         assertContainsSegment(segments, new TestPoint2D(0, 0), new TestPoint2D(0, 1));
         assertContainsSegment(segments, new TestPoint2D(0, 1), new TestPoint2D(1, 1));
@@ -530,38 +530,38 @@ public class AbstractRegionBSPTreeTest {
         insertSkewedBowtie(tree);
 
         // act/assert
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, -1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, -1)));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-3, 1)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(3, -1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-3, 1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(3, -1)));
 
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 5)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, -5)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 5)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, -5)));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(5, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(3, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(2, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(1, 0)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(0, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-1, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-2, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-5, 0)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(5, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(3, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(2, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(1, 0)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(0, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-1, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-2, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-5, 0)));
     }
 
     @Test
     public void testClassify_emptyTree() {
         // act/assert
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
     }
 
     @Test
     public void testClassify_NaN() {
         // act/assert
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, Double.NaN)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, Double.NaN)));
     }
 
     @Test
@@ -570,28 +570,28 @@ public class AbstractRegionBSPTreeTest {
         insertSkewedBowtie(tree);
 
         // act/assert
-        Assert.assertTrue(tree.contains(new TestPoint2D(3, 1)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(-3, -1)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(3, 1)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(-3, -1)));
 
-        Assert.assertFalse(tree.contains(new TestPoint2D(-3, 1)));
-        Assert.assertFalse(tree.contains(new TestPoint2D(3, -1)));
+        Assertions.assertFalse(tree.contains(new TestPoint2D(-3, 1)));
+        Assertions.assertFalse(tree.contains(new TestPoint2D(3, -1)));
 
-        Assert.assertTrue(tree.contains(new TestPoint2D(4, 5)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(-4, -5)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(4, 5)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(-4, -5)));
 
-        Assert.assertFalse(tree.contains(new TestPoint2D(5, 0)));
+        Assertions.assertFalse(tree.contains(new TestPoint2D(5, 0)));
 
-        Assert.assertTrue(tree.contains(new TestPoint2D(4, 0)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(3, 0)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(2, 0)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(1, 0)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(0, 0)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(-1, 0)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(-2, 0)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(-3, 0)));
-        Assert.assertTrue(tree.contains(new TestPoint2D(-4, 0)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(4, 0)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(3, 0)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(2, 0)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(1, 0)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(0, 0)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(-1, 0)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(-2, 0)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(-3, 0)));
+        Assertions.assertTrue(tree.contains(new TestPoint2D(-4, 0)));
 
-        Assert.assertFalse(tree.contains(new TestPoint2D(-5, 0)));
+        Assertions.assertFalse(tree.contains(new TestPoint2D(-5, 0)));
     }
 
     @Test
@@ -603,11 +603,11 @@ public class AbstractRegionBSPTreeTest {
         tree.setFull();
 
         // assert
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertTrue(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
-        Assert.assertTrue(tree.contains(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertTrue(tree.contains(TestPoint2D.ZERO));
     }
 
     @Test
@@ -619,11 +619,11 @@ public class AbstractRegionBSPTreeTest {
         tree.setEmpty();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(TestPoint2D.ZERO));
-        Assert.assertFalse(tree.contains(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertFalse(tree.contains(TestPoint2D.ZERO));
     }
 
     @Test
@@ -635,10 +635,10 @@ public class AbstractRegionBSPTreeTest {
         final RegionSizeProperties<TestPoint2D> third = tree.getRegionSizeProperties();
 
         // assert
-        Assert.assertSame(first, second);
-        Assert.assertNotSame(second, third);
+        Assertions.assertSame(first, second);
+        Assertions.assertNotSame(second, third);
 
-        Assert.assertEquals(1234, first.getSize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(1234, first.getSize(), PartitionTestUtils.EPS);
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(12, 34), first.getCentroid());
     }
 
@@ -646,7 +646,7 @@ public class AbstractRegionBSPTreeTest {
     public void testGetSize() {
         // act/assert
         // make sure our stub value is pulled
-        Assert.assertEquals(1234, tree.getSize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(1234, tree.getSize(), PartitionTestUtils.EPS);
     }
 
     @Test
@@ -659,8 +659,8 @@ public class AbstractRegionBSPTreeTest {
     @Test
     public void testGetBoundarySize_fullAndEmpty() {
         // act/assert
-        Assert.assertEquals(0.0, fullTree().getBoundarySize(), PartitionTestUtils.EPS);
-        Assert.assertEquals(0.0, emptyTree().getBoundarySize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(0.0, fullTree().getBoundarySize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(0.0, emptyTree().getBoundarySize(), PartitionTestUtils.EPS);
     }
 
     @Test
@@ -673,8 +673,8 @@ public class AbstractRegionBSPTreeTest {
         halfPosComplement.complement(halfPos);
 
         // act/assert
-        Assert.assertEquals(Double.POSITIVE_INFINITY, halfPos.getBoundarySize(), PartitionTestUtils.EPS);
-        Assert.assertEquals(Double.POSITIVE_INFINITY, halfPosComplement.getBoundarySize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(Double.POSITIVE_INFINITY, halfPos.getBoundarySize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(Double.POSITIVE_INFINITY, halfPosComplement.getBoundarySize(), PartitionTestUtils.EPS);
     }
 
     @Test
@@ -697,7 +697,7 @@ public class AbstractRegionBSPTreeTest {
         tree.cutNode(node, new TestLineSegment(0, 0, new TestLine(p0, new TestPoint2D(1, 3))));
 
         // act/assert
-        Assert.assertEquals(6, tree.getBoundarySize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(6, tree.getBoundarySize(), PartitionTestUtils.EPS);
     }
 
     @Test
@@ -706,7 +706,7 @@ public class AbstractRegionBSPTreeTest {
         insertBox(tree, new TestPoint2D(2, 2), new TestPoint2D(4, 1));
 
         // act/assert
-        Assert.assertEquals(6.0, tree.getBoundarySize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(6.0, tree.getBoundarySize(), PartitionTestUtils.EPS);
     }
 
     @Test
@@ -716,7 +716,7 @@ public class AbstractRegionBSPTreeTest {
         tree.complement();
 
         // act/assert
-        Assert.assertEquals(6.0, tree.getBoundarySize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(6.0, tree.getBoundarySize(), PartitionTestUtils.EPS);
     }
 
     @Test
@@ -732,9 +732,9 @@ public class AbstractRegionBSPTreeTest {
         final double third = tree.getBoundarySize();
 
         // assert
-        Assert.assertEquals(6.0, first, PartitionTestUtils.EPS);
-        Assert.assertEquals(4.0, second, PartitionTestUtils.EPS);
-        Assert.assertEquals(4.0, third, PartitionTestUtils.EPS);
+        Assertions.assertEquals(6.0, first, PartitionTestUtils.EPS);
+        Assertions.assertEquals(4.0, second, PartitionTestUtils.EPS);
+        Assertions.assertEquals(4.0, third, PartitionTestUtils.EPS);
     }
 
     @Test
@@ -743,7 +743,7 @@ public class AbstractRegionBSPTreeTest {
         final RegionCutBoundary<TestPoint2D> boundary = root.getCutBoundary();
 
         // assert
-        Assert.assertNull(boundary);
+        Assertions.assertNull(boundary);
     }
 
     @Test
@@ -755,7 +755,7 @@ public class AbstractRegionBSPTreeTest {
         final RegionCutBoundary<TestPoint2D> boundary = root.getCutBoundary();
 
         // assert
-        Assert.assertTrue(boundary.getInsideFacing().isEmpty());
+        Assertions.assertTrue(boundary.getInsideFacing().isEmpty());
 
         assertCutBoundarySegment(boundary.getOutsideFacing(),
                 new TestPoint2D(Double.NEGATIVE_INFINITY, 0.0), new TestPoint2D(Double.POSITIVE_INFINITY, 0.0));
@@ -770,7 +770,7 @@ public class AbstractRegionBSPTreeTest {
         final RegionCutBoundary<TestPoint2D> boundary = root.getMinus().getCutBoundary();
 
         // assert
-        Assert.assertNull(boundary);
+        Assertions.assertNull(boundary);
     }
 
     @Test
@@ -782,12 +782,12 @@ public class AbstractRegionBSPTreeTest {
         // act/assert
         final RegionCutBoundary<TestPoint2D> rootBoundary = root.getCutBoundary();
 
-        Assert.assertTrue(rootBoundary.getInsideFacing().isEmpty());
+        Assertions.assertTrue(rootBoundary.getInsideFacing().isEmpty());
         assertCutBoundarySegment(rootBoundary.getOutsideFacing(),
                 new TestPoint2D(Double.NEGATIVE_INFINITY, 0.0), TestPoint2D.ZERO);
 
         final RegionCutBoundary<TestPoint2D> childBoundary = tree.getRoot().getMinus().getCutBoundary();
-        Assert.assertTrue(childBoundary.getInsideFacing().isEmpty());
+        Assertions.assertTrue(childBoundary.getInsideFacing().isEmpty());
         assertCutBoundarySegment(childBoundary.getOutsideFacing(),
                 TestPoint2D.ZERO, new TestPoint2D(0.0, Double.POSITIVE_INFINITY));
     }
@@ -799,17 +799,17 @@ public class AbstractRegionBSPTreeTest {
         tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
 
         // act/assert
-        Assert.assertNull(root.getPlus().getCutBoundary());
-        Assert.assertNull(root.getMinus().getMinus().getCutHyperplane());
-        Assert.assertNull(root.getMinus().getPlus().getCutHyperplane());
+        Assertions.assertNull(root.getPlus().getCutBoundary());
+        Assertions.assertNull(root.getMinus().getMinus().getCutHyperplane());
+        Assertions.assertNull(root.getMinus().getPlus().getCutHyperplane());
     }
 
     @Test
     public void testFullEmpty_fullTree() {
         // act/assert
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getLocation());
+        Assertions.assertTrue(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.getRoot().getLocation());
     }
 
     @Test
@@ -818,9 +818,9 @@ public class AbstractRegionBSPTreeTest {
         tree.complement();
 
         // act/assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isEmpty());
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
     }
 
     @Test
@@ -832,8 +832,8 @@ public class AbstractRegionBSPTreeTest {
         tree.transform(t);
 
         // assert
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertTrue(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE, TestPoint2D.ZERO);
     }
@@ -849,8 +849,8 @@ public class AbstractRegionBSPTreeTest {
         tree.transform(t);
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.OUTSIDE,
                 new TestPoint2D(0, -1), TestPoint2D.ZERO, new TestPoint2D(0, 1));
@@ -872,8 +872,8 @@ public class AbstractRegionBSPTreeTest {
         tree.transform(t);
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 new TestPoint2D(0, 5), new TestPoint2D(-1, 4), new TestPoint2D(1, 6));
@@ -896,8 +896,8 @@ public class AbstractRegionBSPTreeTest {
         tree.transform(t);
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 TestPoint2D.ZERO, new TestPoint2D(-1, 1), new TestPoint2D(1, -1));
@@ -921,8 +921,8 @@ public class AbstractRegionBSPTreeTest {
         tree.transform(t);
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 TestPoint2D.ZERO, new TestPoint2D(1, -1), new TestPoint2D(-1, 1));
@@ -946,8 +946,8 @@ public class AbstractRegionBSPTreeTest {
         tree.transform(t);
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 TestPoint2D.ZERO, new TestPoint2D(1, 1), new TestPoint2D(-1, -1));
@@ -978,7 +978,7 @@ public class AbstractRegionBSPTreeTest {
         final RegionCutBoundary<TestPoint2D> resultBoundary = node.getCutBoundary();
 
         // assert
-        Assert.assertNotSame(origBoundary, resultBoundary);
+        Assertions.assertNotSame(origBoundary, resultBoundary);
 
         assertCutBoundarySegment(origBoundary.getOutsideFacing(), new TestPoint2D(4, 5), new TestPoint2D(-1, 0));
 
@@ -991,11 +991,11 @@ public class AbstractRegionBSPTreeTest {
         tree.complement();
 
         // assert
-        Assert.assertTrue(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, root.getLocation());
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, root.getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(TestPoint2D.ZERO));
     }
 
     @Test
@@ -1007,15 +1007,15 @@ public class AbstractRegionBSPTreeTest {
         tree.complement();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, root.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, root.getPlus().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, root.getMinus().getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, root.getPlus().getLocation());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, 1)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(TestPoint2D.ZERO));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(0, -1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, 1)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(0, -1)));
     }
 
     @Test
@@ -1027,29 +1027,29 @@ public class AbstractRegionBSPTreeTest {
         tree.complement();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(3, 1)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-3, -1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(3, 1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-3, -1)));
 
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, 1)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, -1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, 1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, -1)));
 
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 5)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, -5)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 5)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, -5)));
 
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(5, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(3, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(2, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(1, 0)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-1, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-2, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-5, 0)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(5, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(3, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(2, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(1, 0)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-1, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-2, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-5, 0)));
     }
 
     @Test
@@ -1062,15 +1062,15 @@ public class AbstractRegionBSPTreeTest {
         tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(TestPoint2D.ZERO));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(1, 1)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-1, 1)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(1, -1)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-1, -1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(1, 1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-1, 1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(1, -1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-1, -1)));
     }
 
     @Test
@@ -1086,15 +1086,15 @@ public class AbstractRegionBSPTreeTest {
         root.getMinus().clearCut();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(TestPoint2D.ZERO));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(1, 1)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-1, 1)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(1, -1)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-1, -1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(1, 1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-1, 1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(1, -1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-1, -1)));
     }
 
     @Test
@@ -1110,10 +1110,10 @@ public class AbstractRegionBSPTreeTest {
         root.clearCut();
 
         // assert
-        Assert.assertTrue(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(TestPoint2D.ZERO));
     }
 
     @Test
@@ -1123,11 +1123,11 @@ public class AbstractRegionBSPTreeTest {
         tree.complement();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertTrue(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertTrue(tree.isFull());
 
-        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
     }
 
     @Test
@@ -1140,26 +1140,26 @@ public class AbstractRegionBSPTreeTest {
         tree.complement();
 
         // assert
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, -1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, -1)));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-3, 1)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(3, -1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-3, 1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(3, -1)));
 
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 5)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, -5)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 5)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, -5)));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(5, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(3, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(2, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(1, 0)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(0, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-1, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-2, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-5, 0)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(5, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(3, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(2, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(1, 0)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(0, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-1, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-2, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-5, 0)));
     }
 
     @Test
@@ -1175,21 +1175,21 @@ public class AbstractRegionBSPTreeTest {
         final RegionCutBoundary<TestPoint2D> yAxisBoundary = root.getMinus().getCutBoundary();
 
         // assert
-        Assert.assertTrue(xAxisBoundary.getOutsideFacing().isEmpty());
-        Assert.assertFalse(xAxisBoundary.getInsideFacing().isEmpty());
+        Assertions.assertTrue(xAxisBoundary.getOutsideFacing().isEmpty());
+        Assertions.assertFalse(xAxisBoundary.getInsideFacing().isEmpty());
 
         final List<HyperplaneConvexSubset<TestPoint2D>> xAxisInsideFacing = xAxisBoundary.getInsideFacing();
-        Assert.assertEquals(1, xAxisInsideFacing.size());
+        Assertions.assertEquals(1, xAxisInsideFacing.size());
 
         final TestLineSegment xAxisSeg = (TestLineSegment) xAxisInsideFacing.get(0);
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, 0), xAxisSeg.getStartPoint());
         PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, xAxisSeg.getEndPoint());
 
-        Assert.assertTrue(yAxisBoundary.getOutsideFacing().isEmpty());
-        Assert.assertFalse(yAxisBoundary.getInsideFacing().isEmpty());
+        Assertions.assertTrue(yAxisBoundary.getOutsideFacing().isEmpty());
+        Assertions.assertFalse(yAxisBoundary.getInsideFacing().isEmpty());
 
         final List<HyperplaneConvexSubset<TestPoint2D>> yAxisInsideFacing = yAxisBoundary.getInsideFacing();
-        Assert.assertEquals(1, yAxisInsideFacing.size());
+        Assertions.assertEquals(1, yAxisInsideFacing.size());
 
         final TestLineSegment yAxisSeg = (TestLineSegment) yAxisInsideFacing.get(0);
         PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, yAxisSeg.getStartPoint());
@@ -1206,17 +1206,17 @@ public class AbstractRegionBSPTreeTest {
         other.complement(tree);
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertTrue(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertTrue(tree.isFull());
 
-        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
 
-        Assert.assertTrue(other.isEmpty());
-        Assert.assertFalse(other.isFull());
+        Assertions.assertTrue(other.isEmpty());
+        Assertions.assertFalse(other.isFull());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, other.getRoot().getLocation());
-        Assert.assertEquals(RegionLocation.OUTSIDE, other.classify(TestPoint2D.ZERO));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, other.getRoot().getLocation());
+        Assertions.assertEquals(RegionLocation.OUTSIDE, other.classify(TestPoint2D.ZERO));
     }
 
     @Test
@@ -1230,32 +1230,32 @@ public class AbstractRegionBSPTreeTest {
         other.complement(tree);
 
         // assert
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
-        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, -1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, -1)));
 
-        Assert.assertFalse(other.isEmpty());
-        Assert.assertFalse(other.isFull());
+        Assertions.assertFalse(other.isEmpty());
+        Assertions.assertFalse(other.isFull());
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, other.classify(new TestPoint2D(3, 1)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, other.classify(new TestPoint2D(-3, -1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, other.classify(new TestPoint2D(3, 1)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, other.classify(new TestPoint2D(-3, -1)));
 
-        Assert.assertEquals(RegionLocation.INSIDE, other.classify(new TestPoint2D(-3, 1)));
-        Assert.assertEquals(RegionLocation.INSIDE, other.classify(new TestPoint2D(3, -1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, other.classify(new TestPoint2D(-3, 1)));
+        Assertions.assertEquals(RegionLocation.INSIDE, other.classify(new TestPoint2D(3, -1)));
 
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(4, 5)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-4, -5)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(4, 5)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-4, -5)));
 
-        Assert.assertEquals(RegionLocation.INSIDE, other.classify(new TestPoint2D(5, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(4, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(3, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(2, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(1, 0)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, other.classify(new TestPoint2D(0, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-1, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-2, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-3, 0)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-4, 0)));
-        Assert.assertEquals(RegionLocation.INSIDE, other.classify(new TestPoint2D(-5, 0)));
+        Assertions.assertEquals(RegionLocation.INSIDE, other.classify(new TestPoint2D(5, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(4, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(3, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(2, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(1, 0)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, other.classify(new TestPoint2D(0, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-1, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-2, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-3, 0)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, other.classify(new TestPoint2D(-4, 0)));
+        Assertions.assertEquals(RegionLocation.INSIDE, other.classify(new TestPoint2D(-5, 0)));
     }
 
     @Test
@@ -1268,8 +1268,8 @@ public class AbstractRegionBSPTreeTest {
         copy.copy(tree);
 
         // assert
-        Assert.assertNotSame(tree, copy);
-        Assert.assertEquals(tree.count(), copy.count());
+        Assertions.assertNotSame(tree, copy);
+        Assertions.assertEquals(tree.count(), copy.count());
 
         final List<RegionLocation> origLocations = new ArrayList<>();
         tree.nodes().forEach(n -> origLocations.add(n.getLocation()));
@@ -1277,7 +1277,7 @@ public class AbstractRegionBSPTreeTest {
         final List<RegionLocation> copyLocations = new ArrayList<>();
         copy.nodes().forEach(n -> copyLocations.add(n.getLocation()));
 
-        Assert.assertEquals(origLocations, copyLocations);
+        Assertions.assertEquals(origLocations, copyLocations);
     }
 
     @Test
@@ -1342,8 +1342,8 @@ public class AbstractRegionBSPTreeTest {
         final TestRegionBSPTree empty = emptyTree();
 
         // act/assert
-        Assert.assertNull(full.project(new TestPoint2D(0, 0)));
-        Assert.assertNull(empty.project(new TestPoint2D(-1, 1)));
+        Assertions.assertNull(full.project(new TestPoint2D(0, 0)));
+        Assertions.assertNull(empty.project(new TestPoint2D(-1, 1)));
     }
 
     @Test
@@ -1384,10 +1384,10 @@ public class AbstractRegionBSPTreeTest {
         final Split<TestRegionBSPTree> split = tree.split(TestLine.X_AXIS);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -1399,7 +1399,7 @@ public class AbstractRegionBSPTreeTest {
         final Split<TestRegionBSPTree> split = tree.split(TestLine.X_AXIS);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final TestRegionBSPTree minus = split.getMinus();
         PartitionTestUtils.assertPointLocations(minus, RegionLocation.INSIDE,
@@ -1429,7 +1429,7 @@ public class AbstractRegionBSPTreeTest {
         final Split<TestRegionBSPTree> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final TestRegionBSPTree minus = split.getMinus();
         PartitionTestUtils.assertPointLocations(minus, RegionLocation.INSIDE, new TestPoint2D(-1, 1));
@@ -1453,7 +1453,7 @@ public class AbstractRegionBSPTreeTest {
         final Split<TestRegionBSPTree> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final TestRegionBSPTree minus = split.getMinus();
         PartitionTestUtils.assertPointLocations(minus, RegionLocation.INSIDE, new TestPoint2D(0.25, 0.25));
@@ -1481,7 +1481,7 @@ public class AbstractRegionBSPTreeTest {
         final Split<TestRegionBSPTree> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
         final TestRegionBSPTree minus = split.getMinus();
         PartitionTestUtils.assertPointLocations(minus, RegionLocation.INSIDE, new TestPoint2D(0.5, 0.5));
@@ -1489,7 +1489,7 @@ public class AbstractRegionBSPTreeTest {
                 new TestPoint2D(0.5, 0), new TestPoint2D(0, 0.5),
                 new TestPoint2D(1, 0.5), new TestPoint2D(0.5, 1));
 
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -1503,9 +1503,9 @@ public class AbstractRegionBSPTreeTest {
         final Split<TestRegionBSPTree> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
+        Assertions.assertNull(split.getMinus());
 
         final TestRegionBSPTree plus = split.getPlus();
         PartitionTestUtils.assertPointLocations(plus, RegionLocation.INSIDE, new TestPoint2D(0.5, 0.5));
@@ -1523,8 +1523,8 @@ public class AbstractRegionBSPTreeTest {
         final String str = tree.toString();
 
         // assert
-        Assert.assertEquals("TestRegionBSPTree[count= 3, height= 1]", str);
-        Assert.assertTrue(tree.getRoot().toString().contains("TestRegionNode"));
+        Assertions.assertEquals("TestRegionBSPTree[count= 3, height= 1]", str);
+        Assertions.assertTrue(tree.getRoot().toString().contains("TestRegionNode"));
     }
 
     private static void insertBox(final TestRegionBSPTree tree, final TestPoint2D upperLeft,
@@ -1553,9 +1553,9 @@ public class AbstractRegionBSPTreeTest {
 
     private static void assertCutBoundarySegment(final List<HyperplaneConvexSubset<TestPoint2D>> boundaries,
             final TestPoint2D start, final TestPoint2D end) {
-        Assert.assertFalse("Expected boundary to not be empty", boundaries.isEmpty());
+        Assertions.assertFalse(boundaries.isEmpty(), "Expected boundary to not be empty");
 
-        Assert.assertEquals(1, boundaries.size());
+        Assertions.assertEquals(1, boundaries.size());
 
         final TestLineSegment segment = (TestLineSegment) boundaries.get(0);
         PartitionTestUtils.assertPointsEqual(start, segment.getStartPoint());
@@ -1578,7 +1578,7 @@ public class AbstractRegionBSPTreeTest {
             }
         }
 
-        Assert.assertTrue("Expected to find segment start= " + start + ", end= " + end, found);
+        Assertions.assertTrue(found, "Expected to find segment start= " + start + ", end= " + end);
     }
 
     private static TestRegionBSPTree emptyTree() {

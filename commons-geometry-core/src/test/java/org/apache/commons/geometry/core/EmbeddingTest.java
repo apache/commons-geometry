@@ -24,8 +24,8 @@ import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint1D;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EmbeddingTest {
 
@@ -38,7 +38,7 @@ public class EmbeddingTest {
         final List<TestPoint1D> result = line.toSubspace(new ArrayList<>());
 
         // assert
-        Assert.assertEquals(0, result.size());
+        Assertions.assertEquals(0, result.size());
     }
 
     @Test
@@ -56,10 +56,10 @@ public class EmbeddingTest {
         final List<TestPoint1D> result = line.toSubspace(pts);
 
         // assert
-        Assert.assertEquals(3, result.size());
-        Assert.assertEquals(0, result.get(0).getX(), PartitionTestUtils.EPS);
-        Assert.assertEquals(0.25, result.get(1).getX(), PartitionTestUtils.EPS);
-        Assert.assertEquals(1, result.get(2).getX(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals(0, result.get(0).getX(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(0.25, result.get(1).getX(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(1, result.get(2).getX(), PartitionTestUtils.EPS);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class EmbeddingTest {
         final List<TestPoint2D> result = line.toSpace(new ArrayList<>());
 
         // assert
-        Assert.assertEquals(0, result.size());
+        Assertions.assertEquals(0, result.size());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class EmbeddingTest {
         final List<TestPoint2D> result = line.toSpace(pts);
 
         // assert
-        Assert.assertEquals(3, result.size());
+        Assertions.assertEquals(3, result.size());
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 0), result.get(0));
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 1), result.get(1));
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 0.5), result.get(2));

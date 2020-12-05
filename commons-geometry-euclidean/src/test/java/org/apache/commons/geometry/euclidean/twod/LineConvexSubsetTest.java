@@ -26,8 +26,8 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LineConvexSubsetTest {
 
@@ -51,7 +51,7 @@ public class LineConvexSubsetTest {
         final double side = 1.0 / Math.sqrt(2);
         checkFinite(segment, Vector2D.of(-side, -side), Vector2D.of(2 * side, 2 * side));
 
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, segment.getPrecision());
     }
 
     @Test
@@ -66,11 +66,11 @@ public class LineConvexSubsetTest {
         GeometryTestUtils.assertNegativeInfinity(span.getSubspaceStart());
         GeometryTestUtils.assertPositiveInfinity(span.getSubspaceEnd());
 
-        Assert.assertNull(span.getStartPoint());
-        Assert.assertNull(span.getEndPoint());
+        Assertions.assertNull(span.getStartPoint());
+        Assertions.assertNull(span.getEndPoint());
 
-        Assert.assertSame(Interval.full(), span.getInterval());
-        Assert.assertSame(TEST_PRECISION, span.getPrecision());
+        Assertions.assertSame(Interval.full(), span.getInterval());
+        Assertions.assertSame(TEST_PRECISION, span.getPrecision());
     }
 
     @Test
@@ -85,16 +85,16 @@ public class LineConvexSubsetTest {
         final Ray ray = (Ray) Lines.subsetFromInterval(line, interval);
 
         // assert
-        Assert.assertEquals(-1.0, ray.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(-1.0, ray.getSubspaceStart(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         final double side = 1.0 / Math.sqrt(2);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-side, -side), ray.getStartPoint(), TEST_EPS);
-        Assert.assertNull(ray.getEndPoint());
+        Assertions.assertNull(ray.getEndPoint());
 
         checkInterval(interval, ray.getInterval());
-        Assert.assertSame(TEST_PRECISION, ray.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, ray.getPrecision());
     }
 
     @Test
@@ -110,15 +110,15 @@ public class LineConvexSubsetTest {
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
-        Assert.assertEquals(2, halfLine.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(2, halfLine.getSubspaceEnd(), TEST_EPS);
 
         final double side = 1.0 / Math.sqrt(2);
 
-        Assert.assertNull(halfLine.getStartPoint());
+        Assertions.assertNull(halfLine.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2 * side, 2 * side), halfLine.getEndPoint(), TEST_EPS);
 
         checkInterval(interval, halfLine.getInterval());
-        Assert.assertSame(TEST_PRECISION, halfLine.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, halfLine.getPrecision());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class LineConvexSubsetTest {
         final double side = 1.0 / Math.sqrt(2);
         checkFinite(segment, Vector2D.of(-side, -side), Vector2D.of(2 * side, 2 * side));
 
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, segment.getPrecision());
     }
 
     @Test
@@ -148,10 +148,10 @@ public class LineConvexSubsetTest {
         GeometryTestUtils.assertNegativeInfinity(span.getSubspaceStart());
         GeometryTestUtils.assertPositiveInfinity(span.getSubspaceEnd());
 
-        Assert.assertNull(span.getStartPoint());
-        Assert.assertNull(span.getEndPoint());
+        Assertions.assertNull(span.getStartPoint());
+        Assertions.assertNull(span.getEndPoint());
 
-        Assert.assertSame(TEST_PRECISION, span.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, span.getPrecision());
     }
 
     @Test
@@ -163,15 +163,15 @@ public class LineConvexSubsetTest {
         final Ray ray = (Ray) Lines.subsetFromInterval(line, -1, Double.POSITIVE_INFINITY);
 
         // assert
-        Assert.assertEquals(-1.0, ray.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(-1.0, ray.getSubspaceStart(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         final double side = 1.0 / Math.sqrt(2);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-side, -side), ray.getStartPoint(), TEST_EPS);
-        Assert.assertNull(ray.getEndPoint());
+        Assertions.assertNull(ray.getEndPoint());
 
-        Assert.assertSame(TEST_PRECISION, ray.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, ray.getPrecision());
     }
 
     @Test
@@ -184,14 +184,14 @@ public class LineConvexSubsetTest {
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
-        Assert.assertEquals(2, halfLine.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(2, halfLine.getSubspaceEnd(), TEST_EPS);
 
         final double side = 1.0 / Math.sqrt(2);
 
-        Assert.assertNull(halfLine.getStartPoint());
+        Assertions.assertNull(halfLine.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2 * side, 2 * side), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertSame(TEST_PRECISION, halfLine.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, halfLine.getPrecision());
     }
 
     @Test
@@ -235,8 +235,8 @@ public class LineConvexSubsetTest {
         final List<LineConvexSubset> segments = sub.toConvex();
 
         // assert
-        Assert.assertEquals(1, segments.size());
-        Assert.assertSame(sub, segments.get(0));
+        Assertions.assertEquals(1, segments.size());
+        Assertions.assertSame(sub, segments.get(0));
     }
 
     @Test
@@ -250,8 +250,8 @@ public class LineConvexSubsetTest {
         final Line angledLine = Lines.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 0), TEST_PRECISION);
 
         // act/assert
-        Assert.assertNull(aSeg.intersection(xAxis));
-        Assert.assertNull(aSeg.intersection(yAxis));
+        Assertions.assertNull(aSeg.intersection(xAxis));
+        Assertions.assertNull(aSeg.intersection(yAxis));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bSeg.intersection(xAxis), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bSeg.intersection(yAxis), TEST_EPS);
@@ -268,14 +268,14 @@ public class LineConvexSubsetTest {
         final Segment d = Lines.segmentFromPoints(Vector2D.of(0, 3), Vector2D.of(3, 0), TEST_PRECISION);
 
         // act/assert
-        Assert.assertNull(a.intersection(a));
-        Assert.assertNull(a.intersection(c));
-        Assert.assertNull(a.intersection(b));
+        Assertions.assertNull(a.intersection(a));
+        Assertions.assertNull(a.intersection(c));
+        Assertions.assertNull(a.intersection(b));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, b.intersection(c), TEST_EPS);
 
-        Assert.assertNull(b.intersection(d));
-        Assert.assertNull(d.intersection(b));
+        Assertions.assertNull(b.intersection(d));
+        Assertions.assertNull(d.intersection(b));
     }
 
     @Test
@@ -297,24 +297,24 @@ public class LineConvexSubsetTest {
         checkFinite(bothReversed.getPlus(), middle, end);
 
         final Split<LineConvexSubset> minusOnlyOrthogonal = sub.split(Lines.fromPointAndDirection(start, Vector2D.of(1, -2), TEST_PRECISION));
-        Assert.assertSame(sub, minusOnlyOrthogonal.getMinus());
-        Assert.assertNull(minusOnlyOrthogonal.getPlus());
+        Assertions.assertSame(sub, minusOnlyOrthogonal.getMinus());
+        Assertions.assertNull(minusOnlyOrthogonal.getPlus());
 
         final Split<LineConvexSubset> minusOnlyParallel = sub.split(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION));
-        Assert.assertSame(sub, minusOnlyParallel.getMinus());
-        Assert.assertNull(minusOnlyParallel.getPlus());
+        Assertions.assertSame(sub, minusOnlyParallel.getMinus());
+        Assertions.assertNull(minusOnlyParallel.getPlus());
 
         final Split<LineConvexSubset> plusOnlyOrthogonal = sub.split(Lines.fromPointAndDirection(end, Vector2D.of(1, -2), TEST_PRECISION));
-        Assert.assertNull(plusOnlyOrthogonal.getMinus());
-        Assert.assertSame(sub, plusOnlyOrthogonal.getPlus());
+        Assertions.assertNull(plusOnlyOrthogonal.getMinus());
+        Assertions.assertSame(sub, plusOnlyOrthogonal.getPlus());
 
         final Split<LineConvexSubset> plusOnlyParallel = sub.split(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(-2, -1), TEST_PRECISION));
-        Assert.assertNull(plusOnlyParallel.getMinus());
-        Assert.assertSame(sub, plusOnlyParallel.getPlus());
+        Assertions.assertNull(plusOnlyParallel.getMinus());
+        Assertions.assertSame(sub, plusOnlyParallel.getPlus());
 
         final Split<LineConvexSubset> hyper = sub.split(Lines.fromPointAndDirection(start, Vector2D.of(2, 1), TEST_PRECISION));
-        Assert.assertNull(hyper.getMinus());
-        Assert.assertNull(hyper.getPlus());
+        Assertions.assertNull(hyper.getMinus());
+        Assertions.assertNull(hyper.getPlus());
     }
 
     @Test
@@ -338,16 +338,16 @@ public class LineConvexSubsetTest {
         checkInfinite(bothReversed.getPlus(), line, middle, null);
 
         final Split<LineConvexSubset> minusOnlyParallel = seg.split(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION));
-        Assert.assertSame(seg, minusOnlyParallel.getMinus());
-        Assert.assertNull(minusOnlyParallel.getPlus());
+        Assertions.assertSame(seg, minusOnlyParallel.getMinus());
+        Assertions.assertNull(minusOnlyParallel.getPlus());
 
         final Split<LineConvexSubset> plusOnlyParallel = seg.split(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(-2, -1), TEST_PRECISION));
-        Assert.assertNull(plusOnlyParallel.getMinus());
-        Assert.assertSame(seg, plusOnlyParallel.getPlus());
+        Assertions.assertNull(plusOnlyParallel.getMinus());
+        Assertions.assertSame(seg, plusOnlyParallel.getPlus());
 
         final Split<LineConvexSubset> hyper = seg.split(Lines.fromPointAndDirection(p1, Vector2D.of(2, 1), TEST_PRECISION));
-        Assert.assertNull(hyper.getMinus());
-        Assert.assertNull(hyper.getPlus());
+        Assertions.assertNull(hyper.getMinus());
+        Assertions.assertNull(hyper.getPlus());
     }
 
     @Test
@@ -371,20 +371,20 @@ public class LineConvexSubsetTest {
         checkInfinite(bothReversed.getPlus(), line, middle, null);
 
         final Split<LineConvexSubset> minusOnlyParallel = sub.split(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION));
-        Assert.assertSame(sub, minusOnlyParallel.getMinus());
-        Assert.assertNull(minusOnlyParallel.getPlus());
+        Assertions.assertSame(sub, minusOnlyParallel.getMinus());
+        Assertions.assertNull(minusOnlyParallel.getPlus());
 
         final Split<LineConvexSubset> minusOnlyOrthogonal = sub.split(Lines.fromPointAndDirection(p1, Vector2D.of(1, -2), TEST_PRECISION));
-        Assert.assertSame(sub, minusOnlyOrthogonal.getMinus());
-        Assert.assertNull(minusOnlyOrthogonal.getPlus());
+        Assertions.assertSame(sub, minusOnlyOrthogonal.getMinus());
+        Assertions.assertNull(minusOnlyOrthogonal.getPlus());
 
         final Split<LineConvexSubset> plusOnlyParallel = sub.split(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(-2, -1), TEST_PRECISION));
-        Assert.assertNull(plusOnlyParallel.getMinus());
-        Assert.assertSame(sub, plusOnlyParallel.getPlus());
+        Assertions.assertNull(plusOnlyParallel.getMinus());
+        Assertions.assertSame(sub, plusOnlyParallel.getPlus());
 
         final Split<LineConvexSubset> hyper = sub.split(Lines.fromPointAndDirection(p1, Vector2D.of(2, 1), TEST_PRECISION));
-        Assert.assertNull(hyper.getMinus());
-        Assert.assertNull(hyper.getPlus());
+        Assertions.assertNull(hyper.getMinus());
+        Assertions.assertNull(hyper.getPlus());
     }
 
     @Test
@@ -408,25 +408,25 @@ public class LineConvexSubsetTest {
         checkFinite(bothReversed.getPlus(), middle, p2);
 
         final Split<LineConvexSubset> minusOnlyParallel = seg.split(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION));
-        Assert.assertSame(seg, minusOnlyParallel.getMinus());
-        Assert.assertNull(minusOnlyParallel.getPlus());
+        Assertions.assertSame(seg, minusOnlyParallel.getMinus());
+        Assertions.assertNull(minusOnlyParallel.getPlus());
 
         final Split<LineConvexSubset> plusOnlyParallel = seg.split(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(-2, -1), TEST_PRECISION));
-        Assert.assertNull(plusOnlyParallel.getMinus());
-        Assert.assertSame(seg, plusOnlyParallel.getPlus());
+        Assertions.assertNull(plusOnlyParallel.getMinus());
+        Assertions.assertSame(seg, plusOnlyParallel.getPlus());
 
         final Split<LineConvexSubset> plusOnlyOrthogonal = seg.split(Lines.fromPointAndDirection(p2, Vector2D.of(1, -2), TEST_PRECISION));
-        Assert.assertNull(plusOnlyOrthogonal.getMinus());
-        Assert.assertSame(seg, plusOnlyOrthogonal.getPlus());
+        Assertions.assertNull(plusOnlyOrthogonal.getMinus());
+        Assertions.assertSame(seg, plusOnlyOrthogonal.getPlus());
 
         final Split<LineConvexSubset> hyper = seg.split(Lines.fromPointAndDirection(p1, Vector2D.of(2, 1), TEST_PRECISION));
-        Assert.assertNull(hyper.getMinus());
-        Assert.assertNull(hyper.getPlus());
+        Assertions.assertNull(hyper.getMinus());
+        Assertions.assertNull(hyper.getPlus());
     }
 
     private static void checkInterval(final Interval expected, final Interval actual) {
-        Assert.assertEquals(expected.getMin(), actual.getMin(), TEST_EPS);
-        Assert.assertEquals(expected.getMax(), actual.getMax(), TEST_EPS);
+        Assertions.assertEquals(expected.getMin(), actual.getMin(), TEST_EPS);
+        Assertions.assertEquals(expected.getMax(), actual.getMax(), TEST_EPS);
     }
 
     private static void checkFinite(final LineConvexSubset segment, final Vector2D start, final Vector2D end) {
@@ -434,20 +434,20 @@ public class LineConvexSubsetTest {
     }
 
     private static void checkFinite(final LineConvexSubset segment, final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
-        Assert.assertFalse(segment.isInfinite());
+        Assertions.assertFalse(segment.isInfinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
 
         final Line line = segment.getLine();
-        Assert.assertEquals(HyperplaneLocation.ON, line.classify(segment.getStartPoint()));
-        Assert.assertEquals(HyperplaneLocation.ON, line.classify(segment.getEndPoint()));
+        Assertions.assertEquals(HyperplaneLocation.ON, line.classify(segment.getStartPoint()));
+        Assertions.assertEquals(HyperplaneLocation.ON, line.classify(segment.getEndPoint()));
 
-        Assert.assertEquals(line.toSubspace(segment.getStartPoint()).getX(), segment.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(line.toSubspace(segment.getEndPoint()).getX(), segment.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(line.toSubspace(segment.getStartPoint()).getX(), segment.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(line.toSubspace(segment.getEndPoint()).getX(), segment.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertSame(precision, segment.getPrecision());
-        Assert.assertSame(precision, line.getPrecision());
+        Assertions.assertSame(precision, segment.getPrecision());
+        Assertions.assertSame(precision, line.getPrecision());
     }
 
     private static void checkInfinite(final LineConvexSubset segment, final Line line, final Vector2D start, final Vector2D end) {
@@ -457,25 +457,25 @@ public class LineConvexSubsetTest {
     private static void checkInfinite(final LineConvexSubset segment, final Line line, final Vector2D start, final Vector2D end,
                                       final DoublePrecisionContext precision) {
 
-        Assert.assertTrue(segment.isInfinite());
+        Assertions.assertTrue(segment.isInfinite());
 
-        Assert.assertEquals(line, segment.getLine());
+        Assertions.assertEquals(line, segment.getLine());
 
         if (start == null) {
-            Assert.assertNull(segment.getStartPoint());
+            Assertions.assertNull(segment.getStartPoint());
         } else {
             EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
-            Assert.assertEquals(line.toSubspace(segment.getStartPoint()).getX(), segment.getSubspaceStart(), TEST_EPS);
+            Assertions.assertEquals(line.toSubspace(segment.getStartPoint()).getX(), segment.getSubspaceStart(), TEST_EPS);
         }
 
         if (end == null) {
-            Assert.assertNull(segment.getEndPoint());
+            Assertions.assertNull(segment.getEndPoint());
         } else {
             EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
-            Assert.assertEquals(line.toSubspace(segment.getEndPoint()).getX(), segment.getSubspaceEnd(), TEST_EPS);
+            Assertions.assertEquals(line.toSubspace(segment.getEndPoint()).getX(), segment.getSubspaceEnd(), TEST_EPS);
         }
 
-        Assert.assertSame(precision, segment.getPrecision());
-        Assert.assertSame(precision, line.getPrecision());
+        Assertions.assertSame(precision, segment.getPrecision());
+        Assertions.assertSame(precision, line.getPrecision());
     }
 }

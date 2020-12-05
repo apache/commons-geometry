@@ -25,8 +25,10 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Point2STest {
 
@@ -39,14 +41,14 @@ public class Point2STest {
             final Point2S p = Point2S.of(1.0 + k * PlaneAngleRadians.TWO_PI, 1.4);
 
             // act/assert
-            Assert.assertEquals(1.0, p.getAzimuth(), TEST_EPS);
-            Assert.assertEquals(1.4, p.getPolar(), TEST_EPS);
+            Assertions.assertEquals(1.0, p.getAzimuth(), TEST_EPS);
+            Assertions.assertEquals(1.4, p.getPolar(), TEST_EPS);
 
-            Assert.assertEquals(Math.cos(1.0) * Math.sin(1.4), p.getVector().getX(), TEST_EPS);
-            Assert.assertEquals(Math.sin(1.0) * Math.sin(1.4), p.getVector().getY(), TEST_EPS);
-            Assert.assertEquals(Math.cos(1.4), p.getVector().getZ(), TEST_EPS);
+            Assertions.assertEquals(Math.cos(1.0) * Math.sin(1.4), p.getVector().getX(), TEST_EPS);
+            Assertions.assertEquals(Math.sin(1.0) * Math.sin(1.4), p.getVector().getY(), TEST_EPS);
+            Assertions.assertEquals(Math.cos(1.4), p.getVector().getZ(), TEST_EPS);
 
-            Assert.assertFalse(p.isNaN());
+            Assertions.assertFalse(p.isNaN());
         }
     }
 
@@ -56,16 +58,16 @@ public class Point2STest {
         final Comparator<Point2S> comp = Point2S.POLAR_AZIMUTH_ASCENDING_ORDER;
 
         // act/assert
-        Assert.assertEquals(0, comp.compare(Point2S.of(1, 2), Point2S.of(1, 2)));
-        Assert.assertEquals(1, comp.compare(Point2S.of(1, 2), Point2S.of(2, 1)));
-        Assert.assertEquals(-1, comp.compare(Point2S.of(2, 1), Point2S.of(1, 2)));
+        Assertions.assertEquals(0, comp.compare(Point2S.of(1, 2), Point2S.of(1, 2)));
+        Assertions.assertEquals(1, comp.compare(Point2S.of(1, 2), Point2S.of(2, 1)));
+        Assertions.assertEquals(-1, comp.compare(Point2S.of(2, 1), Point2S.of(1, 2)));
 
-        Assert.assertEquals(-1, comp.compare(Point2S.of(1, 2), Point2S.of(1, 3)));
-        Assert.assertEquals(1, comp.compare(Point2S.of(1, 3), Point2S.of(1, 2)));
+        Assertions.assertEquals(-1, comp.compare(Point2S.of(1, 2), Point2S.of(1, 3)));
+        Assertions.assertEquals(1, comp.compare(Point2S.of(1, 3), Point2S.of(1, 2)));
 
-        Assert.assertEquals(1, comp.compare(null, Point2S.of(1, 2)));
-        Assert.assertEquals(-1, comp.compare(Point2S.of(1, 2), null));
-        Assert.assertEquals(0, comp.compare(null, null));
+        Assertions.assertEquals(1, comp.compare(null, Point2S.of(1, 2)));
+        Assertions.assertEquals(-1, comp.compare(Point2S.of(1, 2), null));
+        Assertions.assertEquals(0, comp.compare(null, null));
     }
 
     @Test
@@ -86,38 +88,38 @@ public class Point2STest {
     @Test
     public void testNaN() {
         // act/assert
-        Assert.assertTrue(Point2S.NaN.isNaN());
-        Assert.assertEquals(Point2S.NaN, Point2S.of(Double.NaN, 1.0));
-        Assert.assertNotEquals(Point2S.of(1.0, 1.3), Point2S.NaN);
-        Assert.assertNull(Point2S.NaN.getVector());
+        Assertions.assertTrue(Point2S.NaN.isNaN());
+        Assertions.assertEquals(Point2S.NaN, Point2S.of(Double.NaN, 1.0));
+        Assertions.assertNotEquals(Point2S.of(1.0, 1.3), Point2S.NaN);
+        Assertions.assertNull(Point2S.NaN.getVector());
 
-        Assert.assertEquals(Point2S.NaN.hashCode(), Point2S.of(Double.NaN, Double.NaN).hashCode());
+        Assertions.assertEquals(Point2S.NaN.hashCode(), Point2S.of(Double.NaN, Double.NaN).hashCode());
     }
 
     @Test
     public void testInfinite() {
         // act/assert
-        Assert.assertTrue(Point2S.of(0, Double.POSITIVE_INFINITY).isInfinite());
-        Assert.assertTrue(Point2S.of(Double.POSITIVE_INFINITY, 0).isInfinite());
+        Assertions.assertTrue(Point2S.of(0, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(Point2S.of(Double.POSITIVE_INFINITY, 0).isInfinite());
 
-        Assert.assertTrue(Point2S.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(Point2S.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isInfinite());
 
-        Assert.assertFalse(Point2S.of(0, 0).isInfinite());
-        Assert.assertFalse(Point2S.of(1, 1).isInfinite());
-        Assert.assertFalse(Point2S.NaN.isInfinite());
+        Assertions.assertFalse(Point2S.of(0, 0).isInfinite());
+        Assertions.assertFalse(Point2S.of(1, 1).isInfinite());
+        Assertions.assertFalse(Point2S.NaN.isInfinite());
     }
 
     @Test
     public void testFinite() {
         // act/assert
-        Assert.assertTrue(Point2S.of(0, 0).isFinite());
-        Assert.assertTrue(Point2S.of(1, 1).isFinite());
+        Assertions.assertTrue(Point2S.of(0, 0).isFinite());
+        Assertions.assertTrue(Point2S.of(1, 1).isFinite());
 
-        Assert.assertFalse(Point2S.of(0, Double.POSITIVE_INFINITY).isFinite());
-        Assert.assertFalse(Point2S.of(Double.POSITIVE_INFINITY, 0).isFinite());
-        Assert.assertFalse(Point2S.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Point2S.of(0, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Point2S.of(Double.POSITIVE_INFINITY, 0).isFinite());
+        Assertions.assertFalse(Point2S.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isFinite());
 
-        Assert.assertFalse(Point2S.NaN.isFinite());
+        Assertions.assertFalse(Point2S.NaN.isFinite());
     }
 
     @Test
@@ -127,10 +129,10 @@ public class Point2STest {
         final Point2S b = Point2S.of(a.getAzimuth() + 0.5 * PlaneAngleRadians.PI, a.getPolar());
 
         // act/assert
-        Assert.assertEquals(0.5 * PlaneAngleRadians.PI, a.distance(b), 1.0e-10);
-        Assert.assertEquals(PlaneAngleRadians.PI, a.distance(a.antipodal()), 1.0e-10);
-        Assert.assertEquals(0.5 * PlaneAngleRadians.PI, Point2S.MINUS_I.distance(Point2S.MINUS_K), 1.0e-10);
-        Assert.assertEquals(0.0, Point2S.of(1.0, 0).distance(Point2S.of(2.0, 0)), 1.0e-10);
+        Assertions.assertEquals(0.5 * PlaneAngleRadians.PI, a.distance(b), 1.0e-10);
+        Assertions.assertEquals(PlaneAngleRadians.PI, a.distance(a.antipodal()), 1.0e-10);
+        Assertions.assertEquals(0.5 * PlaneAngleRadians.PI, Point2S.MINUS_I.distance(Point2S.MINUS_K), 1.0e-10);
+        Assertions.assertEquals(0.0, Point2S.of(1.0, 0).distance(Point2S.of(2.0, 0)), 1.0e-10);
     }
 
     @Test
@@ -201,7 +203,7 @@ public class Point2STest {
         SphericalTestUtils.assertPointsEq(p1, p1.slerp(p1, 1), TEST_EPS);
 
         final Point2S pt = p1.slerp(p2, 0.5);
-        Assert.assertEquals(p1.distance(pt), p2.distance(pt), TEST_EPS);
+        Assertions.assertEquals(p1.distance(pt), p2.distance(pt), TEST_EPS);
     }
 
     @Test
@@ -215,15 +217,15 @@ public class Point2STest {
                 final Point2S result = pt.antipodal();
 
                 // assert
-                Assert.assertEquals(PlaneAngleRadians.PI, pt.distance(result), TEST_EPS);
+                Assertions.assertEquals(PlaneAngleRadians.PI, pt.distance(result), TEST_EPS);
 
                 // check that the azimuth and polar components of the point are correct by creating a
                 // new point and checking the distance
-                Assert.assertEquals(PlaneAngleRadians.PI,
+                Assertions.assertEquals(PlaneAngleRadians.PI,
                         Point2S.of(result.getAzimuth(), result.getPolar()).distance(pt), TEST_EPS);
 
                 // check that the vectors point in opposite directions
-                Assert.assertEquals(-1, pt.getVector().dot(result.getVector()), TEST_EPS);
+                Assertions.assertEquals(-1, pt.getVector().dot(result.getVector()), TEST_EPS);
             }
         }
     }
@@ -238,8 +240,8 @@ public class Point2STest {
         final Point2S result = pt.antipodal().antipodal();
 
         // assert
-        Assert.assertEquals(1.0, result.getAzimuth(), eps);
-        Assert.assertEquals(2.0, result.getPolar(), eps);
+        Assertions.assertEquals(1.0, result.getAzimuth(), eps);
+        Assertions.assertEquals(2.0, result.getPolar(), eps);
     }
 
     @Test
@@ -248,7 +250,7 @@ public class Point2STest {
         final Point2S pt = Point2S.of(1, 2);
 
         // act/assert
-        Assert.assertEquals(2, pt.getDimension());
+        Assertions.assertEquals(2, pt.getDimension());
     }
 
     @Test
@@ -264,17 +266,17 @@ public class Point2STest {
         final Point2S e = Point2S.of(3.0, 2.0);
 
         // act/assert
-        Assert.assertTrue(a.eq(a, smallEps));
-        Assert.assertFalse(a.eq(b, smallEps));
-        Assert.assertFalse(a.eq(c, smallEps));
-        Assert.assertTrue(a.eq(d, smallEps));
-        Assert.assertFalse(a.eq(e, smallEps));
+        Assertions.assertTrue(a.eq(a, smallEps));
+        Assertions.assertFalse(a.eq(b, smallEps));
+        Assertions.assertFalse(a.eq(c, smallEps));
+        Assertions.assertTrue(a.eq(d, smallEps));
+        Assertions.assertFalse(a.eq(e, smallEps));
 
-        Assert.assertTrue(a.eq(a, largeEps));
-        Assert.assertTrue(a.eq(b, largeEps));
-        Assert.assertTrue(a.eq(c, largeEps));
-        Assert.assertTrue(a.eq(d, largeEps));
-        Assert.assertFalse(a.eq(e, largeEps));
+        Assertions.assertTrue(a.eq(a, largeEps));
+        Assertions.assertTrue(a.eq(b, largeEps));
+        Assertions.assertTrue(a.eq(c, largeEps));
+        Assertions.assertTrue(a.eq(d, largeEps));
+        Assertions.assertFalse(a.eq(e, largeEps));
     }
 
     @Test
@@ -289,12 +291,12 @@ public class Point2STest {
         final int hash = a.hashCode();
 
         // assert
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, b.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
 
-        Assert.assertEquals(hash, d.hashCode());
+        Assertions.assertEquals(hash, d.hashCode());
     }
 
     @Test
@@ -308,11 +310,11 @@ public class Point2STest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
 
-        Assert.assertEquals(a, d);
-        Assert.assertEquals(d, a);
+        Assertions.assertEquals(a, d);
+        Assertions.assertEquals(d, a);
     }
 
     @Test
@@ -327,20 +329,20 @@ public class Point2STest {
         final Point2S f = Point2S.of(-1.0, PlaneAngleRadians.PI);
 
         // act/assert
-        Assert.assertEquals(a, a);
-        Assert.assertNotEquals(a, b);
-        Assert.assertEquals(a, c);
+        Assertions.assertEquals(a, a);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertEquals(a, c);
 
-        Assert.assertEquals(d, d);
-        Assert.assertNotEquals(d, e);
-        Assert.assertEquals(d, f);
+        Assertions.assertEquals(d, d);
+        Assertions.assertNotEquals(d, e);
+        Assertions.assertEquals(d, f);
     }
 
     @Test
     public void testToString() {
         // act/assert
-        Assert.assertEquals("(0.0, 0.0)", Point2S.of(0.0, 0.0).toString());
-        Assert.assertEquals("(1.0, 2.0)", Point2S.of(1.0, 2.0).toString());
+        Assertions.assertEquals("(0.0, 0.0)", Point2S.of(0.0, 0.0).toString());
+        Assertions.assertEquals("(1.0, 2.0)", Point2S.of(1.0, 2.0).toString());
     }
 
     @Test
@@ -350,16 +352,16 @@ public class Point2STest {
         checkPoint(Point2S.parse("(1,2)"), 1.0, 2.0);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_failure() {
         // act/assert
-        Point2S.parse("abc");
+        assertThrows(IllegalArgumentException.class, () -> Point2S.parse("abc"));
     }
 
     private static void checkPoint(final Point2S p, final double az, final double polar) {
         final String msg = "Expected (" + az + "," + polar + ") but was " + p;
 
-        Assert.assertEquals(msg, az, p.getAzimuth(), TEST_EPS);
-        Assert.assertEquals(msg, polar, p.getPolar(), TEST_EPS);
+        Assertions.assertEquals(az, p.getAzimuth(), TEST_EPS, msg);
+        Assertions.assertEquals(polar, p.getPolar(), TEST_EPS, msg);
     }
 }

@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.BSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.Node;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /** Class containing utility methods for tests related to the
  * partition package.
@@ -48,8 +48,8 @@ public final class PartitionTestUtils {
      */
     public static void assertPointsEqual(final TestPoint2D expected, final TestPoint2D actual) {
         final String msg = "Expected points to equal " + expected + " but was " + actual + ";";
-        Assert.assertEquals(msg, expected.getX(), actual.getX(), EPS);
-        Assert.assertEquals(msg, expected.getY(), actual.getY(), EPS);
+        Assertions.assertEquals(expected.getX(), actual.getX(), EPS, msg);
+        Assertions.assertEquals(expected.getY(), actual.getY(), EPS, msg);
     }
 
     /** Assert that two line segments are equal using the default test epsilon.
@@ -59,15 +59,15 @@ public final class PartitionTestUtils {
     public static void assertSegmentsEqual(final TestLineSegment expected, final TestLineSegment actual) {
         final String msg = "Expected line segment to equal " + expected + " but was " + actual;
 
-        Assert.assertEquals(msg, expected.getStartPoint().getX(),
-                actual.getStartPoint().getX(), EPS);
-        Assert.assertEquals(msg, expected.getStartPoint().getY(),
-                actual.getStartPoint().getY(), EPS);
+        Assertions.assertEquals(expected.getStartPoint().getX(),
+                actual.getStartPoint().getX(), EPS, msg);
+        Assertions.assertEquals(expected.getStartPoint().getY(),
+                actual.getStartPoint().getY(), EPS, msg);
 
-        Assert.assertEquals(msg, expected.getEndPoint().getX(),
-                actual.getEndPoint().getX(), EPS);
-        Assert.assertEquals(msg, expected.getEndPoint().getY(),
-                actual.getEndPoint().getY(), EPS);
+        Assertions.assertEquals(expected.getEndPoint().getX(),
+                actual.getEndPoint().getX(), EPS, msg);
+        Assertions.assertEquals(expected.getEndPoint().getY(),
+                actual.getEndPoint().getY(), EPS, msg);
     }
 
     /** Assert that all given points lie in the expected location of the region.
@@ -89,7 +89,7 @@ public final class PartitionTestUtils {
             final List<TestPoint2D> points) {
 
         for (final TestPoint2D p : points) {
-            Assert.assertEquals("Unexpected location for point " + p, location, region.classify(p));
+            Assertions.assertEquals(location, region.classify(p), "Unexpected location for point " + p);
         }
     }
 
@@ -97,24 +97,24 @@ public final class PartitionTestUtils {
      * @param node
      */
     public static void assertIsInternalNode(final Node<?, ?> node) {
-        Assert.assertNotNull(node.getCut());
-        Assert.assertNotNull(node.getMinus());
-        Assert.assertNotNull(node.getPlus());
+        Assertions.assertNotNull(node.getCut());
+        Assertions.assertNotNull(node.getMinus());
+        Assertions.assertNotNull(node.getPlus());
 
-        Assert.assertTrue(node.isInternal());
-        Assert.assertFalse(node.isLeaf());
+        Assertions.assertTrue(node.isInternal());
+        Assertions.assertFalse(node.isLeaf());
     }
 
     /** Assert that the given node is a consistent leaf node.
      * @param node
      */
     public static void assertIsLeafNode(final Node<?, ?> node) {
-        Assert.assertNull(node.getCut());
-        Assert.assertNull(node.getMinus());
-        Assert.assertNull(node.getPlus());
+        Assertions.assertNull(node.getCut());
+        Assertions.assertNull(node.getMinus());
+        Assertions.assertNull(node.getPlus());
 
-        Assert.assertFalse(node.isInternal());
-        Assert.assertTrue(node.isLeaf());
+        Assertions.assertFalse(node.isInternal());
+        Assertions.assertTrue(node.isLeaf());
     }
 
     /** Assert that the given tree for has a valid, consistent internal structure. This checks that all nodes
@@ -134,19 +134,19 @@ public final class PartitionTestUtils {
     private static <P extends Point<P>, N extends BSPTree.Node<P, N>> void assertTreeStructureRecursive(
             final BSPTree<P, N> tree, final BSPTree.Node<P, N> node, final int expectedDepth) {
 
-        Assert.assertSame("Node has an incorrect owning tree", tree, node.getTree());
-        Assert.assertEquals("Node has an incorrect depth property", node.depth(), expectedDepth);
+        Assertions.assertSame(tree, node.getTree(), "Node has an incorrect owning tree");
+        Assertions.assertEquals(node.depth(), expectedDepth, "Node has an incorrect depth property");
 
         if (node.getCut() == null) {
             final String msg = "Node without cut cannot have children";
 
-            Assert.assertNull(msg, node.getMinus());
-            Assert.assertNull(msg, node.getPlus());
+            Assertions.assertNull(node.getMinus(), msg);
+            Assertions.assertNull(node.getPlus(), msg);
         } else {
             final String msg = "Node with cut must have children";
 
-            Assert.assertNotNull(msg, node.getMinus());
-            Assert.assertNotNull(msg, node.getPlus());
+            Assertions.assertNotNull(node.getMinus(), msg);
+            Assertions.assertNotNull(node.getPlus(), msg);
 
             assertTreeStructureRecursive(tree, node.getPlus(), expectedDepth + 1);
             assertTreeStructureRecursive(tree, node.getMinus(), expectedDepth + 1);

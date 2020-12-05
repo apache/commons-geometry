@@ -37,8 +37,8 @@ import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SimpleTriangleMeshTest {
 
@@ -66,43 +66,43 @@ public class SimpleTriangleMeshTest {
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(vertices, faceIndices, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(4, mesh.getVertexCount());
-        Assert.assertEquals(Arrays.asList(vertices), mesh.getVertices());
+        Assertions.assertEquals(4, mesh.getVertexCount());
+        Assertions.assertEquals(Arrays.asList(vertices), mesh.getVertices());
 
-        Assert.assertEquals(2, mesh.getFaceCount());
+        Assertions.assertEquals(2, mesh.getFaceCount());
 
         final List<TriangleMesh.Face> faces = mesh.getFaces();
-        Assert.assertEquals(2, faces.size());
+        Assertions.assertEquals(2, faces.size());
 
         final TriangleMesh.Face f1 = faces.get(0);
-        Assert.assertEquals(0, f1.getIndex());
-        Assert.assertArrayEquals(new int[] {0, 1, 2}, f1.getVertexIndices());
-        Assert.assertSame(vertices[0], f1.getPoint1());
-        Assert.assertSame(vertices[1], f1.getPoint2());
-        Assert.assertSame(vertices[2], f1.getPoint3());
-        Assert.assertEquals(Arrays.asList(vertices[0], vertices[1], vertices[2]), f1.getVertices());
-        Assert.assertTrue(f1.definesPolygon());
+        Assertions.assertEquals(0, f1.getIndex());
+        Assertions.assertArrayEquals(new int[] {0, 1, 2}, f1.getVertexIndices());
+        Assertions.assertSame(vertices[0], f1.getPoint1());
+        Assertions.assertSame(vertices[1], f1.getPoint2());
+        Assertions.assertSame(vertices[2], f1.getPoint3());
+        Assertions.assertEquals(Arrays.asList(vertices[0], vertices[1], vertices[2]), f1.getVertices());
+        Assertions.assertTrue(f1.definesPolygon());
 
         final Triangle3D t1 = f1.getPolygon();
-        Assert.assertEquals(Arrays.asList(vertices[0], vertices[1], vertices[2]), t1.getVertices());
+        Assertions.assertEquals(Arrays.asList(vertices[0], vertices[1], vertices[2]), t1.getVertices());
 
         final TriangleMesh.Face f2 = faces.get(1);
-        Assert.assertEquals(1, f2.getIndex());
-        Assert.assertArrayEquals(new int[] {0, 2, 3}, f2.getVertexIndices());
-        Assert.assertSame(vertices[0], f2.getPoint1());
-        Assert.assertSame(vertices[2], f2.getPoint2());
-        Assert.assertSame(vertices[3], f2.getPoint3());
-        Assert.assertEquals(Arrays.asList(vertices[0], vertices[2], vertices[3]), f2.getVertices());
-        Assert.assertTrue(f2.definesPolygon());
+        Assertions.assertEquals(1, f2.getIndex());
+        Assertions.assertArrayEquals(new int[] {0, 2, 3}, f2.getVertexIndices());
+        Assertions.assertSame(vertices[0], f2.getPoint1());
+        Assertions.assertSame(vertices[2], f2.getPoint2());
+        Assertions.assertSame(vertices[3], f2.getPoint3());
+        Assertions.assertEquals(Arrays.asList(vertices[0], vertices[2], vertices[3]), f2.getVertices());
+        Assertions.assertTrue(f2.definesPolygon());
 
         final Triangle3D t2 = f2.getPolygon();
-        Assert.assertEquals(Arrays.asList(vertices[0], vertices[2], vertices[3]), t2.getVertices());
+        Assertions.assertEquals(Arrays.asList(vertices[0], vertices[2], vertices[3]), t2.getVertices());
 
         final Bounds3D bounds = mesh.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), bounds.getMax(), TEST_EPS);
 
-        Assert.assertSame(TEST_PRECISION, mesh.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, mesh.getPrecision());
     }
 
     @Test
@@ -116,15 +116,15 @@ public class SimpleTriangleMeshTest {
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(vertices, faceIndices, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(0, mesh.getVertexCount());
-        Assert.assertEquals(0, mesh.getVertices().size());
+        Assertions.assertEquals(0, mesh.getVertexCount());
+        Assertions.assertEquals(0, mesh.getVertices().size());
 
-        Assert.assertEquals(0, mesh.getFaceCount());
-        Assert.assertEquals(0, mesh.getFaces().size());
+        Assertions.assertEquals(0, mesh.getFaceCount());
+        Assertions.assertEquals(0, mesh.getFaces().size());
 
-        Assert.assertNull(mesh.getBounds());
+        Assertions.assertNull(mesh.getBounds());
 
-        Assert.assertTrue(mesh.toTree().isEmpty());
+        Assertions.assertTrue(mesh.toTree().isEmpty());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class SimpleTriangleMeshTest {
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(src, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(8, mesh.getVertexCount());
+        Assertions.assertEquals(8, mesh.getVertexCount());
 
         final Vector3D p1 = Vector3D.of(0, 0, 0);
         final Vector3D p2 = Vector3D.of(0, 0, 1);
@@ -149,25 +149,25 @@ public class SimpleTriangleMeshTest {
         final Vector3D p8 = Vector3D.of(1, 1, 1);
 
         final List<Vector3D> vertices = mesh.getVertices();
-        Assert.assertEquals(8, vertices.size());
+        Assertions.assertEquals(8, vertices.size());
 
-        Assert.assertTrue(vertices.contains(p1));
-        Assert.assertTrue(vertices.contains(p2));
-        Assert.assertTrue(vertices.contains(p3));
-        Assert.assertTrue(vertices.contains(p4));
-        Assert.assertTrue(vertices.contains(p5));
-        Assert.assertTrue(vertices.contains(p6));
-        Assert.assertTrue(vertices.contains(p7));
-        Assert.assertTrue(vertices.contains(p8));
+        Assertions.assertTrue(vertices.contains(p1));
+        Assertions.assertTrue(vertices.contains(p2));
+        Assertions.assertTrue(vertices.contains(p3));
+        Assertions.assertTrue(vertices.contains(p4));
+        Assertions.assertTrue(vertices.contains(p5));
+        Assertions.assertTrue(vertices.contains(p6));
+        Assertions.assertTrue(vertices.contains(p7));
+        Assertions.assertTrue(vertices.contains(p8));
 
-        Assert.assertEquals(12, mesh.getFaceCount());
+        Assertions.assertEquals(12, mesh.getFaceCount());
 
         final RegionBSPTree3D tree = mesh.toTree();
 
-        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, tree.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getCentroid(), TEST_EPS);
 
-        Assert.assertSame(TEST_PRECISION, mesh.getPrecision());
+        Assertions.assertSame(TEST_PRECISION, mesh.getPrecision());
     }
 
     @Test
@@ -177,15 +177,15 @@ public class SimpleTriangleMeshTest {
                 TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(0, mesh.getVertexCount());
-        Assert.assertEquals(0, mesh.getVertices().size());
+        Assertions.assertEquals(0, mesh.getVertexCount());
+        Assertions.assertEquals(0, mesh.getVertices().size());
 
-        Assert.assertEquals(0, mesh.getFaceCount());
-        Assert.assertEquals(0, mesh.getFaces().size());
+        Assertions.assertEquals(0, mesh.getFaceCount());
+        Assertions.assertEquals(0, mesh.getFaces().size());
 
-        Assert.assertNull(mesh.getBounds());
+        Assertions.assertNull(mesh.getBounds());
 
-        Assert.assertTrue(mesh.toTree().isEmpty());
+        Assertions.assertTrue(mesh.toTree().isEmpty());
     }
 
     @Test
@@ -206,7 +206,7 @@ public class SimpleTriangleMeshTest {
         mesh.vertices().forEach(result::add);
 
         // assert
-        Assert.assertEquals(vertices, result);
+        Assertions.assertEquals(vertices, result);
     }
 
     @Test
@@ -231,25 +231,25 @@ public class SimpleTriangleMeshTest {
         mesh.faces().forEach(result::add);
 
         // assert
-        Assert.assertEquals(2, result.size());
+        Assertions.assertEquals(2, result.size());
 
         final TriangleMesh.Face f1 = result.get(0);
-        Assert.assertEquals(0, f1.getIndex());
-        Assert.assertArrayEquals(new int[] {0, 1, 2}, f1.getVertexIndices());
-        Assert.assertSame(vertices.get(0), f1.getPoint1());
-        Assert.assertSame(vertices.get(1), f1.getPoint2());
-        Assert.assertSame(vertices.get(2), f1.getPoint3());
-        Assert.assertEquals(Arrays.asList(vertices.get(0), vertices.get(1), vertices.get(2)), f1.getVertices());
-        Assert.assertTrue(f1.definesPolygon());
+        Assertions.assertEquals(0, f1.getIndex());
+        Assertions.assertArrayEquals(new int[] {0, 1, 2}, f1.getVertexIndices());
+        Assertions.assertSame(vertices.get(0), f1.getPoint1());
+        Assertions.assertSame(vertices.get(1), f1.getPoint2());
+        Assertions.assertSame(vertices.get(2), f1.getPoint3());
+        Assertions.assertEquals(Arrays.asList(vertices.get(0), vertices.get(1), vertices.get(2)), f1.getVertices());
+        Assertions.assertTrue(f1.definesPolygon());
 
         final TriangleMesh.Face f2 = result.get(1);
-        Assert.assertEquals(1, f2.getIndex());
-        Assert.assertArrayEquals(new int[] {0, 2, 3}, f2.getVertexIndices());
-        Assert.assertSame(vertices.get(0), f2.getPoint1());
-        Assert.assertSame(vertices.get(2), f2.getPoint2());
-        Assert.assertSame(vertices.get(3), f2.getPoint3());
-        Assert.assertEquals(Arrays.asList(vertices.get(0), vertices.get(2), vertices.get(3)), f2.getVertices());
-        Assert.assertTrue(f2.definesPolygon());
+        Assertions.assertEquals(1, f2.getIndex());
+        Assertions.assertArrayEquals(new int[] {0, 2, 3}, f2.getVertexIndices());
+        Assertions.assertSame(vertices.get(0), f2.getPoint1());
+        Assertions.assertSame(vertices.get(2), f2.getPoint2());
+        Assertions.assertSame(vertices.get(3), f2.getPoint3());
+        Assertions.assertEquals(Arrays.asList(vertices.get(0), vertices.get(2), vertices.get(3)), f2.getVertices());
+        Assertions.assertTrue(f2.definesPolygon());
     }
 
     @Test
@@ -270,9 +270,9 @@ public class SimpleTriangleMeshTest {
         // act/assert
         final Iterator<TriangleMesh.Face> it = mesh.faces().iterator();
 
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(0, it.next().getIndex());
-        Assert.assertFalse(it.hasNext());
+        Assertions.assertTrue(it.hasNext());
+        Assertions.assertEquals(0, it.next().getIndex());
+        Assertions.assertFalse(it.hasNext());
 
         GeometryTestUtils.assertThrows(() -> it.next(), NoSuchElementException.class);
     }
@@ -298,17 +298,17 @@ public class SimpleTriangleMeshTest {
         final List<Triangle3D> tris = mesh.triangleStream().collect(Collectors.toList());
 
         // assert
-        Assert.assertEquals(2, tris.size());
+        Assertions.assertEquals(2, tris.size());
 
         final Triangle3D t1 = tris.get(0);
-        Assert.assertSame(vertices.get(0), t1.getPoint1());
-        Assert.assertSame(vertices.get(1), t1.getPoint2());
-        Assert.assertSame(vertices.get(2), t1.getPoint3());
+        Assertions.assertSame(vertices.get(0), t1.getPoint1());
+        Assertions.assertSame(vertices.get(1), t1.getPoint2());
+        Assertions.assertSame(vertices.get(2), t1.getPoint3());
 
         final Triangle3D t2 = tris.get(1);
-        Assert.assertSame(vertices.get(0), t2.getPoint1());
-        Assert.assertSame(vertices.get(2), t2.getPoint2());
-        Assert.assertSame(vertices.get(3), t2.getPoint3());
+        Assertions.assertSame(vertices.get(0), t2.getPoint1());
+        Assertions.assertSame(vertices.get(2), t2.getPoint2());
+        Assertions.assertSame(vertices.get(3), t2.getPoint3());
     }
 
     @Test
@@ -321,17 +321,17 @@ public class SimpleTriangleMeshTest {
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(Parallelepiped.unitCube(TEST_PRECISION), precision1);
 
         // act/assert
-        Assert.assertSame(mesh, mesh.toTriangleMesh(precision1));
+        Assertions.assertSame(mesh, mesh.toTriangleMesh(precision1));
 
         final SimpleTriangleMesh other = mesh.toTriangleMesh(precision2);
-        Assert.assertSame(precision2, other.getPrecision());
-        Assert.assertEquals(mesh.getVertices(), other.getVertices());
-        Assert.assertEquals(12, other.getFaceCount());
+        Assertions.assertSame(precision2, other.getPrecision());
+        Assertions.assertEquals(mesh.getVertices(), other.getVertices());
+        Assertions.assertEquals(12, other.getFaceCount());
         for (int i = 0; i < 12; ++i) {
-            Assert.assertArrayEquals(mesh.getFace(i).getVertexIndices(), other.getFace(i).getVertexIndices());
+            Assertions.assertArrayEquals(mesh.getFace(i).getVertexIndices(), other.getFace(i).getVertexIndices());
         }
 
-        Assert.assertSame(mesh, mesh.toTriangleMesh(precision3));
+        Assertions.assertSame(mesh, mesh.toTriangleMesh(precision3));
     }
 
     @Test
@@ -354,12 +354,12 @@ public class SimpleTriangleMeshTest {
         // act/assert
         final Pattern msgPattern = Pattern.compile("^Points do not define a plane: .*");
 
-        Assert.assertFalse(mesh.getFace(0).definesPolygon());
+        Assertions.assertFalse(mesh.getFace(0).definesPolygon());
         GeometryTestUtils.assertThrows(() -> {
             mesh.getFace(0).getPolygon();
         }, IllegalArgumentException.class, msgPattern);
 
-        Assert.assertFalse(mesh.getFace(1).definesPolygon());
+        Assertions.assertFalse(mesh.getFace(1).definesPolygon());
         GeometryTestUtils.assertThrows(() -> {
             mesh.getFace(1).getPolygon();
         }, IllegalArgumentException.class, msgPattern);
@@ -374,15 +374,15 @@ public class SimpleTriangleMeshTest {
         final RegionBSPTree3D tree = mesh.toTree();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isInfinite());
-        Assert.assertTrue(tree.isFinite());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isInfinite());
+        Assertions.assertTrue(tree.isFinite());
 
-        Assert.assertEquals(1, tree.getSize(), 1);
-        Assert.assertEquals(6, tree.getBoundarySize(), 1);
+        Assertions.assertEquals(1, tree.getSize(), 1);
+        Assertions.assertEquals(6, tree.getBoundarySize(), 1);
 
-        Assert.assertEquals(6, tree.getRoot().height());
+        Assertions.assertEquals(6, tree.getRoot().height());
     }
 
     @Test
@@ -397,10 +397,10 @@ public class SimpleTriangleMeshTest {
         final SimpleTriangleMesh result = mesh.transform(t);
 
         // assert
-        Assert.assertNotSame(mesh, result);
+        Assertions.assertNotSame(mesh, result);
 
-        Assert.assertEquals(8, result.getVertexCount());
-        Assert.assertEquals(12, result.getFaceCount());
+        Assertions.assertEquals(8, result.getVertexCount());
+        Assertions.assertEquals(12, result.getFaceCount());
 
         final Bounds3D resultBounds = result.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, resultBounds.getMin(), TEST_EPS);
@@ -421,10 +421,10 @@ public class SimpleTriangleMeshTest {
         final SimpleTriangleMesh result = mesh.transform(t);
 
         // assert
-        Assert.assertEquals(0, result.getVertexCount());
-        Assert.assertEquals(0, result.getFaceCount());
+        Assertions.assertEquals(0, result.getVertexCount());
+        Assertions.assertEquals(0, result.getFaceCount());
 
-        Assert.assertNull(result.getBounds());
+        Assertions.assertNull(result.getBounds());
     }
 
     @Test
@@ -473,14 +473,14 @@ public class SimpleTriangleMeshTest {
         final SimpleTriangleMesh mesh = builder.build();
 
         // assert
-        Assert.assertEquals(6, mesh.getVertexCount());
-        Assert.assertEquals(2, mesh.getFaceCount());
+        Assertions.assertEquals(6, mesh.getVertexCount());
+        Assertions.assertEquals(2, mesh.getFaceCount());
 
         final List<TriangleMesh.Face> faces = mesh.getFaces();
-        Assert.assertEquals(2, faces.size());
+        Assertions.assertEquals(2, faces.size());
 
-        Assert.assertArrayEquals(new int[] {0, 2, 1},  faces.get(0).getVertexIndices());
-        Assert.assertArrayEquals(new int[] {5, 1, 4},  faces.get(1).getVertexIndices());
+        Assertions.assertArrayEquals(new int[] {0, 2, 1},  faces.get(0).getVertexIndices());
+        Assertions.assertArrayEquals(new int[] {5, 1, 4},  faces.get(1).getVertexIndices());
     }
 
     @Test
@@ -500,8 +500,8 @@ public class SimpleTriangleMeshTest {
             .build();
 
         // assert
-        Assert.assertEquals(4, mesh.getVertexCount());
-        Assert.assertEquals(2, mesh.getFaceCount());
+        Assertions.assertEquals(4, mesh.getVertexCount());
+        Assertions.assertEquals(2, mesh.getFaceCount());
     }
 
     @Test
@@ -633,21 +633,21 @@ public class SimpleTriangleMeshTest {
         builder.addFaceUsingVertices(p1, p2, p3);
 
         // assert
-        Assert.assertEquals(6, builder.getVertexCount());
-        Assert.assertEquals(3, builder.getFaceCount());
+        Assertions.assertEquals(6, builder.getVertexCount());
+        Assertions.assertEquals(3, builder.getFaceCount());
 
         final SimpleTriangleMesh mesh = builder.build();
 
-        Assert.assertEquals(6, mesh.getVertexCount());
-        Assert.assertEquals(3, mesh.getFaceCount());
+        Assertions.assertEquals(6, mesh.getVertexCount());
+        Assertions.assertEquals(3, mesh.getFaceCount());
 
         final TriangleMesh.Face f1 = mesh.getFace(0);
-        Assert.assertArrayEquals(new int[] {0, 1, 2}, f1.getVertexIndices());
+        Assertions.assertArrayEquals(new int[] {0, 1, 2}, f1.getVertexIndices());
 
         final TriangleMesh.Face f2 = mesh.getFace(1);
-        Assert.assertArrayEquals(new int[] {3, 4, 5}, f2.getVertexIndices());
+        Assertions.assertArrayEquals(new int[] {3, 4, 5}, f2.getVertexIndices());
 
         final TriangleMesh.Face f3 = mesh.getFace(2);
-        Assert.assertArrayEquals(new int[] {0, 1, 2}, f3.getVertexIndices());
+        Assertions.assertArrayEquals(new int[] {0, 1, 2}, f3.getVertexIndices());
     }
 }

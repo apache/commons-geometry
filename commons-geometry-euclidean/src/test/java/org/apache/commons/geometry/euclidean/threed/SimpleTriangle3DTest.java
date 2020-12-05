@@ -29,8 +29,8 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SimpleTriangle3DTest {
 
@@ -53,25 +53,25 @@ public class SimpleTriangle3DTest {
         final SimpleTriangle3D tri = new SimpleTriangle3D(XY_PLANE_Z1, p1, p2, p3);
 
         // assert
-        Assert.assertFalse(tri.isFull());
-        Assert.assertFalse(tri.isEmpty());
-        Assert.assertFalse(tri.isInfinite());
-        Assert.assertTrue(tri.isFinite());
+        Assertions.assertFalse(tri.isFull());
+        Assertions.assertFalse(tri.isEmpty());
+        Assertions.assertFalse(tri.isInfinite());
+        Assertions.assertTrue(tri.isFinite());
 
-        Assert.assertSame(XY_PLANE_Z1, tri.getPlane());
-        Assert.assertSame(p1, tri.getPoint1());
-        Assert.assertSame(p2, tri.getPoint2());
-        Assert.assertSame(p3, tri.getPoint3());
+        Assertions.assertSame(XY_PLANE_Z1, tri.getPlane());
+        Assertions.assertSame(p1, tri.getPoint1());
+        Assertions.assertSame(p2, tri.getPoint2());
+        Assertions.assertSame(p3, tri.getPoint3());
 
-        Assert.assertEquals(Arrays.asList(p1, p2, p3), tri.getVertices());
+        Assertions.assertEquals(Arrays.asList(p1, p2, p3), tri.getVertices());
 
         final List<Vector2D> subspaceVertices = tri.getEmbedded().getSubspaceRegion().getVertices();
-        Assert.assertEquals(3, subspaceVertices.size());
+        Assertions.assertEquals(3, subspaceVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), subspaceVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), subspaceVertices.get(1), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 3), subspaceVertices.get(2), TEST_EPS);
 
-        Assert.assertEquals(0.5, tri.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.5, tri.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(5.0 / 3.0, 7.0 / 3.0, 1), tri.getCentroid(), TEST_EPS);
 
         final Bounds3D bounds = tri.getBounds();
@@ -101,8 +101,8 @@ public class SimpleTriangle3DTest {
         final List<Triangle3D> triangles = tri.toTriangles();
 
         // assert
-        Assert.assertEquals(1, triangles.size());
-        Assert.assertSame(tri, triangles.get(0));
+        Assertions.assertEquals(1, triangles.size());
+        Assertions.assertSame(tri, triangles.get(0));
     }
 
     @Test
@@ -111,16 +111,16 @@ public class SimpleTriangle3DTest {
         final QuaternionRotation rot = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.2);
 
         // act/assert
-        Assert.assertEquals(0.5, new SimpleTriangle3D(XY_PLANE_Z1,
+        Assertions.assertEquals(0.5, new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1)).getSize(), TEST_EPS);
 
-        Assert.assertEquals(1, new SimpleTriangle3D(XY_PLANE_Z1,
+        Assertions.assertEquals(1, new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(0, 0, 1), Vector3D.of(2, 0, 1), Vector3D.of(0, 1, 1)).getSize(), TEST_EPS);
 
-        Assert.assertEquals(1.5, new SimpleTriangle3D(XY_PLANE_Z1,
+        Assertions.assertEquals(1.5, new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(1, 2, 1), Vector3D.of(4, 2, 1), Vector3D.of(2, 3, 1)).getSize(), TEST_EPS);
 
-        Assert.assertEquals(1.5, new SimpleTriangle3D(XY_PLANE_Z1,
+        Assertions.assertEquals(1.5, new SimpleTriangle3D(XY_PLANE_Z1,
                 rot.applyVector(Vector3D.of(1, 2, 1)),
                 rot.apply(Vector3D.of(4, 2, 1)),
                 rot.applyVector(Vector3D.of(2, 3, 1))).getSize(), TEST_EPS);
@@ -193,15 +193,15 @@ public class SimpleTriangle3DTest {
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_Z, result.getPlane().getNormal(), TEST_EPS);
 
-        Assert.assertSame(p1, result.getPoint1());
-        Assert.assertSame(p3, result.getPoint2());
-        Assert.assertSame(p2, result.getPoint3());
+        Assertions.assertSame(p1, result.getPoint1());
+        Assertions.assertSame(p3, result.getPoint2());
+        Assertions.assertSame(p2, result.getPoint3());
 
         final Vector3D v1 = result.getPoint1().vectorTo(result.getPoint2());
         final Vector3D v2 = result.getPoint1().vectorTo(result.getPoint3());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_Z, v1.cross(v2).normalize(), TEST_EPS);
 
-        Assert.assertEquals(1, result.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, result.getSize(), TEST_EPS);
     }
 
     @Test
@@ -232,7 +232,7 @@ public class SimpleTriangle3DTest {
         final Vector3D v2 = result.getPoint1().vectorTo(result.getPoint3());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X, v1.cross(v2).normalize(), TEST_EPS);
 
-        Assert.assertEquals(2, result.getSize(), TEST_EPS);
+        Assertions.assertEquals(2, result.getSize(), TEST_EPS);
     }
 
     @Test
@@ -247,10 +247,10 @@ public class SimpleTriangle3DTest {
         final Split<PlaneConvexSubset> split = tri.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(tri, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(tri, split.getPlus());
     }
 
     @Test
@@ -265,10 +265,10 @@ public class SimpleTriangle3DTest {
         final Split<PlaneConvexSubset> split = tri.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(tri, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(tri, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -283,7 +283,7 @@ public class SimpleTriangle3DTest {
         final Split<PlaneConvexSubset> split = tri.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final PlaneConvexSubset minus = split.getMinus();
         EuclideanTestUtils.assertVertexLoopSequence(
@@ -308,10 +308,10 @@ public class SimpleTriangle3DTest {
         final Split<PlaneConvexSubset> split = tri.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -330,7 +330,7 @@ public class SimpleTriangle3DTest {
 
     private static void checkPoints(final ConvexPolygon3D ps, final RegionLocation loc, final Vector3D... pts) {
         for (final Vector3D pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, ps.classify(pt));
+            Assertions.assertEquals(loc, ps.classify(pt), "Unexpected location for point " + pt);
         }
     }
 }

@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class BoundarySourceBoundsBuilder2DTest {
 
@@ -41,7 +41,7 @@ public class BoundarySourceBoundsBuilder2DTest {
         final Bounds2D b = builder.getBounds(src);
 
         // assert
-        Assert.assertNull(b);
+        Assertions.assertNull(b);
     }
 
     @Test
@@ -57,8 +57,8 @@ public class BoundarySourceBoundsBuilder2DTest {
 
         // assert
         checkBounds(b, Vector2D.of(-3, -2), Vector2D.of(1, 4));
-        Assert.assertTrue(b.contains(seg.getStartPoint()));
-        Assert.assertTrue(b.contains(seg.getEndPoint()));
+        Assertions.assertTrue(b.contains(seg.getStartPoint()));
+        Assertions.assertTrue(b.contains(seg.getEndPoint()));
     }
 
     @Test
@@ -78,8 +78,8 @@ public class BoundarySourceBoundsBuilder2DTest {
         checkBounds(b, Vector2D.of(-3, -2), Vector2D.of(7, 9));
 
         src.boundaryStream().forEach(boundary -> {
-            Assert.assertTrue(b.contains(boundary.getStartPoint()));
-            Assert.assertTrue(b.contains(boundary.getEndPoint()));
+            Assertions.assertTrue(b.contains(boundary.getStartPoint()));
+            Assertions.assertTrue(b.contains(boundary.getEndPoint()));
         });
     }
 
@@ -95,7 +95,7 @@ public class BoundarySourceBoundsBuilder2DTest {
         final Bounds2D b = builder.getBounds(src);
 
         // assert
-        Assert.assertNull(b);
+        Assertions.assertNull(b);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class BoundarySourceBoundsBuilder2DTest {
         final Bounds2D b = builder.getBounds(src);
 
         // assert
-        Assert.assertNull(b);
+        Assertions.assertNull(b);
     }
 
     private static void checkBounds(final Bounds2D b, final Vector2D min, final Vector2D max) {

@@ -31,8 +31,8 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class VertexListConvexPolygon3DTest {
 
@@ -53,15 +53,15 @@ public class VertexListConvexPolygon3DTest {
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
         // assert
-        Assert.assertFalse(p.isFull());
-        Assert.assertFalse(p.isEmpty());
-        Assert.assertTrue(p.isFinite());
-        Assert.assertFalse(p.isInfinite());
+        Assertions.assertFalse(p.isFull());
+        Assertions.assertFalse(p.isEmpty());
+        Assertions.assertTrue(p.isFinite());
+        Assertions.assertFalse(p.isInfinite());
 
-        Assert.assertEquals(0.5, p.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.5, p.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.0 / 3.0, 1.0 / 3.0, 1), p.getCentroid(), TEST_EPS);
 
-        Assert.assertSame(XY_PLANE_Z1, p.getPlane());
+        Assertions.assertSame(XY_PLANE_Z1, p.getPlane());
 
         EuclideanTestUtils.assertVertexLoopSequence(
                 Arrays.asList(Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1)),
@@ -119,15 +119,15 @@ public class VertexListConvexPolygon3DTest {
         final ConvexArea area = p.getEmbedded().getSubspaceRegion();
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
-        Assert.assertTrue(area.isFinite());
-        Assert.assertFalse(area.isInfinite());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
+        Assertions.assertTrue(area.isFinite());
+        Assertions.assertFalse(area.isInfinite());
 
-        Assert.assertEquals(0.5, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.5, area.getSize(), TEST_EPS);
 
         final List<Vector2D> vertices = area.getVertices();
-        Assert.assertEquals(3, vertices.size());
+        Assertions.assertEquals(3, vertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(1), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1), vertices.get(2), TEST_EPS);
@@ -142,10 +142,10 @@ public class VertexListConvexPolygon3DTest {
         final List<Triangle3D> tris = p.toTriangles();
 
         // assert
-        Assert.assertEquals(1, tris.size());
+        Assertions.assertEquals(1, tris.size());
 
         final Triangle3D a = tris.get(0);
-        Assert.assertSame(XY_PLANE_Z1, a.getPlane());
+        Assertions.assertSame(XY_PLANE_Z1, a.getPlane());
         EuclideanTestUtils.assertVertexLoopSequence(TRIANGLE_VERTICES, a.getVertices(), TEST_PRECISION);
     }
 
@@ -164,18 +164,18 @@ public class VertexListConvexPolygon3DTest {
         final List<Triangle3D> tris = p.toTriangles();
 
         // assert
-        Assert.assertEquals(3, tris.size());
+        Assertions.assertEquals(3, tris.size());
 
         final Triangle3D a = tris.get(0);
-        Assert.assertSame(XY_PLANE_Z1, a.getPlane());
+        Assertions.assertSame(XY_PLANE_Z1, a.getPlane());
         EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p2, p3, p4), a.getVertices(), TEST_PRECISION);
 
         final Triangle3D b = tris.get(1);
-        Assert.assertSame(XY_PLANE_Z1, b.getPlane());
+        Assertions.assertSame(XY_PLANE_Z1, b.getPlane());
         EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p2, p4, p5), b.getVertices(), TEST_PRECISION);
 
         final Triangle3D c = tris.get(2);
-        Assert.assertSame(XY_PLANE_Z1, c.getPlane());
+        Assertions.assertSame(XY_PLANE_Z1, c.getPlane());
         EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p2, p5, p1), c.getVertices(), TEST_PRECISION);
     }
 
@@ -257,12 +257,12 @@ public class VertexListConvexPolygon3DTest {
         final VertexListConvexPolygon3D result = p.transform(t);
 
         // assert
-        Assert.assertFalse(result.isFull());
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertTrue(result.isFinite());
-        Assert.assertFalse(result.isInfinite());
+        Assertions.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertTrue(result.isFinite());
+        Assertions.assertFalse(result.isInfinite());
 
-        Assert.assertEquals(8, result.getSize(), TEST_EPS);
+        Assertions.assertEquals(8, result.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X, result.getPlane().getNormal(), TEST_EPS);
 
@@ -283,12 +283,12 @@ public class VertexListConvexPolygon3DTest {
         final VertexListConvexPolygon3D result = p.reverse();
 
         // assert
-        Assert.assertFalse(result.isFull());
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertTrue(result.isFinite());
-        Assert.assertFalse(result.isInfinite());
+        Assertions.assertFalse(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertTrue(result.isFinite());
+        Assertions.assertFalse(result.isInfinite());
 
-        Assert.assertEquals(4, result.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, result.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_Z, result.getPlane().getNormal(), TEST_EPS);
 
@@ -308,10 +308,10 @@ public class VertexListConvexPolygon3DTest {
         final Split<PlaneConvexSubset> split = p.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(p, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(p, split.getPlus());
     }
 
     @Test
@@ -325,10 +325,10 @@ public class VertexListConvexPolygon3DTest {
         final Split<PlaneConvexSubset> split = p.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(p, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(p, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -342,7 +342,7 @@ public class VertexListConvexPolygon3DTest {
         final Split<PlaneConvexSubset> split = p.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final PlaneConvexSubset minus = split.getMinus();
         EuclideanTestUtils.assertVertexLoopSequence(
@@ -366,10 +366,10 @@ public class VertexListConvexPolygon3DTest {
         final Split<PlaneConvexSubset> split = p.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -387,7 +387,7 @@ public class VertexListConvexPolygon3DTest {
 
     private static void checkPoints(final ConvexPolygon3D ps, final RegionLocation loc, final Vector3D... pts) {
         for (final Vector3D pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, ps.classify(pt));
+            Assertions.assertEquals(loc, ps.classify(pt), "Unexpected location for point " + pt);
         }
     }
 }

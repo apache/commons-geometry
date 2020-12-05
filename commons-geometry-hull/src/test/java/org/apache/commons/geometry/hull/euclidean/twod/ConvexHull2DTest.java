@@ -27,8 +27,8 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ConvexHull2DTest {
 
@@ -43,15 +43,15 @@ public class ConvexHull2DTest {
         final ConvexHull2D hull = new ConvexHull2D(Collections.emptyList(), TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(0, hull.getVertices().size());
+        Assertions.assertEquals(0, hull.getVertices().size());
 
         final LinePath path = hull.getPath();
-        Assert.assertEquals(0, path.getElements().size());
+        Assertions.assertEquals(0, path.getElements().size());
 
         final List<Vector2D> pathVertices = path.getVertexSequence();
-        Assert.assertEquals(0, pathVertices.size());
+        Assertions.assertEquals(0, pathVertices.size());
 
-        Assert.assertNull(hull.getRegion());
+        Assertions.assertNull(hull.getRegion());
     }
 
     @Test
@@ -63,15 +63,15 @@ public class ConvexHull2DTest {
         final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(vertices, hull.getVertices());
+        Assertions.assertEquals(vertices, hull.getVertices());
 
         final LinePath path = hull.getPath();
-        Assert.assertEquals(0, path.getElements().size());
+        Assertions.assertEquals(0, path.getElements().size());
 
         final List<Vector2D> pathVertices = path.getVertexSequence();
-        Assert.assertEquals(0, pathVertices.size());
+        Assertions.assertEquals(0, pathVertices.size());
 
-        Assert.assertNull(hull.getRegion());
+        Assertions.assertNull(hull.getRegion());
     }
 
     @Test
@@ -83,17 +83,17 @@ public class ConvexHull2DTest {
         final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(vertices, hull.getVertices());
+        Assertions.assertEquals(vertices, hull.getVertices());
 
         final LinePath path = hull.getPath();
-        Assert.assertEquals(1, path.getElements().size());
+        Assertions.assertEquals(1, path.getElements().size());
 
         final List<Vector2D> pathVertices = path.getVertexSequence();
-        Assert.assertEquals(2, pathVertices.size());
+        Assertions.assertEquals(2, pathVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, pathVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, pathVertices.get(1), TEST_EPS);
 
-        Assert.assertNull(hull.getRegion());
+        Assertions.assertNull(hull.getRegion());
     }
 
     @Test
@@ -105,19 +105,19 @@ public class ConvexHull2DTest {
         final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(vertices, hull.getVertices());
+        Assertions.assertEquals(vertices, hull.getVertices());
 
         final LinePath path = hull.getPath();
-        Assert.assertEquals(3, path.getElements().size());
+        Assertions.assertEquals(3, path.getElements().size());
 
         final List<Vector2D> pathVertices = path.getVertexSequence();
-        Assert.assertEquals(4, pathVertices.size());
+        Assertions.assertEquals(4, pathVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, pathVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, pathVertices.get(1), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, pathVertices.get(2), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, pathVertices.get(3), TEST_EPS);
 
-        Assert.assertEquals(0.5, hull.getRegion().getSize(), TEST_EPS);
+        Assertions.assertEquals(0.5, hull.getRegion().getSize(), TEST_EPS);
     }
 
     @Test
@@ -130,20 +130,20 @@ public class ConvexHull2DTest {
         final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(vertices, hull.getVertices());
+        Assertions.assertEquals(vertices, hull.getVertices());
 
         final LinePath path = hull.getPath();
-        Assert.assertEquals(4, path.getElements().size());
+        Assertions.assertEquals(4, path.getElements().size());
 
         final List<Vector2D> pathVertices = path.getVertexSequence();
-        Assert.assertEquals(5, pathVertices.size());
+        Assertions.assertEquals(5, pathVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, pathVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, pathVertices.get(1), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), pathVertices.get(2), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, pathVertices.get(3), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, pathVertices.get(4), TEST_EPS);
 
-        Assert.assertEquals(1.0, hull.getRegion().getSize(), TEST_EPS);
+        Assertions.assertEquals(1.0, hull.getRegion().getSize(), TEST_EPS);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class ConvexHull2DTest {
         final List<Vector2D> hullVertices = hull.getVertices();
 
         // assert
-        Assert.assertNotSame(vertices, hullVertices);
+        Assertions.assertNotSame(vertices, hullVertices);
         GeometryTestUtils.assertThrows(() -> {
             hullVertices.add(Vector2D.Unit.PLUS_Y);
         }, UnsupportedOperationException.class);

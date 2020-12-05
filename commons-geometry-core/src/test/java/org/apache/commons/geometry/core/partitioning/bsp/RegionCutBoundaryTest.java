@@ -27,8 +27,8 @@ import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class RegionCutBoundaryTest {
 
@@ -46,11 +46,11 @@ public class RegionCutBoundaryTest {
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(insideFacing, outsideFacing);
 
         // assert
-        Assert.assertNotSame(insideFacing, boundary.getInsideFacing());
-        Assert.assertEquals(insideFacing, boundary.getInsideFacing());
+        Assertions.assertNotSame(insideFacing, boundary.getInsideFacing());
+        Assertions.assertEquals(insideFacing, boundary.getInsideFacing());
 
-        Assert.assertNotSame(outsideFacing, boundary.getOutsideFacing());
-        Assert.assertEquals(outsideFacing, boundary.getOutsideFacing());
+        Assertions.assertNotSame(outsideFacing, boundary.getOutsideFacing());
+        Assertions.assertEquals(outsideFacing, boundary.getOutsideFacing());
     }
 
     @Test
@@ -59,8 +59,8 @@ public class RegionCutBoundaryTest {
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(null, null);
 
         // assert
-        Assert.assertEquals(0, boundary.getInsideFacing().size());
-        Assert.assertEquals(0, boundary.getOutsideFacing().size());
+        Assertions.assertEquals(0, boundary.getInsideFacing().size());
+        Assertions.assertEquals(0, boundary.getOutsideFacing().size());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class RegionCutBoundaryTest {
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(null, null);
 
         // assert
-        Assert.assertEquals(0, boundary.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, boundary.getSize(), TEST_EPS);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class RegionCutBoundaryTest {
                 Collections.singletonList(new TestLineSegment(-3, -1, line)));
 
         // assert
-        Assert.assertEquals(4, boundary.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, boundary.getSize(), TEST_EPS);
     }
 
     @Test
@@ -159,8 +159,8 @@ public class RegionCutBoundaryTest {
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(null, null);
 
         // act/assert
-        Assert.assertNull(boundary.closest(TestPoint2D.ZERO));
-        Assert.assertNull(boundary.closest(new TestPoint2D(1, 1)));
+        Assertions.assertNull(boundary.closest(TestPoint2D.ZERO));
+        Assertions.assertNull(boundary.closest(new TestPoint2D(1, 1)));
     }
 
     @Test
@@ -177,19 +177,19 @@ public class RegionCutBoundaryTest {
                 Collections.singletonList(outsideFacing));
 
         // act/assert
-        Assert.assertFalse(boundary.contains(new TestPoint2D(-2, 0)));
+        Assertions.assertFalse(boundary.contains(new TestPoint2D(-2, 0)));
 
-        Assert.assertTrue(boundary.contains(new TestPoint2D(-1, 0)));
-        Assert.assertTrue(boundary.contains(new TestPoint2D(-0.5, 0)));
-        Assert.assertTrue(boundary.contains(new TestPoint2D(0, 0)));
-        Assert.assertTrue(boundary.contains(new TestPoint2D(0.5, 0)));
-        Assert.assertTrue(boundary.contains(new TestPoint2D(1, 0)));
+        Assertions.assertTrue(boundary.contains(new TestPoint2D(-1, 0)));
+        Assertions.assertTrue(boundary.contains(new TestPoint2D(-0.5, 0)));
+        Assertions.assertTrue(boundary.contains(new TestPoint2D(0, 0)));
+        Assertions.assertTrue(boundary.contains(new TestPoint2D(0.5, 0)));
+        Assertions.assertTrue(boundary.contains(new TestPoint2D(1, 0)));
 
-        Assert.assertFalse(boundary.contains(new TestPoint2D(2, 0)));
+        Assertions.assertFalse(boundary.contains(new TestPoint2D(2, 0)));
 
-        Assert.assertFalse(boundary.contains(new TestPoint2D(-1, 1)));
-        Assert.assertFalse(boundary.contains(new TestPoint2D(0, -1)));
-        Assert.assertFalse(boundary.contains(new TestPoint2D(1, 1)));
+        Assertions.assertFalse(boundary.contains(new TestPoint2D(-1, 1)));
+        Assertions.assertFalse(boundary.contains(new TestPoint2D(0, -1)));
+        Assertions.assertFalse(boundary.contains(new TestPoint2D(1, 1)));
     }
 
     @Test
@@ -198,8 +198,8 @@ public class RegionCutBoundaryTest {
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(null, null);
 
         // act/assert
-        Assert.assertFalse(boundary.contains(new TestPoint2D(-1, 0)));
-        Assert.assertFalse(boundary.contains(new TestPoint2D(0, 0)));
-        Assert.assertFalse(boundary.contains(new TestPoint2D(1, 0)));
+        Assertions.assertFalse(boundary.contains(new TestPoint2D(-1, 0)));
+        Assertions.assertFalse(boundary.contains(new TestPoint2D(0, 0)));
+        Assertions.assertFalse(boundary.contains(new TestPoint2D(1, 0)));
     }
 }

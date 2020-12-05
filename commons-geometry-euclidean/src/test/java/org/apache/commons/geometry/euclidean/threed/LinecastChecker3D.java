@@ -25,7 +25,7 @@ import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /** Helper class designed to assist with linecast test assertions in 3D.
  */
@@ -110,15 +110,15 @@ class LinecastChecker3D {
      * @param line
      */
     private void checkLinecastResults(final List<LinecastPoint3D> results, final Line3D line) {
-        Assert.assertNotNull("Linecast result list cannot be null", results);
-        Assert.assertEquals("Unexpected result size for linecast", expectedResults.size(), results.size());
+        Assertions.assertNotNull(results, "Linecast result list cannot be null");
+        Assertions.assertEquals(expectedResults.size(), results.size(), "Unexpected result size for linecast");
 
         for (int i = 0; i < expectedResults.size(); ++i) {
             final LinecastPoint3D expected = toLinecastPoint(expectedResults.get(i), line);
             final LinecastPoint3D actual = results.get(i);
 
             if (!eq(expected, actual)) {
-                Assert.fail("Unexpected linecast point at index " + i + " expected " + expected +
+                Assertions.fail("Unexpected linecast point at index " + i + " expected " + expected +
                         " but was " + actual);
             }
         }
@@ -130,14 +130,14 @@ class LinecastChecker3D {
      */
     private void checkLinecastFirstResult(final LinecastPoint3D result, final Line3D line) {
         if (expectedResults.isEmpty()) {
-            Assert.assertNull("Expected linecastFirst result to be null", result);
+            Assertions.assertNull(result, "Expected linecastFirst result to be null");
         } else {
             final LinecastPoint3D expected = toLinecastPoint(expectedResults.get(0), line);
 
-            Assert.assertNotNull("Expected linecastFirst result to not be null", result);
+            Assertions.assertNotNull(result, "Expected linecastFirst result to not be null");
 
             if (!eq(expected, result)) {
-                Assert.fail("Unexpected result from linecastFirst: expected " + expected +
+                Assertions.fail("Unexpected result from linecastFirst: expected " + expected +
                         " but was " + result);
             }
         }

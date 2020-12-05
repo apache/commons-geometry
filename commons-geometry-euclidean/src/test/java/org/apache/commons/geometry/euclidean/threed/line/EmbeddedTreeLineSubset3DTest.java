@@ -30,8 +30,8 @@ import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EmbeddedTreeLineSubset3DTest {
 
@@ -48,9 +48,9 @@ public class EmbeddedTreeLineSubset3DTest {
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine);
 
         // assert
-        Assert.assertSame(testLine, sub.getLine());
-        Assert.assertTrue(sub.getSubspaceRegion().isEmpty());
-        Assert.assertEquals(0, sub.getSize(), TEST_EPS);
+        Assertions.assertSame(testLine, sub.getLine());
+        Assertions.assertTrue(sub.getSubspaceRegion().isEmpty());
+        Assertions.assertEquals(0, sub.getSize(), TEST_EPS);
     }
 
     @Test
@@ -59,8 +59,8 @@ public class EmbeddedTreeLineSubset3DTest {
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, true);
 
         // assert
-        Assert.assertSame(testLine, sub.getLine());
-        Assert.assertTrue(sub.getSubspaceRegion().isFull());
+        Assertions.assertSame(testLine, sub.getLine());
+        Assertions.assertTrue(sub.getSubspaceRegion().isFull());
         GeometryTestUtils.assertPositiveInfinity(sub.getSize());
     }
 
@@ -70,9 +70,9 @@ public class EmbeddedTreeLineSubset3DTest {
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, false);
 
         // assert
-        Assert.assertSame(testLine, sub.getLine());
-        Assert.assertTrue(sub.getSubspaceRegion().isEmpty());
-        Assert.assertEquals(0, sub.getSize(), TEST_EPS);
+        Assertions.assertSame(testLine, sub.getLine());
+        Assertions.assertTrue(sub.getSubspaceRegion().isEmpty());
+        Assertions.assertEquals(0, sub.getSize(), TEST_EPS);
     }
 
     @Test
@@ -84,9 +84,9 @@ public class EmbeddedTreeLineSubset3DTest {
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, tree);
 
         // assert
-        Assert.assertSame(testLine, sub.getLine());
-        Assert.assertSame(tree, sub.getSubspaceRegion());
-        Assert.assertEquals(0, sub.getSize(), TEST_EPS);
+        Assertions.assertSame(testLine, sub.getLine());
+        Assertions.assertSame(tree, sub.getSubspaceRegion());
+        Assertions.assertEquals(0, sub.getSize(), TEST_EPS);
     }
 
     @Test
@@ -95,12 +95,12 @@ public class EmbeddedTreeLineSubset3DTest {
         final EmbeddedTreeLineSubset3D full = new EmbeddedTreeLineSubset3D(testLine, true);
 
         // act/assert
-        Assert.assertTrue(full.isInfinite());
-        Assert.assertFalse(full.isFinite());
+        Assertions.assertTrue(full.isInfinite());
+        Assertions.assertFalse(full.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(full.getSize());
-        Assert.assertNull(full.getCentroid());
-        Assert.assertNull(full.getBounds());
+        Assertions.assertNull(full.getCentroid());
+        Assertions.assertNull(full.getBounds());
     }
 
     @Test
@@ -109,12 +109,12 @@ public class EmbeddedTreeLineSubset3DTest {
         final EmbeddedTreeLineSubset3D empty = new EmbeddedTreeLineSubset3D(testLine, false);
 
         // act/assert
-        Assert.assertFalse(empty.isInfinite());
-        Assert.assertTrue(empty.isFinite());
+        Assertions.assertFalse(empty.isInfinite());
+        Assertions.assertTrue(empty.isFinite());
 
-        Assert.assertEquals(0, empty.getSize(), TEST_EPS);
-        Assert.assertNull(empty.getCentroid());
-        Assert.assertNull(empty.getBounds());
+        Assertions.assertEquals(0, empty.getSize(), TEST_EPS);
+        Assertions.assertNull(empty.getCentroid());
+        Assertions.assertNull(empty.getBounds());
     }
 
     @Test
@@ -124,12 +124,12 @@ public class EmbeddedTreeLineSubset3DTest {
         half.getSubspaceRegion().add(Interval.min(1, TEST_PRECISION));
 
         // act/assert
-        Assert.assertTrue(half.isInfinite());
-        Assert.assertFalse(half.isFinite());
+        Assertions.assertTrue(half.isInfinite());
+        Assertions.assertFalse(half.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(half.getSize());
-        Assert.assertNull(half.getCentroid());
-        Assert.assertNull(half.getBounds());
+        Assertions.assertNull(half.getCentroid());
+        Assertions.assertNull(half.getBounds());
     }
 
     @Test
@@ -143,10 +143,10 @@ public class EmbeddedTreeLineSubset3DTest {
         sub.getSubspaceRegion().add(Interval.of(-2 * sqrt2, -sqrt2, TEST_PRECISION));
 
         // act/assert
-        Assert.assertFalse(sub.isInfinite());
-        Assert.assertTrue(sub.isFinite());
+        Assertions.assertFalse(sub.isInfinite());
+        Assertions.assertTrue(sub.isFinite());
 
-        Assert.assertEquals(2 * sqrt2, sub.getSize(), TEST_EPS);
+        Assertions.assertEquals(2 * sqrt2, sub.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.5, -0.5, 1), sub.getCentroid(), TEST_EPS);
 
         final Bounds3D bounds = sub.getBounds();
@@ -176,7 +176,7 @@ public class EmbeddedTreeLineSubset3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(expectedOrigin, resultLine.getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, -2).normalize(), resultLine.getDirection(), TEST_EPS);
 
-        Assert.assertTrue(result.getSubspaceRegion().isFull());
+        Assertions.assertTrue(result.getSubspaceRegion().isFull());
     }
 
     @Test
@@ -206,10 +206,10 @@ public class EmbeddedTreeLineSubset3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(expectedOrigin, resultLine.getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, -2).normalize(), resultLine.getDirection(), TEST_EPS);
 
-        Assert.assertFalse(result.getSubspaceRegion().isFull());
+        Assertions.assertFalse(result.getSubspaceRegion().isFull());
 
         final List<Interval> intervals = result.getSubspaceRegion().toIntervals();
-        Assert.assertEquals(1, intervals.size());
+        Assertions.assertEquals(1, intervals.size());
 
         final Interval resultInterval = intervals.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, -4),
@@ -227,8 +227,8 @@ public class EmbeddedTreeLineSubset3DTest {
         final List<LineConvexSubset3D> segments = sub.toConvex();
 
         // assert
-        Assert.assertEquals(1, segments.size());
-        Assert.assertTrue(segments.get(0).getSubspaceRegion().isFull());
+        Assertions.assertEquals(1, segments.size());
+        Assertions.assertTrue(segments.get(0).getSubspaceRegion().isFull());
     }
 
     @Test
@@ -245,7 +245,7 @@ public class EmbeddedTreeLineSubset3DTest {
         final List<LineConvexSubset3D> segments = sub.toConvex();
 
         // assert
-        Assert.assertEquals(1, segments.size());
+        Assertions.assertEquals(1, segments.size());
 
         final LineConvexSubset3D segment = segments.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 0), segment.getStartPoint(), TEST_EPS);
@@ -261,8 +261,8 @@ public class EmbeddedTreeLineSubset3DTest {
         final String str = sub.toString();
 
         // assert
-        Assert.assertTrue(str.contains("EmbeddedTreeLineSubset3D[lineOrigin= "));
-        Assert.assertTrue(str.contains(", lineDirection= "));
-        Assert.assertTrue(str.contains(", region= "));
+        Assertions.assertTrue(str.contains("EmbeddedTreeLineSubset3D[lineOrigin= "));
+        Assertions.assertTrue(str.contains(", lineDirection= "));
+        Assertions.assertTrue(str.contains(", region= "));
     }
 }

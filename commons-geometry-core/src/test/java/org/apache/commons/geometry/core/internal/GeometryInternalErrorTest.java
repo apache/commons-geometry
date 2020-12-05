@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.core.internal;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class GeometryInternalErrorTest {
 
@@ -31,6 +31,6 @@ public class GeometryInternalErrorTest {
                 "error in the algorithm implementation than in the calling code or data. Please file a bug report " +
                 "with the developers.";
 
-        Assert.assertEquals(msg, err.getMessage());
+        Assertions.assertEquals(msg, err.getMessage());
     }
 }

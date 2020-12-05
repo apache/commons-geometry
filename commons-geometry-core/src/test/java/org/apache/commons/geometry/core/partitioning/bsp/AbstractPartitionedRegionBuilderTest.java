@@ -27,8 +27,8 @@ import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AbstractPartitionedRegionBuilderTest {
 
@@ -52,9 +52,9 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = builder.build();
 
         // assert
-        Assert.assertTrue(tree.isEmpty());
-        Assert.assertEquals(1, tree.count());
-        Assert.assertEquals(0, tree.height());
+        Assertions.assertTrue(tree.isEmpty());
+        Assertions.assertEquals(1, tree.count());
+        Assertions.assertEquals(0, tree.height());
     }
 
     @Test
@@ -80,11 +80,11 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = builder.build();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
-        Assert.assertEquals(3, tree.count());
-        Assert.assertEquals(1, tree.height());
+        Assertions.assertEquals(3, tree.count());
+        Assertions.assertEquals(1, tree.height());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 new TestPoint2D(-5, 1), new TestPoint2D(0, 1), new TestPoint2D(5, 1));
@@ -108,8 +108,8 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = builder.build();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 new TestPoint2D(-5, 1), new TestPoint2D(0, 1), new TestPoint2D(5, 1));
@@ -133,8 +133,8 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = builder.build();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 new TestPoint2D(-5, 1), new TestPoint2D(0, 1), new TestPoint2D(5, 1));
@@ -159,8 +159,8 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = builder.build();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE, new TestPoint2D(5, 1));
 
@@ -184,8 +184,8 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = builder.build();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE, new TestPoint2D(5, 1));
 
@@ -212,8 +212,8 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = builder.build();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 new TestPoint2D(1, 1), new TestPoint2D(-1, -1));
@@ -237,8 +237,8 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = builder.build();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 new TestPoint2D(-5, 1), new TestPoint2D(0, 1), new TestPoint2D(5, 1));
@@ -264,8 +264,8 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = builder.build();
 
         // assert
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
 
         PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                 new TestPoint2D(2, 2), new TestPoint2D(5, 5));
@@ -303,8 +303,8 @@ public class AbstractPartitionedRegionBuilderTest {
             final TestRegionBSPTree tree = builder.build();
 
             // assert
-            Assert.assertFalse(tree.isEmpty());
-            Assert.assertFalse(tree.isFull());
+            Assertions.assertFalse(tree.isEmpty());
+            Assertions.assertFalse(tree.isFull());
 
             PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                     new TestPoint2D(0, 0),
@@ -346,8 +346,8 @@ public class AbstractPartitionedRegionBuilderTest {
             final TestRegionBSPTree tree = builder.build();
 
             // assert
-            Assert.assertFalse(tree.isEmpty());
-            Assert.assertFalse(tree.isFull());
+            Assertions.assertFalse(tree.isEmpty());
+            Assertions.assertFalse(tree.isFull());
 
             PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                     new TestPoint2D(0, 0),
@@ -393,8 +393,8 @@ public class AbstractPartitionedRegionBuilderTest {
             final TestRegionBSPTree tree = builder.build();
 
             // assert
-            Assert.assertFalse(tree.isEmpty());
-            Assert.assertFalse(tree.isFull());
+            Assertions.assertFalse(tree.isEmpty());
+            Assertions.assertFalse(tree.isFull());
 
             PartitionTestUtils.assertPointLocations(tree, RegionLocation.INSIDE,
                     new TestPoint2D(0, 0),

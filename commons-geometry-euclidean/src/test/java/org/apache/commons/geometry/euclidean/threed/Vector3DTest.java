@@ -31,8 +31,10 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Vector3DTest {
 
@@ -65,14 +67,14 @@ public class Vector3DTest {
         GeometryTestUtils.assertThrows(Vector3D.POSITIVE_INFINITY::normalize, IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(Vector3D.NEGATIVE_INFINITY::normalize, IllegalArgumentException.class);
 
-        Assert.assertSame(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_X.normalize());
-        Assert.assertSame(Vector3D.Unit.MINUS_X, Vector3D.Unit.MINUS_X.normalize());
+        Assertions.assertSame(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_X.normalize());
+        Assertions.assertSame(Vector3D.Unit.MINUS_X, Vector3D.Unit.MINUS_X.normalize());
 
-        Assert.assertSame(Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Y.normalize());
-        Assert.assertSame(Vector3D.Unit.MINUS_Y, Vector3D.Unit.MINUS_Y.normalize());
+        Assertions.assertSame(Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Y.normalize());
+        Assertions.assertSame(Vector3D.Unit.MINUS_Y, Vector3D.Unit.MINUS_Y.normalize());
 
-        Assert.assertSame(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_Z.normalize());
-        Assert.assertSame(Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_Z.normalize());
+        Assertions.assertSame(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_Z.normalize());
+        Assertions.assertSame(Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_Z.normalize());
     }
 
     @Test
@@ -81,19 +83,19 @@ public class Vector3DTest {
         final Comparator<Vector3D> cmp = Vector3D.COORDINATE_ASCENDING_ORDER;
 
         // act/assert
-        Assert.assertEquals(0, cmp.compare(Vector3D.of(1, 2, 3), Vector3D.of(1, 2, 3)));
+        Assertions.assertEquals(0, cmp.compare(Vector3D.of(1, 2, 3), Vector3D.of(1, 2, 3)));
 
-        Assert.assertEquals(-1, cmp.compare(Vector3D.of(0, 2, 3), Vector3D.of(1, 2, 3)));
-        Assert.assertEquals(-1, cmp.compare(Vector3D.of(1, 1, 3), Vector3D.of(1, 2, 3)));
-        Assert.assertEquals(-1, cmp.compare(Vector3D.of(1, 2, 2), Vector3D.of(1, 2, 3)));
+        Assertions.assertEquals(-1, cmp.compare(Vector3D.of(0, 2, 3), Vector3D.of(1, 2, 3)));
+        Assertions.assertEquals(-1, cmp.compare(Vector3D.of(1, 1, 3), Vector3D.of(1, 2, 3)));
+        Assertions.assertEquals(-1, cmp.compare(Vector3D.of(1, 2, 2), Vector3D.of(1, 2, 3)));
 
-        Assert.assertEquals(1, cmp.compare(Vector3D.of(2, 2, 3), Vector3D.of(1, 2, 3)));
-        Assert.assertEquals(1, cmp.compare(Vector3D.of(1, 3, 3), Vector3D.of(1, 2, 3)));
-        Assert.assertEquals(1, cmp.compare(Vector3D.of(1, 2, 4), Vector3D.of(1, 2, 3)));
+        Assertions.assertEquals(1, cmp.compare(Vector3D.of(2, 2, 3), Vector3D.of(1, 2, 3)));
+        Assertions.assertEquals(1, cmp.compare(Vector3D.of(1, 3, 3), Vector3D.of(1, 2, 3)));
+        Assertions.assertEquals(1, cmp.compare(Vector3D.of(1, 2, 4), Vector3D.of(1, 2, 3)));
 
-        Assert.assertEquals(-1, cmp.compare(Vector3D.of(1, 2, 3), null));
-        Assert.assertEquals(1, cmp.compare(null, Vector3D.of(1, 2, 3)));
-        Assert.assertEquals(0, cmp.compare(null, null));
+        Assertions.assertEquals(-1, cmp.compare(Vector3D.of(1, 2, 3), null));
+        Assertions.assertEquals(1, cmp.compare(null, Vector3D.of(1, 2, 3)));
+        Assertions.assertEquals(0, cmp.compare(null, null));
     }
 
     @Test
@@ -102,9 +104,9 @@ public class Vector3DTest {
         final Vector3D c = Vector3D.of(1, 2, 3);
 
         // act/assert
-        Assert.assertEquals(1.0, c.getX(), EPS);
-        Assert.assertEquals(2.0, c.getY(), EPS);
-        Assert.assertEquals(3.0, c.getZ(), EPS);
+        Assertions.assertEquals(1.0, c.getX(), EPS);
+        Assertions.assertEquals(2.0, c.getY(), EPS);
+        Assertions.assertEquals(3.0, c.getZ(), EPS);
     }
 
     @Test
@@ -116,10 +118,10 @@ public class Vector3DTest {
         final double[] arr = c.toArray();
 
         // assert
-        Assert.assertEquals(3, arr.length);
-        Assert.assertEquals(1.0, arr[0], EPS);
-        Assert.assertEquals(2.0, arr[1], EPS);
-        Assert.assertEquals(3.0, arr[2], EPS);
+        Assertions.assertEquals(3, arr.length);
+        Assertions.assertEquals(1.0, arr[0], EPS);
+        Assertions.assertEquals(2.0, arr[1], EPS);
+        Assertions.assertEquals(3.0, arr[2], EPS);
     }
 
     @Test
@@ -128,58 +130,58 @@ public class Vector3DTest {
         final Vector3D c = Vector3D.of(1, 2, 3);
 
         // act/assert
-        Assert.assertEquals(3, c.getDimension());
+        Assertions.assertEquals(3, c.getDimension());
     }
 
     @Test
     public void testNaN() {
         // act/assert
-        Assert.assertTrue(Vector3D.of(0, 0, Double.NaN).isNaN());
-        Assert.assertTrue(Vector3D.of(0, Double.NaN, 0).isNaN());
-        Assert.assertTrue(Vector3D.of(Double.NaN, 0, 0).isNaN());
+        Assertions.assertTrue(Vector3D.of(0, 0, Double.NaN).isNaN());
+        Assertions.assertTrue(Vector3D.of(0, Double.NaN, 0).isNaN());
+        Assertions.assertTrue(Vector3D.of(Double.NaN, 0, 0).isNaN());
 
-        Assert.assertFalse(Vector3D.of(1, 1, 1).isNaN());
-        Assert.assertFalse(Vector3D.of(1, 1, Double.NEGATIVE_INFINITY).isNaN());
-        Assert.assertFalse(Vector3D.of(1, Double.POSITIVE_INFINITY, 1).isNaN());
-        Assert.assertFalse(Vector3D.of(Double.NEGATIVE_INFINITY, 1, 1).isNaN());
+        Assertions.assertFalse(Vector3D.of(1, 1, 1).isNaN());
+        Assertions.assertFalse(Vector3D.of(1, 1, Double.NEGATIVE_INFINITY).isNaN());
+        Assertions.assertFalse(Vector3D.of(1, Double.POSITIVE_INFINITY, 1).isNaN());
+        Assertions.assertFalse(Vector3D.of(Double.NEGATIVE_INFINITY, 1, 1).isNaN());
     }
 
     @Test
     public void testInfinite() {
         // act/assert
-        Assert.assertTrue(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY).isInfinite());
-        Assert.assertTrue(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0).isInfinite());
-        Assert.assertTrue(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0).isInfinite());
-        Assert.assertTrue(Vector3D.of(0, 0, Double.POSITIVE_INFINITY).isInfinite());
-        Assert.assertTrue(Vector3D.of(0, Double.POSITIVE_INFINITY, 0).isInfinite());
-        Assert.assertTrue(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0).isInfinite());
+        Assertions.assertTrue(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0).isInfinite());
+        Assertions.assertTrue(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0).isInfinite());
+        Assertions.assertTrue(Vector3D.of(0, 0, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(Vector3D.of(0, Double.POSITIVE_INFINITY, 0).isInfinite());
+        Assertions.assertTrue(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0).isInfinite());
 
-        Assert.assertFalse(Vector3D.of(1, 1, 1).isInfinite());
-        Assert.assertFalse(Vector3D.of(0, 0, Double.NaN).isInfinite());
-        Assert.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
-        Assert.assertFalse(Vector3D.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isInfinite());
-        Assert.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isInfinite());
-        Assert.assertFalse(Vector3D.of(0, Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertFalse(Vector3D.of(1, 1, 1).isInfinite());
+        Assertions.assertFalse(Vector3D.of(0, 0, Double.NaN).isInfinite());
+        Assertions.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
+        Assertions.assertFalse(Vector3D.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isInfinite());
+        Assertions.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isInfinite());
+        Assertions.assertFalse(Vector3D.of(0, Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
     }
 
     @Test
     public void testFinite() {
         // act/assert
-        Assert.assertTrue(Vector3D.ZERO.isFinite());
-        Assert.assertTrue(Vector3D.of(1, 1, 1).isFinite());
+        Assertions.assertTrue(Vector3D.ZERO.isFinite());
+        Assertions.assertTrue(Vector3D.of(1, 1, 1).isFinite());
 
-        Assert.assertFalse(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY).isFinite());
-        Assert.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0).isFinite());
-        Assert.assertFalse(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0).isFinite());
-        Assert.assertFalse(Vector3D.of(0, 0, Double.POSITIVE_INFINITY).isFinite());
-        Assert.assertFalse(Vector3D.of(0, Double.POSITIVE_INFINITY, 0).isFinite());
-        Assert.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0).isFinite());
+        Assertions.assertFalse(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0).isFinite());
+        Assertions.assertFalse(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0).isFinite());
+        Assertions.assertFalse(Vector3D.of(0, 0, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Vector3D.of(0, Double.POSITIVE_INFINITY, 0).isFinite());
+        Assertions.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0).isFinite());
 
-        Assert.assertFalse(Vector3D.of(0, 0, Double.NaN).isFinite());
-        Assert.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
-        Assert.assertFalse(Vector3D.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isFinite());
-        Assert.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isFinite());
-        Assert.assertFalse(Vector3D.of(0, Double.NaN, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Vector3D.of(0, 0, Double.NaN).isFinite());
+        Assertions.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
+        Assertions.assertFalse(Vector3D.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isFinite());
+        Assertions.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isFinite());
+        Assertions.assertFalse(Vector3D.of(0, Double.NaN, Double.POSITIVE_INFINITY).isFinite());
     }
 
     @Test
@@ -189,15 +191,15 @@ public class Vector3DTest {
 
         // assert
         checkVector(zero, 0, 0, 0);
-        Assert.assertEquals(0, zero.norm(), EPS);
+        Assertions.assertEquals(0, zero.norm(), EPS);
     }
 
     @Test
     public void testNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector3D.ZERO.norm(), 0);
-        Assert.assertEquals(Math.sqrt(29), Vector3D.of(2, 3, 4).norm(), EPS);
-        Assert.assertEquals(Math.sqrt(29), Vector3D.of(-2, -3, -4).norm(), EPS);
+        Assertions.assertEquals(0.0, Vector3D.ZERO.norm(), 0);
+        Assertions.assertEquals(Math.sqrt(29), Vector3D.of(2, 3, 4).norm(), EPS);
+        Assertions.assertEquals(Math.sqrt(29), Vector3D.of(-2, -3, -4).norm(), EPS);
     }
 
     @Test
@@ -206,15 +208,15 @@ public class Vector3DTest {
         final Vector3D v = Vector3D.of(1.0, 2.0, 3.0).normalize();
 
         // act/assert
-        Assert.assertEquals(1.0, v.norm(), 0.0);
+        Assertions.assertEquals(1.0, v.norm(), 0.0);
     }
 
     @Test
     public void testNormSq() {
         // act/assert
-        Assert.assertEquals(0.0, Vector3D.ZERO.normSq(), 0);
-        Assert.assertEquals(29, Vector3D.of(2, 3, 4).normSq(), EPS);
-        Assert.assertEquals(29, Vector3D.of(-2, -3, -4).normSq(), EPS);
+        Assertions.assertEquals(0.0, Vector3D.ZERO.normSq(), 0);
+        Assertions.assertEquals(29, Vector3D.of(2, 3, 4).normSq(), EPS);
+        Assertions.assertEquals(29, Vector3D.of(-2, -3, -4).normSq(), EPS);
     }
 
     @Test
@@ -223,7 +225,7 @@ public class Vector3DTest {
         final Vector3D v = Vector3D.of(1.0, 2.0, 3.0).normalize();
 
         // act/assert
-        Assert.assertEquals(1.0, v.normSq(), 0.0);
+        Assertions.assertEquals(1.0, v.normSq(), 0.0);
     }
 
     @Test
@@ -259,7 +261,7 @@ public class Vector3DTest {
 
         for (int i = 0; i <= 10; i++) {
             final double mag = i * 0.12345 - 5;
-            Assert.assertEquals(Math.abs(mag), Vector3D.of(x, y, z).withNorm(mag).norm(), EPS);
+            Assertions.assertEquals(Math.abs(mag), Vector3D.of(x, y, z).withNorm(mag).norm(), EPS);
         }
     }
 
@@ -287,7 +289,7 @@ public class Vector3DTest {
         checkVector(Vector3D.Unit.PLUS_Z.withNorm(-1.1), 0.0, 0.0, -1.1);
 
         for (double mag = -10.0; mag <= 10.0; ++mag) {
-            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).norm(), EPS);
+            Assertions.assertEquals(Math.abs(mag), v.withNorm(mag).norm(), EPS);
         }
     }
 
@@ -399,7 +401,7 @@ public class Vector3DTest {
         checkVector(Vector3D.of(2, 2, 2).normalize(), invSqrt3, invSqrt3, invSqrt3);
         checkVector(Vector3D.of(-2, -2, -2).normalize(), -invSqrt3, -invSqrt3, -invSqrt3);
 
-        Assert.assertEquals(1.0, Vector3D.of(5, -4, 2).normalize().norm(), EPS);
+        Assertions.assertEquals(1.0, Vector3D.of(5, -4, 2).normalize().norm(), EPS);
     }
 
     @Test
@@ -418,7 +420,7 @@ public class Vector3DTest {
         final Vector3D v = Vector3D.of(2, 2, 2).normalize();
 
         // act/assert
-        Assert.assertSame(v, v.normalize());
+        Assertions.assertSame(v, v.normalize());
         checkVector(v.normalize(), invSqrt3, invSqrt3, invSqrt3);
     }
 
@@ -431,10 +433,10 @@ public class Vector3DTest {
         final Vector3D v4 = Vector3D.of(4.2, 0.1, -1.8);
 
         // act/assert
-        Assert.assertEquals(0.0, v1.dot(v1.orthogonal()), EPS);
-        Assert.assertEquals(0.0, v2.dot(v2.orthogonal()), EPS);
-        Assert.assertEquals(0.0, v3.dot(v3.orthogonal()), EPS);
-        Assert.assertEquals(0.0, v4.dot(v4.orthogonal()), EPS);
+        Assertions.assertEquals(0.0, v1.dot(v1.orthogonal()), EPS);
+        Assertions.assertEquals(0.0, v2.dot(v2.orthogonal()), EPS);
+        Assertions.assertEquals(0.0, v3.dot(v3.orthogonal()), EPS);
+        Assertions.assertEquals(0.0, v4.dot(v4.orthogonal()), EPS);
     }
 
     @Test
@@ -503,17 +505,17 @@ public class Vector3DTest {
         final Vector3D v2 = Vector3D.of(4, 5, 6);
 
         // act/assert
-        Assert.assertEquals(0.22572612855273393616, v1.angle(v2), tolerance);
-        Assert.assertEquals(7.98595620686106654517199e-8, v1.angle(Vector3D.of(2, 4, 6.000001)), tolerance);
-        Assert.assertEquals(3.14159257373023116985197793156, v1.angle(Vector3D.of(-2, -4, -6.000001)), tolerance);
+        Assertions.assertEquals(0.22572612855273393616, v1.angle(v2), tolerance);
+        Assertions.assertEquals(7.98595620686106654517199e-8, v1.angle(Vector3D.of(2, 4, 6.000001)), tolerance);
+        Assertions.assertEquals(3.14159257373023116985197793156, v1.angle(Vector3D.of(-2, -4, -6.000001)), tolerance);
 
-        Assert.assertEquals(0.0, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_X), tolerance);
-        Assert.assertEquals(PlaneAngleRadians.PI, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_X), tolerance);
+        Assertions.assertEquals(0.0, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_X), tolerance);
+        Assertions.assertEquals(PlaneAngleRadians.PI, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_X), tolerance);
 
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Y), tolerance);
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Y), tolerance);
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Z), tolerance);
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Z), tolerance);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Y), tolerance);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Y), tolerance);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Z), tolerance);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Z), tolerance);
     }
 
     @Test
@@ -551,7 +553,7 @@ public class Vector3DTest {
         final Vector3D v2 = k.multiply(Math.cos(1.2)).add(i.multiply(Math.sin(1.2)));
 
         // act/assert
-        Assert.assertTrue(Math.abs(v1.angle(v2) - 1.2) < 1.0e-12);
+        Assertions.assertTrue(Math.abs(v1.angle(v2) - 1.2) < 1.0e-12);
     }
 
     @Test
@@ -595,8 +597,8 @@ public class Vector3DTest {
         final Vector3D cAccurate = u1.cross(u2);
 
         // assert
-        Assert.assertTrue(u3.distance(cNaive) > 2.9 * u3.norm());
-        Assert.assertEquals(0.0, u3.distance(cAccurate), 1.0e-30 * cAccurate.norm());
+        Assertions.assertTrue(u3.distance(cNaive) > 2.9 * u3.norm());
+        Assertions.assertEquals(0.0, u3.distance(cAccurate), 1.0e-30 * cAccurate.norm());
     }
 
     @Test
@@ -618,7 +620,7 @@ public class Vector3DTest {
             final Vector3D cAccurate = Vector3D.of(ux, uy, uz).cross(Vector3D.of(vx, vy, vz));
 
             // assert
-            Assert.assertEquals(0.0, cAccurate.distance(cNaive), 6.0e-15 * cAccurate.norm());
+            Assertions.assertEquals(0.0, cAccurate.distance(cNaive), 6.0e-15 * cAccurate.norm());
         }
     }
 
@@ -663,16 +665,16 @@ public class Vector3DTest {
         final Vector3D v3 = Vector3D.of(5, -6, -7);
 
         // act/assert
-        Assert.assertEquals(0.0, v1.distance(v1), EPS);
-        Assert.assertEquals(0.0, v2.distance(v2), EPS);
+        Assertions.assertEquals(0.0, v1.distance(v1), EPS);
+        Assertions.assertEquals(0.0, v2.distance(v2), EPS);
 
-        Assert.assertEquals(Math.sqrt(50), v1.distance(v2), EPS);
-        Assert.assertEquals(Math.sqrt(50), v2.distance(v1), EPS);
+        Assertions.assertEquals(Math.sqrt(50), v1.distance(v2), EPS);
+        Assertions.assertEquals(Math.sqrt(50), v2.distance(v1), EPS);
 
-        Assert.assertEquals(v1.subtract(v2).norm(), v1.distance(v2), EPS);
+        Assertions.assertEquals(v1.subtract(v2).norm(), v1.distance(v2), EPS);
 
-        Assert.assertEquals(Math.sqrt(132), v1.distance(v3), EPS);
-        Assert.assertEquals(Math.sqrt(132), v3.distance(v1), EPS);
+        Assertions.assertEquals(Math.sqrt(132), v1.distance(v3), EPS);
+        Assertions.assertEquals(Math.sqrt(132), v3.distance(v1), EPS);
     }
 
     @Test
@@ -683,16 +685,16 @@ public class Vector3DTest {
         final Vector3D v3 = Vector3D.of(5, -6, -7);
 
         // act/assert
-        Assert.assertEquals(0.0, v1.distanceSq(v1), EPS);
-        Assert.assertEquals(0.0, v2.distanceSq(v2), EPS);
+        Assertions.assertEquals(0.0, v1.distanceSq(v1), EPS);
+        Assertions.assertEquals(0.0, v2.distanceSq(v2), EPS);
 
-        Assert.assertEquals(50, v1.distanceSq(v2), EPS);
-        Assert.assertEquals(50, v2.distanceSq(v1), EPS);
+        Assertions.assertEquals(50, v1.distanceSq(v2), EPS);
+        Assertions.assertEquals(50, v2.distanceSq(v1), EPS);
 
-        Assert.assertEquals(v1.subtract(v2).normSq(), v1.distanceSq(v2), EPS);
+        Assertions.assertEquals(v1.subtract(v2).normSq(), v1.distanceSq(v2), EPS);
 
-        Assert.assertEquals(132, v1.distanceSq(v3), EPS);
-        Assert.assertEquals(132, v3.distanceSq(v1), EPS);
+        Assertions.assertEquals(132, v1.distanceSq(v3), EPS);
+        Assertions.assertEquals(132, v3.distanceSq(v1), EPS);
     }
 
     @Test
@@ -703,13 +705,13 @@ public class Vector3DTest {
         final Vector3D v3 = Vector3D.of(7, 8, 9);
 
         // act/assert
-        Assert.assertEquals(14, v1.dot(v1), EPS);
+        Assertions.assertEquals(14, v1.dot(v1), EPS);
 
-        Assert.assertEquals(-32, v1.dot(v2), EPS);
-        Assert.assertEquals(-32, v2.dot(v1), EPS);
+        Assertions.assertEquals(-32, v1.dot(v2), EPS);
+        Assertions.assertEquals(-32, v2.dot(v1), EPS);
 
-        Assert.assertEquals(18, v1.dot(v3), EPS);
-        Assert.assertEquals(18, v3.dot(v1), EPS);
+        Assertions.assertEquals(18, v1.dot(v3), EPS);
+        Assertions.assertEquals(18, v3.dot(v1), EPS);
     }
 
     @Test
@@ -731,8 +733,8 @@ public class Vector3DTest {
         final double sAccurate = u1.dot(u2);
 
         // assert
-        Assert.assertEquals(0.0, sNaive, 1.0e-30);
-        Assert.assertEquals(-2088690039198397.0 / 1125899906842624.0, sAccurate, 1.0e-15);
+        Assertions.assertEquals(0.0, sNaive, 1.0e-30);
+        Assertions.assertEquals(-2088690039198397.0 / 1125899906842624.0, sAccurate, 1.0e-15);
     }
 
     @Test
@@ -754,7 +756,7 @@ public class Vector3DTest {
             final double sAccurate = Vector3D.of(ux, uy, uz).dot(Vector3D.of(vx, vy, vz));
 
             // assert
-            Assert.assertEquals(sNaive, sAccurate, 2.5e-16 * sAccurate);
+            Assertions.assertEquals(sNaive, sAccurate, 2.5e-16 * sAccurate);
         }
     }
 
@@ -884,16 +886,16 @@ public class Vector3DTest {
                 // be undefined when the angle between the original vector and the
                 // base is pi/2 (which means that the projection is the zero vector)
                 if (angle < PlaneAngleRadians.PI_OVER_TWO) {
-                    Assert.assertEquals(0.0, proj.angle(base), eps);
+                    Assertions.assertEquals(0.0, proj.angle(base), eps);
                 } else if (angle > PlaneAngleRadians.PI_OVER_TWO) {
-                    Assert.assertEquals(PlaneAngleRadians.PI, proj.angle(base), eps);
+                    Assertions.assertEquals(PlaneAngleRadians.PI, proj.angle(base), eps);
                 }
 
                 // check the angle between the rejection and the base; this should
                 // always be pi/2 except for when the angle between the original vector
                 // and the base is 0 or pi, in which case the rejection is the zero vector.
                 if (angle > 0.0 && angle < PlaneAngleRadians.PI) {
-                    Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, rej.angle(base), eps);
+                    Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, rej.angle(base), eps);
                 }
             }
         }
@@ -1003,26 +1005,26 @@ public class Vector3DTest {
         final Vector3D vec = Vector3D.of(1, -2, 3);
 
         // act/assert
-        Assert.assertTrue(vec.eq(vec, smallEps));
-        Assert.assertTrue(vec.eq(vec, largeEps));
+        Assertions.assertTrue(vec.eq(vec, smallEps));
+        Assertions.assertTrue(vec.eq(vec, largeEps));
 
-        Assert.assertTrue(vec.eq(Vector3D.of(1.0000007, -2.0000009, 3.0000009), smallEps));
-        Assert.assertTrue(vec.eq(Vector3D.of(1.0000007, -2.0000009, 3.0000009), largeEps));
+        Assertions.assertTrue(vec.eq(Vector3D.of(1.0000007, -2.0000009, 3.0000009), smallEps));
+        Assertions.assertTrue(vec.eq(Vector3D.of(1.0000007, -2.0000009, 3.0000009), largeEps));
 
-        Assert.assertFalse(vec.eq(Vector3D.of(1.004, -2, 3), smallEps));
-        Assert.assertFalse(vec.eq(Vector3D.of(1, -2.004, 3), smallEps));
-        Assert.assertFalse(vec.eq(Vector3D.of(1, -2, 2.999), smallEps));
-        Assert.assertTrue(vec.eq(Vector3D.of(1.004, -2.004, 2.999), largeEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(1.004, -2, 3), smallEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(1, -2.004, 3), smallEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(1, -2, 2.999), smallEps));
+        Assertions.assertTrue(vec.eq(Vector3D.of(1.004, -2.004, 2.999), largeEps));
 
-        Assert.assertFalse(vec.eq(Vector3D.of(2, -2, 3), smallEps));
-        Assert.assertFalse(vec.eq(Vector3D.of(1, -3, 3), smallEps));
-        Assert.assertFalse(vec.eq(Vector3D.of(1, -2, 4), smallEps));
-        Assert.assertFalse(vec.eq(Vector3D.of(2, -3, 4), smallEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(2, -2, 3), smallEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(1, -3, 3), smallEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(1, -2, 4), smallEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(2, -3, 4), smallEps));
 
-        Assert.assertFalse(vec.eq(Vector3D.of(2, -2, 3), largeEps));
-        Assert.assertFalse(vec.eq(Vector3D.of(1, -3, 3), largeEps));
-        Assert.assertFalse(vec.eq(Vector3D.of(1, -2, 4), largeEps));
-        Assert.assertFalse(vec.eq(Vector3D.of(2, -3, 4), largeEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(2, -2, 3), largeEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(1, -3, 3), largeEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(1, -2, 4), largeEps));
+        Assertions.assertFalse(vec.eq(Vector3D.of(2, -3, 4), largeEps));
     }
 
     @Test
@@ -1032,26 +1034,26 @@ public class Vector3DTest {
         final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
 
         // act/assert
-        Assert.assertTrue(Vector3D.of(0.0, -0.0, 0.0).isZero(smallEps));
-        Assert.assertTrue(Vector3D.of(-0.0, 0.0, -0.0).isZero(largeEps));
+        Assertions.assertTrue(Vector3D.of(0.0, -0.0, 0.0).isZero(smallEps));
+        Assertions.assertTrue(Vector3D.of(-0.0, 0.0, -0.0).isZero(largeEps));
 
-        Assert.assertTrue(Vector3D.of(-1e-7, 1e-7, -1e-8).isZero(smallEps));
-        Assert.assertTrue(Vector3D.of(1e-7, -1e-7, 1e-8).isZero(largeEps));
+        Assertions.assertTrue(Vector3D.of(-1e-7, 1e-7, -1e-8).isZero(smallEps));
+        Assertions.assertTrue(Vector3D.of(1e-7, -1e-7, 1e-8).isZero(largeEps));
 
-        Assert.assertFalse(Vector3D.of(1e-2, 0.0, 0.0).isZero(smallEps));
-        Assert.assertFalse(Vector3D.of(0.0, 1e-2, 0.0).isZero(smallEps));
-        Assert.assertFalse(Vector3D.of(0.0, 0.0, 1e-2).isZero(smallEps));
-        Assert.assertTrue(Vector3D.of(1e-2, -1e-2, 1e-2).isZero(largeEps));
+        Assertions.assertFalse(Vector3D.of(1e-2, 0.0, 0.0).isZero(smallEps));
+        Assertions.assertFalse(Vector3D.of(0.0, 1e-2, 0.0).isZero(smallEps));
+        Assertions.assertFalse(Vector3D.of(0.0, 0.0, 1e-2).isZero(smallEps));
+        Assertions.assertTrue(Vector3D.of(1e-2, -1e-2, 1e-2).isZero(largeEps));
 
-        Assert.assertFalse(Vector3D.of(0.2, 0.0, 0.0).isZero(smallEps));
-        Assert.assertFalse(Vector3D.of(0.0, 0.2, 0.0).isZero(smallEps));
-        Assert.assertFalse(Vector3D.of(0.0, 0.0, 0.2).isZero(smallEps));
-        Assert.assertFalse(Vector3D.of(0.2, 0.2, 0.2).isZero(smallEps));
+        Assertions.assertFalse(Vector3D.of(0.2, 0.0, 0.0).isZero(smallEps));
+        Assertions.assertFalse(Vector3D.of(0.0, 0.2, 0.0).isZero(smallEps));
+        Assertions.assertFalse(Vector3D.of(0.0, 0.0, 0.2).isZero(smallEps));
+        Assertions.assertFalse(Vector3D.of(0.2, 0.2, 0.2).isZero(smallEps));
 
-        Assert.assertFalse(Vector3D.of(0.2, 0.0, 0.0).isZero(largeEps));
-        Assert.assertFalse(Vector3D.of(0.0, 0.2, 0.0).isZero(largeEps));
-        Assert.assertFalse(Vector3D.of(0.0, 0.0, 0.2).isZero(largeEps));
-        Assert.assertFalse(Vector3D.of(0.2, 0.2, 0.2).isZero(largeEps));
+        Assertions.assertFalse(Vector3D.of(0.2, 0.0, 0.0).isZero(largeEps));
+        Assertions.assertFalse(Vector3D.of(0.0, 0.2, 0.0).isZero(largeEps));
+        Assertions.assertFalse(Vector3D.of(0.0, 0.0, 0.2).isZero(largeEps));
+        Assertions.assertFalse(Vector3D.of(0.2, 0.2, 0.2).isZero(largeEps));
     }
 
     @Test
@@ -1063,13 +1065,13 @@ public class Vector3DTest {
         final Vector3D w = Vector3D.of(1, 1, 1);
 
         // act/assert
-        Assert.assertTrue(u.hashCode() != v.hashCode());
-        Assert.assertEquals(u.hashCode(), w.hashCode());
+        Assertions.assertTrue(u.hashCode() != v.hashCode());
+        Assertions.assertEquals(u.hashCode(), w.hashCode());
 
-        Assert.assertEquals(Vector3D.of(0, 0, Double.NaN).hashCode(), Vector3D.NaN.hashCode());
-        Assert.assertEquals(Vector3D.of(0, Double.NaN, 0).hashCode(), Vector3D.NaN.hashCode());
-        Assert.assertEquals(Vector3D.of(Double.NaN, 0, 0).hashCode(), Vector3D.NaN.hashCode());
-        Assert.assertEquals(Vector3D.of(0, 0, Double.NaN).hashCode(), Vector3D.of(Double.NaN, 0, 0).hashCode());
+        Assertions.assertEquals(Vector3D.of(0, 0, Double.NaN).hashCode(), Vector3D.NaN.hashCode());
+        Assertions.assertEquals(Vector3D.of(0, Double.NaN, 0).hashCode(), Vector3D.NaN.hashCode());
+        Assertions.assertEquals(Vector3D.of(Double.NaN, 0, 0).hashCode(), Vector3D.NaN.hashCode());
+        Assertions.assertEquals(Vector3D.of(0, 0, Double.NaN).hashCode(), Vector3D.of(Double.NaN, 0, 0).hashCode());
     }
 
     @Test
@@ -1081,22 +1083,22 @@ public class Vector3DTest {
 
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(u1);
-        Assert.assertEquals(u1, u2);
+        Assertions.assertEquals(u1, u2);
 
-        Assert.assertNotEquals(u1, Vector3D.of(-1, -2, -3));
-        Assert.assertNotEquals(u1, Vector3D.of(1 + delta, 2, 3));
-        Assert.assertNotEquals(u1, Vector3D.of(1, 2 + delta, 3));
-        Assert.assertNotEquals(u1, Vector3D.of(1, 2, 3 + delta));
+        Assertions.assertNotEquals(u1, Vector3D.of(-1, -2, -3));
+        Assertions.assertNotEquals(u1, Vector3D.of(1 + delta, 2, 3));
+        Assertions.assertNotEquals(u1, Vector3D.of(1, 2 + delta, 3));
+        Assertions.assertNotEquals(u1, Vector3D.of(1, 2, 3 + delta));
 
-        Assert.assertEquals(Vector3D.of(0, Double.NaN, 0), Vector3D.of(Double.NaN, 0, 0));
+        Assertions.assertEquals(Vector3D.of(0, Double.NaN, 0), Vector3D.of(Double.NaN, 0, 0));
 
-        Assert.assertEquals(Vector3D.of(0, 0, Double.POSITIVE_INFINITY), Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
-        Assert.assertNotEquals(Vector3D.of(0, Double.POSITIVE_INFINITY, 0), Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
-        Assert.assertNotEquals(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0), Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
+        Assertions.assertEquals(Vector3D.of(0, 0, Double.POSITIVE_INFINITY), Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
+        Assertions.assertNotEquals(Vector3D.of(0, Double.POSITIVE_INFINITY, 0), Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
+        Assertions.assertNotEquals(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0), Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
 
-        Assert.assertEquals(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0), Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0));
-        Assert.assertNotEquals(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0), Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0));
-        Assert.assertNotEquals(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY), Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0));
+        Assertions.assertEquals(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0), Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0));
+        Assertions.assertNotEquals(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0), Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0));
+        Assertions.assertNotEquals(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY), Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0));
     }
 
     @Test
@@ -1108,13 +1110,13 @@ public class Vector3DTest {
         final Vector3D d = Vector3D.of(-0.0, 0.0, -0.0);
 
         // act/assert
-        Assert.assertFalse(a.equals(b));
+        Assertions.assertFalse(a.equals(b));
 
-        Assert.assertTrue(a.equals(c));
-        Assert.assertEquals(a.hashCode(), c.hashCode());
+        Assertions.assertTrue(a.equals(c));
+        Assertions.assertEquals(a.hashCode(), c.hashCode());
 
-        Assert.assertTrue(b.equals(d));
-        Assert.assertEquals(b.hashCode(), d.hashCode());
+        Assertions.assertTrue(b.equals(d));
+        Assertions.assertEquals(b.hashCode(), d.hashCode());
     }
 
     @Test
@@ -1127,8 +1129,8 @@ public class Vector3DTest {
         final String str = v.toString();
 
         // assert
-        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
-                    pattern.matcher(str).matches());
+        Assertions.assertTrue(pattern.matcher(str).matches(),
+                "Expected string " + str + " to match regex " + pattern);
     }
 
     @Test
@@ -1145,10 +1147,10 @@ public class Vector3DTest {
         checkVector(Vector3D.parse(Vector3D.Unit.MINUS_X.toString()), -1, 0, 0);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_failure() {
         // act/assert
-        Vector3D.parse("abc");
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.parse("abc"));
     }
 
     @Test
@@ -1173,10 +1175,10 @@ public class Vector3DTest {
                 Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector3D.of(new double[] {0.0, 0.0});
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.of(new double[] {0.0, 0.0}));
     }
 
     @Test
@@ -1198,7 +1200,7 @@ public class Vector3DTest {
 
         // act/assert
         checkVector(Vector3D.Unit.from(vec), invSqrt3, -invSqrt3, invSqrt3);
-        Assert.assertSame(unitVec, Vector3D.Unit.from(unitVec));
+        Assertions.assertSame(unitVec, Vector3D.Unit.from(unitVec));
     }
 
     @Test
@@ -1345,12 +1347,12 @@ public class Vector3DTest {
     public void testUnitFactoryOptimization() {
         // An already normalized vector will avoid unnecessary creation.
         final Vector3D v = Vector3D.of(3, 4, 5).normalize();
-        Assert.assertSame(v, v.normalize());
+        Assertions.assertSame(v, v.normalize());
     }
 
     private void checkVector(final Vector3D v, final double x, final double y, final double z) {
-        Assert.assertEquals(x, v.getX(), EPS);
-        Assert.assertEquals(y, v.getY(), EPS);
-        Assert.assertEquals(z, v.getZ(), EPS);
+        Assertions.assertEquals(x, v.getX(), EPS);
+        Assertions.assertEquals(y, v.getY(), EPS);
+        Assertions.assertEquals(z, v.getZ(), EPS);
     }
 }

@@ -17,8 +17,8 @@
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AxisAngleSequenceTest {
 
@@ -28,11 +28,11 @@ public class AxisAngleSequenceTest {
         final AxisAngleSequence seq = new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3);
 
         // assert
-        Assert.assertEquals(AxisReferenceFrame.RELATIVE, seq.getReferenceFrame());
-        Assert.assertEquals(AxisSequence.XYZ, seq.getAxisSequence());
-        Assert.assertEquals(1, seq.getAngle1(), 0.0);
-        Assert.assertEquals(2, seq.getAngle2(), 0.0);
-        Assert.assertEquals(3, seq.getAngle3(), 0.0);
+        Assertions.assertEquals(AxisReferenceFrame.RELATIVE, seq.getReferenceFrame());
+        Assertions.assertEquals(AxisSequence.XYZ, seq.getAxisSequence());
+        Assertions.assertEquals(1, seq.getAngle1(), 0.0);
+        Assertions.assertEquals(2, seq.getAngle2(), 0.0);
+        Assertions.assertEquals(3, seq.getAngle3(), 0.0);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class AxisAngleSequenceTest {
         final double[] angles = seq.getAngles();
 
         // assert
-        Assert.assertArrayEquals(new double[] {1, 2, 3}, angles, 0.0);
+        Assertions.assertArrayEquals(new double[] {1, 2, 3}, angles, 0.0);
     }
 
     @Test
@@ -53,13 +53,13 @@ public class AxisAngleSequenceTest {
         final AxisAngleSequence seq = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3);
 
         // act/assert
-        Assert.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3).hashCode());
-        Assert.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.ZYX, 1, 2, 3).hashCode());
-        Assert.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 9, 2, 3).hashCode());
-        Assert.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 9, 3).hashCode());
-        Assert.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 9).hashCode());
+        Assertions.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3).hashCode());
+        Assertions.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.ZYX, 1, 2, 3).hashCode());
+        Assertions.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 9, 2, 3).hashCode());
+        Assertions.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 9, 3).hashCode());
+        Assertions.assertNotEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 9).hashCode());
 
-        Assert.assertEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3).hashCode());
+        Assertions.assertEquals(seq.hashCode(), new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3).hashCode());
     }
 
     @Test
@@ -70,13 +70,13 @@ public class AxisAngleSequenceTest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(seq);
 
-        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3));
-        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.ZYX, 1, 2, 3));
-        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 9, 2, 3));
-        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 9, 3));
-        Assert.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 9));
+        Assertions.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3));
+        Assertions.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.ZYX, 1, 2, 3));
+        Assertions.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 9, 2, 3));
+        Assertions.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 9, 3));
+        Assertions.assertNotEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 9));
 
-        Assert.assertEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3));
+        Assertions.assertEquals(seq, new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3));
     }
 
     @Test
@@ -92,14 +92,14 @@ public class AxisAngleSequenceTest {
                 -0.0, 0.0, -0.0);
 
         // act/assert
-        Assert.assertFalse(a.equals(b));
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+        Assertions.assertFalse(a.equals(b));
+        Assertions.assertNotEquals(a.hashCode(), b.hashCode());
 
-        Assert.assertTrue(a.equals(c));
-        Assert.assertEquals(a.hashCode(), c.hashCode());
+        Assertions.assertTrue(a.equals(c));
+        Assertions.assertEquals(a.hashCode(), c.hashCode());
 
-        Assert.assertTrue(b.equals(d));
-        Assert.assertEquals(b.hashCode(), d.hashCode());
+        Assertions.assertTrue(b.equals(d));
+        Assertions.assertEquals(b.hashCode(), d.hashCode());
     }
 
     @Test
@@ -111,11 +111,11 @@ public class AxisAngleSequenceTest {
         final String str = seq.toString();
 
         // assert
-        Assert.assertTrue(str.contains("ABSOLUTE"));
-        Assert.assertTrue(str.contains("XYZ"));
-        Assert.assertTrue(str.contains("1"));
-        Assert.assertTrue(str.contains("2"));
-        Assert.assertTrue(str.contains("3"));
+        Assertions.assertTrue(str.contains("ABSOLUTE"));
+        Assertions.assertTrue(str.contains("XYZ"));
+        Assertions.assertTrue(str.contains("1"));
+        Assertions.assertTrue(str.contains("2"));
+        Assertions.assertTrue(str.contains("3"));
     }
 
     @Test
@@ -124,11 +124,11 @@ public class AxisAngleSequenceTest {
         final AxisAngleSequence seq = AxisAngleSequence.createRelative(AxisSequence.XYZ, 1, 2, 3);
 
         // assert
-        Assert.assertEquals(AxisReferenceFrame.RELATIVE, seq.getReferenceFrame());
-        Assert.assertEquals(AxisSequence.XYZ, seq.getAxisSequence());
-        Assert.assertEquals(1, seq.getAngle1(), 0.0);
-        Assert.assertEquals(2, seq.getAngle2(), 0.0);
-        Assert.assertEquals(3, seq.getAngle3(), 0.0);
+        Assertions.assertEquals(AxisReferenceFrame.RELATIVE, seq.getReferenceFrame());
+        Assertions.assertEquals(AxisSequence.XYZ, seq.getAxisSequence());
+        Assertions.assertEquals(1, seq.getAngle1(), 0.0);
+        Assertions.assertEquals(2, seq.getAngle2(), 0.0);
+        Assertions.assertEquals(3, seq.getAngle3(), 0.0);
     }
 
     @Test
@@ -137,10 +137,10 @@ public class AxisAngleSequenceTest {
         final AxisAngleSequence seq = AxisAngleSequence.createAbsolute(AxisSequence.XYZ, 1, 2, 3);
 
         // assert
-        Assert.assertEquals(AxisReferenceFrame.ABSOLUTE, seq.getReferenceFrame());
-        Assert.assertEquals(AxisSequence.XYZ, seq.getAxisSequence());
-        Assert.assertEquals(1, seq.getAngle1(), 0.0);
-        Assert.assertEquals(2, seq.getAngle2(), 0.0);
-        Assert.assertEquals(3, seq.getAngle3(), 0.0);
+        Assertions.assertEquals(AxisReferenceFrame.ABSOLUTE, seq.getReferenceFrame());
+        Assertions.assertEquals(AxisSequence.XYZ, seq.getAxisSequence());
+        Assertions.assertEquals(1, seq.getAngle1(), 0.0);
+        Assertions.assertEquals(2, seq.getAngle2(), 0.0);
+        Assertions.assertEquals(3, seq.getAngle3(), 0.0);
     }
 }

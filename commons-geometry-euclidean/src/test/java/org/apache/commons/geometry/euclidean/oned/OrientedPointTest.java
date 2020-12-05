@@ -28,8 +28,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class OrientedPointTest {
 
@@ -123,14 +123,14 @@ public class OrientedPointTest {
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(-2.0), true, TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(-98.0, pt.offset(Vector1D.of(-100)), Precision.EPSILON);
-        Assert.assertEquals(-0.1, pt.offset(Vector1D.of(-2.1)), Precision.EPSILON);
-        Assert.assertEquals(0.0, pt.offset(Vector1D.of(-2)), Precision.EPSILON);
-        Assert.assertEquals(0.99, pt.offset(Vector1D.of(-1.01)), Precision.EPSILON);
-        Assert.assertEquals(1.0, pt.offset(Vector1D.of(-1.0)), Precision.EPSILON);
-        Assert.assertEquals(1.01, pt.offset(Vector1D.of(-0.99)), Precision.EPSILON);
-        Assert.assertEquals(2.0, pt.offset(Vector1D.of(0)), Precision.EPSILON);
-        Assert.assertEquals(102, pt.offset(Vector1D.of(100)), Precision.EPSILON);
+        Assertions.assertEquals(-98.0, pt.offset(Vector1D.of(-100)), Precision.EPSILON);
+        Assertions.assertEquals(-0.1, pt.offset(Vector1D.of(-2.1)), Precision.EPSILON);
+        Assertions.assertEquals(0.0, pt.offset(Vector1D.of(-2)), Precision.EPSILON);
+        Assertions.assertEquals(0.99, pt.offset(Vector1D.of(-1.01)), Precision.EPSILON);
+        Assertions.assertEquals(1.0, pt.offset(Vector1D.of(-1.0)), Precision.EPSILON);
+        Assertions.assertEquals(1.01, pt.offset(Vector1D.of(-0.99)), Precision.EPSILON);
+        Assertions.assertEquals(2.0, pt.offset(Vector1D.of(0)), Precision.EPSILON);
+        Assertions.assertEquals(102, pt.offset(Vector1D.of(100)), Precision.EPSILON);
     }
 
     @Test
@@ -139,14 +139,14 @@ public class OrientedPointTest {
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(-2.0), false, TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(98.0, pt.offset(Vector1D.of(-100)), Precision.EPSILON);
-        Assert.assertEquals(0.1, pt.offset(Vector1D.of(-2.1)), Precision.EPSILON);
-        Assert.assertEquals(0.0, pt.offset(Vector1D.of(-2)), Precision.EPSILON);
-        Assert.assertEquals(-0.99, pt.offset(Vector1D.of(-1.01)), Precision.EPSILON);
-        Assert.assertEquals(-1.0, pt.offset(Vector1D.of(-1.0)), Precision.EPSILON);
-        Assert.assertEquals(-1.01, pt.offset(Vector1D.of(-0.99)), Precision.EPSILON);
-        Assert.assertEquals(-2, pt.offset(Vector1D.of(0)), Precision.EPSILON);
-        Assert.assertEquals(-102, pt.offset(Vector1D.of(100)), Precision.EPSILON);
+        Assertions.assertEquals(98.0, pt.offset(Vector1D.of(-100)), Precision.EPSILON);
+        Assertions.assertEquals(0.1, pt.offset(Vector1D.of(-2.1)), Precision.EPSILON);
+        Assertions.assertEquals(0.0, pt.offset(Vector1D.of(-2)), Precision.EPSILON);
+        Assertions.assertEquals(-0.99, pt.offset(Vector1D.of(-1.01)), Precision.EPSILON);
+        Assertions.assertEquals(-1.0, pt.offset(Vector1D.of(-1.0)), Precision.EPSILON);
+        Assertions.assertEquals(-1.01, pt.offset(Vector1D.of(-0.99)), Precision.EPSILON);
+        Assertions.assertEquals(-2, pt.offset(Vector1D.of(0)), Precision.EPSILON);
+        Assertions.assertEquals(-102, pt.offset(Vector1D.of(100)), Precision.EPSILON);
     }
 
     @Test
@@ -165,7 +165,7 @@ public class OrientedPointTest {
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(Double.POSITIVE_INFINITY), true, TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(Double.isNaN(pt.offset(Vector1D.of(Double.POSITIVE_INFINITY))));
+        Assertions.assertTrue(Double.isNaN(pt.offset(Vector1D.of(Double.POSITIVE_INFINITY))));
         GeometryTestUtils.assertNegativeInfinity(pt.offset(Vector1D.of(Double.NEGATIVE_INFINITY)));
 
         GeometryTestUtils.assertNegativeInfinity(pt.offset(Vector1D.of(0)));
@@ -205,7 +205,7 @@ public class OrientedPointTest {
         final HyperplaneConvexSubset<Vector1D> result = pt.span();
 
         // assert
-        Assert.assertSame(pt, result.getHyperplane());
+        Assertions.assertSame(pt, result.getHyperplane());
     }
 
     @Test
@@ -217,16 +217,16 @@ public class OrientedPointTest {
         final OrientedPoint positiveDir2 = OrientedPoints.fromPointAndDirection(Vector1D.of(-2.0), true, TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(negativeDir1.similarOrientation(negativeDir1));
-        Assert.assertTrue(negativeDir1.similarOrientation(negativeDir2));
-        Assert.assertTrue(negativeDir2.similarOrientation(negativeDir1));
+        Assertions.assertTrue(negativeDir1.similarOrientation(negativeDir1));
+        Assertions.assertTrue(negativeDir1.similarOrientation(negativeDir2));
+        Assertions.assertTrue(negativeDir2.similarOrientation(negativeDir1));
 
-        Assert.assertTrue(positiveDir1.similarOrientation(positiveDir1));
-        Assert.assertTrue(positiveDir1.similarOrientation(positiveDir2));
-        Assert.assertTrue(positiveDir2.similarOrientation(positiveDir1));
+        Assertions.assertTrue(positiveDir1.similarOrientation(positiveDir1));
+        Assertions.assertTrue(positiveDir1.similarOrientation(positiveDir2));
+        Assertions.assertTrue(positiveDir2.similarOrientation(positiveDir1));
 
-        Assert.assertFalse(negativeDir1.similarOrientation(positiveDir1));
-        Assert.assertFalse(positiveDir1.similarOrientation(negativeDir1));
+        Assertions.assertFalse(negativeDir1.similarOrientation(positiveDir1));
+        Assertions.assertFalse(positiveDir1.similarOrientation(negativeDir1));
     }
 
     @Test
@@ -235,10 +235,10 @@ public class OrientedPointTest {
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(1.0), true, TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(1.0, pt.project(Vector1D.of(-1.0)).getX(), Precision.EPSILON);
-        Assert.assertEquals(1.0, pt.project(Vector1D.of(0.0)).getX(), Precision.EPSILON);
-        Assert.assertEquals(1.0, pt.project(Vector1D.of(1.0)).getX(), Precision.EPSILON);
-        Assert.assertEquals(1.0, pt.project(Vector1D.of(100.0)).getX(), Precision.EPSILON);
+        Assertions.assertEquals(1.0, pt.project(Vector1D.of(-1.0)).getX(), Precision.EPSILON);
+        Assertions.assertEquals(1.0, pt.project(Vector1D.of(0.0)).getX(), Precision.EPSILON);
+        Assertions.assertEquals(1.0, pt.project(Vector1D.of(1.0)).getX(), Precision.EPSILON);
+        Assertions.assertEquals(1.0, pt.project(Vector1D.of(100.0)).getX(), Precision.EPSILON);
     }
 
 
@@ -255,14 +255,14 @@ public class OrientedPointTest {
         final OrientedPoint e = OrientedPoints.createPositiveFacing(1e-4, precision);
 
         // act/assert
-        Assert.assertTrue(a.eq(a, precision));
-        Assert.assertTrue(a.eq(b, precision));
+        Assertions.assertTrue(a.eq(a, precision));
+        Assertions.assertTrue(a.eq(b, precision));
 
-        Assert.assertFalse(a.eq(c, precision));
-        Assert.assertFalse(a.eq(d, precision));
+        Assertions.assertFalse(a.eq(c, precision));
+        Assertions.assertFalse(a.eq(d, precision));
 
-        Assert.assertTrue(a.eq(e, precision));
-        Assert.assertTrue(e.eq(a, precision));
+        Assertions.assertTrue(a.eq(e, precision));
+        Assertions.assertTrue(e.eq(a, precision));
     }
 
     @Test
@@ -280,13 +280,13 @@ public class OrientedPointTest {
         final OrientedPoint f = OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), true, precisionB);
 
         // act/assert
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
-        Assert.assertNotEquals(b.hashCode(), c.hashCode());
-        Assert.assertNotEquals(c.hashCode(), a.hashCode());
+        Assertions.assertNotEquals(a.hashCode(), b.hashCode());
+        Assertions.assertNotEquals(b.hashCode(), c.hashCode());
+        Assertions.assertNotEquals(c.hashCode(), a.hashCode());
 
-        Assert.assertEquals(a.hashCode(), d.hashCode());
-        Assert.assertEquals(b.hashCode(), e.hashCode());
-        Assert.assertEquals(c.hashCode(), f.hashCode());
+        Assertions.assertEquals(a.hashCode(), d.hashCode());
+        Assertions.assertEquals(b.hashCode(), e.hashCode());
+        Assertions.assertEquals(c.hashCode(), f.hashCode());
     }
 
     @Test
@@ -309,12 +309,12 @@ public class OrientedPointTest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(c, d);
-        Assert.assertNotEquals(e, f);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(c, d);
+        Assertions.assertNotEquals(e, f);
 
-        Assert.assertEquals(a, g);
-        Assert.assertEquals(g, a);
+        Assertions.assertEquals(a, g);
+        Assertions.assertEquals(g, a);
     }
 
     @Test
@@ -326,9 +326,9 @@ public class OrientedPointTest {
         final String str = pt.toString();
 
         // assert
-        Assert.assertTrue(str.contains("OrientedPoint"));
-        Assert.assertTrue(str.contains("point= (2.0)"));
-        Assert.assertTrue(str.contains("direction= (1.0)"));
+        Assertions.assertTrue(str.contains("OrientedPoint"));
+        Assertions.assertTrue(str.contains("point= (2.0)"));
+        Assertions.assertTrue(str.contains("direction= (1.0)"));
     }
 
     @Test
@@ -413,8 +413,8 @@ public class OrientedPointTest {
     private void checkSplit(final HyperplaneConvexSubset<Vector1D> sub, final OrientedPoint splitter, final boolean minus, final boolean plus) {
         final Split<? extends HyperplaneConvexSubset<Vector1D>> split = sub.split(splitter);
 
-        Assert.assertSame(minus ? sub : null, split.getMinus());
-        Assert.assertSame(plus ? sub : null, split.getPlus());
+        Assertions.assertSame(minus ? sub : null, split.getMinus());
+        Assertions.assertSame(plus ? sub : null, split.getPlus());
     }
 
     @Test
@@ -424,17 +424,17 @@ public class OrientedPointTest {
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();
 
         // act/assert
-        Assert.assertSame(pt, sub.getHyperplane());
-        Assert.assertFalse(sub.isFull());
-        Assert.assertFalse(sub.isEmpty());
-        Assert.assertFalse(sub.isInfinite());
-        Assert.assertTrue(sub.isFinite());
-        Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);
+        Assertions.assertSame(pt, sub.getHyperplane());
+        Assertions.assertFalse(sub.isFull());
+        Assertions.assertFalse(sub.isEmpty());
+        Assertions.assertFalse(sub.isInfinite());
+        Assertions.assertTrue(sub.isFinite());
+        Assertions.assertEquals(0.0, sub.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2), sub.getCentroid(), TEST_EPS);
 
         final List<? extends HyperplaneConvexSubset<Vector1D>> list = sub.toConvex();
-        Assert.assertEquals(1, list.size());
-        Assert.assertSame(sub, list.get(0));
+        Assertions.assertEquals(1, list.size());
+        Assertions.assertSame(sub, list.get(0));
     }
 
     @Test
@@ -445,18 +445,18 @@ public class OrientedPointTest {
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();
 
         // act/assert
-        Assert.assertEquals(RegionLocation.BOUNDARY, sub.classify(Vector1D.of(0.95)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, sub.classify(Vector1D.of(1)));
-        Assert.assertEquals(RegionLocation.BOUNDARY, sub.classify(Vector1D.of(1.05)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classify(Vector1D.of(0.95)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classify(Vector1D.of(1)));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classify(Vector1D.of(1.05)));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.of(1.11)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.of(0.89)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.of(1.11)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.of(0.89)));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.of(-3)));
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.of(10)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.of(-3)));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.of(10)));
 
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.NEGATIVE_INFINITY));
-        Assert.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.POSITIVE_INFINITY));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.NEGATIVE_INFINITY));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classify(Vector1D.POSITIVE_INFINITY));
     }
 
     @Test
@@ -467,18 +467,18 @@ public class OrientedPointTest {
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();
 
         // act/assert
-        Assert.assertTrue(sub.contains(Vector1D.of(0.95)));
-        Assert.assertTrue(sub.contains(Vector1D.of(1)));
-        Assert.assertTrue(sub.contains(Vector1D.of(1.05)));
+        Assertions.assertTrue(sub.contains(Vector1D.of(0.95)));
+        Assertions.assertTrue(sub.contains(Vector1D.of(1)));
+        Assertions.assertTrue(sub.contains(Vector1D.of(1.05)));
 
-        Assert.assertFalse(sub.contains(Vector1D.of(1.11)));
-        Assert.assertFalse(sub.contains(Vector1D.of(0.89)));
+        Assertions.assertFalse(sub.contains(Vector1D.of(1.11)));
+        Assertions.assertFalse(sub.contains(Vector1D.of(0.89)));
 
-        Assert.assertFalse(sub.contains(Vector1D.of(-3)));
-        Assert.assertFalse(sub.contains(Vector1D.of(10)));
+        Assertions.assertFalse(sub.contains(Vector1D.of(-3)));
+        Assertions.assertFalse(sub.contains(Vector1D.of(10)));
 
-        Assert.assertFalse(sub.contains(Vector1D.NEGATIVE_INFINITY));
-        Assert.assertFalse(sub.contains(Vector1D.POSITIVE_INFINITY));
+        Assertions.assertFalse(sub.contains(Vector1D.NEGATIVE_INFINITY));
+        Assertions.assertFalse(sub.contains(Vector1D.POSITIVE_INFINITY));
     }
 
     @Test
@@ -530,10 +530,10 @@ public class OrientedPointTest {
         final HyperplaneConvexSubset<Vector1D> result = sub.reverse();
 
         // assert
-        Assert.assertEquals(2.0, ((OrientedPoint) result.getHyperplane()).getLocation(), TEST_EPS);
-        Assert.assertFalse(((OrientedPoint) result.getHyperplane()).isPositiveFacing());
+        Assertions.assertEquals(2.0, ((OrientedPoint) result.getHyperplane()).getLocation(), TEST_EPS);
+        Assertions.assertFalse(((OrientedPoint) result.getHyperplane()).isPositiveFacing());
 
-        Assert.assertEquals(sub.getHyperplane(), result.reverse().getHyperplane());
+        Assertions.assertEquals(sub.getHyperplane(), result.reverse().getHyperplane());
     }
 
     @Test
@@ -546,26 +546,26 @@ public class OrientedPointTest {
         final String str = sub.toString();
 
         //assert
-        Assert.assertTrue(str.contains("OrientedPointConvexSubset"));
-        Assert.assertTrue(str.contains("point= (2.0)"));
-        Assert.assertTrue(str.contains("direction= (1.0)"));
+        Assertions.assertTrue(str.contains("OrientedPointConvexSubset"));
+        Assertions.assertTrue(str.contains("point= (2.0)"));
+        Assertions.assertTrue(str.contains("direction= (1.0)"));
     }
 
     private static void assertOrientedPoint(final OrientedPoint pt, final double location, final boolean positiveFacing,
                                             final DoublePrecisionContext precision) {
-        Assert.assertEquals(location, pt.getPoint().getX(), TEST_EPS);
-        Assert.assertEquals(location, pt.getLocation(), TEST_EPS);
-        Assert.assertEquals(positiveFacing ? 1.0 : -1.0, pt.getDirection().getX(), TEST_EPS);
-        Assert.assertEquals(positiveFacing, pt.isPositiveFacing());
-        Assert.assertSame(precision, pt.getPrecision());
+        Assertions.assertEquals(location, pt.getPoint().getX(), TEST_EPS);
+        Assertions.assertEquals(location, pt.getLocation(), TEST_EPS);
+        Assertions.assertEquals(positiveFacing ? 1.0 : -1.0, pt.getDirection().getX(), TEST_EPS);
+        Assertions.assertEquals(positiveFacing, pt.isPositiveFacing());
+        Assertions.assertSame(precision, pt.getPrecision());
     }
 
     private static void assertClassify(final HyperplaneLocation expected, final OrientedPoint pt, final double... locations) {
         for (final double location : locations) {
             final String msg = "Unexpected classification for location " + location;
 
-            Assert.assertEquals(msg, expected, pt.classify(location));
-            Assert.assertEquals(msg, expected, pt.classify(Vector1D.of(location)));
+            Assertions.assertEquals(expected, pt.classify(location), msg);
+            Assertions.assertEquals(expected, pt.classify(Vector1D.of(location)), msg);
         }
     }
 }

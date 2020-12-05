@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /** Helper class designed to assist with linecast test assertions in 2D.
  */
@@ -106,15 +106,15 @@ public class LinecastChecker2D {
      * @param line
      */
     private void checkLinecastResults(final List<LinecastPoint2D> results, final Line line) {
-        Assert.assertNotNull("Linecast result list cannot be null", results);
-        Assert.assertEquals("Unexpected result size for linecast", expectedResults.size(), results.size());
+        Assertions.assertNotNull(results, "Linecast result list cannot be null");
+        Assertions.assertEquals(expectedResults.size(), results.size(), "Unexpected result size for linecast");
 
         for (int i = 0; i < expectedResults.size(); ++i) {
             final LinecastPoint2D expected = toLinecastPoint(expectedResults.get(i), line);
             final LinecastPoint2D actual = results.get(i);
 
             if (!eq(expected, actual)) {
-                Assert.fail("Unexpected linecast point at index " + i + " expected " + expected +
+                Assertions.fail("Unexpected linecast point at index " + i + " expected " + expected +
                         " but was " + actual);
             }
         }
@@ -126,14 +126,14 @@ public class LinecastChecker2D {
      */
     private void checkLinecastFirstResult(final LinecastPoint2D result, final Line line) {
         if (expectedResults.isEmpty()) {
-            Assert.assertNull("Expected linecastFirst result to be null", result);
+            Assertions.assertNull(result, "Expected linecastFirst result to be null");
         } else {
             final LinecastPoint2D expected = toLinecastPoint(expectedResults.get(0), line);
 
-            Assert.assertNotNull("Expected linecastFirst result to not be null", result);
+            Assertions.assertNotNull(result, "Expected linecastFirst result to not be null");
 
             if (!eq(expected, result)) {
-                Assert.fail("Unexpected result from linecastFirst: expected " + expected +
+                Assertions.fail("Unexpected result from linecastFirst: expected " + expected +
                         " but was " + result);
             }
         }

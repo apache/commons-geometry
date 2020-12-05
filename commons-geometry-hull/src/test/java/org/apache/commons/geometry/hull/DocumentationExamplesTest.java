@@ -26,8 +26,8 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.hull.euclidean.twod.ConvexHull2D;
 import org.apache.commons.geometry.hull.euclidean.twod.MonotoneChain;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** This class contains code listed as examples in the user guide and other documentation.
  * If any portion of this code changes, the corresponding examples in the documentation <em>must</em> be updated.
@@ -66,12 +66,12 @@ public class DocumentationExamplesTest {
         final boolean containsAll = pts.stream().allMatch(region::contains); // true - region contains all input points
 
         // ---
-        Assert.assertEquals(4, vertices.size());
+        Assertions.assertEquals(4, vertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(1), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), vertices.get(2), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1), vertices.get(3), TEST_EPS);
 
-        Assert.assertTrue(containsAll);
+        Assertions.assertTrue(containsAll);
     }
 }

@@ -31,10 +31,9 @@ import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class ModelIOTest {
 
@@ -43,8 +42,8 @@ public class ModelIOTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir
+    File anotherTempDir;
 
     @Test
     public void testGetHandler() {
@@ -52,16 +51,16 @@ public class ModelIOTest {
         ModelIOHandlerRegistry registry = ModelIO.getModelIOHandlerRegistry();
 
         // assert
-        Assert.assertTrue(registry instanceof DefaultModelIOHandlerRegistry);
-        Assert.assertSame(registry, ModelIO.getModelIOHandlerRegistry());
+        Assertions.assertTrue(registry instanceof DefaultModelIOHandlerRegistry);
+        Assertions.assertSame(registry, ModelIO.getModelIOHandlerRegistry());
     }
 
     @Test
     public void testWriteRead_typeFromFileExtension() throws IOException {
         // act/assert
         checkWriteRead(model -> {
-            File file = new File(tempFolder.getRoot(), "model.obj");
-
+            //File file = new File(tempFolder.getRoot(), "model.obj");
+            File file = new File(anotherTempDir, "model.obj");
             ModelIO.write(model, file);
             return ModelIO.read(file, TEST_PRECISION);
         });
@@ -71,8 +70,8 @@ public class ModelIOTest {
     public void testWriteRead_typeAndFile() throws IOException {
         // act/assert
         checkWriteRead(model -> {
-            File file = new File(tempFolder.getRoot(), "objmodel");
-
+            //File file = new File(tempFolder.getRoot(), "objmodel");
+            File file = new File(anotherTempDir, "objmodel");
             ModelIO.write(model, "OBJ", file);
             return ModelIO.read("obj", file, TEST_PRECISION);
         });
@@ -82,8 +81,8 @@ public class ModelIOTest {
     public void testWriteRead_typeAndStream() throws IOException {
         // act/assert
         checkWriteRead(model -> {
-            File file = new File(tempFolder.getRoot(), "objmodel");
-
+            //File file = new File(tempFolder.getRoot(), "objmodel");
+            File file = new File(anotherTempDir, "objmodel");
             try (OutputStream out = Files.newOutputStream(file.toPath())) {
                 ModelIO.write(model, "OBJ", out);
             }
@@ -110,7 +109,7 @@ public class ModelIOTest {
 
         // assert
         List<Triangle3D> tris = result.triangleStream().collect(Collectors.toList());
-        Assert.assertEquals(1, tris.size());
+        Assertions.assertEquals(1, tris.size());
 
         Triangle3D tri = tris.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tri.getPoint1(), TEST_EPS);

@@ -20,8 +20,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PolarCoordinatesTest {
 
@@ -141,56 +143,56 @@ public class PolarCoordinatesTest {
         final PolarCoordinates p = PolarCoordinates.of(1, 0);
 
         // act/assert
-        Assert.assertEquals(2, p.getDimension());
+        Assertions.assertEquals(2, p.getDimension());
     }
 
     @Test
     public void testIsNaN() {
         // act/assert
-        Assert.assertFalse(PolarCoordinates.of(1, 0).isNaN());
-        Assert.assertFalse(PolarCoordinates.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isNaN());
+        Assertions.assertFalse(PolarCoordinates.of(1, 0).isNaN());
+        Assertions.assertFalse(PolarCoordinates.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isNaN());
 
-        Assert.assertTrue(PolarCoordinates.of(Double.NaN, 0).isNaN());
-        Assert.assertTrue(PolarCoordinates.of(1, Double.NaN).isNaN());
-        Assert.assertTrue(PolarCoordinates.of(Double.NaN, Double.NaN).isNaN());
+        Assertions.assertTrue(PolarCoordinates.of(Double.NaN, 0).isNaN());
+        Assertions.assertTrue(PolarCoordinates.of(1, Double.NaN).isNaN());
+        Assertions.assertTrue(PolarCoordinates.of(Double.NaN, Double.NaN).isNaN());
     }
 
     @Test
     public void testIsInfinite() {
         // act/assert
-        Assert.assertFalse(PolarCoordinates.of(1, 0).isInfinite());
-        Assert.assertFalse(PolarCoordinates.of(Double.NaN, Double.NaN).isInfinite());
+        Assertions.assertFalse(PolarCoordinates.of(1, 0).isInfinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.NaN, Double.NaN).isInfinite());
 
-        Assert.assertTrue(PolarCoordinates.of(Double.POSITIVE_INFINITY, 0).isInfinite());
-        Assert.assertTrue(PolarCoordinates.of(Double.NEGATIVE_INFINITY, 0).isInfinite());
-        Assert.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
+        Assertions.assertTrue(PolarCoordinates.of(Double.POSITIVE_INFINITY, 0).isInfinite());
+        Assertions.assertTrue(PolarCoordinates.of(Double.NEGATIVE_INFINITY, 0).isInfinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
 
-        Assert.assertTrue(PolarCoordinates.of(0, Double.POSITIVE_INFINITY).isInfinite());
-        Assert.assertTrue(PolarCoordinates.of(0, Double.NEGATIVE_INFINITY).isInfinite());
-        Assert.assertFalse(PolarCoordinates.of(Double.NaN, Double.NEGATIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(PolarCoordinates.of(0, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(PolarCoordinates.of(0, Double.NEGATIVE_INFINITY).isInfinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.NaN, Double.NEGATIVE_INFINITY).isInfinite());
 
-        Assert.assertTrue(PolarCoordinates.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isInfinite());
-        Assert.assertTrue(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(PolarCoordinates.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isInfinite());
+        Assertions.assertTrue(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isInfinite());
     }
 
     @Test
     public void testIsFinite() {
         // act/assert
-        Assert.assertTrue(PolarCoordinates.of(1, 0).isFinite());
-        Assert.assertTrue(PolarCoordinates.of(1, PlaneAngleRadians.PI).isFinite());
+        Assertions.assertTrue(PolarCoordinates.of(1, 0).isFinite());
+        Assertions.assertTrue(PolarCoordinates.of(1, PlaneAngleRadians.PI).isFinite());
 
-        Assert.assertFalse(PolarCoordinates.of(Double.NaN, Double.NaN).isFinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.NaN, Double.NaN).isFinite());
 
-        Assert.assertFalse(PolarCoordinates.of(Double.POSITIVE_INFINITY, 0).isFinite());
-        Assert.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, 0).isFinite());
-        Assert.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.POSITIVE_INFINITY, 0).isFinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, 0).isFinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
 
-        Assert.assertFalse(PolarCoordinates.of(0, Double.POSITIVE_INFINITY).isFinite());
-        Assert.assertFalse(PolarCoordinates.of(0, Double.NEGATIVE_INFINITY).isFinite());
-        Assert.assertFalse(PolarCoordinates.of(Double.NaN, Double.NEGATIVE_INFINITY).isFinite());
+        Assertions.assertFalse(PolarCoordinates.of(0, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(PolarCoordinates.of(0, Double.NEGATIVE_INFINITY).isFinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.NaN, Double.NEGATIVE_INFINITY).isFinite());
 
-        Assert.assertFalse(PolarCoordinates.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isFinite());
-        Assert.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isFinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isFinite());
+        Assertions.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isFinite());
     }
 
     @Test
@@ -204,12 +206,12 @@ public class PolarCoordinatesTest {
         final PolarCoordinates e = PolarCoordinates.of(1, 2);
 
         // act/assert
-        Assert.assertEquals(a.hashCode(), a.hashCode());
-        Assert.assertEquals(a.hashCode(), e.hashCode());
+        Assertions.assertEquals(a.hashCode(), a.hashCode());
+        Assertions.assertEquals(a.hashCode(), e.hashCode());
 
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
-        Assert.assertNotEquals(a.hashCode(), c.hashCode());
-        Assert.assertNotEquals(a.hashCode(), d.hashCode());
+        Assertions.assertNotEquals(a.hashCode(), b.hashCode());
+        Assertions.assertNotEquals(a.hashCode(), c.hashCode());
+        Assertions.assertNotEquals(a.hashCode(), d.hashCode());
     }
 
     @Test
@@ -219,7 +221,7 @@ public class PolarCoordinatesTest {
         final PolarCoordinates b = PolarCoordinates.of(Double.NaN, 1);
 
         // act/assert
-        Assert.assertEquals(a.hashCode(), b.hashCode());
+        Assertions.assertEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
@@ -234,11 +236,11 @@ public class PolarCoordinatesTest {
 
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
-        Assert.assertEquals(a, e);
+        Assertions.assertEquals(a, e);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-        Assert.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
     }
 
     @Test
@@ -248,7 +250,7 @@ public class PolarCoordinatesTest {
         final PolarCoordinates b = PolarCoordinates.of(Double.NaN, 1);
 
         // act/assert
-        Assert.assertEquals(a, b);
+        Assertions.assertEquals(a, b);
     }
 
     @Test
@@ -260,13 +262,13 @@ public class PolarCoordinatesTest {
         final PolarCoordinates d = PolarCoordinates.of(-0.0, 0.0);
 
         // act/assert
-        Assert.assertFalse(a.equals(b));
+        Assertions.assertFalse(a.equals(b));
 
-        Assert.assertTrue(a.equals(c));
-        Assert.assertEquals(a.hashCode(), c.hashCode());
+        Assertions.assertTrue(a.equals(c));
+        Assertions.assertEquals(a.hashCode(), c.hashCode());
 
-        Assert.assertTrue(b.equals(d));
-        Assert.assertEquals(b.hashCode(), d.hashCode());
+        Assertions.assertTrue(b.equals(d));
+        Assertions.assertEquals(b.hashCode(), d.hashCode());
     }
 
     @Test
@@ -312,16 +314,16 @@ public class PolarCoordinatesTest {
     @Test
     public void testToCartesian_static_NaNAndInfinite() {
         // act/assert
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.NaN, 0).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(0, Double.NaN).isNaN());
+        Assertions.assertTrue(PolarCoordinates.toCartesian(Double.NaN, 0).isNaN());
+        Assertions.assertTrue(PolarCoordinates.toCartesian(0, Double.NaN).isNaN());
 
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.POSITIVE_INFINITY, 0).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(0, Double.POSITIVE_INFINITY).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY).isNaN());
+        Assertions.assertTrue(PolarCoordinates.toCartesian(Double.POSITIVE_INFINITY, 0).isNaN());
+        Assertions.assertTrue(PolarCoordinates.toCartesian(0, Double.POSITIVE_INFINITY).isNaN());
+        Assertions.assertTrue(PolarCoordinates.toCartesian(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY).isNaN());
 
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.NEGATIVE_INFINITY, 0).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(0, Double.NEGATIVE_INFINITY).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY).isNaN());
+        Assertions.assertTrue(PolarCoordinates.toCartesian(Double.NEGATIVE_INFINITY, 0).isNaN());
+        Assertions.assertTrue(PolarCoordinates.toCartesian(0, Double.NEGATIVE_INFINITY).isNaN());
+        Assertions.assertTrue(PolarCoordinates.toCartesian(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY).isNaN());
     }
 
     @Test
@@ -334,8 +336,8 @@ public class PolarCoordinatesTest {
         final String str = polar.toString();
 
         // assert
-        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
-                    pattern.matcher(str).matches());
+        Assertions.assertTrue(pattern.matcher(str).matches(),
+                "Expected string " + str + " to match regex " + pattern);
     }
 
     @Test
@@ -346,48 +348,48 @@ public class PolarCoordinatesTest {
         checkPolar(PolarCoordinates.parse("(NaN,-Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_failure() {
         // act/assert
-        PolarCoordinates.parse("abc");
+        assertThrows(IllegalArgumentException.class, () -> PolarCoordinates.parse("abc"));
     }
 
     @Test
     public void testNormalizeAzimuth() {
         // act/assert
-        Assert.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(0), EPS);
+        Assertions.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(0), EPS);
 
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI), EPS);
-        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), EPS);
-        Assert.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), EPS);
+        Assertions.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), EPS);
 
-        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assert.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), EPS);
+        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), EPS);
     }
 
     @Test
     public void testNormalizeAzimuth_NaNAndInfinite() {
         // act/assert
-        Assert.assertEquals(Double.NaN, PolarCoordinates.normalizeAzimuth(Double.NaN), EPS);
-        Assert.assertEquals(Double.NEGATIVE_INFINITY, PolarCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), EPS);
-        Assert.assertEquals(Double.POSITIVE_INFINITY, PolarCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), EPS);
+        Assertions.assertEquals(Double.NaN, PolarCoordinates.normalizeAzimuth(Double.NaN), EPS);
+        Assertions.assertEquals(Double.NEGATIVE_INFINITY, PolarCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), EPS);
+        Assertions.assertEquals(Double.POSITIVE_INFINITY, PolarCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), EPS);
     }
 
     private void checkPolar(final PolarCoordinates polar, final double radius, final double azimuth) {
-        Assert.assertEquals(radius, polar.getRadius(), EPS);
-        Assert.assertEquals(azimuth, polar.getAzimuth(), EPS);
+        Assertions.assertEquals(radius, polar.getRadius(), EPS);
+        Assertions.assertEquals(azimuth, polar.getAzimuth(), EPS);
     }
 
     private void checkVector(final Vector2D v, final double x, final double y) {
-        Assert.assertEquals(x, v.getX(), EPS);
-        Assert.assertEquals(y, v.getY(), EPS);
+        Assertions.assertEquals(x, v.getX(), EPS);
+        Assertions.assertEquals(y, v.getY(), EPS);
     }
 
     private void checkPoint(final Vector2D p, final double x, final double y) {
-        Assert.assertEquals(x, p.getX(), EPS);
-        Assert.assertEquals(y, p.getY(), EPS);
+        Assertions.assertEquals(x, p.getX(), EPS);
+        Assertions.assertEquals(y, p.getY(), EPS);
     }
 }

@@ -28,8 +28,8 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ModelIOHandlerRegistryTest {
 
@@ -57,11 +57,11 @@ public class ModelIOHandlerRegistryTest {
 
         // assert
         List<ModelIOHandler> resultHandlers = registry.getHandlers();
-        Assert.assertNotSame(handlers, resultHandlers);
-        Assert.assertEquals(2, resultHandlers.size());
+        Assertions.assertNotSame(handlers, resultHandlers);
+        Assertions.assertEquals(2, resultHandlers.size());
 
-        Assert.assertSame(handlerA, resultHandlers.get(0));
-        Assert.assertSame(handlerB, resultHandlers.get(1));
+        Assertions.assertSame(handlerA, resultHandlers.get(0));
+        Assertions.assertSame(handlerB, resultHandlers.get(1));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class ModelIOHandlerRegistryTest {
         registry.setHandlers(null);
 
         // assert
-        Assert.assertEquals(0, registry.getHandlers().size());
+        Assertions.assertEquals(0, registry.getHandlers().size());
     }
 
     @Test
@@ -88,13 +88,13 @@ public class ModelIOHandlerRegistryTest {
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
         // act/assert
-        Assert.assertSame(handlerA, registry.getHandlerForType("a"));
-        Assert.assertSame(handlerB, registry.getHandlerForType("b"));
+        Assertions.assertSame(handlerA, registry.getHandlerForType("a"));
+        Assertions.assertSame(handlerB, registry.getHandlerForType("b"));
 
-        Assert.assertNull(registry.getHandlerForType(null));
-        Assert.assertNull(registry.getHandlerForType(""));
-        Assert.assertNull(registry.getHandlerForType(" "));
-        Assert.assertNull(registry.getHandlerForType("nope"));
+        Assertions.assertNull(registry.getHandlerForType(null));
+        Assertions.assertNull(registry.getHandlerForType(""));
+        Assertions.assertNull(registry.getHandlerForType(" "));
+        Assertions.assertNull(registry.getHandlerForType("nope"));
     }
 
     @Test
@@ -106,13 +106,13 @@ public class ModelIOHandlerRegistryTest {
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
         // act/assert
-        Assert.assertTrue(registry.handlesType("a"));
-        Assert.assertTrue(registry.handlesType("b"));
+        Assertions.assertTrue(registry.handlesType("a"));
+        Assertions.assertTrue(registry.handlesType("b"));
 
-        Assert.assertFalse(registry.handlesType(null));
-        Assert.assertFalse(registry.handlesType(""));
-        Assert.assertFalse(registry.handlesType(" "));
-        Assert.assertFalse(registry.handlesType("nope"));
+        Assertions.assertFalse(registry.handlesType(null));
+        Assertions.assertFalse(registry.handlesType(""));
+        Assertions.assertFalse(registry.handlesType(" "));
+        Assertions.assertFalse(registry.handlesType("nope"));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class ModelIOHandlerRegistryTest {
         BoundarySource3D src = registry.read(file, TEST_PRECISION);
 
         // assert
-        Assert.assertSame(SRC_B, src);
+        Assertions.assertSame(SRC_B, src);
     }
 
     @Test
@@ -167,7 +167,7 @@ public class ModelIOHandlerRegistryTest {
         BoundarySource3D src = registry.read("a", new File("file"), TEST_PRECISION);
 
         // assert
-        Assert.assertSame(SRC_A, src);
+        Assertions.assertSame(SRC_A, src);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class ModelIOHandlerRegistryTest {
         BoundarySource3D src = registry.read("a", new ByteArrayInputStream(new byte[0]), TEST_PRECISION);
 
         // assert
-        Assert.assertSame(SRC_A, src);
+        Assertions.assertSame(SRC_A, src);
     }
 
     @Test
@@ -218,8 +218,8 @@ public class ModelIOHandlerRegistryTest {
         registry.write(SRC_B, file);
 
         // assert
-        Assert.assertNull(handlerA.outputBoundarySrc);
-        Assert.assertSame(SRC_B, handlerB.outputBoundarySrc);
+        Assertions.assertNull(handlerA.outputBoundarySrc);
+        Assertions.assertSame(SRC_B, handlerB.outputBoundarySrc);
     }
 
     @Test
@@ -259,8 +259,8 @@ public class ModelIOHandlerRegistryTest {
         registry.write(SRC_B, "a", file);
 
         // assert
-        Assert.assertSame(SRC_B, handlerA.outputBoundarySrc);
-        Assert.assertNull(handlerB.outputBoundarySrc);
+        Assertions.assertSame(SRC_B, handlerA.outputBoundarySrc);
+        Assertions.assertNull(handlerB.outputBoundarySrc);
     }
 
     @Test
@@ -286,8 +286,8 @@ public class ModelIOHandlerRegistryTest {
         registry.write(SRC_B, "a", new ByteArrayOutputStream());
 
         // assert
-        Assert.assertSame(SRC_B, handlerA.outputBoundarySrc);
-        Assert.assertNull(handlerB.outputBoundarySrc);
+        Assertions.assertSame(SRC_B, handlerA.outputBoundarySrc);
+        Assertions.assertNull(handlerB.outputBoundarySrc);
     }
 
     @Test

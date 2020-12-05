@@ -28,8 +28,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D.RegionNode1D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class RegionBSPTree1DTest {
 
@@ -48,8 +48,8 @@ public class RegionBSPTree1DTest {
         final RegionBSPTree1D copy = tree.copy();
 
         // assert
-        Assert.assertNotSame(tree, copy);
-        Assert.assertEquals(3, copy.count());
+        Assertions.assertNotSame(tree, copy);
+        Assertions.assertEquals(3, copy.count());
     }
 
     @Test
@@ -141,9 +141,9 @@ public class RegionBSPTree1DTest {
     @Test
     public void testGetBoundarySize_alwaysReturnsZero() {
         // act/assert
-        Assert.assertEquals(0.0, RegionBSPTree1D.full().getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0.0, RegionBSPTree1D.empty().getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0.0, RegionBSPTree1D.from(
+        Assertions.assertEquals(0.0, RegionBSPTree1D.full().getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0.0, RegionBSPTree1D.empty().getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0.0, RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),
                     Interval.of(4, 5, TEST_PRECISION)
                 ).getBoundarySize(), TEST_EPS);
@@ -155,9 +155,9 @@ public class RegionBSPTree1DTest {
         final RegionBSPTree1D full = RegionBSPTree1D.full();
 
         // act/assert
-        Assert.assertNull(full.project(Vector1D.of(Double.NEGATIVE_INFINITY)));
-        Assert.assertNull(full.project(Vector1D.of(0)));
-        Assert.assertNull(full.project(Vector1D.of(Double.POSITIVE_INFINITY)));
+        Assertions.assertNull(full.project(Vector1D.of(Double.NEGATIVE_INFINITY)));
+        Assertions.assertNull(full.project(Vector1D.of(0)));
+        Assertions.assertNull(full.project(Vector1D.of(Double.POSITIVE_INFINITY)));
     }
 
     @Test
@@ -166,9 +166,9 @@ public class RegionBSPTree1DTest {
         final RegionBSPTree1D empty = RegionBSPTree1D.empty();
 
         // act/assert
-        Assert.assertNull(empty.project(Vector1D.of(Double.NEGATIVE_INFINITY)));
-        Assert.assertNull(empty.project(Vector1D.of(0)));
-        Assert.assertNull(empty.project(Vector1D.of(Double.POSITIVE_INFINITY)));
+        Assertions.assertNull(empty.project(Vector1D.of(Double.NEGATIVE_INFINITY)));
+        Assertions.assertNull(empty.project(Vector1D.of(0)));
+        Assertions.assertNull(empty.project(Vector1D.of(Double.POSITIVE_INFINITY)));
     }
 
     @Test
@@ -342,8 +342,8 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION));
 
         // assert
-        Assert.assertTrue(tree.isFull());
-        Assert.assertEquals(1, tree.count());
+        Assertions.assertTrue(tree.isFull());
+        Assertions.assertEquals(1, tree.count());
     }
 
     @Test
@@ -374,7 +374,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(1, intervals.size());
+        Assertions.assertEquals(1, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
@@ -387,7 +387,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(0, intervals.size());
+        Assertions.assertEquals(0, intervals.size());
     }
 
     @Test
@@ -402,7 +402,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(1, intervals.size());
+        Assertions.assertEquals(1, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1);
     }
 
@@ -418,7 +418,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(1, intervals.size());
+        Assertions.assertEquals(1, intervals.size());
         checkInterval(intervals.get(0), -1, Double.POSITIVE_INFINITY);
     }
 
@@ -434,7 +434,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(1, intervals.size());
+        Assertions.assertEquals(1, intervals.size());
         checkInterval(intervals.get(0), -1, 1);
     }
 
@@ -451,7 +451,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(2, intervals.size());
+        Assertions.assertEquals(2, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -1);
         checkInterval(intervals.get(1), 1, Double.POSITIVE_INFINITY);
     }
@@ -470,7 +470,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(3, intervals.size());
+        Assertions.assertEquals(3, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -10);
         checkInterval(intervals.get(1), -1, 1);
         checkInterval(intervals.get(2), 10, Double.POSITIVE_INFINITY);
@@ -488,7 +488,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(1, intervals.size());
+        Assertions.assertEquals(1, intervals.size());
         checkInterval(intervals.get(0), 1, 1);
     }
 
@@ -505,7 +505,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(2, intervals.size());
+        Assertions.assertEquals(2, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1);
         checkInterval(intervals.get(1), 1, Double.POSITIVE_INFINITY);
     }
@@ -523,7 +523,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(2, intervals.size());
+        Assertions.assertEquals(2, intervals.size());
         checkInterval(intervals.get(0), 1, 1);
         checkInterval(intervals.get(1), 2, 2);
     }
@@ -542,7 +542,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(3, intervals.size());
+        Assertions.assertEquals(3, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1);
         checkInterval(intervals.get(1), 1, 2);
         checkInterval(intervals.get(2), 2, Double.POSITIVE_INFINITY);
@@ -560,7 +560,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(1, intervals.size());
+        Assertions.assertEquals(1, intervals.size());
         checkInterval(intervals.get(0), 1, 3);
     }
 
@@ -580,7 +580,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(3, intervals.size());
+        Assertions.assertEquals(3, intervals.size());
         checkInterval(intervals.get(0), -2, -1);
         checkInterval(intervals.get(1), 1, 4);
         checkInterval(intervals.get(2), 5, 6);
@@ -598,7 +598,7 @@ public class RegionBSPTree1DTest {
         final List<Interval> intervals = tree.toIntervals();
 
         // assert
-        Assert.assertEquals(1, intervals.size());
+        Assertions.assertEquals(1, intervals.size());
         checkInterval(intervals.get(0), -1, 6);
     }
 
@@ -634,7 +634,7 @@ public class RegionBSPTree1DTest {
         tree.transform(transform);
 
         // assert
-        Assert.assertTrue(tree.isFull());
+        Assertions.assertTrue(tree.isFull());
     }
 
     @Test
@@ -654,7 +654,7 @@ public class RegionBSPTree1DTest {
         // assert
         final List<Interval> intervals = tree.toIntervals();
 
-        Assert.assertEquals(2, intervals.size());
+        Assertions.assertEquals(2, intervals.size());
         checkInterval(intervals.get(0), 5, 7);
         checkInterval(intervals.get(1), 9, Double.POSITIVE_INFINITY);
     }
@@ -676,7 +676,7 @@ public class RegionBSPTree1DTest {
         // assert
         final List<Interval> intervals = tree.toIntervals();
 
-        Assert.assertEquals(2, intervals.size());
+        Assertions.assertEquals(2, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -3);
         checkInterval(intervals.get(1), -1, 1);
     }
@@ -697,7 +697,7 @@ public class RegionBSPTree1DTest {
         // assert
         final List<Interval> intervals = tree.toIntervals();
 
-        Assert.assertEquals(2, intervals.size());
+        Assertions.assertEquals(2, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -3);
         checkInterval(intervals.get(1), -2, -1);
     }
@@ -712,14 +712,14 @@ public class RegionBSPTree1DTest {
         final Split<RegionBSPTree1D> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final List<Interval> minusIntervals = split.getMinus().toIntervals();
-        Assert.assertEquals(1, minusIntervals.size());
+        Assertions.assertEquals(1, minusIntervals.size());
         checkInterval(minusIntervals.get(0), Double.NEGATIVE_INFINITY, 2);
 
         final List<Interval> plusIntervals = split.getPlus().toIntervals();
-        Assert.assertEquals(1, plusIntervals.size());
+        Assertions.assertEquals(1, plusIntervals.size());
         checkInterval(plusIntervals.get(0), 2, Double.POSITIVE_INFINITY);
     }
 
@@ -733,10 +733,10 @@ public class RegionBSPTree1DTest {
         final Split<RegionBSPTree1D> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -752,14 +752,14 @@ public class RegionBSPTree1DTest {
         final Split<RegionBSPTree1D> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final List<Interval> minusIntervals = split.getMinus().toIntervals();
-        Assert.assertEquals(1, minusIntervals.size());
+        Assertions.assertEquals(1, minusIntervals.size());
         checkInterval(minusIntervals.get(0), 2, 4);
 
         final List<Interval> plusIntervals = split.getPlus().toIntervals();
-        Assert.assertEquals(2, plusIntervals.size());
+        Assertions.assertEquals(2, plusIntervals.size());
         checkInterval(plusIntervals.get(0), Double.NEGATIVE_INFINITY, -2);
         checkInterval(plusIntervals.get(1), 1, 2);
     }
@@ -776,13 +776,13 @@ public class RegionBSPTree1DTest {
         final Split<RegionBSPTree1D> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
         final List<Interval> minusIntervals = split.getMinus().toIntervals();
-        Assert.assertEquals(1, minusIntervals.size());
+        Assertions.assertEquals(1, minusIntervals.size());
         checkInterval(minusIntervals.get(0), 1, 4);
 
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -797,12 +797,12 @@ public class RegionBSPTree1DTest {
         final Split<RegionBSPTree1D> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
+        Assertions.assertNull(split.getMinus());
 
         final List<Interval> plusIntervals = split.getPlus().toIntervals();
-        Assert.assertEquals(1, plusIntervals.size());
+        Assertions.assertEquals(1, plusIntervals.size());
         checkInterval(plusIntervals.get(0), 1, 4);
     }
 
@@ -817,12 +817,12 @@ public class RegionBSPTree1DTest {
         final Split<RegionBSPTree1D> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
+        Assertions.assertNull(split.getMinus());
 
         final List<Interval> plusIntervals = split.getPlus().toIntervals();
-        Assert.assertEquals(1, plusIntervals.size());
+        Assertions.assertEquals(1, plusIntervals.size());
         checkInterval(plusIntervals.get(0), 1, 1);
     }
 
@@ -837,12 +837,12 @@ public class RegionBSPTree1DTest {
         final Split<RegionBSPTree1D> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
+        Assertions.assertNull(split.getMinus());
 
         final List<Interval> plusIntervals = split.getPlus().toIntervals();
-        Assert.assertEquals(1, plusIntervals.size());
+        Assertions.assertEquals(1, plusIntervals.size());
         checkInterval(plusIntervals.get(0), 1, 1);
     }
 
@@ -857,13 +857,13 @@ public class RegionBSPTree1DTest {
         final Split<RegionBSPTree1D> split = tree.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
         final List<Interval> minusIntervals = split.getMinus().toIntervals();
-        Assert.assertEquals(1, minusIntervals.size());
+        Assertions.assertEquals(1, minusIntervals.size());
         checkInterval(minusIntervals.get(0), 1, 1);
 
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -878,9 +878,9 @@ public class RegionBSPTree1DTest {
         negHalfSpace.getRoot().cut(OrientedPoints.createPositiveFacing(3.0, TEST_PRECISION));
 
         // act/assert
-        Assert.assertEquals(Double.POSITIVE_INFINITY, full.getSize(), TEST_EPS);
-        Assert.assertEquals(Double.POSITIVE_INFINITY, posHalfSpace.getSize(), TEST_EPS);
-        Assert.assertEquals(Double.POSITIVE_INFINITY, negHalfSpace.getSize(), TEST_EPS);
+        Assertions.assertEquals(Double.POSITIVE_INFINITY, full.getSize(), TEST_EPS);
+        Assertions.assertEquals(Double.POSITIVE_INFINITY, posHalfSpace.getSize(), TEST_EPS);
+        Assertions.assertEquals(Double.POSITIVE_INFINITY, negHalfSpace.getSize(), TEST_EPS);
     }
 
     @Test
@@ -889,7 +889,7 @@ public class RegionBSPTree1DTest {
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         // act/assert
-        Assert.assertEquals(0, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, tree.getSize(), TEST_EPS);
     }
 
     @Test
@@ -904,8 +904,8 @@ public class RegionBSPTree1DTest {
         multiplePoints.add(Interval.of(2, 2, TEST_PRECISION));
 
         // act/assert
-        Assert.assertEquals(0, singlePoint.getSize(), TEST_EPS);
-        Assert.assertEquals(0, multiplePoints.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, singlePoint.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, multiplePoints.getSize(), TEST_EPS);
     }
 
     @Test
@@ -922,8 +922,8 @@ public class RegionBSPTree1DTest {
         multiplePoints.add(Interval.of(2, 2.02, precision));
 
         // act/assert
-        Assert.assertEquals(0.02, singlePoint.getSize(), TEST_EPS);
-        Assert.assertEquals(0.06, multiplePoints.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.02, singlePoint.getSize(), TEST_EPS);
+        Assertions.assertEquals(0.06, multiplePoints.getSize(), TEST_EPS);
     }
 
     @Test
@@ -934,7 +934,7 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.of(3, 5, TEST_PRECISION));
 
         // act/assert
-        Assert.assertEquals(3, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(3, tree.getSize(), TEST_EPS);
     }
 
     @Test
@@ -946,7 +946,7 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.of(5, 5, TEST_PRECISION));
 
         // act/assert
-        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, tree.getSize(), TEST_EPS);
     }
 
     @Test
@@ -959,7 +959,7 @@ public class RegionBSPTree1DTest {
         tree.complement();
 
         // act/assert
-        Assert.assertEquals(2, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(2, tree.getSize(), TEST_EPS);
     }
 
     @Test
@@ -974,9 +974,9 @@ public class RegionBSPTree1DTest {
         negHalfSpace.getRoot().cut(OrientedPoints.createPositiveFacing(3.0, TEST_PRECISION));
 
         // act/assert
-        Assert.assertNull(full.getCentroid());
-        Assert.assertNull(posHalfSpace.getCentroid());
-        Assert.assertNull(negHalfSpace.getCentroid());
+        Assertions.assertNull(full.getCentroid());
+        Assertions.assertNull(posHalfSpace.getCentroid());
+        Assertions.assertNull(negHalfSpace.getCentroid());
     }
 
     @Test
@@ -985,7 +985,7 @@ public class RegionBSPTree1DTest {
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         // act/assert
-        Assert.assertNull(tree.getCentroid());
+        Assertions.assertNull(tree.getCentroid());
     }
 
     @Test
@@ -1088,11 +1088,11 @@ public class RegionBSPTree1DTest {
         negHalfSpace.getRoot().cut(OrientedPoints.createPositiveFacing(3.0, TEST_PRECISION));
 
         // act/assert
-        Assert.assertEquals(-2, posHalfSpace.getMin(), TEST_EPS);
+        Assertions.assertEquals(-2, posHalfSpace.getMin(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(posHalfSpace.getMax());
 
         GeometryTestUtils.assertNegativeInfinity(negHalfSpace.getMin());
-        Assert.assertEquals(3, negHalfSpace.getMax(), TEST_EPS);
+        Assertions.assertEquals(3, negHalfSpace.getMax(), TEST_EPS);
     }
 
     @Test
@@ -1105,8 +1105,8 @@ public class RegionBSPTree1DTest {
                 ));
 
         // act/assert
-        Assert.assertEquals(-4, tree.getMin(), TEST_EPS);
-        Assert.assertEquals(5, tree.getMax(), TEST_EPS);
+        Assertions.assertEquals(-4, tree.getMin(), TEST_EPS);
+        Assertions.assertEquals(5, tree.getMax(), TEST_EPS);
     }
 
     @Test
@@ -1119,8 +1119,8 @@ public class RegionBSPTree1DTest {
                 ));
 
         // act/assert
-        Assert.assertEquals(-4, tree.getMin(), TEST_EPS);
-        Assert.assertEquals(5, tree.getMax(), TEST_EPS);
+        Assertions.assertEquals(-4, tree.getMin(), TEST_EPS);
+        Assertions.assertEquals(5, tree.getMax(), TEST_EPS);
     }
 
     @Test
@@ -1129,9 +1129,9 @@ public class RegionBSPTree1DTest {
         final RegionBSPTree1D tree = RegionBSPTree1D.full();
 
         // assert
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
-        Assert.assertNotSame(tree, RegionBSPTree1D.full());
+        Assertions.assertTrue(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
+        Assertions.assertNotSame(tree, RegionBSPTree1D.full());
     }
 
     @Test
@@ -1140,9 +1140,9 @@ public class RegionBSPTree1DTest {
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isEmpty());
-        Assert.assertNotSame(tree, RegionBSPTree1D.full());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
+        Assertions.assertNotSame(tree, RegionBSPTree1D.full());
     }
 
     @Test
@@ -1154,14 +1154,14 @@ public class RegionBSPTree1DTest {
                 ));
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         checkClassify(tree, RegionLocation.INSIDE, 1.5, 3.5);
         checkClassify(tree, RegionLocation.BOUNDARY, 1, 2, 3, 4);
         checkClassify(tree, RegionLocation.OUTSIDE, 0, 2.5, 5);
 
-        Assert.assertEquals(2, tree.toIntervals().size());
+        Assertions.assertEquals(2, tree.toIntervals().size());
     }
 
     @Test
@@ -1170,10 +1170,10 @@ public class RegionBSPTree1DTest {
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Collections.emptyList());
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
 
-        Assert.assertEquals(0, tree.toIntervals().size());
+        Assertions.assertEquals(0, tree.toIntervals().size());
     }
 
     @Test
@@ -1185,22 +1185,22 @@ public class RegionBSPTree1DTest {
                 );
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
         checkClassify(tree, RegionLocation.INSIDE, 1.5, 3.5);
         checkClassify(tree, RegionLocation.BOUNDARY, 1, 2, 3, 4);
         checkClassify(tree, RegionLocation.OUTSIDE, 0, 2.5, 5);
 
-        Assert.assertEquals(2, tree.toIntervals().size());
+        Assertions.assertEquals(2, tree.toIntervals().size());
     }
 
     private static void checkClassify(final RegionBSPTree1D tree, final RegionLocation loc, final double... points) {
         for (final double x : points) {
             final String msg = "Unexpected location for point " + x;
 
-            Assert.assertEquals(msg, loc, tree.classify(x));
-            Assert.assertEquals(msg, loc, tree.classify(Vector1D.of(x)));
+            Assertions.assertEquals(loc, tree.classify(x), msg);
+            Assertions.assertEquals(loc, tree.classify(Vector1D.of(x)), msg);
         }
     }
 
@@ -1208,8 +1208,8 @@ public class RegionBSPTree1DTest {
         for (final double x : points) {
             final String msg = "Unexpected contains status for point " + x;
 
-            Assert.assertEquals(msg, contains, tree.contains(x));
-            Assert.assertEquals(msg, contains, tree.contains(Vector1D.of(x)));
+            Assertions.assertEquals(contains, tree.contains(x), msg);
+            Assertions.assertEquals(contains, tree.contains(Vector1D.of(x)), msg);
         }
     }
 
@@ -1218,7 +1218,7 @@ public class RegionBSPTree1DTest {
 
         final Vector1D proj = tree.project(pt);
 
-        Assert.assertEquals(projectedLocation, proj.getX(), TEST_EPS);
+        Assertions.assertEquals(projectedLocation, proj.getX(), TEST_EPS);
     }
 
     private static void checkInterval(final Interval interval, final double min, final double max) {
@@ -1226,7 +1226,7 @@ public class RegionBSPTree1DTest {
     }
 
     private static void checkInterval(final Interval interval, final double min, final double max, final DoublePrecisionContext precision) {
-        Assert.assertEquals(min, interval.getMin(), TEST_EPS);
-        Assert.assertEquals(max, interval.getMax(), TEST_EPS);
+        Assertions.assertEquals(min, interval.getMin(), TEST_EPS);
+        Assertions.assertEquals(max, interval.getMax(), TEST_EPS);
     }
 }

@@ -61,7 +61,6 @@
         <artifactId>commons-geometry-core</artifactId>
         <version>${geometry.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-geometry-euclidean</artifactId>

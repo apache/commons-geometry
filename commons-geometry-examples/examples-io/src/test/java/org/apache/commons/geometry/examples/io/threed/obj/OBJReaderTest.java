@@ -30,8 +30,8 @@ import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class OBJReaderTest {
 
@@ -54,8 +54,8 @@ public class OBJReaderTest {
         TriangleMesh mesh = reader.readTriangleMesh(new StringReader(""), TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(0, mesh.getVertexCount());
-        Assert.assertEquals(0, mesh.getFaceCount());
+        Assertions.assertEquals(0, mesh.getVertexCount());
+        Assertions.assertEquals(0, mesh.getFaceCount());
     }
 
     @Test
@@ -75,8 +75,8 @@ public class OBJReaderTest {
         TriangleMesh mesh = reader.readTriangleMesh(new StringReader(input), TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(4, mesh.getVertexCount());
-        Assert.assertEquals(2, mesh.getFaceCount());
+        Assertions.assertEquals(4, mesh.getVertexCount());
+        Assertions.assertEquals(2, mesh.getFaceCount());
 
         Triangle3D t0 = mesh.getFace(0).getPolygon();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, t0.getPoint1(), TEST_EPS);
@@ -104,8 +104,8 @@ public class OBJReaderTest {
         TriangleMesh mesh = reader.readTriangleMesh(new StringReader(input), TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(5, mesh.getVertexCount());
-        Assert.assertEquals(3, mesh.getFaceCount());
+        Assertions.assertEquals(5, mesh.getVertexCount());
+        Assertions.assertEquals(3, mesh.getFaceCount());
 
         Triangle3D t0 = mesh.getFace(0).getPolygon();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, t0.getPoint1(), TEST_EPS);
@@ -138,8 +138,8 @@ public class OBJReaderTest {
         TriangleMesh mesh = reader.readTriangleMesh(new StringReader(input), TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(3, mesh.getVertexCount());
-        Assert.assertEquals(1, mesh.getFaceCount());
+        Assertions.assertEquals(3, mesh.getVertexCount());
+        Assertions.assertEquals(1, mesh.getFaceCount());
 
         Triangle3D t0 = mesh.getFace(0).getPolygon();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, t0.getPoint1(), TEST_EPS);
@@ -223,8 +223,8 @@ public class OBJReaderTest {
         TriangleMesh mesh = reader.readTriangleMesh(file, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
-        Assert.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
+        Assertions.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
+        Assertions.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
 
         RegionBSPTree3D tree = RegionBSPTree3D.partitionedRegionBuilder()
                 .insertAxisAlignedGrid(mesh.getBounds(), 1, TEST_PRECISION)
@@ -232,7 +232,7 @@ public class OBJReaderTest {
                 .build();
 
         double eps = 1e-5;
-        Assert.assertEquals(0.11509505362599505, tree.getSize(), eps);
+        Assertions.assertEquals(0.11509505362599505, tree.getSize(), eps);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tree.getCentroid(), TEST_EPS);
     }
 
@@ -245,7 +245,7 @@ public class OBJReaderTest {
         TriangleMesh mesh = reader.readTriangleMesh(url, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
-        Assert.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
+        Assertions.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
+        Assertions.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
     }
 }

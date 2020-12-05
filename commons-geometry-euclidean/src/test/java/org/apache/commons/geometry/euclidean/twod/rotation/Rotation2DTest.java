@@ -29,8 +29,8 @@ import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class Rotation2DTest {
 
@@ -45,8 +45,8 @@ public class Rotation2DTest {
         final Rotation2D r = Rotation2D.identity();
 
         // assert
-        Assert.assertEquals(0.0, r.getAngle(), 0.0);
-        Assert.assertTrue(r.preservesOrientation());
+        Assertions.assertEquals(0.0, r.getAngle(), 0.0);
+        Assertions.assertTrue(r.preservesOrientation());
     }
 
     @Test
@@ -55,8 +55,8 @@ public class Rotation2DTest {
         final Rotation2D r = Rotation2D.of(100.0);
 
         // assert
-        Assert.assertEquals(100.0, r.getAngle(), 0.0);
-        Assert.assertTrue(r.preservesOrientation());
+        Assertions.assertEquals(100.0, r.getAngle(), 0.0);
+        Assertions.assertTrue(r.preservesOrientation());
     }
 
     @Test
@@ -96,8 +96,8 @@ public class Rotation2DTest {
         final Rotation2D r = orig.inverse();
 
         // assert
-        Assert.assertEquals(-100.0, r.getAngle(), 0.0);
-        Assert.assertTrue(r.preservesOrientation());
+        Assertions.assertEquals(-100.0, r.getAngle(), 0.0);
+        Assertions.assertTrue(r.preservesOrientation());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class Rotation2DTest {
             cos, -sin, 0,
             sin, cos, 0
         };
-        Assert.assertArrayEquals(expected, m.toArray(), 0.0);
+        Assertions.assertArrayEquals(expected, m.toArray(), 0.0);
     }
 
     @Test
@@ -161,7 +161,7 @@ public class Rotation2DTest {
 
                 // assert
                 EuclideanTestUtils.assertCoordinatesEqual(v.normalize(), r.apply(u).normalize(), TEST_EPS); // u -> v
-                Assert.assertEquals(0.0, v.dot(r.apply(u.orthogonal())), TEST_EPS); // preserves orthogonality
+                Assertions.assertEquals(0.0, v.dot(r.apply(u.orthogonal())), TEST_EPS); // preserves orthogonality
             });
         });
     }
@@ -217,12 +217,12 @@ public class Rotation2DTest {
         final int hash = a.hashCode();
 
         // act/assert
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, b.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
 
-        Assert.assertEquals(hash, d.hashCode());
+        Assertions.assertEquals(hash, d.hashCode());
     }
 
     @Test
@@ -236,11 +236,11 @@ public class Rotation2DTest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
 
-        Assert.assertEquals(a, d);
-        Assert.assertEquals(d, a);
+        Assertions.assertEquals(a, d);
+        Assertions.assertEquals(d, a);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class Rotation2DTest {
         final String str = r.toString();
 
         // assert
-        Assert.assertEquals("Rotation2D[angle=1.0]", str);
+        Assertions.assertEquals("Rotation2D[angle=1.0]", str);
     }
 
     private static void checkApply(final double angle, final Vector2D pt, final Vector2D expectedPt) {
@@ -310,13 +310,13 @@ public class Rotation2DTest {
 
             // assert
             // check that the norm is unchanged
-            Assert.assertEquals(pt.norm(), resultPt.norm(), TEST_EPS);
+            Assertions.assertEquals(pt.norm(), resultPt.norm(), TEST_EPS);
 
             resultLine = Lines.fromPointAndDirection(Vector2D.ZERO, resultPt, TEST_PRECISION);
             final double lineAngle = line.angle(resultLine);
 
             // check that the angle is what we expect
-            Assert.assertEquals(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(angle), lineAngle, TEST_EPS);
+            Assertions.assertEquals(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(angle), lineAngle, TEST_EPS);
         }
     }
 }

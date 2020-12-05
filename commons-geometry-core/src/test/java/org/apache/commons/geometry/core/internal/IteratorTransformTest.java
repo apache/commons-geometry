@@ -23,8 +23,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class IteratorTransformTest {
 
@@ -37,18 +39,18 @@ public class IteratorTransformTest {
         final List<String> result = toList(new EvenCharIterator(input.iterator()));
 
         // assert
-        Assert.assertEquals(Arrays.asList("2", "4", "1", "2"), result);
+        Assertions.assertEquals(Arrays.asList("2", "4", "1", "2"), result);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testThrowsNoSuchElement() {
         // arrange
         final List<Integer> input = Collections.emptyList();
         final EvenCharIterator it = new EvenCharIterator(input.iterator());
 
         // act/assert
-        Assert.assertFalse(it.hasNext());
-        it.next();
+        Assertions.assertFalse(it.hasNext());
+        assertThrows(NoSuchElementException.class, it::next);
     }
 
     private static <T> List<T> toList(final Iterator<T> it) {

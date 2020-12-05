@@ -33,10 +33,9 @@ import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class OBJModelIOHandlerTest {
 
@@ -51,23 +50,23 @@ public class OBJModelIOHandlerTest {
 
     private static final int CUBE_MINUS_SPHERE_FACES = 728;
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir
+    File anotherTempDir;
 
     private OBJModelIOHandler handler = new OBJModelIOHandler();
 
     @Test
     public void testHandlesType() {
         // act/assert
-        Assert.assertFalse(handler.handlesType(null));
-        Assert.assertFalse(handler.handlesType(""));
-        Assert.assertFalse(handler.handlesType(" "));
-        Assert.assertFalse(handler.handlesType("abc"));
-        Assert.assertFalse(handler.handlesType("stl"));
+        Assertions.assertFalse(handler.handlesType(null));
+        Assertions.assertFalse(handler.handlesType(""));
+        Assertions.assertFalse(handler.handlesType(" "));
+        Assertions.assertFalse(handler.handlesType("abc"));
+        Assertions.assertFalse(handler.handlesType("stl"));
 
-        Assert.assertTrue(handler.handlesType("obj"));
-        Assert.assertTrue(handler.handlesType("OBJ"));
-        Assert.assertTrue(handler.handlesType("oBj"));
+        Assertions.assertTrue(handler.handlesType("obj"));
+        Assertions.assertTrue(handler.handlesType("OBJ"));
+        Assertions.assertTrue(handler.handlesType("oBj"));
     }
 
     @Test
@@ -77,8 +76,8 @@ public class OBJModelIOHandlerTest {
 
         // assert
         TriangleMesh mesh = (TriangleMesh) src;
-        Assert.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
-        Assert.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
+        Assertions.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
+        Assertions.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
     }
 
     @Test
@@ -113,8 +112,8 @@ public class OBJModelIOHandlerTest {
 
         // assert
         TriangleMesh mesh = (TriangleMesh) src;
-        Assert.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
-        Assert.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
+        Assertions.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
+        Assertions.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
     }
 
     @Test
@@ -141,7 +140,7 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testWrite_toFile() throws Exception {
         // arrange
-        File out = tempFolder.newFile("out.obj");
+        File out = new File(anotherTempDir, "out.obj");
 
         BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
@@ -152,15 +151,14 @@ public class OBJModelIOHandlerTest {
 
         // assert
         TriangleMesh mesh = (TriangleMesh) handler.read("obj", out, TEST_PRECISION);
-        Assert.assertEquals(3, mesh.getVertexCount());
-        Assert.assertEquals(1, mesh.getFaceCount());
+        Assertions.assertEquals(3, mesh.getVertexCount());
+        Assertions.assertEquals(1, mesh.getFaceCount());
     }
 
     @Test
     public void testWrite_toFile_unsupportedFormat() throws Exception {
         // arrange
-        File out = tempFolder.newFile("out.obj");
-
+        File out = new File(anotherTempDir, "out.obj");
         BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
@@ -174,8 +172,7 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testWrite_toFile_ioException() throws Exception {
         // arrange
-        File out = tempFolder.newFolder("notafile");
-
+        File out = new File(anotherTempDir, "notafile");
         BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
@@ -201,15 +198,14 @@ public class OBJModelIOHandlerTest {
         // assert
         TriangleMesh mesh = (TriangleMesh) handler.read("obj", new ByteArrayInputStream(out.toByteArray()),
                 TEST_PRECISION);
-        Assert.assertEquals(3, mesh.getVertexCount());
-        Assert.assertEquals(1, mesh.getFaceCount());
+        Assertions.assertEquals(3, mesh.getVertexCount());
+        Assertions.assertEquals(1, mesh.getFaceCount());
     }
 
     @Test
     public void testWrite_toStream_unsupportedFormat() throws Exception {
         // arrange
-        File file = tempFolder.newFile("out.obj");
-
+        File file = new File(anotherTempDir, "out.obj");
         BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );

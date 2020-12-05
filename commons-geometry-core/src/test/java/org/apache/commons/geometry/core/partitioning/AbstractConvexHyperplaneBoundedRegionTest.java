@@ -30,8 +30,8 @@ import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AbstractConvexHyperplaneBoundedRegionTest {
 
@@ -52,8 +52,8 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final StubRegion region = new StubRegion(Collections.emptyList());
 
         // assert
-        Assert.assertTrue(region.isFull());
-        Assert.assertFalse(region.isEmpty());
+        Assertions.assertTrue(region.isFull());
+        Assertions.assertFalse(region.isEmpty());
     }
 
     @Test
@@ -64,9 +64,9 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final TestPoint2D p3 = new TestPoint2D(1, 1);
 
         // act/assert
-        Assert.assertEquals(0, new StubRegion(Collections.emptyList()).getBoundarySize(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(0, new StubRegion(Collections.emptyList()).getBoundarySize(), PartitionTestUtils.EPS);
         GeometryTestUtils.assertPositiveInfinity(new StubRegion(Collections.singletonList(TestLine.X_AXIS.span())).getBoundarySize());
-        Assert.assertEquals(2 + Math.sqrt(2), new StubRegion(Arrays.asList(
+        Assertions.assertEquals(2 + Math.sqrt(2), new StubRegion(Arrays.asList(
                     new TestLineSegment(p1, p2),
                     new TestLineSegment(p2, p3),
                     new TestLineSegment(p3, p1)
@@ -117,8 +117,8 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
             ));
 
         // act/assert
-        Assert.assertNull(full.project(TestPoint2D.ZERO));
-        Assert.assertNull(full.project(new TestPoint2D(1, 1)));
+        Assertions.assertNull(full.project(TestPoint2D.ZERO));
+        Assertions.assertNull(full.project(new TestPoint2D(1, 1)));
 
         PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, halfSpace.project(new TestPoint2D(0, 1)));
         PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, halfSpace.project(new TestPoint2D(0, 0)));
@@ -149,7 +149,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final TestLineSegment segment = new TestLineSegment(new TestPoint2D(-1, 0.5), new TestPoint2D(4, 0.5));
 
         // act/assert
-        Assert.assertSame(segment, full.trim(segment));
+        Assertions.assertSame(segment, full.trim(segment));
 
         final TestLineSegment trimmedA = halfSpace.trim(segment);
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(-1, 0.5), trimmedA.getStartPoint());
@@ -171,16 +171,16 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final StubRegion minus = split.getMinus();
-        Assert.assertEquals(1, minus.getBoundaries().size());
+        Assertions.assertEquals(1, minus.getBoundaries().size());
         checkClassify(minus, RegionLocation.INSIDE, new TestPoint2D(0, 1));
         checkClassify(minus, RegionLocation.BOUNDARY, new TestPoint2D(0, 0));
         checkClassify(minus, RegionLocation.OUTSIDE, new TestPoint2D(0, -1));
 
         final StubRegion plus = split.getPlus();
-        Assert.assertEquals(1, plus.getBoundaries().size());
+        Assertions.assertEquals(1, plus.getBoundaries().size());
         checkClassify(plus, RegionLocation.OUTSIDE, new TestPoint2D(0, 1));
         checkClassify(plus, RegionLocation.BOUNDARY, new TestPoint2D(0, 0));
         checkClassify(plus, RegionLocation.INSIDE, new TestPoint2D(0, -1));
@@ -198,10 +198,10 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(region, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(region, split.getPlus());
     }
 
     @Test
@@ -216,10 +216,10 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(region, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(region, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -234,19 +234,19 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final TestPoint2D p1 = new TestPoint2D(0, 1.5);
         final TestPoint2D p2 = new TestPoint2D(0, 0.5);
         final TestPoint2D p3 = new TestPoint2D(0, -0.5);
 
         final StubRegion minus = split.getMinus();
-        Assert.assertEquals(2, minus.getBoundaries().size());
+        Assertions.assertEquals(2, minus.getBoundaries().size());
         checkClassify(minus, RegionLocation.INSIDE, p2);
         checkClassify(minus, RegionLocation.OUTSIDE, p1, p3);
 
         final StubRegion plus = split.getPlus();
-        Assert.assertEquals(1, plus.getBoundaries().size());
+        Assertions.assertEquals(1, plus.getBoundaries().size());
         checkClassify(plus, RegionLocation.INSIDE, p3);
         checkClassify(plus, RegionLocation.OUTSIDE, p1, p2);
     }
@@ -262,10 +262,10 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(region, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(region, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -279,10 +279,10 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(region, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(region, split.getPlus());
     }
 
     @Test
@@ -306,16 +306,16 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final StubRegion minus = split.getMinus();
-        Assert.assertEquals(4, minus.getBoundaries().size());
+        Assertions.assertEquals(4, minus.getBoundaries().size());
         checkClassify(minus, RegionLocation.INSIDE, new TestPoint2D(1.5, 0.25));
         checkClassify(minus, RegionLocation.BOUNDARY, new TestPoint2D(1.5, 0));
         checkClassify(minus, RegionLocation.OUTSIDE, new TestPoint2D(1.5, -0.25));
 
         final StubRegion plus = split.getPlus();
-        Assert.assertEquals(4, plus.getBoundaries().size());
+        Assertions.assertEquals(4, plus.getBoundaries().size());
         checkClassify(plus, RegionLocation.OUTSIDE, new TestPoint2D(1.5, 0.25));
         checkClassify(plus, RegionLocation.BOUNDARY, new TestPoint2D(1.5, 0));
         checkClassify(plus, RegionLocation.INSIDE, new TestPoint2D(1.5, -0.25));
@@ -348,9 +348,9 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
-        Assert.assertSame(region, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertSame(region, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -373,9 +373,9 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(region, split.getPlus());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(region, split.getPlus());
     }
 
     @Test
@@ -398,9 +398,9 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
-        Assert.assertSame(region, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertSame(region, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -423,9 +423,9 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(region, split.getPlus());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(region, split.getPlus());
     }
 
     @Test
@@ -448,9 +448,9 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final Split<StubRegion> split = region.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertEquals(SplitLocation.NEITHER, split.getLocation());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -464,8 +464,8 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final StubRegion transformed = region.transform(transform);
 
         // assert
-        Assert.assertTrue(transformed.isFull());
-        Assert.assertFalse(transformed.isEmpty());
+        Assertions.assertTrue(transformed.isFull());
+        Assertions.assertFalse(transformed.isEmpty());
     }
 
     @Test
@@ -483,13 +483,13 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         // assert
         final List<TestLineSegment> boundaries = transformed.getBoundaries();
 
-        Assert.assertEquals(1, boundaries.size());
+        Assertions.assertEquals(1, boundaries.size());
 
         final TestLineSegment a = boundaries.get(0);
         final TestLine aLine = a.getHyperplane();
         PartitionTestUtils.assertPointsEqual(aLine.getOrigin(), new TestPoint2D(1, 0));
-        Assert.assertEquals(0.0, aLine.getDirectionX(), PartitionTestUtils.EPS);
-        Assert.assertEquals(1.0, aLine.getDirectionY(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(0.0, aLine.getDirectionX(), PartitionTestUtils.EPS);
+        Assertions.assertEquals(1.0, aLine.getDirectionY(), PartitionTestUtils.EPS);
 
         GeometryTestUtils.assertNegativeInfinity(a.getStart());
         GeometryTestUtils.assertPositiveInfinity(a.getEnd());
@@ -516,7 +516,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         // assert
         final List<TestLineSegment> boundaries = transformed.getBoundaries();
 
-        Assert.assertEquals(3, boundaries.size());
+        Assertions.assertEquals(3, boundaries.size());
 
         final TestLineSegment a = boundaries.get(0);
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(2, 2), a.getStartPoint());
@@ -552,7 +552,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         // assert
         final List<TestLineSegment> boundaries = transformed.getBoundaries();
 
-        Assert.assertEquals(3, boundaries.size());
+        Assertions.assertEquals(3, boundaries.size());
 
         final TestLineSegment a = boundaries.get(0);
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(-2, 0), a.getStartPoint());
@@ -573,7 +573,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final StubRegion region = StubRegion.fromBounds(Collections.emptyList());
 
         // assert
-        Assert.assertSame(StubRegion.FULL, region);
+        Assertions.assertSame(StubRegion.FULL, region);
     }
 
     @Test
@@ -582,7 +582,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final StubRegion region = StubRegion.fromBounds(Collections.singletonList(TestLine.Y_AXIS));
 
         // assert
-        Assert.assertEquals(1, region.getBoundaries().size());
+        Assertions.assertEquals(1, region.getBoundaries().size());
 
         checkClassify(region, RegionLocation.INSIDE, new TestPoint2D(-1, 0));
         checkClassify(region, RegionLocation.BOUNDARY, new TestPoint2D(0, 0));
@@ -599,7 +599,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
                 ));
 
         // assert
-        Assert.assertEquals(3, region.getBoundaries().size());
+        Assertions.assertEquals(3, region.getBoundaries().size());
 
         checkClassify(region, RegionLocation.INSIDE, new TestPoint2D(0.25, 0.25));
 
@@ -621,7 +621,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
                 TestLine.Y_AXIS));
 
         // assert
-        Assert.assertEquals(1, region.getBoundaries().size());
+        Assertions.assertEquals(1, region.getBoundaries().size());
 
         checkClassify(region, RegionLocation.INSIDE, new TestPoint2D(-1, 0));
         checkClassify(region, RegionLocation.BOUNDARY, new TestPoint2D(0, 0));
@@ -653,13 +653,13 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final String str = region.toString();
 
         // assert
-        Assert.assertTrue(str.contains("StubRegion"));
-        Assert.assertTrue(str.contains("boundaries= "));
+        Assertions.assertTrue(str.contains("StubRegion"));
+        Assertions.assertTrue(str.contains("boundaries= "));
     }
 
     private static void checkClassify(final Region<TestPoint2D> region, final RegionLocation loc, final TestPoint2D... pts) {
         for (final TestPoint2D pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
+            Assertions.assertEquals(loc, region.classify(pt), "Unexpected location for point " + pt);
         }
     }
 

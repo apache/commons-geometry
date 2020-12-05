@@ -17,8 +17,8 @@
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AxisSequenceTest {
 
@@ -40,11 +40,11 @@ public class AxisSequenceTest {
         final Vector3D a3 = getAxisForName(name.substring(2, 3));
 
         // assert
-        Assert.assertEquals(a1, axes.getAxis1());
-        Assert.assertEquals(a2, axes.getAxis2());
-        Assert.assertEquals(a3, axes.getAxis3());
+        Assertions.assertEquals(a1, axes.getAxis1());
+        Assertions.assertEquals(a2, axes.getAxis2());
+        Assertions.assertEquals(a3, axes.getAxis3());
 
-        Assert.assertArrayEquals(new Vector3D[] {a1, a2, a3}, axes.toArray());
+        Assertions.assertArrayEquals(new Vector3D[] {a1, a2, a3}, axes.toArray());
     }
 
     private Vector3D getAxisForName(final String name) {

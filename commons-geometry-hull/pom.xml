@@ -85,6 +85,12 @@
       <artifactId>commons-rng-sampling</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- testing -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

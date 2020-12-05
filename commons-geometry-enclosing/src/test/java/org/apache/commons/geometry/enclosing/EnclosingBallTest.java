@@ -24,8 +24,10 @@ import java.util.List;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EnclosingBallTest {
 
@@ -42,12 +44,12 @@ public class EnclosingBallTest {
         final EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, support);
 
         // assert
-        Assert.assertSame(center, ball.getCenter());
-        Assert.assertEquals(radius, ball.getRadius(), TEST_EPS);
-        Assert.assertEquals(0, ball.getSupportSize());
+        Assertions.assertSame(center, ball.getCenter());
+        Assertions.assertEquals(radius, ball.getRadius(), TEST_EPS);
+        Assertions.assertEquals(0, ball.getSupportSize());
 
         final List<Vector2D> resultSupport = ball.getSupport();
-        Assert.assertEquals(0, resultSupport.size());
+        Assertions.assertEquals(0, resultSupport.size());
     }
 
     @Test
@@ -62,16 +64,16 @@ public class EnclosingBallTest {
         final EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, support);
 
         // assert
-        Assert.assertSame(center, ball.getCenter());
-        Assert.assertEquals(radius, ball.getRadius(), TEST_EPS);
-        Assert.assertEquals(3, ball.getSupportSize());
+        Assertions.assertSame(center, ball.getCenter());
+        Assertions.assertEquals(radius, ball.getRadius(), TEST_EPS);
+        Assertions.assertEquals(3, ball.getSupportSize());
 
         final List<Vector2D> resultSupport = ball.getSupport();
-        Assert.assertNotSame(support, resultSupport);
-        Assert.assertEquals(support, resultSupport);
+        Assertions.assertNotSame(support, resultSupport);
+        Assertions.assertEquals(support, resultSupport);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetSupport_listCannotBeModified() {
         // arrange
         final List<Vector2D> support = new ArrayList<>(Collections.singletonList(Vector2D.ZERO));
@@ -79,7 +81,7 @@ public class EnclosingBallTest {
         final EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.of(1, 1), 4, support);
 
         // act/assert
-        ball.getSupport().add(Vector2D.Unit.PLUS_X);
+        assertThrows(UnsupportedOperationException.class, () ->  ball.getSupport().add(Vector2D.Unit.PLUS_X));
     }
 
     @Test
@@ -90,21 +92,21 @@ public class EnclosingBallTest {
         final EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, Collections.emptyList());
 
         // act/assert
-        Assert.assertTrue(ball.contains(center));
+        Assertions.assertTrue(ball.contains(center));
 
-        Assert.assertTrue(ball.contains(Vector2D.of(2, 3)));
-        Assert.assertTrue(ball.contains(Vector2D.of(0, 1)));
+        Assertions.assertTrue(ball.contains(Vector2D.of(2, 3)));
+        Assertions.assertTrue(ball.contains(Vector2D.of(0, 1)));
 
-        Assert.assertTrue(ball.contains(Vector2D.of(0, 2)));
-        Assert.assertTrue(ball.contains(Vector2D.of(1, 4)));
+        Assertions.assertTrue(ball.contains(Vector2D.of(0, 2)));
+        Assertions.assertTrue(ball.contains(Vector2D.of(1, 4)));
 
-        Assert.assertFalse(ball.contains(Vector2D.of(3.00001, 2)));
-        Assert.assertFalse(ball.contains(Vector2D.of(1, -1e-12)));
+        Assertions.assertFalse(ball.contains(Vector2D.of(3.00001, 2)));
+        Assertions.assertFalse(ball.contains(Vector2D.of(1, -1e-12)));
 
-        Assert.assertFalse(ball.contains(Vector2D.of(1, 5)));
-        Assert.assertFalse(ball.contains(Vector2D.of(1, -1)));
-        Assert.assertFalse(ball.contains(Vector2D.of(-2, 2)));
-        Assert.assertFalse(ball.contains(Vector2D.of(4, 2)));
+        Assertions.assertFalse(ball.contains(Vector2D.of(1, 5)));
+        Assertions.assertFalse(ball.contains(Vector2D.of(1, -1)));
+        Assertions.assertFalse(ball.contains(Vector2D.of(-2, 2)));
+        Assertions.assertFalse(ball.contains(Vector2D.of(4, 2)));
     }
 
     @Test
@@ -118,24 +120,24 @@ public class EnclosingBallTest {
         final EnclosingBall<Vector2D> ball = new EnclosingBall<>(center, radius, Collections.emptyList());
 
         // act/assert
-        Assert.assertTrue(ball.contains(center, higherPrecision));
+        Assertions.assertTrue(ball.contains(center, higherPrecision));
 
-        Assert.assertTrue(ball.contains(Vector2D.of(2, 3), higherPrecision));
-        Assert.assertTrue(ball.contains(Vector2D.of(0, 1), higherPrecision));
+        Assertions.assertTrue(ball.contains(Vector2D.of(2, 3), higherPrecision));
+        Assertions.assertTrue(ball.contains(Vector2D.of(0, 1), higherPrecision));
 
-        Assert.assertTrue(ball.contains(Vector2D.of(0, 2), higherPrecision));
-        Assert.assertTrue(ball.contains(Vector2D.of(1, 4), higherPrecision));
+        Assertions.assertTrue(ball.contains(Vector2D.of(0, 2), higherPrecision));
+        Assertions.assertTrue(ball.contains(Vector2D.of(1, 4), higherPrecision));
 
-        Assert.assertFalse(ball.contains(Vector2D.of(3.00001, 2), higherPrecision));
-        Assert.assertTrue(ball.contains(Vector2D.of(1, -1e-12), higherPrecision));
+        Assertions.assertFalse(ball.contains(Vector2D.of(3.00001, 2), higherPrecision));
+        Assertions.assertTrue(ball.contains(Vector2D.of(1, -1e-12), higherPrecision));
 
-        Assert.assertTrue(ball.contains(Vector2D.of(3.00001, 2), lowerPrecision));
-        Assert.assertTrue(ball.contains(Vector2D.of(1, -1e-12), lowerPrecision));
+        Assertions.assertTrue(ball.contains(Vector2D.of(3.00001, 2), lowerPrecision));
+        Assertions.assertTrue(ball.contains(Vector2D.of(1, -1e-12), lowerPrecision));
 
-        Assert.assertFalse(ball.contains(Vector2D.of(1, 5), higherPrecision));
-        Assert.assertFalse(ball.contains(Vector2D.of(1, -1), higherPrecision));
-        Assert.assertFalse(ball.contains(Vector2D.of(-2, 2), higherPrecision));
-        Assert.assertFalse(ball.contains(Vector2D.of(4, 2), higherPrecision));
+        Assertions.assertFalse(ball.contains(Vector2D.of(1, 5), higherPrecision));
+        Assertions.assertFalse(ball.contains(Vector2D.of(1, -1), higherPrecision));
+        Assertions.assertFalse(ball.contains(Vector2D.of(-2, 2), higherPrecision));
+        Assertions.assertFalse(ball.contains(Vector2D.of(4, 2), higherPrecision));
     }
 
     @Test
@@ -147,7 +149,7 @@ public class EnclosingBallTest {
         final String str = ball.toString();
 
         // assert
-        Assert.assertTrue(str.startsWith("EnclosingBall[center= (0"));
-        Assert.assertTrue(str.contains("radius= 1"));
+        Assertions.assertTrue(str.startsWith("EnclosingBall[center= (0"));
+        Assertions.assertTrue(str.contains("radius= 1"));
     }
 }

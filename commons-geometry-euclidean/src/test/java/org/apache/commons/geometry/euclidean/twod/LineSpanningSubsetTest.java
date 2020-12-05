@@ -23,8 +23,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LineSpanningSubsetTest {
 
@@ -42,21 +42,21 @@ public class LineSpanningSubsetTest {
         final LineSpanningSubset result = new LineSpanningSubset(line);
 
         // assert
-        Assert.assertSame(line, result.getHyperplane());
-        Assert.assertSame(line, result.getLine());
+        Assertions.assertSame(line, result.getHyperplane());
+        Assertions.assertSame(line, result.getLine());
 
-        Assert.assertTrue(result.isFull());
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertTrue(result.isInfinite());
-        Assert.assertFalse(result.isFinite());
+        Assertions.assertTrue(result.isFull());
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertTrue(result.isInfinite());
+        Assertions.assertFalse(result.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(result.getSize());
-        Assert.assertNull(result.getCentroid());
-        Assert.assertNull(result.getBounds());
+        Assertions.assertNull(result.getCentroid());
+        Assertions.assertNull(result.getBounds());
 
-        Assert.assertNull(result.getStartPoint());
+        Assertions.assertNull(result.getStartPoint());
         GeometryTestUtils.assertNegativeInfinity(result.getSubspaceStart());
-        Assert.assertNull(result.getEndPoint());
+        Assertions.assertNull(result.getEndPoint());
         GeometryTestUtils.assertPositiveInfinity(result.getSubspaceEnd());
     }
 
@@ -142,17 +142,17 @@ public class LineSpanningSubsetTest {
 
         // parallel
         split = span.split(Lines.fromPointAndAngle(Vector2D.of(2, 2), 0, TEST_PRECISION));
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(span, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(span, split.getPlus());
 
         split = span.split(Lines.fromPointAndAngle(Vector2D.of(2, 2), Math.PI, TEST_PRECISION));
-        Assert.assertSame(span, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(span, split.getMinus());
+        Assertions.assertNull(split.getPlus());
 
         // coincident
         split = span.split(Lines.fromPointAndDirection(pt, Vector2D.Unit.PLUS_X, TEST_PRECISION));
-        Assert.assertNull(split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertNull(split.getPlus());
 
         // through point on line
         checkSplit(span.split(Lines.fromPointAndAngle(pt, 1, TEST_PRECISION)),
@@ -196,7 +196,7 @@ public class LineSpanningSubsetTest {
 
         final LineConvexSubset minus = split.getMinus();
         if (minusStart == null && minusEnd == null) {
-            Assert.assertNull(minus);
+            Assertions.assertNull(minus);
         } else {
             checkPoint(minusStart, minus.getStartPoint());
             checkPoint(minusEnd, minus.getEndPoint());
@@ -205,7 +205,7 @@ public class LineSpanningSubsetTest {
 
         final LineConvexSubset plus = split.getPlus();
         if (plusStart == null && plusEnd == null) {
-            Assert.assertNull(plus);
+            Assertions.assertNull(plus);
         } else {
             checkPoint(plusStart, plus.getStartPoint());
             checkPoint(plusEnd, plus.getEndPoint());
@@ -214,7 +214,7 @@ public class LineSpanningSubsetTest {
 
     private static void checkPoint(final Vector2D expected, final Vector2D pt) {
         if (expected == null) {
-            Assert.assertNull(pt);
+            Assertions.assertNull(pt);
         } else {
             EuclideanTestUtils.assertCoordinatesEqual(expected, pt, TEST_EPS);
         }

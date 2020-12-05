@@ -32,8 +32,8 @@ import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.AbstractLinePathConnector.ConnectableLineSubset;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AbstractLinePathConnectorTest {
 
@@ -53,7 +53,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(Collections.emptyList());
 
         // assert
-        Assert.assertEquals(0, paths.size());
+        Assertions.assertEquals(0, paths.size());
     }
 
     @Test
@@ -65,11 +65,11 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(Collections.singletonList(segment));
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final LinePath path = paths.get(0);
-        Assert.assertEquals(1, path.getElements().size());
-        Assert.assertSame(segment, path.getStart());
+        Assertions.assertEquals(1, path.getElements().size());
+        Assertions.assertSame(segment, path.getStart());
     }
 
     @Test
@@ -81,11 +81,11 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(Collections.singletonList(segment));
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final LinePath path = paths.get(0);
-        Assert.assertEquals(1, path.getElements().size());
-        Assert.assertSame(segment, path.getStart());
+        Assertions.assertEquals(1, path.getElements().size());
+        Assertions.assertSame(segment, path.getStart());
     }
 
     @Test
@@ -97,11 +97,11 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(Collections.singletonList(segment));
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final LinePath path = paths.get(0);
-        Assert.assertEquals(1, path.getElements().size());
-        Assert.assertSame(segment, path.getStart());
+        Assertions.assertEquals(1, path.getElements().size());
+        Assertions.assertSame(segment, path.getStart());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0), Vector2D.of(0, -1), Vector2D.ZERO);
         assertFinitePath(paths.get(1), Vector2D.of(0, 1), Vector2D.of(0, 2));
@@ -136,7 +136,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(1, 1), Vector2D.ZERO);
@@ -168,7 +168,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(3, paths.size());
+        Assertions.assertEquals(3, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.of(-1, 0), Vector2D.of(-0.5, 0), Vector2D.of(0, 1), Vector2D.of(-1, 0));
@@ -194,7 +194,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0));
@@ -227,16 +227,16 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(3, paths.size());
+        Assertions.assertEquals(3, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.of(-1, 3), Vector2D.of(0, 1), Vector2D.of(1, 1));
 
         final LinePath infPath = paths.get(1);
-        Assert.assertTrue(infPath.isInfinite());
-        Assert.assertEquals(2, infPath.getElements().size());
-        Assert.assertSame(inputYInf, infPath.getElements().get(0));
-        Assert.assertSame(inputXInf, infPath.getElements().get(1));
+        Assertions.assertTrue(infPath.isInfinite());
+        Assertions.assertEquals(2, infPath.getElements().size());
+        Assertions.assertSame(inputYInf, infPath.getElements().get(0));
+        Assertions.assertSame(inputXInf, infPath.getElements().get(1));
 
         assertFinitePath(paths.get(2),
                 Vector2D.of(0, 2), Vector2D.of(1, 2), Vector2D.of(1, 3), Vector2D.of(0, 2));
@@ -253,7 +253,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         assertFinitePath(paths.get(0), p0, p0);
     }
@@ -285,7 +285,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         assertFinitePath(paths.get(0), p0, p1, almostP1, p1, p2, p0, almostP0);
     }
@@ -308,13 +308,13 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final LinePath path = paths.get(0);
-        Assert.assertSame(seg0, path.getElements().get(0));
-        Assert.assertSame(seg2, path.getElements().get(1));
-        Assert.assertSame(seg1, path.getElements().get(2));
-        Assert.assertSame(seg3, path.getElements().get(3));
+        Assertions.assertSame(seg0, path.getElements().get(0));
+        Assertions.assertSame(seg2, path.getElements().get(1));
+        Assertions.assertSame(seg1, path.getElements().get(2));
+        Assertions.assertSame(seg3, path.getElements().get(3));
     }
 
     @Test
@@ -334,13 +334,13 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final LinePath path = paths.get(0);
-        Assert.assertSame(seg2, path.getElements().get(0));
-        Assert.assertSame(seg3, path.getElements().get(1));
-        Assert.assertSame(seg0, path.getElements().get(2));
-        Assert.assertSame(seg1, path.getElements().get(3));
+        Assertions.assertSame(seg2, path.getElements().get(0));
+        Assertions.assertSame(seg3, path.getElements().get(1));
+        Assertions.assertSame(seg0, path.getElements().get(2));
+        Assertions.assertSame(seg1, path.getElements().get(3));
     }
 
     @Test
@@ -361,16 +361,16 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         final LinePath path0 = paths.get(0);
-        Assert.assertEquals(1, path0.getElements().size());
-        Assert.assertSame(seg2, path0.getElements().get(0));
+        Assertions.assertEquals(1, path0.getElements().size());
+        Assertions.assertSame(seg2, path0.getElements().get(0));
 
         final LinePath path1 = paths.get(1);
-        Assert.assertEquals(2, path1.getElements().size());
-        Assert.assertSame(seg0, path1.getElements().get(0));
-        Assert.assertSame(seg1, path1.getElements().get(1));
+        Assertions.assertEquals(2, path1.getElements().size());
+        Assertions.assertSame(seg0, path1.getElements().get(0));
+        Assertions.assertSame(seg1, path1.getElements().get(1));
     }
 
     @Test
@@ -392,12 +392,12 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final LinePath path = paths.get(0);
-        Assert.assertSame(seg0, path.getElements().get(0));
-        Assert.assertSame(seg1, path.getElements().get(1));
-        Assert.assertSame(seg2, path.getElements().get(2));
+        Assertions.assertSame(seg0, path.getElements().get(0));
+        Assertions.assertSame(seg1, path.getElements().get(1));
+        Assertions.assertSame(seg2, path.getElements().get(2));
     }
 
     @Test
@@ -421,7 +421,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.of(-1, 1), Vector2D.of(0.5, 0), Vector2D.of(-1, -1));
@@ -441,11 +441,11 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> secondPaths = connector.connectAll(Collections.singletonList(b));
 
         // assert
-        Assert.assertEquals(1, firstPaths.size());
-        Assert.assertEquals(1, secondPaths.size());
+        Assertions.assertEquals(1, firstPaths.size());
+        Assertions.assertEquals(1, secondPaths.size());
 
-        Assert.assertSame(a, firstPaths.get(0).getElements().get(0));
-        Assert.assertSame(b, secondPaths.get(0).getElements().get(0));
+        Assertions.assertSame(a, firstPaths.get(0).getElements().get(0));
+        Assertions.assertSame(b, secondPaths.get(0).getElements().get(0));
     }
 
     @Test
@@ -462,7 +462,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll();
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(2, 0));
         assertFinitePath(paths.get(1), Vector2D.Unit.PLUS_X, Vector2D.of(1, 1));
@@ -482,7 +482,7 @@ public class AbstractLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll();
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1));
         assertFinitePath(paths.get(1), Vector2D.Unit.PLUS_X, Vector2D.of(2, 0));
@@ -500,12 +500,12 @@ public class AbstractLinePathConnectorTest {
         final int hash = a.hashCode();
 
         // assert
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, new ConnectableLineSubset(segB).hashCode());
-        Assert.assertNotEquals(hash, new ConnectableLineSubset(Vector2D.Unit.PLUS_X).hashCode());
+        Assertions.assertNotEquals(hash, new ConnectableLineSubset(segB).hashCode());
+        Assertions.assertNotEquals(hash, new ConnectableLineSubset(Vector2D.Unit.PLUS_X).hashCode());
 
-        Assert.assertEquals(hash, new ConnectableLineSubset(segA).hashCode());
+        Assertions.assertEquals(hash, new ConnectableLineSubset(segA).hashCode());
     }
 
     @Test
@@ -517,15 +517,15 @@ public class AbstractLinePathConnectorTest {
         final ConnectableLineSubset a = new ConnectableLineSubset(segA);
 
         // act/assert
-        Assert.assertEquals(a, a);
+        Assertions.assertEquals(a, a);
 
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
+        Assertions.assertFalse(a.equals(null));
+        Assertions.assertFalse(a.equals(new Object()));
 
-        Assert.assertNotEquals(a, new ConnectableLineSubset(segB));
-        Assert.assertNotEquals(a, new ConnectableLineSubset(Vector2D.Unit.PLUS_X));
+        Assertions.assertNotEquals(a, new ConnectableLineSubset(segB));
+        Assertions.assertNotEquals(a, new ConnectableLineSubset(Vector2D.Unit.PLUS_X));
 
-        Assert.assertEquals(a, new ConnectableLineSubset(segA));
+        Assertions.assertEquals(a, new ConnectableLineSubset(segA));
     }
 
     private static List<LineConvexSubset> shuffle(final List<LineConvexSubset> segments) {
@@ -539,8 +539,8 @@ public class AbstractLinePathConnectorTest {
     }
 
     private static void assertFinitePath(final LinePath path, final Vector2D... vertices) {
-        Assert.assertFalse(path.isInfinite());
-        Assert.assertTrue(path.isFinite());
+        Assertions.assertFalse(path.isInfinite());
+        Assertions.assertTrue(path.isFinite());
 
         assertPathVertices(path, vertices);
     }
@@ -550,7 +550,7 @@ public class AbstractLinePathConnectorTest {
         final List<Vector2D> actualVertices = path.getVertexSequence();
 
         final String msg = "Expected path vertices to equal " + expectedVertices + " but was " + actualVertices;
-        Assert.assertEquals(msg, expectedVertices.size(), actualVertices.size());
+        Assertions.assertEquals(expectedVertices.size(), actualVertices.size(), msg);
 
         for (int i = 0; i < expectedVertices.size(); ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(expectedVertices.get(i), actualVertices.get(i), TEST_EPS);

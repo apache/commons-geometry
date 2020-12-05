@@ -22,8 +22,8 @@ import org.apache.commons.geometry.core.partitioning.test.TestBSPTree;
 import org.apache.commons.geometry.core.partitioning.test.TestBSPTree.TestNode;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class BSPTreeVisitorTest {
 
@@ -33,7 +33,7 @@ public class BSPTreeVisitorTest {
         final BSPTreeVisitor<TestPoint2D, TestNode> visitor = n -> BSPTreeVisitor.Result.CONTINUE;
 
         // act/assert
-        Assert.assertEquals(BSPTreeVisitor.Order.NODE_MINUS_PLUS, visitor.visitOrder(null));
+        Assertions.assertEquals(BSPTreeVisitor.Order.NODE_MINUS_PLUS, visitor.visitOrder(null));
     }
 
     @Test
@@ -101,15 +101,15 @@ public class BSPTreeVisitorTest {
     private static void checkClosestFirst(final TestPoint2D target, final TestNode node, final BSPTreeVisitor.Order order) {
         final ClosestFirstStubVisitor visitor = new ClosestFirstStubVisitor(target);
 
-        Assert.assertSame(target, visitor.getTarget());
-        Assert.assertEquals(order, visitor.visitOrder(node));
+        Assertions.assertSame(target, visitor.getTarget());
+        Assertions.assertEquals(order, visitor.visitOrder(node));
     }
 
     private static void checkFarthestFirst(final TestPoint2D target, final TestNode node, final BSPTreeVisitor.Order order) {
         final FarthestFirstStubVisitor visitor = new FarthestFirstStubVisitor(target);
 
-        Assert.assertSame(target, visitor.getTarget());
-        Assert.assertEquals(order, visitor.visitOrder(node));
+        Assertions.assertSame(target, visitor.getTarget());
+        Assertions.assertEquals(order, visitor.visitOrder(node));
     }
 
     private static class ClosestFirstStubVisitor extends ClosestFirstVisitor<TestPoint2D, TestNode> {

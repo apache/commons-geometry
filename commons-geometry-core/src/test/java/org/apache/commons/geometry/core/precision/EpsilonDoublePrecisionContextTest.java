@@ -17,8 +17,8 @@
 package org.apache.commons.geometry.core.precision;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EpsilonDoublePrecisionContextTest {
 
@@ -31,8 +31,8 @@ public class EpsilonDoublePrecisionContextTest {
         final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
         // assert
-        Assert.assertEquals(eps, ctx.getEpsilon(), 0.0);
-        Assert.assertEquals(eps, ctx.getMaxZero(), 0.0);
+        Assertions.assertEquals(eps, ctx.getEpsilon(), 0.0);
+        Assertions.assertEquals(eps, ctx.getMaxZero(), 0.0);
     }
 
     @Test
@@ -63,18 +63,18 @@ public class EpsilonDoublePrecisionContextTest {
         final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
         // act/assert
-        Assert.assertEquals(0, ctx.sign(0.0));
-        Assert.assertEquals(0, ctx.sign(-0.0));
+        Assertions.assertEquals(0, ctx.sign(0.0));
+        Assertions.assertEquals(0, ctx.sign(-0.0));
 
-        Assert.assertEquals(0, ctx.sign(1e-2));
-        Assert.assertEquals(0, ctx.sign(-1e-2));
+        Assertions.assertEquals(0, ctx.sign(1e-2));
+        Assertions.assertEquals(0, ctx.sign(-1e-2));
 
-        Assert.assertEquals(1, ctx.sign(1e-1));
-        Assert.assertEquals(-1, ctx.sign(-1e-1));
+        Assertions.assertEquals(1, ctx.sign(1e-1));
+        Assertions.assertEquals(-1, ctx.sign(-1e-1));
 
-        Assert.assertEquals(1, ctx.sign(Double.NaN));
-        Assert.assertEquals(1, ctx.sign(Double.POSITIVE_INFINITY));
-        Assert.assertEquals(-1, ctx.sign(Double.NEGATIVE_INFINITY));
+        Assertions.assertEquals(1, ctx.sign(Double.NaN));
+        Assertions.assertEquals(1, ctx.sign(Double.POSITIVE_INFINITY));
+        Assertions.assertEquals(-1, ctx.sign(Double.NEGATIVE_INFINITY));
     }
 
     @Test
@@ -85,19 +85,19 @@ public class EpsilonDoublePrecisionContextTest {
         final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
         // act/assert
-        Assert.assertEquals(0, ctx.compare(0.0, 0.0));
-        Assert.assertEquals(0, ctx.compare(+0.0, -0.0));
-        Assert.assertEquals(0, ctx.compare(eps, -0.0));
-        Assert.assertEquals(0, ctx.compare(+0.0, eps));
+        Assertions.assertEquals(0, ctx.compare(0.0, 0.0));
+        Assertions.assertEquals(0, ctx.compare(+0.0, -0.0));
+        Assertions.assertEquals(0, ctx.compare(eps, -0.0));
+        Assertions.assertEquals(0, ctx.compare(+0.0, eps));
 
-        Assert.assertEquals(0, ctx.compare(-eps, -0.0));
-        Assert.assertEquals(0, ctx.compare(+0.0, -eps));
+        Assertions.assertEquals(0, ctx.compare(-eps, -0.0));
+        Assertions.assertEquals(0, ctx.compare(+0.0, -eps));
 
-        Assert.assertEquals(-1, ctx.compare(0.0, 1.0));
-        Assert.assertEquals(1, ctx.compare(1.0, 0.0));
+        Assertions.assertEquals(-1, ctx.compare(0.0, 1.0));
+        Assertions.assertEquals(1, ctx.compare(1.0, 0.0));
 
-        Assert.assertEquals(1, ctx.compare(0.0, -1.0));
-        Assert.assertEquals(-1, ctx.compare(-1.0, 0.0));
+        Assertions.assertEquals(1, ctx.compare(0.0, -1.0));
+        Assertions.assertEquals(-1, ctx.compare(-1.0, 0.0));
     }
 
     @Test
@@ -110,20 +110,20 @@ public class EpsilonDoublePrecisionContextTest {
         final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
 
         // act/assert
-        Assert.assertEquals(0, ctx.compare(eps, 2 * eps));
-        Assert.assertEquals(0, ctx.compare(-2 * eps, -eps));
+        Assertions.assertEquals(0, ctx.compare(eps, 2 * eps));
+        Assertions.assertEquals(0, ctx.compare(-2 * eps, -eps));
 
-        Assert.assertEquals(0, ctx.compare(small, small + (0.9 * eps)));
-        Assert.assertEquals(0, ctx.compare(-small - (0.9 * eps), -small));
+        Assertions.assertEquals(0, ctx.compare(small, small + (0.9 * eps)));
+        Assertions.assertEquals(0, ctx.compare(-small - (0.9 * eps), -small));
 
-        Assert.assertEquals(0, ctx.compare(big, nextUp(big, 1)));
-        Assert.assertEquals(0, ctx.compare(nextDown(-big, 1), -big));
+        Assertions.assertEquals(0, ctx.compare(big, nextUp(big, 1)));
+        Assertions.assertEquals(0, ctx.compare(nextDown(-big, 1), -big));
 
-        Assert.assertEquals(-1, ctx.compare(small, small + (1.1 * eps)));
-        Assert.assertEquals(1, ctx.compare(-small, -small - (1.1 * eps)));
+        Assertions.assertEquals(-1, ctx.compare(small, small + (1.1 * eps)));
+        Assertions.assertEquals(1, ctx.compare(-small, -small - (1.1 * eps)));
 
-        Assert.assertEquals(-1, ctx.compare(big, nextUp(big, 2)));
-        Assert.assertEquals(1, ctx.compare(-big, nextDown(-big, 2)));
+        Assertions.assertEquals(-1, ctx.compare(big, nextUp(big, 2)));
+        Assertions.assertEquals(1, ctx.compare(-big, nextDown(-big, 2)));
     }
 
     @Test
@@ -132,15 +132,15 @@ public class EpsilonDoublePrecisionContextTest {
         final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(1e-6);
 
         // act/assert
-        Assert.assertEquals(1, ctx.compare(0, Double.NaN));
-        Assert.assertEquals(1, ctx.compare(Double.NaN, 0));
-        Assert.assertEquals(1, ctx.compare(Double.NaN, Double.NaN));
+        Assertions.assertEquals(1, ctx.compare(0, Double.NaN));
+        Assertions.assertEquals(1, ctx.compare(Double.NaN, 0));
+        Assertions.assertEquals(1, ctx.compare(Double.NaN, Double.NaN));
 
-        Assert.assertEquals(1, ctx.compare(Double.POSITIVE_INFINITY, Double.NaN));
-        Assert.assertEquals(1, ctx.compare(Double.NaN, Double.POSITIVE_INFINITY));
+        Assertions.assertEquals(1, ctx.compare(Double.POSITIVE_INFINITY, Double.NaN));
+        Assertions.assertEquals(1, ctx.compare(Double.NaN, Double.POSITIVE_INFINITY));
 
-        Assert.assertEquals(1, ctx.compare(Double.NEGATIVE_INFINITY, Double.NaN));
-        Assert.assertEquals(1, ctx.compare(Double.NaN, Double.NEGATIVE_INFINITY));
+        Assertions.assertEquals(1, ctx.compare(Double.NEGATIVE_INFINITY, Double.NaN));
+        Assertions.assertEquals(1, ctx.compare(Double.NaN, Double.NEGATIVE_INFINITY));
     }
 
     @Test
@@ -149,13 +149,13 @@ public class EpsilonDoublePrecisionContextTest {
         final EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(1e-6);
 
         // act/assert
-        Assert.assertEquals(-1, ctx.compare(0, Double.POSITIVE_INFINITY));
-        Assert.assertEquals(1, ctx.compare(Double.POSITIVE_INFINITY, 0));
-        Assert.assertEquals(0, ctx.compare(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assertions.assertEquals(-1, ctx.compare(0, Double.POSITIVE_INFINITY));
+        Assertions.assertEquals(1, ctx.compare(Double.POSITIVE_INFINITY, 0));
+        Assertions.assertEquals(0, ctx.compare(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
 
-        Assert.assertEquals(1, ctx.compare(0, Double.NEGATIVE_INFINITY));
-        Assert.assertEquals(-1, ctx.compare(Double.NEGATIVE_INFINITY, 0));
-        Assert.assertEquals(0, ctx.compare(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY));
+        Assertions.assertEquals(1, ctx.compare(0, Double.NEGATIVE_INFINITY));
+        Assertions.assertEquals(-1, ctx.compare(Double.NEGATIVE_INFINITY, 0));
+        Assertions.assertEquals(0, ctx.compare(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY));
     }
 
     @Test
@@ -168,13 +168,13 @@ public class EpsilonDoublePrecisionContextTest {
         final double maxZero = ctx.getMaxZero();
 
         // act/assert
-        Assert.assertTrue(ctx.eqZero(maxZero));
-        Assert.assertTrue(ctx.eqZero(nextDown(maxZero, 1)));
-        Assert.assertFalse(ctx.eqZero(nextUp(maxZero, 1)));
+        Assertions.assertTrue(ctx.eqZero(maxZero));
+        Assertions.assertTrue(ctx.eqZero(nextDown(maxZero, 1)));
+        Assertions.assertFalse(ctx.eqZero(nextUp(maxZero, 1)));
 
-        Assert.assertTrue(ctx.eqZero(-maxZero));
-        Assert.assertTrue(ctx.eqZero(nextUp(-maxZero, 1)));
-        Assert.assertFalse(ctx.eqZero(nextDown(-maxZero, 1)));
+        Assertions.assertTrue(ctx.eqZero(-maxZero));
+        Assertions.assertTrue(ctx.eqZero(nextUp(-maxZero, 1)));
+        Assertions.assertFalse(ctx.eqZero(nextDown(-maxZero, 1)));
     }
 
     @Test
@@ -185,10 +185,10 @@ public class EpsilonDoublePrecisionContextTest {
         final EpsilonDoublePrecisionContext c = new EpsilonDoublePrecisionContext(1e-6);
 
         // act/assert
-        Assert.assertEquals(a.hashCode(), a.hashCode());
-        Assert.assertEquals(a.hashCode(), c.hashCode());
+        Assertions.assertEquals(a.hashCode(), a.hashCode());
+        Assertions.assertEquals(a.hashCode(), c.hashCode());
 
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+        Assertions.assertNotEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
@@ -200,10 +200,10 @@ public class EpsilonDoublePrecisionContextTest {
 
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(b, a);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(b, a);
 
-        Assert.assertEquals(a, c);
+        Assertions.assertEquals(a, c);
     }
 
     @Test
@@ -215,14 +215,14 @@ public class EpsilonDoublePrecisionContextTest {
         final EpsilonDoublePrecisionContext d = new EpsilonDoublePrecisionContext(-0.0);
 
         // act/assert
-        Assert.assertFalse(a.equals(b));
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+        Assertions.assertFalse(a.equals(b));
+        Assertions.assertNotEquals(a.hashCode(), b.hashCode());
 
-        Assert.assertTrue(a.equals(c));
-        Assert.assertEquals(a.hashCode(), c.hashCode());
+        Assertions.assertTrue(a.equals(c));
+        Assertions.assertEquals(a.hashCode(), c.hashCode());
 
-        Assert.assertTrue(b.equals(d));
-        Assert.assertEquals(b.hashCode(), d.hashCode());
+        Assertions.assertTrue(b.equals(d));
+        Assertions.assertEquals(b.hashCode(), d.hashCode());
     }
 
     @Test
@@ -234,8 +234,8 @@ public class EpsilonDoublePrecisionContextTest {
         final String str = a.toString();
 
         // assert
-        Assert.assertTrue(str.contains("EpsilonDoublePrecisionContext"));
-        Assert.assertTrue(str.contains("epsilon= 1"));
+        Assertions.assertTrue(str.contains("EpsilonDoublePrecisionContext"));
+        Assertions.assertTrue(str.contains("epsilon= 1"));
     }
 
     /**

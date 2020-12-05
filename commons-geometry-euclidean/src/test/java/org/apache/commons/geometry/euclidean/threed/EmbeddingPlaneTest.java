@@ -25,8 +25,8 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EmbeddingPlaneTest {
 
@@ -86,7 +86,7 @@ public class EmbeddingPlaneTest {
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.MINUS_Y, TEST_PRECISION);
 
         // act/assert
-        Assert.assertSame(plane, plane.getEmbedding());
+        Assertions.assertSame(plane, plane.getEmbedding());
     }
 
     @Test
@@ -119,11 +119,11 @@ public class EmbeddingPlaneTest {
         // assert
         checkPlane(reversed, pt, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X);
 
-        Assert.assertTrue(reversed.contains(Vector3D.of(1, 1, 1)));
-        Assert.assertTrue(reversed.contains(Vector3D.of(-1, -1, 1)));
-        Assert.assertFalse(reversed.contains(Vector3D.ZERO));
+        Assertions.assertTrue(reversed.contains(Vector3D.of(1, 1, 1)));
+        Assertions.assertTrue(reversed.contains(Vector3D.of(-1, -1, 1)));
+        Assertions.assertFalse(reversed.contains(Vector3D.ZERO));
 
-        Assert.assertEquals(1.0, reversed.offset(Vector3D.ZERO), TEST_EPS);
+        Assertions.assertEquals(1.0, reversed.offset(Vector3D.ZERO), TEST_EPS);
     }
 
     @Test
@@ -163,8 +163,8 @@ public class EmbeddingPlaneTest {
 
         checkPlane(result, expectedOrigin, expectedU, expectedV);
 
-        Assert.assertTrue(result.contains(transformedPt));
-        Assert.assertFalse(plane.contains(transformedPt));
+        Assertions.assertTrue(result.contains(transformedPt));
+        Assertions.assertFalse(plane.contains(transformedPt));
     }
 
     @Test
@@ -248,12 +248,12 @@ public class EmbeddingPlaneTest {
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedNormal, result.getNormal(), TEST_EPS);
 
-            Assert.assertTrue(result.contains(t.apply(p1)));
-            Assert.assertTrue(result.contains(t.apply(p2)));
-            Assert.assertTrue(result.contains(t.apply(p3)));
+            Assertions.assertTrue(result.contains(t.apply(p1)));
+            Assertions.assertTrue(result.contains(t.apply(p2)));
+            Assertions.assertTrue(result.contains(t.apply(p3)));
 
-            Assert.assertFalse(result.contains(t.apply(notOnPlane1)));
-            Assert.assertFalse(result.contains(t.apply(notOnPlane2)));
+            Assertions.assertFalse(result.contains(t.apply(notOnPlane1)));
+            Assertions.assertFalse(result.contains(t.apply(notOnPlane2)));
         });
     }
 
@@ -268,19 +268,19 @@ public class EmbeddingPlaneTest {
 
         // act/assert
         plane = plane.rotate(p2, QuaternionRotation.fromAxisAngle(p2.subtract(p1), 1.7));
-        Assert.assertTrue(plane.contains(p1));
-        Assert.assertTrue(plane.contains(p2));
-        Assert.assertFalse(plane.contains(p3));
+        Assertions.assertTrue(plane.contains(p1));
+        Assertions.assertTrue(plane.contains(p2));
+        Assertions.assertFalse(plane.contains(p3));
 
         plane = plane.rotate(p2, QuaternionRotation.fromAxisAngle(oldNormal, 0.1));
-        Assert.assertFalse(plane.contains(p1));
-        Assert.assertTrue(plane.contains(p2));
-        Assert.assertFalse(plane.contains(p3));
+        Assertions.assertFalse(plane.contains(p1));
+        Assertions.assertTrue(plane.contains(p2));
+        Assertions.assertFalse(plane.contains(p3));
 
         plane = plane.rotate(p1, QuaternionRotation.fromAxisAngle(oldNormal, 0.1));
-        Assert.assertFalse(plane.contains(p1));
-        Assert.assertFalse(plane.contains(p2));
-        Assert.assertFalse(plane.contains(p3));
+        Assertions.assertFalse(plane.contains(p1));
+        Assertions.assertFalse(plane.contains(p2));
+        Assertions.assertFalse(plane.contains(p3));
     }
 
     @Test
@@ -293,19 +293,19 @@ public class EmbeddingPlaneTest {
 
         // act/assert
         plane = plane.translate(Vector3D.linearCombination(2.0, plane.getU(), -1.5, plane.getV()));
-        Assert.assertTrue(plane.contains(p1));
-        Assert.assertTrue(plane.contains(p2));
-        Assert.assertTrue(plane.contains(p3));
+        Assertions.assertTrue(plane.contains(p1));
+        Assertions.assertTrue(plane.contains(p2));
+        Assertions.assertTrue(plane.contains(p3));
 
         plane = plane.translate(Vector3D.linearCombination(-1.2, plane.getNormal()));
-        Assert.assertFalse(plane.contains(p1));
-        Assert.assertFalse(plane.contains(p2));
-        Assert.assertFalse(plane.contains(p3));
+        Assertions.assertFalse(plane.contains(p1));
+        Assertions.assertFalse(plane.contains(p2));
+        Assertions.assertFalse(plane.contains(p3));
 
         plane = plane.translate(Vector3D.linearCombination(+1.2, plane.getNormal()));
-        Assert.assertTrue(plane.contains(p1));
-        Assert.assertTrue(plane.contains(p2));
-        Assert.assertTrue(plane.contains(p3));
+        Assertions.assertTrue(plane.contains(p1));
+        Assertions.assertTrue(plane.contains(p2));
+        Assertions.assertTrue(plane.contains(p3));
     }
 
     @Test
@@ -380,11 +380,11 @@ public class EmbeddingPlaneTest {
                 Vector3D.of(1, 1, 1), Vector3D.of(-1, 1, 1), TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(stdPlane.eq(embeddingPlane, TEST_PRECISION));
-        Assert.assertTrue(embeddingPlane.eq(stdPlane, TEST_PRECISION));
+        Assertions.assertTrue(stdPlane.eq(embeddingPlane, TEST_PRECISION));
+        Assertions.assertTrue(embeddingPlane.eq(stdPlane, TEST_PRECISION));
 
-        Assert.assertFalse(stdPlane.eq(nonEqEmbeddingPlane, TEST_PRECISION));
-        Assert.assertFalse(nonEqEmbeddingPlane.eq(stdPlane, TEST_PRECISION));
+        Assertions.assertFalse(stdPlane.eq(nonEqEmbeddingPlane, TEST_PRECISION));
+        Assertions.assertFalse(nonEqEmbeddingPlane.eq(stdPlane, TEST_PRECISION));
     }
 
     @Test
@@ -398,11 +398,11 @@ public class EmbeddingPlaneTest {
                 Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(stdPlane.similarOrientation(embeddingPlane));
-        Assert.assertTrue(embeddingPlane.similarOrientation(stdPlane));
+        Assertions.assertTrue(stdPlane.similarOrientation(embeddingPlane));
+        Assertions.assertTrue(embeddingPlane.similarOrientation(stdPlane));
 
-        Assert.assertFalse(stdPlane.similarOrientation(nonSimilarEmbeddingPlane));
-        Assert.assertFalse(nonSimilarEmbeddingPlane.similarOrientation(stdPlane));
+        Assertions.assertFalse(stdPlane.similarOrientation(nonSimilarEmbeddingPlane));
+        Assertions.assertFalse(nonSimilarEmbeddingPlane.similarOrientation(stdPlane));
     }
 
     @Test
@@ -422,14 +422,14 @@ public class EmbeddingPlaneTest {
         // act/assert
         final int hash = a.hashCode();
 
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
-        Assert.assertNotEquals(hash, d.hashCode());
-        Assert.assertNotEquals(hash, e.hashCode());
+        Assertions.assertNotEquals(hash, b.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, d.hashCode());
+        Assertions.assertNotEquals(hash, e.hashCode());
 
-        Assert.assertEquals(hash, f.hashCode());
+        Assertions.assertEquals(hash, f.hashCode());
     }
 
     @Test
@@ -451,15 +451,15 @@ public class EmbeddingPlaneTest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-        Assert.assertNotEquals(a, d);
-        Assert.assertNotEquals(a, e);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, e);
 
-        Assert.assertEquals(a, f);
-        Assert.assertEquals(f, a);
+        Assertions.assertEquals(a, f);
+        Assertions.assertEquals(f, a);
 
-        Assert.assertNotEquals(a, stdPlane);
+        Assertions.assertNotEquals(a, stdPlane);
     }
 
     @Test
@@ -472,11 +472,11 @@ public class EmbeddingPlaneTest {
         final String str = plane.toString();
 
         // assert
-        Assert.assertTrue(str.startsWith("EmbeddingPlane["));
-        Assert.assertTrue(str.matches(".*origin= \\(0(\\.0)?, 0(\\.0)?\\, 0(\\.0)?\\).*"));
-        Assert.assertTrue(str.matches(".*u= \\(1(\\.0)?, 0(\\.0)?\\, 0(\\.0)?\\).*"));
-        Assert.assertTrue(str.matches(".*v= \\(0(\\.0)?, 1(\\.0)?\\, 0(\\.0)?\\).*"));
-        Assert.assertTrue(str.matches(".*w= \\(0(\\.0)?, 0(\\.0)?\\, 1(\\.0)?\\).*"));
+        Assertions.assertTrue(str.startsWith("EmbeddingPlane["));
+        Assertions.assertTrue(str.matches(".*origin= \\(0(\\.0)?, 0(\\.0)?\\, 0(\\.0)?\\).*"));
+        Assertions.assertTrue(str.matches(".*u= \\(1(\\.0)?, 0(\\.0)?\\, 0(\\.0)?\\).*"));
+        Assertions.assertTrue(str.matches(".*v= \\(0(\\.0)?, 1(\\.0)?\\, 0(\\.0)?\\).*"));
+        Assertions.assertTrue(str.matches(".*w= \\(0(\\.0)?, 0(\\.0)?\\, 1(\\.0)?\\).*"));
     }
 
     private static void checkPlane(final EmbeddingPlane plane, final Vector3D origin, Vector3D u, Vector3D v) {
@@ -485,22 +485,22 @@ public class EmbeddingPlaneTest {
         final Vector3D w = u.cross(v);
 
         EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getOrigin(), TEST_EPS);
-        Assert.assertTrue(plane.contains(origin));
+        Assertions.assertTrue(plane.contains(origin));
 
         EuclideanTestUtils.assertCoordinatesEqual(u, plane.getU(), TEST_EPS);
-        Assert.assertEquals(1.0, plane.getU().norm(), TEST_EPS);
+        Assertions.assertEquals(1.0, plane.getU().norm(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(v, plane.getV(), TEST_EPS);
-        Assert.assertEquals(1.0, plane.getV().norm(), TEST_EPS);
+        Assertions.assertEquals(1.0, plane.getV().norm(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(w, plane.getW(), TEST_EPS);
-        Assert.assertEquals(1.0, plane.getW().norm(), TEST_EPS);
+        Assertions.assertEquals(1.0, plane.getW().norm(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(w, plane.getNormal(), TEST_EPS);
-        Assert.assertEquals(1.0, plane.getNormal().norm(), TEST_EPS);
+        Assertions.assertEquals(1.0, plane.getNormal().norm(), TEST_EPS);
 
         final double offset = plane.getOriginOffset();
-        Assert.assertEquals(Vector3D.ZERO.distance(plane.getOrigin()), Math.abs(offset), TEST_EPS);
+        Assertions.assertEquals(Vector3D.ZERO.distance(plane.getOrigin()), Math.abs(offset), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getNormal().multiply(-offset), TEST_EPS);
     }
 }

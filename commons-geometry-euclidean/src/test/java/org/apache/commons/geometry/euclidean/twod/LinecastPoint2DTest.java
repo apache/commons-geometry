@@ -23,8 +23,8 @@ import java.util.List;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LinecastPoint2DTest {
 
@@ -48,10 +48,10 @@ public class LinecastPoint2DTest {
         final LinecastPoint2D it = new LinecastPoint2D(pt, normal, X_AXIS);
 
         // act
-        Assert.assertSame(pt, it.getPoint());
-        Assert.assertSame(normal, it.getNormal());
-        Assert.assertSame(X_AXIS, it.getLine());
-        Assert.assertEquals(1.0, it.getAbscissa(), TEST_EPS);
+        Assertions.assertSame(pt, it.getPoint());
+        Assertions.assertSame(normal, it.getNormal());
+        Assertions.assertSame(X_AXIS, it.getLine());
+        Assertions.assertEquals(1.0, it.getAbscissa(), TEST_EPS);
     }
 
     @Test
@@ -65,10 +65,10 @@ public class LinecastPoint2DTest {
         final LinecastPoint2D e = new LinecastPoint2D(Vector2D.of(1, 4), Vector2D.Unit.PLUS_X, X_AXIS);
 
         // act/assert
-        Assert.assertEquals(-1, LinecastPoint2D.ABSCISSA_ORDER.compare(a, b));
-        Assert.assertEquals(1, LinecastPoint2D.ABSCISSA_ORDER.compare(a, c));
-        Assert.assertEquals(1, LinecastPoint2D.ABSCISSA_ORDER.compare(a, d));
-        Assert.assertEquals(0, LinecastPoint2D.ABSCISSA_ORDER.compare(a, e));
+        Assertions.assertEquals(-1, LinecastPoint2D.ABSCISSA_ORDER.compare(a, b));
+        Assertions.assertEquals(1, LinecastPoint2D.ABSCISSA_ORDER.compare(a, c));
+        Assertions.assertEquals(1, LinecastPoint2D.ABSCISSA_ORDER.compare(a, d));
+        Assertions.assertEquals(0, LinecastPoint2D.ABSCISSA_ORDER.compare(a, e));
     }
 
     @Test
@@ -84,13 +84,13 @@ public class LinecastPoint2DTest {
         final int hash = a.hashCode();
 
         // assert
-        Assert.assertEquals(hash, a.hashCode());
+        Assertions.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
-        Assert.assertNotEquals(hash, d.hashCode());
+        Assertions.assertNotEquals(hash, b.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, d.hashCode());
 
-        Assert.assertEquals(hash, e.hashCode());
+        Assertions.assertEquals(hash, e.hashCode());
     }
 
     @Test
@@ -105,12 +105,12 @@ public class LinecastPoint2DTest {
         // act/assert
         GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assert.assertNotEquals(a, b);
-        Assert.assertNotEquals(a, c);
-        Assert.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
 
-        Assert.assertEquals(a, e);
-        Assert.assertEquals(e, a);
+        Assertions.assertEquals(a, e);
+        Assertions.assertEquals(e, a);
     }
 
     @Test
@@ -131,13 +131,13 @@ public class LinecastPoint2DTest {
                 Vector2D.of(1 + 1e-3, 1 + 1e-3), Vector2D.Unit.from(1 + 1e-3, 1e-3), otherLine);
 
         // act/assert
-        Assert.assertTrue(a.eq(a, precision));
+        Assertions.assertTrue(a.eq(a, precision));
 
-        Assert.assertFalse(a.eq(b, precision));
-        Assert.assertFalse(a.eq(c, precision));
+        Assertions.assertFalse(a.eq(b, precision));
+        Assertions.assertFalse(a.eq(c, precision));
 
-        Assert.assertTrue(a.eq(d, precision));
-        Assert.assertTrue(a.eq(e, precision));
+        Assertions.assertTrue(a.eq(d, precision));
+        Assertions.assertTrue(a.eq(e, precision));
     }
 
     @Test
@@ -161,7 +161,7 @@ public class LinecastPoint2DTest {
         LinecastPoint2D.sortAndFilter(pts);
 
         // assert
-        Assert.assertEquals(0, pts.size());
+        Assertions.assertEquals(0, pts.size());
     }
 
     @Test
@@ -190,11 +190,11 @@ public class LinecastPoint2DTest {
         LinecastPoint2D.sortAndFilter(list);
 
         // assert
-        Assert.assertEquals(4, list.size());
+        Assertions.assertEquals(4, list.size());
 
-        Assert.assertSame(b, list.get(0));
-        Assert.assertSame(a, list.get(1));
-        Assert.assertSame(c, list.get(2));
-        Assert.assertSame(d, list.get(3));
+        Assertions.assertSame(b, list.get(0));
+        Assertions.assertSame(a, list.get(1));
+        Assertions.assertSame(c, list.get(2));
+        Assertions.assertSame(d, list.get(3));
     }
 }

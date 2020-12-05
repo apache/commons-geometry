@@ -32,8 +32,8 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ConvexAreaTest {
 
@@ -48,13 +48,13 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.full();
 
         // assert
-        Assert.assertTrue(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertTrue(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(0.0, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0.0, area.getBoundarySize(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
-        Assert.assertNull(area.getCentroid());
-        Assert.assertNull(area.getBounds());
+        Assertions.assertNull(area.getCentroid());
+        Assertions.assertNull(area.getBounds());
     }
 
     @Test
@@ -67,11 +67,11 @@ public class ConvexAreaTest {
         final List<LineConvexSubset> segments = area.boundaryStream().collect(Collectors.toList());
 
         // assert
-        Assert.assertEquals(1, segments.size());
+        Assertions.assertEquals(1, segments.size());
         final LineConvexSubset segment = segments.get(0);
-        Assert.assertNull(segment.getStartPoint());
-        Assert.assertNull(segment.getEndPoint());
-        Assert.assertSame(line, segment.getLine());
+        Assertions.assertNull(segment.getStartPoint());
+        Assertions.assertNull(segment.getEndPoint());
+        Assertions.assertSame(line, segment.getLine());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ConvexAreaTest {
         final List<LineConvexSubset> segments = area.boundaryStream().collect(Collectors.toList());
 
         // assert
-        Assert.assertEquals(0, segments.size());
+        Assertions.assertEquals(0, segments.size());
     }
 
     @Test
@@ -100,10 +100,10 @@ public class ConvexAreaTest {
         final RegionBSPTree2D tree = area.toTree();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
 
-        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, tree.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), tree.getCentroid(), TEST_EPS);
     }
 
@@ -116,8 +116,8 @@ public class ConvexAreaTest {
         final RegionBSPTree2D tree = area.toTree();
 
         // assert
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertTrue(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
     }
 
     @Test
@@ -130,7 +130,7 @@ public class ConvexAreaTest {
         final ConvexArea transformed = area.transform(transform);
 
         // assert
-        Assert.assertSame(area, transformed);
+        Assertions.assertSame(area, transformed);
     }
 
     @Test
@@ -148,23 +148,23 @@ public class ConvexAreaTest {
         final ConvexArea transformed = area.transform(mat);
 
         // assert
-        Assert.assertNotSame(area, transformed);
+        Assertions.assertNotSame(area, transformed);
 
         final List<LinePath> paths = transformed.getBoundaryPaths();
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         final List<LineConvexSubset> segments = paths.get(0).getElements();
-        Assert.assertEquals(2, segments.size());
+        Assertions.assertEquals(2, segments.size());
 
         final LineConvexSubset firstSegment = segments.get(0);
-        Assert.assertNull(firstSegment.getStartPoint());
+        Assertions.assertNull(firstSegment.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 2), firstSegment.getEndPoint(), TEST_EPS);
-        Assert.assertEquals(Math.atan2(2, 3), firstSegment.getLine().getAngle(), TEST_EPS);
+        Assertions.assertEquals(Math.atan2(2, 3), firstSegment.getLine().getAngle(), TEST_EPS);
 
         final LineConvexSubset secondSegment = segments.get(1);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 2), secondSegment.getStartPoint(), TEST_EPS);
-        Assert.assertNull(secondSegment.getEndPoint());
-        Assert.assertEquals(Math.atan2(2, -3), secondSegment.getLine().getAngle(), TEST_EPS);
+        Assertions.assertNull(secondSegment.getEndPoint());
+        Assertions.assertEquals(Math.atan2(2, -3), secondSegment.getLine().getAngle(), TEST_EPS);
     }
 
     @Test
@@ -181,13 +181,13 @@ public class ConvexAreaTest {
         final ConvexArea transformed = area.transform(mat);
 
         // assert
-        Assert.assertNotSame(area, transformed);
+        Assertions.assertNotSame(area, transformed);
 
         final List<LineConvexSubset> segments = transformed.getBoundaries();
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
-        Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
-        Assert.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(2, transformed.getSize(), TEST_EPS);
+        Assertions.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 3), transformed.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(transformed, RegionLocation.BOUNDARY,
@@ -209,13 +209,13 @@ public class ConvexAreaTest {
         final ConvexArea transformed = area.transform(mat);
 
         // assert
-        Assert.assertNotSame(area, transformed);
+        Assertions.assertNotSame(area, transformed);
 
         final List<LineConvexSubset> segments = transformed.getBoundaries();
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
-        Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
-        Assert.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(2, transformed.getSize(), TEST_EPS);
+        Assertions.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1.5, 3), transformed.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(transformed, RegionLocation.BOUNDARY,
@@ -237,13 +237,13 @@ public class ConvexAreaTest {
         final ConvexArea transformed = area.transform(mat);
 
         // assert
-        Assert.assertNotSame(area, transformed);
+        Assertions.assertNotSame(area, transformed);
 
         final List<LineConvexSubset> segments = transformed.getBoundaries();
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
-        Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
-        Assert.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(2, transformed.getSize(), TEST_EPS);
+        Assertions.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1.5, -3), transformed.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(transformed, RegionLocation.BOUNDARY,
@@ -257,7 +257,7 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.full();
 
         // act/assert
-        Assert.assertEquals(0, area.getVertices().size());
+        Assertions.assertEquals(0, area.getVertices().size());
     }
 
     @Test
@@ -269,7 +269,7 @@ public class ConvexAreaTest {
                 );
 
         // act/assert
-        Assert.assertEquals(0, area.getVertices().size());
+        Assertions.assertEquals(0, area.getVertices().size());
     }
 
     @Test
@@ -285,7 +285,7 @@ public class ConvexAreaTest {
         final List<Vector2D> vertices = area.getVertices();
 
         // assert
-        Assert.assertEquals(2, vertices.size());
+        Assertions.assertEquals(2, vertices.size());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, -1), vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), vertices.get(1), TEST_EPS);
@@ -304,7 +304,7 @@ public class ConvexAreaTest {
         final List<Vector2D> vertices = area.getVertices();
 
         // assert
-        Assert.assertEquals(3, vertices.size());
+        Assertions.assertEquals(3, vertices.size());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, vertices.get(1), TEST_EPS);
@@ -337,14 +337,14 @@ public class ConvexAreaTest {
         final List<Vector2D> vertices = area.getVertices();
 
         // assert
-        Assert.assertEquals(Arrays.asList(p1, p2, p3, p5), vertices);
+        Assertions.assertEquals(Arrays.asList(p1, p2, p3, p5), vertices);
     }
 
     @Test
     public void testGetBounds_infinite() {
         // act/assert
-        Assert.assertNull(ConvexArea.full().getBounds());
-        Assert.assertNull(ConvexArea.fromBounds(
+        Assertions.assertNull(ConvexArea.full().getBounds());
+        Assertions.assertNull(ConvexArea.fromBounds(
                 Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)).getBounds());
     }
 
@@ -367,8 +367,8 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.full();
 
         // act/assert
-        Assert.assertNull(area.project(Vector2D.ZERO));
-        Assert.assertNull(area.project(Vector2D.Unit.PLUS_X));
+        Assertions.assertNull(area.project(Vector2D.ZERO));
+        Assertions.assertNull(area.project(Vector2D.Unit.PLUS_X));
     }
 
     @Test
@@ -412,7 +412,7 @@ public class ConvexAreaTest {
         final LineConvexSubset trimmed = area.trim(segment);
 
         // assert
-        Assert.assertSame(segment, trimmed);
+        Assertions.assertSame(segment, trimmed);
     }
 
     @Test
@@ -453,7 +453,7 @@ public class ConvexAreaTest {
         final LineConvexSubset trimmed = area.trim(segment);
 
         // assert
-        Assert.assertNull(trimmed);
+        Assertions.assertNull(trimmed);
     }
 
     @Test
@@ -466,7 +466,7 @@ public class ConvexAreaTest {
         final LineConvexSubset trimmed = area.trim(segment);
 
         // assert
-        Assert.assertNull(trimmed);
+        Assertions.assertNull(trimmed);
     }
 
     @Test
@@ -480,31 +480,31 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = input.split(splitter);
 
         // act
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final ConvexArea minus = split.getMinus();
-        Assert.assertFalse(minus.isFull());
-        Assert.assertFalse(minus.isEmpty());
+        Assertions.assertFalse(minus.isFull());
+        Assertions.assertFalse(minus.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(minus.getBoundarySize());
         GeometryTestUtils.assertPositiveInfinity(minus.getSize());
-        Assert.assertNull(minus.getCentroid());
+        Assertions.assertNull(minus.getCentroid());
 
         final List<LineConvexSubset> minusSegments = minus.getBoundaries();
-        Assert.assertEquals(1, minusSegments.size());
-        Assert.assertEquals(splitter, minusSegments.get(0).getLine());
+        Assertions.assertEquals(1, minusSegments.size());
+        Assertions.assertEquals(splitter, minusSegments.get(0).getLine());
 
         final ConvexArea plus = split.getPlus();
-        Assert.assertFalse(plus.isFull());
-        Assert.assertFalse(plus.isEmpty());
+        Assertions.assertFalse(plus.isFull());
+        Assertions.assertFalse(plus.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(plus.getBoundarySize());
         GeometryTestUtils.assertPositiveInfinity(plus.getSize());
-        Assert.assertNull(plus.getCentroid());
+        Assertions.assertNull(plus.getCentroid());
 
         final List<LineConvexSubset> plusSegments = plus.getBoundaries();
-        Assert.assertEquals(1, plusSegments.size());
-        Assert.assertEquals(splitter, plusSegments.get(0).getLine().reverse());
+        Assertions.assertEquals(1, plusSegments.size());
+        Assertions.assertEquals(splitter, plusSegments.get(0).getLine().reverse());
     }
 
     @Test
@@ -517,27 +517,27 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final ConvexArea minus = split.getMinus();
-        Assert.assertFalse(minus.isFull());
-        Assert.assertFalse(minus.isEmpty());
+        Assertions.assertFalse(minus.isFull());
+        Assertions.assertFalse(minus.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(minus.getBoundarySize());
         GeometryTestUtils.assertPositiveInfinity(minus.getSize());
-        Assert.assertNull(minus.getCentroid());
+        Assertions.assertNull(minus.getCentroid());
 
-        Assert.assertEquals(2, minus.getBoundaries().size());
+        Assertions.assertEquals(2, minus.getBoundaries().size());
 
         final ConvexArea plus = split.getPlus();
-        Assert.assertFalse(plus.isFull());
-        Assert.assertFalse(plus.isEmpty());
+        Assertions.assertFalse(plus.isFull());
+        Assertions.assertFalse(plus.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(plus.getBoundarySize());
         GeometryTestUtils.assertPositiveInfinity(plus.getSize());
-        Assert.assertNull(plus.getCentroid());
+        Assertions.assertNull(plus.getCentroid());
 
-        Assert.assertEquals(2, plus.getBoundaries().size());
+        Assertions.assertEquals(2, plus.getBoundaries().size());
     }
 
     @Test
@@ -550,10 +550,10 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Assert.assertSame(area, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertSame(area, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -566,10 +566,10 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(area, split.getPlus());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(area, split.getPlus());
     }
 
     @Test
@@ -582,27 +582,27 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final ConvexArea minus = split.getMinus();
-        Assert.assertFalse(minus.isFull());
-        Assert.assertFalse(minus.isEmpty());
+        Assertions.assertFalse(minus.isFull());
+        Assertions.assertFalse(minus.isEmpty());
 
-        Assert.assertEquals(4, minus.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(1, minus.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, minus.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, minus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 1.5), minus.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(4, minus.getBoundaries().size());
+        Assertions.assertEquals(4, minus.getBoundaries().size());
 
         final ConvexArea plus = split.getPlus();
-        Assert.assertFalse(plus.isFull());
-        Assert.assertFalse(plus.isEmpty());
+        Assertions.assertFalse(plus.isFull());
+        Assertions.assertFalse(plus.isEmpty());
 
-        Assert.assertEquals(4, plus.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(1, plus.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, plus.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, plus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2.5, 1.5), plus.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(4, plus.getBoundaries().size());
+        Assertions.assertEquals(4, plus.getBoundaries().size());
     }
 
     @Test
@@ -615,27 +615,27 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final ConvexArea minus = split.getMinus();
-        Assert.assertFalse(minus.isFull());
-        Assert.assertFalse(minus.isEmpty());
+        Assertions.assertFalse(minus.isFull());
+        Assertions.assertFalse(minus.isEmpty());
 
-        Assert.assertEquals(2 + Math.sqrt(2), minus.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0.5, minus.getSize(), TEST_EPS);
+        Assertions.assertEquals(2 + Math.sqrt(2), minus.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0.5, minus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4.0 / 3.0, 5.0 / 3.0), minus.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(3, minus.getBoundaries().size());
+        Assertions.assertEquals(3, minus.getBoundaries().size());
 
         final ConvexArea plus = split.getPlus();
-        Assert.assertFalse(plus.isFull());
-        Assert.assertFalse(plus.isEmpty());
+        Assertions.assertFalse(plus.isFull());
+        Assertions.assertFalse(plus.isEmpty());
 
-        Assert.assertEquals(2 + Math.sqrt(2), plus.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0.5, plus.getSize(), TEST_EPS);
+        Assertions.assertEquals(2 + Math.sqrt(2), plus.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0.5, plus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(5.0 / 3.0, 4.0 / 3.0), plus.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(3, plus.getBoundaries().size());
+        Assertions.assertEquals(3, plus.getBoundaries().size());
     }
 
     @Test
@@ -648,27 +648,27 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         final ConvexArea minus = split.getMinus();
-        Assert.assertFalse(minus.isFull());
-        Assert.assertFalse(minus.isEmpty());
+        Assertions.assertFalse(minus.isFull());
+        Assertions.assertFalse(minus.isEmpty());
 
-        Assert.assertEquals(2 + Math.sqrt(2), minus.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0.5, minus.getSize(), TEST_EPS);
+        Assertions.assertEquals(2 + Math.sqrt(2), minus.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0.5, minus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(5.0 / 3.0, 4.0 / 3.0), minus.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(3, minus.getBoundaries().size());
+        Assertions.assertEquals(3, minus.getBoundaries().size());
 
         final ConvexArea plus = split.getPlus();
-        Assert.assertFalse(plus.isFull());
-        Assert.assertFalse(plus.isEmpty());
+        Assertions.assertFalse(plus.isFull());
+        Assertions.assertFalse(plus.isEmpty());
 
-        Assert.assertEquals(2 + Math.sqrt(2), plus.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0.5, plus.getSize(), TEST_EPS);
+        Assertions.assertEquals(2 + Math.sqrt(2), plus.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0.5, plus.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4.0 / 3.0, 5.0 / 3.0), plus.getCentroid(), TEST_EPS);
 
-        Assert.assertEquals(3, plus.getBoundaries().size());
+        Assertions.assertEquals(3, plus.getBoundaries().size());
     }
 
     @Test
@@ -681,9 +681,9 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
-        Assert.assertSame(area, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertSame(area, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -696,9 +696,9 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
-        Assert.assertSame(area, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertSame(area, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -711,9 +711,9 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(area, split.getPlus());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(area, split.getPlus());
     }
 
     @Test
@@ -726,9 +726,9 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
-        Assert.assertNull(split.getMinus());
-        Assert.assertSame(area, split.getPlus());
+        Assertions.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assertions.assertNull(split.getMinus());
+        Assertions.assertSame(area, split.getPlus());
     }
 
     @Test
@@ -751,9 +751,9 @@ public class ConvexAreaTest {
         final Split<ConvexArea> split = area.split(splitter);
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
-        Assert.assertSame(area, split.getMinus());
-        Assert.assertNull(split.getPlus());
+        Assertions.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assertions.assertSame(area, split.getMinus());
+        Assertions.assertNull(split.getPlus());
     }
 
     @Test
@@ -785,15 +785,15 @@ public class ConvexAreaTest {
         final Split<ConvexArea> plusSplit = area.split(splitter.reverse());
 
         // assert
-        Assert.assertEquals(SplitLocation.MINUS, minusSplit.getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, minusSplit.getLocation());
 
-        Assert.assertSame(area, minusSplit.getMinus());
-        Assert.assertNull(minusSplit.getPlus());
+        Assertions.assertSame(area, minusSplit.getMinus());
+        Assertions.assertNull(minusSplit.getPlus());
 
-        Assert.assertEquals(SplitLocation.PLUS, plusSplit.getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, plusSplit.getLocation());
 
-        Assert.assertNull(plusSplit.getMinus());
-        Assert.assertSame(area, plusSplit.getPlus());
+        Assertions.assertNull(plusSplit.getMinus());
+        Assertions.assertSame(area, plusSplit.getPlus());
     }
 
     @Test
@@ -846,8 +846,8 @@ public class ConvexAreaTest {
         final String str = area.toString();
 
         // assert
-        Assert.assertTrue(str.contains("ConvexArea"));
-        Assert.assertTrue(str.contains("boundaries= "));
+        Assertions.assertTrue(str.contains("ConvexArea"));
+        Assertions.assertTrue(str.contains("boundaries= "));
     }
 
     @Test
@@ -902,11 +902,11 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(p0, p1, p2), TEST_PRECISION);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(0.5, area.getSize(), TEST_EPS);
-        Assert.assertEquals(2 + Math.sqrt(2), area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(0.5, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(2 + Math.sqrt(2), area.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.centroid(p0, p1, p2), area.getCentroid(), TEST_EPS);
     }
 
@@ -921,11 +921,11 @@ public class ConvexAreaTest {
                 ), TEST_PRECISION);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(1, area.getSize(), TEST_EPS);
-        Assert.assertEquals(4, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, area.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getCentroid(), TEST_EPS);
     }
 
@@ -941,11 +941,11 @@ public class ConvexAreaTest {
                 ), TEST_PRECISION);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(1, area.getSize(), TEST_EPS);
-        Assert.assertEquals(4, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, area.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getCentroid(), TEST_EPS);
     }
 
@@ -968,11 +968,11 @@ public class ConvexAreaTest {
                 ), precision);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(1, area.getSize(), eps);
-        Assert.assertEquals(4, area.getBoundarySize(), eps);
+        Assertions.assertEquals(1, area.getSize(), eps);
+        Assertions.assertEquals(4, area.getBoundarySize(), eps);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getCentroid(), eps);
     }
 
@@ -988,11 +988,11 @@ public class ConvexAreaTest {
                 ), TEST_PRECISION));
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(1, area.getSize(), TEST_EPS);
-        Assert.assertEquals(4, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, area.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getCentroid(), TEST_EPS);
     }
 
@@ -1073,7 +1073,7 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.fromBounds(Collections.emptyList());
 
         // assert
-        Assert.assertSame(ConvexArea.full(), area);
+        Assertions.assertSame(ConvexArea.full(), area);
     }
 
     @Test
@@ -1085,16 +1085,16 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.fromBounds(line);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(area.getBoundarySize());
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
-        Assert.assertNull(area.getCentroid());
+        Assertions.assertNull(area.getCentroid());
 
         final List<LineConvexSubset> segments = area.getBoundaries();
-        Assert.assertEquals(1, segments.size());
-        Assert.assertSame(line, segments.get(0).getLine());
+        Assertions.assertEquals(1, segments.size());
+        Assertions.assertSame(line, segments.get(0).getLine());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(-1, 1), Vector2D.of(0, 2));
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY, Vector2D.of(0, 1), Vector2D.of(2, 5));
@@ -1111,15 +1111,15 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.fromBounds(a, b);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(area.getBoundarySize());
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
-        Assert.assertNull(area.getCentroid());
+        Assertions.assertNull(area.getCentroid());
 
         final List<LineConvexSubset> segments = area.getBoundaries();
-        Assert.assertEquals(2, segments.size());
+        Assertions.assertEquals(2, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(-1, -1));
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
@@ -1139,15 +1139,15 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.fromBounds(a, b, c);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(4 + (2 * Math.sqrt(2)), area.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(2, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(4 + (2 * Math.sqrt(2)), area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(2, area.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2.0 / 3.0, -2.0 / 3.0), area.getCentroid(), TEST_EPS);
 
         final List<LineConvexSubset> segments = area.getBoundaries();
-        Assert.assertEquals(3, segments.size());
+        Assertions.assertEquals(3, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(-0.5, -0.5));
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
@@ -1165,15 +1165,15 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.fromBounds(square);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(4, area.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(1, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, area.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getCentroid(), TEST_EPS);
 
         final List<LineConvexSubset> segments = area.getBoundaries();
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
@@ -1197,15 +1197,15 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.fromBounds(extraLines);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(4, area.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(1, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, area.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getCentroid(), TEST_EPS);
 
         final List<LineConvexSubset> segments = area.getBoundaries();
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
@@ -1227,15 +1227,15 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.fromBounds(duplicateLines);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(4, area.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(1, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(1, area.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getCentroid(), TEST_EPS);
 
         final List<LineConvexSubset> segments = area.getBoundaries();
-        Assert.assertEquals(4, segments.size());
+        Assertions.assertEquals(4, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
@@ -1257,15 +1257,15 @@ public class ConvexAreaTest {
         final ConvexArea area = ConvexArea.fromBounds(a, b, c);
 
         // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
+        Assertions.assertFalse(area.isFull());
+        Assertions.assertFalse(area.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(area.getBoundarySize());
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
-        Assert.assertNull(area.getCentroid());
+        Assertions.assertNull(area.getCentroid());
 
         final List<LineConvexSubset> segments = area.getBoundaries();
-        Assert.assertEquals(1, segments.size());
+        Assertions.assertEquals(1, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY, Vector2D.of(0, 1), Vector2D.of(1, 1), Vector2D.of(-1, 1));
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0, 2), Vector2D.of(1, 2), Vector2D.of(-1, 2));

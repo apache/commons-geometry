@@ -34,8 +34,8 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConnector.Maximize;
 import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConnector.Minimize;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class InteriorAngleLinePathConnectorTest {
 
@@ -54,7 +54,7 @@ public class InteriorAngleLinePathConnectorTest {
             final List<LinePath> paths = connector.connectAll(segments);
 
             // assert
-            Assert.assertEquals(0, paths.size());
+            Assertions.assertEquals(0, paths.size());
         });
     }
 
@@ -70,7 +70,7 @@ public class InteriorAngleLinePathConnectorTest {
             final List<LinePath> paths = connector.connectAll(segments);
 
             // assert
-            Assert.assertEquals(1, paths.size());
+            Assertions.assertEquals(1, paths.size());
 
             assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X);
         });
@@ -89,9 +89,9 @@ public class InteriorAngleLinePathConnectorTest {
             final List<LinePath> paths = connector.connectAll(segments);
 
             // assert
-            Assert.assertEquals(1, paths.size());
+            Assertions.assertEquals(1, paths.size());
 
-            Assert.assertTrue(paths.get(0).isClosed());
+            Assertions.assertTrue(paths.get(0).isClosed());
             assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.ZERO);
         });
     }
@@ -106,7 +106,7 @@ public class InteriorAngleLinePathConnectorTest {
             final List<LinePath> paths = connector.connectAll(segments);
 
             // assert
-            Assert.assertEquals(1, paths.size());
+            Assertions.assertEquals(1, paths.size());
 
             assertFinitePath(paths.get(0),
                     Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1),
@@ -133,7 +133,7 @@ public class InteriorAngleLinePathConnectorTest {
             final List<LinePath> paths = connector.connectAll(segments);
 
             // assert
-            Assert.assertEquals(2, paths.size());
+            Assertions.assertEquals(2, paths.size());
 
             assertFinitePath(paths.get(0),
                     Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1),
@@ -158,7 +158,7 @@ public class InteriorAngleLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assertions.assertEquals(1, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1),
@@ -182,7 +182,7 @@ public class InteriorAngleLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.ZERO, Vector2D.of(2, 2), Vector2D.of(2, 4));
@@ -205,7 +205,7 @@ public class InteriorAngleLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1),
@@ -231,7 +231,7 @@ public class InteriorAngleLinePathConnectorTest {
         final List<LinePath> paths = connector.connectAll(segments);
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.ZERO, Vector2D.of(2, 2), Vector2D.of(1, 3));
@@ -252,7 +252,7 @@ public class InteriorAngleLinePathConnectorTest {
         final List<LinePath> paths = InteriorAngleLinePathConnector.connectMaximized(segments);
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.ZERO, Vector2D.of(2, 2), Vector2D.of(2, 4));
@@ -273,7 +273,7 @@ public class InteriorAngleLinePathConnectorTest {
         final List<LinePath> paths = InteriorAngleLinePathConnector.connectMinimized(segments);
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assertions.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.ZERO, Vector2D.of(2, 2), Vector2D.of(1, 3));
@@ -314,18 +314,18 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     private static void assertInfinitePath(final LinePath path, final LineConvexSubset start, final LineConvexSubset end, final Vector2D... vertices) {
-        Assert.assertTrue(path.isInfinite());
-        Assert.assertFalse(path.isFinite());
+        Assertions.assertTrue(path.isInfinite());
+        Assertions.assertFalse(path.isFinite());
 
-        Assert.assertEquals(start, path.getStart());
-        Assert.assertEquals(end, path.getEnd());
+        Assertions.assertEquals(start, path.getStart());
+        Assertions.assertEquals(end, path.getEnd());
 
         assertPathVertices(path, vertices);
     }
 
     private static void assertFinitePath(final LinePath path, final Vector2D... vertices) {
-        Assert.assertFalse(path.isInfinite());
-        Assert.assertTrue(path.isFinite());
+        Assertions.assertFalse(path.isInfinite());
+        Assertions.assertTrue(path.isFinite());
 
         assertPathVertices(path, vertices);
     }
@@ -335,7 +335,7 @@ public class InteriorAngleLinePathConnectorTest {
         final List<Vector2D> actualVertices = path.getVertexSequence();
 
         final String msg = "Expected path vertices to equal " + expectedVertices + " but was " + actualVertices;
-        Assert.assertEquals(msg, expectedVertices.size(), actualVertices.size());
+        Assertions.assertEquals(expectedVertices.size(), actualVertices.size(), msg);
 
         for (int i = 0; i < expectedVertices.size(); ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(expectedVertices.get(i), actualVertices.get(i), TEST_EPS);

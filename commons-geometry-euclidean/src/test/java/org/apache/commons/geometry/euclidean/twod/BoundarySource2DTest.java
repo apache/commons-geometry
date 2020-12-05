@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class BoundarySource2DTest {
 
@@ -44,9 +44,9 @@ public class BoundarySource2DTest {
         final RegionBSPTree2D tree = src.toTree();
 
         // assert
-        Assert.assertEquals(5, tree.count());
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertEquals(5, tree.count());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
     }
 
     @Test
@@ -58,9 +58,9 @@ public class BoundarySource2DTest {
         final RegionBSPTree2D tree = src.toTree();
 
         // assert
-        Assert.assertEquals(1, tree.count());
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isEmpty());
+        Assertions.assertEquals(1, tree.count());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class BoundarySource2DTest {
 
         // assert
         final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
-        Assert.assertEquals(0, segments.size());
+        Assertions.assertEquals(0, segments.size());
     }
 
     @Test
@@ -83,10 +83,10 @@ public class BoundarySource2DTest {
 
         // assert
         final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
-        Assert.assertEquals(2, segments.size());
+        Assertions.assertEquals(2, segments.size());
 
-        Assert.assertSame(a, segments.get(0));
-        Assert.assertSame(b, segments.get(1));
+        Assertions.assertSame(a, segments.get(0));
+        Assertions.assertSame(b, segments.get(1));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class BoundarySource2DTest {
 
         // assert
         final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
-        Assert.assertEquals(0, segments.size());
+        Assertions.assertEquals(0, segments.size());
     }
 
     @Test
@@ -116,9 +116,9 @@ public class BoundarySource2DTest {
 
         // assert
         final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
-        Assert.assertEquals(2, segments.size());
+        Assertions.assertEquals(2, segments.size());
 
-        Assert.assertSame(a, segments.get(0));
-        Assert.assertSame(b, segments.get(1));
+        Assertions.assertSame(a, segments.get(0));
+        Assertions.assertSame(b, segments.get(1));
     }
 }

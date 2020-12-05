@@ -25,8 +25,8 @@ import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class Segment3DTest {
 
@@ -45,16 +45,16 @@ public class Segment3DTest {
         final Segment3D seg = Lines3D.segmentFromPoints(p1, p2, TEST_PRECISION);
 
         // assert
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(p1, seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(p2, seg.getEndPoint(), TEST_EPS);
 
-        Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(2, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 2), seg.getCentroid(), TEST_EPS);
         final Bounds3D bounds = seg.getBounds();
@@ -90,16 +90,16 @@ public class Segment3DTest {
         final Segment3D seg = Lines3D.segmentFromPoints(line, p2, p1); // reverse location order
 
         // assert
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 2), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 2), seg.getEndPoint(), TEST_EPS);
 
-        Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(4, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(4, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 2), seg.getCentroid(), TEST_EPS);
         final Bounds3D bounds = seg.getBounds();
@@ -118,16 +118,16 @@ public class Segment3DTest {
         final Segment3D seg = Lines3D.segmentFromPoints(line, p1, p1);
 
         // assert
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), seg.getEndPoint(), TEST_EPS);
 
-        Assert.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(0, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), seg.getCentroid(), TEST_EPS);
         final Bounds3D bounds = seg.getBounds();
@@ -170,16 +170,16 @@ public class Segment3DTest {
         final Segment3D seg = Lines3D.segmentFromLocations(line, -1, 2);
 
         // assert
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 2), seg.getEndPoint(), TEST_EPS);
 
-        Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(3, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(3, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0.5), seg.getCentroid(), TEST_EPS);
         final Bounds3D bounds = seg.getBounds();
@@ -196,16 +196,16 @@ public class Segment3DTest {
         final Segment3D seg = Lines3D.segmentFromLocations(line, 2, -1);
 
         // assert
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 2), seg.getEndPoint(), TEST_EPS);
 
-        Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(3, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(3, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0.5), seg.getCentroid(), TEST_EPS);
         final Bounds3D bounds = seg.getBounds();
@@ -222,16 +222,16 @@ public class Segment3DTest {
         final Segment3D seg = Lines3D.segmentFromLocations(line, 1, 1);
 
         // assert
-        Assert.assertFalse(seg.isInfinite());
-        Assert.assertTrue(seg.isFinite());
+        Assertions.assertFalse(seg.isInfinite());
+        Assertions.assertTrue(seg.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), seg.getEndPoint(), TEST_EPS);
 
-        Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(1, seg.getSubspaceEnd(), TEST_EPS);
+        Assertions.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
+        Assertions.assertEquals(1, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertEquals(0, seg.getSize(), TEST_EPS);
+        Assertions.assertEquals(0, seg.getSize(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), seg.getCentroid(), TEST_EPS);
         final Bounds3D bounds = seg.getBounds();
@@ -308,17 +308,17 @@ public class Segment3DTest {
         final Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
 
         // act/assert
-        Assert.assertFalse(seg.contains(Vector3D.of(2, 2, 2)));
-        Assert.assertFalse(seg.contains(Vector3D.of(0.9, 1, 1)));
-        Assert.assertFalse(seg.contains(Vector3D.of(3.1, 1, 1)));
+        Assertions.assertFalse(seg.contains(Vector3D.of(2, 2, 2)));
+        Assertions.assertFalse(seg.contains(Vector3D.of(0.9, 1, 1)));
+        Assertions.assertFalse(seg.contains(Vector3D.of(3.1, 1, 1)));
 
-        Assert.assertTrue(seg.contains(p0));
-        Assert.assertTrue(seg.contains(p1));
+        Assertions.assertTrue(seg.contains(p0));
+        Assertions.assertTrue(seg.contains(p1));
 
-        Assert.assertTrue(seg.contains(p0.subtract(delta)));
-        Assert.assertTrue(seg.contains(p1.add(delta)));
+        Assertions.assertTrue(seg.contains(p0.subtract(delta)));
+        Assertions.assertTrue(seg.contains(p1.add(delta)));
 
-        Assert.assertTrue(seg.contains(p0.lerp(p1, 0.5)));
+        Assertions.assertTrue(seg.contains(p0.lerp(p1, 0.5)));
     }
 
     @Test
@@ -330,10 +330,10 @@ public class Segment3DTest {
         final Interval interval = seg.getInterval();
 
         // assert
-        Assert.assertEquals(-1, interval.getMin(), TEST_EPS);
-        Assert.assertEquals(2, interval.getMax(), TEST_EPS);
+        Assertions.assertEquals(-1, interval.getMin(), TEST_EPS);
+        Assertions.assertEquals(2, interval.getMax(), TEST_EPS);
 
-        Assert.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
+        Assertions.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
     }
 
     @Test
@@ -346,11 +346,11 @@ public class Segment3DTest {
         final Interval interval = seg.getInterval();
 
         // assert
-        Assert.assertEquals(1, interval.getMin(), TEST_EPS);
-        Assert.assertEquals(1, interval.getMax(), TEST_EPS);
-        Assert.assertEquals(0, interval.getSize(), TEST_EPS);
+        Assertions.assertEquals(1, interval.getMin(), TEST_EPS);
+        Assertions.assertEquals(1, interval.getMax(), TEST_EPS);
+        Assertions.assertEquals(0, interval.getSize(), TEST_EPS);
 
-        Assert.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
+        Assertions.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
     }
 
     @Test

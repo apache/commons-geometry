@@ -20,8 +20,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class BoundarySource2STest {
 
@@ -39,9 +39,9 @@ public class BoundarySource2STest {
         final RegionBSPTree2S tree = src.toTree();
 
         // assert
-        Assert.assertEquals(3, tree.count());
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assertions.assertEquals(3, tree.count());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertFalse(tree.isEmpty());
     }
 
     @Test
@@ -53,8 +53,8 @@ public class BoundarySource2STest {
         final RegionBSPTree2S tree = src.toTree();
 
         // assert
-        Assert.assertEquals(1, tree.count());
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isEmpty());
+        Assertions.assertEquals(1, tree.count());
+        Assertions.assertFalse(tree.isFull());
+        Assertions.assertTrue(tree.isEmpty());
     }
 }

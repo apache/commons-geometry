@@ -21,8 +21,8 @@ import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AbstractHyperplaneTest {
 
@@ -33,7 +33,7 @@ public class AbstractHyperplaneTest {
         final StubHyperplane hyper = new StubHyperplane(precision);
 
         // act/assert
-        Assert.assertSame(precision, hyper.getPrecision());
+        Assertions.assertSame(precision, hyper.getPrecision());
     }
 
     @Test
@@ -43,13 +43,13 @@ public class AbstractHyperplaneTest {
         final StubHyperplane hyper = new StubHyperplane(precision);
 
         // act/assert
-        Assert.assertEquals(HyperplaneLocation.MINUS, hyper.classify(new TestPoint2D(1, 1)));
+        Assertions.assertEquals(HyperplaneLocation.MINUS, hyper.classify(new TestPoint2D(1, 1)));
 
-        Assert.assertEquals(HyperplaneLocation.ON, hyper.classify(new TestPoint2D(1, 0.09)));
-        Assert.assertEquals(HyperplaneLocation.ON, hyper.classify(new TestPoint2D(1, 0)));
-        Assert.assertEquals(HyperplaneLocation.ON, hyper.classify(new TestPoint2D(1, -0.09)));
+        Assertions.assertEquals(HyperplaneLocation.ON, hyper.classify(new TestPoint2D(1, 0.09)));
+        Assertions.assertEquals(HyperplaneLocation.ON, hyper.classify(new TestPoint2D(1, 0)));
+        Assertions.assertEquals(HyperplaneLocation.ON, hyper.classify(new TestPoint2D(1, -0.09)));
 
-        Assert.assertEquals(HyperplaneLocation.PLUS, hyper.classify(new TestPoint2D(1, -1)));
+        Assertions.assertEquals(HyperplaneLocation.PLUS, hyper.classify(new TestPoint2D(1, -1)));
     }
 
     @Test
@@ -59,13 +59,13 @@ public class AbstractHyperplaneTest {
         final StubHyperplane hyper = new StubHyperplane(precision);
 
         // act/assert
-        Assert.assertFalse(hyper.contains(new TestPoint2D(1, 1)));
+        Assertions.assertFalse(hyper.contains(new TestPoint2D(1, 1)));
 
-        Assert.assertTrue(hyper.contains(new TestPoint2D(1, 0.09)));
-        Assert.assertTrue(hyper.contains(new TestPoint2D(1, 0)));
-        Assert.assertTrue(hyper.contains(new TestPoint2D(1, -0.09)));
+        Assertions.assertTrue(hyper.contains(new TestPoint2D(1, 0.09)));
+        Assertions.assertTrue(hyper.contains(new TestPoint2D(1, 0)));
+        Assertions.assertTrue(hyper.contains(new TestPoint2D(1, -0.09)));
 
-        Assert.assertFalse(hyper.contains(new TestPoint2D(1, -1)));
+        Assertions.assertFalse(hyper.contains(new TestPoint2D(1, -1)));
     }
 
     public static class StubHyperplane extends AbstractHyperplane<TestPoint2D> {
