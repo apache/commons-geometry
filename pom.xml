@@ -62,7 +62,7 @@
 
     <commons.spotbugs.version>3.1.12</commons.spotbugs.version>
     <!-- Required for Java 13 build -->
-    <commons.spotbugs.dep.version>4.0.0</commons.spotbugs.dep.version>
+    <commons.spotbugs.dep.version>4.2.0</commons.spotbugs.dep.version>
 
     <!-- Fix to avoid JXR 3.0.0 forking the lifecycle phase 'compile' during site report
        jxr:aggregate. If compile is forked, the dist-archive build fails when attempting
