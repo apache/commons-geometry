@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -958,7 +956,7 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testLinecastFirst_onlyReturnsPointsWithinSegment() throws IOException, ParseException {
+    public void testLinecastFirst_onlyReturnsPointsWithinSegment() {
         // arrange
         final Vector3D lowerCorner = Vector3D.ZERO;
         final Vector3D upperCorner = Vector3D.of(1, 1, 1);
@@ -1313,7 +1311,7 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testBoolean_union() throws IOException {
+    public void testBoolean_union() {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;
@@ -1393,7 +1391,7 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testBoolean_intersection() throws IOException {
+    public void testBoolean_intersection() {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;
@@ -1471,7 +1469,7 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testBoolean_xor_twoCubes() throws IOException {
+    public void testBoolean_xor_twoCubes() {
         // arrange
         final double size = 1.0;
         final RegionBSPTree3D box1 = createRect(Vector3D.ZERO, Vector3D.of(size, size, size));
@@ -1507,7 +1505,7 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testBoolean_xor_cubeAndSphere() throws IOException {
+    public void testBoolean_xor_cubeAndSphere() {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;
@@ -1583,7 +1581,7 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testBoolean_difference() throws IOException {
+    public void testBoolean_difference()  {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;
@@ -1657,7 +1655,7 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testBoolean_multiple() throws IOException {
+    public void testBoolean_multiple()  {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;

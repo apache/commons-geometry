@@ -111,7 +111,7 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
         Vector3D curPt;
 
         Vector3D prevVec = startPt.vectorTo(prevPt);
-        Vector3D curVec = null;
+        Vector3D curVec;
 
         double triArea;
         Vector3D triCentroid;
@@ -231,7 +231,7 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
 
         Vector3D boundaryVec;
         double boundaryPointT;
-        Vector3D boundaryPoint = null;
+        Vector3D boundaryPoint;
         double boundaryPointDistSq;
 
         double closestBoundaryPointDistSq = Double.POSITIVE_INFINITY;

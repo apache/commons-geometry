@@ -35,10 +35,10 @@ public abstract class AbstractModelIOHandler implements ModelIOHandler {
     public BoundarySource3D read(final String type, final File in, final DoublePrecisionContext precision) {
         ensureTypeSupported(type);
         try {
-            try (InputStream is = Files.newInputStream(in.toPath())) {
+            try (final InputStream is = Files.newInputStream(in.toPath())) {
                 return readInternal(type, is, precision);
             }
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw createUnchecked(exc);
         }
     }
@@ -49,7 +49,7 @@ public abstract class AbstractModelIOHandler implements ModelIOHandler {
         ensureTypeSupported(type);
         try {
             return readInternal(type, in, precision);
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw createUnchecked(exc);
         }
     }
@@ -59,21 +59,21 @@ public abstract class AbstractModelIOHandler implements ModelIOHandler {
     public void write(final BoundarySource3D model, final String type, final File out) {
         ensureTypeSupported(type);
         try {
-            try (OutputStream os = Files.newOutputStream(out.toPath())) {
+            try (final OutputStream os = Files.newOutputStream(out.toPath())) {
                 writeInternal(model, type, os);
             }
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw createUnchecked(exc);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void write(final BoundarySource3D model, final String type, OutputStream out) {
+    public void write(final BoundarySource3D model, final String type, final OutputStream out) {
         ensureTypeSupported(type);
         try {
             writeInternal(model, type, out);
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw createUnchecked(exc);
         }
     }

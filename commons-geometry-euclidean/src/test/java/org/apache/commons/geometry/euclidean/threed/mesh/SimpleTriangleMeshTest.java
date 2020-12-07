@@ -274,7 +274,7 @@ public class SimpleTriangleMeshTest {
         Assertions.assertEquals(0, it.next().getIndex());
         Assertions.assertFalse(it.hasNext());
 
-        GeometryTestUtils.assertThrows(() -> it.next(), NoSuchElementException.class);
+        GeometryTestUtils.assertThrows(it::next, NoSuchElementException.class);
     }
 
     @Test

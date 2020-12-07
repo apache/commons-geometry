@@ -48,7 +48,7 @@ public class ModelIOTest {
     @Test
     public void testGetHandler() {
         // act
-        ModelIOHandlerRegistry registry = ModelIO.getModelIOHandlerRegistry();
+        final ModelIOHandlerRegistry registry = ModelIO.getModelIOHandlerRegistry();
 
         // assert
         Assertions.assertTrue(registry instanceof DefaultModelIOHandlerRegistry);
@@ -60,7 +60,7 @@ public class ModelIOTest {
         // act/assert
         checkWriteRead(model -> {
             //File file = new File(tempFolder.getRoot(), "model.obj");
-            File file = new File(anotherTempDir, "model.obj");
+            final File file = new File(anotherTempDir, "model.obj");
             ModelIO.write(model, file);
             return ModelIO.read(file, TEST_PRECISION);
         });
@@ -71,7 +71,7 @@ public class ModelIOTest {
         // act/assert
         checkWriteRead(model -> {
             //File file = new File(tempFolder.getRoot(), "objmodel");
-            File file = new File(anotherTempDir, "objmodel");
+            final File file = new File(anotherTempDir, "objmodel");
             ModelIO.write(model, "OBJ", file);
             return ModelIO.read("obj", file, TEST_PRECISION);
         });
@@ -82,12 +82,12 @@ public class ModelIOTest {
         // act/assert
         checkWriteRead(model -> {
             //File file = new File(tempFolder.getRoot(), "objmodel");
-            File file = new File(anotherTempDir, "objmodel");
-            try (OutputStream out = Files.newOutputStream(file.toPath())) {
+            final File file = new File(anotherTempDir, "objmodel");
+            try (final OutputStream out = Files.newOutputStream(file.toPath())) {
                 ModelIO.write(model, "OBJ", out);
             }
 
-            try (InputStream in = Files.newInputStream(file.toPath())) {
+            try (final InputStream in = Files.newInputStream(file.toPath())) {
                 return ModelIO.read("OBJ", in, TEST_PRECISION);
             }
         });
@@ -98,20 +98,20 @@ public class ModelIOTest {
         BoundarySource3D apply(BoundarySource3D model) throws IOException;
     }
 
-    private void checkWriteRead(ModelIOFunction fn) throws IOException {
+    private void checkWriteRead(final ModelIOFunction fn) throws IOException {
         // arrange
-        BoundarySource3D model = BoundarySource3D.from(
+        final BoundarySource3D model = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
         // act
-        BoundarySource3D result = fn.apply(model);
+        final BoundarySource3D result = fn.apply(model);
 
         // assert
-        List<Triangle3D> tris = result.triangleStream().collect(Collectors.toList());
+        final List<Triangle3D> tris = result.triangleStream().collect(Collectors.toList());
         Assertions.assertEquals(1, tris.size());
 
-        Triangle3D tri = tris.get(0);
+        final Triangle3D tri = tris.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tri.getPoint1(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), tri.getPoint2(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0), tri.getPoint3(), TEST_EPS);

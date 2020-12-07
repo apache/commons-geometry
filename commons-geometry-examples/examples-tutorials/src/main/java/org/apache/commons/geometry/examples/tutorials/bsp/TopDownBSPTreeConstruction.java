@@ -46,25 +46,25 @@ public final class TopDownBSPTreeConstruction {
      * @param args command arguments; if given, the first argument is used as the location of
      *      output folder
      */
-    public static void main(String[] args) {
-        File outputFolder = new File(args.length > 0 ? args[0] : ".");
-        BSPTreeSVGWriter svgWriter = new BSPTreeSVGWriter(Bounds2D.from(Vector2D.of(-8, -8), Vector2D.of(8, 8)));
+    public static void main(final String[] args) {
+        final File outputFolder = new File(args.length > 0 ? args[0] : ".");
+        final BSPTreeSVGWriter svgWriter = new BSPTreeSVGWriter(Bounds2D.from(Vector2D.of(-8, -8), Vector2D.of(8, 8)));
 
-        Map<RegionNode2D, String> nodeNames = new HashMap<>();
+        final Map<RegionNode2D, String> nodeNames = new HashMap<>();
         int cutCount = 0;
 
         // create a precision context for floating point comparisons
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // construct an empty tree
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        Segment firstBoundary = Lines.segmentFromPoints(Vector2D.of(-5, 0), Vector2D.of(-1, 0), precision);
+        final Segment firstBoundary = Lines.segmentFromPoints(Vector2D.of(-5, 0), Vector2D.of(-1, 0), precision);
         tree.insert(firstBoundary);
 
-        RegionNode2D a = tree.getRoot();
-        RegionNode2D b = a.getMinus();
-        RegionNode2D c = a.getPlus();
+        final RegionNode2D a = tree.getRoot();
+        final RegionNode2D b = a.getMinus();
+        final RegionNode2D c = a.getPlus();
 
         nodeNames.put(a, "a");
         nodeNames.put(b, "b");
@@ -74,10 +74,10 @@ public final class TopDownBSPTreeConstruction {
         tree.insert(Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(-5, 3), precision));
         tree.insert(Lines.segmentFromPoints(Vector2D.of(-5, 3), Vector2D.of(-5, 0), precision));
 
-        RegionNode2D d = b.getMinus();
-        RegionNode2D e = b.getPlus();
-        RegionNode2D f = d.getMinus();
-        RegionNode2D g = d.getPlus();
+        final RegionNode2D d = b.getMinus();
+        final RegionNode2D e = b.getPlus();
+        final RegionNode2D f = d.getMinus();
+        final RegionNode2D g = d.getPlus();
 
         nodeNames.put(d, "d");
         nodeNames.put(e, "e");
@@ -85,17 +85,17 @@ public final class TopDownBSPTreeConstruction {
         nodeNames.put(g, "g");
         svgWriter.write(tree, nodeNames, new File(outputFolder, String.format(OUTPUT_FILE_FORMAT, ++cutCount)));
 
-        LinePath path = LinePath.fromVertices(Arrays.asList(
+        final LinePath path = LinePath.fromVertices(Arrays.asList(
                 Vector2D.of(-1, 0),
                 Vector2D.of(5, -3),
                 Vector2D.of(5, 0),
                 Vector2D.of(1, 0)), precision);
         tree.insert(path);
 
-        RegionNode2D h = c.getMinus();
-        RegionNode2D i = c.getPlus();
-        RegionNode2D j = h.getMinus();
-        RegionNode2D k = h.getPlus();
+        final RegionNode2D h = c.getMinus();
+        final RegionNode2D i = c.getPlus();
+        final RegionNode2D j = h.getMinus();
+        final RegionNode2D k = h.getPlus();
 
         nodeNames.put(h, "h");
         nodeNames.put(i, "i");

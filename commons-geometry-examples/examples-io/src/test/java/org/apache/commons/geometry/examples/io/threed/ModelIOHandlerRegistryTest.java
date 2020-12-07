@@ -42,21 +42,21 @@ public class ModelIOHandlerRegistryTest {
 
     private static final BoundarySource3D SRC_B = BoundarySource3D.from();
 
-    private ModelIOHandlerRegistry registry = new ModelIOHandlerRegistry();
+    private final ModelIOHandlerRegistry registry = new ModelIOHandlerRegistry();
 
     @Test
     public void testGetSetHandlers() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
-        List<ModelIOHandler> handlers = Arrays.asList(handlerA, handlerB);
+        final List<ModelIOHandler> handlers = Arrays.asList(handlerA, handlerB);
 
         // act
         registry.setHandlers(handlers);
 
         // assert
-        List<ModelIOHandler> resultHandlers = registry.getHandlers();
+        final List<ModelIOHandler> resultHandlers = registry.getHandlers();
         Assertions.assertNotSame(handlers, resultHandlers);
         Assertions.assertEquals(2, resultHandlers.size());
 
@@ -67,8 +67,8 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testSetHandlers_null() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
@@ -82,8 +82,8 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testGetHandlerForType() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
@@ -100,8 +100,8 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testHandlesType() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
@@ -118,15 +118,15 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testRead_typeFromFileExtension() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
-        File file = new File("file.B");
+        final File file = new File("file.B");
 
         // act
-        BoundarySource3D src = registry.read(file, TEST_PRECISION);
+        final BoundarySource3D src = registry.read(file, TEST_PRECISION);
 
         // assert
         Assertions.assertSame(SRC_B, src);
@@ -135,7 +135,7 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testRead_typeFromFileExtension_unknownType() {
         // arrange
-        File file = new File("file.B");
+        final File file = new File("file.B");
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -146,7 +146,7 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testRead_typeFromFileExtension_noFileExtension() {
         // arrange
-        File file = new File("file");
+        final File file = new File("file");
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -158,13 +158,13 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testRead_typeAndFile() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
         // act
-        BoundarySource3D src = registry.read("a", new File("file"), TEST_PRECISION);
+        final BoundarySource3D src = registry.read("a", new File("file"), TEST_PRECISION);
 
         // assert
         Assertions.assertSame(SRC_A, src);
@@ -173,7 +173,7 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testRead_typeAndFile_unknownType() {
         // arrange
-        File file = new File("file");
+        final File file = new File("file");
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -184,13 +184,13 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testRead_typeAndInputStream() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
         // act
-        BoundarySource3D src = registry.read("a", new ByteArrayInputStream(new byte[0]), TEST_PRECISION);
+        final BoundarySource3D src = registry.read("a", new ByteArrayInputStream(new byte[0]), TEST_PRECISION);
 
         // assert
         Assertions.assertSame(SRC_A, src);
@@ -207,12 +207,12 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testWrite_typeFromFileExtension() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
-        File file = new File("file.B");
+        final File file = new File("file.B");
 
         // act
         registry.write(SRC_B, file);
@@ -225,7 +225,7 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testWrite_typeFromFileExtension_unknownType() {
         // arrange
-        File file = new File("file.B");
+        final File file = new File("file.B");
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -236,7 +236,7 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testWrite_typeFromFileExtension_noFileExtension() {
         // arrange
-        File file = new File("file");
+        final File file = new File("file");
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -248,12 +248,12 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testWrite_typeAndFile() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
-        File file = new File("file.B");
+        final File file = new File("file.B");
 
         // act
         registry.write(SRC_B, "a", file);
@@ -266,7 +266,7 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testWrite_typeAndFile_unknownType() {
         // arrange
-        File file = new File("file");
+        final File file = new File("file");
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -277,8 +277,8 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testWrite_typeAndOutputStream() {
         // arrange
-        StubHandler handlerA = new StubHandler("a", SRC_A);
-        StubHandler handlerB = new StubHandler("b", SRC_B);
+        final StubHandler handlerA = new StubHandler("a", SRC_A);
+        final StubHandler handlerB = new StubHandler("b", SRC_B);
 
         registry.setHandlers(Arrays.asList(handlerA, handlerB));
 
@@ -312,27 +312,27 @@ public class ModelIOHandlerRegistryTest {
         }
 
         @Override
-        public boolean handlesType(String type) {
+        public boolean handlesType(final String type) {
             return this.handlerType.equals(type);
         }
 
         @Override
-        public BoundarySource3D read(String type, File in, DoublePrecisionContext precision) {
+        public BoundarySource3D read(final String type, final File in, final DoublePrecisionContext precision) {
             return boundarySrc;
         }
 
         @Override
-        public BoundarySource3D read(String type, InputStream in, DoublePrecisionContext precision) {
+        public BoundarySource3D read(final String type, final InputStream in, final DoublePrecisionContext precision) {
             return boundarySrc;
         }
 
         @Override
-        public void write(BoundarySource3D model, String type, File out) {
+        public void write(final BoundarySource3D model, final String type, final File out) {
             outputBoundarySrc = model;
         }
 
         @Override
-        public void write(BoundarySource3D model, String type, OutputStream out) {
+        public void write(final BoundarySource3D model, final String type, final OutputStream out) {
             outputBoundarySrc = model;
         }
     }

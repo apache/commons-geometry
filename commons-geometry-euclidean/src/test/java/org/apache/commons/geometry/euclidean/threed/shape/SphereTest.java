@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed.shape;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.regex.Pattern;
@@ -292,7 +291,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_zeroSubdivisions() throws IOException {
+    public void testToTree_zeroSubdivisions() {
         // arrange
         final double r = 2;
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
@@ -314,7 +313,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_oneSubdivision() throws IOException {
+    public void testToTree_oneSubdivision() {
         // arrange
         final double r = 2;
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
@@ -335,7 +334,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_multipleSubdivisionCounts() throws Exception {
+    public void testToTree_multipleSubdivisionCounts() {
         // -- arrange
         final Sphere s = Sphere.from(Vector3D.of(-3, 5, 1), 10, TEST_PRECISION);
 
@@ -404,7 +403,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_closeApproximation() throws IOException {
+    public void testToTree_closeApproximation() {
         // arrange
         final Sphere s = Sphere.from(Vector3D.ZERO, 1, TEST_PRECISION);
 

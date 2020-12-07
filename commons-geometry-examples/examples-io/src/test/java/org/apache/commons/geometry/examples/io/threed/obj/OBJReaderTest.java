@@ -46,12 +46,12 @@ public class OBJReaderTest {
 
     private static final int CUBE_MINUS_SPHERE_FACES = 728;
 
-    private OBJReader reader = new OBJReader();
+    private final OBJReader reader = new OBJReader();
 
     @Test
     public void testReadMesh_emptyInput() throws Exception {
         // act
-        TriangleMesh mesh = reader.readTriangleMesh(new StringReader(""), TEST_PRECISION);
+        final TriangleMesh mesh = reader.readTriangleMesh(new StringReader(""), TEST_PRECISION);
 
         // assert
         Assertions.assertEquals(0, mesh.getVertexCount());
@@ -61,7 +61,7 @@ public class OBJReaderTest {
     @Test
     public void testReadMesh_mixedVertexIndexTypesAndWhitespace() throws Exception {
         // arrange
-        String input =
+        final String input =
             "#some comments  \n\r\n \n" +
             " # some other comments\n" +
             "v 0.0 0.0 0.0\n" +
@@ -72,18 +72,18 @@ public class OBJReaderTest {
             " f    -1   -2\t-3";
 
         // act
-        TriangleMesh mesh = reader.readTriangleMesh(new StringReader(input), TEST_PRECISION);
+        final TriangleMesh mesh = reader.readTriangleMesh(new StringReader(input), TEST_PRECISION);
 
         // assert
         Assertions.assertEquals(4, mesh.getVertexCount());
         Assertions.assertEquals(2, mesh.getFaceCount());
 
-        Triangle3D t0 = mesh.getFace(0).getPolygon();
+        final Triangle3D t0 = mesh.getFace(0).getPolygon();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, t0.getPoint1(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.1, 0, 0), t0.getPoint2(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0), t0.getPoint3(), TEST_EPS);
 
-        Triangle3D t1 = mesh.getFace(1).getPolygon();
+        final Triangle3D t1 = mesh.getFace(1).getPolygon();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), t1.getPoint1(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0), t1.getPoint2(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.1, 0, 0), t1.getPoint3(), TEST_EPS);
@@ -92,7 +92,7 @@ public class OBJReaderTest {
     @Test
     public void testReadMesh_multipleFaceIndices_usesTriangleFan() throws Exception {
         // arrange
-        String input =
+        final String input =
             "v 0 0 0\n" +
             "v 1 0 0\n" +
             "v 1 1 0\n" +
@@ -101,23 +101,23 @@ public class OBJReaderTest {
             "f 1 2 3 -2 -1\n";
 
         // act
-        TriangleMesh mesh = reader.readTriangleMesh(new StringReader(input), TEST_PRECISION);
+        final TriangleMesh mesh = reader.readTriangleMesh(new StringReader(input), TEST_PRECISION);
 
         // assert
         Assertions.assertEquals(5, mesh.getVertexCount());
         Assertions.assertEquals(3, mesh.getFaceCount());
 
-        Triangle3D t0 = mesh.getFace(0).getPolygon();
+        final Triangle3D t0 = mesh.getFace(0).getPolygon();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, t0.getPoint1(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), t0.getPoint2(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 0), t0.getPoint3(), TEST_EPS);
 
-        Triangle3D t1 = mesh.getFace(1).getPolygon();
+        final Triangle3D t1 = mesh.getFace(1).getPolygon();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, t1.getPoint1(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 0), t1.getPoint2(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 1.5, 0), t1.getPoint3(), TEST_EPS);
 
-        Triangle3D t2 = mesh.getFace(2).getPolygon();
+        final Triangle3D t2 = mesh.getFace(2).getPolygon();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, t2.getPoint1(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 1.5, 0), t2.getPoint2(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0), t2.getPoint3(), TEST_EPS);
@@ -126,7 +126,7 @@ public class OBJReaderTest {
     @Test
     public void testReadMesh_ignoresUnsupportedContent() throws Exception {
         // arrange
-        String input =
+        final String input =
             "mtllib abc.mtl\n" +
             "nope\n" +
             "v 0 0 0\n" +
@@ -135,28 +135,28 @@ public class OBJReaderTest {
             "f 1/10/20 2//40 3//\n";
 
         // act
-        TriangleMesh mesh = reader.readTriangleMesh(new StringReader(input), TEST_PRECISION);
+        final TriangleMesh mesh = reader.readTriangleMesh(new StringReader(input), TEST_PRECISION);
 
         // assert
         Assertions.assertEquals(3, mesh.getVertexCount());
         Assertions.assertEquals(1, mesh.getFaceCount());
 
-        Triangle3D t0 = mesh.getFace(0).getPolygon();
+        final Triangle3D t0 = mesh.getFace(0).getPolygon();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, t0.getPoint1(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), t0.getPoint2(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0), t0.getPoint3(), TEST_EPS);
     }
 
     @Test
-    public void testReadMesh_invalidVertexDefinition() throws Exception {
+    public void testReadMesh_invalidVertexDefinition() {
         // arrange
-        String badNumber =
+        final String badNumber =
             "v abc 0 0\n" +
             "v 1 0 0\n" +
             "v 0 1 0\n" +
             "f 1 2 3\n";
 
-        String notEnoughVertices =
+        final String notEnoughVertices =
             "v 0 0\n" +
             "v 1 0 0\n" +
             "v 0 1 0\n" +
@@ -166,7 +166,7 @@ public class OBJReaderTest {
         GeometryTestUtils.assertThrows(() -> {
             try {
                 reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION);
-            } catch (IOException exc) {
+            } catch (final IOException exc) {
                 throw new UncheckedIOException(exc);
             }
         }, NumberFormatException.class);
@@ -174,22 +174,22 @@ public class OBJReaderTest {
         GeometryTestUtils.assertThrows(() -> {
             try {
                 reader.readTriangleMesh(new StringReader(notEnoughVertices), TEST_PRECISION);
-            } catch (IOException exc) {
+            } catch (final IOException exc) {
                 throw new UncheckedIOException(exc);
             }
         }, IllegalArgumentException.class, "Invalid vertex definition: at least 3 fields required but found only 2");
     }
 
     @Test
-    public void testReadMesh_invalidFaceDefinition() throws Exception {
+    public void testReadMesh_invalidFaceDefinition() {
         // arrange
-        String badNumber =
+        final String badNumber =
             "v 0 0 0\n" +
             "v 1 0 0\n" +
             "v 0 1 0\n" +
             "f 1 abc 3\n";
 
-        String notEnoughIndices =
+        final String notEnoughIndices =
             "v 0 0 0\n" +
             "v 1 0 0\n" +
             "v 0 1 0\n" +
@@ -199,7 +199,7 @@ public class OBJReaderTest {
         GeometryTestUtils.assertThrows(() -> {
             try {
                 reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION);
-            } catch (IOException exc) {
+            } catch (final IOException exc) {
                 throw new UncheckedIOException(exc);
             }
         }, NumberFormatException.class);
@@ -207,7 +207,7 @@ public class OBJReaderTest {
         GeometryTestUtils.assertThrows(() -> {
             try {
                 reader.readTriangleMesh(new StringReader(notEnoughIndices), TEST_PRECISION);
-            } catch (IOException exc) {
+            } catch (final IOException exc) {
                 throw new UncheckedIOException(exc);
             }
         }, IllegalArgumentException.class, "Invalid face definition: at least 3 fields required but found only 2");
@@ -216,22 +216,22 @@ public class OBJReaderTest {
     @Test
     public void testReadMesh_cubeMinusSphereFile() throws Exception {
         // arrange
-        URL url = getClass().getResource(CUBE_MINUS_SPHERE_MODEL);
-        File file = new File(url.toURI());
+        final URL url = getClass().getResource(CUBE_MINUS_SPHERE_MODEL);
+        final File file = new File(url.toURI());
 
         // act
-        TriangleMesh mesh = reader.readTriangleMesh(file, TEST_PRECISION);
+        final TriangleMesh mesh = reader.readTriangleMesh(file, TEST_PRECISION);
 
         // assert
         Assertions.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
         Assertions.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
 
-        RegionBSPTree3D tree = RegionBSPTree3D.partitionedRegionBuilder()
+        final RegionBSPTree3D tree = RegionBSPTree3D.partitionedRegionBuilder()
                 .insertAxisAlignedGrid(mesh.getBounds(), 1, TEST_PRECISION)
                 .insertBoundaries(mesh)
                 .build();
 
-        double eps = 1e-5;
+        final double eps = 1e-5;
         Assertions.assertEquals(0.11509505362599505, tree.getSize(), eps);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tree.getCentroid(), TEST_EPS);
     }
@@ -239,10 +239,10 @@ public class OBJReaderTest {
     @Test
     public void testReadMesh_cubeMinusSphereUrl() throws IOException {
         // arrange
-        URL url = getClass().getResource(CUBE_MINUS_SPHERE_MODEL);
+        final URL url = getClass().getResource(CUBE_MINUS_SPHERE_MODEL);
 
         // act
-        TriangleMesh mesh = reader.readTriangleMesh(url, TEST_PRECISION);
+        final TriangleMesh mesh = reader.readTriangleMesh(url, TEST_PRECISION);
 
         // assert
         Assertions.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());

@@ -53,7 +53,7 @@ public class OBJModelIOHandlerTest {
     @TempDir
     File anotherTempDir;
 
-    private OBJModelIOHandler handler = new OBJModelIOHandler();
+    private final OBJModelIOHandler handler = new OBJModelIOHandler();
 
     @Test
     public void testHandlesType() {
@@ -72,10 +72,10 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testRead_fromFile() throws Exception {
         // act
-        BoundarySource3D src = handler.read("obj", cubeMinusSphereFile(), TEST_PRECISION);
+        final BoundarySource3D src = handler.read("obj", cubeMinusSphereFile(), TEST_PRECISION);
 
         // assert
-        TriangleMesh mesh = (TriangleMesh) src;
+        final TriangleMesh mesh = (TriangleMesh) src;
         Assertions.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
         Assertions.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
     }
@@ -83,7 +83,7 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testRead_fromFile_unsupportedType() throws Exception {
         // arrange
-        File file = cubeMinusSphereFile();
+        final File file = cubeMinusSphereFile();
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -92,9 +92,9 @@ public class OBJModelIOHandlerTest {
     }
 
     @Test
-    public void testRead_fromFile_ioException() throws Exception {
+    public void testRead_fromFile_ioException() {
         // arrange
-        File file = new File("doesnotexist.obj");
+        final File file = new File("doesnotexist.obj");
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -105,13 +105,13 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testRead_fromStream() throws Exception {
         // act
-        BoundarySource3D src;
-        try (InputStream in = Files.newInputStream(cubeMinusSphereFile().toPath())) {
+        final BoundarySource3D src;
+        try (final InputStream in = Files.newInputStream(cubeMinusSphereFile().toPath())) {
             src = handler.read("obj", cubeMinusSphereFile(), TEST_PRECISION);
         }
 
         // assert
-        TriangleMesh mesh = (TriangleMesh) src;
+        final TriangleMesh mesh = (TriangleMesh) src;
         Assertions.assertEquals(CUBE_MINUS_SPHERE_VERTICES, mesh.getVertexCount());
         Assertions.assertEquals(CUBE_MINUS_SPHERE_FACES, mesh.getFaceCount());
     }
@@ -119,10 +119,10 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testRead_fromStream_unsupportedType() throws Exception {
         // arrange
-        File file = cubeMinusSphereFile();
+        final File file = cubeMinusSphereFile();
 
         // act/assert
-        try (InputStream in = Files.newInputStream(file.toPath())) {
+        try (final InputStream in = Files.newInputStream(file.toPath())) {
             GeometryTestUtils.assertThrows(() -> {
                 handler.read("stl", in, TEST_PRECISION);
             }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
@@ -130,7 +130,7 @@ public class OBJModelIOHandlerTest {
     }
 
     @Test
-    public void testRead_fromStream_ioException() throws Exception {
+    public void testRead_fromStream_ioException() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             handler.read("obj", new FailingInputStream(), TEST_PRECISION);
@@ -138,11 +138,11 @@ public class OBJModelIOHandlerTest {
     }
 
     @Test
-    public void testWrite_toFile() throws Exception {
+    public void testWrite_toFile() {
         // arrange
-        File out = new File(anotherTempDir, "out.obj");
+        final File out = new File(anotherTempDir, "out.obj");
 
-        BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -150,16 +150,16 @@ public class OBJModelIOHandlerTest {
         handler.write(src, "OBJ", out);
 
         // assert
-        TriangleMesh mesh = (TriangleMesh) handler.read("obj", out, TEST_PRECISION);
+        final TriangleMesh mesh = (TriangleMesh) handler.read("obj", out, TEST_PRECISION);
         Assertions.assertEquals(3, mesh.getVertexCount());
         Assertions.assertEquals(1, mesh.getFaceCount());
     }
 
     @Test
-    public void testWrite_toFile_unsupportedFormat() throws Exception {
+    public void testWrite_toFile_unsupportedFormat() {
         // arrange
-        File out = new File(anotherTempDir, "out.obj");
-        BoundarySource3D src = BoundarySource3D.from(
+        final File out = new File(anotherTempDir, "out.obj");
+        final BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -170,10 +170,10 @@ public class OBJModelIOHandlerTest {
     }
 
     @Test
-    public void testWrite_toFile_ioException() throws Exception {
+    public void testWrite_toFile_ioException() {
         // arrange
-        File out = new File(anotherTempDir, "notafile");
-        BoundarySource3D src = BoundarySource3D.from(
+        final File out = new File(anotherTempDir, "notafile");
+        final BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -184,11 +184,11 @@ public class OBJModelIOHandlerTest {
     }
 
     @Test
-    public void testWrite_toStream() throws Exception {
+    public void testWrite_toStream() {
         // arrange
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -196,7 +196,7 @@ public class OBJModelIOHandlerTest {
         handler.write(src, "OBJ", out);
 
         // assert
-        TriangleMesh mesh = (TriangleMesh) handler.read("obj", new ByteArrayInputStream(out.toByteArray()),
+        final TriangleMesh mesh = (TriangleMesh) handler.read("obj", new ByteArrayInputStream(out.toByteArray()),
                 TEST_PRECISION);
         Assertions.assertEquals(3, mesh.getVertexCount());
         Assertions.assertEquals(1, mesh.getFaceCount());
@@ -205,13 +205,13 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testWrite_toStream_unsupportedFormat() throws Exception {
         // arrange
-        File file = new File(anotherTempDir, "out.obj");
-        BoundarySource3D src = BoundarySource3D.from(
+        final File file = new File(anotherTempDir, "out.obj");
+        final BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
         // act/assert
-        try (OutputStream out = Files.newOutputStream(file.toPath())) {
+        try (final OutputStream out = Files.newOutputStream(file.toPath())) {
             GeometryTestUtils.assertThrows(() -> {
                 handler.write(src, "stl", out);
             }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
@@ -219,9 +219,9 @@ public class OBJModelIOHandlerTest {
     }
 
     @Test
-    public void testWrite_toStream_ioException() throws Exception {
+    public void testWrite_toStream_ioException() {
         // arrange
-        BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -232,7 +232,7 @@ public class OBJModelIOHandlerTest {
     }
 
     private static File cubeMinusSphereFile() throws Exception {
-        URL url = OBJModelIOHandlerTest.class.getResource(CUBE_MINUS_SPHERE_MODEL);
+        final URL url = OBJModelIOHandlerTest.class.getResource(CUBE_MINUS_SPHERE_MODEL);
         return new File(url.toURI());
     }
 
@@ -247,7 +247,7 @@ public class OBJModelIOHandlerTest {
     private static final class FailingOutputStream extends OutputStream {
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(final int b) throws IOException {
             throw new IOException("test");
         }
     }

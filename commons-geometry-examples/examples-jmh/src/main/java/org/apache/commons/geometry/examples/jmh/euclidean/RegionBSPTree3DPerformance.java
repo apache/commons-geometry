@@ -122,7 +122,7 @@ public class RegionBSPTree3DPerformance {
     public RegionBSPTree3D insertConvexWorstCase(final SphericalBoundaryInput input) {
         final RegionBSPTree3D tree = RegionBSPTree3D.empty();
 
-        for (PlaneConvexSubset boundary : input.getBoundaries()) {
+        for (final PlaneConvexSubset boundary : input.getBoundaries()) {
             tree.insert(boundary);
         }
 

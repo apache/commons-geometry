@@ -37,19 +37,19 @@ public final class BSPTreeXor {
      * @param args command arguments; if given, the first argument is used as the location of
      *      output folder
      */
-    public static void main(String[] args) {
-        File outputFolder = new File(args.length > 0 ? args[0] : ".");
-        BSPTreeSVGWriter svgWriter = new BSPTreeSVGWriter(Bounds2D.from(Vector2D.of(-8, -8), Vector2D.of(8, 8)));
+    public static void main(final String[] args) {
+        final File outputFolder = new File(args.length > 0 ? args[0] : ".");
+        final BSPTreeSVGWriter svgWriter = new BSPTreeSVGWriter(Bounds2D.from(Vector2D.of(-8, -8), Vector2D.of(8, 8)));
 
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        RegionBSPTree2D result = LinePath.fromVertexLoop(Arrays.asList(
+        final RegionBSPTree2D result = LinePath.fromVertexLoop(Arrays.asList(
                     Vector2D.of(2, 0),
                     Vector2D.of(-4, 3),
                     Vector2D.of(-4, -3)
                 ), precision).toTree();
 
-        RegionBSPTree2D other = LinePath.fromVertexLoop(Arrays.asList(
+        final RegionBSPTree2D other = LinePath.fromVertexLoop(Arrays.asList(
                 Vector2D.of(-2, 0),
                 Vector2D.of(4, -3),
                 Vector2D.of(4, 3)
