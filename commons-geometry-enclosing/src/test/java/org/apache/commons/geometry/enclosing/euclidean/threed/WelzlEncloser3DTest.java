@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
@@ -30,6 +29,8 @@ import org.apache.commons.rng.sampling.UnitSphereSampler;
 import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WelzlEncloser3DTest {
 
@@ -46,13 +47,8 @@ public class WelzlEncloser3DTest {
         final String msg = "Unable to generate enclosing ball: no points given";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            encloser.enclose(null);
-        }, IllegalArgumentException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            encloser.enclose(new ArrayList<Vector3D>());
-        }, IllegalArgumentException.class, msg);
+        assertThrows(IllegalArgumentException.class, () ->  encloser.enclose(null), msg);
+        assertThrows(IllegalArgumentException.class, () ->  encloser.enclose(new ArrayList<Vector3D>()), msg);
     }
 
     @Test

@@ -27,6 +27,8 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ReverseRay3DTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -67,9 +69,7 @@ public class ReverseRay3DTest {
         final Vector3D dir = Vector3D.of(1e-11, 0, 0);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.reverseRayFromPointAndDirection(pt, dir, TEST_PRECISION);
-        }, IllegalArgumentException.class, "Line direction cannot be zero");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.reverseRayFromPointAndDirection(pt, dir, TEST_PRECISION),  "Line direction cannot be zero");
     }
 
     @Test
@@ -104,17 +104,9 @@ public class ReverseRay3DTest {
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.reverseRayFromPoint(line, Vector3D.NaN);
-        }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.reverseRayFromPoint(line, Vector3D.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.reverseRayFromPoint(line, Vector3D.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.reverseRayFromPoint(line, Vector3D.NaN),  "Invalid reverse ray end location: NaN");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.reverseRayFromPoint(line, Vector3D.NEGATIVE_INFINITY),  "Invalid reverse ray end location: NaN");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.reverseRayFromPoint(line, Vector3D.POSITIVE_INFINITY),  "Invalid reverse ray end location: NaN");
     }
 
     @Test

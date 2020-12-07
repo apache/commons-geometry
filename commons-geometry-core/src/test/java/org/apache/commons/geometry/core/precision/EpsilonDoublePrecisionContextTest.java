@@ -20,6 +20,8 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class EpsilonDoublePrecisionContextTest {
 
     @Test
@@ -38,21 +40,11 @@ public class EpsilonDoublePrecisionContextTest {
     @Test
     public void testInvalidEpsilonValues() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            new EpsilonDoublePrecisionContext(-1.0);
-        }, IllegalArgumentException.class);
 
-        GeometryTestUtils.assertThrows(() -> {
-            new EpsilonDoublePrecisionContext(Double.NaN);
-        }, IllegalArgumentException.class, "Invalid epsilon value: NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            new EpsilonDoublePrecisionContext(Double.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid epsilon value: Infinity");
-
-        GeometryTestUtils.assertThrows(() -> {
-            new EpsilonDoublePrecisionContext(Double.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid epsilon value: -Infinity");
+        assertThrows(IllegalArgumentException.class, () ->  new EpsilonDoublePrecisionContext(-1.0));
+        assertThrows(IllegalArgumentException.class, () ->  new EpsilonDoublePrecisionContext(Double.NaN), "Invalid epsilon value: NaN");
+        assertThrows(IllegalArgumentException.class, () ->  new EpsilonDoublePrecisionContext(Double.POSITIVE_INFINITY), "Invalid epsilon value: Infinity");
+        assertThrows(IllegalArgumentException.class, () ->  new EpsilonDoublePrecisionContext(Double.NEGATIVE_INFINITY), "Invalid epsilon value: -Infinity");
     }
 
     @Test

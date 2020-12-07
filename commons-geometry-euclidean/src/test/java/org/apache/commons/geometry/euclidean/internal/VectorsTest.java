@@ -16,12 +16,13 @@
  */
 package org.apache.commons.geometry.euclidean.internal;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class VectorsTest {
 
@@ -53,14 +54,10 @@ public class VectorsTest {
         Assertions.assertEquals(-23.12, Vectors.checkedNorm(-23.12), EPS);
         Assertions.assertEquals(-2e-12, Vectors.checkedNorm(-2e-12), EPS);
 
-        GeometryTestUtils.assertThrows(() -> Vectors.checkedNorm(0.0),
-                IllegalArgumentException.class, "Illegal norm: 0.0");
-        GeometryTestUtils.assertThrows(() -> Vectors.checkedNorm(Double.NaN),
-                IllegalArgumentException.class, "Illegal norm: NaN");
-        GeometryTestUtils.assertThrows(() -> Vectors.checkedNorm(Double.POSITIVE_INFINITY),
-                IllegalArgumentException.class, "Illegal norm: Infinity");
-        GeometryTestUtils.assertThrows(() -> Vectors.checkedNorm(Double.NEGATIVE_INFINITY),
-                IllegalArgumentException.class, "Illegal norm: -Infinity");
+        assertThrows(IllegalArgumentException.class, () ->  Vectors.checkedNorm(0.0),  "Illegal norm: 0.0");
+        assertThrows(IllegalArgumentException.class, () ->  Vectors.checkedNorm(Double.NaN),  "Illegal norm: NaN");
+        assertThrows(IllegalArgumentException.class, () ->  Vectors.checkedNorm(Double.POSITIVE_INFINITY),  "Illegal norm: Infinity");
+        assertThrows(IllegalArgumentException.class, () ->  Vectors.checkedNorm(Double.NEGATIVE_INFINITY),  "Illegal norm: -Infinity");
     }
 
     @Test
@@ -74,14 +71,10 @@ public class VectorsTest {
         Assertions.assertEquals(23.12, Vectors.checkedNorm(Vector1D.of(-23.12)), EPS);
         Assertions.assertEquals(2e-12, Vectors.checkedNorm(Vector1D.of(-2e-12)), EPS);
 
-        GeometryTestUtils.assertThrows(() -> Vectors.checkedNorm(Vector3D.ZERO),
-                IllegalArgumentException.class, "Illegal norm: 0.0");
-        GeometryTestUtils.assertThrows(() -> Vectors.checkedNorm(Vector3D.NaN),
-                IllegalArgumentException.class, "Illegal norm: NaN");
-        GeometryTestUtils.assertThrows(() -> Vectors.checkedNorm(Vector3D.POSITIVE_INFINITY),
-                IllegalArgumentException.class, "Illegal norm: NaN");
-        GeometryTestUtils.assertThrows(() -> Vectors.checkedNorm(Vector3D.NEGATIVE_INFINITY),
-                IllegalArgumentException.class, "Illegal norm: NaN");
+        assertThrows(IllegalArgumentException.class, () ->  Vectors.checkedNorm(Vector3D.ZERO),  "Illegal norm: 0.0");
+        assertThrows(IllegalArgumentException.class, () ->  Vectors.checkedNorm(Vector3D.NaN),  "Illegal norm: NaN");
+        assertThrows(IllegalArgumentException.class, () ->  Vectors.checkedNorm(Vector3D.POSITIVE_INFINITY),  "Illegal norm: NaN");
+        assertThrows(IllegalArgumentException.class, () ->  Vectors.checkedNorm(Vector3D.NEGATIVE_INFINITY),  "Illegal norm: NaN");
     }
 
     @Test

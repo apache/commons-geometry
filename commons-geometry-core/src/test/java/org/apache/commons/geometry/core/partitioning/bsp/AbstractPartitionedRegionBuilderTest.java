@@ -19,7 +19,6 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
@@ -30,17 +29,16 @@ import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class AbstractPartitionedRegionBuilderTest {
 
     @Test
     public void testCtor_invalidTree() {
         // arrange
         final TestRegionBSPTree tree = new TestRegionBSPTree(true);
-
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            new TestRegionBuilder(tree);
-        }, IllegalArgumentException.class, "Tree must be empty");
+        assertThrows(IllegalArgumentException.class, () -> new TestRegionBuilder(tree), "Tree must be empty");
     }
 
     @Test
@@ -65,9 +63,7 @@ public class AbstractPartitionedRegionBuilderTest {
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            builder.insertPartition(new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0)).span());
-        }, IllegalStateException.class, "Cannot insert partitions after boundaries have been inserted");
+        assertThrows(IllegalStateException.class, () -> builder.insertPartition(new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0)).span()), "Cannot insert partitions after boundaries have been inserted");
     }
 
     @Test

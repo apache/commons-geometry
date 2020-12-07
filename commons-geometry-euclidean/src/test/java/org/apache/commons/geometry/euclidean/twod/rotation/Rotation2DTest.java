@@ -32,6 +32,8 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class Rotation2DTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -150,20 +152,18 @@ public class Rotation2DTest {
         final double max = 8;
         final double step = 1;
 
-        EuclideanTestUtils.permuteSkipZero(min, max, step, (ux, uy) -> {
-            EuclideanTestUtils.permuteSkipZero(min, max, step, (vx, vy) -> {
+        EuclideanTestUtils.permuteSkipZero(min, max, step, (ux, uy) -> EuclideanTestUtils.permuteSkipZero(min, max, step, (vx, vy) -> {
 
-                final Vector2D u = Vector2D.of(ux, uy);
-                final Vector2D v = Vector2D.of(vx, vy);
+            final Vector2D u = Vector2D.of(ux, uy);
+            final Vector2D v = Vector2D.of(vx, vy);
 
-                // act
-                final Rotation2D r = Rotation2D.createVectorRotation(u, v);
+            // act
+            final Rotation2D r = Rotation2D.createVectorRotation(u, v);
 
-                // assert
-                EuclideanTestUtils.assertCoordinatesEqual(v.normalize(), r.apply(u).normalize(), TEST_EPS); // u -> v
-                Assertions.assertEquals(0.0, v.dot(r.apply(u.orthogonal())), TEST_EPS); // preserves orthogonality
-            });
-        });
+            // assert
+            EuclideanTestUtils.assertCoordinatesEqual(v.normalize(), r.apply(u).normalize(), TEST_EPS); // u -> v
+            Assertions.assertEquals(0.0, v.dot(r.apply(u.orthogonal())), TEST_EPS); // preserves orthogonality
+        }));
     }
 
     @Test
@@ -177,33 +177,14 @@ public class Rotation2DTest {
         final Vector2D negInf = Vector2D.POSITIVE_INFINITY;
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(zero, vec);
-        }, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(vec, zero);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(nan, vec);
-        }, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(vec, nan);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(posInf, vec);
-        }, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(vec, negInf);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(zero, nan);
-        }, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(negInf, posInf);
-        }, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(zero, vec));
+        assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(vec, zero));
+        assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(nan, vec));
+        assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(vec, nan));
+        assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(posInf, vec));
+        assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(vec, negInf));
+        assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(zero, nan));
+        assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(negInf, posInf));
     }
 
     @Test
@@ -278,9 +259,7 @@ public class Rotation2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, transformFn.apply(transform, Vector2D.ZERO), TEST_EPS);
 
         // check a variety of non-zero points
-        EuclideanTestUtils.permuteSkipZero(-2, -2, 1, (x, y) -> {
-            checkRotatePoint(Vector2D.of(x, y), factory, transformFn);
-        });
+        EuclideanTestUtils.permuteSkipZero(-2, -2, 1, (x, y) -> checkRotatePoint(Vector2D.of(x, y), factory, transformFn));
     }
 
     /** Check a rotation transform for consistency when transforming a single point against a

@@ -28,6 +28,8 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class EmbeddingPlaneTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -59,24 +61,11 @@ public class EmbeddingPlaneTest {
         // act/assert
 
         // identical vectors
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
-        }, IllegalArgumentException.class);
 
-        // zero vector
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.ZERO, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        // collinear vectors
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 2), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        // collinear vectors - reversed
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, -2), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Planes.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () -> Planes.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.ZERO, TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () -> Planes.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 2), TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () -> Planes.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, -2), TEST_PRECISION));
     }
 
     @Test

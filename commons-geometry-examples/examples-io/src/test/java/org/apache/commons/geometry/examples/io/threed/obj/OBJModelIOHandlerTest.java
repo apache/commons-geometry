@@ -26,7 +26,6 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
@@ -36,6 +35,8 @@ import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OBJModelIOHandlerTest {
 
@@ -86,9 +87,7 @@ public class OBJModelIOHandlerTest {
         File file = cubeMinusSphereFile();
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            handler.read("stl", file, TEST_PRECISION);
-        }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
+        assertThrows(IllegalArgumentException.class, () -> handler.read("stl", file, TEST_PRECISION),  "File type is not supported by this handler: stl");
     }
 
     @Test
@@ -97,9 +96,7 @@ public class OBJModelIOHandlerTest {
         File file = new File("doesnotexist.obj");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            handler.read("obj", file, TEST_PRECISION);
-        }, UncheckedIOException.class);
+        assertThrows(UncheckedIOException.class, () -> handler.read("obj", file, TEST_PRECISION));
     }
 
     @Test
@@ -123,18 +120,14 @@ public class OBJModelIOHandlerTest {
 
         // act/assert
         try (InputStream in = Files.newInputStream(file.toPath())) {
-            GeometryTestUtils.assertThrows(() -> {
-                handler.read("stl", in, TEST_PRECISION);
-            }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
+            assertThrows(IllegalArgumentException.class, () -> handler.read("stl", in, TEST_PRECISION),  "File type is not supported by this handler: stl");
         }
     }
 
     @Test
     public void testRead_fromStream_ioException() throws Exception {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            handler.read("obj", new FailingInputStream(), TEST_PRECISION);
-        }, UncheckedIOException.class, "IOException: test");
+        assertThrows(UncheckedIOException.class, () -> handler.read("obj", new FailingInputStream(), TEST_PRECISION),  "IOException: test");
     }
 
     @Test
@@ -164,9 +157,7 @@ public class OBJModelIOHandlerTest {
             );
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            handler.write(src, "stl", out);
-        }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
+        assertThrows(IllegalArgumentException.class, () -> handler.write(src, "stl", out),  "File type is not supported by this handler: stl");
     }
 
     @Test
@@ -178,9 +169,7 @@ public class OBJModelIOHandlerTest {
             );
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            handler.write(src, "OBJ", out);
-        }, UncheckedIOException.class);
+        assertThrows(UncheckedIOException.class, () -> handler.write(src, "OBJ", out));
     }
 
     @Test
@@ -212,9 +201,7 @@ public class OBJModelIOHandlerTest {
 
         // act/assert
         try (OutputStream out = Files.newOutputStream(file.toPath())) {
-            GeometryTestUtils.assertThrows(() -> {
-                handler.write(src, "stl", out);
-            }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
+            assertThrows(IllegalArgumentException.class, () -> handler.write(src, "stl", out),  "File type is not supported by this handler: stl");
         }
     }
 
@@ -226,9 +213,7 @@ public class OBJModelIOHandlerTest {
             );
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            handler.write(src, "OBJ", new FailingOutputStream());
-        }, UncheckedIOException.class, "IOException: test");
+        assertThrows(UncheckedIOException.class, () -> handler.write(src, "OBJ", new FailingOutputStream()),  "IOException: test");
     }
 
     private static File cubeMinusSphereFile() throws Exception {

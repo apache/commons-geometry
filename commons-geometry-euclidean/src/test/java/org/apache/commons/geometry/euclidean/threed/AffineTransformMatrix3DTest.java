@@ -29,6 +29,8 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class AffineTransformMatrix3DTest {
 
     private static final double EPS = 1e-12;
@@ -57,8 +59,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testOf_invalidDimensions() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> AffineTransformMatrix3D.of(1, 2),
-                IllegalArgumentException.class, "Dimension mismatch: 2 != 12");
+        assertThrows(IllegalArgumentException.class, () ->  AffineTransformMatrix3D.of(1, 2),  "Dimension mismatch: 2 != 12");
     }
 
     @Test
@@ -126,9 +127,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testFrom_invalidFunction() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            AffineTransformMatrix3D.from(v -> v.multiply(0));
-        }, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix3D.from(v -> v.multiply(0)));
     }
 
     @Test
@@ -663,10 +662,8 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testApplyDirection_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> AffineTransformMatrix3D.createScale(1, 0, 1).applyDirection(Vector3D.Unit.PLUS_Y),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> AffineTransformMatrix3D.createScale(2).applyDirection(Vector3D.ZERO),
-                IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix3D.createScale(1, 0, 1).applyDirection(Vector3D.Unit.PLUS_Y));
+        assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix3D.createScale(2).applyDirection(Vector3D.ZERO));
     }
 
     @Test
@@ -974,54 +971,34 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testInverse_nonInvertible() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            AffineTransformMatrix3D.of(
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0).inverse();
-        }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is 0.0");
-
-        GeometryTestUtils.assertThrows(() -> {
-            AffineTransformMatrix3D.of(
-                    1, 0, 0, 0,
-                    0, 1, 0, 0,
-                    0, 0, Double.NaN, 0).inverse();
-        }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            AffineTransformMatrix3D.of(
-                    1, 0, 0, 0,
-                    0, Double.NEGATIVE_INFINITY, 0, 0,
-                    0, 0, 1, 0).inverse();
-        }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            AffineTransformMatrix3D.of(
-                    Double.POSITIVE_INFINITY, 0, 0, 0,
-                    0, 1, 0, 0,
-                    0, 0, 1, 0).inverse();
-        }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            AffineTransformMatrix3D.of(
-                    1, 0, 0, Double.NaN,
-                    0, 1, 0, 0,
-                    0, 0, 1, 0).inverse();
-        }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            AffineTransformMatrix3D.of(
-                    1, 0, 0, 0,
-                    0, 1, 0, Double.POSITIVE_INFINITY,
-                    0, 0, 1, 0).inverse();
-        }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: Infinity");
-
-        GeometryTestUtils.assertThrows(() -> {
-            AffineTransformMatrix3D.of(
-                    1, 0, 0, 0,
-                    0, 1, 0, 0,
-                    0, 0, 1, Double.NEGATIVE_INFINITY).inverse();
-        }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: -Infinity");
+        assertThrows(IllegalStateException.class, () ->  AffineTransformMatrix3D.of(
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0).inverse(),  "Matrix is not invertible; matrix determinant is 0.0");
+        assertThrows(IllegalStateException.class, () ->  AffineTransformMatrix3D.of(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, Double.NaN, 0).inverse(),  "Matrix is not invertible; matrix determinant is NaN");
+        assertThrows(IllegalStateException.class, () ->  AffineTransformMatrix3D.of(
+                1, 0, 0, 0,
+                0, Double.NEGATIVE_INFINITY, 0, 0,
+                0, 0, 1, 0).inverse(),  "Matrix is not invertible; matrix determinant is NaN");
+        assertThrows(IllegalStateException.class, () ->  AffineTransformMatrix3D.of(
+                Double.POSITIVE_INFINITY, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0).inverse(),  "Matrix is not invertible; matrix determinant is NaN");
+        assertThrows(IllegalStateException.class, () ->  AffineTransformMatrix3D.of(
+                1, 0, 0, Double.NaN,
+                0, 1, 0, 0,
+                0, 0, 1, 0).inverse(),  "Matrix is not invertible; invalid matrix element: NaN");
+        assertThrows(IllegalStateException.class, () ->  AffineTransformMatrix3D.of(
+                1, 0, 0, 0,
+                0, 1, 0, Double.POSITIVE_INFINITY,
+                0, 0, 1, 0).inverse(),  "Matrix is not invertible; invalid matrix element: Infinity");
+        assertThrows(IllegalStateException.class, () ->  AffineTransformMatrix3D.of(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, Double.NEGATIVE_INFINITY).inverse(),  "Matrix is not invertible; invalid matrix element: -Infinity");
     }
 
     @Test
@@ -1121,9 +1098,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testNormalTransform_nonInvertible() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            AffineTransformMatrix3D.createScale(0).normalTransform();
-        }, IllegalStateException.class);
+        assertThrows(IllegalStateException.class, () -> AffineTransformMatrix3D.createScale(0).normalTransform());
     }
 
     @Test

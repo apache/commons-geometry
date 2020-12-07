@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
@@ -43,6 +42,8 @@ import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AbstractRegionBSPTreeTest {
 
@@ -317,10 +318,8 @@ public class AbstractRegionBSPTreeTest {
     @Test
     public void testSetLocation_invalidArgs() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> root.setLocation(null),
-                IllegalArgumentException.class, "Invalid node location: null");
-        GeometryTestUtils.assertThrows(() -> root.setLocation(RegionLocation.BOUNDARY),
-                IllegalArgumentException.class, "Invalid node location: BOUNDARY");
+        assertThrows(IllegalArgumentException.class, () ->  root.setLocation(null), "Invalid  node location: null");
+        assertThrows(IllegalArgumentException.class, () ->  root.setLocation(RegionLocation.BOUNDARY), "Invalid node location: BOUNDARY");
     }
 
     @Test

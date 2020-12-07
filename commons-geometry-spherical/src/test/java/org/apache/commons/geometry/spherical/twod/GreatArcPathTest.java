@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -33,6 +32,8 @@ import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GreatArcPathTest {
 
@@ -518,77 +519,56 @@ public class GreatArcPathTest {
     @Test
     public void testBuilder_points_noPrecisionGiven() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            GreatArcPath.builder(null)
+        assertThrows(IllegalStateException.class, () -> GreatArcPath.builder(null)
                 .append(Point2S.PLUS_I)
-                .append(Point2S.PLUS_J);
-        }, IllegalStateException.class, "Unable to create arc: no point precision specified");
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatArcPath.builder(null)
+                .append(Point2S.PLUS_J),  "Unable to create arc: no point precision specified");
+        assertThrows(IllegalStateException.class, () -> GreatArcPath.builder(null)
                 .prepend(Point2S.PLUS_I)
-                .prepend(Point2S.PLUS_J);
-        }, IllegalStateException.class, "Unable to create arc: no point precision specified");
+                .prepend(Point2S.PLUS_J),  "Unable to create arc: no point precision specified");
     }
 
     @Test
     public void testBuilder_arcsNotConnected() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            GreatArcPath.builder(TEST_PRECISION)
+        assertThrows(IllegalStateException.class, () ->  GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)
                 .append(Point2S.PLUS_J)
-                .append(GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION));
-        }, IllegalStateException.class, Pattern.compile("^Path arcs are not connected.*"));
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatArcPath.builder(TEST_PRECISION)
+                .append(GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION)));
+        assertThrows(IllegalStateException.class, () ->  GreatArcPath.builder(TEST_PRECISION)
                 .prepend(Point2S.PLUS_I)
                 .prepend(Point2S.PLUS_J)
-                .prepend(GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION));
-        }, IllegalStateException.class, Pattern.compile("^Path arcs are not connected.*"));
+                .prepend(GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION)));
+
     }
 
     @Test
     public void testBuilder_addToFullArc() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            GreatArcPath.builder(TEST_PRECISION)
+        assertThrows(IllegalStateException.class, () ->  GreatArcPath.builder(TEST_PRECISION)
                 .append(GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
-                .append(Point2S.PLUS_J);
-        }, IllegalStateException.class, Pattern.compile("^Cannot add point .* after full arc.*"));
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatArcPath.builder(TEST_PRECISION)
+                .append(Point2S.PLUS_J));
+        assertThrows(IllegalStateException.class, () ->  GreatArcPath.builder(TEST_PRECISION)
                 .prepend(GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
-                .prepend(Point2S.PLUS_J);
-        }, IllegalStateException.class, Pattern.compile("^Cannot add point .* before full arc.*"));
+                .prepend(Point2S.PLUS_J));
     }
 
     @Test
     public void testBuilder_onlySinglePointGiven() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            GreatArcPath.builder(TEST_PRECISION)
+        assertThrows(IllegalStateException.class, () ->  GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_J)
-                .build();
-        }, IllegalStateException.class, Pattern.compile("^Unable to create path; only a single point provided.*"));
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatArcPath.builder(TEST_PRECISION)
+                .build());
+        assertThrows(IllegalStateException.class, () ->  GreatArcPath.builder(TEST_PRECISION)
                 .prepend(Point2S.PLUS_J)
-                .build();
-        }, IllegalStateException.class,  Pattern.compile("^Unable to create path; only a single point provided.*"));
+                .build());
     }
 
     @Test
     public void testBuilder_cannotClose() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            GreatArcPath.builder(TEST_PRECISION)
+        assertThrows(IllegalStateException.class, () -> GreatArcPath.builder(TEST_PRECISION)
                 .append(GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
-                .close();
-        }, IllegalStateException.class, "Unable to close path: path is full");
+                .close(),  "Unable to close path: path is full");
     }
 
     @Test

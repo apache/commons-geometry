@@ -31,6 +31,8 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class OrientedPointTest {
 
     private static final double TEST_EPS = 1e-15;
@@ -112,9 +114,7 @@ public class OrientedPointTest {
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(Vector1D.of(2.0), TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> pt.transform(zeroScale),
-            IllegalArgumentException.class, "Oriented point direction cannot be zero");
+        assertThrows(IllegalArgumentException.class, () ->  pt.transform(zeroScale),  "Oriented point direction cannot be zero");
     }
 
     @Test
@@ -364,12 +364,8 @@ public class OrientedPointTest {
         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(0.1);
 
         // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(0.09), precision),
-            IllegalArgumentException.class, "Oriented point direction cannot be zero");
-        GeometryTestUtils.assertThrows(
-            () -> OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(-0.09), precision),
-            IllegalArgumentException.class, "Oriented point direction cannot be zero");
+        assertThrows(IllegalArgumentException.class, () ->  OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(0.09), precision),  "Oriented point direction cannot be zero");
+        assertThrows(IllegalArgumentException.class, () ->  OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(-0.09), precision),  "Oriented point direction cannot be zero");
     }
 
     @Test

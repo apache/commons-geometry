@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
@@ -29,6 +28,8 @@ import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GreatCircleTest {
 
@@ -92,36 +93,17 @@ public class GreatCircleTest {
         final Point2S p2 = Point2S.of(PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(p1, p1, TEST_PRECISION);
-        }, IllegalArgumentException.class, Pattern.compile("^.*points are equal$"));
+        assertThrows(IllegalArgumentException.class, () ->  GreatCircles.fromPoints(p1, p1, TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () ->  GreatCircles.fromPoints(p1, Point2S.of(1e-12, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () ->  GreatCircles.fromPoints(
+                Point2S.from(Vector3D.Unit.PLUS_X),
+                Point2S.from(Vector3D.Unit.MINUS_X),
+                TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () ->  GreatCircles.fromPoints(p1, Point2S.NaN, TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () ->  GreatCircles.fromPoints(Point2S.NaN, p2, TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () ->  GreatCircles.fromPoints(p1, Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () ->  GreatCircles.fromPoints(Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), p2, TEST_PRECISION));
 
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(p1, Point2S.of(1e-12, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
-        }, IllegalArgumentException.class, Pattern.compile("^.*points are equal$"));
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(
-                    Point2S.from(Vector3D.Unit.PLUS_X),
-                    Point2S.from(Vector3D.Unit.MINUS_X),
-                    TEST_PRECISION);
-        }, IllegalArgumentException.class, Pattern.compile("^.*points are antipodal$"));
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(p1, Point2S.NaN, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(Point2S.NaN, p2, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(p1, Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), p2, TEST_PRECISION);
-        }, IllegalArgumentException.class);
     }
 
     @Test

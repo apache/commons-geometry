@@ -29,6 +29,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Line3DTest {
@@ -65,13 +66,8 @@ public class Line3DTest {
     @Test
     public void testFromPointAndDirection_illegalDirectionNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.ZERO, TEST_PRECISION);
-        }, IllegalArgumentException.class, "Line direction cannot be zero");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1e-12, 1e-12, 1e-12), TEST_PRECISION);
-        }, IllegalArgumentException.class, "Line direction cannot be zero");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.ZERO, TEST_PRECISION),  "Line direction cannot be zero");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1e-12, 1e-12, 1e-12), TEST_PRECISION),  "Line direction cannot be zero");
     }
 
     @Test

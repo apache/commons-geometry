@@ -30,6 +30,8 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class LineConvexSubset3DTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -194,21 +196,10 @@ public class LineConvexSubset3DTest {
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.subsetFromInterval(line, Double.NaN, 0);
-        }, IllegalArgumentException.class, "Invalid line convex subset interval: NaN, 0.0");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.subsetFromInterval(line, 0, Double.NaN);
-        }, IllegalArgumentException.class, "Invalid line convex subset interval: 0.0, NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.subsetFromInterval(line, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid line convex subset interval: Infinity, Infinity");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines3D.subsetFromInterval(line, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid line convex subset interval: -Infinity, -Infinity");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.subsetFromInterval(line, Double.NaN, 0),  "Invalid line convex subset interval: NaN, 0.0");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.subsetFromInterval(line, 0, Double.NaN),  "Invalid line convex subset interval: 0.0, NaN");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.subsetFromInterval(line, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY),  "Invalid line convex subset interval: Infinity, Infinity");
+        assertThrows(IllegalArgumentException.class, () ->  Lines3D.subsetFromInterval(line, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY),  "Invalid line convex subset interval: -Infinity, -Infinity");
     }
 
     @Test

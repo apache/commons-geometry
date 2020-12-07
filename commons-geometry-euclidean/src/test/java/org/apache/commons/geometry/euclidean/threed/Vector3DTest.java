@@ -62,10 +62,10 @@ public class Vector3DTest {
     @Test
     public void testConstants_normalize() {
         // act/assert
-        GeometryTestUtils.assertThrows(Vector3D.ZERO::normalize, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(Vector3D.NaN::normalize, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(Vector3D.POSITIVE_INFINITY::normalize, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(Vector3D.NEGATIVE_INFINITY::normalize, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, Vector3D.ZERO::normalize);
+        assertThrows(IllegalArgumentException.class, Vector3D.NaN::normalize);
+        assertThrows(IllegalArgumentException.class, Vector3D.POSITIVE_INFINITY::normalize);
+        assertThrows(IllegalArgumentException.class, Vector3D.NEGATIVE_INFINITY::normalize);
 
         Assertions.assertSame(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_X.normalize());
         Assertions.assertSame(Vector3D.Unit.MINUS_X, Vector3D.Unit.MINUS_X.normalize());
@@ -268,14 +268,10 @@ public class Vector3DTest {
     @Test
     public void testWithNorm_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.withNorm(2.0),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.withNorm(2.0),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.withNorm(2.0),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.withNorm(2.0),
-                IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () ->  Vector3D.ZERO.withNorm(2.0));
+        assertThrows(IllegalArgumentException.class, () ->  Vector3D.NaN.withNorm(2.0));
+        assertThrows(IllegalArgumentException.class, () ->  Vector3D.POSITIVE_INFINITY.withNorm(2.0));
+        assertThrows(IllegalArgumentException.class, () ->  Vector3D.NEGATIVE_INFINITY.withNorm(2.0));
     }
 
     @Test
@@ -407,10 +403,10 @@ public class Vector3DTest {
     @Test
     public void testNormalize_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(Vector3D.ZERO::normalize, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(Vector3D.NaN::normalize, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(Vector3D.POSITIVE_INFINITY::normalize, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(Vector3D.NEGATIVE_INFINITY::normalize, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, Vector3D.ZERO::normalize);
+        assertThrows(IllegalArgumentException.class, Vector3D.NaN::normalize);
+        assertThrows(IllegalArgumentException.class, Vector3D.POSITIVE_INFINITY::normalize);
+        assertThrows(IllegalArgumentException.class, Vector3D.NEGATIVE_INFINITY::normalize);
     }
 
     @Test
@@ -442,10 +438,10 @@ public class Vector3DTest {
     @Test
     public void testOrthogonal_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(Vector3D.ZERO::orthogonal, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(Vector3D.NaN::orthogonal, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(Vector3D.POSITIVE_INFINITY::orthogonal, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(Vector3D.NEGATIVE_INFINITY::orthogonal, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, Vector3D.ZERO::orthogonal);
+        assertThrows(IllegalArgumentException.class, Vector3D.NaN::orthogonal);
+        assertThrows(IllegalArgumentException.class, Vector3D.POSITIVE_INFINITY::orthogonal);
+        assertThrows(IllegalArgumentException.class, Vector3D.NEGATIVE_INFINITY::orthogonal);
     }
 
     @Test
@@ -464,36 +460,24 @@ public class Vector3DTest {
     @Test
     public void testOrthogonal_givenDirection_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.orthogonal(Vector3D.Unit.PLUS_X),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.orthogonal(Vector3D.Unit.PLUS_X),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.orthogonal(Vector3D.Unit.PLUS_X),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.orthogonal(Vector3D.Unit.PLUS_X),
-                IllegalArgumentException.class);
 
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.ZERO),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.NaN),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.POSITIVE_INFINITY),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.NEGATIVE_INFINITY),
-                IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.ZERO.orthogonal(Vector3D.Unit.PLUS_X));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.NaN.orthogonal(Vector3D.Unit.PLUS_X));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.POSITIVE_INFINITY.orthogonal(Vector3D.Unit.PLUS_X));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.NEGATIVE_INFINITY.orthogonal(Vector3D.Unit.PLUS_X));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.NaN));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.NEGATIVE_INFINITY));
     }
 
     @Test
     public void testOrthogonal_givenDirection_directionIsCollinear() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.Unit.PLUS_X),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.Unit.MINUS_X),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.of(1.0, 1.0, 1.0).orthogonal(Vector3D.of(2.0, 2.0, 2.0)),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.of(-1.01, -1.01, -1.01).orthogonal(Vector3D.of(20.1, 20.1, 20.1)),
-                IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.Unit.PLUS_X));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.Unit.MINUS_X));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.of(1.0, 1.0, 1.0).orthogonal(Vector3D.of(2.0, 2.0, 2.0)));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.of(-1.01, -1.01, -1.01).orthogonal(Vector3D.of(20.1, 20.1, 20.1)));
     }
 
     @Test
@@ -524,23 +508,14 @@ public class Vector3DTest {
         final Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.angle(v),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.angle(v),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.angle(v),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.angle(v),
-                IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> v.angle(Vector3D.ZERO),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> v.angle(Vector3D.NaN),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> v.angle(Vector3D.POSITIVE_INFINITY),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> v.angle(Vector3D.NEGATIVE_INFINITY),
-                IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.ZERO.angle(v));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.NaN.angle(v));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.POSITIVE_INFINITY.angle(v));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.NEGATIVE_INFINITY.angle(v));
+        assertThrows(IllegalArgumentException.class, () -> v.angle(Vector3D.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> v.angle(Vector3D.NaN));
+        assertThrows(IllegalArgumentException.class, () -> v.angle(Vector3D.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> v.angle(Vector3D.NEGATIVE_INFINITY));
     }
 
     @Test
@@ -796,14 +771,10 @@ public class Vector3DTest {
         final Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> v.project(Vector3D.ZERO),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> v.project(Vector3D.NaN),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> v.project(Vector3D.POSITIVE_INFINITY),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> v.project(Vector3D.NEGATIVE_INFINITY),
-                IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> v.project(Vector3D.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> v.project(Vector3D.NaN));
+        assertThrows(IllegalArgumentException.class, () -> v.project(Vector3D.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> v.project(Vector3D.NEGATIVE_INFINITY));
     }
 
     @Test
@@ -842,14 +813,10 @@ public class Vector3DTest {
         final Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> v.reject(Vector3D.ZERO),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> v.reject(Vector3D.NaN),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> v.reject(Vector3D.POSITIVE_INFINITY),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> v.reject(Vector3D.NEGATIVE_INFINITY),
-                IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> v.reject(Vector3D.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> v.reject(Vector3D.NaN));
+        assertThrows(IllegalArgumentException.class, () -> v.reject(Vector3D.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> v.reject(Vector3D.NEGATIVE_INFINITY));
     }
 
     @Test
@@ -943,16 +910,11 @@ public class Vector3DTest {
         final Vector3D p = Vector3D.of(1, 2, 3);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.directionTo(Vector3D.ZERO),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> p.directionTo(p),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> p.directionTo(Vector3D.NaN),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.directionTo(p),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> p.directionTo(Vector3D.POSITIVE_INFINITY),
-                IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.ZERO.directionTo(Vector3D.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> p.directionTo(p));
+        assertThrows(IllegalArgumentException.class, () -> p.directionTo(Vector3D.NaN));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.NEGATIVE_INFINITY.directionTo(p));
+        assertThrows(IllegalArgumentException.class, () -> p.directionTo(Vector3D.POSITIVE_INFINITY));
     }
 
     @Test
@@ -1205,14 +1167,10 @@ public class Vector3DTest {
 
     @Test
     public void testUnitFrom_static_illegalNorm() {
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(0.0, 0.0, 0.0),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(Double.NaN, 1.0, 1.0),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(1.0, Double.NEGATIVE_INFINITY, 1.0),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(1.0, 1.0, Double.POSITIVE_INFINITY),
-                IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.from(0.0, 0.0, 0.0));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.from(Double.NaN, 1.0, 1.0));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.from(1.0, Double.NEGATIVE_INFINITY, 1.0));
+        assertThrows(IllegalArgumentException.class, () -> Vector3D.Unit.from(1.0, 1.0, Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -1234,9 +1192,7 @@ public class Vector3DTest {
         final String msg = "Cannot compute vector max: no vectors given";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Vector3D.max(new ArrayList<>());
-        }, IllegalArgumentException.class, msg);
+        assertThrows(IllegalArgumentException.class, () ->  Vector3D.max(new ArrayList<>()),  msg);
     }
 
     @Test
@@ -1258,9 +1214,7 @@ public class Vector3DTest {
         final String msg = "Cannot compute vector min: no vectors given";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Vector3D.min(new ArrayList<>());
-        }, IllegalArgumentException.class, msg);
+        assertThrows(IllegalArgumentException.class, () ->  Vector3D.min(new ArrayList<>()),  msg);
     }
 
     @Test
@@ -1287,9 +1241,7 @@ public class Vector3DTest {
         final String msg = "Cannot compute centroid: no points given";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Vector3D.centroid(new ArrayList<>());
-        }, IllegalArgumentException.class, msg);
+        assertThrows(IllegalArgumentException.class, () ->  Vector3D.centroid(new ArrayList<>()),  msg);
     }
 
     @Test

@@ -18,13 +18,10 @@ package org.apache.commons.geometry.examples.io.threed.obj;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
-import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
@@ -37,6 +34,8 @@ import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.geometry.euclidean.threed.shape.Sphere;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OBJWriterTest {
 
@@ -208,13 +207,8 @@ public class OBJWriterTest {
         StringWriter writer = new StringWriter();
 
         // act
-        GeometryTestUtils.assertThrows(() -> {
-            try (OBJWriter meshWriter = new OBJWriter(writer)) {
-                meshWriter.writeFace(1, 2);
-            } catch (IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
-        }, IllegalArgumentException.class, "Face must have more than 3 vertices; found 2");
+        final OBJWriter meshWriter = new OBJWriter(writer);
+        assertThrows(IllegalArgumentException.class, () -> meshWriter.writeFace(1, 2),  "Face must have more than 3 vertices; found 2");
     }
 
     @Test
@@ -305,13 +299,8 @@ public class OBJWriterTest {
         StringWriter writer = new StringWriter();
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            try (OBJWriter meshWriter = new OBJWriter(writer)) {
-                meshWriter.writeBoundaries(src);
-            } catch (IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
-        }, IllegalArgumentException.class, Pattern.compile("^OBJ input geometry cannot be infinite: .*"));
+        OBJWriter meshWriter = new OBJWriter(writer);
+        assertThrows(IllegalArgumentException.class, () ->  meshWriter.writeBoundaries(src));
     }
 
     @Test

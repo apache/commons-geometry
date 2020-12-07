@@ -27,6 +27,8 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class SegmentTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -66,13 +68,8 @@ public class SegmentTest {
         final Vector2D p2 = Vector2D.of(1e-17, 2);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromPoints(p1, p1, TEST_PRECISION);
-        }, IllegalArgumentException.class, "Line direction cannot be zero");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
-        }, IllegalArgumentException.class, "Line direction cannot be zero");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromPoints(p1, p1, TEST_PRECISION),  "Line direction cannot be zero");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromPoints(p1, p2, TEST_PRECISION),  "Line direction cannot be zero");
     }
 
     @Test
@@ -137,21 +134,10 @@ public class SegmentTest {
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromPoints(line, Vector2D.NaN, p1);
-        }, IllegalArgumentException.class, "Invalid line segment locations: NaN, 2.0");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromPoints(line, p0, Vector2D.NaN);
-        }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromPoints(line, Vector2D.NEGATIVE_INFINITY, p1);
-        }, IllegalArgumentException.class, "Invalid line segment locations: NaN, 2.0");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromPoints(line, p0, Vector2D.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, NaN");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromPoints(line, Vector2D.NaN, p1),  "Invalid line segment locations: NaN, 2.0");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromPoints(line, p0, Vector2D.NaN),  "Invalid line segment locations: 1.0, NaN");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromPoints(line, Vector2D.NEGATIVE_INFINITY, p1),  "Invalid line segment locations: NaN, 2.0");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromPoints(line, p0, Vector2D.POSITIVE_INFINITY),  "Invalid line segment locations: 1.0, NaN");
     }
 
     @Test
@@ -232,21 +218,10 @@ public class SegmentTest {
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromLocations(line, Double.NaN, 2);
-        }, IllegalArgumentException.class, "Invalid line segment locations: NaN, 2.0");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromLocations(line, 1, Double.NaN);
-        }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromLocations(line, Double.NEGATIVE_INFINITY, 2);
-        }, IllegalArgumentException.class, "Invalid line segment locations: -Infinity, 2.0");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.segmentFromLocations(line, 1, Double.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, Infinity");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromLocations(line, Double.NaN, 2),  "Invalid line segment locations: NaN, 2.0");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromLocations(line, 1, Double.NaN),  "Invalid line segment locations: 1.0, NaN");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromLocations(line, Double.NEGATIVE_INFINITY, 2),  "Invalid line segment locations: -Infinity, 2.0");
+        assertThrows(IllegalArgumentException.class, () -> Lines.segmentFromLocations(line, 1, Double.POSITIVE_INFINITY),  "Invalid line segment locations: 1.0, Infinity");
     }
 
     @Test

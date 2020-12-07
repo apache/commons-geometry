@@ -34,6 +34,8 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class VertexListConvexPolygon3DTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -76,9 +78,7 @@ public class VertexListConvexPolygon3DTest {
     @Test
     public void testCtor_validatesVertexListSize() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X));
-        }, IllegalArgumentException.class, "Convex polygon requires at least 3 points; found 2");
+        assertThrows(IllegalArgumentException.class, () ->  new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X)),  "Convex polygon requires at least 3 points; found 2");
     }
 
     @Test
@@ -88,9 +88,7 @@ public class VertexListConvexPolygon3DTest {
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, vertices);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            p.getVertices().add(Vector3D.of(-1, 0, 1));
-        }, UnsupportedOperationException.class);
+        assertThrows(UnsupportedOperationException.class, () -> p.getVertices().add(Vector3D.of(-1, 0, 1)));
     }
 
     @Test

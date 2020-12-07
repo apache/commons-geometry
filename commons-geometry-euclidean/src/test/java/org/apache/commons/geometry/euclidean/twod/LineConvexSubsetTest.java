@@ -29,6 +29,8 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class LineConvexSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -200,29 +202,12 @@ public class LineConvexSubsetTest {
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.subsetFromInterval(line, 0, Double.NaN);
-        }, IllegalArgumentException.class, "Invalid line subset interval: 0.0, NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.subsetFromInterval(line, Double.NaN, 0.0);
-        }, IllegalArgumentException.class, "Invalid line subset interval: NaN, 0.0");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.subsetFromInterval(line, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid line subset interval: Infinity, Infinity");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.subsetFromInterval(line, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid line subset interval: -Infinity, -Infinity");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.subsetFromInterval(line, Double.POSITIVE_INFINITY, Double.NaN);
-        }, IllegalArgumentException.class, "Invalid line subset interval: Infinity, NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.subsetFromInterval(line, Double.NaN, Double.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid line subset interval: NaN, -Infinity");
+        assertThrows(IllegalArgumentException.class, () -> Lines.subsetFromInterval(line, 0, Double.NaN),  "Invalid line subset interval: 0.0, NaN");
+        assertThrows(IllegalArgumentException.class, () -> Lines.subsetFromInterval(line, Double.NaN, 0.0),  "Invalid line subset interval: NaN, 0.0");
+        assertThrows(IllegalArgumentException.class, () -> Lines.subsetFromInterval(line, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY),  "Invalid line subset interval: Infinity, Infinity");
+        assertThrows(IllegalArgumentException.class, () -> Lines.subsetFromInterval(line, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY),  "Invalid line subset interval: -Infinity, -Infinity");
+        assertThrows(IllegalArgumentException.class, () -> Lines.subsetFromInterval(line, Double.POSITIVE_INFINITY, Double.NaN),  "Invalid line subset interval: Infinity, NaN");
+        assertThrows(IllegalArgumentException.class, () -> Lines.subsetFromInterval(line, Double.NaN, Double.NEGATIVE_INFINITY),  "Invalid line subset interval: NaN, -Infinity");
     }
 
     @Test

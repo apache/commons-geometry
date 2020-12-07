@@ -24,12 +24,13 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ModelIOHandlerRegistryTest {
 
@@ -138,9 +139,7 @@ public class ModelIOHandlerRegistryTest {
         File file = new File("file.B");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            registry.read(file, TEST_PRECISION);
-        }, IllegalArgumentException.class, "No handler found for type \"b\"");
+        assertThrows(IllegalArgumentException.class, () -> registry.read(file, TEST_PRECISION),  "No handler found for type \"b\"");
     }
 
     @Test
@@ -149,10 +148,7 @@ public class ModelIOHandlerRegistryTest {
         File file = new File("file");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            registry.read(file, TEST_PRECISION);
-        }, IllegalArgumentException.class,
-                "Cannot determine target file type: \"file\" does not have a file extension");
+        assertThrows(IllegalArgumentException.class, () -> registry.read(file, TEST_PRECISION),  "Cannot determine target file type: \"file\" does not have a file extension");
     }
 
     @Test
@@ -176,9 +172,7 @@ public class ModelIOHandlerRegistryTest {
         File file = new File("file");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            registry.read("nope", file, TEST_PRECISION);
-        }, IllegalArgumentException.class, "No handler found for type \"nope\"");
+        assertThrows(IllegalArgumentException.class, () -> registry.read("nope", file, TEST_PRECISION),  "No handler found for type \"nope\"");
     }
 
     @Test
@@ -199,9 +193,7 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testRead_typeAndInputStream_unknownType() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            registry.read("nope", new ByteArrayInputStream(new byte[0]), TEST_PRECISION);
-        }, IllegalArgumentException.class, "No handler found for type \"nope\"");
+        assertThrows(IllegalArgumentException.class, () -> registry.read("nope", new ByteArrayInputStream(new byte[0]), TEST_PRECISION),  "No handler found for type \"nope\"");
     }
 
     @Test
@@ -228,9 +220,7 @@ public class ModelIOHandlerRegistryTest {
         File file = new File("file.B");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            registry.write(SRC_A, file);
-        }, IllegalArgumentException.class, "No handler found for type \"b\"");
+        assertThrows(IllegalArgumentException.class, () -> registry.write(SRC_A, file),  "No handler found for type \"b\"");
     }
 
     @Test
@@ -239,10 +229,7 @@ public class ModelIOHandlerRegistryTest {
         File file = new File("file");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            registry.write(SRC_A, file);
-        }, IllegalArgumentException.class,
-                "Cannot determine target file type: \"file\" does not have a file extension");
+        assertThrows(IllegalArgumentException.class, () -> registry.write(SRC_A, file),  "Cannot determine target file type: \"file\" does not have a file extension");
     }
 
     @Test
@@ -269,9 +256,7 @@ public class ModelIOHandlerRegistryTest {
         File file = new File("file");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            registry.write(SRC_A, "nope", file);
-        }, IllegalArgumentException.class, "No handler found for type \"nope\"");
+        assertThrows(IllegalArgumentException.class, () -> registry.write(SRC_A, "nope", file),  "No handler found for type \"nope\"");
     }
 
     @Test
@@ -293,9 +278,7 @@ public class ModelIOHandlerRegistryTest {
     @Test
     public void testWrite_typeAndOutputStream_unknownType() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            registry.write(SRC_A, "nope", new ByteArrayOutputStream());
-        }, IllegalArgumentException.class, "No handler found for type \"nope\"");
+        assertThrows(IllegalArgumentException.class, () -> registry.write(SRC_A, "nope", new ByteArrayOutputStream()),  "No handler found for type \"nope\"");
     }
 
     private static final class StubHandler implements ModelIOHandler {

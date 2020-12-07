@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -36,6 +35,8 @@ import org.apache.commons.geometry.spherical.twod.RegionBSPTree2S.RegionNode2S;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RegionBSPTree2STest {
 
@@ -272,9 +273,7 @@ public class RegionBSPTree2STest {
         tree.insert(EQUATOR.span());
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            tree.getBoundaryPaths().add(GreatArcPath.empty());
-        }, UnsupportedOperationException.class);
+        assertThrows(UnsupportedOperationException.class, () -> tree.getBoundaryPaths().add(GreatArcPath.empty()));
     }
 
     @Test

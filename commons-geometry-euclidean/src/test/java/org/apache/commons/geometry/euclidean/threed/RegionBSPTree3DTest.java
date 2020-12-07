@@ -44,6 +44,8 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class RegionBSPTree3DTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -253,21 +255,10 @@ public class RegionBSPTree3DTest {
         final String msg = "Cannot insert partitions after boundaries have been inserted";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            builder.insertPartition(partition);
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.insertPartition(partition.span());
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.insertAxisAlignedPartitions(Vector3D.ZERO, TEST_PRECISION);
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.insertAxisAlignedGrid(Bounds3D.from(Vector3D.ZERO, Vector3D.of(1, 1, 1)), 1, TEST_PRECISION);
-        }, IllegalStateException.class, msg);
+        assertThrows(IllegalStateException.class, () ->  builder.insertPartition(partition),  msg);
+        assertThrows(IllegalStateException.class, () ->  builder.insertPartition(partition.span()),  msg);
+        assertThrows(IllegalStateException.class, () ->  builder.insertAxisAlignedPartitions(Vector3D.ZERO, TEST_PRECISION),  msg);
+        assertThrows(IllegalStateException.class, () ->  builder.insertAxisAlignedGrid(Bounds3D.from(Vector3D.ZERO, Vector3D.of(1, 1, 1)), 1, TEST_PRECISION),  msg);
     }
 
     @Test
@@ -432,9 +423,7 @@ public class RegionBSPTree3DTest {
         tree.getRoot().insertCut(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            tree.toTriangleMesh(TEST_PRECISION);
-        }, IllegalStateException.class);
+        assertThrows(IllegalStateException.class, () -> tree.toTriangleMesh(TEST_PRECISION));
     }
 
     @Test

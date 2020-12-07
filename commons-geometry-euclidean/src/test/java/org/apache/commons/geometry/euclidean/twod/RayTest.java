@@ -27,6 +27,8 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class RayTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -69,9 +71,7 @@ public class RayTest {
         final Vector2D d = Vector2D.of(1e-17, -1e-12);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.rayFromPointAndDirection(p, d, TEST_PRECISION);
-        }, IllegalArgumentException.class, "Line direction cannot be zero");
+        assertThrows(IllegalArgumentException.class, () -> Lines.rayFromPointAndDirection(p, d, TEST_PRECISION),  "Line direction cannot be zero");
     }
 
     @Test
@@ -113,17 +113,9 @@ public class RayTest {
         final Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.rayFromPoint(line, Vector2D.NaN);
-        }, IllegalArgumentException.class, "Invalid ray start point: (NaN, NaN)");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.rayFromPoint(line, Vector2D.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid ray start point: (Infinity, Infinity)");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.rayFromPoint(line, Vector2D.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid ray start point: (-Infinity, -Infinity)");
+        assertThrows(IllegalArgumentException.class, () -> Lines.rayFromPoint(line, Vector2D.NaN),  "Invalid ray start point: (NaN, NaN)");
+        assertThrows(IllegalArgumentException.class, () -> Lines.rayFromPoint(line, Vector2D.POSITIVE_INFINITY),  "Invalid ray start point: (Infinity, Infinity)");
+        assertThrows(IllegalArgumentException.class, () -> Lines.rayFromPoint(line, Vector2D.NEGATIVE_INFINITY),  "Invalid ray start point: (-Infinity, -Infinity)");
     }
 
     @Test
@@ -164,17 +156,9 @@ public class RayTest {
         final Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.rayFromLocation(line, Double.NaN);
-        }, IllegalArgumentException.class, "Invalid ray start location: NaN");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.rayFromLocation(line, Double.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid ray start location: Infinity");
-
-        GeometryTestUtils.assertThrows(() -> {
-            Lines.rayFromLocation(line, Double.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid ray start location: -Infinity");
+        assertThrows(IllegalArgumentException.class, () -> Lines.rayFromLocation(line, Double.NaN),  "Invalid ray start location: NaN");
+        assertThrows(IllegalArgumentException.class, () -> Lines.rayFromLocation(line, Double.POSITIVE_INFINITY),  "Invalid ray start location: Infinity");
+        assertThrows(IllegalArgumentException.class, () -> Lines.rayFromLocation(line, Double.NEGATIVE_INFINITY),  "Invalid ray start location: -Infinity");
     }
 
     @Test

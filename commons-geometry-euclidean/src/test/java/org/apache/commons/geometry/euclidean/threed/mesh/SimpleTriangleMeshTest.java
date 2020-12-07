@@ -40,6 +40,8 @@ import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class SimpleTriangleMeshTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -274,7 +276,7 @@ public class SimpleTriangleMeshTest {
         Assertions.assertEquals(0, it.next().getIndex());
         Assertions.assertFalse(it.hasNext());
 
-        GeometryTestUtils.assertThrows(() -> it.next(), NoSuchElementException.class);
+        assertThrows(NoSuchElementException.class, it::next);
     }
 
     @Test
@@ -355,14 +357,10 @@ public class SimpleTriangleMeshTest {
         final Pattern msgPattern = Pattern.compile("^Points do not define a plane: .*");
 
         Assertions.assertFalse(mesh.getFace(0).definesPolygon());
-        GeometryTestUtils.assertThrows(() -> {
-            mesh.getFace(0).getPolygon();
-        }, IllegalArgumentException.class, msgPattern);
 
+        assertThrows(IllegalArgumentException.class, () -> mesh.getFace(0).getPolygon());
+        assertThrows(IllegalArgumentException.class, () -> mesh.getFace(1).getPolygon());
         Assertions.assertFalse(mesh.getFace(1).definesPolygon());
-        GeometryTestUtils.assertThrows(() -> {
-            mesh.getFace(1).getPolygon();
-        }, IllegalArgumentException.class, msgPattern);
     }
 
     @Test
@@ -515,29 +513,12 @@ public class SimpleTriangleMeshTest {
         final String msgBase = "Invalid vertex index: ";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFace(-1, 1, 2);
-        }, IllegalArgumentException.class, msgBase + "-1");
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFace(0, 3, 2);
-        }, IllegalArgumentException.class, msgBase + "3");
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFace(0, 1, 4);
-        }, IllegalArgumentException.class, msgBase + "4");
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(new int[][] {{-1, 1, 2}});
-        }, IllegalArgumentException.class, msgBase + "-1");
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(new int[][] {{0, 3, 2}});
-        }, IllegalArgumentException.class, msgBase + "3");
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(new int[][] {{0, 1, 4}});
-        }, IllegalArgumentException.class, msgBase + "4");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFace(-1, 1, 2), msgBase + "-1");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFace(0, 3, 2), msgBase + "3");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFace(0, 1, 4), msgBase + "4");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFaces(new int[][] {{-1, 1, 2}}), msgBase + "-1");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFaces(new int[][] {{0, 3, 2}}), msgBase + "3");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFaces(new int[][] {{0, 1, 4}}), msgBase + "4");
     }
 
     @Test
@@ -552,21 +533,10 @@ public class SimpleTriangleMeshTest {
         final String msgBase = "Face must contain 3 vertex indices; found ";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(new int[][] {{}});
-        }, IllegalArgumentException.class, msgBase + "0");
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(new int[][] {{0}});
-        }, IllegalArgumentException.class, msgBase + "1");
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(new int[][] {{0, 1}});
-        }, IllegalArgumentException.class, msgBase + "2");
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(new int[][] {{0, 1, 2, 3}});
-        }, IllegalArgumentException.class, msgBase + "4");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFaces(new int[][] {{}}), msgBase + "1");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFaces(new int[][] {{0}}), msgBase + "2");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFaces(new int[][] {{0, 1}}), msgBase + "3");
+        assertThrows(IllegalArgumentException.class, () -> builder.addFaces(new int[][] {{0, 1, 2, 3}}), msgBase + "4");
     }
 
     @Test
@@ -586,37 +556,14 @@ public class SimpleTriangleMeshTest {
         final String msg = "Builder instance cannot be modified: mesh construction is complete";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            builder.useVertex(Vector3D.ZERO);
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addVertex(Vector3D.ZERO);
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addVertices(Collections.singletonList(Vector3D.ZERO));
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addVertices(new Vector3D[] {Vector3D.ZERO});
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaceUsingVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFace(0, 1, 2);
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(Collections.singletonList(new int[]{0, 1, 2}));
-        }, IllegalStateException.class, msg);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.addFaces(new int[][] {{0, 1, 2}});
-        }, IllegalStateException.class, msg);
+        assertThrows(IllegalStateException.class, () -> builder.useVertex(Vector3D.ZERO));
+        assertThrows(IllegalStateException.class, () -> builder.addVertex(Vector3D.ZERO));
+        assertThrows(IllegalStateException.class, () -> builder.addVertices(Collections.singletonList(Vector3D.ZERO)));
+        assertThrows(IllegalStateException.class, () -> builder.addVertices(new Vector3D[] {Vector3D.ZERO}));
+        assertThrows(IllegalStateException.class, () -> builder.addFaceUsingVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0)));
+        assertThrows(IllegalStateException.class, () -> builder.addFace(0, 1, 2));
+        assertThrows(IllegalStateException.class, () -> builder.addFaces(Collections.singletonList(new int[]{0, 1, 2})));
+        assertThrows(IllegalStateException.class, () -> builder.addFaces(new int[][] {{0, 1, 2}}));
     }
 
     @Test

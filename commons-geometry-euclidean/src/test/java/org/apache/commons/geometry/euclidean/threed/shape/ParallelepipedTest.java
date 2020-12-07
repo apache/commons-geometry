@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -34,6 +33,8 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ParallelepipedTest {
 
@@ -146,20 +147,12 @@ public class ParallelepipedTest {
     @Test
     public void testFromTransformedUnitCube_zeroSizeRegion() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelepiped.fromTransformedUnitCube(AffineTransformMatrix3D.createScale(Vector3D.of(1e-16, 1, 1)),
-                    TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelepiped.fromTransformedUnitCube(AffineTransformMatrix3D.createScale(Vector3D.of(1, 1e-16, 1)),
-                    TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelepiped.fromTransformedUnitCube(AffineTransformMatrix3D.createScale(Vector3D.of(1, 1, 1e-16)),
-                    TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Parallelepiped.fromTransformedUnitCube(AffineTransformMatrix3D.createScale(Vector3D.of(1e-16, 1, 1)),
+                TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () -> Parallelepiped.fromTransformedUnitCube(AffineTransformMatrix3D.createScale(Vector3D.of(1, 1e-16, 1)),
+                TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () -> Parallelepiped.fromTransformedUnitCube(AffineTransformMatrix3D.createScale(Vector3D.of(1, 1, 1e-16)),
+                TEST_PRECISION));
     }
 
     @Test
@@ -209,17 +202,9 @@ public class ParallelepipedTest {
     @Test
     public void testAxisAligned_illegalArgs() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 6), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 2, 6), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 3), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 6), TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () -> Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 2, 6), TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () -> Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 3), TEST_PRECISION));
     }
 
     @Test

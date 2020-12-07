@@ -37,6 +37,8 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class EmbeddedAreaPlaneConvexSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -149,26 +151,20 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final Pattern pattern = Pattern.compile("^Cannot convert infinite plane subset to triangles: .*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, ConvexArea.full()).toTriangles();
-        }, IllegalStateException.class, pattern);
+        assertThrows(IllegalStateException.class, () -> new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, ConvexArea.full()).toTriangles());
 
-        GeometryTestUtils.assertThrows(() -> {
-            final ConvexArea area = ConvexArea.fromBounds(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION));
-            final EmbeddedAreaPlaneConvexSubset halfSpace = new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, area);
+        final ConvexArea area = ConvexArea.fromBounds(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION));
+        final EmbeddedAreaPlaneConvexSubset halfSpace = new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, area);
 
-            halfSpace.toTriangles();
-        }, IllegalStateException.class, pattern);
 
-        GeometryTestUtils.assertThrows(() -> {
-            final ConvexArea area = ConvexArea.fromBounds(
-                    Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION),
-                    Lines.fromPointAndAngle(Vector2D.ZERO, 0.5 * Math.PI, TEST_PRECISION));
+        assertThrows(IllegalStateException.class, halfSpace::toTriangles);
 
-            final EmbeddedAreaPlaneConvexSubset halfSpaceWithVertices = new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, area);
+        final ConvexArea areaHalfSpaceWithVertices = ConvexArea.fromBounds(
+                Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION),
+                Lines.fromPointAndAngle(Vector2D.ZERO, 0.5 * Math.PI, TEST_PRECISION));
 
-            halfSpaceWithVertices.toTriangles();
-        }, IllegalStateException.class, pattern);
+        final EmbeddedAreaPlaneConvexSubset halfSpaceWithVertices = new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, areaHalfSpaceWithVertices);
+        assertThrows(IllegalStateException.class, halfSpaceWithVertices::toTriangles);
     }
 
     @Test

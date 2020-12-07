@@ -30,6 +30,8 @@ import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ConvexHull2DTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -159,9 +161,7 @@ public class ConvexHull2DTest {
 
         // assert
         Assertions.assertNotSame(vertices, hullVertices);
-        GeometryTestUtils.assertThrows(() -> {
-            hullVertices.add(Vector2D.Unit.PLUS_Y);
-        }, UnsupportedOperationException.class);
+        assertThrows(UnsupportedOperationException.class, () -> hullVertices.add(Vector2D.Unit.PLUS_Y));
     }
 
     @Test

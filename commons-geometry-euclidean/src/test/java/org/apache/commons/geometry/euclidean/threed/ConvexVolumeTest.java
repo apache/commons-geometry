@@ -34,6 +34,8 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ConvexVolumeTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -115,13 +117,8 @@ public class ConvexVolumeTest {
                 );
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            half.triangleStream().collect(Collectors.toList());
-        }, IllegalStateException.class, pattern);
-
-        GeometryTestUtils.assertThrows(() -> {
-            quadrant.triangleStream().collect(Collectors.toList());
-        }, IllegalStateException.class, pattern);
+        assertThrows(IllegalStateException.class, () -> half.triangleStream().collect(Collectors.toList()));
+        assertThrows(IllegalStateException.class, () -> quadrant.triangleStream().collect(Collectors.toList()));
     }
 
     @Test

@@ -19,10 +19,8 @@ package org.apache.commons.geometry.examples.io.threed.obj;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UncheckedIOException;
 import java.net.URL;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -32,6 +30,8 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OBJReaderTest {
 
@@ -163,21 +163,9 @@ public class OBJReaderTest {
             "f 1 2 3\n";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            try {
-                reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION);
-            } catch (IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
-        }, NumberFormatException.class);
 
-        GeometryTestUtils.assertThrows(() -> {
-            try {
-                reader.readTriangleMesh(new StringReader(notEnoughVertices), TEST_PRECISION);
-            } catch (IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
-        }, IllegalArgumentException.class, "Invalid vertex definition: at least 3 fields required but found only 2");
+        assertThrows(NumberFormatException.class, () -> reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () -> reader.readTriangleMesh(new StringReader(notEnoughVertices), TEST_PRECISION),  "Invalid vertex definition: at least 3 fields required but found only 2");
     }
 
     @Test
@@ -196,21 +184,8 @@ public class OBJReaderTest {
             "f 1 2\n";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            try {
-                reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION);
-            } catch (IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
-        }, NumberFormatException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            try {
-                reader.readTriangleMesh(new StringReader(notEnoughIndices), TEST_PRECISION);
-            } catch (IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
-        }, IllegalArgumentException.class, "Invalid face definition: at least 3 fields required but found only 2");
+        assertThrows(NumberFormatException.class, () -> reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION));
+        assertThrows(IllegalArgumentException.class, () -> reader.readTriangleMesh(new StringReader(notEnoughIndices), TEST_PRECISION),  "Invalid face definition: at least 3 fields required but found only 2");
     }
 
     @Test

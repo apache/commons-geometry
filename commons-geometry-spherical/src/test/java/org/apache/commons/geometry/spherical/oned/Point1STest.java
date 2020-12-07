@@ -361,17 +361,9 @@ public class Point1STest {
     @Test
     public void testNormalize_nonFinite() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.POSITIVE_INFINITY).normalize(0.0);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NEGATIVE_INFINITY).normalize(0.0);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NaN).normalize(Point1S.ZERO);
-        }, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).normalize(0.0));
+        assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).normalize(0.0));
+        assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NaN).normalize(Point1S.ZERO));
     }
 
     @Test
@@ -400,17 +392,9 @@ public class Point1STest {
     @Test
     public void testAbove_nonFinite() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.POSITIVE_INFINITY).above(Point1S.ZERO);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NEGATIVE_INFINITY).above(Point1S.ZERO);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NaN).above(Point1S.ZERO);
-        }, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).above(Point1S.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).above(Point1S.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NaN).above(Point1S.ZERO));
     }
 
     @Test
@@ -439,17 +423,9 @@ public class Point1STest {
     @Test
     public void testBelow_nonFinite() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.POSITIVE_INFINITY).below(Point1S.ZERO);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NEGATIVE_INFINITY).below(Point1S.ZERO);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NaN).below(Point1S.ZERO);
-        }, IllegalArgumentException.class);
+        assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).below(Point1S.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).below(Point1S.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NaN).below(Point1S.ZERO));
     }
 
     @Test
