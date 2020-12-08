@@ -354,7 +354,6 @@ public final class Point1S implements Point<Point1S> {
      */
     public static Point1S parse(final String str) {
         return SimpleTupleFormat.getDefault().parse(str, (DoubleFunction1N<Point1S>) Point1S::of);
-
     }
 
     /** Compute the signed shortest distance (angular separation) between two points. The return

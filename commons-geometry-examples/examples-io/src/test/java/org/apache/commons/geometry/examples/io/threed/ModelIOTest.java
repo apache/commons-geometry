@@ -83,11 +83,11 @@ public class ModelIOTest {
         checkWriteRead(model -> {
             //File file = new File(tempFolder.getRoot(), "objmodel");
             final File file = new File(anotherTempDir, "objmodel");
-            try (final OutputStream out = Files.newOutputStream(file.toPath())) {
+            try (OutputStream out = Files.newOutputStream(file.toPath())) {
                 ModelIO.write(model, "OBJ", out);
             }
 
-            try (final InputStream in = Files.newInputStream(file.toPath())) {
+            try (InputStream in = Files.newInputStream(file.toPath())) {
                 return ModelIO.read("OBJ", in, TEST_PRECISION);
             }
         });

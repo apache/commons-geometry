@@ -51,7 +51,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act/assert
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             Assertions.assertEquals("\n", meshWriter.getLineSeparator());
             Assertions.assertEquals(6, meshWriter.getDecimalFormat().getMaximumFractionDigits());
         }
@@ -63,7 +63,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act/assert
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.close();
         }
     }
@@ -74,7 +74,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.setLineSeparator("\r\n");
 
             meshWriter.writeComment("line 1");
@@ -95,7 +95,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.setDecimalFormat(new DecimalFormat("00.0"));
 
             meshWriter.writeVertex(Vector3D.of(1, 2, 3));
@@ -111,7 +111,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.writeComment("test");
             meshWriter.writeComment(" a\r\n multi-line\ncomment");
         }
@@ -130,7 +130,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.writeObjectName("test-object");
         }
 
@@ -144,7 +144,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.writeGroupName("test-group");
         }
 
@@ -160,7 +160,7 @@ public class OBJWriterTest {
         // act
         final int index1;
         final int index2;
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.getDecimalFormat().setMaximumFractionDigits(1);
 
             index1 = meshWriter.writeVertex(Vector3D.of(1.09, 2.1, 3.005));
@@ -181,7 +181,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.writeVertex(Vector3D.ZERO);
             meshWriter.writeVertex(Vector3D.of(1, 0, 0));
             meshWriter.writeVertex(Vector3D.of(1, 1, 0));
@@ -208,7 +208,7 @@ public class OBJWriterTest {
 
         // act
         GeometryTestUtils.assertThrows(() -> {
-            try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+            try (OBJWriter meshWriter = new OBJWriter(writer)) {
                 meshWriter.writeFace(1, 2);
             } catch (final IOException exc) {
                 throw new UncheckedIOException(exc);
@@ -227,7 +227,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.writeMesh(mesh);
         }
 
@@ -252,7 +252,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.writeBoundaries(mesh);
         }
 
@@ -277,7 +277,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+        try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.writeBoundaries(src);
         }
 
@@ -305,7 +305,7 @@ public class OBJWriterTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            try (final OBJWriter meshWriter = new OBJWriter(writer)) {
+            try (OBJWriter meshWriter = new OBJWriter(writer)) {
                 meshWriter.writeBoundaries(src);
             } catch (final IOException exc) {
                 throw new UncheckedIOException(exc);
@@ -327,7 +327,7 @@ public class OBJWriterTest {
 
         // act
         final Path out = Files.createTempFile("objTest", ".obj");
-        try (final OBJWriter writer = new OBJWriter(out.toFile())) {
+        try (OBJWriter writer = new OBJWriter(out.toFile())) {
             writer.writeComment("A test obj file\nWritten by " + OBJReaderTest.class.getName());
 
             writer.writeBoundaries(mesh);
@@ -348,7 +348,7 @@ public class OBJWriterTest {
 
         // act
         final Path out = Files.createTempFile("objTest", ".obj");
-        try (final OBJWriter writer = new OBJWriter(out.toFile())) {
+        try (OBJWriter writer = new OBJWriter(out.toFile())) {
             writer.writeComment("A test obj file\nWritten by " + OBJReaderTest.class.getName());
 
             writer.writeBoundaries(result);

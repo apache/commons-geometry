@@ -126,8 +126,8 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     public void testConvexHull() {
         // execute 100 random variations
         for (int i = 0; i < 100; i++) {
-            // randomize the size from 4 to 100
-            final int size = (int) Math.floor(random.nextDouble() * 96.0 + 4.0);
+            // randomize the size from 3 to 100
+            final int size = (int) Math.floor(random.nextDouble() * 96.0 + 3.0);
 
             final List<Vector2D> points = createRandomPoints(size);
 

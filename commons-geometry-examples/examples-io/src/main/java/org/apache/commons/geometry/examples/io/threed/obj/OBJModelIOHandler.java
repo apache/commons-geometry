@@ -49,7 +49,7 @@ public class OBJModelIOHandler extends AbstractModelIOHandler {
     @Override
     protected TriangleMesh readInternal(final String type, final InputStream in,
             final DoublePrecisionContext precision) throws IOException {
-        try (final InputStreamReader reader = new InputStreamReader(in, DEFAULT_CHARSET)) {
+        try (InputStreamReader reader = new InputStreamReader(in, DEFAULT_CHARSET)) {
             final OBJReader objReader = new OBJReader();
             return objReader.readTriangleMesh(reader, precision);
         }
@@ -59,7 +59,7 @@ public class OBJModelIOHandler extends AbstractModelIOHandler {
     @Override
     protected void writeInternal(final BoundarySource3D model, final String type, final OutputStream out)
             throws IOException {
-        try (final OBJWriter objWriter = new OBJWriter(new BufferedWriter(
+        try (OBJWriter objWriter = new OBJWriter(new BufferedWriter(
                 new OutputStreamWriter(out, DEFAULT_CHARSET)))) {
             objWriter.writeBoundaries(model);
         }

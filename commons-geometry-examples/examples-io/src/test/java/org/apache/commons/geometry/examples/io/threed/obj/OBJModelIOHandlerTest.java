@@ -106,7 +106,7 @@ public class OBJModelIOHandlerTest {
     public void testRead_fromStream() throws Exception {
         // act
         final BoundarySource3D src;
-        try (final InputStream in = Files.newInputStream(cubeMinusSphereFile().toPath())) {
+        try (InputStream in = Files.newInputStream(cubeMinusSphereFile().toPath())) {
             src = handler.read("obj", cubeMinusSphereFile(), TEST_PRECISION);
         }
 
@@ -122,7 +122,7 @@ public class OBJModelIOHandlerTest {
         final File file = cubeMinusSphereFile();
 
         // act/assert
-        try (final InputStream in = Files.newInputStream(file.toPath())) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             GeometryTestUtils.assertThrows(() -> {
                 handler.read("stl", in, TEST_PRECISION);
             }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
@@ -211,7 +211,7 @@ public class OBJModelIOHandlerTest {
             );
 
         // act/assert
-        try (final OutputStream out = Files.newOutputStream(file.toPath())) {
+        try (OutputStream out = Files.newOutputStream(file.toPath())) {
             GeometryTestUtils.assertThrows(() -> {
                 handler.write(src, "stl", out);
             }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
