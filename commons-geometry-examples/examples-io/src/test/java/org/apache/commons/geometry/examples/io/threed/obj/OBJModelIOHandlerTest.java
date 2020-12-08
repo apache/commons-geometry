@@ -51,7 +51,7 @@ public class OBJModelIOHandlerTest {
     private static final int CUBE_MINUS_SPHERE_FACES = 728;
 
     @TempDir
-    File anotherTempDir;
+    protected File anotherTempDir;
 
     private OBJModelIOHandler handler = new OBJModelIOHandler();
 
@@ -172,7 +172,7 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testWrite_toFile_ioException() throws Exception {
         // arrange
-        File out = new File(anotherTempDir, "notafile");
+        File out = new File(anotherTempDir, "notafolder/notafile");
         BoundarySource3D src = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
