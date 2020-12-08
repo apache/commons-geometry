@@ -38,7 +38,7 @@ public abstract class AbstractModelIOHandler implements ModelIOHandler {
             try (InputStream is = Files.newInputStream(in.toPath())) {
                 return readInternal(type, is, precision);
             }
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw createUnchecked(exc);
         }
     }
@@ -49,7 +49,7 @@ public abstract class AbstractModelIOHandler implements ModelIOHandler {
         ensureTypeSupported(type);
         try {
             return readInternal(type, in, precision);
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw createUnchecked(exc);
         }
     }
@@ -62,18 +62,18 @@ public abstract class AbstractModelIOHandler implements ModelIOHandler {
             try (OutputStream os = Files.newOutputStream(out.toPath())) {
                 writeInternal(model, type, os);
             }
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw createUnchecked(exc);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void write(final BoundarySource3D model, final String type, OutputStream out) {
+    public void write(final BoundarySource3D model, final String type, final OutputStream out) {
         ensureTypeSupported(type);
         try {
             writeInternal(model, type, out);
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw createUnchecked(exc);
         }
     }

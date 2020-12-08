@@ -38,13 +38,13 @@ public final class HexagonPartitionedRegion {
      * @param args command arguments; if given, the first argument is used as the location of
      *      output folder
      */
-    public static void main(String[] args) {
-        File outputFolder = new File(args.length > 0 ? args[0] : ".");
-        BSPTreeSVGWriter svgWriter = new BSPTreeSVGWriter(Bounds2D.from(Vector2D.of(-8, -8), Vector2D.of(8, 8)));
+    public static void main(final String[] args) {
+        final File outputFolder = new File(args.length > 0 ? args[0] : ".");
+        final BSPTreeSVGWriter svgWriter = new BSPTreeSVGWriter(Bounds2D.from(Vector2D.of(-8, -8), Vector2D.of(8, 8)));
 
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        LinePath path = LinePath.fromVertexLoop(Arrays.asList(
+        final LinePath path = LinePath.fromVertexLoop(Arrays.asList(
                 Vector2D.of(-4, 0),
                 Vector2D.of(-2, -3),
                 Vector2D.of(2, -3),
@@ -53,7 +53,7 @@ public final class HexagonPartitionedRegion {
                 Vector2D.of(-2, 3)
             ), precision);
 
-        RegionBSPTree2D tree = RegionBSPTree2D.partitionedRegionBuilder()
+        final RegionBSPTree2D tree = RegionBSPTree2D.partitionedRegionBuilder()
                 .insertAxisAlignedGrid(path.getBounds(), 1, precision)
                 .insertBoundaries(path)
                 .build();

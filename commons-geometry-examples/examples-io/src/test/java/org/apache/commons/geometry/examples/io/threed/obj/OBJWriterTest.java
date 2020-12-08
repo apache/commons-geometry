@@ -48,7 +48,7 @@ public class OBJWriterTest {
     @Test
     public void testDefaults() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act/assert
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -60,7 +60,7 @@ public class OBJWriterTest {
     @Test
     public void testClose_calledMultipleTimes() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act/assert
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -72,7 +72,7 @@ public class OBJWriterTest {
     @Test
     public void testSetLineSeparator() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -93,7 +93,7 @@ public class OBJWriterTest {
     @Test
     public void testSetDecimalFormat() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -109,7 +109,7 @@ public class OBJWriterTest {
     @Test
     public void testWriteComment() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -128,7 +128,7 @@ public class OBJWriterTest {
     @Test
     public void testWriteObjectName() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -142,7 +142,7 @@ public class OBJWriterTest {
     @Test
     public void testWriteGroupName() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -156,11 +156,11 @@ public class OBJWriterTest {
     @Test
     public void testWriteVertex() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
-        int index1;
-        int index2;
+        final int index1;
+        final int index2;
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
             meshWriter.getDecimalFormat().setMaximumFractionDigits(1);
 
@@ -179,7 +179,7 @@ public class OBJWriterTest {
     @Test
     public void testWriteFace() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -205,13 +205,13 @@ public class OBJWriterTest {
     @Test
     public void testWriteFace_invalidVertexNumber() throws IOException {
         // arrange
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         GeometryTestUtils.assertThrows(() -> {
             try (OBJWriter meshWriter = new OBJWriter(writer)) {
                 meshWriter.writeFace(1, 2);
-            } catch (IOException exc) {
+            } catch (final IOException exc) {
                 throw new UncheckedIOException(exc);
             }
         }, IllegalArgumentException.class, "Face must have more than 3 vertices; found 2");
@@ -220,12 +220,12 @@ public class OBJWriterTest {
     @Test
     public void testWriteMesh() throws IOException {
         // arrange
-        SimpleTriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION)
+        final SimpleTriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION)
                 .addFaceUsingVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0))
                 .addFaceUsingVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 0, 1))
                 .build();
 
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -245,12 +245,12 @@ public class OBJWriterTest {
     @Test
     public void testWriteBoundaries_meshArgument() throws IOException {
         // arrange
-        SimpleTriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION)
+        final SimpleTriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION)
                 .addFaceUsingVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0))
                 .addFaceUsingVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 0, 1))
                 .build();
 
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -270,12 +270,12 @@ public class OBJWriterTest {
     @Test
     public void testWriteBoundaries_nonMeshArgument() throws IOException {
         // arrange
-        BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.from(
                     Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION),
                     Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 0, 1), TEST_PRECISION)
                 );
 
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act
         try (OBJWriter meshWriter = new OBJWriter(writer)) {
@@ -297,18 +297,18 @@ public class OBJWriterTest {
     @Test
     public void testWriteBoundaries_infiniteBoundary() throws IOException {
         // arrange
-        BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.from(
                     Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION),
                     Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION).span()
                 );
 
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             try (OBJWriter meshWriter = new OBJWriter(writer)) {
                 meshWriter.writeBoundaries(src);
-            } catch (IOException exc) {
+            } catch (final IOException exc) {
                 throw new UncheckedIOException(exc);
             }
         }, IllegalArgumentException.class, Pattern.compile("^OBJ input geometry cannot be infinite: .*"));
@@ -317,17 +317,17 @@ public class OBJWriterTest {
     @Test
     public void testWriteToFile_boundaries() throws IOException {
         // arrange
-        RegionBSPTree3D box = Parallelepiped.unitCube(TEST_PRECISION).toTree();
-        RegionBSPTree3D sphere = Sphere.from(Vector3D.ZERO, 0.6, TEST_PRECISION)
+        final RegionBSPTree3D box = Parallelepiped.unitCube(TEST_PRECISION).toTree();
+        final RegionBSPTree3D sphere = Sphere.from(Vector3D.ZERO, 0.6, TEST_PRECISION)
                 .toTree(3);
 
-        RegionBSPTree3D result = RegionBSPTree3D.empty();
+        final RegionBSPTree3D result = RegionBSPTree3D.empty();
         result.difference(box, sphere);
 
-        TriangleMesh mesh = result.toTriangleMesh(TEST_PRECISION);
+        final TriangleMesh mesh = result.toTriangleMesh(TEST_PRECISION);
 
         // act
-        Path out = Files.createTempFile("objTest", ".obj");
+        final Path out = Files.createTempFile("objTest", ".obj");
         try (OBJWriter writer = new OBJWriter(out.toFile())) {
             writer.writeComment("A test obj file\nWritten by " + OBJReaderTest.class.getName());
 
@@ -340,15 +340,15 @@ public class OBJWriterTest {
     @Test
     public void testWriteToFile_mesh() throws IOException {
         // arrange
-        RegionBSPTree3D box = Parallelepiped.unitCube(TEST_PRECISION).toTree();
-        RegionBSPTree3D sphere = Sphere.from(Vector3D.ZERO, 0.6, TEST_PRECISION)
+        final RegionBSPTree3D box = Parallelepiped.unitCube(TEST_PRECISION).toTree();
+        final RegionBSPTree3D sphere = Sphere.from(Vector3D.ZERO, 0.6, TEST_PRECISION)
                 .toTree(3);
 
-        RegionBSPTree3D result = RegionBSPTree3D.empty();
+        final RegionBSPTree3D result = RegionBSPTree3D.empty();
         result.difference(box, sphere);
 
         // act
-        Path out = Files.createTempFile("objTest", ".obj");
+        final Path out = Files.createTempFile("objTest", ".obj");
         try (OBJWriter writer = new OBJWriter(out.toFile())) {
             writer.writeComment("A test obj file\nWritten by " + OBJReaderTest.class.getName());
 

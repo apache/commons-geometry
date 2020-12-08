@@ -215,7 +215,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         final int boundaryPairCount = insideBoundaryPairs.size();
 
         // Get the start point for merging intervals together.
-        int startOffset = getIntervalStartIndex(insideBoundaryPairs);
+        final int startOffset = getIntervalStartIndex(insideBoundaryPairs);
 
         // Go through the pairs starting at the start offset and create intervals
         // for each set of adjacent pairs.

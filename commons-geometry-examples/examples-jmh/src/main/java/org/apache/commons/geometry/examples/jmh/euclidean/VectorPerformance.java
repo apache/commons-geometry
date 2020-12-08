@@ -148,7 +148,7 @@ public class VectorPerformance {
             case NORMALIZABLE:
                 final ZigguratNormalizedGaussianSampler sampler = ZigguratNormalizedGaussianSampler.of(rng);
                 return () -> {
-                    double n = sampler.sample();
+                    final double n = sampler.sample();
                     return n == 0 ? 0.1 : n; // do not return exactly zero
                 };
             case EDGE:

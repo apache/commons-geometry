@@ -678,7 +678,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
             final Integer actualIdx = map.putIfAbsent(vertex, targetIdx);
 
             return actualIdx != null ?
-                    actualIdx.intValue() :
+                    actualIdx :
                     targetIdx;
         }
 

@@ -118,31 +118,31 @@ public class BSPTreeSVGWriter {
     private final Bounds2D bounds;
 
     /** The width of the SVG. */
-    private int width = 750;
+    private final int width = 750;
 
     /** The height of the SVG. */
-    private int height = 375;
+    private final int height = 375;
 
     /** The margin used in the SVG. */
-    private int margin = 5;
+    private final int margin = 5;
 
     /** Amount of the overall width of the SVG to use for the geometry area. */
-    private double geometryAreaWidthFactor = 0.5;
+    private final double geometryAreaWidthFactor = 0.5;
 
     /** Amount of the overall width of the SVG to use for the tree structure area. */
-    private double treeAreaWidthFactor = 1.0 - geometryAreaWidthFactor;
+    private final double treeAreaWidthFactor = 1.0 - geometryAreaWidthFactor;
 
     /** Angle that arrow heads on lines make with the direction of the line. */
-    private double arrowAngle = 0.8 * Math.PI;
+    private final double arrowAngle = 0.8 * Math.PI;
 
     /** Length of arrow head lines. */
-    private double arrowLength = 8;
+    private final double arrowLength = 8;
 
     /** Distance between levels of the tree in the tree structure display. */
-    private double treeVerticalSpacing = 45;
+    private final double treeVerticalSpacing = 45;
 
     /** Line end margin used in the lines between nodes in the tree structure display. */
-    private double treeLineMargin = 10;
+    private final double treeLineMargin = 10;
 
     /** Factor determining how much of the available horizontal width for a node should be used to
      * offset it from its parent.
@@ -153,7 +153,7 @@ public class BSPTreeSVGWriter {
     private double treeParentXOffsetMin = 0;
 
     /** Precision context used for floating point comparisons. */
-    private DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+    private final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
     /** Construct a new instance that will render regions within the given bounds.
      * @param bounds bounds used to determine what output
@@ -247,7 +247,7 @@ public class BSPTreeSVGWriter {
 
             transformer.transform(source, target);
 
-        } catch (ParserConfigurationException | TransformerException e) {
+        } catch (final ParserConfigurationException | TransformerException e) {
             // throw as a runtime exception for convenience
             throw new RuntimeException("Failed to create SVG", e);
         }
@@ -475,7 +475,7 @@ public class BSPTreeSVGWriter {
          * @param svgEnd end point
          * @return path element
          */
-        protected Element createPathElement(final String className, final Vector2D svgStart, Vector2D svgEnd) {
+        protected Element createPathElement(final String className, final Vector2D svgStart, final Vector2D svgEnd) {
             final Element path = createElement(PATH_ELEMENT);
             path.setAttribute(CLASS_ATTR, className);
 
@@ -570,12 +570,12 @@ public class BSPTreeSVGWriter {
             labelGroup.appendChild(createNodeNameElement(name, svgCentroid));
 
             if (node.isInside()) {
-                for (LinePath linePath : tree.getBoundaryPaths()) {
+                for (final LinePath linePath : tree.getBoundaryPaths()) {
                     final Element path = createElement(PATH_ELEMENT);
                     pathGroup.appendChild(path);
                     path.setAttribute(CLASS_ATTR, "inside");
 
-                    StringBuilder sb = new StringBuilder();
+                    final StringBuilder sb = new StringBuilder();
 
                     for (final Vector2D pt : linePath.getVertexSequence()) {
                         if (sb.length() < 1) {
@@ -696,7 +696,7 @@ public class BSPTreeSVGWriter {
         private final double svgWidth;
 
         /** Map of nodes to their rendered locations in the content area. */
-        private final Map<RegionNode2D, Vector2D> nodeLocations = new HashMap<>();;
+        private final Map<RegionNode2D, Vector2D> nodeLocations = new HashMap<>();
 
         /** Construct a new instance for rendering a representation of the structure of a BSP tree.
          * @param treeNodeHeight the height of the BSP tree
@@ -742,7 +742,7 @@ public class BSPTreeSVGWriter {
          */
         private String getNodeClassNames(final String name, final RegionNode2D node) {
             final StringBuilder sb = new StringBuilder();
-            sb.append("node-" + name);
+            sb.append("node-").append(name);
 
             if (node.isLeaf()) {
                 sb.append(SPACE)

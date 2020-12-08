@@ -43,7 +43,7 @@ public class DefaultModelIOHandlerRegistryTest {
     @Test
     public void testDefaultHandlers() {
         // act
-        List<ModelIOHandler> handlers = registry.getHandlers();
+        final List<ModelIOHandler> handlers = registry.getHandlers();
 
         // assert
         Assertions.assertEquals(1, handlers.size());
@@ -62,23 +62,23 @@ public class DefaultModelIOHandlerRegistryTest {
         checkWriteRead("obj");
     }
 
-    private void checkWriteRead(String type) {
+    private void checkWriteRead(final String type) {
         // arrange
-        BoundarySource3D model = BoundarySource3D.from(
+        final BoundarySource3D model = BoundarySource3D.from(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // act
         registry.write(model, type, out);
-        BoundarySource3D result = registry.read(type, new ByteArrayInputStream(out.toByteArray()), TEST_PRECISION);
+        final BoundarySource3D result = registry.read(type, new ByteArrayInputStream(out.toByteArray()), TEST_PRECISION);
 
         // assert
-        List<Triangle3D> tris = result.triangleStream().collect(Collectors.toList());
+        final List<Triangle3D> tris = result.triangleStream().collect(Collectors.toList());
         Assertions.assertEquals(1, tris.size());
 
-        Triangle3D tri = tris.get(0);
+        final Triangle3D tri = tris.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tri.getPoint1(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), tri.getPoint2(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0), tri.getPoint3(), TEST_EPS);

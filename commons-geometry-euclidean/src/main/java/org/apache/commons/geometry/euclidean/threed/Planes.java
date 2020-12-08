@@ -808,7 +808,7 @@ public final class Planes {
             this.basePlane = basePlane;
 
             // Extruded plane; this forms the end of the 3D region opposite the base plane.
-            EmbeddingPlane extrudedPlane = basePlane.translate(extrusionVector);
+            final EmbeddingPlane extrudedPlane = basePlane.translate(extrusionVector);
 
             if (basePlane.contains(extrudedPlane)) {
                 throw new IllegalArgumentException(

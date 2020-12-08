@@ -120,7 +120,7 @@ public class RegionBSPTree2DPerformance {
     public RegionBSPTree2D insertConvexWorstCase(final CircularBoundaryInput input) {
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        for (LineConvexSubset boundary : input.getBoundaries()) {
+        for (final LineConvexSubset boundary : input.getBoundaries()) {
             tree.insert(boundary);
         }
 

@@ -44,21 +44,21 @@ public final class BottomUpBSPTreeConstruction {
      * @param args command arguments; if given, the first argument is used as the location of
      *      output folder
      */
-    public static void main(String[] args) {
-        File outputFolder = new File(args.length > 0 ? args[0] : ".");
-        BSPTreeSVGWriter svgWriter = new BSPTreeSVGWriter(Bounds2D.from(Vector2D.of(-8, -8), Vector2D.of(8, 8)));
+    public static void main(final String[] args) {
+        final File outputFolder = new File(args.length > 0 ? args[0] : ".");
+        final BSPTreeSVGWriter svgWriter = new BSPTreeSVGWriter(Bounds2D.from(Vector2D.of(-8, -8), Vector2D.of(8, 8)));
 
-        Map<RegionNode2D, String> nodeNames = new HashMap<>();
+        final Map<RegionNode2D, String> nodeNames = new HashMap<>();
         int cutCount = -1;
 
         // create a precision context for floating point comparisons
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // construct an empty tree
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        Line rootCut = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
-        RegionNode2D a = tree.getRoot();
+        final Line rootCut = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
+        final RegionNode2D a = tree.getRoot();
 
         nodeNames.put(a, "a");
         svgWriter.write(tree, nodeNames, new File(outputFolder, String.format(OUTPUT_FILE_FORMAT, ++cutCount)));
@@ -66,8 +66,8 @@ public final class BottomUpBSPTreeConstruction {
         // add a single cut
         a.cut(rootCut);
 
-        RegionNode2D b = a.getMinus();
-        RegionNode2D c = a.getPlus();
+        final RegionNode2D b = a.getMinus();
+        final RegionNode2D c = a.getPlus();
 
         nodeNames.put(b, "b");
         nodeNames.put(c, "c");
@@ -76,8 +76,8 @@ public final class BottomUpBSPTreeConstruction {
         // add another cut
         b.insertCut(Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(-1, 1), precision));
 
-        RegionNode2D d = b.getMinus();
-        RegionNode2D e = b.getPlus();
+        final RegionNode2D d = b.getMinus();
+        final RegionNode2D e = b.getPlus();
 
         nodeNames.put(d, "d");
         nodeNames.put(e, "e");
@@ -85,8 +85,8 @@ public final class BottomUpBSPTreeConstruction {
 
         d.insertCut(Lines.fromPointAndDirection(Vector2D.of(-5, 1), Vector2D.Unit.MINUS_Y, precision));
 
-        RegionNode2D f = d.getMinus();
-        RegionNode2D g = d.getPlus();
+        final RegionNode2D f = d.getMinus();
+        final RegionNode2D g = d.getPlus();
 
         nodeNames.put(f, "f");
         nodeNames.put(g, "g");
@@ -95,8 +95,8 @@ public final class BottomUpBSPTreeConstruction {
         // other side
         c.insertCut(Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(1, -1), precision));
 
-        RegionNode2D h = c.getMinus();
-        RegionNode2D i = c.getPlus();
+        final RegionNode2D h = c.getMinus();
+        final RegionNode2D i = c.getPlus();
 
         nodeNames.put(h, "h");
         nodeNames.put(i, "i");
@@ -104,8 +104,8 @@ public final class BottomUpBSPTreeConstruction {
 
         h.insertCut(Lines.fromPointAndDirection(Vector2D.of(5, -1), Vector2D.Unit.PLUS_Y, precision));
 
-        RegionNode2D j = h.getMinus();
-        RegionNode2D k = h.getPlus();
+        final RegionNode2D j = h.getMinus();
+        final RegionNode2D k = h.getPlus();
 
         nodeNames.put(j, "j");
         nodeNames.put(k, "k");
