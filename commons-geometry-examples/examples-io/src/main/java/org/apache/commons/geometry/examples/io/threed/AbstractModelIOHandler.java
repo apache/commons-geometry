@@ -35,7 +35,7 @@ public abstract class AbstractModelIOHandler implements ModelIOHandler {
     public BoundarySource3D read(final String type, final File in, final DoublePrecisionContext precision) {
         ensureTypeSupported(type);
         try {
-            try (final InputStream is = Files.newInputStream(in.toPath())) {
+            try (InputStream is = Files.newInputStream(in.toPath())) {
                 return readInternal(type, is, precision);
             }
         } catch (final IOException exc) {
@@ -59,7 +59,7 @@ public abstract class AbstractModelIOHandler implements ModelIOHandler {
     public void write(final BoundarySource3D model, final String type, final File out) {
         ensureTypeSupported(type);
         try {
-            try (final OutputStream os = Files.newOutputStream(out.toPath())) {
+            try (OutputStream os = Files.newOutputStream(out.toPath())) {
                 writeInternal(model, type, os);
             }
         } catch (final IOException exc) {

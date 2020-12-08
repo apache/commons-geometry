@@ -50,7 +50,7 @@ public final class OBJReader {
      * @throws IllegalArgumentException if invalid OBj syntax is encountered in the input
      */
     public TriangleMesh readTriangleMesh(final File file, final DoublePrecisionContext precision) throws IOException {
-        try (final Reader reader = Files.newBufferedReader(file.toPath(), OBJConstants.DEFAULT_CHARSET)) {
+        try (Reader reader = Files.newBufferedReader(file.toPath(), OBJConstants.DEFAULT_CHARSET)) {
             return readTriangleMesh(reader, precision);
         }
     }
@@ -64,7 +64,7 @@ public final class OBJReader {
      * @throws IllegalArgumentException if invalid OBj syntax is encountered in the input
      */
     public TriangleMesh readTriangleMesh(final URL url, final DoublePrecisionContext precision) throws IOException {
-        try (final InputStreamReader reader = new InputStreamReader(url.openStream(), OBJConstants.DEFAULT_CHARSET)) {
+        try (InputStreamReader reader = new InputStreamReader(url.openStream(), OBJConstants.DEFAULT_CHARSET)) {
             return readTriangleMesh(reader, precision);
         }
     }
