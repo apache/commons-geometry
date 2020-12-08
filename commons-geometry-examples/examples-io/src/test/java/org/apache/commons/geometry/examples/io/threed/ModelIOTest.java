@@ -43,7 +43,7 @@ public class ModelIOTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @TempDir
-    File anotherTempDir;
+    protected File anotherTempDir;
 
     @Test
     public void testGetHandler() {
