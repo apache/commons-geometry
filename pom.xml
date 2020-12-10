@@ -53,16 +53,16 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <geometry.pmd.version>3.13.0</geometry.pmd.version>
-    <geometry.pmd.dep.version>6.21.0</geometry.pmd.dep.version>
+    <geometry.pmd.dep.version>6.29.0</geometry.pmd.dep.version>
     <geometry.checkstyle.version>3.1.1</geometry.checkstyle.version>
     <geometry.checkstyle.dep.version>8.29</geometry.checkstyle.dep.version>
     <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
 
-    <commons.spotbugs.version>3.1.12</commons.spotbugs.version>
+    <commons.spotbugs.version>4.1.4</commons.spotbugs.version>
     <!-- Required for Java 13 build -->
-    <commons.spotbugs.dep.version>4.0.0</commons.spotbugs.dep.version>
+    <commons.spotbugs.dep.version>4.2.0</commons.spotbugs.dep.version>
 
     <!-- Fix to avoid JXR 3.0.0 forking the lifecycle phase 'compile' during site report
        jxr:aggregate. If compile is forked, the dist-archive build fails when attempting
@@ -304,7 +304,7 @@
             <ruleset>${geometry.parent.dir}/src/main/resources/pmd/pmd-ruleset.xml</ruleset>
           </rulesets>
           <excludeRoots>
-            <excludeRoot>target/generated-sources</excludeRoot>
+            <excludeRoot>target/generated-sources/annotations</excludeRoot>
           </excludeRoots>
         </configuration>
       </plugin>
@@ -446,6 +446,9 @@
           <rulesets>
             <ruleset>${geometry.parent.dir}/src/main/resources/pmd/pmd-ruleset.xml</ruleset>
           </rulesets>
+          <excludeRoots>
+            <excludeRoot>target/generated-sources/annotations</excludeRoot>
+          </excludeRoots>
         </configuration>
         <reportSets>
           <reportSet>
@@ -509,7 +512,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.7</version>
             <executions>
               <execution>
                 <id>prepare-checkout</id>
