@@ -54,7 +54,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <geometry.pmd.version>3.13.0</geometry.pmd.version>
     <geometry.pmd.dep.version>6.21.0</geometry.pmd.dep.version>
-    <geometry.checkstyle.version>3.1.0</geometry.checkstyle.version>
+    <geometry.checkstyle.version>3.1.1</geometry.checkstyle.version>
     <geometry.checkstyle.dep.version>8.29</geometry.checkstyle.dep.version>
     <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
     <!-- Workaround to avoid duplicating config files. -->
@@ -268,7 +268,7 @@
           <logViolationsToConsole>true</logViolationsToConsole>
           <failOnViolation>true</failOnViolation>
           <resourceExcludes>NOTICE.txt,LICENSE.txt,**/pom.properties,**/resolver-status.properties,**/sha512.properties</resourceExcludes>
-          <excludes>**/generated/**.java</excludes>
+          <excludes>**/generated/**.java,**/jmh_generated/**.java</excludes>
         </configuration>
         <executions>
           <execution>
@@ -424,7 +424,7 @@
           <suppressionsLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
           <enableRulesSummary>false</enableRulesSummary>
           <includeResources>false</includeResources>
-          <excludes>**/generated/**.java</excludes>
+          <excludes>**/generated/**.java,**/jmh_generated/**.java</excludes>
         </configuration>
         <reportSets>
           <reportSet>
