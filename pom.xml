@@ -52,7 +52,7 @@
     <commons.encoding>UTF-8</commons.encoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <geometry.pmd.version>3.13.0</geometry.pmd.version>
+    <geometry.pmd.version>3.14.0</geometry.pmd.version>
     <geometry.pmd.dep.version>6.29.0</geometry.pmd.dep.version>
     <geometry.checkstyle.version>3.1.1</geometry.checkstyle.version>
     <geometry.checkstyle.dep.version>8.29</geometry.checkstyle.dep.version>
