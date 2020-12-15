@@ -460,6 +460,27 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
+    public void testToList() {
+        // arrange
+        final RegionBSPTree3D tree = Parallelepiped.axisAligned(
+                Vector3D.ZERO, Vector3D.of(1, 3, 3), TEST_PRECISION).toTree();
+
+        // act
+        final BoundaryList3D list = tree.toList();
+
+        // assert
+        Assertions.assertEquals(6, list.count());
+        Assertions.assertEquals(9, list.toTree().getSize());
+    }
+
+    @Test
+    public void testToList_fullAndEmpty() {
+        // act/assert
+        Assertions.assertEquals(0, RegionBSPTree3D.full().toList().count());
+        Assertions.assertEquals(0, RegionBSPTree3D.empty().toList().count());
+    }
+
+    @Test
     public void testToTree_returnsSameInstance() {
         // arrange
         final RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 2, 1));

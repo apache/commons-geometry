@@ -34,6 +34,33 @@ public class BoundarySource3DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
+    public void testToList() {
+        // act
+        final BoundarySource3D src = BoundarySource3D.from(
+            Planes.convexPolygonFromVertices(
+                    Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION)
+        );
+
+        // act
+        final BoundaryList3D list = src.toList();
+
+        // assert
+        Assertions.assertEquals(1, list.count());
+    }
+
+    @Test
+    public void testToList_noBoundaries() {
+        // act
+        final BoundarySource3D src = BoundarySource3D.from();
+
+        // act
+        final BoundaryList3D list = src.toList();
+
+        // assert
+        Assertions.assertEquals(0, list.count());
+    }
+
+    @Test
     public void testToTree() {
         // act
         final PlaneConvexSubset a = Planes.convexPolygonFromVertices(

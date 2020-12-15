@@ -179,6 +179,39 @@ public class ConvexVolumeTest {
     }
 
     @Test
+    public void testToList_full() {
+        // arrange
+        final ConvexVolume volume = ConvexVolume.full();
+
+        // act
+        final BoundaryList3D list = volume.toList();
+
+        // assert
+        Assertions.assertEquals(0, list.count());
+    }
+
+    @Test
+    public void testToList() {
+        // arrange
+        final ConvexVolume volume = ConvexVolume.fromBounds(
+                    Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
+                    Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
+                    Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
+
+                    Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION),
+                    Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y, TEST_PRECISION),
+                    Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION)
+                );
+
+        // act
+        final BoundaryList3D list = volume.toList();
+
+        // assert
+        Assertions.assertEquals(6, list.count());
+        Assertions.assertEquals(1, list.toTree().getSize(), TEST_EPS);
+    }
+
+    @Test
     public void testToTree_full() {
         // arrange
         final ConvexVolume volume = ConvexVolume.full();

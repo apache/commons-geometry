@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import java.util.stream.Stream;
+import java.util.Collections;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -27,12 +27,40 @@ public class BoundarySource2STest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION = new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
+
+    @Test
+    public void testToList() {
+        // act
+        final BoundarySource2S src = BoundarySource2S.from(
+            GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION),
+            GreatCircles.arcFromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
+        );
+
+        // act
+        final BoundaryList2S list = src.toList();
+
+        // assert
+        Assertions.assertEquals(2, list.count());
+    }
+
+    @Test
+    public void testToList_noBoundaries() {
+        // act
+        final BoundarySource2S src = BoundarySource2S.from();
+
+        // act
+        final BoundaryList2S list = src.toList();
+
+        // assert
+        Assertions.assertEquals(0, list.count());
+    }
 
     @Test
     public void testToTree() {
         // act
-        final BoundarySource2S src = () -> Stream.of(
+        final BoundarySource2S src = BoundarySource2S.from(
                 GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION));
 
         // act
@@ -47,7 +75,7 @@ public class BoundarySource2STest {
     @Test
     public void testToTree_noBoundaries() {
         // act
-        final BoundarySource2S src = Stream::empty;
+        final BoundarySource2S src = BoundarySource2S.from(Collections.emptyList());
 
         // act
         final RegionBSPTree2S tree = src.toTree();

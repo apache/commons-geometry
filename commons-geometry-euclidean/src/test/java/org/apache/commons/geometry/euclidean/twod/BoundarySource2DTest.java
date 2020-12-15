@@ -33,6 +33,33 @@ public class BoundarySource2DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
+    public void testToList() {
+        // act
+        final BoundarySource2D src = BoundarySource2D.from(
+            Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION),
+            Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)
+        );
+
+        // act
+        final BoundaryList2D list = src.toList();
+
+        // assert
+        Assertions.assertEquals(2, list.count());
+    }
+
+    @Test
+    public void testToList_noBoundaries() {
+        // act
+        final BoundarySource2D src = BoundarySource2D.from();
+
+        // act
+        final BoundaryList2D list = src.toList();
+
+        // assert
+        Assertions.assertEquals(0, list.count());
+    }
+
+    @Test
     public void testToTree() {
         // act
         final BoundarySource2D src = BoundarySource2D.from(

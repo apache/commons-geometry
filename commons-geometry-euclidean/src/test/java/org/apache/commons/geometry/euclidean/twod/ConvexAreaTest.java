@@ -87,6 +87,33 @@ public class ConvexAreaTest {
     }
 
     @Test
+    public void testToList() {
+        // arrange
+        final ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
+                    Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(0, 1)
+                ), TEST_PRECISION);
+
+        // act
+        final BoundaryList2D list = area.toList();
+
+        // assert
+        Assertions.assertEquals(3, list.count());
+        Assertions.assertEquals(area.getBoundaries(), list.getBoundaries());
+    }
+
+    @Test
+    public void testToList_full() {
+        // arrange
+        final ConvexArea area = ConvexArea.full();
+
+        // act
+        final BoundaryList2D list = area.toList();
+
+        // assert
+        Assertions.assertEquals(0, list.count());
+    }
+
+    @Test
     public void testToTree() {
         // arrange
         final ConvexArea area = ConvexArea.fromBounds(

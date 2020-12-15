@@ -646,8 +646,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final String str = region.toString();
 
         // assert
-        Assertions.assertTrue(str.contains("StubRegion"));
-        Assertions.assertTrue(str.contains("boundaries= "));
+        Assertions.assertEquals("StubRegion[boundaries= []]", str);
     }
 
     private static void checkClassify(final Region<TestPoint2D> region, final RegionLocation loc, final TestPoint2D... pts) {

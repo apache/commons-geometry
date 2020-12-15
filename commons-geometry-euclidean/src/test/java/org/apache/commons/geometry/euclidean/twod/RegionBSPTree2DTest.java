@@ -1081,6 +1081,26 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
+    public void testToList() {
+        // arrange
+        final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).toTree();
+
+        // act
+        final BoundaryList2D list = tree.toList();
+
+        // assert
+        Assertions.assertEquals(4, list.toList().count());
+        Assertions.assertEquals(1, list.toTree().getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testToList_fullAndEmpty() {
+        // act/assert
+        Assertions.assertEquals(0, RegionBSPTree2D.full().toList().count());
+        Assertions.assertEquals(0, RegionBSPTree2D.empty().toList().count());
+    }
+
+    @Test
     public void testToTree_returnsSameInstance() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 2), TEST_PRECISION).toTree();

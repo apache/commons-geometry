@@ -19,12 +19,23 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
 
 /** Extension of the {@link BoundarySource} interface for Euclidean 2D space.
  */
 public interface BoundarySource2D extends BoundarySource<LineConvexSubset>, Linecastable2D {
+
+    /** Return a {@link BoundaryList2D} containing the boundaries in this instance.
+     * @return a {@link BoundaryList2D} containing the boundaries in this instance
+     */
+    default BoundaryList2D toList() {
+        final List<LineConvexSubset> boundaries = boundaryStream()
+                .collect(Collectors.toList());
+
+        return new BoundaryList2D(boundaries);
+    }
 
     /** Return a BSP tree constructed from the boundaries contained in this instance. This is
      * a convenience method for quickly constructing BSP trees and may produce unbalanced trees

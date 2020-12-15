@@ -144,7 +144,8 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         final StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getSimpleName())
             .append("[boundaries= ")
-            .append(boundaries);
+            .append(boundaries)
+            .append(']');
 
         return sb.toString();
     }

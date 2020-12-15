@@ -791,6 +791,35 @@ public class ConvexArea2STest {
     }
 
     @Test
+    public void testToList_full() {
+        // arrange
+        final ConvexArea2S area = ConvexArea2S.full();
+
+        // act
+        final BoundaryList2S list = area.toList();
+
+        // assert
+        Assertions.assertEquals(0, list.count());
+    }
+
+    @Test
+    public void testToList() {
+        // arrange
+        final ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
+                    Point2S.of(0.1, 0.1), Point2S.of(-0.4, 1),
+                    Point2S.of(0.15, 1.5), Point2S.of(0.3, 1.2),
+                    Point2S.of(0.1, 0.1)
+                ), TEST_PRECISION);
+
+        // act
+        final BoundaryList2S list = area.toList();
+
+        // assert
+        Assertions.assertEquals(4, list.count());
+        Assertions.assertEquals(area.getSize(), list.toTree().getSize(), TEST_EPS);
+    }
+
+    @Test
     public void testToTree_full() {
         // arrange
         final ConvexArea2S area = ConvexArea2S.full();
