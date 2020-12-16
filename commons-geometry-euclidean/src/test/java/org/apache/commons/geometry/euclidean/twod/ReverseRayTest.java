@@ -67,7 +67,7 @@ public class ReverseRayTest {
         final Vector2D d = Vector2D.of(1e-17, -1e-12);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.reverseRayFromPointAndDirection(p, d, TEST_PRECISION);
         }, IllegalArgumentException.class, "Line direction cannot be zero");
     }
@@ -109,15 +109,15 @@ public class ReverseRayTest {
         final Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.reverseRayFromPoint(line, Vector2D.NaN);
         }, IllegalArgumentException.class, "Invalid reverse ray end point: (NaN, NaN)");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.reverseRayFromPoint(line, Vector2D.POSITIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid reverse ray end point: (Infinity, Infinity)");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.reverseRayFromPoint(line, Vector2D.NEGATIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid reverse ray end point: (-Infinity, -Infinity)");
     }
@@ -158,15 +158,15 @@ public class ReverseRayTest {
         final Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.reverseRayFromLocation(line, Double.NaN);
         }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.reverseRayFromLocation(line, Double.POSITIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid reverse ray end location: Infinity");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.reverseRayFromLocation(line, Double.NEGATIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid reverse ray end location: -Infinity");
     }

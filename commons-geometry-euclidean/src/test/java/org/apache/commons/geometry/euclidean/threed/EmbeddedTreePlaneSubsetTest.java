@@ -165,11 +165,11 @@ public class EmbeddedTreePlaneSubsetTest {
         final Pattern pattern = Pattern.compile("^Cannot convert infinite plane subset to triangles: .*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             new EmbeddedTreePlaneSubset(XY_PLANE, true).toTriangles();
         }, IllegalStateException.class, pattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             final EmbeddedTreePlaneSubset halfSpace = new EmbeddedTreePlaneSubset(XY_PLANE, false);
             halfSpace.getSubspaceRegion().getRoot()
                 .insertCut(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION));
@@ -177,7 +177,7 @@ public class EmbeddedTreePlaneSubsetTest {
             halfSpace.toTriangles();
         }, IllegalStateException.class, pattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             final RegionBSPTree2D tree = RegionBSPTree2D.empty();
             tree.insert(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION));
             tree.insert(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(0, 1), TEST_PRECISION));
@@ -660,17 +660,12 @@ public class EmbeddedTreePlaneSubsetTest {
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            ps.add(Planes.subsetFromConvexArea(
-                    Planes.fromPointAndPlaneVectors(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
-                    ConvexArea.full()));
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            ps.add(new EmbeddedTreePlaneSubset(
-                    Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION),
-                    false));
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ps.add(Planes.subsetFromConvexArea(
+                Planes.fromPointAndPlaneVectors(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
+                ConvexArea.full())));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ps.add(new EmbeddedTreePlaneSubset(
+                Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION),
+                false)));
     }
 
     @Test

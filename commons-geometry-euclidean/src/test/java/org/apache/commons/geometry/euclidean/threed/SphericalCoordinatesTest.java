@@ -23,7 +23,6 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SphericalCoordinatesTest {
 
@@ -363,7 +362,7 @@ public class SphericalCoordinatesTest {
     @Test
     public void testParse_failure() {
         // act/assert
-        assertThrows(IllegalArgumentException.class, () -> SphericalCoordinates.parse("abc"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> SphericalCoordinates.parse("abc"));
     }
 
     @Test

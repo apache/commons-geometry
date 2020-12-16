@@ -44,6 +44,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class RegionBSPTree3DTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -253,19 +254,19 @@ public class RegionBSPTree3DTest {
         final String msg = "Cannot insert partitions after boundaries have been inserted";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             builder.insertPartition(partition);
         }, IllegalStateException.class, msg);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             builder.insertPartition(partition.span());
         }, IllegalStateException.class, msg);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             builder.insertAxisAlignedPartitions(Vector3D.ZERO, TEST_PRECISION);
         }, IllegalStateException.class, msg);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             builder.insertAxisAlignedGrid(Bounds3D.from(Vector3D.ZERO, Vector3D.of(1, 1, 1)), 1, TEST_PRECISION);
         }, IllegalStateException.class, msg);
     }
@@ -432,9 +433,7 @@ public class RegionBSPTree3DTest {
         tree.getRoot().insertCut(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            tree.toTriangleMesh(TEST_PRECISION);
-        }, IllegalStateException.class);
+        Assertions.assertThrows(IllegalStateException.class, () -> tree.toTriangleMesh(TEST_PRECISION));
     }
 
     @Test

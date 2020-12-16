@@ -46,11 +46,11 @@ public class WelzlEncloser3DTest {
         final String msg = "Unable to generate enclosing ball: no points given";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             encloser.enclose(null);
         }, IllegalArgumentException.class, msg);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             encloser.enclose(new ArrayList<Vector3D>());
         }, IllegalArgumentException.class, msg);
     }

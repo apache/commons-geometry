@@ -28,7 +28,6 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Point2STest {
 
@@ -355,7 +354,7 @@ public class Point2STest {
     @Test
     public void testParse_failure() {
         // act/assert
-        assertThrows(IllegalArgumentException.class, () -> Point2S.parse("abc"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point2S.parse("abc"));
     }
 
     private static void checkPoint(final Point2S p, final double az, final double polar) {

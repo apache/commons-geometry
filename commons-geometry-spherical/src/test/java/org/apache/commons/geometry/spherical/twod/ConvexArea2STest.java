@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -34,6 +33,7 @@ import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 
 public class ConvexArea2STest {
 
@@ -480,13 +480,8 @@ public class ConvexArea2STest {
     @Test
     public void testFromVertices_invalidArguments() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            ConvexArea2S.fromVertices(Collections.singletonList(Point2S.PLUS_I), TEST_PRECISION);
-        }, IllegalStateException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            ConvexArea2S.fromVertices(Arrays.asList(Point2S.PLUS_I, Point2S.of(1e-16, PlaneAngleRadians.PI_OVER_TWO)), TEST_PRECISION);
-        }, IllegalStateException.class);
+        Assertions.assertThrows(IllegalStateException.class, () -> ConvexArea2S.fromVertices(Collections.singletonList(Point2S.PLUS_I), TEST_PRECISION));
+        Assertions.assertThrows(IllegalStateException.class, () -> ConvexArea2S.fromVertices(Arrays.asList(Point2S.PLUS_I, Point2S.of(1e-16, PlaneAngleRadians.PI_OVER_TWO)), TEST_PRECISION));
     }
 
     @Test

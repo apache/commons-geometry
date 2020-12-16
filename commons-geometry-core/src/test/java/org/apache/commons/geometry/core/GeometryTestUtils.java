@@ -23,6 +23,7 @@ import java.io.ObjectOutputStream;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.function.Executable;
 
 /** Class containing various geometry-related test utilities.
  */
@@ -50,61 +51,28 @@ public final class GeometryTestUtils {
         Assertions.assertTrue(value < 0, msg);
     }
 
-    /** Asserts that the given Runnable throws an exception of the given type.
-     * @param r the Runnable instance
-     * @param exceptionType the expected exception type
-     */
-    public static void assertThrows(final Runnable r, final Class<?> exceptionType) {
-        assertThrows(r, exceptionType, (String) null);
-    }
-
-    /** Asserts that the given Runnable throws an exception of the given type. If
+    /** Asserts that the given Executable throws an exception of the given type. If
      * {@code message} is not null, the exception message is asserted to equal the
      * given value.
-     * @param r the Runnable instance
+     * @param executable the Executable instance
      * @param exceptionType the expected exception type
      * @param message the expected exception message; ignored if null
      */
-    public static void assertThrows(final Runnable r, final Class<?> exceptionType, final String message) {
-        try {
-            r.run();
-            Assertions.fail("Operation should have thrown an exception");
-        } catch (final Exception exc) {
-            final Class<?> actualType = exc.getClass();
-
-            Assertions.assertTrue(exceptionType.isAssignableFrom(actualType),
-                    "Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName());
-
-            if (message != null) {
-                Assertions.assertEquals(message, exc.getMessage());
-            }
-        }
+    public static <T extends Throwable> void assertThrowsWithMessage(final Executable executable, final Class<T> exceptionType, final String message) {
+        Assertions.assertEquals(message, Assertions.assertThrows(exceptionType, executable).getMessage());
     }
 
-    /** Asserts that the given Runnable throws an exception of the given type. If
+    /** Asserts that the given Executable throws an exception of the given type. If
      * {@code pattern} is not null, the exception message is asserted to match the
      * given regex.
-     * @param r the Runnable instance
+     * @param executable the Executable instance
      * @param exceptionType the expected exception type
      * @param pattern regex pattern to match; ignored if null
      */
-    public static void assertThrows(final Runnable r, final Class<?> exceptionType, final Pattern pattern) {
-        try {
-            r.run();
-            Assertions.fail("Operation should have thrown an exception");
-        } catch (final Exception exc) {
-            final Class<?> actualType = exc.getClass();
-
-            Assertions.assertTrue(exceptionType.isAssignableFrom(actualType),
-                    "Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName());
-
-            if (pattern != null) {
-                final String message = exc.getMessage();
-
-                final String err = "Expected exception message to match /" + pattern + "/ but was [" + message + "]";
-                Assertions.assertTrue(pattern.matcher(message).matches(), err);
-            }
-        }
+    public static <T extends Throwable> void assertThrowsWithMessage(final Executable executable, final Class<T> exceptionType, final Pattern pattern) {
+        final String message = Assertions.assertThrows(exceptionType, executable).getMessage();
+        Assertions.assertTrue(pattern.matcher(message).matches(),
+                "Expected exception message to match /" + pattern + "/ but was [" + message + "]");
     }
 
     /** Assert that a string contains a given substring value.

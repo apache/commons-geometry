@@ -30,6 +30,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class GreatCircleTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -92,36 +93,25 @@ public class GreatCircleTest {
         final Point2S p2 = Point2S.of(PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             GreatCircles.fromPoints(p1, p1, TEST_PRECISION);
         }, IllegalArgumentException.class, Pattern.compile("^.*points are equal$"));
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             GreatCircles.fromPoints(p1, Point2S.of(1e-12, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
         }, IllegalArgumentException.class, Pattern.compile("^.*points are equal$"));
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             GreatCircles.fromPoints(
                     Point2S.from(Vector3D.Unit.PLUS_X),
                     Point2S.from(Vector3D.Unit.MINUS_X),
                     TEST_PRECISION);
         }, IllegalArgumentException.class, Pattern.compile("^.*points are antipodal$"));
 
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(p1, Point2S.NaN, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(Point2S.NaN, p2, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(p1, Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            GreatCircles.fromPoints(Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), p2, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> GreatCircles.fromPoints(p1, Point2S.NaN, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> GreatCircles.fromPoints(Point2S.NaN, p2, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> GreatCircles.fromPoints(p1, Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> GreatCircles.fromPoints(Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), p2, TEST_PRECISION));
     }
 
     @Test

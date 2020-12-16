@@ -38,7 +38,7 @@ public class AbstractPartitionedRegionBuilderTest {
         final TestRegionBSPTree tree = new TestRegionBSPTree(true);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             new TestRegionBuilder(tree);
         }, IllegalArgumentException.class, "Tree must be empty");
     }
@@ -65,7 +65,7 @@ public class AbstractPartitionedRegionBuilderTest {
         builder.insertBoundary(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             builder.insertPartition(new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0)).span());
         }, IllegalStateException.class, "Cannot insert partitions after boundaries have been inserted");
     }

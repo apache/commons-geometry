@@ -92,19 +92,19 @@ public class MatricesTest {
     @Test
     public void testCheckDeterminantForInverse_invalid() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Matrices.checkDeterminantForInverse(0);
         }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is 0.0");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Matrices.checkDeterminantForInverse(Double.NaN);
         }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is NaN");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Matrices.checkDeterminantForInverse(Double.POSITIVE_INFINITY);
         }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is Infinity");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Matrices.checkDeterminantForInverse(Double.NEGATIVE_INFINITY);
         }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is -Infinity");
     }
@@ -121,15 +121,15 @@ public class MatricesTest {
     @Test
     public void testCheckElementForInverse_invalid() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Matrices.checkElementForInverse(Double.NaN);
         }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: NaN");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Matrices.checkElementForInverse(Double.POSITIVE_INFINITY);
         }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: Infinity");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Matrices.checkElementForInverse(Double.NEGATIVE_INFINITY);
         }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: -Infinity");
     }

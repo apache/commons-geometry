@@ -112,7 +112,7 @@ public class OrientedPointTest {
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(Vector1D.of(2.0), TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(
+        GeometryTestUtils.assertThrowsWithMessage(
             () -> pt.transform(zeroScale),
             IllegalArgumentException.class, "Oriented point direction cannot be zero");
     }
@@ -364,10 +364,10 @@ public class OrientedPointTest {
         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(0.1);
 
         // act/assert
-        GeometryTestUtils.assertThrows(
+        GeometryTestUtils.assertThrowsWithMessage(
             () -> OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(0.09), precision),
             IllegalArgumentException.class, "Oriented point direction cannot be zero");
-        GeometryTestUtils.assertThrows(
+        GeometryTestUtils.assertThrowsWithMessage(
             () -> OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(-0.09), precision),
             IllegalArgumentException.class, "Oriented point direction cannot be zero");
     }

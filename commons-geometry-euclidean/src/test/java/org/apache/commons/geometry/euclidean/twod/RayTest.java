@@ -69,7 +69,7 @@ public class RayTest {
         final Vector2D d = Vector2D.of(1e-17, -1e-12);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.rayFromPointAndDirection(p, d, TEST_PRECISION);
         }, IllegalArgumentException.class, "Line direction cannot be zero");
     }
@@ -113,15 +113,15 @@ public class RayTest {
         final Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.rayFromPoint(line, Vector2D.NaN);
         }, IllegalArgumentException.class, "Invalid ray start point: (NaN, NaN)");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.rayFromPoint(line, Vector2D.POSITIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid ray start point: (Infinity, Infinity)");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.rayFromPoint(line, Vector2D.NEGATIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid ray start point: (-Infinity, -Infinity)");
     }
@@ -164,15 +164,15 @@ public class RayTest {
         final Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.rayFromLocation(line, Double.NaN);
         }, IllegalArgumentException.class, "Invalid ray start location: NaN");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.rayFromLocation(line, Double.POSITIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid ray start location: Infinity");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Lines.rayFromLocation(line, Double.NEGATIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid ray start location: -Infinity");
     }

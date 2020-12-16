@@ -317,9 +317,9 @@ public class AbstractRegionBSPTreeTest {
     @Test
     public void testSetLocation_invalidArgs() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> root.setLocation(null),
+        GeometryTestUtils.assertThrowsWithMessage(() -> root.setLocation(null),
                 IllegalArgumentException.class, "Invalid node location: null");
-        GeometryTestUtils.assertThrows(() -> root.setLocation(RegionLocation.BOUNDARY),
+        GeometryTestUtils.assertThrowsWithMessage(() -> root.setLocation(RegionLocation.BOUNDARY),
                 IllegalArgumentException.class, "Invalid node location: BOUNDARY");
     }
 

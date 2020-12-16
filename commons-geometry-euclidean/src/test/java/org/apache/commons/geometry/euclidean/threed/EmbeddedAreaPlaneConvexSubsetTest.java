@@ -149,18 +149,18 @@ public class EmbeddedAreaPlaneConvexSubsetTest {
         final Pattern pattern = Pattern.compile("^Cannot convert infinite plane subset to triangles: .*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, ConvexArea.full()).toTriangles();
         }, IllegalStateException.class, pattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             final ConvexArea area = ConvexArea.fromBounds(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION));
             final EmbeddedAreaPlaneConvexSubset halfSpace = new EmbeddedAreaPlaneConvexSubset(XY_PLANE_Z1, area);
 
             halfSpace.toTriangles();
         }, IllegalStateException.class, pattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             final ConvexArea area = ConvexArea.fromBounds(
                     Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION),
                     Lines.fromPointAndAngle(Vector2D.ZERO, 0.5 * Math.PI, TEST_PRECISION));

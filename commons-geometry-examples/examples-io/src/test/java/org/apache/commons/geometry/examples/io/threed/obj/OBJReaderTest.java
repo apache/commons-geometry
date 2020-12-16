@@ -171,7 +171,7 @@ public class OBJReaderTest {
             }
         }, NumberFormatException.class);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             try {
                 reader.readTriangleMesh(new StringReader(notEnoughVertices), TEST_PRECISION);
             } catch (final IOException exc) {
@@ -204,7 +204,7 @@ public class OBJReaderTest {
             }
         }, NumberFormatException.class);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             try {
                 reader.readTriangleMesh(new StringReader(notEnoughIndices), TEST_PRECISION);
             } catch (final IOException exc) {

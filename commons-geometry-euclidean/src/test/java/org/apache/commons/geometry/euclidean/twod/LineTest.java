@@ -55,9 +55,9 @@ public class LineTest {
     @Test
     public void testFromPoints_pointsTooClose() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Lines.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION),
+        GeometryTestUtils.assertThrowsWithMessage(() -> Lines.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
-        GeometryTestUtils.assertThrows(() -> Lines.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1 + 1e-11, 1e-11), TEST_PRECISION),
+        GeometryTestUtils.assertThrowsWithMessage(() -> Lines.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1 + 1e-11, 1e-11), TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
@@ -80,9 +80,9 @@ public class LineTest {
     @Test
     public void testFromPointAndDirection_directionIsZero() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Lines.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.ZERO, TEST_PRECISION),
+        GeometryTestUtils.assertThrowsWithMessage(() -> Lines.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.ZERO, TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
-        GeometryTestUtils.assertThrows(() -> Lines.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.of(1e-11, -1e-12), TEST_PRECISION),
+        GeometryTestUtils.assertThrowsWithMessage(() -> Lines.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.of(1e-11, -1e-12), TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
@@ -1064,7 +1064,7 @@ public class LineTest {
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             line.transform(scaleCollapse);
         }, IllegalArgumentException.class, "Line direction cannot be zero");
     }

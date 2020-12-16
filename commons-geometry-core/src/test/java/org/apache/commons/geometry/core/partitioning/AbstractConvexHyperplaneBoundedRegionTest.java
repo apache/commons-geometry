@@ -33,6 +33,7 @@ import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class AbstractConvexHyperplaneBoundedRegionTest {
 
     @Test
@@ -41,9 +42,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         final StubRegion region = new StubRegion(new ArrayList<>());
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            region.getBoundaries().add(TestLine.X_AXIS.span());
-        }, UnsupportedOperationException.class);
+        Assertions.assertThrows(UnsupportedOperationException.class, () ->  region.getBoundaries().add(TestLine.X_AXIS.span()));
     }
 
     @Test
@@ -631,17 +630,13 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
     @Test
     public void testConvexRegionBoundaryBuilder() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            StubRegion.fromBounds(Arrays.asList(TestLine.X_AXIS, TestLine.X_AXIS.reverse()));
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> StubRegion.fromBounds(Arrays.asList(TestLine.X_AXIS, TestLine.X_AXIS.reverse())));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> StubRegion.fromBounds(Arrays.asList(
+                TestLine.X_AXIS,
+                TestLine.Y_AXIS,
+                new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -1)),
+                new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -2)))));
 
-        GeometryTestUtils.assertThrows(() -> {
-            StubRegion.fromBounds(Arrays.asList(
-                    TestLine.X_AXIS,
-                    TestLine.Y_AXIS,
-                    new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -1)),
-                    new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -2))));
-        }, IllegalArgumentException.class);
     }
 
     @Test

@@ -33,7 +33,6 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class    EmbeddedTreeSubGreatCircleTest {
 
@@ -344,7 +343,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
 
         final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(circle);
         // act/assert
-        assertThrows(IllegalArgumentException.class, () ->  sub.add(otherCircle.arc(Point2S.PLUS_J, Point2S.of(1.5 * PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI))));
+        Assertions.assertThrows(IllegalArgumentException.class, () ->  sub.add(otherCircle.arc(Point2S.PLUS_J, Point2S.of(1.5 * PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI))));
     }
 
     @Test
@@ -384,7 +383,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
         final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(circle);
 
         // act/assert
-        assertThrows(IllegalArgumentException.class, () ->  sub.add(new EmbeddedTreeGreatCircleSubset(otherCircle, RegionBSPTree1S.full())));
+        Assertions.assertThrows(IllegalArgumentException.class, () ->  sub.add(new EmbeddedTreeGreatCircleSubset(otherCircle, RegionBSPTree1S.full())));
     }
 
     @Test

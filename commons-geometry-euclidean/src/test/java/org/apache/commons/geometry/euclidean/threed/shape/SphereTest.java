@@ -44,6 +44,7 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class SphereTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -74,12 +75,8 @@ public class SphereTest {
     @Test
     public void testFrom_illegalCenter() {
         // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> Sphere.from(Vector3D.of(Double.POSITIVE_INFINITY, 1, 2), 1, TEST_PRECISION),
-            IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(
-            () -> Sphere.from(Vector3D.of(Double.NaN, 1, 2), 1, TEST_PRECISION),
-            IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Sphere.from(Vector3D.of(Double.POSITIVE_INFINITY, 1, 2), 1, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Sphere.from(Vector3D.of(Double.NaN, 1, 2), 1, TEST_PRECISION));
     }
 
     @Test
@@ -88,17 +85,11 @@ public class SphereTest {
         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Sphere.from(Vector3D.ZERO, -1, TEST_PRECISION),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Sphere.from(Vector3D.ZERO, 0, TEST_PRECISION),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Sphere.from(Vector3D.ZERO, Double.POSITIVE_INFINITY, TEST_PRECISION),
-                IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> Sphere.from(Vector3D.ZERO, Double.NaN, TEST_PRECISION),
-                IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> Sphere.from(Vector3D.ZERO, 1e-3, precision),
-                IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Sphere.from(Vector3D.ZERO, -1, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Sphere.from(Vector3D.ZERO, 0, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Sphere.from(Vector3D.ZERO, Double.POSITIVE_INFINITY, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Sphere.from(Vector3D.ZERO, Double.NaN, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Sphere.from(Vector3D.ZERO, 1e-3, precision));
     }
 
     @Test
@@ -428,7 +419,7 @@ public class SphereTest {
         final Sphere s = Sphere.from(Vector3D.ZERO, 1, precision);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             s.toTree(6);
         }, IllegalStateException.class,
                 Pattern.compile("^Failed to construct sphere approximation with subdivision count 6:.*"));
@@ -440,7 +431,7 @@ public class SphereTest {
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             s.toTree(-1);
         }, IllegalArgumentException.class,
                 "Number of sphere approximation subdivisions must be greater than or equal to zero; was -1");
@@ -501,7 +492,7 @@ public class SphereTest {
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             s.toTriangleMesh(-1);
         }, IllegalArgumentException.class,
                 "Number of sphere approximation subdivisions must be greater than or equal to zero; was -1");

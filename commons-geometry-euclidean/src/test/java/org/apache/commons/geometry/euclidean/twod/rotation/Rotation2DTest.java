@@ -32,6 +32,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class Rotation2DTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -177,33 +178,14 @@ public class Rotation2DTest {
         final Vector2D negInf = Vector2D.POSITIVE_INFINITY;
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(zero, vec);
-        }, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(vec, zero);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(nan, vec);
-        }, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(vec, nan);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(posInf, vec);
-        }, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(vec, negInf);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(zero, nan);
-        }, IllegalArgumentException.class);
-        GeometryTestUtils.assertThrows(() -> {
-            Rotation2D.createVectorRotation(negInf, posInf);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(zero, vec));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(vec, zero));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(nan, vec));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(vec, nan));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(posInf, vec));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(vec, negInf));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(zero, nan));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Rotation2D.createVectorRotation(negInf, posInf));
     }
 
     @Test

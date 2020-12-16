@@ -35,6 +35,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class ConvexAreaTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -864,28 +865,28 @@ public class ConvexAreaTest {
                 Pattern.compile("Unable to create line path; only a single unique vertex provided.*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(Collections.emptyList(), precision);
         }, IllegalArgumentException.class, unclosedPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(Collections.singletonList(Vector2D.ZERO), precision);
         }, IllegalStateException.class, singleVertexPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(Arrays.asList(Vector2D.ZERO, Vector2D.of(1e-4, 1e-4)), precision);
         }, IllegalStateException.class, singleVertexPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X), precision);
         }, IllegalArgumentException.class, notEnoughElementsPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(
                     Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1e-4)), precision);
         }, IllegalArgumentException.class, notEnoughElementsPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(
                     Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, -1)), precision);
         }, IllegalArgumentException.class, nonConvexPattern);
@@ -1002,19 +1003,19 @@ public class ConvexAreaTest {
         final Pattern msgPattern = Pattern.compile("Cannot construct convex polygon from non-convex path.*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(Arrays.asList(
                         Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 0)
                     ), TEST_PRECISION);
         }, IllegalArgumentException.class, msgPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(Arrays.asList(
                         Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(1, -1)
                     ), TEST_PRECISION);
         }, IllegalArgumentException.class, msgPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(
                     Arrays.asList(
                             Vector2D.ZERO,
@@ -1024,7 +1025,7 @@ public class ConvexAreaTest {
                     ), TEST_PRECISION);
         }, IllegalArgumentException.class, msgPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromVertices(Arrays.asList(
                         Vector2D.ZERO, Vector2D.of(2, 0),
                         Vector2D.of(2, 2), Vector2D.of(1, 1),
@@ -1042,21 +1043,21 @@ public class ConvexAreaTest {
         final Pattern nonConvexPattern = Pattern.compile("Cannot construct convex polygon from non-convex path.*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromPath(LinePath.empty());
         }, IllegalArgumentException.class, unclosedPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromPath(LinePath.fromVertices(
                     Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X), TEST_PRECISION));
         }, IllegalArgumentException.class, unclosedPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromPath(LinePath.fromVertices(
                     Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.ZERO), TEST_PRECISION));
         }, IllegalArgumentException.class, notEnoughElementsPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             ConvexArea.convexPolygonFromPath(LinePath.fromVertexLoop(
                     Arrays.asList(
                             Vector2D.ZERO,
@@ -1280,21 +1281,17 @@ public class ConvexAreaTest {
         final Line c = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromBounds(a, b, c);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ConvexArea.fromBounds(a, b, c));
     }
 
     @Test
     public void testFromBounds_boundsDoNotProduceAConvexRegion() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromBounds(Arrays.asList(
-                        Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION),
-                        Lines.fromPointAndAngle(Vector2D.of(0, -1), PlaneAngleRadians.PI, TEST_PRECISION),
-                        Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
-                    ));
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ConvexArea.fromBounds(Arrays.asList(
+                Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION),
+                Lines.fromPointAndAngle(Vector2D.of(0, -1), PlaneAngleRadians.PI, TEST_PRECISION),
+                Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+        )));
     }
 
     private static List<Line> createSquareBoundingLines(final Vector2D lowerLeft, final double width, final double height) {

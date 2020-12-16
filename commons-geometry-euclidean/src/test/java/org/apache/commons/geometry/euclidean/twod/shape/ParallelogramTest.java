@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.twod.shape;
 
 import java.util.List;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -30,6 +29,7 @@ import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 
 public class ParallelogramTest {
 
@@ -111,15 +111,11 @@ public class ParallelogramTest {
     @Test
     public void testFromTransformedUnitSquare_zeroSizeRegion() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelogram.fromTransformedUnitSquare(AffineTransformMatrix2D.createScale(Vector2D.of(1e-16, 1)),
-                    TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () ->  Parallelogram.fromTransformedUnitSquare(AffineTransformMatrix2D.createScale(Vector2D.of(1e-16, 1)),
+                TEST_PRECISION));
 
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelogram.fromTransformedUnitSquare(AffineTransformMatrix2D.createScale(Vector2D.of(1, 1e-16)),
-                    TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () ->  Parallelogram.fromTransformedUnitSquare(AffineTransformMatrix2D.createScale(Vector2D.of(1, 1e-16)),
+                TEST_PRECISION));
     }
 
     @Test
@@ -161,17 +157,10 @@ public class ParallelogramTest {
     @Test
     public void testAxisAligned_illegalArgs() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(1, 3), TEST_PRECISION);
-        }, IllegalArgumentException.class);
 
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Parallelogram.axisAligned(Vector2D.of(2, 3), Vector2D.of(2, 3), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () ->  Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(1, 3), TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () ->  Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () ->  Parallelogram.axisAligned(Vector2D.of(2, 3), Vector2D.of(2, 3), TEST_PRECISION));
     }
 
     @Test

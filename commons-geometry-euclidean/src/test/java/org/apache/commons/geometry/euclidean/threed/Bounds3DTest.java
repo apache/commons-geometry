@@ -31,6 +31,7 @@ import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class Bounds3DTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -110,7 +111,7 @@ public class Bounds3DTest {
     @Test
     public void testFrom_iterable_noPoints() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Bounds3D.from(new ArrayList<>());
         }, IllegalStateException.class, NO_POINTS_MESSAGE);
     }
@@ -125,27 +126,27 @@ public class Bounds3DTest {
         final Vector3D negInf = Vector3D.of(1, 1, Double.NEGATIVE_INFINITY);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Bounds3D.from(Vector3D.NaN);
         }, IllegalStateException.class, INVALID_BOUNDS_PATTERN);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Bounds3D.from(Vector3D.POSITIVE_INFINITY);
         }, IllegalStateException.class, INVALID_BOUNDS_PATTERN);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Bounds3D.from(Vector3D.NEGATIVE_INFINITY);
         }, IllegalStateException.class, INVALID_BOUNDS_PATTERN);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Bounds3D.from(good, nan);
         }, IllegalStateException.class, INVALID_BOUNDS_PATTERN);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Bounds3D.from(posInf, good);
         }, IllegalStateException.class, INVALID_BOUNDS_PATTERN);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Bounds3D.from(good, negInf, good);
         }, IllegalStateException.class, INVALID_BOUNDS_PATTERN);
     }
@@ -381,10 +382,8 @@ public class Bounds3DTest {
     @Test
     public void toRegion_boundingBoxTooSmall() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Bounds3D.from(Vector3D.ZERO, Vector3D.of(1e-12, 1e-12, 1e-12))
-                .toRegion(TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Bounds3D.from(Vector3D.ZERO, Vector3D.of(1e-12, 1e-12, 1e-12))
+                .toRegion(TEST_PRECISION));
     }
 
     @Test

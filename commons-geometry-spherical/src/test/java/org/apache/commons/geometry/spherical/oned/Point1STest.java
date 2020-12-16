@@ -28,7 +28,6 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Point1STest {
 
@@ -361,17 +360,9 @@ public class Point1STest {
     @Test
     public void testNormalize_nonFinite() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.POSITIVE_INFINITY).normalize(0.0);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NEGATIVE_INFINITY).normalize(0.0);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NaN).normalize(Point1S.ZERO);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).normalize(0.0));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).normalize(0.0));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NaN).normalize(Point1S.ZERO));
     }
 
     @Test
@@ -400,17 +391,9 @@ public class Point1STest {
     @Test
     public void testAbove_nonFinite() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.POSITIVE_INFINITY).above(Point1S.ZERO);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NEGATIVE_INFINITY).above(Point1S.ZERO);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NaN).above(Point1S.ZERO);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).above(Point1S.ZERO));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).above(Point1S.ZERO));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NaN).above(Point1S.ZERO));
     }
 
     @Test
@@ -439,17 +422,9 @@ public class Point1STest {
     @Test
     public void testBelow_nonFinite() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.POSITIVE_INFINITY).below(Point1S.ZERO);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NEGATIVE_INFINITY).below(Point1S.ZERO);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NaN).below(Point1S.ZERO);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).below(Point1S.ZERO));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).below(Point1S.ZERO));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NaN).below(Point1S.ZERO));
     }
 
     @Test
@@ -469,7 +444,7 @@ public class Point1STest {
     @Test
     public void testParse_failure() {
         // act/assert
-        assertThrows(IllegalArgumentException.class, () ->  Point1S.parse("abc"));
+        Assertions.assertThrows(IllegalArgumentException.class, () ->  Point1S.parse("abc"));
     }
 
     private static void checkPoint(final Point1S pt, final double az) {

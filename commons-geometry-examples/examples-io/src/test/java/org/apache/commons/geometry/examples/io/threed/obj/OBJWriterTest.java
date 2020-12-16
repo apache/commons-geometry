@@ -208,7 +208,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             try (OBJWriter meshWriter = new OBJWriter(writer)) {
                 meshWriter.writeFace(1, 2);
             } catch (final IOException exc) {
@@ -305,7 +305,7 @@ public class OBJWriterTest {
         final StringWriter writer = new StringWriter();
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             try (OBJWriter meshWriter = new OBJWriter(writer)) {
                 meshWriter.writeBoundaries(src);
             } catch (final IOException exc) {

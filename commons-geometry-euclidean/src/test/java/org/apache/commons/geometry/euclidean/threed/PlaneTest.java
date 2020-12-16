@@ -32,6 +32,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class PlaneTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -55,9 +56,7 @@ public class PlaneTest {
     @Test
     public void testFromNormal_illegalArguments() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromNormal(Vector3D.ZERO, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromNormal(Vector3D.ZERO, TEST_PRECISION));
     }
 
     @Test
@@ -80,9 +79,7 @@ public class PlaneTest {
         final Vector3D pt = Vector3D.of(1, 2, 3);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPointAndNormal(pt, Vector3D.ZERO, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPointAndNormal(pt, Vector3D.ZERO, TEST_PRECISION));
     }
 
     @Test
@@ -123,21 +120,11 @@ public class PlaneTest {
         final Vector3D b = Vector3D.of(0, 1, 0);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(a, a, a, TEST_PRECISION);
-        }, IllegalArgumentException.class);
 
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(a, a, b, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(a, b, a, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(b, a, a, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(a, a, a, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(a, a, b, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(a, b, a, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(b, a, a, TEST_PRECISION));
     }
 
     @Test
@@ -287,72 +274,53 @@ public class PlaneTest {
         final Vector3D b = Vector3D.Unit.PLUS_X;
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Collections.emptyList(), TEST_PRECISION);
-        }, IllegalArgumentException.class);
 
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Collections.singletonList(a), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Arrays.asList(a, b), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Collections.emptyList(), TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Collections.singletonList(a), TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Arrays.asList(a, b), TEST_PRECISION));
     }
 
     @Test
     public void testFromPoints_collection_allPointsCollinear() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Arrays.asList(
-                        Vector3D.ZERO,
-                        Vector3D.Unit.PLUS_X,
-                        Vector3D.of(2, 0, 0)
-                    ), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Arrays.asList(
-                        Vector3D.ZERO,
-                        Vector3D.Unit.PLUS_X,
-                        Vector3D.of(2, 0, 0),
-                        Vector3D.of(3, 0, 0)
-                    ), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Arrays.asList(
+                Vector3D.ZERO,
+                Vector3D.Unit.PLUS_X,
+                Vector3D.of(2, 0, 0)
+        ), TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Arrays.asList(
+                Vector3D.ZERO,
+                Vector3D.Unit.PLUS_X,
+                Vector3D.of(2, 0, 0),
+                Vector3D.of(3, 0, 0)
+        ), TEST_PRECISION));
     }
 
     @Test
     public void testFromPoints_collection_notEnoughUniquePoints() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Arrays.asList(
-                        Vector3D.ZERO,
-                        Vector3D.ZERO,
-                        Vector3D.of(1e-12, 1e-12, 0),
-                        Vector3D.Unit.PLUS_X
-                    ), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Arrays.asList(
-                        Vector3D.ZERO,
-                        Vector3D.of(1e-12, 0, 0),
-                        Vector3D.ZERO
-                    ), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Arrays.asList(
+                Vector3D.ZERO,
+                Vector3D.ZERO,
+                Vector3D.of(1e-12, 1e-12, 0),
+                Vector3D.Unit.PLUS_X
+        ), TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Arrays.asList(
+                Vector3D.ZERO,
+                Vector3D.of(1e-12, 0, 0),
+                Vector3D.ZERO
+        ), TEST_PRECISION));
     }
 
     @Test
     public void testFromPoints_collection_pointsNotOnSamePlane() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.fromPoints(Arrays.asList(
-                        Vector3D.ZERO,
-                        Vector3D.Unit.PLUS_X,
-                        Vector3D.Unit.PLUS_Y,
-                        Vector3D.Unit.PLUS_Z
-                    ), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Arrays.asList(
+                Vector3D.ZERO,
+                Vector3D.Unit.PLUS_X,
+                Vector3D.Unit.PLUS_Y,
+                Vector3D.Unit.PLUS_Z
+        ), TEST_PRECISION));
     }
 
     @Test

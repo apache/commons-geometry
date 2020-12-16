@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -25,6 +24,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 
 public class IntervalTest {
 
@@ -63,18 +63,13 @@ public class IntervalTest {
 
     @Test
     public void testOf_doubles_invalidIntervals() {
-        // arrange
-        final Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Interval.of(1, Double.NaN, TEST_PRECISION), excType);
-        GeometryTestUtils.assertThrows(() -> Interval.of(Double.NaN, 1, TEST_PRECISION), excType);
-        GeometryTestUtils.assertThrows(() -> Interval.of(Double.NaN, Double.NaN, TEST_PRECISION), excType);
-
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION), excType);
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, TEST_PRECISION), excType);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(1, Double.NaN, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(Double.NaN, 1, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(Double.NaN, Double.NaN, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, TEST_PRECISION));
     }
 
     @Test
@@ -87,14 +82,10 @@ public class IntervalTest {
 
     @Test
     public void testOf_points_invalidIntervals() {
-        // arrange
-        final Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(Vector1D.of(1), Vector1D.of(Double.NaN), TEST_PRECISION), excType);
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(Vector1D.of(Double.POSITIVE_INFINITY), Vector1D.of(Double.POSITIVE_INFINITY), TEST_PRECISION), excType);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(Vector1D.of(1), Vector1D.of(Double.NaN), TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(Vector1D.of(Double.POSITIVE_INFINITY), Vector1D.of(Double.POSITIVE_INFINITY), TEST_PRECISION));
     }
 
     @Test
@@ -139,44 +130,28 @@ public class IntervalTest {
 
     @Test
     public void testOf_hyperplanes_invalidArgs() {
-        // arrange
-        final Class<?> excType = IllegalArgumentException.class;
-
         // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(
-                    OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION),
-                    OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION)), excType);
-
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(
-                    OrientedPoints.fromLocationAndDirection(2, false, TEST_PRECISION),
-                    OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION)), excType);
-
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(
-                    OrientedPoints.fromLocationAndDirection(Double.POSITIVE_INFINITY, false, TEST_PRECISION),
-                    OrientedPoints.fromLocationAndDirection(Double.POSITIVE_INFINITY, true, TEST_PRECISION)), excType);
-
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(
-                    OrientedPoints.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
-                    OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION)), excType);
-
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(
-                    OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION),
-                    OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
-
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(
-                    OrientedPoints.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
-                    OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
-
-        GeometryTestUtils.assertThrows(
-            () -> Interval.of(
-                    null,
-                    OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(
+                OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(
+                OrientedPoints.fromLocationAndDirection(2, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(
+                OrientedPoints.fromLocationAndDirection(Double.POSITIVE_INFINITY, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(Double.POSITIVE_INFINITY, true, TEST_PRECISION)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(
+                OrientedPoints.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(
+                OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(
+                OrientedPoints.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(
+                null,
+                OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)));
     }
 
     @Test
@@ -189,16 +164,10 @@ public class IntervalTest {
 
     @Test
     public void testPoint_invalidArgs() {
-        // arrange
-        final Class<?> excType = IllegalArgumentException.class;
-
         // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> Interval.point(Double.NEGATIVE_INFINITY, TEST_PRECISION), excType);
-        GeometryTestUtils.assertThrows(
-            () -> Interval.point(Double.POSITIVE_INFINITY, TEST_PRECISION), excType);
-        GeometryTestUtils.assertThrows(
-            () -> Interval.point(Double.NaN, TEST_PRECISION), excType);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.point(Double.NEGATIVE_INFINITY, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.point(Double.POSITIVE_INFINITY, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.point(Double.NaN, TEST_PRECISION));
     }
 
     @Test
@@ -214,14 +183,9 @@ public class IntervalTest {
 
     @Test
     public void testMin_invalidArgs() {
-        // arrange
-        final Class<?> excType = IllegalArgumentException.class;
-
         // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> Interval.min(Double.POSITIVE_INFINITY, TEST_PRECISION), excType);
-        GeometryTestUtils.assertThrows(
-            () -> Interval.min(Double.NaN, TEST_PRECISION), excType);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.min(Double.POSITIVE_INFINITY, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.min(Double.NaN, TEST_PRECISION));
     }
 
     @Test
@@ -237,14 +201,9 @@ public class IntervalTest {
 
     @Test
     public void testMax_invalidArgs() {
-        // arrange
-        final Class<?> excType = IllegalArgumentException.class;
-
         // act/assert
-        GeometryTestUtils.assertThrows(
-            () -> Interval.max(Double.NEGATIVE_INFINITY, TEST_PRECISION), excType);
-        GeometryTestUtils.assertThrows(
-            () -> Interval.max(Double.NaN, TEST_PRECISION), excType);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.max(Double.NEGATIVE_INFINITY, TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.max(Double.NaN, TEST_PRECISION));
     }
 
     @Test

@@ -115,11 +115,11 @@ public class ConvexVolumeTest {
                 );
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             half.triangleStream().collect(Collectors.toList());
         }, IllegalStateException.class, pattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             quadrant.triangleStream().collect(Collectors.toList());
         }, IllegalStateException.class, pattern);
     }

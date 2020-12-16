@@ -40,6 +40,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class PlanesTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -181,24 +182,24 @@ public class PlanesTest {
         final Pattern nonPlanarPattern = Pattern.compile("Points do not define a plane.*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.convexPolygonFromVertices(Collections.emptyList(), TEST_PRECISION);
         }, IllegalArgumentException.class, nonPlanarPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.convexPolygonFromVertices(Collections.singletonList(Vector3D.ZERO), TEST_PRECISION);
         }, IllegalArgumentException.class, nonPlanarPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.convexPolygonFromVertices(Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0)), TEST_PRECISION);
         }, IllegalArgumentException.class, nonPlanarPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.convexPolygonFromVertices(
                     Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 1e-15, 0)), TEST_PRECISION);
         }, IllegalArgumentException.class, nonPlanarPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.convexPolygonFromVertices(Arrays.asList(
                         Vector3D.ZERO,
                         Vector3D.of(1, 0, 1),
@@ -214,7 +215,7 @@ public class PlanesTest {
         final Pattern nonConvexPattern = Pattern.compile("Points do not define a convex region.*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.convexPolygonFromVertices(Arrays.asList(
                         Vector3D.ZERO,
                         Vector3D.of(2, 0, 0),
@@ -245,7 +246,7 @@ public class PlanesTest {
         final Pattern msg = Pattern.compile("^Points do not define a plane.*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.triangleFromVertices(
                         Vector3D.ZERO,
                         Vector3D.of(1e-11, 0, 0),
@@ -253,7 +254,7 @@ public class PlanesTest {
                         TEST_PRECISION);
         }, IllegalArgumentException.class, msg);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.triangleFromVertices(
                         Vector3D.ZERO,
                         Vector3D.of(1, 0, 0),
@@ -343,37 +344,32 @@ public class PlanesTest {
         };
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.indexedTriangles(vertices, new int[][] {
                 {0}
             }, TEST_PRECISION);
         }, IllegalArgumentException.class,
                 "Invalid number of vertex indices for face at index 0: expected 3 but found 1");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.indexedTriangles(vertices, new int[][] {
                 {0, 1, 2, 0}
             }, TEST_PRECISION);
         }, IllegalArgumentException.class,
                 "Invalid number of vertex indices for face at index 0: expected 3 but found 4");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.indexedTriangles(new ArrayList<>(Arrays.asList(vertices)), new int[][] {
                 {0, 1, 3}
             }, TEST_PRECISION);
         }, IllegalArgumentException.class, Pattern.compile("^Points do not define a plane: .*"));
 
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.indexedTriangles(vertices, new int[][] {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> Planes.indexedTriangles(vertices, new int[][] {
                 {0, 1, 10}
-            }, TEST_PRECISION);
-        }, IndexOutOfBoundsException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.indexedTriangles(new ArrayList<>(Arrays.asList(vertices)), new int[][] {
+        }, TEST_PRECISION));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> Planes.indexedTriangles(new ArrayList<>(Arrays.asList(vertices)), new int[][] {
                 {0, 1, 10}
-            }, TEST_PRECISION);
-        }, IndexOutOfBoundsException.class);
+        }, TEST_PRECISION));
     }
 
     @Test
@@ -499,30 +495,25 @@ public class PlanesTest {
         };
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.indexedConvexPolygons(vertices, new int[][] {
                 {0}
             }, TEST_PRECISION);
         }, IllegalArgumentException.class,
                 "Invalid number of vertex indices for face at index 0: required at least 3 but found 1");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.indexedConvexPolygons(new ArrayList<>(Arrays.asList(vertices)), new int[][] {
                 {0, 1, 3}
             }, TEST_PRECISION);
         }, IllegalArgumentException.class, Pattern.compile("^Points do not define a plane: .*"));
 
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.indexedConvexPolygons(vertices, new int[][] {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> Planes.indexedConvexPolygons(vertices, new int[][] {
                 {0, 1, 10}
-            }, TEST_PRECISION);
-        }, IndexOutOfBoundsException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.indexedConvexPolygons(new ArrayList<>(Arrays.asList(vertices)), new int[][] {
+        }, TEST_PRECISION));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> Planes.indexedConvexPolygons(new ArrayList<>(Arrays.asList(vertices)), new int[][] {
                 {0, 1, 10}
-            }, TEST_PRECISION);
-        }, IndexOutOfBoundsException.class);
+        }, TEST_PRECISION));
     }
 
     @Test
@@ -662,15 +653,15 @@ public class PlanesTest {
         final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.convexPolygonToTriangleFan(plane, Collections.emptyList());
         }, IllegalArgumentException.class, baseMsg + "0");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.convexPolygonToTriangleFan(plane, Collections.singletonList(Vector3D.ZERO));
         }, IllegalArgumentException.class, baseMsg + "1");
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.convexPolygonToTriangleFan(plane, Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0)));
         }, IllegalArgumentException.class, baseMsg + "2");
     }
@@ -822,14 +813,9 @@ public class PlanesTest {
         final Vector3D extrusionVector = Vector3D.of(0, 0, 2);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.extrudeVertexLoop(Collections.singletonList(Vector2D.ZERO), plane, extrusionVector, TEST_PRECISION);
-        }, IllegalStateException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Planes.extrudeVertexLoop(Arrays.asList(Vector2D.ZERO, Vector2D.of(0, 1e-16)), plane,
-                    extrusionVector, TEST_PRECISION);
-        }, IllegalStateException.class);
+        Assertions.assertThrows(IllegalStateException.class, () -> Planes.extrudeVertexLoop(Collections.singletonList(Vector2D.ZERO), plane, extrusionVector, TEST_PRECISION));
+        Assertions.assertThrows(IllegalStateException.class, () -> Planes.extrudeVertexLoop(Arrays.asList(Vector2D.ZERO, Vector2D.of(0, 1e-16)), plane,
+                extrusionVector, TEST_PRECISION));
     }
 
     @Test
@@ -1339,33 +1325,33 @@ public class PlanesTest {
         final Pattern errorPattern = Pattern.compile("^Extrusion vector produces regions of zero size.*");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.extrudeVertexLoop(vertices, plane, Vector3D.of(1e-16, 0, 0), TEST_PRECISION);
         }, IllegalArgumentException.class, errorPattern);
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.extrudeVertexLoop(vertices, plane, Vector3D.of(4, 1e-16, 0), TEST_PRECISION);
         }, IllegalArgumentException.class, errorPattern);
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.extrudeVertexLoop(vertices, plane, Vector3D.of(1e-16, 5, 0), TEST_PRECISION);
         }, IllegalArgumentException.class, errorPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.extrude(path, plane, Vector3D.of(1e-16, 0, 0), TEST_PRECISION);
         }, IllegalArgumentException.class, errorPattern);
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.extrude(path, plane, Vector3D.of(4, 1e-16, 0), TEST_PRECISION);
         }, IllegalArgumentException.class, errorPattern);
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.extrude(path, plane, Vector3D.of(1e-16, 5, 0), TEST_PRECISION);
         }, IllegalArgumentException.class, errorPattern);
 
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.extrude(tree, plane, Vector3D.of(1e-16, 0, 0), TEST_PRECISION);
         }, IllegalArgumentException.class, errorPattern);
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.extrude(tree, plane, Vector3D.of(4, 1e-16, 0), TEST_PRECISION);
         }, IllegalArgumentException.class, errorPattern);
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             Planes.extrude(tree, plane, Vector3D.of(1e-16, 5, 0), TEST_PRECISION);
         }, IllegalArgumentException.class, errorPattern);
     }

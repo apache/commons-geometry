@@ -30,6 +30,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
 public class EmbeddedTreeLineSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -229,13 +230,8 @@ public class EmbeddedTreeLineSubsetTest {
         final EmbeddedTreeLineSubset subset = new EmbeddedTreeLineSubset(line);
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            subset.add(Lines.subsetFromInterval(otherLine, 0, 1));
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            subset.add(new EmbeddedTreeLineSubset(otherLine));
-        }, IllegalArgumentException.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> subset.add(Lines.subsetFromInterval(otherLine, 0, 1)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> subset.add(new EmbeddedTreeLineSubset(otherLine)));
     }
 
     @Test

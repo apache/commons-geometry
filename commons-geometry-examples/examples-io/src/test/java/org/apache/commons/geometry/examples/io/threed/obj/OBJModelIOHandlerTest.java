@@ -86,7 +86,7 @@ public class OBJModelIOHandlerTest {
         final File file = cubeMinusSphereFile();
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             handler.read("stl", file, TEST_PRECISION);
         }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
     }
@@ -123,7 +123,7 @@ public class OBJModelIOHandlerTest {
 
         // act/assert
         try (InputStream in = Files.newInputStream(file.toPath())) {
-            GeometryTestUtils.assertThrows(() -> {
+            GeometryTestUtils.assertThrowsWithMessage(() -> {
                 handler.read("stl", in, TEST_PRECISION);
             }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
         }
@@ -132,7 +132,7 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testRead_fromStream_ioException() throws Exception {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             handler.read("obj", new FailingInputStream(), TEST_PRECISION);
         }, UncheckedIOException.class, "IOException: test");
     }
@@ -164,7 +164,7 @@ public class OBJModelIOHandlerTest {
             );
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             handler.write(src, "stl", out);
         }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
     }
@@ -212,7 +212,7 @@ public class OBJModelIOHandlerTest {
 
         // act/assert
         try (OutputStream out = Files.newOutputStream(file.toPath())) {
-            GeometryTestUtils.assertThrows(() -> {
+            GeometryTestUtils.assertThrowsWithMessage(() -> {
                 handler.write(src, "stl", out);
             }, IllegalArgumentException.class, "File type is not supported by this handler: stl");
         }
@@ -226,7 +226,7 @@ public class OBJModelIOHandlerTest {
             );
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             handler.write(src, "OBJ", new FailingOutputStream());
         }, UncheckedIOException.class, "IOException: test");
     }
