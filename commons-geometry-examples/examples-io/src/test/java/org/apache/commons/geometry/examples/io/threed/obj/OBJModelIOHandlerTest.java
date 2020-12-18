@@ -97,9 +97,9 @@ public class OBJModelIOHandlerTest {
         final File file = new File("doesnotexist.obj");
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        Assertions.assertThrows(UncheckedIOException.class, () -> {
             handler.read("obj", file, TEST_PRECISION);
-        }, UncheckedIOException.class);
+        });
     }
 
     @Test
@@ -178,9 +178,9 @@ public class OBJModelIOHandlerTest {
             );
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
+        Assertions.assertThrows(UncheckedIOException.class, () -> {
             handler.write(src, "OBJ", out);
-        }, UncheckedIOException.class);
+        });
     }
 
     @Test

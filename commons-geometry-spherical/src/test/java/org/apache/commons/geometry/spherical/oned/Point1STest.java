@@ -28,7 +28,6 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class Point1STest {
 
     private static final double TEST_EPS = 1e-10;

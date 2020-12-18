@@ -35,7 +35,6 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class QuaternionRotationTest {
 
     private static final double EPS = 1e-12;
@@ -250,7 +249,6 @@ public class QuaternionRotationTest {
     @Test
     public void testFromAxisAngle_invalidAxisNorm() {
         // act/assert
-
         Assertions.assertThrows(IllegalArgumentException.class, () -> QuaternionRotation.fromAxisAngle(Vector3D.ZERO, PlaneAngleRadians.PI_OVER_TWO));
         Assertions.assertThrows(IllegalArgumentException.class, () -> QuaternionRotation.fromAxisAngle(Vector3D.NaN, PlaneAngleRadians.PI_OVER_TWO));
         Assertions.assertThrows(IllegalArgumentException.class, () -> QuaternionRotation.fromAxisAngle(Vector3D.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO));

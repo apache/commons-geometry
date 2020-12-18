@@ -31,7 +31,6 @@ import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class Bounds2DTest {
 
     private static final double TEST_EPS = 1e-10;

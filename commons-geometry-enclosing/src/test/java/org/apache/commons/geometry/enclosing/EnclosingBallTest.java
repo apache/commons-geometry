@@ -27,7 +27,6 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class EnclosingBallTest {
 
     private static final double TEST_EPS = 1e-10;

@@ -29,7 +29,6 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class AffineTransformMatrix3DTest {
 
     private static final double EPS = 1e-12;

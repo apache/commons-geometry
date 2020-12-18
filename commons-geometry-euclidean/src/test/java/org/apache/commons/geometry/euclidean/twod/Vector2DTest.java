@@ -31,7 +31,6 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class Vector2DTest {
 
     private static final double EPS = Math.ulp(1d);

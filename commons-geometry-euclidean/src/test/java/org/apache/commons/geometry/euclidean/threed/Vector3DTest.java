@@ -61,13 +61,10 @@ public class Vector3DTest {
     @Test
     public void testConstants_normalize() {
         // act/assert
-
-
         Assertions.assertThrows(IllegalArgumentException.class, Vector3D.ZERO::normalize);
         Assertions.assertThrows(IllegalArgumentException.class, Vector3D.NaN::normalize);
         Assertions.assertThrows(IllegalArgumentException.class, Vector3D.POSITIVE_INFINITY::normalize);
         Assertions.assertThrows(IllegalArgumentException.class, Vector3D.NEGATIVE_INFINITY::normalize);
-
 
         Assertions.assertSame(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_X.normalize());
         Assertions.assertSame(Vector3D.Unit.MINUS_X, Vector3D.Unit.MINUS_X.normalize());

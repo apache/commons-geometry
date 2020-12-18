@@ -25,7 +25,6 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class IntervalTest {
 
     private static final double TEST_EPS = 1e-15;

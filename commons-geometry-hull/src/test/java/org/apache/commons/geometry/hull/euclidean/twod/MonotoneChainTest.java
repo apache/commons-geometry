@@ -24,7 +24,6 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 /**
  * Test class for MonotoneChain.
  */

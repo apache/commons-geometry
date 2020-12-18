@@ -27,7 +27,6 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class Vector1DTest {
 
     private static final double TEST_TOLERANCE = 1e-15;

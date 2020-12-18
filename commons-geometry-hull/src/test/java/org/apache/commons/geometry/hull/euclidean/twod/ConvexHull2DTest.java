@@ -30,7 +30,6 @@ import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class ConvexHull2DTest {
 
     private static final double TEST_EPS = 1e-10;

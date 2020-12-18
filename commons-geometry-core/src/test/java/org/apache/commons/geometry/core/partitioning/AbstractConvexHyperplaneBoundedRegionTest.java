@@ -33,7 +33,6 @@ import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class AbstractConvexHyperplaneBoundedRegionTest {
 
     @Test
@@ -636,7 +635,6 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
                 TestLine.Y_AXIS,
                 new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -1)),
                 new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -2)))));
-
     }
 
     @Test

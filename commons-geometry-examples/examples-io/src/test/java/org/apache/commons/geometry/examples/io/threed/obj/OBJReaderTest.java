@@ -19,7 +19,6 @@ package org.apache.commons.geometry.examples.io.threed.obj;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UncheckedIOException;
 import java.net.URL;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -163,20 +162,12 @@ public class OBJReaderTest {
             "f 1 2 3\n";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            try {
-                reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION);
-            } catch (final IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
-        }, NumberFormatException.class);
+        Assertions.assertThrows(NumberFormatException.class, () -> {
+            reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION);
+        });
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
-            try {
-                reader.readTriangleMesh(new StringReader(notEnoughVertices), TEST_PRECISION);
-            } catch (final IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
+            reader.readTriangleMesh(new StringReader(notEnoughVertices), TEST_PRECISION);
         }, IllegalArgumentException.class, "Invalid vertex definition: at least 3 fields required but found only 2");
     }
 
@@ -196,20 +187,12 @@ public class OBJReaderTest {
             "f 1 2\n";
 
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            try {
-                reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION);
-            } catch (final IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
-        }, NumberFormatException.class);
+        Assertions.assertThrows(NumberFormatException.class, () -> {
+            reader.readTriangleMesh(new StringReader(badNumber), TEST_PRECISION);
+        });
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
-            try {
-                reader.readTriangleMesh(new StringReader(notEnoughIndices), TEST_PRECISION);
-            } catch (final IOException exc) {
-                throw new UncheckedIOException(exc);
-            }
+            reader.readTriangleMesh(new StringReader(notEnoughIndices), TEST_PRECISION);
         }, IllegalArgumentException.class, "Invalid face definition: at least 3 fields required but found only 2");
     }
 

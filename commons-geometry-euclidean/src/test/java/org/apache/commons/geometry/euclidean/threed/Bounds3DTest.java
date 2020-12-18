@@ -31,7 +31,6 @@ import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 public class Bounds3DTest {
 
     private static final double TEST_EPS = 1e-10;
