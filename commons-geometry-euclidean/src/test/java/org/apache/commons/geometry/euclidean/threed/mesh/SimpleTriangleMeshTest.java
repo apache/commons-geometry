@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -57,10 +56,7 @@ public class SimpleTriangleMeshTest {
             Vector3D.of(0, 0, 1)
         };
 
-        final int[][] faceIndices = new int[][] {
-            {0, 1, 2},
-            {0, 2, 3}
-        };
+        final int[][] faceIndices = {{0, 1, 2}, {0, 2, 3}};
 
         // act
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(vertices, faceIndices, TEST_PRECISION);
@@ -110,7 +106,7 @@ public class SimpleTriangleMeshTest {
         // arrange
         final Vector3D[] vertices = {};
 
-        final int[][] faceIndices = new int[][] {};
+        final int[][] faceIndices = {};
 
         // act
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(vertices, faceIndices, TEST_PRECISION);
@@ -337,17 +333,14 @@ public class SimpleTriangleMeshTest {
     public void testFace_doesNotDefineTriangle() {
         // arrange
         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
-        final Vector3D[] vertices = new Vector3D[] {
+        final Vector3D[] vertices = {
             Vector3D.ZERO,
             Vector3D.of(0.01, -0.01, 0.01),
             Vector3D.of(0.01, 0.01, 0.01),
             Vector3D.of(1, 0, 0),
             Vector3D.of(2, 0.01, 0)
         };
-        final int[][] faces = new int[][] {
-            {0, 1, 2},
-            {0, 3, 4}
-        };
+        final int[][] faces = {{0, 1, 2}, {0, 3, 4}};
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(vertices, faces, precision);
 
         // act/assert
