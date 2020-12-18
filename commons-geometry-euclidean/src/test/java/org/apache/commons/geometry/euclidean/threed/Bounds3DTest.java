@@ -240,8 +240,8 @@ public class Bounds3DTest {
         checkIntersects(b, Vector3D::getZ, (v, z) -> Vector3D.of(v.getX(), v.getY(), z));
     }
 
-    private void checkIntersects(final Bounds3D b, final ToDoubleFunction<Vector3D> getter,
-                                 final BiFunction<Vector3D, Double, Vector3D> setter) {
+    private void checkIntersects(final Bounds3D b, final ToDoubleFunction<? super Vector3D> getter,
+                                 final BiFunction<? super Vector3D, Double, ? extends Vector3D> setter) {
 
         final Vector3D min = b.getMin();
         final Vector3D max = b.getMax();

@@ -176,7 +176,7 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
      * @throws IllegalArgumentException if the given set of bounding planes do not form a convex volume,
      *      meaning that there is no region that is on the minus side of all of the bounding planes.
      */
-    public static ConvexVolume fromBounds(final Iterable<Plane> boundingPlanes) {
+    public static ConvexVolume fromBounds(final Iterable<? extends Plane> boundingPlanes) {
         final List<PlaneConvexSubset> facets = new ConvexRegionBoundaryBuilder<>(PlaneConvexSubset.class)
                 .build(boundingPlanes);
         return facets.isEmpty() ? full() : new ConvexVolume(facets);

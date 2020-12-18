@@ -373,7 +373,7 @@ public class LinePath implements BoundarySource2D, Sized {
      * @return new path containing the given line subsets in order
      * @throws IllegalStateException if the subsets do not form a connected path
      */
-    public static LinePath from(final Collection<LineConvexSubset> subsets) {
+    public static LinePath from(final Collection<? extends LineConvexSubset> subsets) {
         final Builder builder = builder(null);
 
         for (final LineConvexSubset subset : subsets) {
@@ -573,7 +573,7 @@ public class LinePath implements BoundarySource2D, Sized {
          * @return this instance
          * @see #append(Vector2D)
          */
-        public Builder appendVertices(final Collection<Vector2D> vertices) {
+        public Builder appendVertices(final Collection<? extends Vector2D> vertices) {
             for (final Vector2D vertex : vertices) {
                 append(vertex);
             }
@@ -828,7 +828,7 @@ public class LinePath implements BoundarySource2D, Sized {
          * @param list the list to return the first item from
          * @return the first item from the given list or null if it does not exist
          */
-        private LineConvexSubset getFirst(final List<LineConvexSubset> list) {
+        private LineConvexSubset getFirst(final List<? extends LineConvexSubset> list) {
             if (list != null && !list.isEmpty()) {
                 return list.get(0);
             }
@@ -840,7 +840,7 @@ public class LinePath implements BoundarySource2D, Sized {
          * @param list the list to return the last item from
          * @return the last item from the given list or null if it does not exist
          */
-        private LineConvexSubset getLast(final List<LineConvexSubset> list) {
+        private LineConvexSubset getLast(final List<? extends LineConvexSubset> list) {
             if (list != null && !list.isEmpty()) {
                 return list.get(list.size() - 1);
             }

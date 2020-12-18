@@ -487,7 +487,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     // verify that all points are inside the convex hull region
-    protected final void checkPointsInsideHullRegion(final Collection<Vector2D> points,
+    protected final void checkPointsInsideHullRegion(final Collection<? extends Vector2D> points,
                                                      final ConvexHull2D hull,
                                                      final boolean includesCollinearPoints) {
 

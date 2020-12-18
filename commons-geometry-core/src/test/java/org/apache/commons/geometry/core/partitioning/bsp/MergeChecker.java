@@ -175,7 +175,7 @@ class MergeChecker {
     }
 
     private void checkInternal(final boolean inPlace, final Operation operation,
-            final Consumer<TestRegionBSPTree> assertions) {
+            final Consumer<? super TestRegionBSPTree> assertions) {
 
         final TestRegionBSPTree tree1 = tree1Factory.get();
         final TestRegionBSPTree tree2 = tree2Factory.get();

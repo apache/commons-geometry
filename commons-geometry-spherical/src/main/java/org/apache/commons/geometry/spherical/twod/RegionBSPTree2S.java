@@ -118,7 +118,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
      * @param result list containing the results of the computation
      */
     private void toConvexRecursive(final RegionNode2S node, final ConvexArea2S nodeArea,
-            final List<ConvexArea2S> result) {
+            final List<? super ConvexArea2S> result) {
         if (node.isLeaf()) {
             // base case; only add to the result list if the node is inside
             if (node.isInside()) {

@@ -336,7 +336,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * @throws IllegalArgumentException if either azimuth is infinite or NaN
      */
     private static <T extends AngularInterval> T createInterval(final Point1S min, final Point1S max,
-            final DoublePrecisionContext precision, final BiFunction<CutAngle, CutAngle, T> factory,
+            final DoublePrecisionContext precision, final BiFunction<? super CutAngle, ? super CutAngle, T> factory,
             final T fullSpace) {
 
         validateIntervalValues(min, max);
@@ -368,7 +368,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * @throws IllegalArgumentException if either argument is infinite or NaN
      */
     private static <T extends AngularInterval> T createInterval(final CutAngle a, final CutAngle b,
-            final BiFunction<CutAngle, CutAngle, T> factory, final T fullSpace) {
+            final BiFunction<? super CutAngle, ? super CutAngle, T> factory, final T fullSpace) {
 
         final Point1S aPoint = a.getPoint();
         final Point1S bPoint = b.getPoint();
@@ -429,7 +429,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      */
     private static <T extends AngularInterval> T transform(final T interval,
             final Transform<Point1S> transform,
-            final BiFunction<CutAngle, CutAngle, T> factory) {
+            final BiFunction<? super CutAngle, ? super CutAngle, T> factory) {
 
         if (!interval.isFull()) {
             final CutAngle tMin = interval.getMinBoundary().transform(transform);

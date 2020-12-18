@@ -128,7 +128,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      *      form the convex areas for any child nodes
      * @param result list containing the results of the computation
      */
-    private void toConvexRecursive(final RegionNode2D node, final ConvexArea nodeArea, final List<ConvexArea> result) {
+    private void toConvexRecursive(final RegionNode2D node, final ConvexArea nodeArea, final List<? super ConvexArea> result) {
         if (node.isLeaf()) {
             // base case; only add to the result list if the node is inside
             if (node.isInside()) {

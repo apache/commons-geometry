@@ -105,7 +105,7 @@ public class LinecastChecker2D {
      * @param results
      * @param line
      */
-    private void checkLinecastResults(final List<LinecastPoint2D> results, final Line line) {
+    private void checkLinecastResults(final List<? extends LinecastPoint2D> results, final Line line) {
         Assertions.assertNotNull(results, "Linecast result list cannot be null");
         Assertions.assertEquals(expectedResults.size(), results.size(), "Unexpected result size for linecast");
 

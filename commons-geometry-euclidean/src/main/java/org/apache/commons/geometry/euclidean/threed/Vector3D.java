@@ -544,7 +544,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param more iterator with additional vectors
      * @return vector containing the maximum component values of all input vectors
      */
-    private static Vector3D computeMax(final Vector3D first, final Iterator<Vector3D> more) {
+    private static Vector3D computeMax(final Vector3D first, final Iterator<? extends Vector3D> more) {
         double x = first.getX();
         double y = first.getY();
         double z = first.getZ();
@@ -589,7 +589,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param more iterator with additional vectors
      * @return vector containing the minimum component values of all input vectors
      */
-    private static Vector3D computeMin(final Vector3D first, final Iterator<Vector3D> more) {
+    private static Vector3D computeMin(final Vector3D first, final Iterator<? extends Vector3D> more) {
         double x = first.getX();
         double y = first.getY();
         double z = first.getZ();
@@ -636,7 +636,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param more iterator with additional points
      * @return the centroid of the point set
      */
-    private static Vector3D computeCentroid(final Vector3D first, final Iterator<Vector3D> more) {
+    private static Vector3D computeCentroid(final Vector3D first, final Iterator<? extends Vector3D> more) {
         double x = first.getX();
         double y = first.getY();
         double z = first.getZ();

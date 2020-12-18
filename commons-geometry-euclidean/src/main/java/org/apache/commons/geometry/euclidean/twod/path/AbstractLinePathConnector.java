@@ -48,7 +48,7 @@ public abstract class AbstractLinePathConnector
      * @see #connectAll()
      * @see #add(LineConvexSubset)
      */
-    public void add(final Iterable<LineConvexSubset> subsets) {
+    public void add(final Iterable<? extends LineConvexSubset> subsets) {
         for (final LineConvexSubset subset : subsets) {
             add(subset);
         }
@@ -64,7 +64,7 @@ public abstract class AbstractLinePathConnector
      * @param subsets line subsets to connect
      * @see #connectAll()
      */
-    public void connect(final Iterable<LineConvexSubset> subsets) {
+    public void connect(final Iterable<? extends LineConvexSubset> subsets) {
         final List<ConnectableLineSubset> newEntries = new ArrayList<>();
 
         for (final LineConvexSubset subset : subsets) {

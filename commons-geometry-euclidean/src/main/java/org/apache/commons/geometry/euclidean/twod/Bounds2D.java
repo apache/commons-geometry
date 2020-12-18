@@ -216,7 +216,7 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D> {
          * @param pts points to add
          * @return this instance
          */
-        public Builder addAll(final Iterable<Vector2D> pts) {
+        public Builder addAll(final Iterable<? extends Vector2D> pts) {
             for (final Vector2D pt : pts) {
                 add(pt);
             }

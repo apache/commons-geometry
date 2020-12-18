@@ -109,7 +109,7 @@ class LinecastChecker3D {
      * @param results
      * @param line
      */
-    private void checkLinecastResults(final List<LinecastPoint3D> results, final Line3D line) {
+    private void checkLinecastResults(final List<? extends LinecastPoint3D> results, final Line3D line) {
         Assertions.assertNotNull(results, "Linecast result list cannot be null");
         Assertions.assertEquals(expectedResults.size(), results.size(), "Unexpected result size for linecast");
 

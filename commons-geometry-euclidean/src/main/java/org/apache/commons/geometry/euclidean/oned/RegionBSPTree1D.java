@@ -371,7 +371,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
          * @param visitor the object that will receive the min and max boundaries for the node's
          *      convex region
          */
-        private void visitNodeInterval(final BiConsumer<OrientedPoint, OrientedPoint> visitor) {
+        private void visitNodeInterval(final BiConsumer<? super OrientedPoint, ? super OrientedPoint> visitor) {
             OrientedPoint min = null;
             OrientedPoint max = null;
 

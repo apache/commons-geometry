@@ -1390,7 +1390,7 @@ public class PlanesTest {
         }
     }
 
-    private static boolean hasEquivalentSubLine(final LineConvexSubset target, final Collection<LineConvexSubset> subsets) {
+    private static boolean hasEquivalentSubLine(final LineConvexSubset target, final Collection<? extends LineConvexSubset> subsets) {
         final Line line = target.getLine();
         final double start = target.getSubspaceStart();
         final double end = target.getSubspaceEnd();

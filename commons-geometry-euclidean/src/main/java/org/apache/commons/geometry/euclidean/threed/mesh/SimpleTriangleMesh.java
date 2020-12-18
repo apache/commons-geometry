@@ -380,13 +380,13 @@ public final class SimpleTriangleMesh implements TriangleMesh {
         private int index = 0;
 
         /** Function to apply to each face in the mesh. */
-        private final Function<TriangleMesh.Face, T> fn;
+        private final Function<? super TriangleMesh.Face, T> fn;
 
         /** Construct a new instance for iterating through the mesh faces and extracting
          * a value from each.
          * @param fn function to apply to each face in order to obtain the iterated value
          */
-        FaceIterator(final Function<TriangleMesh.Face, T> fn) {
+        FaceIterator(final Function<? super TriangleMesh.Face, T> fn) {
             this.fn = fn;
         }
 
@@ -495,7 +495,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
          * @return this instance
          * @see #addVertex(Vector3D)
          */
-        public Builder addVertices(final Collection<Vector3D> newVertices) {
+        public Builder addVertices(final Collection<? extends Vector3D> newVertices) {
             final int newSize = vertices.size() + newVertices.size();
             ensureVertexCapacity(newSize);
 
@@ -672,7 +672,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
          * @param map vertex index map
          * @return the index now associated with the given vertex or its equivalent
          */
-        private int addToVertexIndexMap(final Vector3D vertex, final int targetIdx, final Map<Vector3D, Integer> map) {
+        private int addToVertexIndexMap(final Vector3D vertex, final int targetIdx, final Map<? super Vector3D, Integer> map) {
             validateCanModify();
 
             final Integer actualIdx = map.putIfAbsent(vertex, targetIdx);

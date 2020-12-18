@@ -118,7 +118,7 @@ public final class AklToussaintHeuristic {
      * @return {@code true} if the point is inside the quadrilateral, {@code false} otherwise
      */
     private static boolean insideQuadrilateral(final Vector2D point,
-                                               final List<Vector2D> quadrilateralPoints) {
+                                               final List<? extends Vector2D> quadrilateralPoints) {
 
         Vector2D v1 = quadrilateralPoints.get(0);
         Vector2D v2 = quadrilateralPoints.get(1);

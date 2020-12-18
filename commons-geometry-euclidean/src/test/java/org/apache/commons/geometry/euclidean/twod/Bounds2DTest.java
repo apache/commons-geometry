@@ -230,8 +230,8 @@ public class Bounds2DTest {
         checkIntersects(b, Vector2D::getY, (v, y) -> Vector2D.of(v.getX(), y));
     }
 
-    private void checkIntersects(final Bounds2D b, final ToDoubleFunction<Vector2D> getter,
-                                 final BiFunction<Vector2D, Double, Vector2D> setter) {
+    private void checkIntersects(final Bounds2D b, final ToDoubleFunction<? super Vector2D> getter,
+                                 final BiFunction<? super Vector2D, Double, ? extends Vector2D> setter) {
 
         final Vector2D min = b.getMin();
         final Vector2D max = b.getMax();

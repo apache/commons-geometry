@@ -483,7 +483,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param more iterator with additional vectors
      * @return vector containing the maximum component values of all input vectors
      */
-    private static Vector2D computeMax(final Vector2D first, final Iterator<Vector2D> more) {
+    private static Vector2D computeMax(final Vector2D first, final Iterator<? extends Vector2D> more) {
         double x = first.getX();
         double y = first.getY();
 
@@ -526,7 +526,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param more iterator with additional vectors
      * @return vector containing the minimum component values of all input vectors
      */
-    private static Vector2D computeMin(final Vector2D first, final Iterator<Vector2D> more) {
+    private static Vector2D computeMin(final Vector2D first, final Iterator<? extends Vector2D> more) {
         double x = first.getX();
         double y = first.getY();
 
@@ -571,7 +571,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param more iterator with additional points
      * @return the centroid of the point set
      */
-    private static Vector2D computeCentroid(final Vector2D first, final Iterator<Vector2D> more) {
+    private static Vector2D computeCentroid(final Vector2D first, final Iterator<? extends Vector2D> more) {
         double x = first.getX();
         double y = first.getY();
 

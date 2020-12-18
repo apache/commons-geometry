@@ -234,7 +234,7 @@ public final class Planes {
      * @throws IndexOutOfBoundsException if any index into {@code vertices} is out of bounds
      * @see #indexedTriangles(Vector3D[], int[][], DoublePrecisionContext)
      */
-    public static List<Triangle3D> indexedTriangles(final List<Vector3D> vertices, final int[][] faceIndices,
+    public static List<Triangle3D> indexedTriangles(final List<? extends Vector3D> vertices, final int[][] faceIndices,
             final DoublePrecisionContext precision) {
 
         final int numFaces = faceIndices.length;
@@ -313,7 +313,7 @@ public final class Planes {
      * @throws IndexOutOfBoundsException if any index into {@code vertices} is out of bounds
      * @see #indexedConvexPolygons(Vector3D[], int[][], DoublePrecisionContext)
      */
-    public static List<ConvexPolygon3D> indexedConvexPolygons(final List<Vector3D> vertices, final int[][] faceIndices,
+    public static List<ConvexPolygon3D> indexedConvexPolygons(final List<? extends Vector3D> vertices, final int[][] faceIndices,
             final DoublePrecisionContext precision) {
         final int numFaces = faceIndices.length;
         final List<ConvexPolygon3D> polygons = new ArrayList<>(numFaces);
@@ -446,7 +446,7 @@ public final class Planes {
      * @return the result of the split operation
      */
     static <T extends PlaneSubset> Split<T> subspaceSplit(final Plane splitter, final T subset,
-            final BiFunction<EmbeddingPlane, HyperplaneBoundedRegion<Vector2D>, T> factory) {
+            final BiFunction<? super EmbeddingPlane, ? super HyperplaneBoundedRegion<Vector2D>, T> factory) {
 
         final EmbeddingPlane thisPlane = subset.getPlane().getEmbedding();
 
@@ -610,7 +610,7 @@ public final class Planes {
     private static final class PlaneBuilder {
 
         /** The point sequence to build a plane for. */
-        private final Collection<Vector3D> pts;
+        private final Collection<? extends Vector3D> pts;
 
         /** Precision context used for floating point comparisons. */
         private final DoublePrecisionContext precision;
@@ -640,13 +640,13 @@ public final class Planes {
         private boolean requireConvex = false;
 
         /** List that unique vertices discovered in the input sequence will be added to. */
-        private List<Vector3D> uniqueVertexOutput;
+        private List<? super Vector3D> uniqueVertexOutput;
 
         /** Construct a new build instance for the given point sequence and precision context.
          * @param pts point sequence
          * @param precision precision context used to perform floating point comparisons
          */
-        PlaneBuilder(final Collection<Vector3D> pts, final DoublePrecisionContext precision) {
+        PlaneBuilder(final Collection<? extends Vector3D> pts, final DoublePrecisionContext precision) {
             this.pts = pts;
             this.precision = precision;
         }
@@ -672,7 +672,7 @@ public final class Planes {
          * @throws IllegalArgumentException if the points do not define a plane or the {@code requireConvex}
          *      flag is true and the points do not define a convex area
          */
-        Plane buildForConvexPolygon(final List<Vector3D> vertexOutput) {
+        Plane buildForConvexPolygon(final List<? super Vector3D> vertexOutput) {
             this.requireConvex = true;
             this.uniqueVertexOutput = vertexOutput;
 
@@ -840,7 +840,7 @@ public final class Planes {
          * @param subspaceRegion subspace region being extruded.
          * @param result list to add the boundary results to
          */
-        private void addEnds(final RegionBSPTree2D subspaceRegion, final List<PlaneConvexSubset> result) {
+        private void addEnds(final RegionBSPTree2D subspaceRegion, final List<? super PlaneConvexSubset> result) {
             // add the base boundaries
             final List<ConvexArea> baseAreas = subspaceRegion.toConvex();
 
@@ -868,7 +868,7 @@ public final class Planes {
          * @param subspaceRegion subspace region being extruded.
          * @param result list to add the boundary results to
          */
-        private void addSides(final RegionBSPTree2D subspaceRegion, final List<PlaneConvexSubset> result) {
+        private void addSides(final RegionBSPTree2D subspaceRegion, final List<? super PlaneConvexSubset> result) {
             Vector2D subStartPt;
             Vector2D subEndPt;
 

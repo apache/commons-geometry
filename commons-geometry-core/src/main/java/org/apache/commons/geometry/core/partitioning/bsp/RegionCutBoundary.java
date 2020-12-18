@@ -88,7 +88,7 @@ public final class RegionCutBoundary<P extends Point<P>> implements Sized {
      * @param boundaries boundaries to compute the size for
      * @return the total size of all boundaries in the given list
      */
-    private double getTotalSize(final List<HyperplaneConvexSubset<P>> boundaries) {
+    private double getTotalSize(final List<? extends HyperplaneConvexSubset<P>> boundaries) {
         double total = 0.0;
         for (final HyperplaneConvexSubset<P> boundary : boundaries) {
             total += boundary.getSize();
@@ -170,7 +170,7 @@ public final class RegionCutBoundary<P extends Point<P>> implements Sized {
      * @param boundaries
      * @return true if the point is contained in any of the given boundaries
      */
-    private boolean anyContains(final P pt, final List<HyperplaneConvexSubset<P>> boundaries) {
+    private boolean anyContains(final P pt, final List<? extends HyperplaneConvexSubset<P>> boundaries) {
         for (final HyperplaneConvexSubset<P> boundary : boundaries) {
             if (boundary.contains(pt)) {
                 return true;

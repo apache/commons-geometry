@@ -189,7 +189,7 @@ public final class Parallelepiped extends ConvexVolume {
      * @return a parallelepiped face created from the indexed vertices
      */
     private static PlaneConvexSubset createFace(final int a, final int b, final int c, final int d,
-            final List<Vector3D> vertices, final boolean reverse, final DoublePrecisionContext precision) {
+            final List<? extends Vector3D> vertices, final boolean reverse, final DoublePrecisionContext precision) {
 
         final Vector3D pa = vertices.get(a);
         final Vector3D pb = vertices.get(b);

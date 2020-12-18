@@ -272,7 +272,7 @@ public class Rotation2DTest {
      *      the transformed point
      */
     private static <T extends EuclideanTransform<Vector2D>> void checkRotatePoint(
-            final Vector2D pt, final DoubleFunction<T> factory, final BiFunction<T, Vector2D, Vector2D> transformFn) {
+            final Vector2D pt, final DoubleFunction<T> factory, final BiFunction<T, ? super Vector2D, ? extends Vector2D> transformFn) {
 
         // arrange
         final double limit = 4 * Math.PI;

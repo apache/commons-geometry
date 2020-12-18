@@ -203,7 +203,7 @@ public class InteriorAngleGreatArcConnectorTest {
      * Run the given consumer function twice, once with a Maximize instance and once with
      * a Minimize instance.
      */
-    private static void runWithMaxAndMin(final Consumer<InteriorAngleGreatArcConnector> body) {
+    private static void runWithMaxAndMin(final Consumer<? super InteriorAngleGreatArcConnector> body) {
         body.accept(new Maximize());
         body.accept(new Minimize());
     }

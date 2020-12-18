@@ -102,7 +102,7 @@ public class LinecastPoint3D extends AbstractLinecastPoint<Vector3D, Vector3D.Un
      * @param list list to test against
      * @return true if the given linecast point is equivalent to any of those in the given list
      */
-    private static boolean containsEq(final LinecastPoint3D pt, final List<LinecastPoint3D> list) {
+    private static boolean containsEq(final LinecastPoint3D pt, final List<? extends LinecastPoint3D> list) {
         final DoublePrecisionContext precision = pt.getLine().getPrecision();
 
         for (final LinecastPoint3D listPt : list) {

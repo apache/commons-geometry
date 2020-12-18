@@ -744,8 +744,8 @@ public abstract class AbstractRegionBSPTree<
          *      of the region; may be null
          */
         private void characterizeHyperplaneSubset(final HyperplaneConvexSubset<P> sub,
-                final AbstractRegionNode<P, N> node, final List<HyperplaneConvexSubset<P>> in,
-                final List<HyperplaneConvexSubset<P>> out) {
+                final AbstractRegionNode<P, N> node, final List<? super HyperplaneConvexSubset<P>> in,
+                final List<? super HyperplaneConvexSubset<P>> out) {
 
             if (sub != null) {
                 if (node.isLeaf()) {
@@ -1104,14 +1104,14 @@ public abstract class AbstractRegionBSPTree<
         extends IteratorTransform<N, C> {
 
         /** Function that converts from the convex subset type to the output type. */
-        private final Function<HyperplaneConvexSubset<P>, C> typeConverter;
+        private final Function<? super HyperplaneConvexSubset<P>, C> typeConverter;
 
         /** Simple constructor.
          * @param inputIterator iterator that will provide all nodes in the tree
          * @param typeConverter function that converts from the convex subset type to the output type
          */
         RegionBoundaryIterator(final Iterator<N> inputIterator,
-                final Function<HyperplaneConvexSubset<P>, C> typeConverter) {
+                final Function<? super HyperplaneConvexSubset<P>, C> typeConverter) {
             super(inputIterator);
 
             this.typeConverter = typeConverter;

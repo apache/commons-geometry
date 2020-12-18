@@ -191,7 +191,7 @@ public final class TestOBJWriter implements AutoCloseable {
      * @param it boundary iterator
      * @throws IllegalArgumentException if any boundary in the argument is infinite
      */
-    private void writeBoundaries(final Iterator<PlaneConvexSubset> it) throws IOException {
+    private void writeBoundaries(final Iterator<? extends PlaneConvexSubset> it) throws IOException {
         PlaneConvexSubset boundary;
         List<Vector3D> vertices;
         int[] vertexIndices;
