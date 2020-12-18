@@ -238,7 +238,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         /** Simple constructor.
          * @param tree the owning tree instance
          */
-        protected RegionNode3D(final AbstractBSPTree<Vector3D, RegionNode3D> tree) {
+        RegionNode3D(final AbstractBSPTree<Vector3D, RegionNode3D> tree) {
             super(tree);
         }
 

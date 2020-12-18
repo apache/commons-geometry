@@ -73,7 +73,7 @@ public final class TestRegionBSPTree extends AbstractRegionBSPTree<TestPoint2D, 
     public static final class TestRegionNode
         extends AbstractRegionBSPTree.AbstractRegionNode<TestPoint2D, TestRegionNode> {
 
-        protected TestRegionNode(final AbstractBSPTree<TestPoint2D, TestRegionNode> tree) {
+        TestRegionNode(final AbstractBSPTree<TestPoint2D, TestRegionNode> tree) {
             super(tree);
         }
 
