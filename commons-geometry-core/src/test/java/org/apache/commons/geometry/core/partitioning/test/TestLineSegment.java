@@ -28,7 +28,7 @@ import org.apache.commons.geometry.core.partitioning.Split;
 /** Class representing a line segment in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
+public final class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
     /** Abscissa of the line segment start point. */
     private final double start;
 

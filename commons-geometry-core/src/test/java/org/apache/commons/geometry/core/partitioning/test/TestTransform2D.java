@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.Transform;
 /** Implementation class for 2D {@link Transform}s. This
  * class should only be used for testing purposes.
  */
-public class TestTransform2D implements Transform<TestPoint2D> {
+public final class TestTransform2D implements Transform<TestPoint2D> {
 
     /** Underlying transform function. */
     private final UnaryOperator<TestPoint2D> fn;

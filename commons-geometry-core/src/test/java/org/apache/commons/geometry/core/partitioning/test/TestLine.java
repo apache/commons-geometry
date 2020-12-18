@@ -24,7 +24,7 @@ import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 /** Class representing a line in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
+public final class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
 
     /** Line pointing along the positive x-axis. */
     public static final TestLine X_AXIS = new TestLine(0, 0, 1, 0);

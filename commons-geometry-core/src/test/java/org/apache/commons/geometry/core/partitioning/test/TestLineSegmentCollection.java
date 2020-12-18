@@ -30,7 +30,7 @@ import org.apache.commons.geometry.core.partitioning.Split;
 /** Class containing a collection line segments. This class should only be used for
  * testing purposes.
  */
-public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> {
+public final class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> {
     /** The collection of line-segments making up the subset.
      */
     private final List<TestLineSegment> segments;

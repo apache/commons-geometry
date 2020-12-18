@@ -21,7 +21,7 @@ import org.apache.commons.geometry.core.Point;
 /** Class representing a point in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestPoint2D implements Point<TestPoint2D> {
+public final class TestPoint2D implements Point<TestPoint2D> {
 
     /** Instance representing the coordinates {@code (0, 0)} */
     public static final TestPoint2D ZERO = new TestPoint2D(0, 0);

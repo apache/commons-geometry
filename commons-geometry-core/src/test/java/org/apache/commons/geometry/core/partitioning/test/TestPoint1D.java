@@ -21,7 +21,7 @@ import org.apache.commons.geometry.core.Point;
 /** Class representing a point in one dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestPoint1D implements Point<TestPoint1D> {
+public final class TestPoint1D implements Point<TestPoint1D> {
     /** X coordinate */
     private final double x;
 

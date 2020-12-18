@@ -24,7 +24,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 
 /** BSP Tree implementation class for testing purposes.
  */
-public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNode> {
+public final class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNode> {
 
     /** {@inheritDoc} */
     @Override
