@@ -325,7 +325,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_multipleSubdivisionCounts() throws Exception {
+    public void testToTree_multipleSubdivisionCounts() {
         // -- arrange
         final Sphere s = Sphere.from(Vector3D.of(-3, 5, 1), 10, TEST_PRECISION);
 

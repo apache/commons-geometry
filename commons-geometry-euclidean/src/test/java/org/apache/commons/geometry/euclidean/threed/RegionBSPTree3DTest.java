@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -977,7 +976,7 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testLinecastFirst_onlyReturnsPointsWithinSegment() throws IOException, ParseException {
+    public void testLinecastFirst_onlyReturnsPointsWithinSegment() {
         // arrange
         final Vector3D lowerCorner = Vector3D.ZERO;
         final Vector3D upperCorner = Vector3D.of(1, 1, 1);
