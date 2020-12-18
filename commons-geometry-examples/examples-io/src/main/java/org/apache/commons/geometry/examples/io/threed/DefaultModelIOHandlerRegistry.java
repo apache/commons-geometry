@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.examples.io.threed;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.commons.geometry.examples.io.threed.obj.OBJModelIOHandler;
 
@@ -28,8 +28,6 @@ public class DefaultModelIOHandlerRegistry extends ModelIOHandlerRegistry {
     /** Construct a new instance and register known handlers.
      */
     public DefaultModelIOHandlerRegistry() {
-        setHandlers(Arrays.asList(
-                new OBJModelIOHandler()
-            ));
+        setHandlers(Collections.singletonList(new OBJModelIOHandler()));
     }
 }

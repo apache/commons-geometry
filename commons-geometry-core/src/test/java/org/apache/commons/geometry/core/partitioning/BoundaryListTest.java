@@ -54,18 +54,16 @@ public class BoundaryListTest {
         final BoundaryList<TestPoint2D, TestLineSegment> list = new BoundaryList<>(boundaries);
 
         // act/assert
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-            list.getBoundaries().add(new TestLineSegment(1, 1, 0, 2));
-        });
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> list.getBoundaries().add(new TestLineSegment(1, 1, 0, 2)));
     }
 
     @Test
     public void testCount() {
         // act/assert
         Assertions.assertEquals(0, new BoundaryList<>(Collections.emptyList()).count());
-        Assertions.assertEquals(1, new BoundaryList<>(Arrays.asList(
-                    new TestLineSegment(0, 0, 1, 1)
-                )).count());
+        Assertions.assertEquals(1, new BoundaryList<>(Collections.singletonList(
+                new TestLineSegment(0, 0, 1, 1)
+        )).count());
         Assertions.assertEquals(2, new BoundaryList<>(Arrays.asList(
                 new TestLineSegment(0, 0, 1, 1),
                 new TestLineSegment(1, 1, 0, 2)
@@ -76,9 +74,9 @@ public class BoundaryListTest {
     public void testToString() {
         // arrange
         final BoundaryList<TestPoint2D, TestLineSegment> empty = new BoundaryList<>(Collections.emptyList());
-        final BoundaryList<TestPoint2D, TestLineSegment> single = new BoundaryList<>(Arrays.asList(
-                    new TestLineSegment(0, 0, 1, 1)
-                ));
+        final BoundaryList<TestPoint2D, TestLineSegment> single = new BoundaryList<>(Collections.singletonList(
+                new TestLineSegment(0, 0, 1, 1)
+        ));
 
         // act
         Assertions.assertEquals("BoundaryList[count= 0]", empty.toString());

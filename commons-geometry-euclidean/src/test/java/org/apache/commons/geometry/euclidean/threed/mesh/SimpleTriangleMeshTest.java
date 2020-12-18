@@ -261,8 +261,7 @@ public class SimpleTriangleMeshTest {
             Vector3D.of(0, 1, 0)
         );
 
-        final List<int[]> faceIndices = Arrays.asList(
-            new int[] {0, 1, 2}
+        final List<int[]> faceIndices = Collections.singletonList(new int[]{0, 1, 2}
         );
 
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(vertices, faceIndices, TEST_PRECISION);

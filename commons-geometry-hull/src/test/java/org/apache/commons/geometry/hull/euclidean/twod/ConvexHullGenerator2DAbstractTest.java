@@ -423,8 +423,8 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         }
         Assertions.assertEquals(perimeter, hullRegion.getBoundarySize(), 1.0e-12);
 
-        for (int i = 0; i < referenceHull.length; ++i) {
-            Assertions.assertEquals(RegionLocation.BOUNDARY, hullRegion.classify(referenceHull[i]));
+        for (final Vector2D vector2D : referenceHull) {
+            Assertions.assertEquals(RegionLocation.BOUNDARY, hullRegion.classify(vector2D));
         }
 
     }

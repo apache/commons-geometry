@@ -70,7 +70,7 @@ public class IteratorTransformTest {
         @Override
         protected void acceptInput(final Integer input) {
             // filter out odd integers
-            final int value = input.intValue();
+            final int value = input;
             if (value % 2 == 0) {
                 final char[] chars = (value + "").toCharArray();
 

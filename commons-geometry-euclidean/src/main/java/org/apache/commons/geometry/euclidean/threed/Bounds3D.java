@@ -233,7 +233,7 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D> {
          * @param pts points to add
          * @return this instance
          */
-        public Builder addAll(final Iterable<Vector3D> pts) {
+        public Builder addAll(final Iterable<? extends Vector3D> pts) {
             for (final Vector3D pt : pts) {
                 add(pt);
             }

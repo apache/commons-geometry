@@ -42,7 +42,7 @@ public class ModelIOHandlerRegistryTest {
 
     private static final BoundarySource3D SRC_B = BoundarySource3D.from();
 
-    private ModelIOHandlerRegistry registry = new ModelIOHandlerRegistry();
+    private final ModelIOHandlerRegistry registry = new ModelIOHandlerRegistry();
 
     @Test
     public void testGetSetHandlers() {

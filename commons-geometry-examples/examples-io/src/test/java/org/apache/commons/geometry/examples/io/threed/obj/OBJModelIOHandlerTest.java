@@ -53,7 +53,7 @@ public class OBJModelIOHandlerTest {
     @TempDir
     protected File anotherTempDir;
 
-    private OBJModelIOHandler handler = new OBJModelIOHandler();
+    private final OBJModelIOHandler handler = new OBJModelIOHandler();
 
     @Test
     public void testHandlesType() {

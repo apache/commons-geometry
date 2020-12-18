@@ -585,9 +585,9 @@ public class QuaternionRotationTest {
 
         // act/assert
         // test each rotation against all of the others (including itself)
-        for (int i = 0; i < rotations.length; ++i) {
-            for (int j = 0; j < rotations.length; ++j) {
-                checkSlerpCombination(rotations[i], rotations[j]);
+        for (final QuaternionRotation quaternionRotation : rotations) {
+            for (final QuaternionRotation rotation : rotations) {
+                checkSlerpCombination(quaternionRotation, rotation);
             }
         }
     }
@@ -822,9 +822,7 @@ public class QuaternionRotationTest {
         final AxisReferenceFrame frame = AxisReferenceFrame.RELATIVE;
 
         for (final AxisSequence axes : getAxes(AxisSequenceType.EULER)) {
-            for (int i = 0; i < eulerSingularities.length; ++i) {
-
-                final double singularityAngle = eulerSingularities[i];
+            for (final double singularityAngle : eulerSingularities) {
 
                 final AxisAngleSequence inputSeq = new AxisAngleSequence(frame, axes, angle1, singularityAngle, angle2);
                 final QuaternionRotation inputQuat = QuaternionRotation.fromAxisAngleSequence(inputSeq);
@@ -859,9 +857,7 @@ public class QuaternionRotationTest {
         final AxisReferenceFrame frame = AxisReferenceFrame.ABSOLUTE;
 
         for (final AxisSequence axes : getAxes(AxisSequenceType.EULER)) {
-            for (int i = 0; i < eulerSingularities.length; ++i) {
-
-                final double singularityAngle = eulerSingularities[i];
+            for (final double singularityAngle : eulerSingularities) {
 
                 final AxisAngleSequence inputSeq = new AxisAngleSequence(frame, axes, angle1, singularityAngle, angle2);
                 final QuaternionRotation inputQuat = QuaternionRotation.fromAxisAngleSequence(inputSeq);
@@ -896,9 +892,7 @@ public class QuaternionRotationTest {
         final AxisReferenceFrame frame = AxisReferenceFrame.RELATIVE;
 
         for (final AxisSequence axes : getAxes(AxisSequenceType.TAIT_BRYAN)) {
-            for (int i = 0; i < taitBryanSingularities.length; ++i) {
-
-                final double singularityAngle = taitBryanSingularities[i];
+            for (final double singularityAngle : taitBryanSingularities) {
 
                 final AxisAngleSequence inputSeq = new AxisAngleSequence(frame, axes, angle1, singularityAngle, angle2);
                 final QuaternionRotation inputQuat = QuaternionRotation.fromAxisAngleSequence(inputSeq);
@@ -933,9 +927,7 @@ public class QuaternionRotationTest {
         final AxisReferenceFrame frame = AxisReferenceFrame.ABSOLUTE;
 
         for (final AxisSequence axes : getAxes(AxisSequenceType.TAIT_BRYAN)) {
-            for (int i = 0; i < taitBryanSingularities.length; ++i) {
-
-                final double singularityAngle = taitBryanSingularities[i];
+            for (final double singularityAngle : taitBryanSingularities) {
 
                 final AxisAngleSequence inputSeq = new AxisAngleSequence(frame, axes, angle1, singularityAngle, angle2);
                 final QuaternionRotation inputQuat = QuaternionRotation.fromAxisAngleSequence(inputSeq);

@@ -16,10 +16,6 @@
  */
 package org.apache.commons.geometry.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Assertions;
@@ -101,27 +97,5 @@ public final class GeometryTestUtils {
         }
 
         Assertions.assertTrue(obj.equals(obj), "Object should equal itself");
-    }
-
-    /**
-     * Serializes and then recovers an object from a byte array. Returns the deserialized object.
-     *
-     * @param obj  object to serialize and recover
-     * @return  the recovered, deserialized object
-     */
-    public static Object serializeAndRecover(final Object obj) {
-        try {
-            // serialize the Object
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final ObjectOutputStream so = new ObjectOutputStream(bos);
-            so.writeObject(obj);
-
-            // deserialize the Object
-            final ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-            final ObjectInputStream si = new ObjectInputStream(bis);
-            return si.readObject();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

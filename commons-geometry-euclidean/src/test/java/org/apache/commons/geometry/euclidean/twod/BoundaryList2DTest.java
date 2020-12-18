@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,9 +34,9 @@ public class BoundaryList2DTest {
     @Test
     public void testCtor() {
         // arrange
-        final List<LineConvexSubset> boundaries = Arrays.asList(
-                    Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
-                );
+        final List<LineConvexSubset> boundaries = Collections.singletonList(
+                Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        );
 
         // act
         final BoundaryList2D list = new BoundaryList2D(boundaries);

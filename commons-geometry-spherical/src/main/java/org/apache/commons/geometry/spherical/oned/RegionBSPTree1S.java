@@ -223,7 +223,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
         BoundaryPair start = null;
         BoundaryPair end = null;
-        BoundaryPair current = null;
+        BoundaryPair current;
 
         for (int i = 0; i < boundaryPairCount; ++i) {
             current = insideBoundaryPairs.get((i + startOffset) % boundaryPairCount);
@@ -262,7 +262,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         final int size = boundaryPairs.size();
 
         if (size > 0) {
-            BoundaryPair current = null;
+            BoundaryPair current;
             BoundaryPair previous = boundaryPairs.get(size - 1);
 
             for (int i = 0; i < size; ++i, previous = current) {

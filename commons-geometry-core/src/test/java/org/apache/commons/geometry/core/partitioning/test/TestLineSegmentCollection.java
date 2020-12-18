@@ -140,7 +140,7 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
                 null :
                 new TestLineSegmentCollection(plusList);
 
-        return new Split<TestLineSegmentCollection>(minus, plus);
+        return new Split<>(minus, plus);
     }
 
     /** {@inheritDoc} */

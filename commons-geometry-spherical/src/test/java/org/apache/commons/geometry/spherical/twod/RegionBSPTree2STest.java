@@ -1037,8 +1037,8 @@ public class RegionBSPTree2STest {
     private static RegionBSPTree2S latLongToTree(final DoublePrecisionContext precision, final double[][] points) {
         final GreatArcPath.Builder pathBuilder = GreatArcPath.builder(precision);
 
-        for (int i = 0; i < points.length; ++i) {
-            pathBuilder.append(latLongToPoint(points[i][0], points[i][1]));
+        for (final double[] point : points) {
+            pathBuilder.append(latLongToPoint(point[0], point[1]));
         }
 
         return pathBuilder.close().toTree();

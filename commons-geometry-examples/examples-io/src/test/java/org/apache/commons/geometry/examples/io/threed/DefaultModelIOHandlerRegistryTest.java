@@ -38,7 +38,7 @@ public class DefaultModelIOHandlerRegistryTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private DefaultModelIOHandlerRegistry registry = new DefaultModelIOHandlerRegistry();
+    private final DefaultModelIOHandlerRegistry registry = new DefaultModelIOHandlerRegistry();
 
     @Test
     public void testDefaultHandlers() {

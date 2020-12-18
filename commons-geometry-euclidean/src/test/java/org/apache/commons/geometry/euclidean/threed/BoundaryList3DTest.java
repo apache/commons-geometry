@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,9 +34,9 @@ public class BoundaryList3DTest {
     @Test
     public void testCtor() {
         // arrange
-        final List<PlaneConvexSubset> boundaries = Arrays.asList(
-                    Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION).span()
-                );
+        final List<PlaneConvexSubset> boundaries = Collections.singletonList(
+                Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION).span()
+        );
 
         // act
         final BoundaryList3D list = new BoundaryList3D(boundaries);

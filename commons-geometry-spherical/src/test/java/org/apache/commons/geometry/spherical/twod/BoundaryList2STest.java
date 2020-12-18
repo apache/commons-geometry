@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,9 +34,9 @@ public class BoundaryList2STest {
     @Test
     public void testCtor() {
         // arrange
-        final List<GreatArc> boundaries = Arrays.asList(
-                    GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION)
-                );
+        final List<GreatArc> boundaries = Collections.singletonList(
+                GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION)
+        );
 
         // act
         final BoundaryList2S list = new BoundaryList2S(boundaries);

@@ -1854,11 +1854,9 @@ public class RegionBSPTree3DTest {
 
         final List<Vector3D> vertexList = new ArrayList<>();
 
-        for (int i = 0; i < facets.length; ++i) {
-            final int[] indices = facets[i];
-
-            for (int j = 0; j < indices.length; ++j) {
-                vertexList.add(vertices[indices[j]]);
+        for (final int[] indices : facets) {
+            for (final int index : indices) {
+                vertexList.add(vertices[index]);
             }
 
             // insert into an embedded tree and convert to convex polygons so that we can support

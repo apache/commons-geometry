@@ -249,11 +249,11 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
 
             final int sign = PartitionTestUtils.PRECISION.sign(originOffset);
             if (sign < 0) {
-                return new Split<TestLineSegment>(this, null);
+                return new Split<>(this, null);
             } else if (sign > 0) {
-                return new Split<TestLineSegment>(null, this);
+                return new Split<>(null, this);
             }
-            return new Split<TestLineSegment>(null, null);
+            return new Split<>(null, null);
         } else {
             // the lines intersect
             final double intersectionAbscissa = line.toSubspaceValue(intersection);
@@ -274,7 +274,7 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
             final TestLineSegment minus = (startCmp > 0) ? endSegment : startSegment;
             final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
-            return new Split<TestLineSegment>(minus, plus);
+            return new Split<>(minus, plus);
         }
     }
 
@@ -305,13 +305,13 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
 
         if (startCmp == 0 && endCmp == 0) {
             // the entire line segment is directly on the splitter line
-            return new Split<TestLineSegment>(null, null);
+            return new Split<>(null, null);
         } else if (startCmp < 1 && endCmp < 1) {
             // the entire line segment is on the minus side
-            return new Split<TestLineSegment>(this, null);
+            return new Split<>(this, null);
         } else if (startCmp > -1 && endCmp > -1) {
             // the entire line segment is on the plus side
-            return new Split<TestLineSegment>(null, this);
+            return new Split<>(null, this);
         }
 
         // we need to split the line
@@ -324,6 +324,6 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
         final TestLineSegment minus = (startCmp > 0) ? endSegment : startSegment;
         final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
-        return new Split<TestLineSegment>(minus, plus);
+        return new Split<>(minus, plus);
     }
 }

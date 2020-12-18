@@ -161,7 +161,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      */
     protected <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> R transformInternal(
             final Transform<P> transform, final R thisInstance, final Class<S> boundaryType,
-            final Function<List<S>, R> factory) {
+            final Function<? super List<S>, R> factory) {
 
         if (isFull()) {
             return thisInstance;

@@ -45,7 +45,7 @@ public class OBJReaderTest {
 
     private static final int CUBE_MINUS_SPHERE_FACES = 728;
 
-    private OBJReader reader = new OBJReader();
+    private final OBJReader reader = new OBJReader();
 
     @Test
     public void testReadMesh_emptyInput() throws Exception {

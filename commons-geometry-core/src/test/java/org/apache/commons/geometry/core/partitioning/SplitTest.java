@@ -42,10 +42,10 @@ public class SplitTest {
         final Object b = new Object();
 
         // act/assert
-        Assertions.assertEquals(SplitLocation.NEITHER, new Split<Object>(null, null).getLocation());
-        Assertions.assertEquals(SplitLocation.MINUS, new Split<Object>(a, null).getLocation());
-        Assertions.assertEquals(SplitLocation.PLUS, new Split<Object>(null, b).getLocation());
-        Assertions.assertEquals(SplitLocation.BOTH, new Split<Object>(a, b).getLocation());
+        Assertions.assertEquals(SplitLocation.NEITHER, new Split<>(null, null).getLocation());
+        Assertions.assertEquals(SplitLocation.MINUS, new Split<>(a, null).getLocation());
+        Assertions.assertEquals(SplitLocation.PLUS, new Split<>(null, b).getLocation());
+        Assertions.assertEquals(SplitLocation.BOTH, new Split<>(a, b).getLocation());
     }
 
     @Test
