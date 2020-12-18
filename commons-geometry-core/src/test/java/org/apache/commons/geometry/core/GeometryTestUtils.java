@@ -56,7 +56,7 @@ public final class GeometryTestUtils {
      * given value.
      * @param executable the Executable instance
      * @param exceptionType the expected exception type
-     * @param message the expected exception message; ignored if null
+     * @param message the expected exception message
      */
     public static <T extends Throwable> void assertThrowsWithMessage(final Executable executable, final Class<T> exceptionType, final String message) {
         Assertions.assertEquals(message, Assertions.assertThrows(exceptionType, executable).getMessage());
@@ -67,7 +67,7 @@ public final class GeometryTestUtils {
      * given regex.
      * @param executable the Executable instance
      * @param exceptionType the expected exception type
-     * @param pattern regex pattern to match; ignored if null
+     * @param pattern regex pattern to match
      */
     public static <T extends Throwable> void assertThrowsWithMessage(final Executable executable, final Class<T> exceptionType, final Pattern pattern) {
         final String message = Assertions.assertThrows(exceptionType, executable).getMessage();
