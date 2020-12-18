@@ -313,8 +313,8 @@ public final class Planes {
      * @throws IndexOutOfBoundsException if any index into {@code vertices} is out of bounds
      * @see #indexedConvexPolygons(Vector3D[], int[][], DoublePrecisionContext)
      */
-    public static List<ConvexPolygon3D> indexedConvexPolygons(final List<? extends Vector3D> vertices, final int[][] faceIndices,
-            final DoublePrecisionContext precision) {
+    public static List<ConvexPolygon3D> indexedConvexPolygons(final List<? extends Vector3D> vertices,
+            final int[][] faceIndices, final DoublePrecisionContext precision) {
         final int numFaces = faceIndices.length;
         final List<ConvexPolygon3D> polygons = new ArrayList<>(numFaces);
         final List<Vector3D> faceVertices = new ArrayList<>();
