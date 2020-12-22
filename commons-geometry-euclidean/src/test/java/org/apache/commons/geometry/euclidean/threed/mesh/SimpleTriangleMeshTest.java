@@ -173,7 +173,7 @@ public class SimpleTriangleMeshTest {
     @Test
     public void testFrom_boundarySource_empty() {
         // act
-        final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(BoundarySource3D.from(Collections.emptyList()),
+        final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(BoundarySource3D.of(Collections.emptyList()),
                 TEST_PRECISION);
 
         // assert
@@ -431,7 +431,7 @@ public class SimpleTriangleMeshTest {
         // arrange
         final Triangle3D tri = Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
                 TEST_PRECISION);
-        final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(BoundarySource3D.from(tri), TEST_PRECISION);
+        final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(BoundarySource3D.of(tri), TEST_PRECISION);
 
         // act
         final String str = mesh.toString();
@@ -445,7 +445,7 @@ public class SimpleTriangleMeshTest {
         // arrange
         final Triangle3D tri = Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
                 TEST_PRECISION);
-        final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(BoundarySource3D.from(tri), TEST_PRECISION);
+        final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(BoundarySource3D.of(tri), TEST_PRECISION);
 
         // act
         final String str = mesh.getFace(0).toString();

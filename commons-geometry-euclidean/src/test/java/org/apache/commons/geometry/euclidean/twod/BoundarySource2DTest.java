@@ -35,7 +35,7 @@ public class BoundarySource2DTest {
     @Test
     public void testToList() {
         // act
-        final BoundarySource2D src = BoundarySource2D.from(
+        final BoundarySource2D src = BoundarySource2D.of(
             Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION),
             Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)
         );
@@ -50,7 +50,7 @@ public class BoundarySource2DTest {
     @Test
     public void testToList_noBoundaries() {
         // act
-        final BoundarySource2D src = BoundarySource2D.from();
+        final BoundarySource2D src = BoundarySource2D.of();
 
         // act
         final BoundaryList2D list = src.toList();
@@ -62,7 +62,7 @@ public class BoundarySource2DTest {
     @Test
     public void testToTree() {
         // act
-        final BoundarySource2D src = BoundarySource2D.from(
+        final BoundarySource2D src = BoundarySource2D.of(
             Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION),
             Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)
         );
@@ -79,7 +79,7 @@ public class BoundarySource2DTest {
     @Test
     public void testToTree_noBoundaries() {
         // act
-        final BoundarySource2D src = BoundarySource2D.from();
+        final BoundarySource2D src = BoundarySource2D.of();
 
         // act
         final RegionBSPTree2D tree = src.toTree();
@@ -91,9 +91,9 @@ public class BoundarySource2DTest {
     }
 
     @Test
-    public void testFrom_varargs_empty() {
+    public void testOf_varargs_empty() {
         // act
-        final BoundarySource2D src = BoundarySource2D.from();
+        final BoundarySource2D src = BoundarySource2D.of();
 
         // assert
         final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
@@ -101,12 +101,12 @@ public class BoundarySource2DTest {
     }
 
     @Test
-    public void testFrom_varargs() {
+    public void testOf_varargs() {
         // act
         final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final Segment b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
 
-        final BoundarySource2D src = BoundarySource2D.from(a, b);
+        final BoundarySource2D src = BoundarySource2D.of(a, b);
 
         // assert
         final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
@@ -117,12 +117,12 @@ public class BoundarySource2DTest {
     }
 
     @Test
-    public void testFrom_list_empty() {
+    public void testOf_list_empty() {
         // arrange
         final List<LineConvexSubset> input = new ArrayList<>();
 
         // act
-        final BoundarySource2D src = BoundarySource2D.from(input);
+        final BoundarySource2D src = BoundarySource2D.of(input);
 
         // assert
         final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
@@ -130,7 +130,7 @@ public class BoundarySource2DTest {
     }
 
     @Test
-    public void testFrom_list() {
+    public void testOf_list() {
         // act
         final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final Segment b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
@@ -139,7 +139,7 @@ public class BoundarySource2DTest {
         input.add(a);
         input.add(b);
 
-        final BoundarySource2D src = BoundarySource2D.from(input);
+        final BoundarySource2D src = BoundarySource2D.of(input);
 
         // assert
         final List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());

@@ -270,7 +270,7 @@ public class OBJWriterTest {
     @Test
     public void testWriteBoundaries_nonMeshArgument() throws IOException {
         // arrange
-        final BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.of(
                     Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION),
                     Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 0, 1), TEST_PRECISION)
                 );
@@ -297,7 +297,7 @@ public class OBJWriterTest {
     @Test
     public void testWriteBoundaries_infiniteBoundary() throws IOException {
         // arrange
-        final BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.of(
                     Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION),
                     Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION).span()
                 );

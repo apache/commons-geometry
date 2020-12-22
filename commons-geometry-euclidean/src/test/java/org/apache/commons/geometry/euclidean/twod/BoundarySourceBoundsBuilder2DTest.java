@@ -34,7 +34,7 @@ public class BoundarySourceBoundsBuilder2DTest {
     @Test
     public void testGetBounds_noBoundaries() {
         // arrange
-        final BoundarySource2D src = BoundarySource2D.from(new ArrayList<>());
+        final BoundarySource2D src = BoundarySource2D.of(new ArrayList<>());
         final BoundarySourceBoundsBuilder2D builder = new BoundarySourceBoundsBuilder2D();
 
         // act
@@ -49,7 +49,7 @@ public class BoundarySourceBoundsBuilder2DTest {
         // arrange
         final Segment seg = Lines.segmentFromPoints(Vector2D.of(1, -2), Vector2D.of(-3, 4), TEST_PRECISION);
 
-        final BoundarySource2D src = BoundarySource2D.from(seg);
+        final BoundarySource2D src = BoundarySource2D.of(seg);
         final BoundarySourceBoundsBuilder2D builder = new BoundarySourceBoundsBuilder2D();
 
         // act
@@ -68,7 +68,7 @@ public class BoundarySourceBoundsBuilder2DTest {
         final Segment seg2 = Lines.segmentFromPoints(Vector2D.of(0, 1), Vector2D.of(7, 0), TEST_PRECISION);
         final Segment seg3 = Lines.segmentFromPoints(Vector2D.of(4, 6), Vector2D.of(-3, 9), TEST_PRECISION);
 
-        final BoundarySource2D src = BoundarySource2D.from(seg1, seg2, seg3);
+        final BoundarySource2D src = BoundarySource2D.of(seg1, seg2, seg3);
         final BoundarySourceBoundsBuilder2D builder = new BoundarySourceBoundsBuilder2D();
 
         // act
@@ -88,7 +88,7 @@ public class BoundarySourceBoundsBuilder2DTest {
         // arrange
         final LineConvexSubset boundary = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION)
                 .span();
-        final BoundarySource2D src = BoundarySource2D.from(boundary);
+        final BoundarySource2D src = BoundarySource2D.of(boundary);
         final BoundarySourceBoundsBuilder2D builder = new BoundarySourceBoundsBuilder2D();
 
         // act
@@ -110,7 +110,7 @@ public class BoundarySourceBoundsBuilder2DTest {
         final Segment seg2 = Lines.segmentFromPoints(Vector2D.of(0, 1), Vector2D.of(7, 0), TEST_PRECISION);
         final Segment seg3 = Lines.segmentFromPoints(Vector2D.of(4, 6), Vector2D.of(-3, 9), TEST_PRECISION);
 
-        final BoundarySource2D src = BoundarySource2D.from(seg1, seg2, inf, seg3);
+        final BoundarySource2D src = BoundarySource2D.of(seg1, seg2, inf, seg3);
         final BoundarySourceBoundsBuilder2D builder = new BoundarySourceBoundsBuilder2D();
 
         // act

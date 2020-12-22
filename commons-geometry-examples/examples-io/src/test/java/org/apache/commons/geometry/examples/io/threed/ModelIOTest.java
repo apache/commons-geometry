@@ -100,7 +100,7 @@ public class ModelIOTest {
 
     private void checkWriteRead(final ModelIOFunction fn) throws IOException {
         // arrange
-        final BoundarySource3D model = BoundarySource3D.from(
+        final BoundarySource3D model = BoundarySource3D.of(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 

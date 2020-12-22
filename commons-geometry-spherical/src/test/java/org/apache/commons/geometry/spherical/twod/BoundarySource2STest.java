@@ -33,7 +33,7 @@ public class BoundarySource2STest {
     @Test
     public void testToList() {
         // act
-        final BoundarySource2S src = BoundarySource2S.from(
+        final BoundarySource2S src = BoundarySource2S.of(
             GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION),
             GreatCircles.arcFromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
         );
@@ -48,7 +48,7 @@ public class BoundarySource2STest {
     @Test
     public void testToList_noBoundaries() {
         // act
-        final BoundarySource2S src = BoundarySource2S.from();
+        final BoundarySource2S src = BoundarySource2S.of();
 
         // act
         final BoundaryList2S list = src.toList();
@@ -60,7 +60,7 @@ public class BoundarySource2STest {
     @Test
     public void testToTree() {
         // act
-        final BoundarySource2S src = BoundarySource2S.from(
+        final BoundarySource2S src = BoundarySource2S.of(
                 GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION));
 
         // act
@@ -75,7 +75,7 @@ public class BoundarySource2STest {
     @Test
     public void testToTree_noBoundaries() {
         // act
-        final BoundarySource2S src = BoundarySource2S.from(Collections.emptyList());
+        final BoundarySource2S src = BoundarySource2S.of(Collections.emptyList());
 
         // act
         final RegionBSPTree2S tree = src.toTree();

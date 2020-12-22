@@ -142,7 +142,7 @@ public class OBJModelIOHandlerTest {
         // arrange
         final File out = new File(anotherTempDir, "out.obj");
 
-        final BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.of(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -159,7 +159,7 @@ public class OBJModelIOHandlerTest {
     public void testWrite_toFile_unsupportedFormat() throws Exception {
         // arrange
         final File out = new File(anotherTempDir, "out.obj");
-        final BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.of(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -173,7 +173,7 @@ public class OBJModelIOHandlerTest {
     public void testWrite_toFile_ioException() throws Exception {
         // arrange
         final File out = new File(anotherTempDir, "notafolder/notafile");
-        final BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.of(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -188,7 +188,7 @@ public class OBJModelIOHandlerTest {
         // arrange
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        final BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.of(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -206,7 +206,7 @@ public class OBJModelIOHandlerTest {
     public void testWrite_toStream_unsupportedFormat() throws Exception {
         // arrange
         final File file = new File(anotherTempDir, "out.obj");
-        final BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.of(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 
@@ -221,7 +221,7 @@ public class OBJModelIOHandlerTest {
     @Test
     public void testWrite_toStream_ioException() throws Exception {
         // arrange
-        final BoundarySource3D src = BoundarySource3D.from(
+        final BoundarySource3D src = BoundarySource3D.of(
                 Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION)
             );
 

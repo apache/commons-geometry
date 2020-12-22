@@ -104,8 +104,8 @@ public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset>, Lin
      * @param boundaries boundaries to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource3D from(final PlaneConvexSubset... boundaries) {
-        return from(Arrays.asList(boundaries));
+    static BoundarySource3D of(final PlaneConvexSubset... boundaries) {
+        return of(Arrays.asList(boundaries));
     }
 
     /** Return a {@link BoundarySource3D} instance containing the given boundaries. The given
@@ -113,7 +113,7 @@ public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset>, Lin
      * @param boundaries boundaries to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource3D from(final Collection<PlaneConvexSubset> boundaries) {
+    static BoundarySource3D of(final Collection<PlaneConvexSubset> boundaries) {
         return boundaries::stream;
     }
 }

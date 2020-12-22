@@ -77,8 +77,8 @@ public interface BoundarySource2D extends BoundarySource<LineConvexSubset>, Line
      * @param boundaries line subsets to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource2D from(final LineConvexSubset... boundaries) {
-        return from(Arrays.asList(boundaries));
+    static BoundarySource2D of(final LineConvexSubset... boundaries) {
+        return of(Arrays.asList(boundaries));
     }
 
     /** Return a {@link BoundarySource2D} instance containing the given boundaries. The given
@@ -86,7 +86,7 @@ public interface BoundarySource2D extends BoundarySource<LineConvexSubset>, Line
      * @param boundaries line subsets to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource2D from(final Collection<LineConvexSubset> boundaries) {
+    static BoundarySource2D of(final Collection<LineConvexSubset> boundaries) {
         return boundaries::stream;
     }
 }

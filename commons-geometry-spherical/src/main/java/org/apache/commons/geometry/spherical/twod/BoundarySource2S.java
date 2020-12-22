@@ -54,8 +54,8 @@ public interface BoundarySource2S extends BoundarySource<GreatArc> {
      * @param boundaries boundaries to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource2S from(final GreatArc... boundaries) {
-        return from(Arrays.asList(boundaries));
+    static BoundarySource2S of(final GreatArc... boundaries) {
+        return of(Arrays.asList(boundaries));
     }
 
     /** Return a {@link BoundarySource2S} instance containing the given boundaries. The given
@@ -63,7 +63,7 @@ public interface BoundarySource2S extends BoundarySource<GreatArc> {
      * @param boundaries boundaries to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource2S from(final Collection<GreatArc> boundaries) {
+    static BoundarySource2S of(final Collection<GreatArc> boundaries) {
         return boundaries::stream;
     }
 }

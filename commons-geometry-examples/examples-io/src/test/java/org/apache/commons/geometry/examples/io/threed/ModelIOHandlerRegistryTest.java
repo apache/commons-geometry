@@ -38,9 +38,9 @@ public class ModelIOHandlerRegistryTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final BoundarySource3D SRC_A = BoundarySource3D.from();
+    private static final BoundarySource3D SRC_A = BoundarySource3D.of();
 
-    private static final BoundarySource3D SRC_B = BoundarySource3D.from();
+    private static final BoundarySource3D SRC_B = BoundarySource3D.of();
 
     private final ModelIOHandlerRegistry registry = new ModelIOHandlerRegistry();
 
