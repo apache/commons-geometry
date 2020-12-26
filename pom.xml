@@ -52,10 +52,10 @@
     <commons.encoding>UTF-8</commons.encoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <geometry.pmd.version>3.13.0</geometry.pmd.version>
-    <geometry.pmd.dep.version>6.29.0</geometry.pmd.dep.version>
+    <geometry.pmd.version>3.14.0</geometry.pmd.version>
+    <geometry.pmd.dep.version>6.30.0</geometry.pmd.dep.version>
     <geometry.checkstyle.version>3.1.1</geometry.checkstyle.version>
-    <geometry.checkstyle.dep.version>8.29</geometry.checkstyle.dep.version>
+    <geometry.checkstyle.dep.version>8.38</geometry.checkstyle.dep.version>
     <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
@@ -556,7 +556,7 @@
           <plugin>
             <groupId>org.ekstazi</groupId>
             <artifactId>ekstazi-maven-plugin</artifactId>
-            <version>4.4.0</version>
+            <version>5.3.0</version>
             <configuration>
               <forcefailing>true</forcefailing>
             </configuration>
