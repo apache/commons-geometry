@@ -55,7 +55,7 @@
     <geometry.pmd.version>3.14.0</geometry.pmd.version>
     <geometry.pmd.dep.version>6.30.0</geometry.pmd.dep.version>
     <geometry.checkstyle.version>3.1.1</geometry.checkstyle.version>
-    <geometry.checkstyle.dep.version>8.38</geometry.checkstyle.dep.version>
+    <geometry.checkstyle.dep.version>8.39</geometry.checkstyle.dep.version>
     <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
