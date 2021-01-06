@@ -57,10 +57,10 @@ class MergeChecker {
     private int expectedCount = -1;
 
     /** The expected full state of the merged tree */
-    private boolean expectedFull = false;
+    private boolean expectedFull;
 
     /** The expected empty state of the merged tree */
-    private boolean expectedEmpty = false;
+    private boolean expectedEmpty;
 
     /** Points expected to lie in the inside of the region */
     private final List<TestPoint2D> insidePoints = new ArrayList<>();

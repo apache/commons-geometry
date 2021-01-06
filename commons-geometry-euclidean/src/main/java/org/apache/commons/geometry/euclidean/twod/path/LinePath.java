@@ -458,10 +458,10 @@ public class LinePath implements BoundarySource2D, Sized {
      */
     public static final class Builder {
         /** Line subsets appended to the path. */
-        private List<LineConvexSubset> appended = null;
+        private List<LineConvexSubset> appended;
 
         /** Line subsets prepended to the path. */
-        private List<LineConvexSubset> prepended = null;
+        private List<LineConvexSubset> prepended;
 
         /** Precision context used when creating line segments directly from vertices. */
         private DoublePrecisionContext precision;

@@ -72,17 +72,17 @@ public class IteratorTransformTest {
             // filter out odd integers
             final int value = input;
             if (value % 2 == 0) {
-                final char[] chars = (value + "").toCharArray();
+                final char[] chars = (Integer.toString(value)).toCharArray();
 
                 if (chars.length > 1) {
                     final List<String> strs = new ArrayList<>();
                     for (final char ch : chars) {
-                        strs.add(ch + "");
+                        strs.add(String.valueOf(ch));
                     }
 
                     addAllOutput(strs);
                 } else if (chars.length == 1) {
-                    addOutput(chars[0] + "");
+                    addOutput(String.valueOf(chars[0]));
                 }
             }
         }

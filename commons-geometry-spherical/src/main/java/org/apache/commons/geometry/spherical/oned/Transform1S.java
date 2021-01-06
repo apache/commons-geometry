@@ -182,7 +182,7 @@ public final class Transform1S implements Transform<Point1S> {
             .append(isNegation())
             .append(", rotate= ")
             .append(getRotation())
-            .append("]");
+            .append(']');
 
         return sb.toString();
     }

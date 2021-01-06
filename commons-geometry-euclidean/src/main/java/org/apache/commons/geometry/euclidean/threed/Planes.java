@@ -637,7 +637,7 @@ public final class Planes {
         private double crossSumZ;
 
         /** If true, an exception will be thrown if the point sequence is discovered to be non-convex. */
-        private boolean requireConvex = false;
+        private boolean requireConvex;
 
         /** List that unique vertices discovered in the input sequence will be added to. */
         private List<? super Vector3D> uniqueVertexOutput;

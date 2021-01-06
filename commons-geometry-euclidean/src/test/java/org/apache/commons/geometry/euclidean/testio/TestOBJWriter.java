@@ -59,7 +59,7 @@ public final class TestOBJWriter implements AutoCloseable {
     private DecimalFormat decimalFormat;
 
     /** Number of vertices written to the output. */
-    private int vertexCount = 0;
+    private int vertexCount;
 
     /** Create a new instance for writing to the given file.
      * @param file file to write to

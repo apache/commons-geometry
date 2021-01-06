@@ -200,7 +200,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 .append(count())
                 .append(", height= ")
                 .append(height())
-                .append("]")
+                .append(']')
                 .toString();
     }
 

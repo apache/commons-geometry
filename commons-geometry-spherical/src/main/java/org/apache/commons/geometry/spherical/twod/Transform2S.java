@@ -172,7 +172,7 @@ public final class Transform2S implements Transform<Point2S> {
         sb.append(this.getClass().getSimpleName())
             .append("[euclideanTransform= ")
             .append(getEuclideanTransform())
-            .append("]");
+            .append(']');
 
         return sb.toString();
     }
