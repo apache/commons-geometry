@@ -376,7 +376,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
     private final class FaceIterator<T> implements Iterator<T> {
 
         /** The current index of the iterator. */
-        private int index = 0;
+        private int index;
 
         /** Function to apply to each face in the mesh. */
         private final Function<? super TriangleMesh.Face, T> fn;
@@ -428,7 +428,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
         private final DoublePrecisionContext precision;
 
         /** Flag set to true once a mesh is constructed from this builder. */
-        private boolean built = false;
+        private boolean built;
 
         /** Construct a new builder.
          * @param precision precision context used for floating point comparisons; may

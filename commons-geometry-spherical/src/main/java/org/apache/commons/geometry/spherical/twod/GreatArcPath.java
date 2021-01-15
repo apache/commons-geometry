@@ -283,10 +283,10 @@ public final class GreatArcPath implements BoundarySource2S {
      */
     public static final class Builder {
         /** Arcs appended to the path. */
-        private List<GreatArc> appendedArcs = null;
+        private List<GreatArc> appendedArcs;
 
         /** Arcs prepended to the path. */
-        private List<GreatArc> prependedArcs = null;
+        private List<GreatArc> prependedArcs;
 
         /** Precision context used when creating arcs directly from points. */
         private DoublePrecisionContext precision;
