@@ -34,6 +34,8 @@
   <!-- Prevent subclass error on generic package-private methods (checkstyle parsing issue?) -->
   <suppress checks="DesignForExtension" files=".*[/\\]twod[/\\]LineSubset" />
   <suppress checks="DesignForExtension" files=".*[/\\]threed[/\\]PlaneSubset" />
+  <!-- allow catch and rethrow of RuntimeExceptions to ensure resource closure when execution exits the method -->
+  <suppress checks="IllegalCatch" files=".*[/\\]io[/\\]core[/\\]internal[/\\]GeometryIOUtils" />
 
   <!-- Be more lenient on tests. -->
   <suppress checks="Javadoc" files=".*[/\\]test[/\\].*" />
@@ -42,4 +44,5 @@
   <suppress checks="LineLength" files=".*[/\\]test[/\\].*" />
   <suppress checks="IllegalCatch" files=".*[/\\]test[/\\].*" />
   <suppress checks="MethodName" files=".*[/\\]test[/\\].*" />
+  <suppress checks="IllegalInstantiation" files=".*[/\\]test[/\\].*" />
 </suppressions>

@@ -184,6 +184,7 @@
     <!-- No public fields -->
     <module name="VisibilityModifier">
        <property name="protectedAllowed" value="true"/>
+       <property name="ignoreAnnotationCanonicalNames" value="org.junit.jupiter.api.io.TempDir"/>
     </module>
 
     <!-- Miscellaneous other checks. -->
