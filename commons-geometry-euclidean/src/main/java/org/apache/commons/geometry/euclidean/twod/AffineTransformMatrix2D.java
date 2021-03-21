@@ -134,6 +134,22 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
         return Vector2D.of(resultX, resultY);
     }
 
+    /**
+     * Applys the transform directly to the given array.
+     *
+     * @param x
+     * @param y
+     */
+    public void applyDirect(final double[] x, double[] y) {
+
+        for (int i = 0; i < x.length; i++) {
+            final double resultX = LinearCombination.value(m00, x[i], m01, y[i]) + m02;
+            final double resultY = LinearCombination.value(m10, x[i], m11, y[i]) + m12;
+            x[i] = resultX;
+            y[i] = resultY;
+        }
+    }
+
     /** {@inheritDoc}
     *
     *  <p>The transformed vector is computed by creating a 3-element column vector from the
