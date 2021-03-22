@@ -34,7 +34,7 @@
   <properties>
     <!-- OSGi -->
     <commons.osgi.symbolicName>org.apache.commons.geometry.euclidean</commons.osgi.symbolicName>
-    <commons.osgi.export>org.apache.commons.geometry.euclidean,org.apache.commons.geometry.euclidean.oned,org.apache.commons.geometry.euclidean.twod,org.apache.commons.geometry.euclidean.threed</commons.osgi.export>
+    <commons.osgi.export>org.apache.commons.geometry.euclidean.*</commons.osgi.export>
     <!-- Java 9+ -->
     <commons.automatic.module.name>org.apache.commons.geometry.euclidean</commons.automatic.module.name>
     <!-- Workaround to avoid duplicating config files. -->
