@@ -36,7 +36,7 @@
 
     <!-- OSGi -->
     <commons.osgi.symbolicName>org.apache.commons.geometry.examples.io</commons.osgi.symbolicName>
-    <commons.osgi.export>org.apache.commons.geometry.examples.io</commons.osgi.export>
+    <commons.osgi.export>org.apache.commons.geometry.examples.io.*</commons.osgi.export>
     <!-- Java 9+ -->
     <commons.automatic.module.name>org.apache.commons.geometry.examples.io</commons.automatic.module.name>
     <!-- Workaround to avoid duplicating config files. -->
