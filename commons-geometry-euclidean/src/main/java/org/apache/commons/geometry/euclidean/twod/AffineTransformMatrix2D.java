@@ -134,6 +134,61 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
         return Vector2D.of(resultX, resultY);
     }
 
+    /**
+     * Transforms the given x-coordinate, assuming that y has no influence on the
+     * outcome.
+     *
+     * @param x the value to transform
+     * @return the transformed value
+     * @throws IllegalStateException if the value of x is not independent of y
+     */
+    public double transformX(final double x) throws IllegalStateException {
+        if (m01 != 0.0) {
+            throw new IllegalStateException(
+                    "maxtrix contains y-shear value, you need to call the two argument variant of this function");
+        }
+        return m00 * x + m02;
+    }
+
+    /**
+     * Transform the given x-coordinate taking the given y value into account.
+     *
+     * @param x the value to transform
+     * @param y the dependent y value
+     * @return the transformed value
+     */
+    public double transformX(final double x, double y) {
+        return LinearCombination.value(m00, x, m01, y) + m02;
+    }
+
+    /**
+     * Transforms the given y-coordinate, assuming that y has no influence on the
+     * outcome.
+     *
+     * @param y the value to transform
+     * @return the transformed value
+     * @throws IllegalStateException if the value of y is not independent of x
+     */
+    public double transformY(double y) throws IllegalStateException {
+        if (m10 != 0.0) {
+            throw new IllegalStateException(
+                    "maxtrix contains x-shear value, you need to call the two argument variant of this function");
+        }
+        return m11 * y + m12;
+    }
+
+    /**
+     * Transform the given y-coordinate taking the given x value into account.
+     *
+     * @param x the dependent x value
+     * @param y the value to transform
+     * @return the transformed value
+     */
+    public double transformY(final double x, double y) {
+
+        return LinearCombination.value(m10, x, m11, y) + m12;
+    }
+
     /** {@inheritDoc}
     *
     *  <p>The transformed vector is computed by creating a 3-element column vector from the
@@ -222,6 +277,20 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
                     m00, m01, m02 + x,
                     m10, m11, m12 + y
                 );
+    }
+
+    /**
+     * Apply a shear to the current instance, returning the result as a new transform.
+     * @param shx shear in x-direction
+     * @param shy shear in y direction
+     * @return a new transform containing the result of applying a shear to
+     *      the current instance
+     */
+    public AffineTransformMatrix2D shear(double shx, double shy) {
+        return multiply(AffineTransformMatrix2D.of(
+                1.0, shx, 0.0,
+                shy, 1.0, 0.0
+        ), this);
     }
 
     /** Apply a scale operation to the current instance, returning the result as a new transform.
