@@ -224,6 +224,20 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
                 );
     }
 
+    /**
+     * Apply a shear to the current instance, returning the result as a new transform.
+     * @param shx shear in x-direction
+     * @param shy shear in y direction
+     * @return a new transform containing the result of applying a shear to
+     *      the current instance
+     */
+    public AffineTransformMatrix2D shear(double shx, double shy) {
+        return multiply(AffineTransformMatrix2D.of(
+                1.0, shx, 0.0,
+                shy, 1.0, 0.0
+        ), this);
+    }
+
     /** Apply a scale operation to the current instance, returning the result as a new transform.
      * @param factor the scale factor to apply to all axes
      * @return a new transform containing the result of applying a scale operation to
