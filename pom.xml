@@ -107,6 +107,8 @@
     <module>commons-geometry-spherical</module>
     <module>commons-geometry-hull</module>
     <module>commons-geometry-enclosing</module>
+    <module>commons-geometry-io-core</module>
+    <module>commons-geometry-io-euclidean</module>
   </modules>
 
   <scm>

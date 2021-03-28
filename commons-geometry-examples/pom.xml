@@ -71,7 +71,6 @@
 
   <modules>
     <module>examples-jmh</module>
-    <module>examples-io</module>
     <module>examples-tutorials</module>
   </modules>
 </project>

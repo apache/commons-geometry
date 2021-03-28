@@ -523,6 +523,15 @@ public final class SimpleTriangleMesh implements TriangleMesh {
             return vertices.size();
         }
 
+        /** Get the vertex at the given index.
+         * @param index index of the vertex to retrieve
+         * @return vertex at the given index
+         * @throws IndexOutOfBoundsException if the index is out of bounds of the mesh vertex list
+         */
+        public Vector3D getVertex(final int index) {
+            return vertices.get(index);
+        }
+
         /** Append a face to this mesh.
          * @param index1 index of the first vertex in the face
          * @param index2 index of the second vertex in the face
