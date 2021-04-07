@@ -188,6 +188,12 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
+    public Unit normalizeOrNull() {
+        return Unit.tryCreateNormalized(x, false);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Vector1D multiply(final double a) {
         return new Vector1D(a * x);
     }
@@ -413,31 +419,6 @@ public class Vector1D extends EuclideanVector<Vector1D> {
             super(x);
         }
 
-        /**
-         * Creates a normalized vector.
-         *
-         * @param x Vector coordinate.
-         * @return a vector whose norm is 1.
-         * @throws IllegalArgumentException if the norm of the given value is zero, NaN, or infinite
-         */
-        public static Unit from(final double x) {
-            Vectors.checkedNorm(Vectors.norm(x));
-            return x > 0 ? PLUS : MINUS;
-        }
-
-        /**
-         * Creates a normalized vector.
-         *
-         * @param v Vector.
-         * @return a vector whose norm is 1.
-         * @throws IllegalArgumentException if the norm of the given value is zero, NaN, or infinite
-         */
-        public static Unit from(final Vector1D v) {
-            return v instanceof Unit ?
-                (Unit) v :
-                from(v.getX());
-        }
-
         /** {@inheritDoc} */
         @Override
         public double norm() {
@@ -458,6 +439,12 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
         /** {@inheritDoc} */
         @Override
+        public Unit normalizeOrNull() {
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Vector1D withNorm(final double mag) {
             return multiply(mag);
         }
@@ -466,6 +453,46 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         @Override
         public Vector1D negate() {
             return this == PLUS ? MINUS : PLUS;
+        }
+
+        /** Create a normalized vector.
+         * @param x Vector coordinate.
+         * @return a vector whose norm is 1.
+         * @throws IllegalArgumentException if the norm of the given value is zero, NaN, or infinite
+         */
+        public static Unit from(final double x) {
+            return tryCreateNormalized(x, true);
+        }
+
+        /** Create a normalized vector.
+         * @param v Vector.
+         * @return a vector whose norm is 1.
+         * @throws IllegalArgumentException if the norm of the given value is zero, NaN, or infinite
+         */
+        public static Unit from(final Vector1D v) {
+            return v instanceof Unit ?
+                (Unit) v :
+                from(v.getX());
+        }
+
+        /** Attempt to create a normalized vector from the given coordinate values. If {@code throwOnFailure}
+         * is true, an exception is thrown if a normalized vector cannot be created. Otherwise, null
+         * is returned.
+         * @param x x coordinate
+         * @param throwOnFailure if true, an exception will be thrown if a normalized vector cannot be created
+         * @return normalized vector or null if one cannot be created and {@code throwOnFailure}
+         *      is false
+         * @throws IllegalArgumentException if the computed norm is zero, NaN, or infinite
+         */
+        private static Unit tryCreateNormalized(final double x, final boolean throwOnFailure) {
+            final double norm = Vectors.norm(x);
+
+            if (Vectors.isRealNonZero(norm)) {
+                return x > 0 ? PLUS : MINUS;
+            } else if (throwOnFailure) {
+                throw Vectors.illegalNorm(norm);
+            }
+            return null;
         }
     }
 }

@@ -269,15 +269,28 @@ public class Vector1DTest {
         checkVector(Vector1D.of(-1).normalize(), -1);
         checkVector(Vector1D.of(5).normalize(), 1);
         checkVector(Vector1D.of(-5).normalize(), -1);
+
+        checkVector(Vector1D.of(Double.MIN_VALUE).normalize(), 1);
+        checkVector(Vector1D.of(-Double.MIN_VALUE).normalize(), -1);
+
+        checkVector(Vector1D.of(Double.MAX_VALUE).normalize(), 1);
+        checkVector(Vector1D.of(-Double.MAX_VALUE).normalize(), -1);
     }
 
     @Test
     public void testNormalize_illegalNorm() {
+        // arrange
+        final Pattern illegalNorm = Pattern.compile("^Illegal norm: (0\\.0|-?Infinity|NaN)");
+
         // act/assert
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Vector1D.of(0.0).normalize());
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Vector1D.of(Double.NaN).normalize());
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Vector1D.of(Double.POSITIVE_INFINITY).normalize());
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Vector1D.of(Double.NEGATIVE_INFINITY).normalize());
+        GeometryTestUtils.assertThrowsWithMessage(Vector1D.ZERO::normalize,
+                IllegalArgumentException.class, illegalNorm);
+        GeometryTestUtils.assertThrowsWithMessage(Vector1D.NaN::normalize,
+                IllegalArgumentException.class, illegalNorm);
+        GeometryTestUtils.assertThrowsWithMessage(Vector1D.POSITIVE_INFINITY::normalize,
+                IllegalArgumentException.class, illegalNorm);
+        GeometryTestUtils.assertThrowsWithMessage(Vector1D.NEGATIVE_INFINITY::normalize,
+                IllegalArgumentException.class, illegalNorm);
     }
 
     @Test
@@ -288,6 +301,37 @@ public class Vector1DTest {
         // act/assert
         Assertions.assertSame(v, v.normalize());
         checkVector(v.normalize(), 1.0);
+    }
+
+    @Test
+    public void testNormalizeOrNull() {
+        // act/assert
+        checkVector(Vector1D.of(100).normalizeOrNull(), 1);
+        checkVector(Vector1D.of(-100).normalizeOrNull(), -1);
+
+        checkVector(Vector1D.of(2).normalizeOrNull(), 1);
+        checkVector(Vector1D.of(-2).normalizeOrNull(), -1);
+
+        checkVector(Vector1D.of(Double.MIN_VALUE).normalizeOrNull(), 1);
+        checkVector(Vector1D.of(-Double.MIN_VALUE).normalizeOrNull(), -1);
+
+        checkVector(Vector1D.of(Double.MAX_VALUE).normalizeOrNull(), 1);
+        checkVector(Vector1D.of(-Double.MAX_VALUE).normalizeOrNull(), -1);
+
+        Assertions.assertNull(Vector1D.ZERO.normalizeOrNull());
+        Assertions.assertNull(Vector1D.NaN.normalizeOrNull());
+        Assertions.assertNull(Vector1D.POSITIVE_INFINITY.normalizeOrNull());
+        Assertions.assertNull(Vector1D.NEGATIVE_INFINITY.normalizeOrNull());
+    }
+
+    @Test
+    public void testNormalizeOrNull_isIdempotent() {
+        // arrange
+        final Vector1D v = Vector1D.of(2).normalizeOrNull();
+
+        // act/assert
+        Assertions.assertSame(v, v.normalizeOrNull());
+        checkVector(v.normalizeOrNull(), 1.0);
     }
 
     @Test

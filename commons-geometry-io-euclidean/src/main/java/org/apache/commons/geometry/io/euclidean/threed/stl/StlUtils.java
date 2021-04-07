@@ -18,7 +18,6 @@ package org.apache.commons.geometry.io.euclidean.threed.stl;
 
 import java.nio.ByteBuffer;
 
-import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Utility methods for the STL format.
@@ -51,7 +50,7 @@ final class StlUtils {
             final Vector3D normal) {
         if (normal != null) {
             // try to normalize it
-            final Vector3D normalized = Vectors.tryNormalize(normal);
+            final Vector3D normalized = normal.normalizeOrNull();
             if (normalized != null) {
                 return normalized;
             }
@@ -93,7 +92,7 @@ final class StlUtils {
      * @return the normal for the given triangle vertices or null if one could not be computed
      */
     private static Vector3D computeTriangleNormal(final Vector3D p1, final Vector3D p2, final Vector3D p3) {
-        final Vector3D normal = Vectors.tryNormalize(p1.vectorTo(p2).cross(p1.vectorTo(p3)));
+        final Vector3D normal = p1.vectorTo(p2).cross(p1.vectorTo(p3)).normalizeOrNull();
         return normal != null ?
                 normal :
                 null;

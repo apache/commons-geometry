@@ -215,6 +215,12 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
+    public Unit normalizeOrNull() {
+        return Unit.tryCreateNormalized(x, y, false);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Vector2D multiply(final double a) {
         return new Vector2D(a * x, a * y);
     }
@@ -686,6 +692,21 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         /** Negation of unit vector (coordinates: 0, -1). */
         public static final Unit MINUS_Y = new Unit(0d, -1d);
 
+        /** Maximum coordinate value for computing normalized vectors
+         * with raw, unscaled values.
+         */
+        private static final double UNSCALED_MAX = 0x1.0p+500;
+
+        /** Factor used to scale up coordinate values in order to produce
+         * normalized coordinates without overflow or underflow.
+         */
+        private static final double SCALE_UP_FACTOR = 0x1.0p+600;
+
+        /** Factor used to scale down coordinate values in order to produce
+         * normalized coordinates without overflow or underflow.
+         */
+        private static final double SCALE_DOWN_FACTOR = 0x1.0p-600;
+
         /** Simple constructor. Callers are responsible for ensuring that the given
          * values represent a normalized vector.
          * @param x abscissa (first coordinate value)
@@ -693,32 +714,6 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
          */
         private Unit(final double x, final double y) {
             super(x, y);
-        }
-
-        /**
-         * Creates a normalized vector.
-         *
-         * @param x Vector coordinate.
-         * @param y Vector coordinate.
-         * @return a vector whose norm is 1.
-         * @throws IllegalArgumentException if the norm of the given value is zero, NaN, or infinite
-         */
-        public static Unit from(final double x, final double y) {
-            final double invNorm = 1 / Vectors.checkedNorm(Vectors.norm(x, y));
-            return new Unit(x * invNorm, y * invNorm);
-        }
-
-        /**
-         * Creates a normalized vector.
-         *
-         * @param v Vector.
-         * @return a vector whose norm is 1.
-         * @throws IllegalArgumentException if the norm of the given value is zero, NaN, or infinite
-         */
-        public static Unit from(final Vector2D v) {
-            return v instanceof Unit ?
-                (Unit) v :
-                from(v.getX(), v.getY());
         }
 
         /** {@inheritDoc} */
@@ -741,6 +736,12 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
         /** {@inheritDoc} */
         @Override
+        public Unit normalizeOrNull() {
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Vector2D.Unit orthogonal() {
             return new Unit(-getY(), getX());
         }
@@ -755,6 +756,78 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         @Override
         public Unit negate() {
             return new Unit(-getX(), -getY());
+        }
+
+        /** Create a normalized vector.
+         * @param x Vector coordinate.
+         * @param y Vector coordinate.
+         * @return a vector whose norm is 1.
+         * @throws IllegalArgumentException if the norm of the given value is zero, NaN,
+         *      or infinite
+         */
+        public static Unit from(final double x, final double y) {
+            return tryCreateNormalized(x, y, true);
+        }
+
+        /** Create a normalized vector.
+         * @param v Vector.
+         * @return a vector whose norm is 1.
+         * @throws IllegalArgumentException if the norm of the given value is zero, NaN,
+         *      or infinite
+         */
+        public static Unit from(final Vector2D v) {
+            return v instanceof Unit ?
+                (Unit) v :
+                from(v.getX(), v.getY());
+        }
+
+        /** Attempt to create a normalized vector from the given coordinate values. If {@code throwOnFailure}
+         * is true, an exception is thrown if a normalized vector cannot be created. Otherwise, null
+         * is returned.
+         * @param x x coordinate
+         * @param y y coordinate
+         * @param throwOnFailure if true, an exception will be thrown if a normalized vector cannot be created
+         * @return normalized vector or null if one cannot be created and {@code throwOnFailure}
+         *      is false
+         * @throws IllegalArgumentException if the computed norm is zero, NaN, or infinite
+         */
+        private static Unit tryCreateNormalized(final double x, final double y, final boolean throwOnFailure) {
+
+            // Compute the inverse norm directly. If the result is a non-zero real number,
+            // then we can go ahead and construct the unit vector immediately. If not,
+            // we'll do some extra work for edge cases.
+            final double norm = Vectors.norm(x, y);
+            final double normInv = 1.0 / norm;
+            if (Vectors.isRealNonZero(normInv)) {
+                return new Unit(
+                        x * normInv,
+                        y * normInv);
+            }
+
+            // Direct computation did not work. Try scaled versions of the coordinates
+            // to handle overflow and underflow.
+            final double scaledX;
+            final double scaledY;
+
+            final double maxCoord = Math.max(Math.abs(x), Math.abs(y));
+            if (maxCoord > UNSCALED_MAX) {
+                scaledX = x * SCALE_DOWN_FACTOR;
+                scaledY = y * SCALE_DOWN_FACTOR;
+            } else {
+                scaledX = x * SCALE_UP_FACTOR;
+                scaledY = y * SCALE_UP_FACTOR;
+            }
+
+            final double scaledNormInv = 1.0 / Vectors.norm(scaledX, scaledY);
+
+            if (Vectors.isRealNonZero(scaledNormInv)) {
+                return new Unit(
+                        scaledX * scaledNormInv,
+                        scaledY * scaledNormInv);
+            } else if (throwOnFailure) {
+                throw Vectors.illegalNorm(norm);
+            }
+            return null;
         }
     }
 }

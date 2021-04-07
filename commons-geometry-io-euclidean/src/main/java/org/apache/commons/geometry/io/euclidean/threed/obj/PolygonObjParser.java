@@ -28,7 +28,6 @@ import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.io.core.internal.SimpleTextParser;
 
@@ -323,7 +322,7 @@ public class PolygonObjParser extends AbstractObjParser {
                 }
             }
 
-            return Vectors.tryNormalize(sum);
+            return sum.normalizeOrNull();
         }
 
         /** Compute a normal for the face using its first three vertices. The vertices will wind in a
@@ -340,7 +339,7 @@ public class PolygonObjParser extends AbstractObjParser {
             final Vector3D p1 = modelVertexFn.apply(vertexAttributes.get(1).getVertexIndex());
             final Vector3D p2 = modelVertexFn.apply(vertexAttributes.get(2).getVertexIndex());
 
-            return Vectors.tryNormalize(p0.vectorTo(p1).cross(p0.vectorTo(p2)));
+            return p0.vectorTo(p1).cross(p0.vectorTo(p2)).normalizeOrNull();
         }
 
         /** Get the vertex attributes for the face listed in the order that produces a counter-clockwise

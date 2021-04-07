@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.internal;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.jupiter.api.Assertions;
@@ -82,20 +81,6 @@ public class VectorsTest {
                 IllegalArgumentException.class, "Illegal norm: NaN");
         GeometryTestUtils.assertThrowsWithMessage(() -> Vectors.checkedNorm(Vector3D.NEGATIVE_INFINITY),
                 IllegalArgumentException.class, "Illegal norm: NaN");
-    }
-
-    @Test
-    public void testTryNormalize() {
-        // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X,
-                Vectors.tryNormalize(Vector3D.of(2, 0, 0)), EPS);
-
-        Assertions.assertNull(Vectors.tryNormalize(Vector3D.of(0, 0, 0)));
-        Assertions.assertNull(Vectors.tryNormalize(Vector3D.of(-0, 0, 0)));
-
-        Assertions.assertNull(Vectors.tryNormalize(Vector3D.of(Double.NaN, 1, 1)));
-        Assertions.assertNull(Vectors.tryNormalize(Vector3D.of(1, Double.POSITIVE_INFINITY, 1)));
-        Assertions.assertNull(Vectors.tryNormalize(Vector3D.of(1, 1, Double.NEGATIVE_INFINITY)));
     }
 
     @Test

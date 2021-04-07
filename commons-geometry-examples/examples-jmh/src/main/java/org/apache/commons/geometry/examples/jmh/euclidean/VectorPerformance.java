@@ -305,14 +305,14 @@ public class VectorPerformance {
         }
     }
 
-    /** Run a benchmark test on a function that produces a vector.
+    /** Run a benchmark test on a function that accepts a vector.
      * @param <V> Vector implementation type
      * @param input vector input
      * @param bh jmh blackhole for consuming output
      * @param fn function to call
      */
-    private static <V extends Vector<V>> void testUnary(final VectorInputBase<V> input, final Blackhole bh,
-            final UnaryOperator<V> fn) {
+    private static <V extends Vector<V>> void testFunction(final VectorInputBase<V> input, final Blackhole bh,
+            final Function<V, ?> fn) {
         for (final V vec : input.getVectors()) {
             bh.consume(fn.apply(vec));
         }
@@ -324,7 +324,7 @@ public class VectorPerformance {
      */
     @Benchmark
     public void baseline(final VectorInput1D input, final Blackhole bh) {
-        testUnary(input, bh, UnaryOperator.identity());
+        testFunction(input, bh, UnaryOperator.identity());
     }
 
     /** Benchmark testing the performance of the {@link Vector1D#norm()} method.
@@ -360,7 +360,16 @@ public class VectorPerformance {
      */
     @Benchmark
     public void normalize1D(final NormalizableVectorInput1D input, final Blackhole bh) {
-        testUnary(input, bh, Vector1D::normalize);
+        testFunction(input, bh, Vector1D::normalize);
+    }
+
+    /** Benchmark testing the performance of the {@link Vector1D#normalizeOrNull()} method.
+     * @param input benchmark state input
+     * @param bh jmh blackhole for consuming output
+     */
+    @Benchmark
+    public void normalizeOrNull1D(final VectorInput1D input, final Blackhole bh) {
+        testFunction(input, bh, v -> v.normalizeOrNull());
     }
 
     /** Benchmark testing the performance of the {@link Vector2D#normalize()}
@@ -370,7 +379,17 @@ public class VectorPerformance {
      */
     @Benchmark
     public void normalize2D(final NormalizableVectorInput2D input, final Blackhole bh) {
-        testUnary(input, bh, Vector2D::normalize);
+        testFunction(input, bh, Vector2D::normalize);
+    }
+
+    /** Benchmark testing the performance of the {@link Vector2D#normalizeOrNull()}
+     * method.
+     * @param input benchmark state input
+     * @param bh jmh blackhole for consuming output
+     */
+    @Benchmark
+    public void normalizeOrNull2D(final VectorInput2D input, final Blackhole bh) {
+        testFunction(input, bh, v -> v.normalizeOrNull());
     }
 
     /** Benchmark testing the performance of the {@link Vector3D#normalize()}
@@ -380,6 +399,16 @@ public class VectorPerformance {
      */
     @Benchmark
     public void normalize3D(final NormalizableVectorInput3D input, final Blackhole bh) {
-        testUnary(input, bh, Vector3D::normalize);
+        testFunction(input, bh, Vector3D::normalize);
+    }
+
+    /** Benchmark testing the performance of the {@link Vector3D#normalizeOrNull()}
+     * method.
+     * @param input benchmark state input
+     * @param bh jmh blackhole for consuming output
+     */
+    @Benchmark
+    public void normalizeOrNull3D(final VectorInput3D input, final Blackhole bh) {
+        testFunction(input, bh, v -> v.normalizeOrNull());
     }
 }

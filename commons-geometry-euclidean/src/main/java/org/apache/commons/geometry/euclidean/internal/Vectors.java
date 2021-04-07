@@ -46,7 +46,7 @@ public final class Vectors {
      */
     public static double checkedNorm(final double norm) {
         if (!isRealNonZero(norm)) {
-            throw new IllegalArgumentException("Illegal norm: " + norm);
+            throw illegalNorm(norm);
         }
 
         return norm;
@@ -63,18 +63,12 @@ public final class Vectors {
         return checkedNorm(vec.norm());
     }
 
-    /** Attempt to normalize the given vector, returning null if the vector cannot be normalized
-     * due to the norm being NaN, infinite, or null.
-     * @param <V> Vector implementation type
-     * @param vec the vector to attempt to normalize
-     * @return the normalized vector if successful, otherwise null
+    /** Return an exception indicating an illegal norm value.
+     * @param norm illegal norm value
+     * @return exception indicating an illegal norm value
      */
-    public static <V extends Vector<V>> V tryNormalize(final V vec) {
-        final double norm = vec.norm();
-        if (isRealNonZero(norm)) {
-            return vec.normalize();
-        }
-        return null;
+    public static IllegalArgumentException illegalNorm(final double norm) {
+        return new IllegalArgumentException("Illegal norm: " + norm);
     }
 
     /** Get the L<sub>2</sub> norm (commonly known as the Euclidean norm) for the vector

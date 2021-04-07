@@ -317,21 +317,43 @@ public class Vector2DTest {
 
     @Test
     public void testNormalize() {
+        // arrange
+        final double invSqrt2 = 1.0 / Math.sqrt(2);
+
         // act/assert
         checkVector(Vector2D.of(100, 0).normalize(), 1, 0);
         checkVector(Vector2D.of(-100, 0).normalize(), -1, 0);
         checkVector(Vector2D.of(0, 100).normalize(), 0, 1);
         checkVector(Vector2D.of(0, -100).normalize(), 0, -1);
         checkVector(Vector2D.of(-1, 2).normalize(), -1.0 / Math.sqrt(5), 2.0 / Math.sqrt(5));
+
+        checkVector(Vector2D.of(Double.MIN_VALUE, 0).normalize(), 1, 0);
+        checkVector(Vector2D.of(0, Double.MIN_VALUE).normalize(), 0, 1);
+
+        checkVector(Vector2D.of(-Double.MIN_VALUE, Double.MIN_VALUE).normalize(), -invSqrt2, invSqrt2);
+
+        checkVector(Vector2D.of(Double.MIN_NORMAL, 0).normalize(), 1, 0, 0);
+        checkVector(Vector2D.of(0, Double.MIN_NORMAL).normalize(), 0, 1, 0);
+
+        checkVector(Vector2D.of(Double.MIN_NORMAL, -Double.MIN_NORMAL).normalize(), invSqrt2, -invSqrt2);
+
+        checkVector(Vector2D.of(-Double.MAX_VALUE, -Double.MAX_VALUE).normalize(), -invSqrt2, -invSqrt2);
     }
 
     @Test
     public void testNormalize_illegalNorm() {
+        // arrange
+        final Pattern illegalNorm = Pattern.compile("^Illegal norm: (0\\.0|-?Infinity|NaN)");
+
         // act/assert
-        Assertions.assertThrows(IllegalArgumentException.class, Vector2D.ZERO::normalize);
-        Assertions.assertThrows(IllegalArgumentException.class, Vector2D.NaN::normalize);
-        Assertions.assertThrows(IllegalArgumentException.class, Vector2D.POSITIVE_INFINITY::normalize);
-        Assertions.assertThrows(IllegalArgumentException.class, Vector2D.NEGATIVE_INFINITY::normalize);
+        GeometryTestUtils.assertThrowsWithMessage(Vector2D.ZERO::normalize,
+                IllegalArgumentException.class, illegalNorm);
+        GeometryTestUtils.assertThrowsWithMessage(Vector2D.NaN::normalize,
+                IllegalArgumentException.class, illegalNorm);
+        GeometryTestUtils.assertThrowsWithMessage(Vector2D.POSITIVE_INFINITY::normalize,
+                IllegalArgumentException.class, illegalNorm);
+        GeometryTestUtils.assertThrowsWithMessage(Vector2D.NEGATIVE_INFINITY::normalize,
+                IllegalArgumentException.class, illegalNorm);
     }
 
     @Test
@@ -343,6 +365,44 @@ public class Vector2DTest {
         // act/assert
         Assertions.assertSame(v, v.normalize());
         checkVector(v.normalize(), invSqrt2, invSqrt2);
+    }
+
+    @Test
+    public void testNormalizeOrNull() {
+        // arrange
+        final double invSqrt2 = 1 / Math.sqrt(2);
+
+        // act/assert
+        checkVector(Vector2D.of(100, 0).normalizeOrNull(), 1, 0);
+        checkVector(Vector2D.of(-100, 0).normalizeOrNull(), -1, 0);
+
+        checkVector(Vector2D.of(2, 2).normalizeOrNull(), invSqrt2, invSqrt2);
+        checkVector(Vector2D.of(-2, -2).normalizeOrNull(), -invSqrt2, -invSqrt2);
+
+        checkVector(Vector2D.of(Double.MIN_VALUE, 0).normalizeOrNull(), 1, 0);
+        checkVector(Vector2D.of(0, Double.MIN_VALUE).normalizeOrNull(), 0, 1);
+
+        checkVector(Vector2D.of(-Double.MIN_VALUE, -Double.MIN_VALUE).normalizeOrNull(), -invSqrt2, -invSqrt2);
+
+        checkVector(Vector2D.of(Double.MIN_NORMAL, -Double.MIN_NORMAL).normalizeOrNull(), invSqrt2, -invSqrt2);
+
+        checkVector(Vector2D.of(Double.MAX_VALUE, -Double.MAX_VALUE).normalizeOrNull(), invSqrt2, -invSqrt2);
+
+        Assertions.assertNull(Vector2D.ZERO.normalizeOrNull());
+        Assertions.assertNull(Vector2D.NaN.normalizeOrNull());
+        Assertions.assertNull(Vector2D.POSITIVE_INFINITY.normalizeOrNull());
+        Assertions.assertNull(Vector2D.NEGATIVE_INFINITY.normalizeOrNull());
+    }
+
+    @Test
+    public void testNormalizeOrNull_isIdempotent() {
+        // arrange
+        final double invSqrt2 = 1 / Math.sqrt(2);
+        final Vector2D v = Vector2D.of(2, 2).normalizeOrNull();
+
+        // act/assert
+        Assertions.assertSame(v, v.normalizeOrNull());
+        checkVector(v.normalizeOrNull(), invSqrt2, invSqrt2);
     }
 
     @Test
