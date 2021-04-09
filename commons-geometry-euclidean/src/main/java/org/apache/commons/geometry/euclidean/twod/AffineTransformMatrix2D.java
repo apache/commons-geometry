@@ -301,6 +301,17 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
         return rotate(center, rotation.getAngle());
     }
 
+    /** Apply a shear to the current instance, returning the result as a new transform.
+     * @param shx multiplier by which coordinates are shifted along the positive x-axis as a factor of their
+     *      y coordinate; a value of 0 indicates no shift along the x-axis
+     * @param shy multiplier by which coordinates are shifted along the positive y-axis as a factor of their
+     *      x coordinate; a value of 0 indicates no shift along the y-axis
+     * @return a new transform containing the result of applying a shear to the current instance
+     */
+    public AffineTransformMatrix2D shear(final double shx, final double shy) {
+        return multiply(createShear(shx, shy), this);
+    }
+
     /** Get a new transform created by multiplying this instance by the argument.
      * This is equivalent to the expression {@code A * M} where {@code A} is the
      * current transform matrix and {@code M} is the given transform matrix. In
@@ -615,6 +626,26 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      */
     public static AffineTransformMatrix2D createRotation(final Vector2D center, final Rotation2D rotation) {
         return createRotation(center, rotation.getAngle());
+    }
+
+    /** Create a transform representing a shear operation. The returned instance contains the
+     * matrix values
+     * <pre>
+     *      [ 1,    shx,  0 ]
+     *      [ shy,  1,    0 ]
+     *      [ 0,    0,    0 ]
+     * </pre>
+     * @param shx multiplier by which coordinates are shifted along the positive x-axis as a factor of their
+     *      y coordinate; a value of 0 indicates no shift along the x-axis
+     * @param shy multiplier by which coordinates are shifted along the positive y-axis as a factor of their
+     *      x coordinate; a value of 0 indicates no shift along the y-axis
+     * @return a new transform representing the shear operation
+     */
+    public static AffineTransformMatrix2D createShear(final double shx, final double shy) {
+        return new AffineTransformMatrix2D(
+                    1, shx, 0,
+                    shy, 1, 0
+                );
     }
 
     /** Multiply two transform matrices together.

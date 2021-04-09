@@ -426,6 +426,57 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
+    public void testCreateShear() {
+        // act
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createShear(2, 3);
+
+        // assert
+        final double[] expected = {
+            1, 2, 0,
+            3, 1, 0
+        };
+        Assertions.assertArrayEquals(expected, transform.toArray(), 0.0);
+    }
+
+    @Test
+    public void testShear() {
+        // arrange
+        final AffineTransformMatrix2D a = AffineTransformMatrix2D.of(
+                1, 2, 3,
+                4, 5, 6
+            );
+
+        // act
+        final AffineTransformMatrix2D result = a.shear(-2, 3);
+
+        // assert
+        final double[] expected = {
+            -7, -8, -9,
+            7, 11, 15
+        };
+        Assertions.assertArrayEquals(expected, result.toArray(), EPS);
+    }
+
+    @Test
+    public void testShear_noShear() {
+        // arrange
+        final AffineTransformMatrix2D a = AffineTransformMatrix2D.of(
+                1, 2, 3,
+                4, 5, 6
+            );
+
+        // act
+        final AffineTransformMatrix2D result = a.shear(0, 0);
+
+        // assert
+        final double[] expected = {
+            1, 2, 3,
+            4, 5, 6
+        };
+        Assertions.assertArrayEquals(expected, result.toArray(), EPS);
+    }
+
+    @Test
     public void testApply_identity() {
         // arrange
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity();
@@ -525,6 +576,82 @@ public class AffineTransformMatrix2DTest {
             EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
         });
     }
+
+    @Test
+    public void testApply_shearAlongX() {
+        // arrange
+        final double shearFactor = -2;
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
+                .shear(shearFactor, 0);
+
+        // act/assert
+        runWithCoordinates((x, y) -> {
+            final Vector2D vec = Vector2D.of(x, y);
+
+            final Vector2D expectedVec = Vector2D.of(x + (shearFactor * y), y);
+
+            EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
+        });
+    }
+
+    @Test
+    public void testApply_shearAlongY() {
+        // arrange
+        final double shearFactor = 2;
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
+                .shear(0, shearFactor);
+
+        // act/assert
+        runWithCoordinates((x, y) -> {
+            final Vector2D vec = Vector2D.of(x, y);
+
+            final Vector2D expectedVec = Vector2D.of(x, y + (shearFactor * x));
+
+            EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
+        });
+    }
+
+    @Test
+    public void testApply_shearAlongXAndY() {
+        // arrange
+        final double shearX = 2;
+        final double shearY = -3;
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
+                .shear(shearX, shearY);
+
+        // act/assert
+        runWithCoordinates((x, y) -> {
+            final Vector2D vec = Vector2D.of(x, y);
+
+            final Vector2D expectedVec = Vector2D.of(x + (shearX * y), y + (shearY * x));
+
+            EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
+        });
+    }
+
+    @Test
+    public void testApply_translateShear() {
+        // arrange
+        final Vector2D translation = Vector2D.of(7, 8);
+        final double shearX = -4;
+        final double shearY = 5;
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
+                .translate(translation)
+                .shear(shearX, shearY);
+
+        // act/assert
+        runWithCoordinates((x, y) -> {
+            final Vector2D vec = Vector2D.of(x, y);
+
+            final double tx = x + translation.getX();
+            final double ty = y + translation.getY();
+
+            final Vector2D expectedVec = Vector2D.of(tx + (shearX * ty), ty + (shearY * tx));
+
+            EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
+        });
+    }
+
 
     @Test
     public void testApply_translateScaleRotate() {
