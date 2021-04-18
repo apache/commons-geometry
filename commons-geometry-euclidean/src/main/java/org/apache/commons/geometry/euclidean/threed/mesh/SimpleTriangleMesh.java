@@ -554,6 +554,22 @@ public final class SimpleTriangleMesh implements TriangleMesh {
             return this;
         }
 
+        /** Append a face to this mesh.
+         * @param face array containing the 3 vertex indices defining the face
+         * @return this instance
+         * @throws IllegalArgumentException if {@code face} does not contain exactly 3 elements
+         *      or if any of the vertex indices is not a valid index into the current vertex list
+         */
+        public Builder addFace(final int[] face) {
+            if (face.length != 3) {
+                throw new IllegalArgumentException("Face must contain 3 vertex indices; found " + face.length);
+            }
+
+            addFace(face[0], face[1], face[2]);
+
+            return this;
+        }
+
         /** Append a group of faces to this mesh.
          * @param faceIndices faces to append
          * @return this instance
@@ -575,11 +591,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
             ensureFaceCapacity(newSize);
 
             for (final int[] face : faceIndices) {
-                if (face.length != 3) {
-                    throw new IllegalArgumentException("Face must contain 3 vertex indices; found " + face.length);
-                }
-
-                addFace(face[0], face[1], face[2]);
+                addFace(face);
             }
 
             return this;
