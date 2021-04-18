@@ -1,0 +1,986 @@
+<?xml version="1.0"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+  -->
+<document>
+  <properties>
+    <title>Solid Geometry Tutorial</title>
+  </properties>
+
+  <body>
+
+    <h1>Solid Geometry Tutorial</h1>
+    <h3>Teapot Construction 101</h3>
+    <section name="Contents" id="toc">
+      <ul>
+        <li>
+          <a href="#introduction">Introduction</a>
+        </li>
+        <li>
+          <a href="#getting-started">Getting Started</a>
+        </li>
+        <li>
+          <a href="#parts">Building the Parts</a>
+          <ul>
+            <li><a href="#body">The Body</a></li>
+            <li><a href="#lid">The Lid</a></li>
+            <li><a href="#handle">The Handle</a></li>
+            <li><a href="#spout">The Spout</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#putting-it-all-together">Putting It All Together</a>
+        </li>
+        <li>
+          <a href="#extra-credit">Extra Credit</a>
+        </li>
+        <li>
+          <a href="#conclusion">Conclusion</a>
+        </li>
+      </ul>
+    </section>
+
+    <section name="Introduction" id="introduction">
+      <p>
+      <em>Commons Geometry</em> contains a number of methods for manipulating solid, 3D dimensional figures.
+      These geometric figures can be combined in various ways to produce new figures. In this tutorial,
+      we will explore these features by constructing a 3D model of a teapot from scratch. The image
+      below shows the result of our efforts. The final code for this tutorial can be found in the
+      <a class="code" href="../commons-geometry-examples/commons-geometry-examples-tutorials/apidocs/org/apache/commons/geometry/examples/tutorials/teapot/TeapotBuilder.html">
+      TeapotBuilder</a> class.
+      </p>
+
+      <p>
+      <strong>NOTE:</strong> All images used in this tutorial have been rendered
+      using <a href="https://www.blender.org/" target="_blank">Blender</a>.
+      </p>
+
+      <img src="../images/tutorials/teapot/teapot-final.png" />
+
+    </section>
+
+    <section name="Getting Started" id="getting-started">
+      <p>
+      The first step we will take on our journey is the creation of a class encapsulating our teapot construction
+      logic, aptly named
+      <a class="code" href="../commons-geometry-examples/commons-geometry-examples-tutorials/apidocs/org/apache/commons/geometry/examples/tutorials/teapot/TeapotBuilder.html">TeapotBuilder</a>.
+      The constructor will accept only a single argument: an instance of
+      <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html">DoublePrecisionContext</a>.
+      This is a ubiquitous type in <em>Commons Geometry</em> and is used to provide a method of comparing
+      floating point numbers without being susceptible to small floating point errors introduced during computations.
+      Typically, users of <em>Commons Geometry</em> will construct a single instance of this type for use by multiple
+      objects throughout an entire operation, or even application. Since we don't want our class to
+      assume such a heavy responsibility, we will simply accept a
+      <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html">DoublePrecisionContext</a>
+      in the constructor.
+      </p>
+
+      <source>
+public class TeapotBuilder {
+
+    private final DoublePrecisionContext precision;
+
+    public TeapotBuilder(final DoublePrecisionContext precision) {
+        this.precision = precision;
+    }
+}</source>
+
+      <p>
+      Next, we will create a stub method for our teapot-building code. We will fill in this method as we work through
+      the tutorial.
+      </p>
+      <source>
+public RegionBSPTree3D buildTeapot() {
+    // TODO: actually build a teapot here
+
+    return RegionBSPTree3D.empty();
+}</source>
+
+      <p>
+      We have chosen the
+      <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/RegionBSPTree3D.html">RegionBSPTree3D</a>
+      type for both the construction of the teapot geometry as well as the return value. This is the primary type
+      in <em>Commons Geometry</em> for manipulating solid geometries. (There are similar such types for each space and
+      dimension supported by the library, such as
+      <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/RegionBSPTree2D.html">RegionBSPTree2D</a>
+      for 2D Euclidean space and
+      <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/RegionBSPTree2S.html">RegionBSPTree2S</a>
+      for 2D spherical space.) This type uses a <a href="bsp-tree.html">binary space partitioning (BSP) tree</a>
+      to represent arbitrary regions of space, including regions of infinite size. This is accomplished by recursively
+      dividing a space in two by partitioning planes (or "hyperplanes", to use the more general term). The spaces on either side of
+      the planes are then given the labels "inside" or "outside". A region is composed of all of the "inside" portions
+      of the BSP tree.
+      </p>
+
+      <p>
+      A major benefit of using BSP trees to represent regions is that it allows us to perform boolean operations such
+      as union, intersection, difference, and xor on arbitrary regions. We will use these operations to combine simple
+      shapes to construct our teapot.
+      </p>
+
+      <p>
+      Before constructing our first geometry, we need to handle one more bit of housekeeping, namely, how to view our
+      work. The easiest way to do this is to export our geometries using a common 3D file format, such as
+      <a href="https://en.wikipedia.org/wiki/STL_%28file_format%29">STL</a>, and view the
+      model in a 3D modeling program. I enjoy working with <a href="https://www.blender.org/" target="_blank">Blender</a>
+      so that is the modeling program I have chosen to use for this tutorial. However any program able to load and display
+      3D models should work. To create our geometry files, we will use the 3D file writing capabilities of <em>Commons Geometry</em>
+      accessible through the
+      <a class="code" href="../commons-geometry-io-euclidean/apidocs/org/apache/commons/geometry/io/euclidean/threed/IO3D.html">IO3D</a>
+      convenience class. See the
+      <a class="code" href="../commons-geometry-io-euclidean/apidocs/org/apache/commons/geometry/io/euclidean/threed/GeometryFormat3D.html">GeometryFormat3D</a>
+      enum for a list of supported file formats.
+      </p>
+
+      <source>
+TeapotBuilder builder = new TeapotBuilder(precision);
+
+RegionBSPTree3D teapot = builder.buildTeapot();
+
+IO3D.write(teapot, Paths.get("teapot.stl"));</source>
+
+    <p>
+    With this bit of code place, we are ready to start creating geometry!
+    </p>
+
+    </section>
+
+    <section name="Building the Parts" id="parts">
+      <p>
+      Our teapot will contain four main parts: the body, the lid, the handle, and the spout. We will create
+      private methods for each of theses parts in our <var>TeapotBuilder</var> class. Later, we will
+      combine the outputs of these methods to form the final geometry.
+      </p>
+
+      <subsection name="The Body" id="body">
+        <p>
+        The first part we will construct is the teapot body. We will start by creating a private method named
+        <var>buildBody</var> in our builder class and referencing it in our main build method.
+        We'll return the body directly for the time being so we can view the output.
+        </p>
+
+        <source>
+public RegionBSPTree3D buildTeapot() {
+    // build parts
+    RegionBSPTree3D body = buildBody();
+
+    // TODO: combine into the final region
+
+    return body; // return for debugging
+}
+
+private RegionBSPTree3D buildBody() {
+    // TODO
+    return RegionBSPTree3D.empty();
+}</source>
+
+        <p>
+        Unlike some fancier types you might see, our teapot is going to have a simple, rounded body. So, we will start
+        by creating a sphere and go from there. Luckily, <em>Commons Geometry</em> provides a
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/shape/Sphere.html">Sphere</a>
+        class to help us.
+        </p>
+
+        <source>
+Sphere sphere = Sphere.from(Vector3D.ZERO, 1, precision);</source>
+
+        <p>
+        We now have a <var>Sphere</var> instance centered on the origin with a radius of <var>1</var>. However, our
+        instance represents an analytic sphere, meaning it is does not contain any flat surfaces. This is great for
+        many use cases, but we need flat surfaces in order to construct a BSP tree. To convert
+        from our mathematically perfect sphere abstraction to a BSP tree sphere approximation, we will use the
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/shape/Sphere.html#toTree-int-">Sphere.toTree()</a>
+        method. This method accepts a single argument that determines the number of facets that will be used in the approximation.
+        The documentation explains the details of the conversion. For our purposes, we will use the argument <var>4</var>, which
+        will give us a BSP tree with <var>2048</var> facets.
+        </p>
+
+        <source>
+Sphere sphere = Sphere.from(Vector3D.ZERO, 1, precision);
+RegionBSPTree3D body = sphere.toTree(4);</source>
+
+        <p>
+        This finally gives us something we can look at in our 3D modeling program.
+        </p>
+
+        <img src="../images/tutorials/teapot/body-sphere.png" />
+
+        <p>
+        Our next step is to tweak the sphere to make it more teapot-like. First, we will squash it vertically a little
+        to make it less of a perfect sphere. Our tool of choice for this squashing exercise is the
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/AffineTransformMatrix3D.html">AffineTransformMatrix3D</a>
+        class, which we will be using quite frequently in the remainder of this tutorial.
+        This class represents a 4x4 transform matrix that can be used to perform
+        <a target="_blank" href="https://en.wikipedia.org/wiki/Affine_transformation">affine transformations</a> in 3D space. In short,
+        it lets us perform operations like translate, scale, and rotate on geometries. Here, we will use it to scale
+        down our sphere approximation along the z-axis, while keeping the x and y axes the same.
+        </p>
+
+        <source>
+AffineTransformMatrix3D t = AffineTransformMatrix3D.createScale(1, 1, 0.75);
+body.transform(t);</source>
+
+        <p>
+        Our sphere now looks flattened a bit.
+        </p>
+
+        <img src="../images/tutorials/teapot/body-sphere-flattened.png" />
+
+        <p>
+        Note that our choice to scale along the z-axis (as opposed to the x or y axes) was completely arbitrary; our
+        sphere was entirely symmetrical and we had no definition of what was "up" and what was "down" as it relates
+        to our teapot. Now that we have performed our first non-symmetrical operation, we should officially declare the
+        orientation of our teapot: henceforth the positive z-axis will be "up" and the the positive x-axis will be
+        "forward" (the direction that the spout is pointing) in "teapot-space". Keeping this orientation in mind
+        will help us when working through later transformations.
+        </p>
+
+        <p>
+        Our teapot is now pleasantly flattened but it is still very likely to roll off tables and create all manner
+        of messes. To address this shortcoming, we will chop off part of the bottom to make a flat base for the teapot
+        to sit on. In code, we will define this plane, construct a region of infinite size with that plane as the "top",
+        and compute the difference between our flattened sphere and the infinite region.
+        </p>
+
+        <source>
+Plane bottomPlane = Planes.fromPointAndNormal(
+        Vector3D.of(0, 0, -0.6),
+        Vector3D.Unit.PLUS_Z,
+        precision);
+PlaneConvexSubset bottom = bottomPlane.span();
+body.difference(RegionBSPTree3D.from(Arrays.asList(bottom)));</source>
+
+        <p>
+        There's a lot going on in just a few lines here so let's go through it step by step.
+        </p>
+
+        <source>
+Plane bottomPlane = Planes.fromPointAndNormal(
+        Vector3D.of(0, 0, -0.6),
+        Vector3D.Unit.PLUS_Z,
+        precision);</source>
+        <p>
+
+        Here we construct a plane from an arbitrary point lying in the plane, the plane normal, and our good friend
+        <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html">DoublePrecisionContext</a>.
+        We choose a point that is directly "below" the origin (per our previous definition of teapot-space) and
+        that will cause the plane to intersect the bottom of the teapot body. The plane normal points "up", along the
+        positive z axis.
+        </p>
+
+        <source>
+PlaneConvexSubset bottom = bottomPlane.span();</source>
+
+        <p>
+        This may well be the most confusing line in this section. This line constructs a
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/PlaneConvexSubset.html">PlaneConvexSubset</a>
+        that represents all of the points in the plane we just created. These seem like equivalent concepts &mdash;
+        a plane and another object that represents the exact same set of points &mdash;
+        but they're slightly different. The plane <em>defines</em> what points are available, while
+        the convex subset <em>selects</em> (in an abstract sense) a convex group of those points. Examples of plane
+        convex subsets include triangles, convex polygons, plane half-spaces, and, as in this case,
+        every single last point in the entire plane (i.e., the "span"). These concepts are generalized to all geometric
+        spaces and dimensions with the
+        <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/Hyperplane.html">Hyperplane</a>
+        and
+        <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/HyperplaneConvexSubset.html">HyperplaneConvexSubset</a>
+        interfaces. The reason we needed to convert from a
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Plane.html">Plane</a>
+        to a
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/PlaneConvexSubset.html">PlaneConvexSubset</a>
+        in the first place is that BSP trees are constructed from plane convex subsets and not planes. This brings
+        us to the next line.
+        </p>
+
+        <source>
+body.difference(RegionBSPTree3D.from(Arrays.asList(bottom)));</source>
+        <p>
+        This line constructs a BSP tree from our bottom plane convex subset and then computes the difference between
+        <var>body</var> and the new BSP tree, storing the result back into <var>body</var>. When BSP trees are constructed
+        from plane convex subsets, the inside of the region is by default the part opposite the direction of the plane normal.
+        Since we constructed our plane with the normal along the positive z-axis (i.e. "up"), the inside of our BSP tree
+        is everything from our plane "down" along the negative z-axis. When we subtract this from the body, we end up with
+        a rounded top and a flat bottom.
+        </p>
+
+        <img src="../images/tutorials/teapot/body-final.png" />
+
+      </subsection>
+
+      <subsection name="The Lid" id="lid">
+        <p>
+        Next, we will make the lid of our teapot. As before, we will begin by creating a helper method and referencing
+        it in the main build method.
+        </p>
+
+        <source>
+public RegionBSPTree3D buildTeapot() {
+    // build parts
+    RegionBSPTree3D body = buildBody();
+    RegionBSPTree3D lid = buildLid(body);
+
+    // TODO: combine into the final region
+
+    return lid; // return for debugging
+}
+
+private RegionBSPTree3D buildLid(RegionBSPTree3D body) {
+    // TODO
+    return RegionBSPTree3D.empty();
+}</source>
+
+        <p>
+        You may be wondering why we passed the <var>body</var> BSP tree to our new method. The reason is
+        that we want the top of the lid to match the curve of the body exactly and the best way to do that is to have
+        access to the body itself. Our overall plan of attack here will be to
+        <ol>
+          <li>translate a copy of the body "up" a small amount,</li>
+          <li>trim this translated portion to the correct size, and</li>
+          <li>add a small, flattened sphere on top as a handle.</li>
+        </ol>
+        Sounds simple enough. Let's get started.
+        </p>
+
+        <source>
+final RegionBSPTree3D lid = body.copy();
+
+final AffineTransformMatrix3D t = AffineTransformMatrix3D.createTranslation(0, 0, 0.03);
+lid.transform(t);</source>
+
+        <p>
+        Our lid is now slightly raised above the body and matches its curve exactly. Unfortunately, the lid is also the
+        same <em>size</em> as the body which makes its job as lid somewhat difficult. We need to trim it to have a radius
+        less than the radius of the body, but how do we do that? One option is to intersect it with a cylinder of the
+        appropriate radius. If the cylinder is oriented along the positive z-axis ("up"), then it will trim off the
+        parts of the body that we don't want while retaining the curved top. Perfect. Now all we need is a way to
+        construct a cylinder with the correct dimensions. It sounds like we need another helper method.
+        </p>
+
+        <p>
+        There are many ways we could go about creating our cylinder helper method. We could, for example, have it return
+        a BSP tree like all of our other methods so far. This would work in the case of the lid. However, for other
+        parts of the teapot, we are going to want fine-grain control over the position of the cylinder vertices.
+        Therefore, we will design our helper method to return a
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/mesh/TriangleMesh.html">TriangleMesh</a>,
+        which will give us the precise vertex placement that we need. The method will accept 3 arguments:
+        <ol>
+          <li>the number of vertical segments in the cylinder,</li>
+          <li>the number of vertices forming the cylinder circle, and</li>
+          <li>a function that callers can use to place each vertex into its final location.</li>
+        </ol>
+        The cylinder will be constructed pointing along the positive z-axis with vertex z values going from <var>0</var>
+        to <var>1</var>. However, the final orientation of the mesh will be determined by the supplied transform function.
+        </p>
+
+        <source>
+private TriangleMesh buildUnitCylinderMesh(int segments, int circleVertexCount,
+        UnaryOperator&lt;Vector3D&gt; vertexTransform) {
+    // TODO
+    return null;
+}</source>
+
+        <p>
+        We will use the
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/mesh/SimpleTriangleMesh.html">SimpleTriangleMesh</a>
+        class to build our mesh. This class has a builder type that allows us to easily define vertices and faces.
+        </p>
+
+        <source>
+SimpleTriangleMesh.Builder builder = SimpleTriangleMesh.builder(precision);</source>
+
+        <p>
+        Next, we will define the vertices. As mentioned above, the cylinder will initially be constructed along the
+        positive z-axis with z values in the range <var>0</var> to <var>1</var>. The cylinder vertices will then be
+        transformed to their final locations using the function supplied by the caller. The final vertex locations do
+        not affect the face definitions, however, so after this step we can continue on with the rest of cylinder
+        construction as if the vertices were in their original locations.
+        </p>
+
+        <source>
+double zDelta = 1.0 / segments;
+double zValue;
+
+double azDelta = PlaneAngleRadians.TWO_PI / circleVertexCount;
+double az;
+
+Vector3D vertex;
+for (int i = 0; i &lt;= segments; ++i) {
+    zValue = (i * zDelta);
+
+    for (int v = 0; v &lt; circleVertexCount; ++v) {
+        az = v * azDelta;
+
+        vertex = Vector3D.of(
+                Math.cos(az),
+                Math.sin(az),
+                zValue);
+        builder.addVertex(vertexTransform.apply(vertex));
+    }
+}</source>
+
+        <p>
+        Now come the face definitions. We need to define the faces on the bottom, sides, and top of the cylinder, making
+        sure at each step that the triangle normals point outward.
+        </p>
+
+<source>
+// add the bottom faces using a triangle fan, making sure
+// that the triangles are oriented so that the face normal
+// points down
+for (int i = 1; i &lt; circleVertexCount - 1; ++i) {
+    builder.addFace(0, i + 1, i);
+}
+
+// add the side faces
+int circleStart;
+int v1;
+int v2;
+int v3;
+int v4;
+for (int s = 0; s &lt; segments; ++s) {
+    circleStart = s * circleVertexCount;
+
+    for (int i = 0; i &lt; circleVertexCount; ++i) {
+        v1 = i + circleStart;
+        v2 = ((i + 1) % circleVertexCount) + circleStart;
+        v3 = v2 + circleVertexCount;
+        v4 = v1 + circleVertexCount;
+
+        builder
+            .addFace(v1, v2, v3)
+            .addFace(v1, v3, v4);
+    }
+}
+
+// add the top faces using a triangle fan
+int lastCircleStart = circleVertexCount * segments;
+for (int i = 1 + lastCircleStart; i &lt; builder.getVertexCount() - 1; ++i) {
+    builder.addFace(lastCircleStart, i, i + 1);
+}
+
+return builder.build();</source>
+
+        <p>
+        That should do it! Now we can use this in our lid construction, making sure to pass a transform that will
+        give us the radius that we want with enough height to make sure we don't miss any part of the top. We'll
+        use the <var>toTree()</var> method of the mesh to directly convert the mesh geometry into a BSP tree.
+        </p>
+
+        <source>
+TriangleMesh cylinder = buildUnitCylinderMesh(1, 20, AffineTransformMatrix3D.createScale(0.5, 0.5, 10));
+lid.intersection(cylinder.toTree());</source>
+
+        <img src="../images/tutorials/teapot/lid-no-handle.png" />
+
+        <p>
+        The fact that the lid is extremely thick does not matter for our purposes. We will be merging it with the teapot
+        body soon and the lower portion will simply become part of the body.
+        </p>
+
+        <p>
+        All that's left now is the small rounded handle on top of the lid. We've already done something similar
+        for the body so this should be simple. The only difference from before is that we will be using the
+        axis-aligned bounding box of the lid to help place the handle in the correct location.
+        </p>
+
+        <source>
+Sphere sphere = Sphere.from(Vector3D.of(0, 0, 0), 0.15, precision);
+RegionBSPTree3D sphereTree = sphere.toTree(2);
+
+Bounds3D lidBounds = lid.getBounds();
+double sphereZ = lidBounds.getMax().getZ() + 0.075;
+sphereTree.transform(AffineTransformMatrix3D.createScale(1, 1, 0.75)
+        .translate(0, 0, sphereZ));
+
+lid.union(sphereTree);</source>
+
+        <p>
+        This completes our teapot lid.
+        </p>
+
+        <img src="../images/tutorials/teapot/lid-final.png" />
+
+      </subsection>
+
+      <subsection name="The Handle" id="handle">
+        <p>
+        Constructing the handle of our teapot is going to be something of an adventure; not only will we need to apply
+        scaling and translations to our starting geometry, we will need to interpolate between a range of 3D rotations.
+        In this case, perhaps it would be best to see the end product first before we jump into the details. That will
+        give us a frame of reference for what we're working toward. Below is our goal for the handle.
+        </p>
+
+        <img src="../images/tutorials/teapot/handle-final.png" />
+
+        <p>
+        As you can see, the handle is a long, straight cylinder that we've curved back on itself, leaving straight
+        sections at the beginning and end. This means that we can use our new cylinder mesh helper method to construct
+        the shape. Let's start by adding the private builder method to our class, leaving a placeholder for the portion
+        where we manipulate the position of the cylinder.
+        </p>
+
+        <source>
+public RegionBSPTree3D buildTeapot() {
+    // build parts
+    RegionBSPTree3D body = buildBody();
+    RegionBSPTree3D lid = buildLid(body);
+    RegionBSPTree3D handle = buildHandle();
+
+    // TODO: combine into the final region
+
+    return handle; // return for debugging
+}
+
+private RegionBSPTree3D buildHandle() {
+    UnaryOperator&lt;Vector3D&gt; vertexTransform = v -&gt; {
+        // TODO
+        return v;
+    };
+
+    return buildUnitCylinderMesh(10, 14, vertexTransform).toTree();
+}</source>
+
+        <p>
+        We now have the start of our handle in place. Note that we've used a larger number of cylinder segments
+        (<var>14</var>) so we have enough to smoothly curve the shape. Since we're not modifying the shape of
+        the cylinder yet, our handle looks like this.
+        </p>
+
+        <img src="../images/tutorials/teapot/handle-cylinder.png" />
+
+        <p>
+        The handle is a cylinder with a radius of <var>1</var> and a height (along the positive z-axis) of <var>1</var>
+        with its base at the origin. We will need to apply scaling, rotation, and translation to get this cylinder
+        into the correct shape and location. The scaling is no problem since we've already done that several times.
+        We want our handle to have a radius of <var>0.1</var> so we scale by that factor in the x and y axes. For the
+        z-axis (height), we'll leave the value at <var>1</var> for now.
+        </p>
+
+        <source>
+double handleRadius = 0.1;
+double height = 1;
+
+AffineTransformMatrix3D scale = AffineTransformMatrix3D.createScale(handleRadius, handleRadius, height);
+
+UnaryOperator&lt;Vector3D&gt; vertexTransform = v -&gt; {
+    return scale.apply(v);
+};
+
+return buildUnitCylinderMesh(10, 14, vertexTransform).toTree();</source>
+
+        <p>
+        This gives our handle the thickness that we want.
+        </p>
+
+        <img src="../images/tutorials/teapot/handle-cylinder-scaled.png" />
+
+        <p>Now on to the tricky bit: the rotation. The
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/rotation/QuaternionRotation.html">QuaternionRotation</a>
+        class is to go-to class in <em>Commons Geometry</em> for rotations in 3D. Instances of this class can be pictured
+        as representing a rotation of a certain angle around some axis in 3D space. If we applied the same rotation
+        to all vertices in our cylinder, the entire thing would rotate but retain the same shape. This is not what we want.
+        We want a curve in the middle of the handle, which means we need to apply different rotations to different vertices.
+        Our tool for this is the
+        <a target="_blank" href="https://en.wikipedia.org/wiki/Slerp">Slerp (spherical linear interpolation)</a> algorithm. This algorithm
+        smoothly interpolates between a start and stop quaternion rotation, giving us the series of rotations that we need
+        for our curve. Let's create our slerp function in code.
+        </p>
+
+        <source>
+QuaternionRotation startRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -PlaneAngleRadians.PI_OVER_TWO);
+QuaternionRotation endRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO);
+DoubleFunction&lt;QuaternionRotation&gt; slerp = startRotation.slerp(endRotation);</source>
+
+        <p>
+        We've defined our rotation sequence as starting at <var>-&pi;/2</var> around the y-axis and ending at
+        <var>+&pi;/2</var> around the y-axis. This gives the full rotation an angle of <var>&pi;</var>, or 180 degrees.
+        The expression <code>startRotation.slerp(endRotation)</code> returns a <code>DoubleFunction</code> that accepts a
+        double value and returns a
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/rotation/QuaternionRotation.html">QuaternionRotation</a>
+        instance. If we pass <var>0</var>, we get a rotation
+        equal to <var>startRotation</var>. If we pass <var>1</var>, we get a rotation equal to <var>endRotation</var>.
+        If we pass any other number between <var>0</var> and <var>1</var>, we get a rotation interpolated between the two.
+        </p>
+
+        <p>
+        Let's apply our new slerp function to the cylinder. Since the cylinder z-values range from <var>0</var> to
+        <var>1</var>, they make the perfect argument to pass to <var>slerp</var> to determine the rotation for each
+        vertex. When we apply the rotation, we need to keep the following in mind:
+        <ol>
+          <li>We want to make sure to rotate around a point <em>outside</em> of the cylinder
+          instead of around the origin, which is where rotations occur by default.
+          <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/AffineTransformMatrix3D.html">AffineTransformMatrix3D</a>
+          has a method to create this type of transformation.</li>
+          <li>In order to keep the curve smooth, we will start rotating each point from its position projected on the
+          xy plane (with z = 0). This prevents the rotation from being affected by the changing distance of the vertex from
+          the curve center. You can picture this as taking a hula hoop lying in the xy plane and swinging it back and
+          forth to define a tube in 3D space.</li>
+        </ol>
+        Below is our updated vertex transform code.
+        </p>
+
+        <source>
+double t = v.getZ();
+
+Vector3D scaled = scale.apply(v);
+
+QuaternionRotation rot = slerp.apply(t);
+AffineTransformMatrix3D mat = AffineTransformMatrix3D.createRotation(curveCenter, rot);
+
+return mat.apply(Vector3D.of(scaled.getX(), scaled.getY(), 0));</source>
+
+        <img src="../images/tutorials/teapot/handle-curved.png" />
+
+        <p>
+        Looks good! We only need a few more tweaks:
+        <ol>
+          <li>We want the beginning and end segments of the curve to extend straight out along the x-axis. We'll add
+          an additional x-axis offset when <var>t</var> is at <var>0</var> (the start) or <var>1</var> (the end).
+          </li>
+          <li>The handle is a bit taller than our goal of one unit since we're placing the handle <em>center</em> on the
+          curve with radius of <var>0.5</var>. We'll adjust by removing twice the handle thickness from the curve radius.
+          </li>
+          <li>
+          The handle needs to be translated back along the x-axis to be in the correct position relative to the
+          rest of the body.
+          </li>
+        </ol>
+        Adding these updates in, we arrive at our final handle code.
+        </p>
+
+        <source>
+double handleRadius = 0.1;
+double height = 1 - (2 * handleRadius);
+
+AffineTransformMatrix3D scale = AffineTransformMatrix3D.createScale(handleRadius, handleRadius, height);
+
+QuaternionRotation startRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -PlaneAngleRadians.PI_OVER_TWO);
+QuaternionRotation endRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO);
+DoubleFunction&lt;QuaternionRotation&gt; slerp = startRotation.slerp(endRotation);
+
+Vector3D curveCenter = Vector3D.of(0.5 * height, 0, 0);
+
+AffineTransformMatrix3D translation = AffineTransformMatrix3D.createTranslation(Vector3D.of(-1.38, 0, 0));
+
+UnaryOperator&lt;Vector3D&gt; vertexTransform = v -&gt; {
+    final double t = v.getZ();
+
+    final Vector3D scaled = scale.apply(v);
+
+    final QuaternionRotation rot = slerp.apply(t);
+    final AffineTransformMatrix3D mat = AffineTransformMatrix3D.createRotation(curveCenter, rot);
+
+    final Vector3D rotated = mat.apply(Vector3D.of(scaled.getX(), scaled.getY(), 0));
+
+    final Vector3D result = (t &gt; 0 &amp;&amp; t &lt; 1) ?
+            rotated :
+            rotated.add(Vector3D.Unit.PLUS_X);
+
+    return translation.apply(result);
+};
+
+return buildUnitCylinderMesh(10, 14, vertexTransform).toTree();</source>
+
+        <p>
+        Voila&#768;.
+        </p>
+
+        <img src="../images/tutorials/teapot/handle-final.png" />
+
+      </subsection>
+
+      <subsection name="The Spout" id="spout">
+        <p>
+        Now that we have the handle under our belt, the spout will be a piece of cake. Our general approach will be
+        the same as the handle, where we begin with a cylinder and transform the mesh vertices into their final
+        positions. Instead of a curve, however, we will be creating a taper and a shear. Let's create our method stub
+        to start.
+        </p>
+
+        <source>
+public RegionBSPTree3D buildTeapot() {
+    // build parts
+    RegionBSPTree3D body = buildBody();
+    RegionBSPTree3D lid = buildLid(body);
+    RegionBSPTree3D handle = buildHandle();
+    RegionBSPTree3D spout = buildSpout();
+
+    // TODO: combine into the final region
+
+    return spout; // return for debugging
+}
+
+private RegionBSPTree3D buildSpout() {
+    UnaryOperator&lt;Vector3D&gt; vertexTransform = v -&gt; {
+        // TODO
+        return v;
+    };
+
+    return buildUnitCylinderMesh(10, 14, vertexTransform).toTree();
+}</source>
+
+        <p>
+        We'll start with the taper. We want the spout to be an oval that is wider at the base and narrower
+        near the top. We can represent this as a two different scalings in the horizontal plane and store the scale
+        factors in 2D vectors. We'll define the factors for the base and then simply compute the factors for the top
+        as a multiple of that. The scaling for each vertex is then a linear interpolation between the two, with the
+        vertex z value as the interpolation parameter. We'll use the vector
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Vector2D.html#lerp-org.apache.commons.geometry.euclidean.twod.Vector2D-double-">lerp</a>
+        method to perform the interpolation.
+        </p>
+
+        <source>
+Vector2D baseScale = Vector2D.of(0.4, 0.2);
+Vector2D topScale = baseScale.multiply(0.6);
+
+UnaryOperator&lt;Vector3D&gt; vertexTransform = v -&gt; {
+    Vector2D scale = baseScale.lerp(topScale, v.getZ());
+
+    Vector3D tv = Vector3D.of(
+                v.getX() * scale.getX(),
+                v.getY() * scale.getY(),
+                v.getZ()
+            );
+
+    return tv;
+};
+
+return buildUnitCylinderMesh(1, 14, vertexTransform).toTree();</source>
+
+        <img src="../images/tutorials/teapot/spout-taper.png" />
+
+        <p>
+        Now for the shear, or slant, in the positive x direction. This is simply a multiple of the vertex z value that
+        we add to the x value. While we're at it, we'll also translate the spout to its final position in the teapot.
+        </p>
+
+        <source>
+Vector2D baseScale = Vector2D.of(0.4, 0.2);
+Vector2D topScale = baseScale.multiply(0.6);
+double shearZ = 0.9;
+
+AffineTransformMatrix3D translation = AffineTransformMatrix3D.createTranslation(Vector3D.of(0.25, 0, -0.4));
+
+UnaryOperator&lt;Vector3D&gt; vertexTransform = v -&lt; {
+    Vector2D scale = baseScale.lerp(topScale, v.getZ());
+
+    Vector3D tv = Vector3D.of(
+                (v.getX() * scale.getX()) + (v.getZ() * shearZ),
+                v.getY() * scale.getY(),
+                v.getZ()
+            );
+
+    return translation.apply(tv);
+};
+
+return buildUnitCylinderMesh(1, 14, vertexTransform).toTree();</source>
+
+        <img src="../images/tutorials/teapot/spout-final.png" />
+
+      </subsection>
+    </section>
+
+    <section name="Putting it all together" id="putting-it-all-together">
+      <p>
+      Now that we have all of the parts of our teapot in place we can begin combining them to construct the full teapot.
+      We simply need to compute the union of all of the parts using the BSP tree
+      <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/AbstractRegionBSPTree.html#union-org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree-">union</a> method.
+      </p>
+
+      <source>
+public RegionBSPTree3D buildTeapot(Map&lt;String, RegionBSPTree3D&gt; debugOutputs) {
+    // build the parts
+    RegionBSPTree3D body = buildBody(1);
+    RegionBSPTree3D lid = buildLid(body);
+    RegionBSPTree3D handle = buildHandle();
+    RegionBSPTree3D spout = buildSpout(1);
+
+    // combine into the final region
+    RegionBSPTree3D teapot = RegionBSPTree3D.empty();
+    teapot.union(body, lid);
+    teapot.union(handle);
+    teapot.union(spout);
+
+    return teapot;
+}</source>
+
+      <p>
+      Note that we've used two different forms of the <var>union</var> method: a two argument version and a one
+      argument version. In both cases, the result is stored in the caller and the arguments are unchanged. The
+      two argument version is designed for use when the caller is not involved in the computation and can be
+      completely overwritten. For example, the call <code>teapot.union(body, lid);</code> above is equivalent
+      to <code>teapot.union(body); teapot.union(lid);</code>. However, since <var>teapot</var> is completely empty
+      at first, the <code>teapot.union(body);</code> call effectively just makes a copy of <var>body</var> and stores
+      it in <var>teapot</var>. We can avoid this unnecessary copy by using the two argument version of <var>union</var>.
+      </p>
+
+      <p>
+      Now that all of the parts are combined, we can finally view our teapot.
+      </p>
+
+      <img src="../images/tutorials/teapot/teapot-solid.png" />
+
+      <p>
+      It looks pretty good! One thing is off, though: our teapot is completely solid. In order to make it hollow like
+      a real teapot, we'd need to hollow out the body and the interior of the spout. Luckily, we can do this with just
+      a few small tweaks to our code: we can add parameters to our body and spout construction methods that control
+      the overall size of the produced region. We can then subtract these smaller regions from the teapot to hollow it
+      out.
+      </p>
+
+      <source>
+public RegionBSPTree3D buildTeapot() {
+    // build the parts
+    RegionBSPTree3D body = buildBody(1);
+    RegionBSPTree3D lid = buildLid(body);
+    RegionBSPTree3D handle = buildHandle();
+    RegionBSPTree3D spout = buildSpout(1);
+
+    // combine into the final region
+    RegionBSPTree3D teapot = RegionBSPTree3D.empty();
+    teapot.union(body, lid);
+    teapot.union(handle);
+    teapot.union(spout);
+
+    // subtract scaled-down versions of the body and spout to
+    // create the hollow interior
+    teapot.difference(buildBody(0.9));
+    teapot.difference(buildSpout(0.8));
+
+    return teapot;
+}
+
+private RegionBSPTree3D buildBody(double initialRadius) {
+    Sphere sphere = Sphere.from(Vector3D.ZERO, initialRadius, precision);
+
+    // ...
+
+    Plane bottomPlane = Planes.fromPointAndNormal(
+            Vector3D.of(0, 0, -0.6 * initialRadius),
+            Vector3D.Unit.PLUS_Z,
+            precision);
+
+    // ...
+}
+
+private RegionBSPTree3D buildSpout(double initialRadius) {
+    Vector2D baseScale = Vector2D.of(0.4, 0.2).multiply(initialRadius);
+
+    // ...
+}</source>
+
+      <p>
+      This gives us our final result.
+      </p>
+
+      <img src="../images/tutorials/teapot/teapot-final.png" />
+    </section>
+
+    <section name="Extra Credit" id="extra-credit">
+      <p>
+      Let's say that we want to take this even further. We're not satisfied with our single-piece teapot and want
+      the lid as a separate piece that we can remove. Well, today is our lucky day because we can use what
+      we've learned about BSP trees and boolean operations to accomplish this easily. Our approach will be
+      to create an "extractor" region consisting of an outer cylinder with a smaller inner cylinder poking out of
+      the bottom. We will scale and position this extractor so that it just fits over the teapot lid. Our removable
+      teapot lid then becomes the intersection of the teapot and the extractor while the body becomes the
+      difference. Let's put this into code. Our method will simply return a map containing the name of the part and
+      the associated region.
+      </p>
+
+      <source>
+public Map&lt;String, RegionBSPTree3D&gt; buildSeparatedTeapot() {
+    // construct the single-piece teapot
+    RegionBSPTree3D teapot = buildTeapot();
+
+    // create a region to extract the lid
+    AffineTransformMatrix3D innerCylinderTransform = AffineTransformMatrix3D.createScale(0.4, 0.4, 1)
+            .translate(0, 0, 0.5);
+    RegionBSPTree3D innerCylinder = buildUnitCylinderMesh(1, 20, innerCylinderTransform).toTree();
+
+    AffineTransformMatrix3D outerCylinderTransform = AffineTransformMatrix3D.createScale(0.5, 0.5, 10);
+    RegionBSPTree3D outerCylinder = buildUnitCylinderMesh(1, 20, outerCylinderTransform).toTree();
+
+    Plane step = Planes.fromPointAndNormal(Vector3D.of(0, 0, 0.645), Vector3D.Unit.MINUS_Z, precision);
+
+    RegionBSPTree3D extractor = RegionBSPTree3D.from(Arrays.asList(step.span()));
+    extractor.union(innerCylinder);
+    extractor.intersection(outerCylinder);
+
+    // extract the lid
+    RegionBSPTree3D lid = RegionBSPTree3D.empty();
+    lid.intersection(teapot, extractor);
+
+    // remove the lid from the body
+    RegionBSPTree3D body = RegionBSPTree3D.empty();
+    body.difference(teapot, extractor);
+
+    // build the output
+    final Map&lt;String, RegionBSPTree3D&gt; result = new LinkedHashMap&lt;&gt;();
+    result.put("lid", lid);
+    result.put("body", body);
+
+    return result;
+}</source>
+
+      <p>
+      While we can easily write these parts out into separate geometry files, it would be very convenient to keep them
+      together. The
+      <a target="_blank" href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">OBJ</a>
+      file format supports multiple named geometries in a single file so let's use that to create
+      our output file. We will use the low-level
+      <a class="code" href="../commons-geometry-io-euclidean/apidocs/org/apache/commons/geometry/io/euclidean/threed/obj/ObjWriter.html">ObjWriter</a>
+      class instead of the
+      <a class="code" href="../commons-geometry-io-euclidean/apidocs/org/apache/commons/geometry/io/euclidean/threed/IO3D.html">IO3D</a>
+      convenience class in order to gain access to OBJ-specific features.
+      </p>
+
+      <source>
+Map&lt;String, RegionBSPTree3D&gt; partMap = builder.buildSeparatedTeapot();
+try (ObjWriter writer = new ObjWriter(Files.newBufferedWriter(Paths.get("separated-teapot.obj")))) {
+
+    for (Map.Entry&lt;String, RegionBSPTree3D&gt; entry : partMap.entrySet()) {
+        writer.writeObjectName(entry.getKey());
+        writer.writeBoundaries(entry.getValue());
+    }
+}</source>
+
+      <p>
+      Loading this into our 3D modeling program gives us two separate geometries that we can manipulate independently.
+      The image below shows the teapot with the lid lifted up to reveal the interior.
+      </p>
+
+      <img src="../images/tutorials/teapot/teapot-separated.png" />
+
+    </section>
+
+    <section name="Conclusion" id="conclusion">
+      <p>
+      In this tutorial, we've explored creating and combining solid geometries with <em>Commons Geometry</em>.
+      These are powerful features of the library and can be used in a wide range of applications. However, this
+      is just the beginning. Once we have our geometries in place, we can perform other useful tasks, such as computing
+      <a href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/AbstractRegionBSPTree.html#getSize--">volume</a>,
+      <a href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/AbstractRegionBSPTree.html#getBoundarySize--">surface area</a>,
+      and
+      <a href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/AbstractRegionBSPTree.html#getCentroid--">center of mass</a>
+      or performing visibility checks using
+      <a href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Linecastable3D.html">raycasting or linecasting</a>.
+      Hopefully what you've learned in this tutorial will give you a solid base to build on as you explore these and
+      other features of the library.
+      </p>
+    </section>
+  </body>
+</document>
