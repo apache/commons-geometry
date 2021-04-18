@@ -80,6 +80,7 @@
     </menu>
     <menu name="Tutorials">
       <item name="BSP Trees" href="/tutorials/bsp-tree.html" />
+      <item name="Solid Geometry" href="/tutorials/teapot.html" />
     </menu>
   </body>
 
