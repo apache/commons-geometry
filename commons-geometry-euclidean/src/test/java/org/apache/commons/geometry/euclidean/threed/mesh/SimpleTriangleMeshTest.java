@@ -460,19 +460,21 @@ public class SimpleTriangleMeshTest {
         builder.useVertex(Vector3D.of(1, 1, 1));
 
         builder.addFace(0, 2, 1);
+        builder.addFace(new int[] {1, 2, 3});
         builder.addFaceUsingVertices(Vector3D.of(0.5, 0, 0), Vector3D.of(1.01, 0, 0), Vector3D.of(1, 1, 0.95));
 
         final SimpleTriangleMesh mesh = builder.build();
 
         // assert
         Assertions.assertEquals(6, mesh.getVertexCount());
-        Assertions.assertEquals(2, mesh.getFaceCount());
+        Assertions.assertEquals(3, mesh.getFaceCount());
 
         final List<TriangleMesh.Face> faces = mesh.getFaces();
-        Assertions.assertEquals(2, faces.size());
+        Assertions.assertEquals(3, faces.size());
 
         Assertions.assertArrayEquals(new int[] {0, 2, 1},  faces.get(0).getVertexIndices());
-        Assertions.assertArrayEquals(new int[] {5, 1, 4},  faces.get(1).getVertexIndices());
+        Assertions.assertArrayEquals(new int[] {1, 2, 3},  faces.get(1).getVertexIndices());
+        Assertions.assertArrayEquals(new int[] {5, 1, 4},  faces.get(2).getVertexIndices());
     }
 
     @Test
@@ -520,6 +522,18 @@ public class SimpleTriangleMeshTest {
         }, IllegalArgumentException.class, msgBase + "4");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
+            builder.addFace(new int[] {-1, 1, 2});
+        }, IllegalArgumentException.class, msgBase + "-1");
+
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            builder.addFace(new int[] {0, 3, 2});
+        }, IllegalArgumentException.class, msgBase + "3");
+
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            builder.addFace(new int[] {0, 1, 4});
+        }, IllegalArgumentException.class, msgBase + "4");
+
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
             builder.addFaces(new int[][] {{-1, 1, 2}});
         }, IllegalArgumentException.class, msgBase + "-1");
 
@@ -544,6 +558,22 @@ public class SimpleTriangleMeshTest {
         final String msgBase = "Face must contain 3 vertex indices; found ";
 
         // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            builder.addFace(new int[] {});
+        }, IllegalArgumentException.class, msgBase + "0");
+
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            builder.addFace(new int[] {0});
+        }, IllegalArgumentException.class, msgBase + "1");
+
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            builder.addFace(new int[] {0, 1});
+        }, IllegalArgumentException.class, msgBase + "2");
+
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            builder.addFace(new int[] {0, 1, 3, 4});
+        }, IllegalArgumentException.class, msgBase + "4");
+
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             builder.addFaces(new int[][] {{}});
         }, IllegalArgumentException.class, msgBase + "0");
