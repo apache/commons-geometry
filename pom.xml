@@ -60,7 +60,7 @@
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
 
-    <commons.spotbugs.version>4.2.2</commons.spotbugs.version>
+    <commons.spotbugs.version>4.2.3</commons.spotbugs.version>
     <!-- Required for Java 13 build -->
     <commons.spotbugs.dep.version>4.2.3</commons.spotbugs.dep.version>
 
