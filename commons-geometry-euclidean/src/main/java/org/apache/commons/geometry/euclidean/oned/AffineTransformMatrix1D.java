@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.function.UnaryOperator;
 
-import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
@@ -83,11 +82,17 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
     /** {@inheritDoc} */
     @Override
     public Vector1D apply(final Vector1D vec) {
-        final double x = vec.getX();
+        return Vector1D.of(applyX(vec.getX()));
+    }
 
-        final double resultX = (m00 * x) + m01;
-
-        return Vector1D.of(resultX);
+    /** Apply this transform to the given point coordinate and return the transformed
+     * x value. The return value is equal to <code>(x * m<sub>00</sub>) + m<sub>01</sub></code>.
+     * @param x x coordinate value
+     * @return transformed x coordinate value
+     * @see #apply(Vector1D)
+     */
+    public double applyX(final double x) {
+        return applyVectorX(x) + m01;
     }
 
     /** {@inheritDoc}
@@ -95,7 +100,17 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
      */
     @Override
     public Vector1D applyVector(final Vector1D vec) {
-        return applyVector(vec, Vector1D::of);
+        return Vector1D.of(applyVectorX(vec.getX()));
+    }
+
+    /** Apply this transform to the given vector coordinate, ignoring translations, and
+     * return the transformed x value. The return value is equal to <code>x * m<sub>00</sub></code>.
+     * @param x x coordinate value
+     * @return transformed x coordinate value
+     * @see #applyVector(Vector1D)
+     */
+    public double applyVectorX(final double x) {
+        return x * m00;
     }
 
     /** {@inheritDoc}
@@ -103,7 +118,7 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
      */
     @Override
     public Vector1D.Unit applyDirection(final Vector1D vec) {
-        return applyVector(vec, Vector1D.Unit::from);
+        return Vector1D.Unit.from(applyVectorX(vec.getX()));
     }
 
     /** {@inheritDoc} */
@@ -290,19 +305,6 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
             .append(MATRIX_END);
 
         return sb.toString();
-    }
-
-    /** Multiplies the given vector by the scaling component of this transform.
-     * The computed coordinate is passed to the given factory function.
-     * @param <T> factory output type
-     * @param vec the vector to transform
-     * @param factory the factory instance that will be passed the transformed coordinate
-     * @return the factory return value
-     */
-    private <T> T applyVector(final Vector1D vec, final DoubleFunction1N<T> factory) {
-        final double resultX = m00 * vec.getX();
-
-        return factory.apply(resultX);
     }
 
     /** Get a new transform with the given matrix elements. The array must contain 2 elements.

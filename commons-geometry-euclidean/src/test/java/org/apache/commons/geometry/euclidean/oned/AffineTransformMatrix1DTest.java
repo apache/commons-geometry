@@ -282,6 +282,24 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
+    public void testApplyX() {
+        // arrange
+        final Vector1D translation = Vector1D.of(-2.0);
+        final Vector1D scale = Vector1D.of(5.0);
+
+        final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
+                .translate(translation)
+                .scale(scale);
+
+        // act/assert
+        runWithCoordinates(x -> {
+            final double expected = (x + translation.getX()) * scale.getX();
+
+            Assertions.assertEquals(expected, transform.applyX(x), EPS);
+        });
+    }
+
+    @Test
     public void testApplyVector_identity() {
         // arrange
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity();
@@ -348,6 +366,28 @@ public class AffineTransformMatrix1DTest {
             final Vector1D expectedVec = transform.apply(p1).subtract(transform.apply(p2));
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.applyVector(input), EPS);
+        });
+    }
+
+    @Test
+    public void testApplyVectorX() {
+        // arrange
+        final Vector1D p1 = Vector1D.of(PlaneAngleRadians.PI);
+
+        final Vector1D translation = Vector1D.of(-2.0);
+        final Vector1D scale = Vector1D.of(5.0);
+
+        final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
+                .translate(translation)
+                .scale(scale);
+
+        // act/assert
+        runWithCoordinates(x -> {
+            final Vector1D p2 = p1.add(Vector1D.of(x));
+
+            final double expected = transform.apply(p1).vectorTo(transform.apply(p2)).getX();
+
+            Assertions.assertEquals(expected, transform.applyVectorX(x), EPS);
         });
     }
 

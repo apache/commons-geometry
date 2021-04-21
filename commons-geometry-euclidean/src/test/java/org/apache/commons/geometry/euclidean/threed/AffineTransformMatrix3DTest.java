@@ -523,6 +523,28 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
+    public void testApplyXYZ() {
+        // arrange
+        final double scaleFactor = 2;
+        final Vector3D center = Vector3D.of(3, -4, 5);
+        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.of(0.5, 1, 1), 2 * Math.PI / 3);
+
+        final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
+                .scale(scaleFactor)
+                .rotate(center, rotation);
+
+        // act/assert
+        runWithCoordinates((x, y, z) -> {
+            final Vector3D vec = Vector3D.of(x, y, z);
+            final Vector3D expectedVec = rotation.apply(vec.multiply(scaleFactor).subtract(center)).add(center);
+
+            Assertions.assertEquals(expectedVec.getX(), transform.applyX(x, y, z), EPS);
+            Assertions.assertEquals(expectedVec.getY(), transform.applyY(x, y, z), EPS);
+            Assertions.assertEquals(expectedVec.getZ(), transform.applyZ(x, y, z), EPS);
+        });
+    }
+
+    @Test
     public void testApplyVector_identity() {
         // arrange
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity();
@@ -587,6 +609,28 @@ public class AffineTransformMatrix3DTest {
             final Vector3D expected = transform.apply(p1).subtract(transform.apply(p2));
 
             EuclideanTestUtils.assertCoordinatesEqual(expected, transform.applyVector(input), EPS);
+        });
+    }
+
+    @Test
+    public void testApplyVectorXYZ() {
+        // arrange
+        final Vector3D p1 = Vector3D.of(1, 2, 3);
+
+        final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
+                .scale(1.5)
+                .translate(4, 6, 5)
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.of(0.5, 1, 1), PlaneAngleRadians.PI_OVER_TWO));
+
+        // act/assert
+        runWithCoordinates((x, y, z) -> {
+            final Vector3D p2 = p1.add(Vector3D.of(x, y, z));
+
+            final Vector3D expected = transform.apply(p1).vectorTo(transform.apply(p2));
+
+            Assertions.assertEquals(expected.getX(), transform.applyVectorX(x, y, z), EPS);
+            Assertions.assertEquals(expected.getY(), transform.applyVectorY(x, y, z), EPS);
+            Assertions.assertEquals(expected.getZ(), transform.applyVectorZ(x, y, z), EPS);
         });
     }
 
