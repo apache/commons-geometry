@@ -57,15 +57,18 @@ public final class PolarCoordinates implements Spatial {
      * @param radius Radius value.
      * @param azimuth Azimuth angle in radians.
      */
-    private PolarCoordinates(double radius, double azimuth) {
-        if (radius < 0) {
+    private PolarCoordinates(final double radius, final double azimuth) {
+        double rad = radius;
+        double az = azimuth;
+
+        if (rad < 0) {
             // negative radius; flip the angles
-            radius = Math.abs(radius);
-            azimuth += PlaneAngleRadians.PI;
+            rad = Math.abs(radius);
+            az += PlaneAngleRadians.PI;
         }
 
-        this.radius = radius;
-        this.azimuth = normalizeAzimuth(azimuth);
+        this.radius = rad;
+        this.azimuth = normalizeAzimuth(az);
     }
 
     /** Return the radius value. The value will be greater than or equal to 0.
@@ -228,9 +231,9 @@ public final class PolarCoordinates implements Spatial {
      * @param azimuth azimuth value in radians
      * @return equivalent azimuth value in the range {@code [0, 2pi)}.
      */
-    public static double normalizeAzimuth(double azimuth) {
+    public static double normalizeAzimuth(final double azimuth) {
         if (Double.isFinite(azimuth)) {
-            azimuth = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(azimuth);
+            return PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(azimuth);
         }
 
         return azimuth;

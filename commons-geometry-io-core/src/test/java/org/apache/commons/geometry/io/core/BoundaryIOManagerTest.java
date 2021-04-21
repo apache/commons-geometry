@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +37,6 @@ import org.apache.commons.geometry.io.core.output.GeometryOutput;
 import org.apache.commons.geometry.io.core.test.StubGeometryFormat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 public class BoundaryIOManagerTest {
 
@@ -55,9 +53,6 @@ public class BoundaryIOManagerTest {
     private static final GeometryFormat FMT_B_ALT = new StubGeometryFormat("TESTb", Collections.singletonList("B"));
 
     private static final GeometryFormat FMT_C = new StubGeometryFormat("testC", Collections.singletonList("c"));
-
-    @TempDir
-    Path tempDir;
 
     private final TestManager manager = new TestManager();
 
@@ -123,15 +118,19 @@ public class BoundaryIOManagerTest {
 
     @Test
     public void testRegisterReadHandler_illegalArgs() {
+        // arrange
+        final StubReadHandler nullFmt = new StubReadHandler(null);
+        final StubReadHandler nullFmtName = new StubReadHandler(new StubGeometryFormat(null));
+
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(
                 () -> manager.registerReadHandler(null),
                 NullPointerException.class, "Handler cannot be null");
         GeometryTestUtils.assertThrowsWithMessage(
-                () -> manager.registerReadHandler(new StubReadHandler(null)),
+                () -> manager.registerReadHandler(nullFmt),
                 NullPointerException.class, "Format cannot be null");
         GeometryTestUtils.assertThrowsWithMessage(
-                () -> manager.registerReadHandler(new StubReadHandler(new StubGeometryFormat(null))),
+                () -> manager.registerReadHandler(nullFmtName),
                 NullPointerException.class, "Format name cannot be null");
     }
 
@@ -527,15 +526,19 @@ public class BoundaryIOManagerTest {
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
 
+        final StubGeometryInput inputA = new StubGeometryInput("file.a");
+        final StubGeometryInput inputB = new StubGeometryInput("file.b");
+        final StubGeometryInput inputNull = new StubGeometryInput(null);
+
         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-4);
 
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> manager.read(new StubGeometryInput("file.a"), FMT_B, precision));
+                () -> manager.read(inputA, FMT_B, precision));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> manager.read(new StubGeometryInput("file.b"), null, precision));
+                () -> manager.read(inputB, null, precision));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> manager.read(new StubGeometryInput(null), null, precision));
+                () -> manager.read(inputNull, null, precision));
     }
 
     @Test
@@ -580,15 +583,19 @@ public class BoundaryIOManagerTest {
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
 
+        final StubGeometryInput inputA = new StubGeometryInput("file.a");
+        final StubGeometryInput inputB = new StubGeometryInput("file.b");
+        final StubGeometryInput inputNull = new StubGeometryInput(null);
+
         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-4);
 
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> manager.boundaries(new StubGeometryInput("file.a"), FMT_B, precision));
+                () -> manager.boundaries(inputA, FMT_B, precision));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> manager.boundaries(new StubGeometryInput("file.b"), null, precision));
+                () -> manager.boundaries(inputB, null, precision));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> manager.boundaries(new StubGeometryInput(null), null, precision));
+                () -> manager.boundaries(inputNull, null, precision));
     }
 
     @Test
@@ -631,15 +638,19 @@ public class BoundaryIOManagerTest {
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         manager.registerWriteHandler(w1);
 
+        final StubGeometryOutput outputA = new StubGeometryOutput("file.a");
+        final StubGeometryOutput outputB = new StubGeometryOutput("file.b");
+        final StubGeometryOutput nullOutput = new StubGeometryOutput(null);
+
         final TestBoundaryList src = BOUNDARY_LIST;
 
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> manager.write(src, new StubGeometryOutput("file.a"), FMT_B));
+                () -> manager.write(src, outputA, FMT_B));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> manager.write(src, new StubGeometryOutput("file.b"), null));
+                () -> manager.write(src, outputB, null));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> manager.write(src, new StubGeometryOutput(null), null));
+                () -> manager.write(src, nullOutput, null));
     }
 
     private static final class TestManager

@@ -152,7 +152,7 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(30);
         sb.append(this.getClass().getSimpleName())
             .append("[center= ")
             .append(center)

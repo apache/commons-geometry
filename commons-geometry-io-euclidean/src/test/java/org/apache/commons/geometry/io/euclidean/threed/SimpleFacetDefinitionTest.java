@@ -38,8 +38,11 @@ public class SimpleFacetDefinitionTest {
         // assert
         Assertions.assertEquals(FACET_PTS, f.getVertices());
         Assertions.assertNotSame(FACET_PTS, f.getVertices());
+
+        final List<Vector3D> vertices = f.getVertices();
+        final Vector3D toAdd = FACET_PTS.get(0);
         Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> f.getVertices().add(FACET_PTS.get(0)));
+                () -> vertices.add(toAdd));
 
         Assertions.assertNull(f.getNormal());
     }
@@ -55,8 +58,11 @@ public class SimpleFacetDefinitionTest {
         // assert
         Assertions.assertEquals(FACET_PTS, f.getVertices());
         Assertions.assertNotSame(FACET_PTS, f.getVertices());
+
+        final List<Vector3D> vertices = f.getVertices();
+        final Vector3D toAdd = FACET_PTS.get(0);
         Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> f.getVertices().add(FACET_PTS.get(0)));
+                () -> vertices.add(toAdd));
 
         Assertions.assertSame(normal, f.getNormal());
     }

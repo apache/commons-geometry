@@ -858,6 +858,8 @@ public class SimpleTextParserTest {
             .match("a")
             .next(100)
             .match("bcdef");
+
+        Assertions.assertFalse(p.hasMoreCharacters());
     }
 
     @Test
@@ -894,6 +896,8 @@ public class SimpleTextParserTest {
             .matchIgnoreCase("A")
             .next(100)
             .matchIgnoreCase("BcdEF");
+
+        Assertions.assertFalse(p.hasMoreCharacters());
     }
 
     @Test

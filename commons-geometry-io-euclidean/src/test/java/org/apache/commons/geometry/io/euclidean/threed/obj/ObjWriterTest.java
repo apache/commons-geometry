@@ -64,6 +64,8 @@ public class ObjWriterTest {
         try (ObjWriter objWriter = new ObjWriter(writer)) {
             objWriter.close();
         }
+
+        Assertions.assertEquals("", writer.toString());
     }
 
     @Test

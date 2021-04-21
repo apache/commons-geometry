@@ -48,7 +48,7 @@ public class CharReadBuffer {
     private int count;
 
     /** True when the end of reader content is reached. */
-    private boolean eof;
+    private boolean reachedEof;
 
     /** Minimum number of characters to request for each read. */
     private final int minRead;
@@ -284,7 +284,7 @@ public class CharReadBuffer {
      * @throws IOException if an I/O error occurs
      */
     private void readChars(final int n) throws IOException {
-        if (!eof) {
+        if (!reachedEof) {
             int remaining = Math.max(n, minRead);
 
             ensureCapacity(count + remaining);
@@ -298,7 +298,7 @@ public class CharReadBuffer {
 
                 read = reader.read(buffer, tail, len);
                 if (read == EOF) {
-                    eof = true;
+                    reachedEof = true;
                     break;
                 }
 
