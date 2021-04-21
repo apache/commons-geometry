@@ -37,28 +37,28 @@ package org.apache.commons.geometry.io.core.utils;
 final class ParsedDouble {
 
     /** Minus sign character. */
-    private static final char MINUS = '-';
+    private static final char MINUS_CHAR = '-';
 
     /** Decimal separator character. */
-    private static final char DECIMAL_SEP = '.';
+    private static final char DECIMAL_SEP_CHAR = '.';
 
     /** Exponent character. */
-    private static final char EXPONENT = 'E';
+    private static final char EXPONENT_CHAR = 'E';
 
     /** Zero digit character. */
-    private static final char ZERO = '0';
+    private static final char ZERO_CHAR = '0';
 
     /** One digit character. */
-    private static final char ONE = '1';
+    private static final char ONE_CHAR = '1';
 
-    /** String containing the digits '0' - '9' in sequence. */
-    private static final String DIGITS = "0123456789";
+    /** String containing the decimal digits '0' - '9' in sequence. */
+    private static final String DECIMAL_DIGITS = "0123456789";
 
     /** Shared instance representing the positive zero double value. */
-    private static final ParsedDouble POS_ZERO = new ParsedDouble(false, String.valueOf(ZERO), 0);
+    private static final ParsedDouble POS_ZERO = new ParsedDouble(false, String.valueOf(ZERO_CHAR), 0);
 
     /** Shared instance representing the negative zero double value. */
-    private static final ParsedDouble NEG_ZERO = new ParsedDouble(true, String.valueOf(ZERO), 0);
+    private static final ParsedDouble NEG_ZERO = new ParsedDouble(true, String.valueOf(ZERO_CHAR), 0);
 
     /** True if the value is negative. */
     private final boolean negative;
@@ -110,7 +110,7 @@ final class ParsedDouble {
      * @return true if the value is equal to zero
      */
     public boolean isZero() {
-        return getPrecision() == 1 && digits.charAt(0) == ZERO;
+        return getPrecision() == 1 && digits.charAt(0) == ZERO_CHAR;
     }
 
     /** Return the precision of this instance, meaning the number of significant decimal
@@ -211,7 +211,7 @@ final class ParsedDouble {
 
         final StringBuilder sb = new StringBuilder();
         if (negative) {
-            sb.append(MINUS);
+            sb.append(MINUS_CHAR);
         }
 
         if (exponent < 0) {
@@ -224,15 +224,15 @@ final class ParsedDouble {
                 sb.append(digits.charAt(i));
             }
             if (i == 0) {
-                sb.append(ZERO);
+                sb.append(ZERO_CHAR);
             }
 
             // decimal separator
-            sb.append(DECIMAL_SEP);
+            sb.append(DECIMAL_SEP_CHAR);
 
             // add placeholder fraction zeros if needed
             for (int j = 0; j > diff; --j) {
-                sb.append(ZERO);
+                sb.append(ZERO_CHAR);
             }
 
             // fraction digits
@@ -241,12 +241,12 @@ final class ParsedDouble {
             sb.append(digits);
 
             for (int i = 0; i < exponent; ++i) {
-                sb.append(ZERO);
+                sb.append(ZERO_CHAR);
             }
 
             if (includeDecimalPlaceholder) {
-                sb.append(DECIMAL_SEP)
-                    .append(ZERO);
+                sb.append(DECIMAL_SEP_CHAR)
+                    .append(ZERO_CHAR);
             }
         }
 
@@ -305,7 +305,7 @@ final class ParsedDouble {
 
         final StringBuilder sb = new StringBuilder();
         if (negative) {
-            sb.append(MINUS);
+            sb.append(MINUS_CHAR);
         }
 
         if (precision <= wholeDigits) {
@@ -314,24 +314,24 @@ final class ParsedDouble {
             sb.append(digits);
 
             for (int i = precision; i < wholeDigits; ++i) {
-                sb.append(ZERO);
+                sb.append(ZERO_CHAR);
             }
 
             if (includeDecimalPlaceholder) {
-                sb.append(DECIMAL_SEP)
-                    .append(ZERO);
+                sb.append(DECIMAL_SEP_CHAR)
+                    .append(ZERO_CHAR);
             }
         } else {
             // we'll need a fractional portion
             sb.append(digits, 0, wholeDigits)
-                .append(DECIMAL_SEP)
+                .append(DECIMAL_SEP_CHAR)
                 .append(digits, wholeDigits, precision);
         }
 
         // add the exponent but only if non-zero
         final int resultExponent = exponent + precision - wholeDigits;
         if (resultExponent != 0) {
-            sb.append(EXPONENT)
+            sb.append(EXPONENT_CHAR)
                 .append(resultExponent);
         }
 
@@ -371,7 +371,7 @@ final class ParsedDouble {
         // extract the different portions of the string representation
         // (since double is finite, str is guaranteed to not be empty and to contain a
         // single decimal point according to the Double.toString() API)
-        final boolean negative = str.charAt(0) == MINUS;
+        final boolean negative = str.charAt(0) == MINUS_CHAR;
         final int digitStartIdx = negative ? 1 : 0;
 
         final StringBuilder digitStr = new StringBuilder(str.length());
@@ -383,9 +383,9 @@ final class ParsedDouble {
         for (int i = digitStartIdx; i < str.length(); ++i) {
             ch = str.charAt(i);
 
-            if (ch == DECIMAL_SEP) {
+            if (ch == DECIMAL_SEP_CHAR) {
                 decimalSepIdx = i;
-            } else if (ch == EXPONENT) {
+            } else if (ch == EXPONENT_CHAR) {
                 exponentIdx = i;
             } else if (exponentIdx < 0) {
                 digitStr.append(ch);
@@ -423,7 +423,7 @@ final class ParsedDouble {
         char ch;
         for (int i = 0; i < seq.length(); ++i) {
             ch = seq.charAt(i);
-            if (ch != ZERO) {
+            if (ch != ZERO_CHAR) {
                 return i;
             }
         }
@@ -441,7 +441,7 @@ final class ParsedDouble {
         char ch;
         for (i = seq.length() - 1; i >= 0; --i) {
             ch = seq.charAt(i);
-            if (ch != ZERO) {
+            if (ch != ZERO_CHAR) {
                 break;
             }
         }
@@ -455,7 +455,7 @@ final class ParsedDouble {
      * @return numeric value of the digit character, ex: '1' = 1
      */
     private static int digitValue(final char ch) {
-        return ch - ZERO;
+        return ch - ZERO_CHAR;
     }
 
     /** Add one to the value of the integer represented by the given string, returning
@@ -469,7 +469,7 @@ final class ParsedDouble {
         final char[] digitChars = digitStr.toCharArray();
         if (addOne(digitChars)) {
             return new StringBuilder()
-                    .append(ONE)
+                    .append(ONE_CHAR)
                     .append(digitChars)
                     .toString();
         }
@@ -488,10 +488,10 @@ final class ParsedDouble {
         int i;
         char c;
         for (i = digitChars.length - 1; i >= 0; --i) {
-            c = DIGITS.charAt((digitValue(digitChars[i]) + 1) % DIGITS.length());
+            c = DECIMAL_DIGITS.charAt((digitValue(digitChars[i]) + 1) % DECIMAL_DIGITS.length());
             digitChars[i] = c;
 
-            if (c != ZERO) {
+            if (c != ZERO_CHAR) {
                 break; // no carry over; stop
             }
         }

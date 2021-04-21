@@ -77,17 +77,21 @@ public final class SphericalCoordinates implements Spatial {
      * @param azimuth Azimuth angle in radians.
      * @param polar Polar angle in radians.
      */
-    private SphericalCoordinates(double radius, double azimuth, double polar) {
-        if (radius < 0) {
+    private SphericalCoordinates(final double radius, final double azimuth, final double polar) {
+        double rad = radius;
+        double az = azimuth;
+        double pol = polar;
+
+        if (rad < 0) {
             // negative radius; flip the angles
-            radius = Math.abs(radius);
-            azimuth += PlaneAngleRadians.PI;
-            polar += PlaneAngleRadians.PI;
+            rad = Math.abs(rad);
+            az += PlaneAngleRadians.PI;
+            pol += PlaneAngleRadians.PI;
         }
 
-        this.radius = radius;
-        this.azimuth = normalizeAzimuth(azimuth);
-        this.polar = normalizePolar(polar);
+        this.radius = rad;
+        this.azimuth = normalizeAzimuth(az);
+        this.polar = normalizePolar(pol);
     }
 
     /** Return the radius value. The value is in the range {@code [0, +Infinity)}.
@@ -285,11 +289,11 @@ public final class SphericalCoordinates implements Spatial {
      * @param polar polar value in radians
      * @return equivalent polar value in the range {@code [0, +pi]}
      */
-    public static double normalizePolar(double polar) {
+    public static double normalizePolar(final double polar) {
         // normalize the polar angle; this is the angle between the polar vector and the point ray
         // so it is unsigned (unlike the azimuth) and should be in the range [0, pi]
         if (Double.isFinite(polar)) {
-            polar = Math.abs(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(polar));
+            return Math.abs(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(polar));
         }
 
         return polar;

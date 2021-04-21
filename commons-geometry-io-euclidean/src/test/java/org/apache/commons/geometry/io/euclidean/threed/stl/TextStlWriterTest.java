@@ -19,6 +19,7 @@ package org.apache.commons.geometry.io.euclidean.threed.stl;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -387,13 +388,17 @@ public class TextStlWriterTest {
         try (TextStlWriter writer = new TextStlWriter(out)) {
             writer.startSolid();
 
+            final List<Vector3D> noElements = Collections.emptyList();
+            final List<Vector3D> singleElement = Collections.singletonList(Vector3D.ZERO);
+            final List<Vector3D> twoElements = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 1, 1));
+
             // act/assert
             Assertions.assertThrows(IllegalArgumentException.class,
-                    () -> writer.writeTriangles(Arrays.asList(), null));
+                    () -> writer.writeTriangles(noElements, null));
             Assertions.assertThrows(IllegalArgumentException.class,
-                    () -> writer.writeTriangles(Arrays.asList(Vector3D.ZERO), null));
+                    () -> writer.writeTriangles(singleElement, null));
             Assertions.assertThrows(IllegalArgumentException.class,
-                    () -> writer.writeTriangles(Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 1, 1)), null));
+                    () -> writer.writeTriangles(twoElements, null));
         }
     }
 

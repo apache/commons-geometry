@@ -104,7 +104,7 @@ public class BoundaryIOManager<
      */
     public List<GeometryFormat> getReadFormats() {
         return readRegistry.getHandlers().stream()
-                .map(h -> h.getFormat())
+                .map(BoundaryReadHandler::getFormat)
                 .collect(Collectors.toList());
     }
 
@@ -162,7 +162,7 @@ public class BoundaryIOManager<
      */
     public List<GeometryFormat> getWriteFormats() {
         return writeRegistry.getHandlers().stream()
-                .map(h -> h.getFormat())
+                .map(BoundaryWriteHandler::getFormat)
                 .collect(Collectors.toList());
     }
 

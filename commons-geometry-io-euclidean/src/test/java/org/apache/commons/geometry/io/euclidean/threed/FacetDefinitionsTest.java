@@ -46,7 +46,7 @@ public class FacetDefinitionsTest {
         final ConvexPolygon3D p = FacetDefinitions.toPolygon(f, TEST_PRECISION);
 
         // assert
-        Assertions.assertSame(p.getPlane().getPrecision(), TEST_PRECISION);
+        Assertions.assertSame(TEST_PRECISION, p.getPlane().getPrecision());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, p.getPlane().getNormal(), TEST_EPS);
         Assertions.assertEquals(4, p.getVertices().size());
@@ -63,7 +63,7 @@ public class FacetDefinitionsTest {
         final ConvexPolygon3D p = FacetDefinitions.toPolygon(f, TEST_PRECISION);
 
         // assert
-        Assertions.assertSame(p.getPlane().getPrecision(), TEST_PRECISION);
+        Assertions.assertSame(TEST_PRECISION, p.getPlane().getPrecision());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, p.getPlane().getNormal(), TEST_EPS);
         Assertions.assertEquals(4, p.getVertices().size());
@@ -80,7 +80,7 @@ public class FacetDefinitionsTest {
         final ConvexPolygon3D p = FacetDefinitions.toPolygon(f, TEST_PRECISION);
 
         // assert
-        Assertions.assertSame(p.getPlane().getPrecision(), TEST_PRECISION);
+        Assertions.assertSame(TEST_PRECISION, p.getPlane().getPrecision());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_Z, p.getPlane().getNormal(), TEST_EPS);
         Assertions.assertEquals(4, p.getVertices().size());

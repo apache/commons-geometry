@@ -285,9 +285,7 @@ public class SimpleTextParser {
         if (hasMoreCharacters()) {
             final StringBuilder sb = new StringBuilder(len);
 
-            consume(len, ch -> {
-                sb.append((char) ch);
-            });
+            consume(len, ch -> sb.append((char) ch));
 
             token = sb.toString();
         }
@@ -320,9 +318,8 @@ public class SimpleTextParser {
         if (hasMoreCharacters()) {
             final StringBuilder sb = new StringBuilder(len);
 
-            consumeWithLineContinuation(lineContinuationChar, len, ch -> {
-                sb.append((char) ch);
-            });
+            consumeWithLineContinuation(lineContinuationChar, len,
+                    ch -> sb.append((char) ch));
 
             token = sb.toString();
         }
