@@ -128,10 +128,33 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
         final double x = pt.getX();
         final double y = pt.getY();
 
-        final double resultX = LinearCombination.value(m00, x, m01, y) + m02;
-        final double resultY = LinearCombination.value(m10, x, m11, y) + m12;
+        return Vector2D.of(
+                applyX(x, y),
+                applyY(x, y));
+    }
 
-        return Vector2D.of(resultX, resultY);
+    /** Apply this transform to the given point coordinates and return the transformed
+     * x value. The return value is equal to
+     * <code>(x * m<sub>00</sub>) + (y * m<sub>01</sub>) + m<sub>02</sub></code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @return transformed x coordinate value
+     * @see #apply(Vector2D)
+     */
+    public double applyX(final double x, final double y) {
+        return applyVectorX(x, y) + m02;
+    }
+
+    /** Apply this transform to the given point coordinates and return the transformed
+     * y value. The return value is equal to
+     * <code>(x * m<sub>10</sub>) + (y * m<sub>11</sub>) + m<sub>12</sub></code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @return transformed y coordinate value
+     * @see #apply(Vector2D)
+     */
+    public double applyY(final double x, final double y) {
+        return applyVectorY(x, y) + m12;
     }
 
     /** {@inheritDoc}
@@ -151,6 +174,30 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
     @Override
     public Vector2D applyVector(final Vector2D vec) {
         return applyVector(vec, Vector2D::of);
+    }
+
+    /** Apply this transform to the given vector coordinates, ignoring translations, and
+     * return the transformed x value. The return value is equal to
+     * <code>(x * m<sub>00</sub>) + (y * m<sub>01</sub>)</code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @return transformed x coordinate value
+     * @see #applyVector(Vector2D)
+     */
+    public double applyVectorX(final double x, final double y) {
+        return LinearCombination.value(m00, x, m01, y);
+    }
+
+    /** Apply this transform to the given vector coordinates, ignoring translations, and
+     * return the transformed y value. The return value is equal to
+     * <code>(x * m<sub>10</sub>) + (y * m<sub>11</sub>)</code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @return transformed y coordinate value
+     * @see #applyVector(Vector2D)
+     */
+    public double applyVectorY(final double x, final double y) {
+        return LinearCombination.value(m10, x, m11, y);
     }
 
     /** {@inheritDoc}
@@ -454,10 +501,9 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
         final double x = vec.getX();
         final double y = vec.getY();
 
-        final double resultX = LinearCombination.value(m00, x, m01, y);
-        final double resultY = LinearCombination.value(m10, x, m11, y);
-
-        return factory.apply(resultX, resultY);
+        return factory.apply(
+                applyVectorX(x, y),
+                applyVectorY(x, y));
     }
 
     /** Get a new transform with the given matrix elements. The array must contain 6 elements.

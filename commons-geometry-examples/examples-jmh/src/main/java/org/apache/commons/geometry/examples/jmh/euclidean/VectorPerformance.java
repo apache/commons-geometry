@@ -28,6 +28,7 @@ import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.examples.jmh.BenchmarkUtils;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.sampling.distribution.ZigguratNormalizedGaussianSampler;
 import org.apache.commons.rng.simple.RandomSource;
@@ -144,7 +145,7 @@ public class VectorPerformance {
         private DoubleSupplier createDoubleSupplier(final String type, final UniformRandomProvider rng) {
             switch (type) {
             case RANDOM:
-                return () -> createRandomDouble(rng);
+                return () -> BenchmarkUtils.randomDouble(rng);
             case NORMALIZABLE:
                 final ZigguratNormalizedGaussianSampler sampler = ZigguratNormalizedGaussianSampler.of(rng);
                 return () -> {
@@ -274,22 +275,6 @@ public class VectorPerformance {
         public String getType() {
             return NORMALIZABLE;
         }
-    }
-
-    /** Creates a random double number with a random sign and mantissa and a large range for
-     * the exponent. The numbers will not be uniform over the range.
-     * @param rng random number generator
-     * @return the random number
-     */
-    private static double createRandomDouble(final UniformRandomProvider rng) {
-        // Create random doubles using random bits in the sign bit and the mantissa.
-        // Then create an exponent in the range -64 to 64. Thus the sum product
-        // of 4 max or min values will not over or underflow.
-        final long mask = ((1L << 52) - 1) | 1L << 63;
-        final long bits = rng.nextLong() & mask;
-        // The exponent must be unsigned so + 1023 to the signed exponent
-        final long exp = rng.nextInt(129) - 64 + 1023;
-        return Double.longBitsToDouble(bits | (exp << 52));
     }
 
     /** Run a benchmark test on a function that produces a double.

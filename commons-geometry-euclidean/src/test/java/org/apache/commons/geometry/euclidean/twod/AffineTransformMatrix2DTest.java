@@ -706,6 +706,36 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
+    public void testApplyXY() {
+        // arrange
+        final Vector2D scale = Vector2D.of(5.0, 6.0);
+        final Vector2D translation = Vector2D.of(-2.0, -3.0);
+        final Vector2D shear = Vector2D.of(7, 8);
+
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
+                .scale(scale)
+                .translate(translation)
+                .rotate(-PlaneAngleRadians.PI_OVER_TWO)
+                .shear(shear.getX(), shear.getY());
+
+        // act/assert
+        runWithCoordinates((x, y) -> {
+            final Vector2D scaledAndTranslated = Vector2D.of(
+                        (x * scale.getX()) + translation.getX(),
+                        (y * scale.getY()) + translation.getY()
+                    );
+            final Vector2D rotated = Vector2D.of(scaledAndTranslated.getY(), -scaledAndTranslated.getX());
+            final Vector2D expected = Vector2D.of(
+                        rotated.getX() + (rotated.getY() * shear.getX()),
+                        rotated.getY() + (rotated.getX() * shear.getY())
+                    );
+
+            Assertions.assertEquals(expected.getX(), transform.applyX(x, y), EPS);
+            Assertions.assertEquals(expected.getY(), transform.applyY(x, y), EPS);
+        });
+    }
+
+    @Test
     public void testApplyVector_identity() {
         // arrange
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity();
@@ -770,6 +800,27 @@ public class AffineTransformMatrix2DTest {
             final Vector2D expected = transform.apply(p1).subtract(transform.apply(p2));
 
             EuclideanTestUtils.assertCoordinatesEqual(expected, transform.applyVector(input), EPS);
+        });
+    }
+
+    @Test
+    public void testApplyVectorXY() {
+        // arrange
+        final Vector2D p1 = Vector2D.of(2, 3);
+
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
+                .scale(1.5)
+                .translate(4, 6)
+                .rotate(0.3 * Math.PI);
+
+        // act/assert
+        runWithCoordinates((x, y) -> {
+            final Vector2D p2 = p1.add(Vector2D.of(x, y));
+
+            final Vector2D expected = transform.apply(p1).vectorTo(transform.apply(p2));
+
+            Assertions.assertEquals(expected.getX(), transform.applyVectorX(x, y), EPS);
+            Assertions.assertEquals(expected.getY(), transform.applyVectorY(x, y), EPS);
         });
     }
 

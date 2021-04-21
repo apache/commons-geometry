@@ -160,11 +160,49 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
         final double y = pt.getY();
         final double z = pt.getZ();
 
-        final double resultX = LinearCombination.value(m00, x, m01, y, m02, z) + m03;
-        final double resultY = LinearCombination.value(m10, x, m11, y, m12, z) + m13;
-        final double resultZ = LinearCombination.value(m20, x, m21, y, m22, z) + m23;
+        return Vector3D.of(
+                applyX(x, y, z),
+                applyY(x, y, z),
+                applyZ(x, y, z));
+    }
 
-        return Vector3D.of(resultX, resultY, resultZ);
+    /** Apply this transform to the given point coordinates and return the transformed
+     * x value. The return value is equal to
+     * <code>(x * m<sub>00</sub>) + (y * m<sub>01</sub>) + (z * m<sub>02</sub>) + m<sub>03</sub></code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @param z z coordinate value
+     * @return transformed x coordinate value
+     * @see #apply(Vector3D)
+     */
+    public double applyX(final double x, final double y, final double z) {
+        return applyVectorX(x, y, z) + m03;
+    }
+
+    /** Apply this transform to the given point coordinates and return the transformed
+     * y value. The return value is equal to
+     * <code>(x * m<sub>10</sub>) + (y * m<sub>11</sub>) + (z * m<sub>12</sub>) + m<sub>13</sub></code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @param z z coordinate value
+     * @return transformed y coordinate value
+     * @see #apply(Vector3D)
+     */
+    public double applyY(final double x, final double y, final double z) {
+        return applyVectorY(x, y, z) + m13;
+    }
+
+    /** Apply this transform to the given point coordinates and return the transformed
+     * z value. The return value is equal to
+     * <code>(x * m<sub>20</sub>) + (y * m<sub>21</sub>) + (z * m<sub>22</sub>) + m<sub>23</sub></code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @param z z coordinate value
+     * @return transformed z coordinate value
+     * @see #apply(Vector3D)
+     */
+    public double applyZ(final double x, final double y, final double z) {
+        return applyVectorZ(x, y, z) + m23;
     }
 
     /** {@inheritDoc}
@@ -185,6 +223,45 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
     @Override
     public Vector3D applyVector(final Vector3D vec) {
         return applyVector(vec, Vector3D::of);
+    }
+
+    /** Apply this transform to the given vector coordinates, ignoring translations, and
+     * return the transformed x value. The return value is equal to
+     * <code>(x * m<sub>00</sub>) + (y * m<sub>01</sub>) + (z * m<sub>02</sub>)</code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @param z z coordinate value
+     * @return transformed x coordinate value
+     * @see #applyVector(Vector3D)
+     */
+    public double applyVectorX(final double x, final double y, final double z) {
+        return LinearCombination.value(m00, x, m01, y, m02, z);
+    }
+
+    /** Apply this transform to the given vector coordinates, ignoring translations, and
+     * return the transformed y value. The return value is equal to
+     * <code>(x * m<sub>10</sub>) + (y * m<sub>11</sub>) + (z * m<sub>12</sub>)</code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @param z z coordinate value
+     * @return transformed y coordinate value
+     * @see #applyVector(Vector3D)
+     */
+    public double applyVectorY(final double x, final double y, final double z) {
+        return LinearCombination.value(m10, x, m11, y, m12, z);
+    }
+
+    /** Apply this transform to the given vector coordinates, ignoring translations, and
+     * return the transformed z value. The return value is equal to
+     * <code>(x * m<sub>20</sub>) + (y * m<sub>21</sub>) + (z * m<sub>22</sub>)</code>.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @param z z coordinate value
+     * @return transformed z coordinate value
+     * @see #applyVector(Vector3D)
+     */
+    public double applyVectorZ(final double x, final double y, final double z) {
+        return LinearCombination.value(m20, x, m21, y, m22, z);
     }
 
     /** {@inheritDoc}
@@ -509,11 +586,10 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
         final double y = vec.getY();
         final double z = vec.getZ();
 
-        final double resultX = LinearCombination.value(m00, x, m01, y, m02, z);
-        final double resultY = LinearCombination.value(m10, x, m11, y, m12, z);
-        final double resultZ = LinearCombination.value(m20, x, m21, y, m22, z);
-
-        return factory.apply(resultX, resultY, resultZ);
+        return factory.apply(
+                applyVectorX(x, y, z),
+                applyVectorY(x, y, z),
+                applyVectorZ(x, y, z));
     }
 
     /** Get a new transform with the given matrix elements. The array must contain 12 elements.
