@@ -559,59 +559,6 @@ public class PlanesTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_fourVertices_chooseLargestInteriorAngleForBase() {
-        // arrange
-        final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
-        final Vector3D p1 = Vector3D.ZERO;
-        final Vector3D p2 = Vector3D.of(1, 0, 0);
-        final Vector3D p3 = Vector3D.of(2, 1, 0);
-        final Vector3D p4 = Vector3D.of(1.5, 1, 0);
-
-        // act
-        final List<Triangle3D> tris = Planes.convexPolygonToTriangleFan(plane, Arrays.asList(p1, p2, p3, p4));
-
-        // assert
-        Assertions.assertEquals(2, tris.size());
-
-        final Triangle3D a = tris.get(0);
-        Assertions.assertSame(plane, a.getPlane());
-        EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p4, p1, p2), a.getVertices(), TEST_PRECISION);
-
-        final Triangle3D b = tris.get(1);
-        Assertions.assertSame(plane, b.getPlane());
-        EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p4, p2, p3), b.getVertices(), TEST_PRECISION);
-    }
-
-    @Test
-    public void testConvexPolygonToTriangleFan_fourVertices_distancesLessThanPrecision() {
-        // This test checks that the triangle fan algorithm is not affected by the distances between
-        // the vertices, just as long as the points are not exactly equal. Callers are responsible for
-        // ensuring that the points are actually distinct according to the relevant precision context.
-
-        // arrange
-        final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
-        final Vector3D p1 = Vector3D.ZERO;
-        final Vector3D p2 = Vector3D.of(1e-20, 0, 0);
-        final Vector3D p3 = Vector3D.of(1e-20, 1e-20, 0);
-        final Vector3D p4 = Vector3D.of(0, 1e-20, 0);
-
-        // act
-        final List<Triangle3D> tris = Planes.convexPolygonToTriangleFan(plane, Arrays.asList(p1, p2, p3, p4));
-
-        // assert
-        Assertions.assertEquals(2, tris.size());
-
-        final Triangle3D a = tris.get(0);
-        Assertions.assertSame(plane, a.getPlane());
-        EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p1, p2, p3), a.getVertices(), TEST_PRECISION);
-
-        final Triangle3D b = tris.get(1);
-        Assertions.assertSame(plane, b.getPlane());
-        EuclideanTestUtils.assertVertexLoopSequence(Arrays.asList(p1, p3, p4), b.getVertices(), TEST_PRECISION);
-    }
-
-
-    @Test
     public void testConvexPolygonToTriangleFan_sixVertices() {
         // arrange
         final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
