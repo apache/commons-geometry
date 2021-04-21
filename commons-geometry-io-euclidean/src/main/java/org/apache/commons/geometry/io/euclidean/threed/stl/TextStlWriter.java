@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
-import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.io.core.utils.AbstractTextFormatWriter;
@@ -131,7 +131,7 @@ public class TextStlWriter extends AbstractTextFormatWriter {
      * @throws IOException if an I/O error occurs
      */
     public void writeTriangles(final List<Vector3D> vertices, final Vector3D normal) throws IOException {
-        for (final List<Vector3D> triangle : Planes.convexPolygonToTriangleFan(vertices, t -> t)) {
+        for (final List<Vector3D> triangle : EuclideanUtils.convexPolygonToTriangleFan(vertices, t -> t)) {
             writeTriangle(
                     triangle.get(0),
                     triangle.get(1),
