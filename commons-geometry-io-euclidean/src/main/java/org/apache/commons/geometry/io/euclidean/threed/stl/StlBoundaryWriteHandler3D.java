@@ -23,9 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.commons.geometry.euclidean.internal.EuclideanInternals;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
-import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
@@ -149,7 +149,8 @@ public class StlBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
                 facet = it.next();
                 attributeValue = getFacetAttributeValue(facet);
 
-                for (final List<Vector3D> tri : Planes.convexPolygonToTriangleFan(facet.getVertices(), t -> t)) {
+                for (final List<Vector3D> tri :
+                    EuclideanInternals.convexPolygonToTriangleFan(facet.getVertices(), t -> t)) {
 
                     dataWriter.writeTriangle(
                             tri.get(0),
