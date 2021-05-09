@@ -352,8 +352,8 @@ final class ParsedDouble {
         final int precision = getPrecision();
         final int roundValue = digitValue(digits.charAt(idx));
 
-        return roundValue > 5 || (roundValue == 5 &&
-                (idx < precision - 1 || (idx > 0 && digitValue(digits.charAt(idx - 1)) % 2 != 0)));
+        return roundValue > 5 ||
+                roundValue == 5 && (idx < precision - 1 || idx > 0 && digitValue(digits.charAt(idx - 1)) % 2 != 0);
     }
 
     /** Construct a new instance from the given double value.

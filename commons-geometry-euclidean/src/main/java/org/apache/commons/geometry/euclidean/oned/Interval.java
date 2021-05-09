@@ -419,8 +419,8 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
         }
 
         // determine the ordering of the hyperplanes; we know that at least one is non-null
-        final OrientedPoint minBoundary = ((hasA && !a.isPositiveFacing()) || (hasB && b.isPositiveFacing())) ? a : b;
-        final OrientedPoint maxBoundary = ((hasA && a.isPositiveFacing()) || (hasB && !b.isPositiveFacing())) ? a : b;
+        final OrientedPoint minBoundary = (hasA && !a.isPositiveFacing() || hasB && b.isPositiveFacing()) ? a : b;
+        final OrientedPoint maxBoundary = (hasA && a.isPositiveFacing() || hasB && !b.isPositiveFacing()) ? a : b;
 
         // validate the boundary locations; this will ensure that we don't have NaN values
         final double minLoc = (minBoundary != null) ? minBoundary.getLocation() : Double.NEGATIVE_INFINITY;
@@ -501,7 +501,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      */
     private static void validateIntervalValues(final double a, final double b) {
         if (Double.isNaN(a) || Double.isNaN(b) ||
-                (Double.isInfinite(a) && Double.compare(a, b) == 0)) {
+                Double.isInfinite(a) && Double.compare(a, b) == 0) {
 
             throw new IllegalArgumentException(
                     MessageFormat.format("Invalid interval values: [{0}, {1}]", a, b));

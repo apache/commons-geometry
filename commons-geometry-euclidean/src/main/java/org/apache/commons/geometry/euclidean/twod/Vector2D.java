@@ -256,7 +256,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
         final double dot = dot(v);
         final double threshold = normProduct * 0.9999;
-        if ((dot < -threshold) || (dot > threshold)) {
+        if (dot < -threshold || dot > threshold) {
             // the vectors are almost aligned, compute using the sine
             final double n = Math.abs(LinearCombination.value(x, v.y, -y, v.x));
             if (dot >= 0) {

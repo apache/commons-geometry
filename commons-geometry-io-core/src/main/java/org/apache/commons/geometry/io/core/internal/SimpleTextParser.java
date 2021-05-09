@@ -252,7 +252,7 @@ public class SimpleTextParser {
     public int readChar() throws IOException {
         final int value = buffer.read();
         if (value == LF ||
-                (value == CR && peekChar() != LF)) {
+                value == CR && peekChar() != LF) {
             ++lineNumber;
             columnNumber = 1;
         } else if (value != EOF) {

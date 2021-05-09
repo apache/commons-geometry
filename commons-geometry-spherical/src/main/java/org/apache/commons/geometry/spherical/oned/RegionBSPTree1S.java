@@ -329,8 +329,8 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         while ((min == null || max == null) && (parent = child.getParent()) != null) {
             pt = (CutAngle) parent.getCutHyperplane();
 
-            if ((pt.isPositiveFacing() && child.isMinus()) ||
-                    (!pt.isPositiveFacing() && child.isPlus())) {
+            if (pt.isPositiveFacing() && child.isMinus() ||
+                    !pt.isPositiveFacing() && child.isPlus()) {
 
                 if (max == null) {
                     max = pt;

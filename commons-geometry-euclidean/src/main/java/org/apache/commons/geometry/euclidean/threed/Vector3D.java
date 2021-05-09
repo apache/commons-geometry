@@ -304,7 +304,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
         final double dot = dot(v);
         final double threshold = normProduct * 0.99;
-        if ((dot < -threshold) || (dot > threshold)) {
+        if (dot < -threshold || dot > threshold) {
             // the vectors are almost aligned, compute using the sine
             final Vector3D cross = cross(v);
             if (dot >= 0) {

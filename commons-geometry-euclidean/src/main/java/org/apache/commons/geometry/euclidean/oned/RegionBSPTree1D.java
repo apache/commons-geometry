@@ -382,8 +382,8 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
             while ((min == null || max == null) && (parent = child.getParent()) != null) {
                 pt = (OrientedPoint) parent.getCutHyperplane();
 
-                if ((pt.isPositiveFacing() && child.isMinus()) ||
-                        (!pt.isPositiveFacing() && child.isPlus())) {
+                if (pt.isPositiveFacing() && child.isMinus() ||
+                        !pt.isPositiveFacing() && child.isPlus()) {
 
                     if (max == null) {
                         max = pt;

@@ -343,7 +343,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             final boolean onMinusSide = cutLoc == HyperplaneLocation.MINUS;
             final boolean onCut = !onPlusSide && !onMinusSide;
 
-            if (onMinusSide || (onCut && cutRule == FindNodeCutRule.MINUS)) {
+            if (onMinusSide || onCut && cutRule == FindNodeCutRule.MINUS) {
                 return findNode(start.getMinus(), pt, cutRule);
             } else if (onPlusSide || cutRule == FindNodeCutRule.PLUS) {
                 return findNode(start.getPlus(), pt, cutRule);

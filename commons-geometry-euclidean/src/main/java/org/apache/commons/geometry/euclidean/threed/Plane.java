@@ -156,8 +156,8 @@ public class Plane extends AbstractHyperplane<Vector3D> {
         final double angle = normal.angle(plane.normal);
         final DoublePrecisionContext precision = getPrecision();
 
-        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset)) ||
-                ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
+        return (precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset) ||
+                (precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset);
     }
 
     /** {@inheritDoc} */

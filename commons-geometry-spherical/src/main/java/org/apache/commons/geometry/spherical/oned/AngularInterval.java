@@ -165,8 +165,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
 
             final boolean wraps = wrapsZero();
 
-            if ((!wraps && (minLoc == HyperplaneLocation.PLUS || maxLoc == HyperplaneLocation.PLUS)) ||
-                    (wraps && minLoc == HyperplaneLocation.PLUS && maxLoc == HyperplaneLocation.PLUS)) {
+            if (!wraps && (minLoc == HyperplaneLocation.PLUS || maxLoc == HyperplaneLocation.PLUS) ||
+                    wraps && minLoc == HyperplaneLocation.PLUS && maxLoc == HyperplaneLocation.PLUS) {
                 return RegionLocation.OUTSIDE;
             } else if (minLoc == HyperplaneLocation.ON || maxLoc == HyperplaneLocation.ON) {
                 return RegionLocation.BOUNDARY;

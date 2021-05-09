@@ -229,8 +229,8 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
             angle = Math.abs(incoming.getRelativeAngle(outgoing));
             isUnconnected = !outgoing.hasNext();
 
-            if (bestElement == null || (!bestIsUnconnected && isUnconnected) ||
-                    (bestIsUnconnected == isUnconnected && angle < smallestAngle)) {
+            if (bestElement == null || !bestIsUnconnected && isUnconnected ||
+                    bestIsUnconnected == isUnconnected && angle < smallestAngle) {
 
                 smallestAngle = angle;
                 bestElement = outgoing;

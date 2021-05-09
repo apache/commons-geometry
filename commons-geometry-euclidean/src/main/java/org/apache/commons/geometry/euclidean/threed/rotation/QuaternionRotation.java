@@ -788,7 +788,7 @@ public final class QuaternionRotation implements Rotation3D {
             y = (m02 - m20) * sinv;
             z = (m10 - m01) * sinv;
             w = 0.25 * s;
-        } else if ((m00 > m11) && (m00 > m22)) {
+        } else if (m00 > m11 && m00 > m22) {
             // let s = 4*x
             final double s = 2.0 * Math.sqrt(1.0 + m00 - m11 - m22);
             final double sinv = 1.0 / s;
