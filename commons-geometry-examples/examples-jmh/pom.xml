@@ -40,7 +40,7 @@
     <geometry.parent.dir>${basedir}/../..</geometry.parent.dir>
 
     <!-- JMH Benchmark related properties: version, name of the benchmarking uber jar. -->
-    <jmh.version>1.29</jmh.version>
+    <jmh.version>1.31</jmh.version>
     <uberjar.name>examples-jmh</uberjar.name>
     <project.mainClass>org.openjdk.jmh.Main</project.mainClass>
   </properties>
