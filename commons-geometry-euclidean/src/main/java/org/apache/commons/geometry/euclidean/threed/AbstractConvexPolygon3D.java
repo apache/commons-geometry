@@ -24,11 +24,11 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Abstract base class for {@link ConvexPolygon3D} implementations.
  */
@@ -160,7 +160,7 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
     public RegionLocation classify(final Vector3D pt) {
         if (plane.contains(pt)) {
             final List<Vector3D> vertices = getVertices();
-            final DoublePrecisionContext precision = plane.getPrecision();
+            final Precision.DoubleEquivalence precision = plane.getPrecision();
 
             final Vector3D normal = plane.getNormal();
             Vector3D edgeVec;
@@ -214,7 +214,7 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
     @Override
     public Vector3D closest(final Vector3D pt) {
         final Vector3D normal = plane.getNormal();
-        final DoublePrecisionContext precision = plane.getPrecision();
+        final Precision.DoubleEquivalence precision = plane.getPrecision();
 
         final List<Vector3D> vertices = getVertices();
 

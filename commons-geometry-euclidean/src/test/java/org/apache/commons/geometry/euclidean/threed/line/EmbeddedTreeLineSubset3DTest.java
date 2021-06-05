@@ -20,8 +20,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
@@ -29,7 +27,8 @@ import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,8 +36,8 @@ public class EmbeddedTreeLineSubset3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     private final Line3D testLine = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 0), TEST_PRECISION);
 
@@ -162,7 +161,7 @@ public class EmbeddedTreeLineSubset3DTest {
         final Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
                 .scale(Vector3D.of(2, 1, 1))
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Angle.PI_OVER_TWO));
 
         // act
         final EmbeddedTreeLineSubset3D result = sub.transform(transform);
@@ -192,7 +191,7 @@ public class EmbeddedTreeLineSubset3DTest {
         final Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
                 .scale(Vector3D.of(2, 1, 1))
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Angle.PI_OVER_TWO));
 
         // act
         final EmbeddedTreeLineSubset3D result = sub.transform(transform);

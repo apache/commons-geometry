@@ -18,10 +18,10 @@ package org.apache.commons.geometry.examples.jmh.euclidean;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.shape.Sphere;
+import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -127,7 +127,7 @@ public class SpherePerformance {
         final Vector3D center = Vector3D.of(nextDouble(rand), nextDouble(rand), nextDouble(rand));
         final double radius = nextDouble(rand);
 
-        return Sphere.from(center, radius, new EpsilonDoublePrecisionContext(EPS));
+        return Sphere.from(center, radius, Precision.doubleEquivalenceOfEpsilon(EPS));
     }
 
     /** Return a random double bounded by {@link #MAX_VALUE} and {@link #MIN_VALUE}.

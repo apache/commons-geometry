@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractNSphere;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
@@ -32,7 +31,8 @@ import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a circle in 2 dimensional Euclidean space.
  */
@@ -45,7 +45,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
      * @throws IllegalArgumentException if center is not finite or radius is not finite or is
      *      less than or equal to zero as evaluated by the given precision context
      */
-    private Circle(final Vector2D center, final double radius, final DoublePrecisionContext precision) {
+    private Circle(final Vector2D center, final double radius, final Precision.DoubleEquivalence precision) {
         super(center, radius, precision);
     }
 
@@ -59,7 +59,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
     /** {@inheritDoc} */
     @Override
     public double getBoundarySize() {
-        return PlaneAngleRadians.TWO_PI * getRadius();
+        return Angle.TWO_PI * getRadius();
     }
 
     /** {@inheritDoc} */
@@ -153,7 +153,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
      * @throws IllegalArgumentException if center is not finite or radius is not finite or is
      *      less than or equal to zero as evaluated by the given precision context
      */
-    public static Circle from(final Vector2D center, final double radius, final DoublePrecisionContext precision) {
+    public static Circle from(final Vector2D center, final double radius, final Precision.DoubleEquivalence precision) {
         return new Circle(center, radius, precision);
     }
 
@@ -195,7 +195,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
             this.circle = circle;
 
             this.segments = segments;
-            this.angleDelta = PlaneAngleRadians.TWO_PI / segments;
+            this.angleDelta = Angle.TWO_PI / segments;
         }
 
         /** Build the BSP tree circle approximation.

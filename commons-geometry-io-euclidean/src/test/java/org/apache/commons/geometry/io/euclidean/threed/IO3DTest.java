@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.BoundaryList3D;
@@ -49,6 +47,7 @@ import org.apache.commons.geometry.io.core.output.StreamGeometryOutput;
 import org.apache.commons.geometry.io.core.test.CloseCountInputStream;
 import org.apache.commons.geometry.io.core.test.CloseCountOutputStream;
 import org.apache.commons.geometry.io.euclidean.EuclideanIOTestUtils;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -64,7 +63,7 @@ public class IO3DTest {
 
     private static final double MODEL_EPS = 1e-8;
 
-    private static final DoublePrecisionContext MODEL_PRECISION = new EpsilonDoublePrecisionContext(MODEL_EPS);
+    private static final Precision.DoubleEquivalence MODEL_PRECISION = Precision.doubleEquivalenceOfEpsilon(MODEL_EPS);
 
     @TempDir
     public Path tempDir;
@@ -74,7 +73,7 @@ public class IO3DTest {
         final Path origFile = tempDir.resolve("orig.obj");
         final Path scaledFile = tempDir.resolve("scaled.csv");
 
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
         final BoundarySource3D src = Parallelepiped.unitCube(precision);
 
         IO3D.write(src, origFile);

@@ -22,11 +22,11 @@ import java.util.List;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing an arbitrary subset of a plane using a {@link RegionBSPTree2D}.
  * This class can represent convex, non-convex, finite, infinite, and empty regions.
@@ -203,7 +203,7 @@ public final class EmbeddedTreePlaneSubset extends AbstractEmbeddedRegionPlaneSu
         final EmbeddingPlane thisPlane = getPlane();
         final EmbeddingPlane otherPlane = embedded.getPlane();
 
-        final DoublePrecisionContext precision = thisPlane.getPrecision();
+        final Precision.DoubleEquivalence precision = thisPlane.getPrecision();
 
         final double uDot = thisPlane.getU().dot(otherPlane.getU());
         if (!precision.eq(uDot, 1.0)) {

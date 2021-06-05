@@ -21,8 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
@@ -36,6 +34,7 @@ import org.apache.commons.geometry.io.core.input.GeometryInput;
 import org.apache.commons.geometry.io.core.output.FileGeometryOutput;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
 import org.apache.commons.geometry.io.euclidean.threed.IO3D;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -49,8 +48,8 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testIndexPageExample() throws IOException {
-        // construct a precision context to handle floating-point comparisons
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        // construct a precision instance to handle floating-point comparisons
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a BSP tree representing the unit cube
         final RegionBSPTree3D tree = Parallelepiped.unitCube(precision).toTree();
@@ -83,7 +82,7 @@ public class DocumentationExamplesTest {
         final Path inputPath = Paths.get(EuclideanIOTestUtils.resource("/models/cube.obj").toURI());
         final Path outputPath = tempDir.resolve("scaled.csv");
 
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         final GeometryInput input = new FileGeometryInput(inputPath);
         final GeometryOutput scaledOutput = new FileGeometryOutput(outputPath);

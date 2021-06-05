@@ -21,9 +21,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractLinecastPoint;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing intersections resulting from linecast operations in Euclidean
  * 3D space. This class contains the intersection point along with the boundary normal
@@ -60,14 +60,14 @@ public class LinecastPoint3D extends AbstractLinecastPoint<Vector3D, Vector3D.Un
      * @param precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
      */
-    public boolean eq(final LinecastPoint3D other, final DoublePrecisionContext precision) {
+    public boolean eq(final LinecastPoint3D other, final Precision.DoubleEquivalence precision) {
         return getLine().eq(other.getLine(), precision) &&
                 getPoint().eq(other.getPoint(), precision) &&
                 getNormal().eq(other.getNormal(), precision);
     }
 
     /** Sort the given list of linecast points by increasing abscissa value and filter to remove
-     * duplicate entries (as determined by the {@link #eq(LinecastPoint3D, DoublePrecisionContext)} method).
+     * duplicate entries (as determined by the {@link #eq(LinecastPoint3D, Precision.DoubleEquivalence)} method).
      * The argument is modified.
      * @param pts list of points to sort and filter
      */
@@ -103,7 +103,7 @@ public class LinecastPoint3D extends AbstractLinecastPoint<Vector3D, Vector3D.Un
      * @return true if the given linecast point is equivalent to any of those in the given list
      */
     private static boolean containsEq(final LinecastPoint3D pt, final List<? extends LinecastPoint3D> list) {
-        final DoublePrecisionContext precision = pt.getLine().getPrecision();
+        final Precision.DoubleEquivalence precision = pt.getLine().getPrecision();
 
         for (final LinecastPoint3D listPt : list) {
             if (listPt.eq(pt, precision)) {

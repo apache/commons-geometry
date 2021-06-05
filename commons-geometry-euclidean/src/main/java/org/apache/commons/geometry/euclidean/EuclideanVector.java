@@ -18,8 +18,8 @@ package org.apache.commons.geometry.euclidean;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Vector;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
+import org.apache.commons.numbers.core.Precision;
 
 /** Abstract base class for Euclidean vectors <em>and</em> points. See
  * {@link org.apache.commons.geometry.euclidean here} for a discussion
@@ -76,7 +76,7 @@ public abstract class EuclideanVector<V extends EuclideanVector<V>>
      * @return true if the current instance is considered equal to the given vector when using
      *      the given precision context; otherwise false
      */
-    public abstract boolean eq(V v, DoublePrecisionContext precision);
+    public abstract boolean eq(V v, Precision.DoubleEquivalence precision);
 
     /** Return true if the current instance is considered equal to the zero vector as evaluated by the
      * given precision context. This is a convenience method equivalent to
@@ -85,9 +85,9 @@ public abstract class EuclideanVector<V extends EuclideanVector<V>>
      * @param precision precision context used to determine floating point equality
      * @return true if the current instance is considered equal to the zero vector when using
      *      the given precision context; otherwise false
-     * @see #eq(EuclideanVector, DoublePrecisionContext)
+     * @see #eq(EuclideanVector, Precision.DoubleEquivalence)
      */
-    public boolean isZero(final DoublePrecisionContext precision) {
+    public boolean isZero(final Precision.DoubleEquivalence precision) {
         return eq(getZero(), precision);
     }
 

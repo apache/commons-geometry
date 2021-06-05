@@ -23,15 +23,14 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -39,8 +38,8 @@ public class PlaneConvexSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testToConvex() {
@@ -88,7 +87,7 @@ public class PlaneConvexSubsetTest {
         final PlaneConvexSubset sp = Planes.subsetFromConvexArea(plane, ConvexArea.full());
 
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO))
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Angle.PI_OVER_TWO))
                 .translate(Vector3D.Unit.PLUS_Y);
 
         // act
@@ -109,7 +108,7 @@ public class PlaneConvexSubsetTest {
                 ConvexArea.fromBounds(Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)));
 
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createRotation(Vector3D.Unit.PLUS_Z,
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Angle.PI_OVER_TWO));
 
         // act
         final PlaneConvexSubset transformed = sp.transform(transform);
@@ -128,7 +127,7 @@ public class PlaneConvexSubsetTest {
                 Arrays.asList(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)), TEST_PRECISION);
 
         final Transform<Vector3D> transform = AffineTransformMatrix3D.createScale(2)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Angle.PI_OVER_TWO));
 
         // act
         final PlaneConvexSubset transformed = sp.transform(transform);
@@ -386,8 +385,8 @@ public class PlaneConvexSubsetTest {
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
         final PlaneConvexSubset ps = Planes.subsetFromConvexArea(plane, ConvexArea.fromBounds(
                     Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION),
-                    Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
-                    Lines.fromPointAndAngle(Vector2D.of(0, 1), -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+                    Lines.fromPointAndAngle(Vector2D.of(1, 0), Angle.PI_OVER_TWO, TEST_PRECISION),
+                    Lines.fromPointAndAngle(Vector2D.of(0, 1), -Angle.PI_OVER_TWO, TEST_PRECISION)
                 ));
 
         final Plane splitter = Planes.fromPointAndNormal(Vector3D.of(0, 1, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);

@@ -18,10 +18,10 @@ package org.apache.commons.geometry.spherical;
 
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.twod.Point2S;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 
 /** Class containing various test utilities for spherical space.
@@ -59,7 +59,7 @@ public final class SphericalTestUtils {
      */
     public static void assertPointsEq(final Point2S expected, final Point2S actual, final double tolerance) {
         final String msg = "Expected point to be equivalent to " + expected + " but was " + actual + ";";
-        Assertions.assertTrue(expected.eq(actual, new EpsilonDoublePrecisionContext(tolerance)), msg);
+        Assertions.assertTrue(expected.eq(actual, Precision.doubleEquivalenceOfEpsilon(tolerance)), msg);
     }
 
     /** Assert that the given vectors are equal, using the specified tolerance value.

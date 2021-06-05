@@ -30,11 +30,10 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.partitioning.BoundaryList;
 import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.io.core.input.GeometryInput;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
 import org.apache.commons.geometry.io.core.test.StubGeometryFormat;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -491,7 +490,7 @@ public class BoundaryIOManagerTest {
         manager.registerReadHandler(r1);
 
         final StubGeometryInput in = new StubGeometryInput(null);
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-4);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-4);
 
         // act
         final TestBoundaryList result = manager.read(in, FMT_A_ALT, precision);
@@ -509,7 +508,7 @@ public class BoundaryIOManagerTest {
         manager.registerReadHandler(r1);
 
         final StubGeometryInput in = new StubGeometryInput("file.aeXT");
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-4);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-4);
 
         // act
         final TestBoundaryList result = manager.read(in, null, precision);
@@ -530,7 +529,7 @@ public class BoundaryIOManagerTest {
         final StubGeometryInput inputB = new StubGeometryInput("file.b");
         final StubGeometryInput inputNull = new StubGeometryInput(null);
 
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-4);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-4);
 
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -548,7 +547,7 @@ public class BoundaryIOManagerTest {
         manager.registerReadHandler(r1);
 
         final StubGeometryInput in = new StubGeometryInput(null);
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-4);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-4);
 
         // act
         final Stream<TestLineSegment> result = manager.boundaries(in, FMT_A_ALT, precision);
@@ -566,7 +565,7 @@ public class BoundaryIOManagerTest {
         manager.registerReadHandler(r1);
 
         final StubGeometryInput in = new StubGeometryInput("file.aeXT");
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-4);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-4);
 
         // act
         final Stream<TestLineSegment> result = manager.boundaries(in, null, precision);
@@ -587,7 +586,7 @@ public class BoundaryIOManagerTest {
         final StubGeometryInput inputB = new StubGeometryInput("file.b");
         final StubGeometryInput inputNull = new StubGeometryInput(null);
 
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-4);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-4);
 
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -725,7 +724,7 @@ public class BoundaryIOManagerTest {
 
         private GeometryInput inArg;
 
-        private DoublePrecisionContext precisionArg;
+        private Precision.DoubleEquivalence precisionArg;
 
         StubReadHandler(final GeometryFormat fmt) {
             this.fmt = fmt;
@@ -739,7 +738,7 @@ public class BoundaryIOManagerTest {
 
         /** {@inheritDoc} */
         @Override
-        public TestBoundaryList read(final GeometryInput in, final DoublePrecisionContext precision)
+        public TestBoundaryList read(final GeometryInput in, final Precision.DoubleEquivalence precision)
                 throws IOException {
             this.inArg = in;
             this.precisionArg = precision;
@@ -750,7 +749,7 @@ public class BoundaryIOManagerTest {
         /** {@inheritDoc} */
         @Override
         public Stream<TestLineSegment> boundaries(final GeometryInput in,
-                final DoublePrecisionContext precision) throws IOException {
+                final Precision.DoubleEquivalence precision) throws IOException {
             this.inArg = in;
             this.precisionArg = precision;
 

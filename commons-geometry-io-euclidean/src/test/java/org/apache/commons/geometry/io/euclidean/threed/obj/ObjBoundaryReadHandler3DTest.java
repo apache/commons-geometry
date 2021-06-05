@@ -24,8 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
@@ -35,6 +33,7 @@ import org.apache.commons.geometry.io.euclidean.EuclideanIOTestUtils;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinitionReader;
 import org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,8 +41,8 @@ public class ObjBoundaryReadHandler3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     private final ObjBoundaryReadHandler3D handler = new ObjBoundaryReadHandler3D();
 

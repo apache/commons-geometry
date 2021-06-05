@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a connected sequence of {@link GreatArc} instances.
  */
@@ -216,31 +216,31 @@ public final class GreatArcPath implements BoundarySource2S {
     /** Return a new path formed by connecting the given vertices. An additional arc is added
      * from the last point to the first point to construct a loop, if the two points are not
      * already considered equal by the given precision context. This method is equivalent
-     * to calling {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * to calling {@link #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
      * fromPoints(points, true, precision)}.
      * @param vertices the points to construct the path from
      * @param precision precision precision context used to construct the arc instances for the
      *      path
      * @return a new path formed by connecting the given vertices
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * @see #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
      */
     public static GreatArcPath fromVertexLoop(final Collection<Point2S> vertices,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return fromVertices(vertices, true, precision);
     }
 
     /** Return a new path formed by connecting the given vertices. No additional arc
      * is inserted to connect the last point to the first. This method is equivalent
-     * to calling {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * to calling {@link #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
      * fromPoint(points, false, precision)}.
      * @param vertices the points to construct the path from
      * @param precision precision context used to construct the arc instances for the
      *      path
      * @return a new path formed by connecting the given vertices
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * @see #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
      */
     public static GreatArcPath fromVertices(final Collection<Point2S> vertices,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return fromVertices(vertices, false, precision);
     }
 
@@ -254,7 +254,7 @@ public final class GreatArcPath implements BoundarySource2S {
      * @return a new path formed by connecting the given points
      */
     public static GreatArcPath fromVertices(final Collection<Point2S> vertices, final boolean close,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         return builder(precision)
                 .appendVertices(vertices)
@@ -268,7 +268,7 @@ public final class GreatArcPath implements BoundarySource2S {
      *      raw points; may be null if raw points are not used.
      * @return a new {@link Builder} instance
      */
-    public static Builder builder(final DoublePrecisionContext precision) {
+    public static Builder builder(final Precision.DoubleEquivalence precision) {
         return new Builder(precision);
     }
 
@@ -289,7 +289,7 @@ public final class GreatArcPath implements BoundarySource2S {
         private List<GreatArc> prependedArcs;
 
         /** Precision context used when creating arcs directly from points. */
-        private DoublePrecisionContext precision;
+        private Precision.DoubleEquivalence precision;
 
         /** The current point at the start of the path. */
         private Point2S startVertex;
@@ -300,7 +300,7 @@ public final class GreatArcPath implements BoundarySource2S {
         /** The precision context used when performing comparisons involving the current
          * end point.
          */
-        private DoublePrecisionContext endVertexPrecision;
+        private Precision.DoubleEquivalence endVertexPrecision;
 
         /** Construct a new instance configured with the given precision context. The
          * precision context is used when building arcs from points and
@@ -308,7 +308,7 @@ public final class GreatArcPath implements BoundarySource2S {
          * @param precision precision context to use when creating arcs
          *      from points
          */
-        private Builder(final DoublePrecisionContext precision) {
+        private Builder(final Precision.DoubleEquivalence precision) {
             setPrecision(precision);
         }
 
@@ -318,7 +318,7 @@ public final class GreatArcPath implements BoundarySource2S {
          * @param builderPrecision precision context to use when creating arcs from points
          * @return this instance
          */
-        public Builder setPrecision(final DoublePrecisionContext builderPrecision) {
+        public Builder setPrecision(final Precision.DoubleEquivalence builderPrecision) {
             this.precision = builderPrecision;
 
             return this;
@@ -365,10 +365,10 @@ public final class GreatArcPath implements BoundarySource2S {
          * using the configured precision context.
          * @param vertex the vertex to add
          * @return this instance
-         * @see #setPrecision(DoublePrecisionContext)
+         * @see #setPrecision(Precision.DoubleEquivalence)
          */
         public Builder append(final Point2S vertex) {
-            final DoublePrecisionContext vertexPrecision = getAddPointPrecision();
+            final Precision.DoubleEquivalence vertexPrecision = getAddPointPrecision();
 
             if (endVertex == null) {
                 // make sure that we're not adding to a full arc
@@ -433,10 +433,10 @@ public final class GreatArcPath implements BoundarySource2S {
          * using the configured precision context.
          * @param vertex the vertex to add
          * @return this instance
-         * @see #setPrecision(DoublePrecisionContext)
+         * @see #setPrecision(Precision.DoubleEquivalence)
          */
         public Builder prepend(final Point2S vertex) {
-            final DoublePrecisionContext vertexPrecision = getAddPointPrecision();
+            final Precision.DoubleEquivalence vertexPrecision = getAddPointPrecision();
 
             if (startVertex == null) {
                 // make sure that we're not adding to a full arc
@@ -579,7 +579,7 @@ public final class GreatArcPath implements BoundarySource2S {
             if (previous != null && next != null) {
                 final Point2S nextStartVertex = next.getStartPoint();
                 final Point2S previousEndVertex = previous.getEndPoint();
-                final DoublePrecisionContext previousPrecision = previous.getPrecision();
+                final Precision.DoubleEquivalence previousPrecision = previous.getPrecision();
 
                 if (nextStartVertex == null || previousEndVertex == null ||
                         !(nextStartVertex.eq(previousEndVertex, previousPrecision))) {
@@ -596,7 +596,7 @@ public final class GreatArcPath implements BoundarySource2S {
          * @return the precision context used when working with raw points
          * @throws IllegalStateException if no precision context is configured
          */
-        private DoublePrecisionContext getAddPointPrecision() {
+        private Precision.DoubleEquivalence getAddPointPrecision() {
             if (precision == null) {
                 throw new IllegalStateException("Unable to create arc: no point precision specified");
             }

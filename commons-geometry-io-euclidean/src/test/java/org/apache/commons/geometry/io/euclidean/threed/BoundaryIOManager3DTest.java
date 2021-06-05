@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Planes;
@@ -40,6 +38,7 @@ import org.apache.commons.geometry.io.core.input.GeometryInput;
 import org.apache.commons.geometry.io.core.output.FileGeometryOutput;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
 import org.apache.commons.geometry.io.core.test.StubGeometryFormat;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +46,7 @@ public class BoundaryIOManager3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION = new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION = Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     private static final GeometryFormat TEST_FMT = new StubGeometryFormat("test");
 
@@ -409,7 +408,7 @@ public class BoundaryIOManager3DTest {
 
         private GeometryInput inArg;
 
-        private DoublePrecisionContext precisionArg;
+        private Precision.DoubleEquivalence precisionArg;
 
         /** {@inheritDoc} */
         @Override
@@ -419,7 +418,7 @@ public class BoundaryIOManager3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public BoundarySource3D read(final GeometryInput in, final DoublePrecisionContext precision)
+        public BoundarySource3D read(final GeometryInput in, final Precision.DoubleEquivalence precision)
                 throws IOException {
             throw new UnsupportedOperationException();
         }
@@ -427,7 +426,7 @@ public class BoundaryIOManager3DTest {
         /** {@inheritDoc} */
         @Override
         public Stream<PlaneConvexSubset> boundaries(final GeometryInput in,
-                final DoublePrecisionContext precision) throws IOException {
+                final Precision.DoubleEquivalence precision) throws IOException {
             this.inArg = in;
             this.precisionArg = precision;
 
@@ -452,7 +451,7 @@ public class BoundaryIOManager3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public TriangleMesh readTriangleMesh(final GeometryInput in, final DoublePrecisionContext precision)
+        public TriangleMesh readTriangleMesh(final GeometryInput in, final Precision.DoubleEquivalence precision)
                 throws IOException {
             this.inArg = in;
             this.precisionArg = precision;

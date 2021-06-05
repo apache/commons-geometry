@@ -30,9 +30,9 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractPartitionedRegi
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConnector;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
+import org.apache.commons.numbers.core.Precision;
 
 /** Binary space partitioning (BSP) tree representing a region in two dimensional
  * Euclidean space.
@@ -428,7 +428,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * @throws IllegalStateException if a boundary has previously been inserted
          */
         public PartitionedRegionBuilder2D insertAxisAlignedPartitions(final Vector2D center,
-                final DoublePrecisionContext precision) {
+                final Precision.DoubleEquivalence precision) {
 
             insertPartition(Lines.fromPointAndDirection(center, Vector2D.Unit.PLUS_X, precision));
             insertPartition(Lines.fromPointAndDirection(center, Vector2D.Unit.PLUS_Y, precision));
@@ -438,7 +438,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
         /** Insert a grid of partitions. The partitions are constructed recursively: at each level two axis-aligned
          * partitioning lines are inserted using
-         * {@link #insertAxisAlignedPartitions(Vector2D, DoublePrecisionContext) insertAxisAlignedPartitions}.
+         * {@link #insertAxisAlignedPartitions(Vector2D, Precision.DoubleEquivalence) insertAxisAlignedPartitions}.
          * The algorithm then recurses using bounding boxes from the min point to the center and from the center
          * point to the max. Note that this means no partitions are ever inserted directly on the boundaries of
          * the given bounding box. This is intentional and done to allow this method to be called directly with the
@@ -452,7 +452,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * @throws IllegalStateException if a boundary has previously been inserted
          */
         public PartitionedRegionBuilder2D insertAxisAlignedGrid(final Bounds2D bounds, final int level,
-                final DoublePrecisionContext precision) {
+                final Precision.DoubleEquivalence precision) {
 
             insertAxisAlignedGridRecursive(bounds.getMin(), bounds.getMax(), level, precision);
 
@@ -466,7 +466,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * @param precision precision context used to construct the partition planes
          */
         private void insertAxisAlignedGridRecursive(final Vector2D min, final Vector2D max, final int level,
-                final DoublePrecisionContext precision) {
+                final Precision.DoubleEquivalence precision) {
             if (level > 0) {
                 final Vector2D center = min.lerp(max, 0.5);
 

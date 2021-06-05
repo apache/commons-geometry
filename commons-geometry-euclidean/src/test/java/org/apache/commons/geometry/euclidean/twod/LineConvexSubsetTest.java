@@ -21,11 +21,10 @@ import java.util.List;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,13 +32,13 @@ public class LineConvexSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testFromInterval_intervalArg_finite() {
         // arrange
-        final DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 2, intervalPrecision);
 
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
@@ -76,7 +75,7 @@ public class LineConvexSubsetTest {
     @Test
     public void testFromInterval_intervalArg_positiveHalfSpace() {
         // arrange
-        final DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.min(-1, intervalPrecision);
 
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
@@ -100,7 +99,7 @@ public class LineConvexSubsetTest {
     @Test
     public void testFromInterval_intervalArg_negativeHalfSpace() {
         // arrange
-        final DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.max(2, intervalPrecision);
 
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
@@ -246,7 +245,7 @@ public class LineConvexSubsetTest {
         final Segment bSeg = Lines.segmentFromPoints(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION);
 
         final Line xAxis = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        final Line yAxis = Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
+        final Line yAxis = Lines.fromPointAndAngle(Vector2D.ZERO, Angle.PI_OVER_TWO, TEST_PRECISION);
         final Line angledLine = Lines.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 0), TEST_PRECISION);
 
         // act/assert
@@ -433,7 +432,7 @@ public class LineConvexSubsetTest {
         checkFinite(segment, start, end, TEST_PRECISION);
     }
 
-    private static void checkFinite(final LineConvexSubset segment, final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
+    private static void checkFinite(final LineConvexSubset segment, final Vector2D start, final Vector2D end, final Precision.DoubleEquivalence precision) {
         Assertions.assertFalse(segment.isInfinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
@@ -455,7 +454,7 @@ public class LineConvexSubsetTest {
     }
 
     private static void checkInfinite(final LineConvexSubset segment, final Line line, final Vector2D start, final Vector2D end,
-                                      final DoublePrecisionContext precision) {
+                                      final Precision.DoubleEquivalence precision) {
 
         Assertions.assertTrue(segment.isInfinite());
 

@@ -28,8 +28,8 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing an angular interval of size greater than zero to {@code 2pi}. The interval is
  * defined by two azimuth angles: a min and a max. The interval starts at the min azimuth angle and
@@ -92,7 +92,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
     public double getMax() {
         return (maxBoundary != null) ?
                 maxBoundary.getAzimuth() :
-                PlaneAngleRadians.TWO_PI;
+                Angle.TWO_PI;
     }
 
     /** Get the maximum point for the interval. This will be null if the
@@ -288,7 +288,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * @return a new instance resulting the angular region between the given min and max azimuths
      * @throws IllegalArgumentException if either azimuth is infinite or NaN
      */
-    public static AngularInterval of(final double min, final double max, final DoublePrecisionContext precision) {
+    public static AngularInterval of(final double min, final double max,
+            final Precision.DoubleEquivalence precision) {
         return of(Point1S.of(min), Point1S.of(max), precision);
     }
 
@@ -303,7 +304,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * @return a new instance resulting the angular region between the given min and max points
      * @throws IllegalArgumentException if either azimuth is infinite or NaN
      */
-    public static AngularInterval of(final Point1S min, final Point1S max, final DoublePrecisionContext precision) {
+    public static AngularInterval of(final Point1S min, final Point1S max,
+            final Precision.DoubleEquivalence precision) {
         return createInterval(min, max, precision, AngularInterval::new, Convex.FULL);
     }
 
@@ -336,8 +338,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * @throws IllegalArgumentException if either azimuth is infinite or NaN
      */
     private static <T extends AngularInterval> T createInterval(final Point1S min, final Point1S max,
-            final DoublePrecisionContext precision, final BiFunction<? super CutAngle, ? super CutAngle, T> factory,
-            final T fullSpace) {
+            final Precision.DoubleEquivalence precision,
+            final BiFunction<? super CutAngle, ? super CutAngle, T> factory, final T fullSpace) {
 
         validateIntervalValues(min, max);
 
@@ -412,8 +414,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
     private static boolean isConvex(final CutAngle min, final CutAngle max) {
         if (min != null && max != null) {
             final double dist = max.getAzimuth() - min.getAzimuth();
-            final DoublePrecisionContext precision = min.getPrecision();
-            return precision.lte(dist, PlaneAngleRadians.PI);
+            final Precision.DoubleEquivalence precision = min.getPrecision();
+            return precision.lte(dist, Math.PI);
         }
 
         return true;
@@ -502,11 +504,11 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
             final CutAngle minBoundary = getMinBoundary();
             final CutAngle maxBoundary = getMaxBoundary();
 
-            final Point1S posPole = Point1S.of(splitter.getPoint().getAzimuth() + PlaneAngleRadians.PI_OVER_TWO);
+            final Point1S posPole = Point1S.of(splitter.getPoint().getAzimuth() + Angle.PI_OVER_TWO);
 
-            final int minLoc = minBoundary.getPrecision().compare(PlaneAngleRadians.PI_OVER_TWO,
+            final int minLoc = minBoundary.getPrecision().compare(Angle.PI_OVER_TWO,
                     posPole.distance(minBoundary.getPoint()));
-            final int maxLoc = maxBoundary.getPrecision().compare(PlaneAngleRadians.PI_OVER_TWO,
+            final int maxLoc = maxBoundary.getPrecision().compare(Angle.PI_OVER_TWO,
                     posPole.distance(maxBoundary.getPoint()));
 
             final boolean positiveFacingSplit = splitter.isPositiveFacing();
@@ -555,7 +557,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
             } else {
                 // min is directly on the splitter; determine whether it was on the main split
                 // point or its antipodal point
-                if (splitter.getPoint().distance(minBoundary.getPoint()) < PlaneAngleRadians.PI_OVER_TWO) {
+                if (splitter.getPoint().distance(minBoundary.getPoint()) < Angle.PI_OVER_TWO) {
                     // on main splitter; interval will be located on pos side of split
                     pos = this;
                 } else {
@@ -583,7 +585,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
          * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
          *      interval is not convex (meaning it has a size of greater than {@code pi})
          */
-        public static Convex of(final double min, final double max, final DoublePrecisionContext precision) {
+        public static Convex of(final double min, final double max, final Precision.DoubleEquivalence precision) {
             return of(Point1S.of(min), Point1S.of(max), precision);
         }
 
@@ -599,7 +601,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
          * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
          *      interval is not convex (meaning it has a size of greater than {@code pi})
          */
-        public static Convex of(final Point1S min, final Point1S max, final DoublePrecisionContext precision) {
+        public static Convex of(final Point1S min, final Point1S max, final Precision.DoubleEquivalence precision) {
             return createInterval(min, max, precision, Convex::new, Convex.FULL);
         }
 

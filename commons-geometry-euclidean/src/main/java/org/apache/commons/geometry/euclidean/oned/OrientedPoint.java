@@ -27,7 +27,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** This class represents a 1D oriented hyperplane.
  *
@@ -50,7 +50,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D> {
      *      otherwise, it will point toward negative infinity.
      * @param precision precision context used to compare floating point values
      */
-    OrientedPoint(final Vector1D point, final boolean positiveFacing, final DoublePrecisionContext precision) {
+    OrientedPoint(final Vector1D point, final boolean positiveFacing, final Precision.DoubleEquivalence precision) {
         super(precision);
 
         this.point = point;
@@ -155,7 +155,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D> {
     public HyperplaneLocation classify(final double location) {
         final double offsetValue = offset(location);
 
-        final int cmp = getPrecision().sign(offsetValue);
+        final double cmp = getPrecision().signum(offsetValue);
         if (cmp > 0) {
             return HyperplaneLocation.PLUS;
         } else if (cmp < 0) {
@@ -197,9 +197,9 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D> {
      * @param other the point to compare with
      * @param precision precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
-     * @see Vector1D#eq(Vector1D, DoublePrecisionContext)
+     * @see Vector1D#eq(Vector1D, Precision.DoubleEquivalence)
      */
-    public boolean eq(final OrientedPoint other, final DoublePrecisionContext precision) {
+    public boolean eq(final OrientedPoint other, final Precision.DoubleEquivalence precision) {
         return point.eq(other.point, precision) &&
                 positiveFacing == other.positiveFacing;
     }

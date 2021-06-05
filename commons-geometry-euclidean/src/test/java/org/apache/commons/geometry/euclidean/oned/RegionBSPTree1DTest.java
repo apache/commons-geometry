@@ -24,10 +24,9 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D.RegionNode1D;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,8 +34,8 @@ public class RegionBSPTree1DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testCopy() {
@@ -393,7 +392,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_halfOpen_negative() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.getRoot().cut(OrientedPoints.fromLocationAndDirection(1.0, true, precision));
@@ -409,7 +408,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_halfOpen_positive() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.getRoot().cut(OrientedPoints.fromLocationAndDirection(-1.0, false, precision));
@@ -425,7 +424,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_singleClosedInterval() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(-1, 1, precision));
@@ -441,7 +440,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_singleClosedInterval_complement() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(-1, 1, precision));
@@ -459,7 +458,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_openAndClosedIntervals() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(Double.NEGATIVE_INFINITY, -10, precision));
@@ -479,7 +478,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_singlePoint() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(1, 1, precision));
@@ -495,7 +494,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_singlePoint_complement() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(1, 1, precision));
@@ -513,7 +512,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_multiplePoints() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(1, 1, precision));
@@ -531,7 +530,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_multiplePoints_complement() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(1, 1, precision));
@@ -589,7 +588,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(-1, 6, precision));
@@ -911,7 +910,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testGetSize_pointsWithinPrecision() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
         final RegionBSPTree1D singlePoint = RegionBSPTree1D.empty();
         singlePoint.add(Interval.of(1, 1.02, precision));
@@ -1007,7 +1006,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testGetCentroid_pointsWithinPrecision() {
      // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
         final RegionBSPTree1D singlePoint = RegionBSPTree1D.empty();
         singlePoint.add(Interval.of(1, 1.02, precision));
@@ -1225,7 +1224,7 @@ public class RegionBSPTree1DTest {
         checkInterval(interval, min, max, TEST_PRECISION);
     }
 
-    private static void checkInterval(final Interval interval, final double min, final double max, final DoublePrecisionContext precision) {
+    private static void checkInterval(final Interval interval, final double min, final double max, final Precision.DoubleEquivalence precision) {
         Assertions.assertEquals(min, interval.getMin(), TEST_EPS);
         Assertions.assertEquals(max, interval.getMax(), TEST_EPS);
     }

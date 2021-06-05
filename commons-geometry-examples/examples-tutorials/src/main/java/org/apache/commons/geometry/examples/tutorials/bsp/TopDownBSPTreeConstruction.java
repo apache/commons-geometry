@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Bounds2D;
 import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
@@ -30,6 +28,7 @@ import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing tutorial code for constructing a 2D BSP tree using
  * a top-down approach.
@@ -54,7 +53,7 @@ public final class TopDownBSPTreeConstruction {
         int cutCount = 0;
 
         // create a precision context for floating point comparisons
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // construct an empty tree
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();

@@ -21,10 +21,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.sampling.UnitSphereSampler;
 import org.apache.commons.rng.simple.RandomSource;
@@ -35,8 +34,8 @@ public class SphereGeneratorTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     private final SphereGenerator generator = new SphereGenerator(TEST_PRECISION);
 
@@ -57,8 +56,8 @@ public class SphereGeneratorTest {
     @Test
     public void testSupport1Point() {
         // arrange
-        final DoublePrecisionContext lowPrecision = new EpsilonDoublePrecisionContext(0.5);
-        final DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(0.001);
+        final Precision.DoubleEquivalence lowPrecision = Precision.doubleEquivalenceOfEpsilon(0.5);
+        final Precision.DoubleEquivalence highPrecision = Precision.doubleEquivalenceOfEpsilon(0.001);
         final List<Vector3D> support = Collections.singletonList(Vector3D.of(1, 2, 3));
 
         // act
@@ -231,7 +230,7 @@ public class SphereGeneratorTest {
         Assertions.assertEquals(-16.571096474251747245361467833760, sphere.getCenter().getY(), eps);
         Assertions.assertEquals(11.711945804096960876521111630800, sphere.getCenter().getZ(), eps);
 
-        final DoublePrecisionContext supportPrecision = new EpsilonDoublePrecisionContext(1e-14);
+        final Precision.DoubleEquivalence supportPrecision = Precision.doubleEquivalenceOfEpsilon(1e-14);
         for (final Vector3D v : support) {
             Assertions.assertTrue(sphere.contains(v, supportPrecision));
         }

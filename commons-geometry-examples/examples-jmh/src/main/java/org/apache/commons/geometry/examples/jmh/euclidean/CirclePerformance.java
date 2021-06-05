@@ -18,10 +18,10 @@ package org.apache.commons.geometry.examples.jmh.euclidean;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shape.Circle;
+import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -127,7 +127,7 @@ public class CirclePerformance {
         final Vector2D center = Vector2D.of(nextDouble(rand), nextDouble(rand));
         final double radius = nextDouble(rand);
 
-        return Circle.from(center, radius, new EpsilonDoublePrecisionContext(EPS));
+        return Circle.from(center, radius, Precision.doubleEquivalenceOfEpsilon(EPS));
     }
 
     /** Return a random double bounded by {@link #MAX_VALUE} and {@link #MIN_VALUE}.

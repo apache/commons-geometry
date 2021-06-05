@@ -30,10 +30,10 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractPartitionedRegi
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Binary space partitioning (BSP) tree representing a region in three dimensional
  * Euclidean space.
@@ -343,7 +343,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @throws IllegalStateException if a boundary has previously been inserted
          */
         public PartitionedRegionBuilder3D insertAxisAlignedPartitions(final Vector3D center,
-                final DoublePrecisionContext precision) {
+                final Precision.DoubleEquivalence precision) {
 
             insertPartition(Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_X, precision));
             insertPartition(Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_Y, precision));
@@ -354,7 +354,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
         /** Insert a 3D grid of partitions. The partitions are constructed recursively: at each level a set of
          * three axis-aligned partitioning planes are inserted using
-         * {@link #insertAxisAlignedPartitions(Vector3D, DoublePrecisionContext) insertAxisAlignedPartitions}.
+         * {@link #insertAxisAlignedPartitions(Vector3D, Precision.DoubleEquivalence) insertAxisAlignedPartitions}.
          * The algorithm then recurses using bounding boxes from the min point to the center and from the center
          * point to the max. Note that this means no partitions are ever inserted directly on the boundaries of
          * the given bounding box. This is intentional and done to allow this method to be called directly with the
@@ -368,7 +368,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @throws IllegalStateException if a boundary has previously been inserted
          */
         public PartitionedRegionBuilder3D insertAxisAlignedGrid(final Bounds3D bounds, final int level,
-                final DoublePrecisionContext precision) {
+                final Precision.DoubleEquivalence precision) {
 
             insertAxisAlignedGridRecursive(bounds.getMin(), bounds.getMax(), level, precision);
 
@@ -382,7 +382,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param precision precision context used to construct the partition planes
          */
         private void insertAxisAlignedGridRecursive(final Vector3D min, final Vector3D max, final int level,
-                final DoublePrecisionContext precision) {
+                final Precision.DoubleEquivalence precision) {
             if (level > 0) {
                 final Vector3D center = min.lerp(max, 0.5);
 

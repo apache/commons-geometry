@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class for reading OBJ content as a {@link TriangleMesh triangle mesh}.
  */
@@ -41,7 +41,7 @@ public class ObjTriangleMeshReader extends AbstractObjPolygonReader {
      * @param reader reader to read from
      * @param precision precision context used to compare floating point numbers
      */
-    public ObjTriangleMeshReader(final Reader reader, final DoublePrecisionContext precision) {
+    public ObjTriangleMeshReader(final Reader reader, final Precision.DoubleEquivalence precision) {
         super(reader);
 
         this.meshBuilder = SimpleTriangleMesh.builder(precision);

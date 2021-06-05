@@ -23,7 +23,7 @@ import java.util.Objects;
 import org.apache.commons.geometry.euclidean.internal.AbstractPathConnector;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
 
 /** Abstract class for joining collections of line subsets into connected
  * paths. This class is not thread-safe.
@@ -257,9 +257,9 @@ public abstract class AbstractLinePathConnector
 
                     if (cmp == 0) {
                         // sort by line angle
-                        final double aAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
+                        final double aAngle = Angle.Rad.WITHIN_MINUS_PI_AND_PI.applyAsDouble(
                                 this.getLineSubset().getLine().getAngle());
-                        final double bAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
+                        final double bAngle = Angle.Rad.WITHIN_MINUS_PI_AND_PI.applyAsDouble(
                                 other.getLineSubset().getLine().getAngle());
 
                         cmp = Double.compare(aAngle, bAngle);

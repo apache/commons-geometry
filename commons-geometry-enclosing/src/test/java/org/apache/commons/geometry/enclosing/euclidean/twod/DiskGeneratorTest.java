@@ -21,10 +21,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.sampling.UnitSphereSampler;
 import org.apache.commons.rng.simple.RandomSource;
@@ -54,8 +53,8 @@ public class DiskGeneratorTest {
     @Test
     public void testSupport1Point() {
         // arrange
-        final DoublePrecisionContext lowPrecision = new EpsilonDoublePrecisionContext(0.5);
-        final DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(0.001);
+        final Precision.DoubleEquivalence lowPrecision = Precision.doubleEquivalenceOfEpsilon(0.5);
+        final Precision.DoubleEquivalence highPrecision = Precision.doubleEquivalenceOfEpsilon(0.001);
         final List<Vector2D> support = Collections.singletonList(Vector2D.of(1, 2));
 
         // act

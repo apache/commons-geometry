@@ -23,8 +23,8 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.internal.HyperplaneSubsets;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.spherical.oned.Point1S;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a subset of the points in a great circle.
  * @see GreatCircles
@@ -118,7 +118,7 @@ public abstract class GreatCircleSubset implements HyperplaneSubset<Point2S>, Re
      * same object used by the underlying {@link GreatCircle}.
      * @return precision object used to perform floating point comparisons.
      */
-    public DoublePrecisionContext getPrecision() {
+    public Precision.DoubleEquivalence getPrecision() {
         return circle.getPrecision();
     }
 }

@@ -20,9 +20,6 @@ import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -415,23 +412,23 @@ public class Vector1DTest {
 
         // act/assert
         Assertions.assertEquals(0.0, v1.angle(v1), TEST_TOLERANCE);
-        Assertions.assertEquals(PlaneAngleRadians.PI, v1.angle(v2), TEST_TOLERANCE);
+        Assertions.assertEquals(Math.PI, v1.angle(v2), TEST_TOLERANCE);
         Assertions.assertEquals(0.0, v1.angle(v3), TEST_TOLERANCE);
-        Assertions.assertEquals(PlaneAngleRadians.PI, v1.angle(v4), TEST_TOLERANCE);
+        Assertions.assertEquals(Math.PI, v1.angle(v4), TEST_TOLERANCE);
 
-        Assertions.assertEquals(PlaneAngleRadians.PI, v2.angle(v1), TEST_TOLERANCE);
+        Assertions.assertEquals(Math.PI, v2.angle(v1), TEST_TOLERANCE);
         Assertions.assertEquals(0.0, v2.angle(v2), TEST_TOLERANCE);
-        Assertions.assertEquals(PlaneAngleRadians.PI, v2.angle(v3), TEST_TOLERANCE);
+        Assertions.assertEquals(Math.PI, v2.angle(v3), TEST_TOLERANCE);
         Assertions.assertEquals(0.0, v2.angle(v4), TEST_TOLERANCE);
 
         Assertions.assertEquals(0.0, v3.angle(v1), TEST_TOLERANCE);
-        Assertions.assertEquals(PlaneAngleRadians.PI, v3.angle(v2), TEST_TOLERANCE);
+        Assertions.assertEquals(Math.PI, v3.angle(v2), TEST_TOLERANCE);
         Assertions.assertEquals(0.0, v3.angle(v3), TEST_TOLERANCE);
-        Assertions.assertEquals(PlaneAngleRadians.PI, v3.angle(v4), TEST_TOLERANCE);
+        Assertions.assertEquals(Math.PI, v3.angle(v4), TEST_TOLERANCE);
 
-        Assertions.assertEquals(PlaneAngleRadians.PI, v4.angle(v1), TEST_TOLERANCE);
+        Assertions.assertEquals(Math.PI, v4.angle(v1), TEST_TOLERANCE);
         Assertions.assertEquals(0.0, v4.angle(v2), TEST_TOLERANCE);
-        Assertions.assertEquals(PlaneAngleRadians.PI, v4.angle(v3), TEST_TOLERANCE);
+        Assertions.assertEquals(Math.PI, v4.angle(v3), TEST_TOLERANCE);
         Assertions.assertEquals(0.0, v4.angle(v4), TEST_TOLERANCE);
     }
 
@@ -545,8 +542,8 @@ public class Vector1DTest {
     @Test
     public void testPrecisionEquals() {
         // arrange
-        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-6);
+        final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
         final Vector1D vec = Vector1D.of(1);
 
@@ -567,8 +564,8 @@ public class Vector1DTest {
     @Test
     public void testIsZero() {
         // arrange
-        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-6);
+        final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
         // act/assert
         Assertions.assertTrue(Vector1D.of(0.0).isZero(smallEps));

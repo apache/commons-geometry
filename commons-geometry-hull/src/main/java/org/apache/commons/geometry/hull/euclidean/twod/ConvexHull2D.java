@@ -21,11 +21,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.hull.ConvexHull;
+import org.apache.commons.numbers.core.Precision;
 
 /**
  * This class represents a convex hull in two-dimensional Euclidean space.
@@ -43,7 +43,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
      *      the given vertices are in order, unique, and define a convex hull.
      * @param precision precision context used to compare floating point numbers
      */
-    ConvexHull2D(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
+    ConvexHull2D(final Collection<Vector2D> vertices, final Precision.DoubleEquivalence precision) {
         this.vertices = Collections.unmodifiableList(new ArrayList<>(vertices));
         this.path = buildHullPath(vertices, precision);
     }
@@ -92,7 +92,8 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
      * @param precision precision context used to compare floating point values
      * @return path for the convex hull defined by the given vertices
      */
-    private static LinePath buildHullPath(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
+    private static LinePath buildHullPath(final Collection<Vector2D> vertices,
+            final Precision.DoubleEquivalence precision) {
         if (vertices.size() < 2) {
             return LinePath.empty();
         }

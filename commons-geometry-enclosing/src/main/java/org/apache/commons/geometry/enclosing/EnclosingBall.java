@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** This class represents a ball enclosing some points.
  * @param <P> Point type.
@@ -98,7 +98,7 @@ public class EnclosingBall<P extends Point<P>> {
      * @return true if the point is within the ball or on the boundary as evaluated by
      *      the precision context
      */
-    public boolean contains(final P point, final DoublePrecisionContext precision) {
+    public boolean contains(final P point, final Precision.DoubleEquivalence precision) {
         return precision.lte(point.distance(center), radius);
     }
 

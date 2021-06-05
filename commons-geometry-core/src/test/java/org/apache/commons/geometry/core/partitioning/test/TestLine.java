@@ -140,8 +140,8 @@ public final class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoin
      */
     public TestPoint2D toSpace(final double abscissa) {
         if (Double.isInfinite(abscissa)) {
-            final int dirXCmp = PartitionTestUtils.PRECISION.sign(directionX);
-            final int dirYCmp = PartitionTestUtils.PRECISION.sign(directionY);
+            final double dirXCmp = PartitionTestUtils.PRECISION.signum(directionX);
+            final double dirYCmp = PartitionTestUtils.PRECISION.signum(directionY);
 
             final double x;
             if (dirXCmp == 0) {

@@ -100,7 +100,7 @@
       </p>
 
       <p>
-        <em>Commons Geometry</em> is divided into 5 submodules.
+        <em>Commons Geometry</em> is divided into a number of submodules.
       </p>
       <ul>
         <li>
@@ -114,6 +114,14 @@
         <li>
           <a class="code" href="../commons-geometry-spherical/index.html">commons-geometry-spherical</a> - Provides
           classes for Spherical space in 1D and 2D.
+        </li>
+        <li>
+          <a class="code" href="../commons-geometry-io-core/index.html">commons-geometry-io-core</a> - Provides
+          core classes and interfaces for IO functionality.
+        </li>
+        <li>
+          <a class="code" href="../commons-geometry-io-euclidean/index.html">commons-geometry-io-euclidean</a> - Provides
+          classes for IO operations on Euclidean data formats, such STL and OBJ.
         </li>
         <li>
           <a class="code" href="../commons-geometry-hull/index.html">commons-geometry-hull</a> - Provides implementations
@@ -137,13 +145,13 @@
           in computations. A precision context is an object that encapsulates floating point comparisons,
           allowing numbers that may not be exactly equal to be considered equal for the
           purposes of a computation. This idea is represented in code with the
-          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html"
-          >DoublePrecisionContext</a> interface. The example below uses an epsilon (tolerance) value to compare
-          numbers for equality.
+          <span class="code">org.apache.commons.numbers.core.Precision.DoubleEquivalence</span> class from
+          the <a target="_blank" href="https://commons.apache.org/proper/commons-numbers/">Commons Numbers</a> library.
+          The example below uses an epsilon (tolerance) value to compare numbers for equality.
         </p>
         <source>
-// create a precision context with an epsilon (aka, tolerance) value of 1e-3
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+// create a precision instance with an epsilon (aka, tolerance) value of 1e-3
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
 // test for equality using the eq() method
 precision.eq(1.0009, 1.0); // true; difference is less than epsilon
@@ -167,21 +175,20 @@ precision.compare(1.002, 1.0); // 1
         <p>
           In contrast, the <span class="code">eq()</span> method is used to test for <em>approximate</em> equality
           between objects, with floating point values being evaluated by a provided
-          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html"
-          >DoublePrecisionContext</a>. Because of this approximate nature, this method cannot be guaranteed to
-          be transitive or have any meaningful relationship to <span class="code">hashCode</span>. The
-          <span class="code">eq()</span> should be used to test for object equality in cases where floating-point
+          <span class="code">Precision.DoubleEquivalence</span> instance. Because of this approximate nature, this
+          method cannot be guaranteed to be transitive or have any meaningful relationship to <span class="code">hashCode</span>.
+          The <span class="code">eq()</span> should be used to test for object equality in cases where floating-point
           errors in a computation may have introduced small discrepancies in values. The example below demonstrates
           the differences between <span class="code">equals()</span> and <span class="code">eq()</span>.
         </p>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 Vector2D v1 = Vector2D.of(1, 1); // (1.0, 1.0)
 Vector2D v2 = Vector2D.parse("(1, 1)"); // (1.0, 1.0)
 
 Vector2D v3 = Vector2D.of(Math.sqrt(2), 0).transform(
-        AffineTransformMatrix2D.createRotation(0.25 * Math.PI)); // (1.0000000000000002, 1.0)
+    AffineTransformMatrix2D.createRotation(0.25 * Math.PI)); // (1.0000000000000002, 1.0)
 
 v1.equals(v2); // true - exactly equal
 v1.equals(v3); // false - not exactly equal
@@ -288,8 +295,8 @@ v1.eq(v3, precision); // true - approximately equal according to the given preci
           additional information must be stored with each leaf node, namely whether or not that leaf node lies on the
           inside or outside of the shape. By convention, when a BSP tree node is cut, the child node that lies on the
           minus side of the cutting hyperplane is considered to be inside of the shape, while the child node on the plus
-          side is considered to be on the outside. For example, in Euclidean 3D space, plane normals point toward the plus
-          side of the plane. Thus, when splitting a BSP tree node with a plane, the plane normal points outward from
+          side is considered to be on the outside. For example, in Euclidean 3D space, plane normals are considered to
+          point toward the plus side of the plane. Thus, when splitting a BSP tree node with a plane, the plane normal points outward from
           the shape, as one might expect. (In <em>Commons Geometry</em>, this default convention can be changed by passing a
           <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/RegionCutRule.html">RegionCutRule</a>
           value when inserting into a tree. This gives fine-grain control over the structure of the tree and can
@@ -318,7 +325,7 @@ v1.eq(v3, precision); // true - approximately equal according to the given preci
           into nodes. A diagonal "structural" cut is used at the root node in order to keep the tree balanced.
         </p>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create a tree representing an empty space (nothing "inside")
 RegionBSPTree2D tree = RegionBSPTree2D.empty();
@@ -359,7 +366,7 @@ Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
           into the tree. The shape is the same as the example above.
         </p>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create a tree representing an empty space (nothing "inside")
 RegionBSPTree2D tree = RegionBSPTree2D.empty();
@@ -421,7 +428,7 @@ Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
           <ul>
             <li>
                 <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/HyperplaneSubset.html">HyperplaneSubset</a> -
-                Represents an arbitrary subset of points in a hyperplane, such as set of 1D intervals on a line or a
+                Represents an arbitrary subset of points in a hyperplane, such as a set of 1D intervals on a line or a
                 polygonal area on a 3D plane. This is a base interface of
                 <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/HyperplaneConvexSubset.html">HyperplaneConvexSubset</a>,
                 but does not require that the represented subset be convex. Thus, non-convex and disjoint regions
@@ -513,7 +520,7 @@ Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
 
         <h5>Interval creation</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create a closed interval and a half-open interval with a min but no max
 Interval closed = Interval.of(1, 2, precision);
@@ -532,7 +539,7 @@ RegionLocation halfOpenThreeLoc = halfOpen.classify(3.0); // RegionLocation.INSI
 
         <h5>BSP tree from intervals</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // build a bsp tree from the union of several intervals
 RegionBSPTree1D tree = RegionBSPTree1D.empty();
@@ -617,7 +624,7 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
 
         <h5>Line intersection</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create some lines
 Line a = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), precision);
@@ -631,7 +638,7 @@ double angleBtoA = b.angle(a); // -pi/4
 
         <h5>Line segment intersection</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create some line segments
 Segment segmentA = Lines.segmentFromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1), precision);
@@ -647,7 +654,7 @@ Vector2D bIntersection = segmentB.intersection(ray); // null - no intersection
 
         <h5>BSP tree union</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create a connected sequence of line segments forming the unit square
 LinePath path = LinePath.builder(precision)
@@ -681,12 +688,12 @@ List&lt;LinePath&gt; boundaries = tree.getBoundaryPaths(); // size = 1
 
         <h5>Linecast</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 Parallelogram box = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
 
 LinecastPoint2D pt = box.linecastFirst(
-        Lines.segmentFromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
+    Lines.segmentFromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
 
 Vector2D intersection = pt.getPoint(); // (2.0, 0.5)
 Vector2D normal = pt.getNormal(); // (1.0, 0.0)
@@ -779,12 +786,12 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
 
         <h5>Plane intersection</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create two planes
 Plane a = Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, precision);
 Plane b = Planes.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1),
-        Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_Y, precision);
+    Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_Y, precision);
 
 // compute the intersection
 Line3D line = a.intersection(b);
@@ -794,7 +801,7 @@ Vector3D dir = line.getDirection(); // (0, 1, 0)
 
         <h5>Transforms</h5>
         <source>
-List&gt;Vector3D&lt; inputPts = Arrays.asList(
+List&lt;Vector3D&gt; inputPts = Arrays.asList(
         Vector3D.ZERO,
         Vector3D.Unit.PLUS_X,
         Vector3D.Unit.PLUS_Y,
@@ -805,21 +812,21 @@ AffineTransformMatrix3D mat = AffineTransformMatrix3D.createScale(2)
         .translate(Vector3D.of(1, 2, 3));
 
 QuaternionRotation rot = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z,
-        PlaneAngleRadians.PI_OVER_TWO);
+        Angle.PI_OVER_TWO);
 
 // transform the input points
-List&gt;Vector3D&lt; matOutput = inputPts.stream()
+List&lt;Vector3D&gt; matOutput = inputPts.stream()
         .map(mat)
         .collect(Collectors.toList()); // [(1, 2, 3), (3, 2, 3), (1, 4, 3), (1, 2, 5)]
 
-List&gt;Vector3D&lt; rotOutput = inputPts.stream()
+List&lt;Vector3D&gt; rotOutput = inputPts.stream()
         .map(rot)
         .collect(Collectors.toList()); // [(0, 0, 0), (0, 1, 0), (-1, 0, 0), (0, 0, 1)]
         </source>
 
         <h5>BSP tree from boundaries</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create the faces of a pyramid with a square base and its apex pointing along the
 // positive z axis
@@ -857,7 +864,7 @@ List&lt;PlaneConvexSubset&gt; minusBoundaries = minus.getBoundaries(); // size =
 
         <h5>Linecast</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create a BSP tree representing an axis-aligned cube with corners at (0, 0, 0) and (1, 1, 1)
 RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 1, 1), precision)
@@ -867,7 +874,7 @@ RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 
 Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(0.5, 0.5, -1), Vector3D.Unit.PLUS_Z, precision);
 
 // perform the linecast
-List&gt;LinecastPoint3D&lt; pts = tree.linecast(ray);
+List&lt;LinecastPoint3D&gt; pts = tree.linecast(ray);
 
 // check the results
 int intersectionCount = pts.size(); // intersectionCount = 2
@@ -961,11 +968,11 @@ Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)
 
         <h5>AngularInterval creation</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create angular intervals of different sizes, one of size pi/2 and one of size 3pi/2
-AngularInterval a = AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, precision);
-AngularInterval b = AngularInterval.of(Point1S.PI, Point1S.of(PlaneAngleRadians.PI_OVER_TWO), precision);
+AngularInterval a = AngularInterval.of(0, Angle.PI_OVER_TWO, precision);
+AngularInterval b = AngularInterval.of(Point1S.PI, Point1S.of(Angle.PI_OVER_TWO), precision);
 
 // test some points
 a.contains(Point1S.of(0.25 * Math.PI)); // true
@@ -977,7 +984,7 @@ RegionLocation bLocZero = b.classify(Point1S.ZERO); // RegionLocation.INSIDE
 
         <h5>BSP tree from intervals</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create a region from the union of multiple angular intervals
 RegionBSPTree1S tree = RegionBSPTree1S.empty();
@@ -1054,7 +1061,7 @@ List&lt;AngularInterval&gt; intervals = tree.toIntervals(); //size = 2
 
         <h5>GreatCircle intersection</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create two great circles
 GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
@@ -1067,7 +1074,7 @@ Point2S ptB = ptA.antipodal(); // (0, pi/2)
 
         <h5>BSP tree from boundaries</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create a path outlining a quadrant triangle
 GreatArcPath path = GreatArcPath.builder(precision)
@@ -1129,7 +1136,7 @@ List&lt;GreatArcPath&gt; minusPaths = minus.getBoundaryPaths(); // size = 1
 
         <h5>Monotone Chain</h5>
         <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
 // create a list of input points for the algorithm
 List&lt;Vector2D&gt; pts = Arrays.asList(
@@ -1191,9 +1198,9 @@ boolean containsAll = pts.stream().allMatch(region::contains); // true - region 
 
       <h5>WelzlEncloser3D</h5>
       <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
-List&gt;Vector3D&lt; points = Arrays.asList(
+List&lt;Vector3D&gt; points = Arrays.asList(
             Vector3D.of(0, 0, 1),
             Vector3D.of(0.75, 0, 1),
             Vector3D.of(2, 0, 1),
@@ -1203,7 +1210,7 @@ List&gt;Vector3D&lt; points = Arrays.asList(
 // compute the enclosing ball
 WelzlEncloser3D encloser = new WelzlEncloser3D(precision);
 
-EnclosingBall&gt;Vector3D&lt; sphere = encloser.enclose(points);
+EnclosingBall&lt;Vector3D&gt; sphere = encloser.enclose(points);
 
 // check the generated ball
 Vector3D center = sphere.getCenter(); // (1, 0, 1)

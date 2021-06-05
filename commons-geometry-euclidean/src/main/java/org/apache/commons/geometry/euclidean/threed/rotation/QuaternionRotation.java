@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.quaternion.Quaternion;
 import org.apache.commons.numbers.quaternion.Slerp;
@@ -414,8 +414,8 @@ public final class QuaternionRotation implements Rotation3D {
             final double angle1TanX = vec2.dot(axis2);
 
             final double angle2 = angle2Sin > AXIS_ANGLE_SINGULARITY_THRESHOLD ?
-                    PlaneAngleRadians.PI_OVER_TWO :
-                    -PlaneAngleRadians.PI_OVER_TWO;
+                    Angle.PI_OVER_TWO :
+                    -Angle.PI_OVER_TWO;
 
             return new double[] {
                 Math.atan2(angle1TanY, angle1TanX),
@@ -482,7 +482,7 @@ public final class QuaternionRotation implements Rotation3D {
             final double angle1TanY = vec2.dot(crossAxis);
             final double angle1TanX = vec2.dot(axis2);
 
-            final double angle2 = angle2Cos > AXIS_ANGLE_SINGULARITY_THRESHOLD ? 0.0 : PlaneAngleRadians.PI;
+            final double angle2 = angle2Cos > AXIS_ANGLE_SINGULARITY_THRESHOLD ? 0.0 : Math.PI;
 
             return new double[] {
                 Math.atan2(angle1TanY, angle1TanX),

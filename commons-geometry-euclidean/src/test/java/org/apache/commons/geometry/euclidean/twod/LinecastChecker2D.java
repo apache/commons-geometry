@@ -19,8 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 
 /** Helper class designed to assist with linecast test assertions in 2D.
@@ -29,8 +28,8 @@ public class LinecastChecker2D {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     /** The linecastable target. */
     private final Linecastable2D target;

@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
 import org.apache.commons.geometry.enclosing.euclidean.twod.DiskGenerator;
@@ -28,6 +27,7 @@ import org.apache.commons.geometry.euclidean.threed.EmbeddingPlane;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.numbers.fraction.BigFraction;
 
 /** Class generating a sphere from its support points.
@@ -35,12 +35,12 @@ import org.apache.commons.numbers.fraction.BigFraction;
 public class SphereGenerator implements SupportBallGenerator<Vector3D> {
 
     /** Precision context used to compare floating point numbers. */
-    private final DoublePrecisionContext precision;
+    private final Precision.DoubleEquivalence precision;
 
     /** Construct a new instance with the given precision context.
      * @param precision precision context used to compare floating point numbers
      */
-    public SphereGenerator(final DoublePrecisionContext precision) {
+    public SphereGenerator(final Precision.DoubleEquivalence precision) {
         this.precision = precision;
     }
 

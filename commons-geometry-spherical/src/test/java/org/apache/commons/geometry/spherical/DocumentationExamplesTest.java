@@ -20,8 +20,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.Point1S;
@@ -31,7 +29,8 @@ import org.apache.commons.geometry.spherical.twod.GreatCircle;
 import org.apache.commons.geometry.spherical.twod.GreatCircles;
 import org.apache.commons.geometry.spherical.twod.Point2S;
 import org.apache.commons.geometry.spherical.twod.RegionBSPTree2S;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,11 +43,11 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testAngularIntervalExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create angular intervals of different sizes, one of size pi/2 and one of size 3pi/2
-        final AngularInterval a = AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, precision);
-        final AngularInterval b = AngularInterval.of(Point1S.PI, Point1S.of(PlaneAngleRadians.PI_OVER_TWO), precision);
+        final AngularInterval a = AngularInterval.of(0, Angle.PI_OVER_TWO, precision);
+        final AngularInterval b = AngularInterval.of(Point1S.PI, Point1S.of(Angle.PI_OVER_TWO), precision);
 
         // test some points
         a.contains(Point1S.of(0.25 * Math.PI)); // true
@@ -67,7 +66,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testRegionBSPTree1SExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a region from the union of multiple angular intervals
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
@@ -88,7 +87,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testGreatCircleIntersectionExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create two great circles
         final GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
@@ -105,7 +104,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testRegionBSPTree2SExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a path outlining a quadrant triangle
         final GreatArcPath path = GreatArcPath.builder(precision)

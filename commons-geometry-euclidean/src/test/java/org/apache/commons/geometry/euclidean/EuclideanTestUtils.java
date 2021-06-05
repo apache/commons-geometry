@@ -21,10 +21,10 @@ import java.util.List;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -197,7 +197,7 @@ public final class EuclideanTestUtils {
      * @param precision
      */
     public static <V extends EuclideanVector<V>> void assertVertexLoopSequence(final List<V> expected, final List<V> actual,
-                                                                               final DoublePrecisionContext precision) {
+                                                                               final Precision.DoubleEquivalence precision) {
         Assertions.assertEquals(expected.size(), actual.size(), "Vertex sequences have different sizes");
 
         if (!expected.isEmpty()) {

@@ -20,7 +20,6 @@ import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -202,7 +201,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApply_translate() {
         // arrange
-        final Vector1D translation = Vector1D.of(-PlaneAngleRadians.PI);
+        final Vector1D translation = Vector1D.of(-Math.PI);
 
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
                 .translate(translation);
@@ -315,7 +314,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApplyVector_translate() {
         // arrange
-        final Vector1D translation = Vector1D.of(-PlaneAngleRadians.PI);
+        final Vector1D translation = Vector1D.of(-Math.PI);
 
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
                 .translate(translation);
@@ -349,7 +348,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApplyVector_representsDisplacement() {
         // arrange
-        final Vector1D p1 = Vector1D.of(PlaneAngleRadians.PI);
+        final Vector1D p1 = Vector1D.of(Math.PI);
 
         final Vector1D translation = Vector1D.of(-2.0);
         final Vector1D scale = Vector1D.of(5.0);
@@ -372,7 +371,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApplyVectorX() {
         // arrange
-        final Vector1D p1 = Vector1D.of(PlaneAngleRadians.PI);
+        final Vector1D p1 = Vector1D.of(Math.PI);
 
         final Vector1D translation = Vector1D.of(-2.0);
         final Vector1D scale = Vector1D.of(5.0);
@@ -407,7 +406,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApplyDirection_translate() {
         // arrange
-        final Vector1D translation = Vector1D.of(-PlaneAngleRadians.PI);
+        final Vector1D translation = Vector1D.of(-Math.PI);
 
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
                 .translate(translation);
@@ -441,7 +440,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApplyDirection_representsNormalizedDisplacement() {
         // arrange
-        final Vector1D p1 = Vector1D.of(PlaneAngleRadians.PI);
+        final Vector1D p1 = Vector1D.of(Math.PI);
 
         final Vector1D translation = Vector1D.of(-2.0);
         final Vector1D scale = Vector1D.of(5.0);

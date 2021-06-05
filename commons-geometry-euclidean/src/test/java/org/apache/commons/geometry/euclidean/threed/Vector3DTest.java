@@ -24,10 +24,8 @@ import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -558,12 +556,12 @@ public class Vector3DTest {
         Assertions.assertEquals(3.14159257373023116985197793156, v1.angle(Vector3D.of(-2, -4, -6.000001)), tolerance);
 
         Assertions.assertEquals(0.0, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_X), tolerance);
-        Assertions.assertEquals(PlaneAngleRadians.PI, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_X), tolerance);
+        Assertions.assertEquals(Math.PI, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_X), tolerance);
 
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Y), tolerance);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Y), tolerance);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Z), tolerance);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Z), tolerance);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Y), tolerance);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Y), tolerance);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Z), tolerance);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Z), tolerance);
     }
 
     @Test
@@ -904,8 +902,8 @@ public class Vector3DTest {
     }
 
     private void checkProjectAndRejectFullSphere(final Vector3D vec, final double baseMag, final double eps) {
-        for (double polar = 0.0; polar <= PlaneAngleRadians.PI; polar += 0.5) {
-            for (double azimuth = 0.0; azimuth <= PlaneAngleRadians.TWO_PI; azimuth += 0.5) {
+        for (double polar = 0.0; polar <= Math.PI; polar += 0.5) {
+            for (double azimuth = 0.0; azimuth <= Angle.TWO_PI; azimuth += 0.5) {
                 final Vector3D base = SphericalCoordinates.toCartesian(baseMag, azimuth, polar);
 
                 final Vector3D proj = vec.project(base);
@@ -919,17 +917,17 @@ public class Vector3DTest {
                 // check the angle between the projection and the base; this will
                 // be undefined when the angle between the original vector and the
                 // base is pi/2 (which means that the projection is the zero vector)
-                if (angle < PlaneAngleRadians.PI_OVER_TWO) {
+                if (angle < Angle.PI_OVER_TWO) {
                     Assertions.assertEquals(0.0, proj.angle(base), eps);
-                } else if (angle > PlaneAngleRadians.PI_OVER_TWO) {
-                    Assertions.assertEquals(PlaneAngleRadians.PI, proj.angle(base), eps);
+                } else if (angle > Angle.PI_OVER_TWO) {
+                    Assertions.assertEquals(Math.PI, proj.angle(base), eps);
                 }
 
                 // check the angle between the rejection and the base; this should
                 // always be pi/2 except for when the angle between the original vector
                 // and the base is 0 or pi, in which case the rejection is the zero vector.
-                if (angle > 0.0 && angle < PlaneAngleRadians.PI) {
-                    Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, rej.angle(base), eps);
+                if (angle > 0.0 && angle < Math.PI) {
+                    Assertions.assertEquals(Angle.PI_OVER_TWO, rej.angle(base), eps);
                 }
             }
         }
@@ -1027,8 +1025,8 @@ public class Vector3DTest {
     @Test
     public void testPrecisionEquals() {
         // arrange
-        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-6);
+        final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
         final Vector3D vec = Vector3D.of(1, -2, 3);
 
@@ -1058,8 +1056,8 @@ public class Vector3DTest {
     @Test
     public void testIsZero() {
         // arrange
-        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-6);
+        final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
         // act/assert
         Assertions.assertTrue(Vector3D.of(0.0, -0.0, 0.0).isZero(smallEps));

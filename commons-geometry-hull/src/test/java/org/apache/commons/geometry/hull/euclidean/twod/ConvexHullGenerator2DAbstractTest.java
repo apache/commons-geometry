@@ -23,8 +23,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -42,8 +40,8 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
     protected static final double TEST_EPS = 1e-10;
 
-    protected static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    protected static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     protected ConvexHullGenerator2D generator;
 

@@ -18,10 +18,10 @@ package org.apache.commons.geometry.euclidean.threed.line;
 
 import java.text.MessageFormat;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing factory methods for constructing {@link Line3D} and {@link LineSubset3D} instances.
  */
@@ -41,7 +41,7 @@ public final class Lines3D {
      * @throws IllegalArgumentException if the points lie too close to create a non-zero direction vector
      */
     public static Line3D fromPoints(final Vector3D p1, final Vector3D p2,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return fromPointAndDirection(p1, p1.vectorTo(p2), precision);
     }
 
@@ -55,7 +55,7 @@ public final class Lines3D {
      *      given precision context
      */
     public static Line3D fromPointAndDirection(final Vector3D pt, final Vector3D dir,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         if (dir.isZero(precision)) {
             throw new IllegalArgumentException("Line direction cannot be zero");
         }
@@ -73,10 +73,10 @@ public final class Lines3D {
      * @return a new ray instance with the given start point and direction
      * @throws IllegalArgumentException If {@code direction} has zero length, as evaluated by the
      *      given precision context
-     * @see Lines3D#fromPointAndDirection(Vector3D, Vector3D, DoublePrecisionContext)
+     * @see Lines3D#fromPointAndDirection(Vector3D, Vector3D, Precision.DoubleEquivalence)
      */
     public static Ray3D rayFromPointAndDirection(final Vector3D startPoint, final Vector3D direction,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Line3D line = Lines3D.fromPointAndDirection(startPoint, direction, precision);
 
         return new Ray3D(line, startPoint);
@@ -117,10 +117,10 @@ public final class Lines3D {
      * @return a new reverse ray with the given end point and line direction
      * @throws IllegalArgumentException If {@code lineDirection} has zero length, as evaluated by the
      *      given precision context
-     * @see Lines3D#fromPointAndDirection(Vector3D, Vector3D, DoublePrecisionContext)
+     * @see Lines3D#fromPointAndDirection(Vector3D, Vector3D, Precision.DoubleEquivalence)
      */
     public static ReverseRay3D reverseRayFromPointAndDirection(final Vector3D endPoint, final Vector3D lineDirection,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Line3D line = Lines3D.fromPointAndDirection(endPoint, lineDirection, precision);
 
         return new ReverseRay3D(line, endPoint);
@@ -161,10 +161,10 @@ public final class Lines3D {
      * @return a new line segment instance with the given start and end points
      * @throws IllegalArgumentException If the vector between {@code startPoint} and {@code endPoint} has zero length,
      *      as evaluated by the given precision context
-     * @see Lines3D#fromPoints(Vector3D, Vector3D, DoublePrecisionContext)
+     * @see Lines3D#fromPoints(Vector3D, Vector3D, Precision.DoubleEquivalence)
      */
     public static Segment3D segmentFromPoints(final Vector3D startPoint, final Vector3D endPoint,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Line3D line = Lines3D.fromPoints(startPoint, endPoint, precision);
 
         // we know that the points lie on the line and are in increasing abscissa order

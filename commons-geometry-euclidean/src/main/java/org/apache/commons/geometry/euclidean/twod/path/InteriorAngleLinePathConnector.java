@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Line subset connector that selects between multiple connection options
  * based on the resulting interior angle. An interior angle in this
@@ -49,7 +48,7 @@ public abstract class InteriorAngleLinePathConnector extends AbstractLinePathCon
 
         for (final ConnectableLineSubset candidate : outgoing) {
             final double interiorAngle =
-                    PlaneAngleRadians.PI - incomingLine.angle(candidate.getLineSubset().getLine());
+                    Math.PI - incomingLine.angle(candidate.getLineSubset().getLine());
 
             if (selected == null || isBetterAngle(interiorAngle, selectedInteriorAngle)) {
                 selectedInteriorAngle = interiorAngle;

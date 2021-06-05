@@ -22,8 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
@@ -31,7 +29,8 @@ import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.AbstractLinePathConnector.ConnectableLineSubset;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -39,10 +38,10 @@ public class AbstractLinePathConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
-    private static final Line Y_AXIS = Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO,
+    private static final Line Y_AXIS = Lines.fromPointAndAngle(Vector2D.ZERO, Angle.PI_OVER_TWO,
             TEST_PRECISION);
 
     private final TestConnector connector = new TestConnector();
@@ -270,11 +269,11 @@ public class AbstractLinePathConnectorTest {
 
         final LinePath input = LinePath.builder(TEST_PRECISION)
                 .appendVertices(p0, p1)
-                .append(Lines.fromPointAndAngle(p1, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION).segment(p1, p1))
-                .append(Lines.fromPointAndAngle(p1, -0.25 * PlaneAngleRadians.PI, TEST_PRECISION).segment(almostP1, almostP1))
+                .append(Lines.fromPointAndAngle(p1, 0.25 * Math.PI, TEST_PRECISION).segment(p1, p1))
+                .append(Lines.fromPointAndAngle(p1, -0.25 * Math.PI, TEST_PRECISION).segment(almostP1, almostP1))
                 .append(p2)
                 .append(p0)
-                .append(Lines.fromPointAndAngle(Vector2D.ZERO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+                .append(Lines.fromPointAndAngle(Vector2D.ZERO, -Angle.PI_OVER_TWO, TEST_PRECISION)
                         .segment(almostP0, almostP0))
                 .build();
 
@@ -298,8 +297,8 @@ public class AbstractLinePathConnectorTest {
 
         final Segment seg0 = Lines.segmentFromPoints(p0, p1, TEST_PRECISION);
         final Segment seg1 = Lines.segmentFromPoints(p1, p0, TEST_PRECISION);
-        final LineConvexSubset seg2 = Lines.fromPointAndAngle(p1, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p1, p1);
-        final LineConvexSubset seg3 = Lines.fromPointAndAngle(p0, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
+        final LineConvexSubset seg2 = Lines.fromPointAndAngle(p1, Angle.PI_OVER_TWO, TEST_PRECISION).segment(p1, p1);
+        final LineConvexSubset seg3 = Lines.fromPointAndAngle(p0, -Angle.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
 
         final List<LineConvexSubset> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
         shuffle(segments);
@@ -323,9 +322,9 @@ public class AbstractLinePathConnectorTest {
         final Vector2D p0 = Vector2D.of(1, 0);
 
         final LineConvexSubset seg0 = Lines.fromPointAndAngle(p0, 0.0, TEST_PRECISION).segment(p0, p0);
-        final LineConvexSubset seg1 = Lines.fromPointAndAngle(p0, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
-        final LineConvexSubset seg2 = Lines.fromPointAndAngle(p0, PlaneAngleRadians.PI, TEST_PRECISION).segment(p0, p0);
-        final LineConvexSubset seg3 = Lines.fromPointAndAngle(p0, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
+        final LineConvexSubset seg1 = Lines.fromPointAndAngle(p0, Angle.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
+        final LineConvexSubset seg2 = Lines.fromPointAndAngle(p0, Math.PI, TEST_PRECISION).segment(p0, p0);
+        final LineConvexSubset seg3 = Lines.fromPointAndAngle(p0, -Angle.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
 
         final List<LineConvexSubset> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
         shuffle(segments);
@@ -350,7 +349,7 @@ public class AbstractLinePathConnectorTest {
         final Vector2D p1 = Vector2D.of(1, 0);
 
         final LineConvexSubset seg0 = Lines.fromPointAndAngle(p1, 0.0, TEST_PRECISION).segment(p1, p1);
-        final LineConvexSubset seg1 = Lines.fromPointAndAngle(p1, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION).segment(p1, p1);
+        final LineConvexSubset seg1 = Lines.fromPointAndAngle(p1, 0.25 * Math.PI, TEST_PRECISION).segment(p1, p1);
         final LineConvexSubset seg2 = Lines.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0);
 
         final List<LineConvexSubset> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2));
@@ -380,7 +379,7 @@ public class AbstractLinePathConnectorTest {
         final Vector2D p1 = Vector2D.of(1, 0);
         final Vector2D p2 = Vector2D.of(1, 1);
 
-        final LineConvexSubset seg0 = Lines.fromPointAndAngle(p0, PlaneAngleRadians.PI, TEST_PRECISION).segment(p0, p0);
+        final LineConvexSubset seg0 = Lines.fromPointAndAngle(p0, Math.PI, TEST_PRECISION).segment(p0, p0);
         final LineConvexSubset seg1 = Lines.segmentFromPoints(p0, p1, TEST_PRECISION);
         final LineConvexSubset seg2 = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
 

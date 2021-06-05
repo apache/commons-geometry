@@ -19,9 +19,9 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.Arrays;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractBounds;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing minimum and maximum points defining a 2D axis-aligned bounding box. Unless otherwise
  * noted, floating point comparisons used in this class are strict, meaning that values are considered equal
@@ -41,7 +41,7 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasSize(final DoublePrecisionContext precision) {
+    public boolean hasSize(final Precision.DoubleEquivalence precision) {
         final Vector2D diag = getDiagonal();
 
         return !precision.eqZero(diag.getX()) &&
@@ -63,7 +63,7 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean contains(final Vector2D pt, final DoublePrecisionContext precision) {
+    public boolean contains(final Vector2D pt, final Precision.DoubleEquivalence precision) {
         final double x = pt.getX();
         final double y = pt.getY();
 
@@ -118,7 +118,7 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D> {
      *      as evaluated by the given precision context
      */
     @Override
-    public Parallelogram toRegion(final DoublePrecisionContext precision) {
+    public Parallelogram toRegion(final Precision.DoubleEquivalence precision) {
         return Parallelogram.axisAligned(getMin(), getMax(), precision);
     }
 

@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexVolume;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing parallelepipeds, i.e. 3 dimensional figures formed by six
  * parallelograms. For example, cubes and rectangular prisms are parallelepipeds.
@@ -76,7 +76,7 @@ public final class Parallelepiped extends ConvexVolume {
      * @param precision precision context used to construct boundaries
      * @return a new instance representing a unit cube centered at the origin
      */
-    public static Parallelepiped unitCube(final DoublePrecisionContext precision) {
+    public static Parallelepiped unitCube(final Precision.DoubleEquivalence precision) {
         return fromTransformedUnitCube(AffineTransformMatrix3D.identity(), precision);
     }
 
@@ -91,7 +91,7 @@ public final class Parallelepiped extends ConvexVolume {
      *      as evaluated by the precision context.
      */
     public static Parallelepiped axisAligned(final Vector3D a, final Vector3D b,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         final double minX = Math.min(a.getX(), b.getX());
         final double maxX = Math.max(a.getX(), b.getX());
@@ -141,7 +141,7 @@ public final class Parallelepiped extends ConvexVolume {
      *      as evaluated by the precision context.
      */
     public static Parallelepiped fromTransformedUnitCube(final Transform<Vector3D> transform,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         final List<Vector3D> vertices = UNIT_CUBE_VERTICES.stream()
                 .map(transform)
@@ -174,7 +174,7 @@ public final class Parallelepiped extends ConvexVolume {
      * @param precision precision context used to create boundaries
      * @return a new {@link Builder} instance
      */
-    public static Builder builder(final DoublePrecisionContext precision) {
+    public static Builder builder(final Precision.DoubleEquivalence precision) {
         return new Builder(precision);
     }
 
@@ -189,7 +189,8 @@ public final class Parallelepiped extends ConvexVolume {
      * @return a parallelepiped face created from the indexed vertices
      */
     private static PlaneConvexSubset createFace(final int a, final int b, final int c, final int d,
-            final List<? extends Vector3D> vertices, final boolean reverse, final DoublePrecisionContext precision) {
+            final List<? extends Vector3D> vertices, final boolean reverse,
+            final Precision.DoubleEquivalence precision) {
 
         final Vector3D pa = vertices.get(a);
         final Vector3D pb = vertices.get(b);
@@ -211,7 +212,7 @@ public final class Parallelepiped extends ConvexVolume {
      * @throws IllegalArgumentException if the given points are equivalent according to the precision context
      */
     private static void ensureNonZeroSideLength(final Vector3D a, final Vector3D b,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         if (precision.eqZero(a.distance(b))) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Parallelepiped has zero size: vertices {0} and {1} are equivalent", a, b));
@@ -237,12 +238,12 @@ public final class Parallelepiped extends ConvexVolume {
         private Vector3D position = Vector3D.ZERO;
 
         /** Precision context used to construct boundaries. */
-        private final DoublePrecisionContext precision;
+        private final Precision.DoubleEquivalence precision;
 
         /** Construct a new instance configured with the given precision context.
          * @param precision precision context used to create boundaries
          */
-        private Builder(final DoublePrecisionContext precision) {
+        private Builder(final Precision.DoubleEquivalence precision) {
             this.precision = precision;
         }
 
@@ -298,7 +299,7 @@ public final class Parallelepiped extends ConvexVolume {
          * @return a new parallelepiped instance
          * @throws IllegalArgumentException if the length of any side of the parallelepiped is zero,
          *      as determined by the configured precision context
-         * @see Parallelepiped#fromTransformedUnitCube(Transform, DoublePrecisionContext)
+         * @see Parallelepiped#fromTransformedUnitCube(Transform, Precision.DoubleEquivalence)
          */
         public Parallelepiped build() {
             final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createScale(scale)

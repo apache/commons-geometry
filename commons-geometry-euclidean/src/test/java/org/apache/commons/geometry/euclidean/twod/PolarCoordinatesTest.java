@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,24 +27,26 @@ public class PolarCoordinatesTest {
 
     private static final double EPS = 1e-10;
 
+    private static final double THREE_PI_OVER_TWO = 3 * Math.PI / 2;
+
     @Test
     public void testOf() {
         // act/assert
         checkPolar(PolarCoordinates.of(0, 0), 0, 0);
 
         checkPolar(PolarCoordinates.of(2, 0), 2, 0);
-        checkPolar(PolarCoordinates.of(2, PlaneAngleRadians.PI_OVER_TWO), 2, PlaneAngleRadians.PI_OVER_TWO);
-        checkPolar(PolarCoordinates.of(2, PlaneAngleRadians.PI), 2, PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.of(2, -PlaneAngleRadians.PI_OVER_TWO), 2, PlaneAngleRadians.THREE_PI_OVER_TWO);
+        checkPolar(PolarCoordinates.of(2, Angle.PI_OVER_TWO), 2, Angle.PI_OVER_TWO);
+        checkPolar(PolarCoordinates.of(2, Math.PI), 2, Math.PI);
+        checkPolar(PolarCoordinates.of(2, -Angle.PI_OVER_TWO), 2, THREE_PI_OVER_TWO);
     }
 
     @Test
     public void testOf_unnormalizedAngles() {
         // act/assert
-        checkPolar(PolarCoordinates.of(2, PlaneAngleRadians.TWO_PI), 2, 0);
-        checkPolar(PolarCoordinates.of(2, PlaneAngleRadians.PI_OVER_TWO + PlaneAngleRadians.TWO_PI), 2, PlaneAngleRadians.PI_OVER_TWO);
-        checkPolar(PolarCoordinates.of(2, -PlaneAngleRadians.PI), 2, PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.of(2, -PlaneAngleRadians.PI * 1.5), 2, PlaneAngleRadians.PI_OVER_TWO);
+        checkPolar(PolarCoordinates.of(2, Angle.TWO_PI), 2, 0);
+        checkPolar(PolarCoordinates.of(2, Angle.PI_OVER_TWO + Angle.TWO_PI), 2, Angle.PI_OVER_TWO);
+        checkPolar(PolarCoordinates.of(2, -Math.PI), 2, Math.PI);
+        checkPolar(PolarCoordinates.of(2, -Math.PI * 1.5), 2, Angle.PI_OVER_TWO);
     }
 
     @Test
@@ -55,39 +57,39 @@ public class PolarCoordinatesTest {
         // act/assert
         checkAzimuthWrapAround(2, 0);
         checkAzimuthWrapAround(2, delta);
-        checkAzimuthWrapAround(2, PlaneAngleRadians.PI - delta);
-        checkAzimuthWrapAround(2, PlaneAngleRadians.PI);
+        checkAzimuthWrapAround(2, Math.PI - delta);
+        checkAzimuthWrapAround(2, Math.PI);
 
-        checkAzimuthWrapAround(2, PlaneAngleRadians.THREE_PI_OVER_TWO);
-        checkAzimuthWrapAround(2, PlaneAngleRadians.TWO_PI - delta);
+        checkAzimuthWrapAround(2, THREE_PI_OVER_TWO);
+        checkAzimuthWrapAround(2, Angle.TWO_PI - delta);
     }
 
     private void checkAzimuthWrapAround(final double radius, final double azimuth) {
         checkPolar(PolarCoordinates.of(radius, azimuth), radius, azimuth);
 
-        checkPolar(PolarCoordinates.of(radius, azimuth - PlaneAngleRadians.TWO_PI), radius, azimuth);
-        checkPolar(PolarCoordinates.of(radius, azimuth - (2 * PlaneAngleRadians.TWO_PI)), radius, azimuth);
-        checkPolar(PolarCoordinates.of(radius, azimuth - (3 * PlaneAngleRadians.TWO_PI)), radius, azimuth);
+        checkPolar(PolarCoordinates.of(radius, azimuth - Angle.TWO_PI), radius, azimuth);
+        checkPolar(PolarCoordinates.of(radius, azimuth - (2 * Angle.TWO_PI)), radius, azimuth);
+        checkPolar(PolarCoordinates.of(radius, azimuth - (3 * Angle.TWO_PI)), radius, azimuth);
 
-        checkPolar(PolarCoordinates.of(radius, azimuth + PlaneAngleRadians.TWO_PI), radius, azimuth);
-        checkPolar(PolarCoordinates.of(radius, azimuth + (2 * PlaneAngleRadians.TWO_PI)), radius, azimuth);
-        checkPolar(PolarCoordinates.of(radius, azimuth + (3 * PlaneAngleRadians.TWO_PI)), radius, azimuth);
+        checkPolar(PolarCoordinates.of(radius, azimuth + Angle.TWO_PI), radius, azimuth);
+        checkPolar(PolarCoordinates.of(radius, azimuth + (2 * Angle.TWO_PI)), radius, azimuth);
+        checkPolar(PolarCoordinates.of(radius, azimuth + (3 * Angle.TWO_PI)), radius, azimuth);
     }
 
     @Test
     public void testOf_negativeRadius() {
         // act/assert
-        checkPolar(PolarCoordinates.of(-1, 0), 1, PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.of(-1e-6, PlaneAngleRadians.PI_OVER_TWO), 1e-6, PlaneAngleRadians.THREE_PI_OVER_TWO);
-        checkPolar(PolarCoordinates.of(-2, PlaneAngleRadians.PI), 2, 0);
-        checkPolar(PolarCoordinates.of(-3, -PlaneAngleRadians.PI_OVER_TWO), 3, PlaneAngleRadians.PI_OVER_TWO);
+        checkPolar(PolarCoordinates.of(-1, 0), 1, Math.PI);
+        checkPolar(PolarCoordinates.of(-1e-6, Angle.PI_OVER_TWO), 1e-6, THREE_PI_OVER_TWO);
+        checkPolar(PolarCoordinates.of(-2, Math.PI), 2, 0);
+        checkPolar(PolarCoordinates.of(-3, -Angle.PI_OVER_TWO), 3, Angle.PI_OVER_TWO);
     }
 
     @Test
     public void testOf_NaNAndInfinite() {
         // act/assert
         checkPolar(PolarCoordinates.of(Double.NaN, 0), Double.NaN, 0);
-        checkPolar(PolarCoordinates.of(Double.NEGATIVE_INFINITY, 0), Double.POSITIVE_INFINITY, PlaneAngleRadians.PI);
+        checkPolar(PolarCoordinates.of(Double.NEGATIVE_INFINITY, 0), Double.POSITIVE_INFINITY, Math.PI);
         checkPolar(PolarCoordinates.of(Double.POSITIVE_INFINITY, 0), Double.POSITIVE_INFINITY, 0);
 
         checkPolar(PolarCoordinates.of(0, Double.NaN), 0, Double.NaN);
@@ -104,15 +106,15 @@ public class PolarCoordinatesTest {
         checkPolar(PolarCoordinates.fromCartesian(0, 0), 0, 0);
 
         checkPolar(PolarCoordinates.fromCartesian(1, 0), 1, 0);
-        checkPolar(PolarCoordinates.fromCartesian(1, 1), sqrt2, 0.25 * PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.fromCartesian(0, 1), 1, PlaneAngleRadians.PI_OVER_TWO);
+        checkPolar(PolarCoordinates.fromCartesian(1, 1), sqrt2, 0.25 * Math.PI);
+        checkPolar(PolarCoordinates.fromCartesian(0, 1), 1, Angle.PI_OVER_TWO);
 
-        checkPolar(PolarCoordinates.fromCartesian(-1, 1), sqrt2, 0.75 * PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.fromCartesian(-1, 0), 1, PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.fromCartesian(-1, -1), sqrt2, 1.25 * PlaneAngleRadians.PI);
+        checkPolar(PolarCoordinates.fromCartesian(-1, 1), sqrt2, 0.75 * Math.PI);
+        checkPolar(PolarCoordinates.fromCartesian(-1, 0), 1, Math.PI);
+        checkPolar(PolarCoordinates.fromCartesian(-1, -1), sqrt2, 1.25 * Math.PI);
 
-        checkPolar(PolarCoordinates.fromCartesian(0, -1), 1, 1.5 * PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.fromCartesian(1, -1), sqrt2, 1.75 * PlaneAngleRadians.PI);
+        checkPolar(PolarCoordinates.fromCartesian(0, -1), 1, 1.5 * Math.PI);
+        checkPolar(PolarCoordinates.fromCartesian(1, -1), sqrt2, 1.75 * Math.PI);
     }
 
     @Test
@@ -124,15 +126,15 @@ public class PolarCoordinatesTest {
         checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(0, 0)), 0, 0);
 
         checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(1, 0)), 1, 0);
-        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(1, 1)), sqrt2, 0.25 * PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(0, 1)), 1, PlaneAngleRadians.PI_OVER_TWO);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(1, 1)), sqrt2, 0.25 * Math.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(0, 1)), 1, Angle.PI_OVER_TWO);
 
-        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(-1, 1)), sqrt2, 0.75 * PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(-1, 0)), 1, PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(-1, -1)), sqrt2, 1.25 * PlaneAngleRadians.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(-1, 1)), sqrt2, 0.75 * Math.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(-1, 0)), 1, Math.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(-1, -1)), sqrt2, 1.25 * Math.PI);
 
-        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(0, -1)), 1, 1.5 * PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(1, -1)), sqrt2, 1.75 * PlaneAngleRadians.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(0, -1)), 1, 1.5 * Math.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(1, -1)), sqrt2, 1.75 * Math.PI);
     }
 
     @Test
@@ -177,7 +179,7 @@ public class PolarCoordinatesTest {
     public void testIsFinite() {
         // act/assert
         Assertions.assertTrue(PolarCoordinates.of(1, 0).isFinite());
-        Assertions.assertTrue(PolarCoordinates.of(1, PlaneAngleRadians.PI).isFinite());
+        Assertions.assertTrue(PolarCoordinates.of(1, Math.PI).isFinite());
 
         Assertions.assertFalse(PolarCoordinates.of(Double.NaN, Double.NaN).isFinite());
 
@@ -278,15 +280,15 @@ public class PolarCoordinatesTest {
         checkVector(PolarCoordinates.of(0, 0).toCartesian(), 0, 0);
 
         checkVector(PolarCoordinates.of(1, 0).toCartesian(), 1, 0);
-        checkVector(PolarCoordinates.of(sqrt2, 0.25 * PlaneAngleRadians.PI).toCartesian(), 1, 1);
-        checkVector(PolarCoordinates.of(1, PlaneAngleRadians.PI_OVER_TWO).toCartesian(), 0, 1);
+        checkVector(PolarCoordinates.of(sqrt2, 0.25 * Math.PI).toCartesian(), 1, 1);
+        checkVector(PolarCoordinates.of(1, Angle.PI_OVER_TWO).toCartesian(), 0, 1);
 
-        checkVector(PolarCoordinates.of(sqrt2, 0.75 * PlaneAngleRadians.PI).toCartesian(), -1, 1);
-        checkVector(PolarCoordinates.of(1, PlaneAngleRadians.PI).toCartesian(), -1, 0);
-        checkVector(PolarCoordinates.of(sqrt2, -0.75 * PlaneAngleRadians.PI).toCartesian(), -1, -1);
+        checkVector(PolarCoordinates.of(sqrt2, 0.75 * Math.PI).toCartesian(), -1, 1);
+        checkVector(PolarCoordinates.of(1, Math.PI).toCartesian(), -1, 0);
+        checkVector(PolarCoordinates.of(sqrt2, -0.75 * Math.PI).toCartesian(), -1, -1);
 
-        checkVector(PolarCoordinates.of(1, -PlaneAngleRadians.PI_OVER_TWO).toCartesian(), 0, -1);
-        checkVector(PolarCoordinates.of(sqrt2, -0.25 * PlaneAngleRadians.PI).toCartesian(), 1, -1);
+        checkVector(PolarCoordinates.of(1, -Angle.PI_OVER_TWO).toCartesian(), 0, -1);
+        checkVector(PolarCoordinates.of(sqrt2, -0.25 * Math.PI).toCartesian(), 1, -1);
     }
 
     @Test
@@ -298,15 +300,15 @@ public class PolarCoordinatesTest {
         checkVector(PolarCoordinates.toCartesian(0, 0), 0, 0);
 
         checkPoint(PolarCoordinates.toCartesian(1, 0), 1, 0);
-        checkPoint(PolarCoordinates.toCartesian(sqrt2, 0.25 * PlaneAngleRadians.PI), 1, 1);
-        checkPoint(PolarCoordinates.toCartesian(1, PlaneAngleRadians.PI_OVER_TWO), 0, 1);
+        checkPoint(PolarCoordinates.toCartesian(sqrt2, 0.25 * Math.PI), 1, 1);
+        checkPoint(PolarCoordinates.toCartesian(1, Angle.PI_OVER_TWO), 0, 1);
 
-        checkPoint(PolarCoordinates.toCartesian(sqrt2, 0.75 * PlaneAngleRadians.PI), -1, 1);
-        checkPoint(PolarCoordinates.toCartesian(1, PlaneAngleRadians.PI), -1, 0);
-        checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.75 * PlaneAngleRadians.PI), -1, -1);
+        checkPoint(PolarCoordinates.toCartesian(sqrt2, 0.75 * Math.PI), -1, 1);
+        checkPoint(PolarCoordinates.toCartesian(1, Math.PI), -1, 0);
+        checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.75 * Math.PI), -1, -1);
 
-        checkPoint(PolarCoordinates.toCartesian(1, -PlaneAngleRadians.PI_OVER_TWO), 0, -1);
-        checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.25 * PlaneAngleRadians.PI), 1, -1);
+        checkPoint(PolarCoordinates.toCartesian(1, -Angle.PI_OVER_TWO), 0, -1);
+        checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.25 * Math.PI), 1, -1);
     }
 
     @Test
@@ -342,7 +344,7 @@ public class PolarCoordinatesTest {
     public void testParse() {
         // act/assert
         checkPolar(PolarCoordinates.parse("(1, 2)"), 1, 2);
-        checkPolar(PolarCoordinates.parse("( -1 , 0.5 )"), 1, 0.5 + PlaneAngleRadians.PI);
+        checkPolar(PolarCoordinates.parse("( -1 , 0.5 )"), 1, 0.5 + Math.PI);
         checkPolar(PolarCoordinates.parse("(NaN,-Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY);
     }
 
@@ -357,15 +359,15 @@ public class PolarCoordinatesTest {
         // act/assert
         Assertions.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(0), EPS);
 
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI), EPS);
-        Assertions.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), EPS);
-        Assertions.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(Angle.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(Math.PI, PolarCoordinates.normalizeAzimuth(Math.PI), EPS);
+        Assertions.assertEquals(THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(THREE_PI_OVER_TWO), EPS);
+        Assertions.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(Angle.TWO_PI), EPS);
 
-        Assertions.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
-        Assertions.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), EPS);
+        Assertions.assertEquals(THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-Angle.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(Math.PI, PolarCoordinates.normalizeAzimuth(-Math.PI), EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-Math.PI - Angle.PI_OVER_TWO), EPS);
+        Assertions.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(-Angle.TWO_PI), EPS);
     }
 
     @Test

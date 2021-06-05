@@ -19,13 +19,12 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils.PermuteCallback3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.threed.rotation.StandardRotations;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,8 +32,8 @@ public class AffineTransformMatrix3DTest {
 
     private static final double EPS = 1e-12;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(EPS);
 
     @Test
     public void testOf() {
@@ -322,7 +321,7 @@ public class AffineTransformMatrix3DTest {
     public void testCreateRotation() {
         // arrange
         final Vector3D center = Vector3D.of(1, 2, 3);
-        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI_OVER_TWO);
+        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Angle.PI_OVER_TWO);
 
         // act
         final AffineTransformMatrix3D result = AffineTransformMatrix3D.createRotation(center, rotation);
@@ -345,7 +344,7 @@ public class AffineTransformMatrix3DTest {
                     9, 10, 11, 12
                 );
 
-        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI_OVER_TWO);
+        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Angle.PI_OVER_TWO);
 
         // act
         final AffineTransformMatrix3D result = a.rotate(rotation);
@@ -369,7 +368,7 @@ public class AffineTransformMatrix3DTest {
                 );
 
         final Vector3D center = Vector3D.of(1, 2, 3);
-        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI_OVER_TWO);
+        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Angle.PI_OVER_TWO);
 
         // act
         final AffineTransformMatrix3D result = a.rotate(center, rotation);
@@ -399,7 +398,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testApply_translate() {
         // arrange
-        final Vector3D translation = Vector3D.of(1.1, -PlaneAngleRadians.PI, 5.5);
+        final Vector3D translation = Vector3D.of(1.1, -Math.PI, 5.5);
 
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .translate(translation);
@@ -485,7 +484,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testApply_rotate() {
         // arrange
-        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.of(1, 1, 1), 2.0 * PlaneAngleRadians.PI / 3.0);
+        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.of(1, 1, 1), 2.0 * Math.PI / 3.0);
 
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity().rotate(rotation);
 
@@ -504,7 +503,7 @@ public class AffineTransformMatrix3DTest {
         // arrange
         final double scaleFactor = 2;
         final Vector3D center = Vector3D.of(3, -4, 5);
-        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI_OVER_TWO);
+        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Angle.PI_OVER_TWO);
 
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .scale(scaleFactor)
@@ -560,7 +559,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testApplyVector_translate() {
         // arrange
-        final Vector3D translation = Vector3D.of(1.1, -PlaneAngleRadians.PI, 5.5);
+        final Vector3D translation = Vector3D.of(1.1, -Math.PI, 5.5);
 
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .translate(translation);
@@ -599,7 +598,7 @@ public class AffineTransformMatrix3DTest {
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .scale(1.5)
                 .translate(4, 6, 5)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI_OVER_TWO));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Angle.PI_OVER_TWO));
 
         // act/assert
         runWithCoordinates((x, y, z) -> {
@@ -620,7 +619,7 @@ public class AffineTransformMatrix3DTest {
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .scale(1.5)
                 .translate(4, 6, 5)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.of(0.5, 1, 1), PlaneAngleRadians.PI_OVER_TWO));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.of(0.5, 1, 1), Angle.PI_OVER_TWO));
 
         // act/assert
         runWithCoordinates((x, y, z) -> {
@@ -650,7 +649,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testApplyDirection_translate() {
         // arrange
-        final Vector3D translation = Vector3D.of(1.1, -PlaneAngleRadians.PI, 5.5);
+        final Vector3D translation = Vector3D.of(1.1, -Math.PI, 5.5);
 
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .translate(translation);
@@ -689,7 +688,7 @@ public class AffineTransformMatrix3DTest {
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .scale(1.5)
                 .translate(4, 6, 5)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI_OVER_TWO));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Angle.PI_OVER_TWO));
 
         // act/assert
         runWithCoordinates((x, y, z) -> {
@@ -967,7 +966,7 @@ public class AffineTransformMatrix3DTest {
     public void testInverse_rotate() {
         // arrange
         final Vector3D center = Vector3D.of(1, 2, 3);
-        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI_OVER_TWO);
+        final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Angle.PI_OVER_TWO);
 
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createRotation(center, rotation);
 

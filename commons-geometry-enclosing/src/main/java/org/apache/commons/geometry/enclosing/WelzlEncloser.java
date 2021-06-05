@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class implementing Emo Welzl's algorithm to find the smallest enclosing ball in linear time.
  * <p>
@@ -41,7 +41,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
 
     /** Precision context used to compare floating point numbers. */
-    private final DoublePrecisionContext precision;
+    private final Precision.DoubleEquivalence precision;
 
     /** Object used to generate balls from support points. */
     private final SupportBallGenerator<P> generator;
@@ -50,7 +50,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
      * @param generator generator for balls on support
      * @param precision precision context used to compare floating point values
      */
-    public WelzlEncloser(final SupportBallGenerator<P> generator, final DoublePrecisionContext precision) {
+    public WelzlEncloser(final SupportBallGenerator<P> generator, final Precision.DoubleEquivalence precision) {
         this.generator = generator;
         this.precision = precision;
     }

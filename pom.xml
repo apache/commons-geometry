@@ -96,7 +96,7 @@
     <doclint.javadoc.qualifier></doclint.javadoc.qualifier>
 
     <!-- Dependency versions -->
-    <commons.numbers.version>1.0-beta1</commons.numbers.version>
+    <commons.numbers.version>1.0-SNAPSHOT</commons.numbers.version>
     <commons.rng.version>1.3</commons.rng.version>
     <junit.version>5.7.1</junit.version>
   </properties>

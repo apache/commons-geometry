@@ -26,7 +26,6 @@ import java.util.function.BiFunction;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
@@ -37,6 +36,7 @@ import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing factory methods for constructing {@link Plane} and {@link PlaneSubset} instances.
  */
@@ -55,7 +55,7 @@ public final class Planes {
      * @throws IllegalArgumentException if the norm of the given values is zero, NaN, or infinite.
      */
     public static EmbeddingPlane fromPointAndPlaneVectors(final Vector3D p, final Vector3D u, final Vector3D v,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Vector3D.Unit uNorm = u.normalize();
         final Vector3D.Unit vNorm = uNorm.orthogonal(v);
         final Vector3D.Unit wNorm = uNorm.cross(vNorm).normalize();
@@ -71,7 +71,7 @@ public final class Planes {
      * @return a new plane
      * @throws IllegalArgumentException if the norm of the given values is zero, NaN, or infinite.
      */
-    public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision) {
+    public static Plane fromNormal(final Vector3D normal, final Precision.DoubleEquivalence precision) {
         return fromPointAndNormal(Vector3D.ZERO, normal, precision);
     }
 
@@ -84,7 +84,7 @@ public final class Planes {
      * @throws IllegalArgumentException if the norm of the given values is zero, NaN, or infinite.
      */
     public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Vector3D.Unit unitNormal = normal.normalize();
         final double originOffset = -p.dot(unitNormal);
 
@@ -104,7 +104,7 @@ public final class Planes {
      * @throws IllegalArgumentException if the points do not define a unique plane
      */
     public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return fromPoints(Arrays.asList(p1, p2, p3), precision);
     }
 
@@ -121,7 +121,7 @@ public final class Planes {
      * @throws IllegalArgumentException if the given collection does not contain at least 3 points or the
      *      points do not define a unique plane
      */
-    public static Plane fromPoints(final Collection<Vector3D> pts, final DoublePrecisionContext precision) {
+    public static Plane fromPoints(final Collection<Vector3D> pts, final Precision.DoubleEquivalence precision) {
         return new PlaneBuilder(pts, precision).build();
     }
 
@@ -148,10 +148,10 @@ public final class Planes {
      * @return a new convex polygon defined by the given sequence of vertices
      * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
      *       unique plane
-     * @see #fromPoints(Collection, DoublePrecisionContext)
+     * @see #fromPoints(Collection, Precision.DoubleEquivalence)
      */
     public static ConvexPolygon3D convexPolygonFromVertices(final Collection<Vector3D> pts,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final List<Vector3D> vertices = new ArrayList<>(pts.size());
         final Plane plane = new PlaneBuilder(pts, precision).buildForConvexPolygon(vertices);
 
@@ -178,7 +178,7 @@ public final class Planes {
      * @throws IllegalArgumentException if the points do not define a unique plane
      */
     public static Triangle3D triangleFromVertices(final Vector3D p1, final Vector3D p2, final Vector3D p3,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Plane plane = fromPoints(p1, p2, p3, precision);
         return new SimpleTriangle3D(plane, p1, p2, p3);
     }
@@ -186,7 +186,7 @@ public final class Planes {
     /** Construct a list of {@link Triangle3D} instances from a set of vertices and arrays of face indices.
      * For example, the following code constructs a list of triangles forming a square pyramid.
      * <pre>
-     * DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+     * Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
      *
      * Vector3D[] vertices = {
      *      Vector3D.ZERO,
@@ -218,7 +218,7 @@ public final class Planes {
      * @throws IndexOutOfBoundsException if any index into {@code vertices} is out of bounds
      */
     public static List<Triangle3D> indexedTriangles(final Vector3D[] vertices, final int[][] faceIndices,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return indexedTriangles(Arrays.asList(vertices), faceIndices, precision);
     }
 
@@ -232,10 +232,10 @@ public final class Planes {
      * @throws IllegalArgumentException if any face index array does not contain exactly 3 elements or a set
      *      of 3 vertices do not define a plane
      * @throws IndexOutOfBoundsException if any index into {@code vertices} is out of bounds
-     * @see #indexedTriangles(Vector3D[], int[][], DoublePrecisionContext)
+     * @see #indexedTriangles(Vector3D[], int[][], Precision.DoubleEquivalence)
      */
     public static List<Triangle3D> indexedTriangles(final List<? extends Vector3D> vertices, final int[][] faceIndices,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         final int numFaces = faceIndices.length;
         final List<Triangle3D> triangles = new ArrayList<>(numFaces);
@@ -265,7 +265,7 @@ public final class Planes {
      * For example, the following code constructs a list of convex polygons forming a square pyramid.
      * Note that the first face (the pyramid base) uses a different number of vertices than the other faces.
      * <pre>
-     * DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+     * Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
      *
      * Vector3D[] vertices = {
      *      Vector3D.ZERO,
@@ -296,7 +296,7 @@ public final class Planes {
      * @throws IndexOutOfBoundsException if any index into {@code vertices} is out of bounds
      */
     public static List<ConvexPolygon3D> indexedConvexPolygons(final Vector3D[] vertices, final int[][] faceIndices,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return indexedConvexPolygons(Arrays.asList(vertices), faceIndices, precision);
     }
 
@@ -311,10 +311,10 @@ public final class Planes {
      * @throws IllegalArgumentException if any face index array does not contain at least 3 elements or a set
      *      of vertices do not define a planar convex polygon
      * @throws IndexOutOfBoundsException if any index into {@code vertices} is out of bounds
-     * @see #indexedConvexPolygons(Vector3D[], int[][], DoublePrecisionContext)
+     * @see #indexedConvexPolygons(Vector3D[], int[][], Precision.DoubleEquivalence)
      */
     public static List<ConvexPolygon3D> indexedConvexPolygons(final List<? extends Vector3D> vertices,
-            final int[][] faceIndices, final DoublePrecisionContext precision) {
+            final int[][] faceIndices, final Precision.DoubleEquivalence precision) {
         final int numFaces = faceIndices.length;
         final List<ConvexPolygon3D> polygons = new ArrayList<>(numFaces);
         final List<Vector3D> faceVertices = new ArrayList<>();
@@ -355,11 +355,11 @@ public final class Planes {
      * @throws IllegalArgumentException if regions of non-zero size cannot be produced with the
      *      given plane and extrusion vector. This occurs when the extrusion vector has zero length
      *      or is orthogonal to the plane normal
-     * @see LinePath#fromVertexLoop(Collection, DoublePrecisionContext)
-     * @see #extrude(LinePath, EmbeddingPlane, Vector3D, DoublePrecisionContext)
+     * @see LinePath#fromVertexLoop(Collection, Precision.DoubleEquivalence)
+     * @see #extrude(LinePath, EmbeddingPlane, Vector3D, Precision.DoubleEquivalence)
      */
     public static List<PlaneConvexSubset> extrudeVertexLoop(final List<Vector2D> vertices,
-            final EmbeddingPlane plane, final Vector3D extrusionVector, final DoublePrecisionContext precision) {
+            final EmbeddingPlane plane, final Vector3D extrusionVector, final Precision.DoubleEquivalence precision) {
         final LinePath path = LinePath.fromVertexLoop(vertices, precision);
         return extrude(path, plane, extrusionVector, precision);
     }
@@ -375,10 +375,10 @@ public final class Planes {
      * @throws IllegalArgumentException if regions of non-zero size cannot be produced with the
      *      given plane and extrusion vector. This occurs when the extrusion vector has zero length
      *      or is orthogonal to the plane normal
-     * @see #extrude(RegionBSPTree2D, EmbeddingPlane, Vector3D, DoublePrecisionContext)
+     * @see #extrude(RegionBSPTree2D, EmbeddingPlane, Vector3D, Precision.DoubleEquivalence)
      */
     public static List<PlaneConvexSubset> extrude(final LinePath path, final EmbeddingPlane plane,
-            final Vector3D extrusionVector, final DoublePrecisionContext precision) {
+            final Vector3D extrusionVector, final Precision.DoubleEquivalence precision) {
         return extrude(path.toTree(), plane, extrusionVector, precision);
     }
 
@@ -394,7 +394,7 @@ public final class Planes {
      *      or is orthogonal to the plane normal
      */
     public static List<PlaneConvexSubset> extrude(final RegionBSPTree2D region, final EmbeddingPlane plane,
-            final Vector3D extrusionVector, final DoublePrecisionContext precision) {
+            final Vector3D extrusionVector, final Precision.DoubleEquivalence precision) {
         return new PlaneRegionExtruder(plane, extrusionVector, precision).extrude(region);
     }
 
@@ -542,7 +542,7 @@ public final class Planes {
         private final Collection<? extends Vector3D> pts;
 
         /** Precision context used for floating point comparisons. */
-        private final DoublePrecisionContext precision;
+        private final Precision.DoubleEquivalence precision;
 
         /** The start point from the point sequence. */
         private Vector3D startPt;
@@ -575,7 +575,7 @@ public final class Planes {
          * @param pts point sequence
          * @param precision precision context used to perform floating point comparisons
          */
-        PlaneBuilder(final Collection<? extends Vector3D> pts, final DoublePrecisionContext precision) {
+        PlaneBuilder(final Collection<? extends Vector3D> pts, final Precision.DoubleEquivalence precision) {
             this.pts = pts;
             this.precision = precision;
         }
@@ -722,7 +722,7 @@ public final class Planes {
         private final boolean extrudingOnPlusSide;
 
         /** Precision context used to create boundaries. */
-        private final DoublePrecisionContext precision;
+        private final Precision.DoubleEquivalence precision;
 
         /** Construct a new instance that performs extrusions from {@code basePlane} along {@code extrusionVector}.
          * @param basePlane base plane to extrude from
@@ -732,7 +732,7 @@ public final class Planes {
          *      of zero size
          */
         PlaneRegionExtruder(final EmbeddingPlane basePlane, final Vector3D extrusionVector,
-                final DoublePrecisionContext precision) {
+                final Precision.DoubleEquivalence precision) {
 
             this.basePlane = basePlane;
 

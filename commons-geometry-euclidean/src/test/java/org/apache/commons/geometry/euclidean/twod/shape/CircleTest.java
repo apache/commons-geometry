@@ -22,8 +22,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
@@ -33,7 +31,8 @@ import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -41,8 +40,8 @@ public class CircleTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     private static final Comparator<LineConvexSubset> SEGMENT_DIRECTION_COMPARATOR =
         (a, b) -> Vector2D.COORDINATE_ASCENDING_ORDER.compare(
@@ -79,7 +78,7 @@ public class CircleTest {
     @Test
     public void testFrom_illegalRadius() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Circle.from(Vector2D.ZERO, -1, TEST_PRECISION));
@@ -119,7 +118,7 @@ public class CircleTest {
                 Vector2D.of(0.25, 1.25), Vector2D.of(1.75, 2.75),
                 Vector2D.of(0.25, 2.75), Vector2D.of(1.75, 1.25));
 
-        for (double angle = 0; angle < PlaneAngleRadians.TWO_PI; angle += 0.1) {
+        for (double angle = 0; angle < Angle.TWO_PI; angle += 0.1) {
             EuclideanTestUtils.assertRegionLocation(c, RegionLocation.BOUNDARY,
                     c.getCenter().add(PolarCoordinates.of(1, angle).toCartesian()));
         }
@@ -138,7 +137,7 @@ public class CircleTest {
                 Vector2D.of(0.5, 1.5), Vector2D.of(1.5, 2.5),
                 Vector2D.of(0.5, 2.5), Vector2D.of(1.5, 1.5));
 
-        for (double angle = 0; angle < PlaneAngleRadians.TWO_PI; angle += 0.1) {
+        for (double angle = 0; angle < Angle.TWO_PI; angle += 0.1) {
             checkContains(c, true,
                     c.getCenter().add(PolarCoordinates.of(1, angle).toCartesian()));
         }
@@ -281,7 +280,7 @@ public class CircleTest {
 
         Assertions.assertEquals(3, segments.size());
 
-        final double inc = PlaneAngleRadians.TWO_PI / 3.0;
+        final double inc = Angle.TWO_PI / 3.0;
         final Vector2D p0 = Vector2D.of(4, 1);
         final Vector2D p1 = Vector2D.of(
                 (2 * Math.cos(inc)) + 2,
@@ -385,7 +384,7 @@ public class CircleTest {
     @Test
     public void testHashCode() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final Circle a = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
         final Circle b = Circle.from(Vector2D.of(1, 1), 3, TEST_PRECISION);
@@ -409,7 +408,7 @@ public class CircleTest {
     @Test
     public void testEquals() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final Circle a = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
         final Circle b = Circle.from(Vector2D.of(1, 1), 3, TEST_PRECISION);

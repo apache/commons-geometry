@@ -17,19 +17,19 @@
 package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Base class for hyperplane implementations.
  * @param <P> Point implementation type
  */
 public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperplane<P> {
     /** Precision object used to perform floating point comparisons. */
-    private final DoublePrecisionContext precision;
+    private final Precision.DoubleEquivalence precision;
 
     /** Construct an instance using the given precision context.
      * @param precision object used to perform floating point comparisons
      */
-    protected AbstractHyperplane(final DoublePrecisionContext precision) {
+    protected AbstractHyperplane(final Precision.DoubleEquivalence precision) {
         this.precision = precision;
     }
 
@@ -38,7 +38,7 @@ public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperpla
     public HyperplaneLocation classify(final P point) {
         final double offsetValue = offset(point);
 
-        final int cmp = precision.sign(offsetValue);
+        final double cmp = precision.signum(offsetValue);
         if (cmp > 0) {
             return HyperplaneLocation.PLUS;
         } else if (cmp < 0) {
@@ -58,7 +58,7 @@ public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperpla
      * comparisons for this instance.
      * @return the precision object for this instance
      */
-    public DoublePrecisionContext getPrecision() {
+    public Precision.DoubleEquivalence getPrecision() {
         return precision;
     }
 }

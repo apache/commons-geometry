@@ -20,11 +20,10 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.Comparator;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +36,7 @@ public class Point2STest {
     public void testProperties() {
         for (int k = -2; k < 3; ++k) {
             // arrange
-            final Point2S p = Point2S.of(1.0 + k * PlaneAngleRadians.TWO_PI, 1.4);
+            final Point2S p = Point2S.of(1.0 + k * Angle.TWO_PI, 1.4);
 
             // act/assert
             Assertions.assertEquals(1.0, p.getAzimuth(), TEST_EPS);
@@ -72,16 +71,16 @@ public class Point2STest {
     @Test
     public void testFrom_vector() {
         // arrange
-        final double quarterPi = 0.25 * PlaneAngleRadians.PI;
+        final double quarterPi = 0.25 * Math.PI;
 
         // act/assert
-        checkPoint(Point2S.from(Vector3D.of(1, 1, 0)), quarterPi, PlaneAngleRadians.PI_OVER_TWO);
+        checkPoint(Point2S.from(Vector3D.of(1, 1, 0)), quarterPi, Angle.PI_OVER_TWO);
         checkPoint(Point2S.from(Vector3D.of(1, 0, 1)), 0, quarterPi);
-        checkPoint(Point2S.from(Vector3D.of(0, 1, 1)), PlaneAngleRadians.PI_OVER_TWO, quarterPi);
+        checkPoint(Point2S.from(Vector3D.of(0, 1, 1)), Angle.PI_OVER_TWO, quarterPi);
 
-        checkPoint(Point2S.from(Vector3D.of(1, -1, 0)), PlaneAngleRadians.TWO_PI - quarterPi, PlaneAngleRadians.PI_OVER_TWO);
-        checkPoint(Point2S.from(Vector3D.of(-1, 0, -1)), PlaneAngleRadians.PI, PlaneAngleRadians.PI - quarterPi);
-        checkPoint(Point2S.from(Vector3D.of(0, -1, -1)), PlaneAngleRadians.TWO_PI - PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI - quarterPi);
+        checkPoint(Point2S.from(Vector3D.of(1, -1, 0)), Angle.TWO_PI - quarterPi, Angle.PI_OVER_TWO);
+        checkPoint(Point2S.from(Vector3D.of(-1, 0, -1)), Math.PI, Math.PI - quarterPi);
+        checkPoint(Point2S.from(Vector3D.of(0, -1, -1)), Angle.TWO_PI - Angle.PI_OVER_TWO, Math.PI - quarterPi);
     }
 
     @Test
@@ -124,13 +123,13 @@ public class Point2STest {
     @Test
     public void testDistance() {
         // arrange
-        final Point2S a = Point2S.of(1.0, 0.5 * PlaneAngleRadians.PI);
-        final Point2S b = Point2S.of(a.getAzimuth() + 0.5 * PlaneAngleRadians.PI, a.getPolar());
+        final Point2S a = Point2S.of(1.0, 0.5 * Math.PI);
+        final Point2S b = Point2S.of(a.getAzimuth() + 0.5 * Math.PI, a.getPolar());
 
         // act/assert
-        Assertions.assertEquals(0.5 * PlaneAngleRadians.PI, a.distance(b), 1.0e-10);
-        Assertions.assertEquals(PlaneAngleRadians.PI, a.distance(a.antipodal()), 1.0e-10);
-        Assertions.assertEquals(0.5 * PlaneAngleRadians.PI, Point2S.MINUS_I.distance(Point2S.MINUS_K), 1.0e-10);
+        Assertions.assertEquals(0.5 * Math.PI, a.distance(b), 1.0e-10);
+        Assertions.assertEquals(Math.PI, a.distance(a.antipodal()), 1.0e-10);
+        Assertions.assertEquals(0.5 * Math.PI, Point2S.MINUS_I.distance(Point2S.MINUS_K), 1.0e-10);
         Assertions.assertEquals(0.0, Point2S.of(1.0, 0).distance(Point2S.of(2.0, 0)), 1.0e-10);
     }
 
@@ -142,15 +141,15 @@ public class Point2STest {
 
         // act/assert
         SphericalTestUtils.assertPointsEq(p1, p1.slerp(p2, 0), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0.25 * PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO), p1.slerp(p2, 0.25), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0.5 * PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO), p1.slerp(p2, 0.5), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0.75 * PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO), p1.slerp(p2, 0.75), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.25 * Angle.PI_OVER_TWO, Angle.PI_OVER_TWO), p1.slerp(p2, 0.25), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.5 * Angle.PI_OVER_TWO, Angle.PI_OVER_TWO), p1.slerp(p2, 0.5), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.75 * Angle.PI_OVER_TWO, Angle.PI_OVER_TWO), p1.slerp(p2, 0.75), TEST_EPS);
         SphericalTestUtils.assertPointsEq(p2, p1.slerp(p2, 1), TEST_EPS);
 
         SphericalTestUtils.assertPointsEq(p2, p2.slerp(p1, 0), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0.75 * PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO), p2.slerp(p1, 0.25), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0.5 * PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO), p2.slerp(p1, 0.5), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0.25 * PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO), p2.slerp(p1, 0.75), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.75 * Angle.PI_OVER_TWO, Angle.PI_OVER_TWO), p2.slerp(p1, 0.25), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.5 * Angle.PI_OVER_TWO, Angle.PI_OVER_TWO), p2.slerp(p1, 0.5), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.25 * Angle.PI_OVER_TWO, Angle.PI_OVER_TWO), p2.slerp(p1, 0.75), TEST_EPS);
         SphericalTestUtils.assertPointsEq(p1, p2.slerp(p1, 1), TEST_EPS);
 
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_I, p1.slerp(p2, 2), TEST_EPS);
@@ -165,15 +164,15 @@ public class Point2STest {
 
         // act/assert
         SphericalTestUtils.assertPointsEq(p1, p1.slerp(p2, 0), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.75 * PlaneAngleRadians.PI_OVER_TWO), p1.slerp(p2, 0.25), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.5 * PlaneAngleRadians.PI_OVER_TWO), p1.slerp(p2, 0.5), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.25 * PlaneAngleRadians.PI_OVER_TWO), p1.slerp(p2, 0.75), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Angle.PI_OVER_TWO, 0.75 * Angle.PI_OVER_TWO), p1.slerp(p2, 0.25), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Angle.PI_OVER_TWO, 0.5 * Angle.PI_OVER_TWO), p1.slerp(p2, 0.5), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Angle.PI_OVER_TWO, 0.25 * Angle.PI_OVER_TWO), p1.slerp(p2, 0.75), TEST_EPS);
         SphericalTestUtils.assertPointsEq(p2, p1.slerp(p2, 1), TEST_EPS);
 
         SphericalTestUtils.assertPointsEq(p2, p2.slerp(p1, 0), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.25 * PlaneAngleRadians.PI_OVER_TWO), p2.slerp(p1, 0.25), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.5 * PlaneAngleRadians.PI_OVER_TWO), p2.slerp(p1, 0.5), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.75 * PlaneAngleRadians.PI_OVER_TWO), p2.slerp(p1, 0.75), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Angle.PI_OVER_TWO, 0.25 * Angle.PI_OVER_TWO), p2.slerp(p1, 0.25), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Angle.PI_OVER_TWO, 0.5 * Angle.PI_OVER_TWO), p2.slerp(p1, 0.5), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Angle.PI_OVER_TWO, 0.75 * Angle.PI_OVER_TWO), p2.slerp(p1, 0.75), TEST_EPS);
         SphericalTestUtils.assertPointsEq(p1, p2.slerp(p1, 1), TEST_EPS);
 
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_J, p1.slerp(p2, 2), TEST_EPS);
@@ -207,8 +206,8 @@ public class Point2STest {
 
     @Test
     public void testAntipodal() {
-        for (double az = -6 * PlaneAngleRadians.PI; az <= 6 * PlaneAngleRadians.PI; az += 0.1) {
-            for (double p = 0; p <= PlaneAngleRadians.PI; p += 0.1) {
+        for (double az = -6 * Math.PI; az <= 6 * Math.PI; az += 0.1) {
+            for (double p = 0; p <= Math.PI; p += 0.1) {
                 // arrange
                 final Point2S pt = Point2S.of(az, p);
 
@@ -216,11 +215,11 @@ public class Point2STest {
                 final Point2S result = pt.antipodal();
 
                 // assert
-                Assertions.assertEquals(PlaneAngleRadians.PI, pt.distance(result), TEST_EPS);
+                Assertions.assertEquals(Math.PI, pt.distance(result), TEST_EPS);
 
                 // check that the azimuth and polar components of the point are correct by creating a
                 // new point and checking the distance
-                Assertions.assertEquals(PlaneAngleRadians.PI,
+                Assertions.assertEquals(Math.PI,
                         Point2S.of(result.getAzimuth(), result.getPolar()).distance(pt), TEST_EPS);
 
                 // check that the vectors point in opposite directions
@@ -255,8 +254,8 @@ public class Point2STest {
     @Test
     public void testEq() {
         // arrange
-        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-5);
-        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(5e-1);
+        final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-5);
+        final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(5e-1);
 
         final Point2S a = Point2S.of(1.0, 2.0);
         final Point2S b = Point2S.of(1.0, 2.01);
@@ -323,9 +322,9 @@ public class Point2STest {
         final Point2S b = Point2S.of(0.0, 0.0);
         final Point2S c = Point2S.of(1.0, 0.0);
 
-        final Point2S d = Point2S.of(-1.0, PlaneAngleRadians.PI);
-        final Point2S e = Point2S.of(0.0, PlaneAngleRadians.PI);
-        final Point2S f = Point2S.of(-1.0, PlaneAngleRadians.PI);
+        final Point2S d = Point2S.of(-1.0, Math.PI);
+        final Point2S e = Point2S.of(0.0, Math.PI);
+        final Point2S f = Point2S.of(-1.0, Math.PI);
 
         // act/assert
         Assertions.assertEquals(a, a);

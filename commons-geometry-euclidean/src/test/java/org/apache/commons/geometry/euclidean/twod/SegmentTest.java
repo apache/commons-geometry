@@ -20,10 +20,9 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,8 +30,8 @@ public class SegmentTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testFromPoints() {
@@ -435,7 +434,7 @@ public class SegmentTest {
         // of the lines lying far enough away from the segment start point along the line to be
         // considered a valid 1D distance for a split. In this case, no split should be performed since
         // both points still lie on the splitter.
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-5);
 
         final Segment seg = Lines.segmentFromPoints(Vector2D.of(1, 1e-8), Vector2D.of(1.01, 1e-6), precision);
 

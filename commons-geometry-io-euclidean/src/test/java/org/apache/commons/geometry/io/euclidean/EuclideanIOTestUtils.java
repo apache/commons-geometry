@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
@@ -32,6 +31,7 @@ import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.geometry.euclidean.threed.shape.Sphere;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinitionReader;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 
 /** Class containing utility methods for IO tests.
@@ -45,12 +45,12 @@ public final class EuclideanIOTestUtils {
      * @param precision precision context used for floating point comparisons
      * @return a test cube
      */
-    public static Parallelepiped cube(final DoublePrecisionContext precision) {
+    public static Parallelepiped cube(final Precision.DoubleEquivalence precision) {
         return Parallelepiped.unitCube(precision);
     }
 
     /** Assert that the given boundary source defines a cube equivalent to that returned by
-     * {@link #cube(DoublePrecisionContext)}.
+     * {@link #cube(Precision.DoubleEquivalence)}.
      * @param src boundary source to test
      * @param eps floating point comparison epsilon
      */
@@ -84,7 +84,7 @@ public final class EuclideanIOTestUtils {
      * @param precision precision context used for floating point comparisons
      * @return a test cube with a sphere removed from the center
      */
-    public static RegionBSPTree3D cubeMinusSphere(final DoublePrecisionContext precision) {
+    public static RegionBSPTree3D cubeMinusSphere(final Precision.DoubleEquivalence precision) {
         final RegionBSPTree3D tree = Parallelepiped.unitCube(precision).toTree();
         final Sphere sphere = Sphere.from(Vector3D.ZERO, 0.65, precision);
 
@@ -94,7 +94,7 @@ public final class EuclideanIOTestUtils {
     }
 
     /** Assert that the given boundary source defines a region equivalent to that returned by
-     * {@link #cubeMinusSphere(DoublePrecisionContext)}.
+     * {@link #cubeMinusSphere(Precision.DoubleEquivalence)}.
      * @param src boundary source to test
      * @param eps floating point comparison epsilon
      */

@@ -19,8 +19,7 @@ package org.apache.commons.geometry.core.partitioning;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.test.TestLine;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +28,7 @@ public class AbstractHyperplaneTest {
     @Test
     public void testGetPrecision() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final StubHyperplane hyper = new StubHyperplane(precision);
 
         // act/assert
@@ -39,7 +38,7 @@ public class AbstractHyperplaneTest {
     @Test
     public void testClassify() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final StubHyperplane hyper = new StubHyperplane(precision);
 
         // act/assert
@@ -55,7 +54,7 @@ public class AbstractHyperplaneTest {
     @Test
     public void testContains() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final StubHyperplane hyper = new StubHyperplane(precision);
 
         // act/assert
@@ -70,7 +69,7 @@ public class AbstractHyperplaneTest {
 
     public static class StubHyperplane extends AbstractHyperplane<TestPoint2D> {
 
-        public StubHyperplane(final DoublePrecisionContext precision) {
+        public StubHyperplane(final Precision.DoubleEquivalence precision) {
             super(precision);
         }
 

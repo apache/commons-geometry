@@ -119,7 +119,7 @@ public class HyperplaneSubsetsTest {
         @Override
         public RegionLocation classify(final TestPoint1D pt) {
             if (!empty) {
-                final int sign = PartitionTestUtils.PRECISION.sign(pt.getX());
+                final double sign = PartitionTestUtils.PRECISION.signum(pt.getX());
 
                 if (sign < 0) {
                     return RegionLocation.INSIDE;

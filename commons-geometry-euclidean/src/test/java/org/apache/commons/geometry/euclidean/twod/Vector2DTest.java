@@ -23,10 +23,8 @@ import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -517,7 +515,7 @@ public class Vector2DTest {
 
     @Test
     public void testOrthogonal_fullCircle() {
-        for (double az = 0.0; az <= PlaneAngleRadians.TWO_PI; az += 0.25) {
+        for (double az = 0.0; az <= Angle.TWO_PI; az += 0.25) {
             // arrange
             final Vector2D v = PolarCoordinates.toCartesian(Math.PI, az);
 
@@ -579,12 +577,12 @@ public class Vector2DTest {
         // act/assert
         Assertions.assertEquals(0, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_X), EPS);
 
-        Assertions.assertEquals(PlaneAngleRadians.PI, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_X), EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_Y), EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_Y), EPS);
+        Assertions.assertEquals(Math.PI, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_X), EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_Y), EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_Y), EPS);
 
-        Assertions.assertEquals(PlaneAngleRadians.PI / 4, Vector2D.of(1, 1).angle(Vector2D.of(1, 0)), EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI / 4, Vector2D.of(1, 0).angle(Vector2D.of(1, 1)), EPS);
+        Assertions.assertEquals(Math.PI / 4, Vector2D.of(1, 1).angle(Vector2D.of(1, 0)), EPS);
+        Assertions.assertEquals(Math.PI / 4, Vector2D.of(1, 0).angle(Vector2D.of(1, 1)), EPS);
 
         Assertions.assertEquals(0.004999958333958323, Vector2D.of(20.0, 0.0).angle(Vector2D.of(20.0, 0.1)), EPS);
     }
@@ -620,11 +618,11 @@ public class Vector2DTest {
         Assertions.assertEquals(1.0, a.signedArea(b), eps);
         Assertions.assertEquals(-1.0, b.signedArea(a), eps);
 
-        final double xAxisAndCArea = 2 * Math.cos(0.25 * PlaneAngleRadians.PI);
+        final double xAxisAndCArea = 2 * Math.cos(0.25 * Math.PI);
         Assertions.assertEquals(xAxisAndCArea, a.signedArea(c), eps);
         Assertions.assertEquals(-xAxisAndCArea, c.signedArea(a), eps);
 
-        final double xAxisAndDArea = 3 * Math.cos(0.25 * PlaneAngleRadians.PI);
+        final double xAxisAndDArea = 3 * Math.cos(0.25 * Math.PI);
         Assertions.assertEquals(xAxisAndDArea, a.signedArea(d), eps);
         Assertions.assertEquals(-xAxisAndDArea, d.signedArea(a), eps);
 
@@ -731,7 +729,7 @@ public class Vector2DTest {
     }
 
     private void checkProjectAndRejectFullCircle(final Vector2D vec, final double baseMag, final double eps) {
-        for (double theta = 0.0; theta <= PlaneAngleRadians.TWO_PI; theta += 0.5) {
+        for (double theta = 0.0; theta <= Angle.TWO_PI; theta += 0.5) {
             final Vector2D base = PolarCoordinates.toCartesian(baseMag, theta);
 
             final Vector2D proj = vec.project(base);
@@ -745,17 +743,17 @@ public class Vector2DTest {
             // check the angle between the projection and the base; this will
             // be undefined when the angle between the original vector and the
             // base is pi/2 (which means that the projection is the zero vector)
-            if (angle < PlaneAngleRadians.PI_OVER_TWO) {
+            if (angle < Angle.PI_OVER_TWO) {
                 Assertions.assertEquals(0.0, proj.angle(base), eps);
-            } else if (angle > PlaneAngleRadians.PI_OVER_TWO) {
-                Assertions.assertEquals(PlaneAngleRadians.PI, proj.angle(base), eps);
+            } else if (angle > Angle.PI_OVER_TWO) {
+                Assertions.assertEquals(Math.PI, proj.angle(base), eps);
             }
 
             // check the angle between the rejection and the base; this should
             // always be pi/2 except for when the angle between the original vector
             // and the base is 0 or pi, in which case the rejection is the zero vector.
-            if (angle > 0.0 && angle < PlaneAngleRadians.PI) {
-                Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, rej.angle(base), eps);
+            if (angle > 0.0 && angle < Math.PI) {
+                Assertions.assertEquals(Angle.PI_OVER_TWO, rej.angle(base), eps);
             }
         }
     }
@@ -850,8 +848,8 @@ public class Vector2DTest {
     @Test
     public void testPrecisionEquals() {
         // arrange
-        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-6);
+        final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
         final Vector2D vec = Vector2D.of(1, -2);
 
@@ -875,8 +873,8 @@ public class Vector2DTest {
     @Test
     public void testIsZero() {
         // arrange
-        final DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
-        final DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-6);
+        final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
         // act/assert
         Assertions.assertTrue(Vector2D.of(0.0, -0.0).isZero(smallEps));

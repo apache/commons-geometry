@@ -26,7 +26,6 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.BoundaryList3D;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
@@ -35,6 +34,7 @@ import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.geometry.io.core.input.GeometryInput;
 import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
+import org.apache.commons.numbers.core.Precision;
 
 /** Abstract base class for {@link BoundaryReadHandler3D} implementations.
  */
@@ -42,7 +42,7 @@ public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandl
 
     /** {@inheritDoc} */
     @Override
-    public BoundarySource3D read(final GeometryInput in, final DoublePrecisionContext precision)
+    public BoundarySource3D read(final GeometryInput in, final Precision.DoubleEquivalence precision)
             throws IOException {
         // read the input as a simple list of boundaries
         final List<PlaneConvexSubset> list = new ArrayList<>();
@@ -59,7 +59,7 @@ public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandl
 
     /** {@inheritDoc} */
     @Override
-    public TriangleMesh readTriangleMesh(final GeometryInput in, final DoublePrecisionContext precision)
+    public TriangleMesh readTriangleMesh(final GeometryInput in, final Precision.DoubleEquivalence precision)
             throws IOException {
         final SimpleTriangleMesh.Builder meshBuilder = SimpleTriangleMesh.builder(precision);
 
@@ -81,7 +81,7 @@ public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandl
 
     /** {@inheritDoc} */
     @Override
-    public Stream<PlaneConvexSubset> boundaries(final GeometryInput in, final DoublePrecisionContext precision)
+    public Stream<PlaneConvexSubset> boundaries(final GeometryInput in, final Precision.DoubleEquivalence precision)
             throws IOException {
         return facets(in)
                 .map(f -> FacetDefinitions.toPolygon(f, precision));

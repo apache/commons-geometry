@@ -24,8 +24,7 @@ import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.Node;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 
 /** Class containing utility methods for tests related to the
@@ -35,8 +34,8 @@ public final class PartitionTestUtils {
 
     public static final double EPS = 1e-6;
 
-    public static final DoublePrecisionContext PRECISION =
-            new EpsilonDoublePrecisionContext(EPS);
+    public static final Precision.DoubleEquivalence PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(EPS);
 
 
     private PartitionTestUtils() {}

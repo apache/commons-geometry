@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a portion of a line in 2D Euclidean space that starts at infinity and
  * continues in the direction of the line up to a single end point. This is equivalent to taking a
@@ -181,7 +181,7 @@ public final class ReverseRay extends LineConvexSubset {
     @Override
     protected Split<LineConvexSubset> splitOnIntersection(final Line splitter, final Vector2D intersection) {
         final Line line = getLine();
-        final DoublePrecisionContext splitterPrecision = splitter.getPrecision();
+        final Precision.DoubleEquivalence splitterPrecision = splitter.getPrecision();
 
         final int endCmp = splitterPrecision.compare(splitter.offset(endPoint), 0.0);
         final boolean pointsTowardPlus = splitter.getOffsetDirection().dot(line.getDirection()) >= 0.0;

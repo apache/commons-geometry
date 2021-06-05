@@ -20,10 +20,10 @@ import java.util.Comparator;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.numbers.core.Precision;
 
 /** This class represents a point on the 2-sphere.
  * <p>Instances of this class are guaranteed to be immutable.</p>
@@ -188,7 +188,7 @@ public final class Point2S implements Point<Point2S> {
      * @return true if this point should be considered equivalent to the argument using the
      *      given precision context
      */
-    public boolean eq(final Point2S point, final DoublePrecisionContext precision) {
+    public boolean eq(final Point2S point, final Precision.DoubleEquivalence precision) {
         return precision.eqZero(distance(point));
     }
 

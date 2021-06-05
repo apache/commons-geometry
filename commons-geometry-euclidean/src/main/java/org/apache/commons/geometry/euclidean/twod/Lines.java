@@ -18,8 +18,8 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.text.MessageFormat;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing factory methods for constructing {@link Line} and {@link LineSubset} instances.
  */
@@ -39,7 +39,7 @@ public final class Lines {
      * @throws IllegalArgumentException If the vector between {@code p1} and {@code p2} has zero length,
      *      as evaluated by the given precision context
      */
-    public static Line fromPoints(final Vector2D p1, final Vector2D p2, final DoublePrecisionContext precision) {
+    public static Line fromPoints(final Vector2D p1, final Vector2D p2, final Precision.DoubleEquivalence precision) {
         return fromPointAndDirection(p1, p1.vectorTo(p2), precision);
     }
 
@@ -52,7 +52,7 @@ public final class Lines {
      *      given precision context
      */
     public static Line fromPointAndDirection(final Vector2D pt, final Vector2D dir,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         if (dir.isZero(precision)) {
             throw new IllegalArgumentException("Line direction cannot be zero");
         }
@@ -72,7 +72,7 @@ public final class Lines {
      *      abscissa (x) axis.
      */
     public static Line fromPointAndAngle(final Vector2D pt, final double angle,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Vector2D.Unit dir = Vector2D.Unit.from(Math.cos(angle), Math.sin(angle));
         return fromPointAndDirection(pt, dir, precision);
     }
@@ -84,10 +84,10 @@ public final class Lines {
      * @return a new ray instance with the given start point and direction
      * @throws IllegalArgumentException If {@code direction} has zero length, as evaluated by the
      *      given precision context
-     * @see #fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
+     * @see #fromPointAndDirection(Vector2D, Vector2D, Precision.DoubleEquivalence)
      */
     public static Ray rayFromPointAndDirection(final Vector2D startPoint, final Vector2D direction,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Line line = Lines.fromPointAndDirection(startPoint, direction, precision);
 
         return new Ray(line, startPoint);
@@ -130,10 +130,10 @@ public final class Lines {
      * @return a new instance with the given end point and line direction
      * @throws IllegalArgumentException If {@code lineDirection} has zero length, as evaluated by the
      *      given precision context
-     * @see #fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
+     * @see #fromPointAndDirection(Vector2D, Vector2D, Precision.DoubleEquivalence)
      */
     public static ReverseRay reverseRayFromPointAndDirection(final Vector2D endPoint, final Vector2D lineDirection,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Line line = Lines.fromPointAndDirection(endPoint, lineDirection, precision);
 
         return new ReverseRay(line, endPoint);
@@ -179,7 +179,7 @@ public final class Lines {
      *      as evaluated by the given precision context
      */
     public static Segment segmentFromPoints(final Vector2D startPoint, final Vector2D endPoint,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final Line line = Lines.fromPoints(startPoint, endPoint, precision);
 
         // we know that the points lie on the line and are in increasing abscissa order

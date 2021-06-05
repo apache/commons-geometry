@@ -26,8 +26,8 @@ import org.apache.commons.geometry.core.Embedding;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Abstract base class representing an n-sphere, which is a generalization of the ordinary 3 dimensional
  * sphere to arbitrary dimensions.
@@ -43,7 +43,7 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
     private final double radius;
 
     /** Precision object used to perform floating point comparisons. */
-    private final DoublePrecisionContext precision;
+    private final Precision.DoubleEquivalence precision;
 
     /** Construct a new instance from its component parts.
      * @param center the center point of the n-sphere
@@ -52,7 +52,7 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
      * @throws IllegalArgumentException if center is not finite or radius is not finite or is
      *      less than or equal to zero as evaluated by the given precision context
      */
-    protected AbstractNSphere(final V center, final double radius, final DoublePrecisionContext precision) {
+    protected AbstractNSphere(final V center, final double radius, final Precision.DoubleEquivalence precision) {
         if (!center.isFinite()) {
             throw new IllegalArgumentException("Illegal center point: " + center);
         }
@@ -83,7 +83,7 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
      * comparisons for this instance.
      * @return the precision object for this instance
      */
-    public DoublePrecisionContext getPrecision() {
+    public Precision.DoubleEquivalence getPrecision() {
         return precision;
     }
 

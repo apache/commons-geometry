@@ -23,10 +23,10 @@ import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
+import org.apache.commons.numbers.core.Precision;
 
 /** This class represents vectors and points in two-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
@@ -331,7 +331,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean eq(final Vector2D vec, final DoublePrecisionContext precision) {
+    public boolean eq(final Vector2D vec, final Precision.DoubleEquivalence precision) {
         return precision.eq(x, vec.x) &&
                 precision.eq(y, vec.y);
     }

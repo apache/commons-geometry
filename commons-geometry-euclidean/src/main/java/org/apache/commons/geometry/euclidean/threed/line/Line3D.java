@@ -21,10 +21,10 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.Embedding;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a line in 3D space.
  *
@@ -43,7 +43,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
     private final Vector3D direction;
 
     /** Precision context used to compare floating point numbers. */
-    private final DoublePrecisionContext precision;
+    private final Precision.DoubleEquivalence precision;
 
     /** Simple constructor.
      * @param origin the origin of the line, meaning the point on the line closest to the origin of the
@@ -51,7 +51,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param direction the direction of the line
      * @param precision precision context used to compare floating point numbers
      */
-    Line3D(final Vector3D origin, final Vector3D direction, final DoublePrecisionContext precision) {
+    Line3D(final Vector3D origin, final Vector3D direction, final Precision.DoubleEquivalence precision) {
         this.origin = origin;
         this.direction = direction;
         this.precision = precision;
@@ -74,7 +74,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
     /** Get the object used to determine floating point equality for this instance.
      * @return the floating point precision context for the instance
      */
-    public DoublePrecisionContext getPrecision() {
+    public Precision.DoubleEquivalence getPrecision() {
         return precision;
     }
 
@@ -351,9 +351,9 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param other the point to compare with
      * @param ctx precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
-     * @see Vector3D#eq(Vector3D, DoublePrecisionContext)
+     * @see Vector3D#eq(Vector3D, Precision.DoubleEquivalence)
      */
-    public boolean eq(final Line3D other, final DoublePrecisionContext ctx) {
+    public boolean eq(final Line3D other, final Precision.DoubleEquivalence ctx) {
         return getOrigin().eq(other.getOrigin(), ctx) &&
                 getDirection().eq(other.getDirection(), ctx);
     }

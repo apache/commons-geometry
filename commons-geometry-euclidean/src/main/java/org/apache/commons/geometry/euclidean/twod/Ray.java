@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a ray in 2D Euclidean space. A ray is a portion of a line consisting of
  * a single start point and extending to infinity along the direction of the line.
@@ -186,7 +186,7 @@ public final class Ray extends LineConvexSubset {
     @Override
     Split<LineConvexSubset> splitOnIntersection(final Line splitter, final Vector2D intersection) {
         final Line line = getLine();
-        final DoublePrecisionContext splitterPrecision = splitter.getPrecision();
+        final Precision.DoubleEquivalence splitterPrecision = splitter.getPrecision();
 
         final int startCmp = splitterPrecision.compare(splitter.offset(startPoint), 0.0);
         final boolean pointsTowardPlus = splitter.getOffsetDirection().dot(line.getDirection()) >= 0.0;

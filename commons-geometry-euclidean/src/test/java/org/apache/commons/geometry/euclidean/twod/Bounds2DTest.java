@@ -24,10 +24,9 @@ import java.util.function.ToDoubleFunction;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,8 +34,8 @@ public class Bounds2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     private static final String NO_POINTS_MESSAGE = "Cannot construct bounds: no points given";
 
@@ -153,8 +152,8 @@ public class Bounds2DTest {
     @Test
     public void testHasSize() {
         // arrange
-        final DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
-        final DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
+        final Precision.DoubleEquivalence low = Precision.doubleEquivalenceOfEpsilon(1e-2);
+        final Precision.DoubleEquivalence high = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
         final Vector2D p1 = Vector2D.ZERO;
 
@@ -359,8 +358,8 @@ public class Bounds2DTest {
     @Test
     public void testEq() {
         // arrange
-        final DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1e-2);
-        final DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
+        final Precision.DoubleEquivalence low = Precision.doubleEquivalenceOfEpsilon(1e-2);
+        final Precision.DoubleEquivalence high = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
         final Bounds2D b1 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 

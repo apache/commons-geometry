@@ -21,11 +21,11 @@ import java.util.Objects;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a plane in 3 dimensional Euclidean space. Each plane is defined by a
  * {@link #getNormal() normal} and an {@link #getOriginOffset() origin offset}. If \(\vec{n}\) is the plane normal,
@@ -57,7 +57,7 @@ public class Plane extends AbstractHyperplane<Vector3D> {
      * @param precision precision context used to compare floating point values
      */
     Plane(final Vector3D.Unit normal, final double originOffset,
-          final DoublePrecisionContext precision) {
+          final Precision.DoubleEquivalence precision) {
 
         super(precision);
 
@@ -154,7 +154,7 @@ public class Plane extends AbstractHyperplane<Vector3D> {
      */
     public boolean contains(final Plane plane) {
         final double angle = normal.angle(plane.normal);
-        final DoublePrecisionContext precision = getPrecision();
+        final Precision.DoubleEquivalence precision = getPrecision();
 
         return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset)) ||
                 ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
@@ -355,9 +355,9 @@ public class Plane extends AbstractHyperplane<Vector3D> {
      * @param other the point to compare with
      * @param precision precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
-     * @see Vector3D#eq(Vector3D, DoublePrecisionContext)
+     * @see Vector3D#eq(Vector3D, Precision.DoubleEquivalence)
      */
-    public boolean eq(final Plane other, final DoublePrecisionContext precision) {
+    public boolean eq(final Plane other, final Precision.DoubleEquivalence precision) {
         return getOrigin().eq(other.getOrigin(), precision) &&
                 normal.eq(other.normal, precision);
     }

@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
@@ -33,6 +32,7 @@ import org.apache.commons.geometry.io.core.input.GeometryInput;
 import org.apache.commons.geometry.io.core.input.UrlGeometryInput;
 import org.apache.commons.geometry.io.core.output.FileGeometryOutput;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
+import org.apache.commons.numbers.core.Precision;
 
 /** Utility class providing convenient access to 3D IO functionality. The static read and write methods here
  * delegate to a default {@link #getDefaultManager() BoundaryIOManager3D} instance. The default
@@ -198,9 +198,9 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if stream creation fails
-     * @see BoundaryIOManager3D#boundaries(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#boundaries(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static Stream<PlaneConvexSubset> boundaries(final Path path, final DoublePrecisionContext precision)
+    public static Stream<PlaneConvexSubset> boundaries(final Path path, final Precision.DoubleEquivalence precision)
             throws IOException {
         return boundaries(new FileGeometryInput(path), null, precision);
     }
@@ -226,9 +226,9 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if stream creation fails
-     * @see BoundaryIOManager3D#boundaries(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#boundaries(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static Stream<PlaneConvexSubset> boundaries(final URL url, final DoublePrecisionContext precision)
+    public static Stream<PlaneConvexSubset> boundaries(final URL url, final Precision.DoubleEquivalence precision)
             throws IOException {
         return boundaries(new UrlGeometryInput(url), null, precision);
     }
@@ -251,10 +251,10 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if stream creation fails
-     * @see BoundaryIOManager3D#boundaries(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#boundaries(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
     public static Stream<PlaneConvexSubset> boundaries(final GeometryInput in, final GeometryFormat fmt,
-            final DoublePrecisionContext precision) throws IOException {
+            final Precision.DoubleEquivalence precision) throws IOException {
         return getDefaultManager().boundaries(in, fmt, precision);
     }
 
@@ -279,9 +279,9 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if stream creation fails
-     * @see BoundaryIOManager3D#triangles(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#triangles(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static Stream<Triangle3D> triangles(final Path path, final DoublePrecisionContext precision)
+    public static Stream<Triangle3D> triangles(final Path path, final Precision.DoubleEquivalence precision)
             throws IOException {
         return triangles(new FileGeometryInput(path), null, precision);
     }
@@ -307,9 +307,9 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if stream creation fails
-     * @see BoundaryIOManager3D#triangles(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#triangles(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static Stream<Triangle3D> triangles(final URL url, final DoublePrecisionContext precision)
+    public static Stream<Triangle3D> triangles(final URL url, final Precision.DoubleEquivalence precision)
             throws IOException {
         return triangles(new UrlGeometryInput(url), null, precision);
     }
@@ -332,10 +332,10 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if stream creation fails
-     * @see BoundaryIOManager3D#triangles(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#triangles(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
     public static Stream<Triangle3D> triangles(final GeometryInput in, final GeometryFormat fmt,
-            final DoublePrecisionContext precision) throws IOException {
+            final Precision.DoubleEquivalence precision) throws IOException {
         return getDefaultManager().triangles(in, fmt, precision);
     }
 
@@ -347,9 +347,9 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if an I/O or data format error occurs
-     * @see BoundaryIOManager3D#read(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#read(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static BoundarySource3D read(final Path path, final DoublePrecisionContext precision)
+    public static BoundarySource3D read(final Path path, final Precision.DoubleEquivalence precision)
             throws IOException {
         return read(new FileGeometryInput(path), null, precision);
     }
@@ -362,9 +362,9 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if an I/O or data format error occurs
-     * @see BoundaryIOManager3D#read(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#read(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static BoundarySource3D read(final URL url, final DoublePrecisionContext precision)
+    public static BoundarySource3D read(final URL url, final Precision.DoubleEquivalence precision)
             throws IOException {
         return read(new UrlGeometryInput(url), null, precision);
     }
@@ -378,10 +378,10 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if an I/O or data format error occurs
-     * @see BoundaryIOManager3D#read(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#read(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
     public static BoundarySource3D read(final GeometryInput in, final GeometryFormat fmt,
-            final DoublePrecisionContext precision) throws IOException {
+            final Precision.DoubleEquivalence precision) throws IOException {
         return getDefaultManager().read(in, fmt, precision);
     }
 
@@ -393,9 +393,9 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if an I/O or data format error occurs
-     * @see BoundaryIOManager3D#readTriangleMesh(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#readTriangleMesh(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static TriangleMesh readTriangleMesh(final Path path, final DoublePrecisionContext precision)
+    public static TriangleMesh readTriangleMesh(final Path path, final Precision.DoubleEquivalence precision)
             throws IOException {
         return readTriangleMesh(new FileGeometryInput(path), null, precision);
     }
@@ -408,9 +408,9 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if an I/O or data format error occurs
-     * @see BoundaryIOManager3D#readTriangleMesh(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#readTriangleMesh(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static TriangleMesh readTriangleMesh(final URL url, final DoublePrecisionContext precision)
+    public static TriangleMesh readTriangleMesh(final URL url, final Precision.DoubleEquivalence precision)
             throws IOException {
         return readTriangleMesh(new UrlGeometryInput(url), null, precision);
     }
@@ -424,10 +424,10 @@ public final class IO3D {
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
      * @throws IOException if an I/O or data format error occurs
-     * @see BoundaryIOManager3D#readTriangleMesh(GeometryInput, GeometryFormat, DoublePrecisionContext)
+     * @see BoundaryIOManager3D#readTriangleMesh(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
     public static TriangleMesh readTriangleMesh(final GeometryInput in, final GeometryFormat fmt,
-            final DoublePrecisionContext precision) throws IOException {
+            final Precision.DoubleEquivalence precision) throws IOException {
         return getDefaultManager().readTriangleMesh(in, fmt, precision);
     }
 

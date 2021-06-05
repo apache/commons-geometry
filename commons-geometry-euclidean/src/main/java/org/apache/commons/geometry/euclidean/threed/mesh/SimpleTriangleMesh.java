@@ -30,14 +30,15 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.core.Precision;
 
 /** A simple implementation of the {@link TriangleMesh} interface. This class ensures that
  * faces always contain 3 valid references into the vertex list but does not enforce that
@@ -62,7 +63,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
     private final Bounds3D bounds;
 
     /** Object used for floating point comparisons. */
-    private final DoublePrecisionContext precision;
+    private final Precision.DoubleEquivalence precision;
 
     /** Construct a new instance from a vertex list and set of faces. No validation is
      * performed on the input.
@@ -72,7 +73,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      * @param precision precision context used when creating face polygons
      */
     private SimpleTriangleMesh(final List<Vector3D> vertices, final List<int[]> faces, final Bounds3D bounds,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         this.vertices = Collections.unmodifiableList(vertices);
         this.faces = Collections.unmodifiableList(faces);
         this.bounds = bounds;
@@ -138,7 +139,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      * face {@link Triangle3D} instances.
      * @return the precision context for the mesh
      */
-    public DoublePrecisionContext getPrecision() {
+    public Precision.DoubleEquivalence getPrecision() {
         return precision;
     }
 
@@ -184,7 +185,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      *      instance
      */
     @Override
-    public SimpleTriangleMesh toTriangleMesh(final DoublePrecisionContext meshPrecision) {
+    public SimpleTriangleMesh toTriangleMesh(final Precision.DoubleEquivalence meshPrecision) {
         if (this.precision.equals(meshPrecision)) {
             return this;
         }
@@ -224,7 +225,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      * @param precision precision object used for floating point comparisons
      * @return a builder for creating new triangle mesh objects
      */
-    public static Builder builder(final DoublePrecisionContext precision) {
+    public static Builder builder(final Precision.DoubleEquivalence precision) {
         return new Builder(precision);
     }
 
@@ -237,7 +238,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      *       if any index is not a valid index into the vertex list
      */
     public static SimpleTriangleMesh from(final Vector3D[] vertices, final int[][] faces,
-                                          final DoublePrecisionContext precision) {
+                                          final Precision.DoubleEquivalence precision) {
         return from(Arrays.asList(vertices), Arrays.asList(faces), precision);
     }
 
@@ -250,7 +251,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      *       if any index is not a valid index into the vertex list
      */
     public static SimpleTriangleMesh from(final Collection<Vector3D> vertices, final Collection<int[]> faces,
-                                          final DoublePrecisionContext precision) {
+                                          final Precision.DoubleEquivalence precision) {
         final Builder builder = builder(precision);
 
         return builder.addVertices(vertices)
@@ -267,7 +268,8 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      * @throws IllegalStateException if any boundary in the boundary source has infinite size and cannot
      *      be converted to triangles
      */
-    public static SimpleTriangleMesh from(final BoundarySource3D boundarySrc, final DoublePrecisionContext precision) {
+    public static SimpleTriangleMesh from(final BoundarySource3D boundarySrc,
+            final Precision.DoubleEquivalence precision) {
         final Builder builder = builder(precision);
         try (Stream<Triangle3D> stream = boundarySrc.triangleStream()) {
             stream.forEach(tri -> builder.addFaceUsingVertices(
@@ -425,7 +427,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
         /** Precision context used for floating point comparisons; this value may be null
          * if vertices are not to be combined in this builder.
          */
-        private final DoublePrecisionContext precision;
+        private final Precision.DoubleEquivalence precision;
 
         /** Flag set to true once a mesh is constructed from this builder. */
         private boolean built;
@@ -434,14 +436,14 @@ public final class SimpleTriangleMesh implements TriangleMesh {
          * @param precision precision context used for floating point comparisons; may
          *      be null if vertices are not to be combined in this builder.
          */
-        private Builder(final DoublePrecisionContext precision) {
+        private Builder(final Precision.DoubleEquivalence precision) {
             Objects.requireNonNull(precision, "Precision context must not be null");
 
             this.precision = precision;
         }
 
         /** Use a vertex in the constructed mesh. If an equivalent vertex already exist, as determined
-         * by the configured {@link DoublePrecisionContext}, then the index of the previously added
+         * by the configured {@link Precision.DoubleEquivalence}, then the index of the previously added
          * vertex is returned. Otherwise, the given vertex is added to the vertex list and the index
          * of the new entry is returned. This is in contrast with the {@link #addVertex(Vector3D)},
          * which always adds a new entry to the vertex list.
@@ -748,13 +750,13 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      */
     private static final class FuzzyVectorComparator implements Comparator<Vector3D> {
         /** Precision context to determine floating-point equality. */
-        private final DoublePrecisionContext precision;
+        private final Precision.DoubleEquivalence precision;
 
         /** Construct a new instance that uses the given precision context for
          * floating point comparisons.
          * @param precision precision context used for floating point comparisons
          */
-        FuzzyVectorComparator(final DoublePrecisionContext precision) {
+        FuzzyVectorComparator(final Precision.DoubleEquivalence precision) {
             this.precision = precision;
         }
 

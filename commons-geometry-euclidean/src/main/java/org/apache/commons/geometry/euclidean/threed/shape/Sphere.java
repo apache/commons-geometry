@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractNSphere;
 import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.Planes;
@@ -35,6 +34,7 @@ import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a 3 dimensional sphere in Euclidean space.
  */
@@ -57,7 +57,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
      * @throws IllegalArgumentException if center is not finite or radius is not finite or is
      *      less than or equal to zero as evaluated by the given precision context
      */
-    private Sphere(final Vector3D center, final double radius, final DoublePrecisionContext precision) {
+    private Sphere(final Vector3D center, final double radius, final Precision.DoubleEquivalence precision) {
         super(center, radius, precision);
     }
 
@@ -241,7 +241,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
      * @throws IllegalArgumentException if center is not finite or radius is not finite or is
      *      less than or equal to zero as evaluated by the given precision context
      */
-    public static Sphere from(final Vector3D center, final double radius, final DoublePrecisionContext precision) {
+    public static Sphere from(final Vector3D center, final double radius, final Precision.DoubleEquivalence precision) {
         return new Sphere(center, radius, precision);
     }
 
@@ -278,7 +278,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
 
             final Vector3D center = sphere.getCenter();
             final double radius = sphere.getRadius();
-            final DoublePrecisionContext precision = sphere.getPrecision();
+            final Precision.DoubleEquivalence precision = sphere.getPrecision();
 
             // insert the primary split planes
             final Plane plusXPlane = Planes.fromPointAndNormal(center, Vector3D.Unit.PLUS_X, precision);

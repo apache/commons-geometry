@@ -16,11 +16,10 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.Point1S;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing factory methods for constructing {@link GreatCircle} and {@link GreatCircleSubset} instances.
  */
@@ -35,7 +34,7 @@ public final class GreatCircles {
      * @param precision precision context used to compare floating point values
      * @return a great circle defined by the given pole vector
      */
-    public static GreatCircle fromPole(final Vector3D pole, final DoublePrecisionContext precision) {
+    public static GreatCircle fromPole(final Vector3D pole, final Precision.DoubleEquivalence precision) {
         final Vector3D.Unit u = pole.orthogonal();
         final Vector3D.Unit v = pole.cross(u).normalize();
         return new GreatCircle(pole.normalize(), u, v, precision);
@@ -50,7 +49,7 @@ public final class GreatCircles {
      * @return a great circle defined by the given pole vector and u-axis direction
      */
     public static GreatCircle fromPoleAndU(final Vector3D pole, final Vector3D u,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         final Vector3D.Unit unitPole = pole.normalize();
         final Vector3D.Unit unitX = pole.orthogonal(u);
@@ -70,7 +69,7 @@ public final class GreatCircles {
      *      equal or antipodal as evaluated by the given precision context
      */
     public static GreatCircle fromPoints(final Point2S a, final Point2S b,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         if (!a.isFinite() || !b.isFinite()) {
             throw new IllegalArgumentException("Invalid points for great circle: " + a + ", " + b);
@@ -81,7 +80,7 @@ public final class GreatCircles {
         final double dist = a.distance(b);
         if (precision.eqZero(dist)) {
             err = "equal";
-        } else if (precision.eq(dist, PlaneAngleRadians.PI)) {
+        } else if (precision.eq(dist, Math.PI)) {
             err = "antipodal";
         }
 
@@ -105,10 +104,10 @@ public final class GreatCircles {
      * @return an arc representing the shortest path between the given points
      * @throws IllegalArgumentException if either of the given points is NaN or infinite, or if the given
      *      points are equal or antipodal as evaluated by the given precision context
-     * @see GreatCircles#fromPoints(Point2S, Point2S, org.apache.commons.geometry.core.precision.DoublePrecisionContext)
+     * @see GreatCircles#fromPoints(Point2S, Point2S, org.apache.commons.geometry.core.precision.Precision.DoubleEquivalence)
      */
     public static GreatArc arcFromPoints(final Point2S start, final Point2S end,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         final GreatCircle circle = GreatCircles.fromPoints(start, end, precision);
 
         final Point1S subspaceStart = circle.toSubspace(start);

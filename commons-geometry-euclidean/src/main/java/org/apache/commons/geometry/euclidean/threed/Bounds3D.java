@@ -19,9 +19,9 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Arrays;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractBounds;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing minimum and maximum points defining a 3D axis-aligned bounding box. Unless otherwise
  * noted, floating point comparisons used in this class are strict, meaning that values are considered equal
@@ -41,7 +41,7 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasSize(final DoublePrecisionContext precision) {
+    public boolean hasSize(final Precision.DoubleEquivalence precision) {
         final Vector3D diag = getDiagonal();
 
         return !precision.eqZero(diag.getX()) &&
@@ -66,7 +66,7 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean contains(final Vector3D pt, final DoublePrecisionContext precision) {
+    public boolean contains(final Vector3D pt, final Precision.DoubleEquivalence precision) {
         final double x = pt.getX();
         final double y = pt.getY();
         final double z = pt.getZ();
@@ -126,7 +126,7 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D> {
      *      as evaluated by the given precision context
      */
     @Override
-    public Parallelepiped toRegion(final DoublePrecisionContext precision) {
+    public Parallelepiped toRegion(final Precision.DoubleEquivalence precision) {
         return Parallelepiped.axisAligned(getMin(), getMax(), precision);
     }
 

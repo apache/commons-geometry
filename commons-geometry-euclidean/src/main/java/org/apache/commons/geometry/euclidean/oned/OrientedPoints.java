@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing factory methods for constructing {@link OrientedPoint} instances.
  */
@@ -34,7 +34,7 @@ public final class OrientedPoints {
      * @return a new instance
      */
     public static OrientedPoint fromLocationAndDirection(final double location, final boolean positiveFacing,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return fromPointAndDirection(Vector1D.of(location), positiveFacing, precision);
     }
 
@@ -46,7 +46,7 @@ public final class OrientedPoints {
      * @return a new instance
      */
     public static OrientedPoint fromPointAndDirection(final Vector1D point, final boolean positiveFacing,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return new OrientedPoint(point, positiveFacing, precision);
     }
 
@@ -59,7 +59,7 @@ public final class OrientedPoints {
      *      given precision context
      */
     public static OrientedPoint fromPointAndDirection(final Vector1D point, final Vector1D direction,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         if (direction.isZero(precision)) {
             throw new IllegalArgumentException("Oriented point direction cannot be zero");
         }
@@ -74,7 +74,8 @@ public final class OrientedPoints {
      * @param precision precision context used to compare floating point values
      * @return a new instance oriented toward positive infinity
      */
-    public static OrientedPoint createPositiveFacing(final Vector1D point, final DoublePrecisionContext precision) {
+    public static OrientedPoint createPositiveFacing(final Vector1D point,
+            final Precision.DoubleEquivalence precision) {
         return new OrientedPoint(point, true, precision);
     }
 
@@ -83,7 +84,8 @@ public final class OrientedPoints {
      * @param precision precision context used to compare floating point values
      * @return a new instance oriented toward positive infinity
      */
-    public static OrientedPoint createPositiveFacing(final double location, final DoublePrecisionContext precision) {
+    public static OrientedPoint createPositiveFacing(final double location,
+            final Precision.DoubleEquivalence precision) {
         return new OrientedPoint(Vector1D.of(location), true, precision);
     }
 
@@ -92,7 +94,8 @@ public final class OrientedPoints {
      * @param precision precision context used to compare floating point values
      * @return a new instance oriented toward negative infinity
      */
-    public static OrientedPoint createNegativeFacing(final Vector1D point, final DoublePrecisionContext precision) {
+    public static OrientedPoint createNegativeFacing(final Vector1D point,
+            final Precision.DoubleEquivalence precision) {
         return new OrientedPoint(point, false, precision);
     }
 
@@ -101,7 +104,8 @@ public final class OrientedPoints {
      * @param precision precision context used to compare floating point values
      * @return a new instance oriented toward negative infinity
      */
-    public static OrientedPoint createNegativeFacing(final double location, final DoublePrecisionContext precision) {
+    public static OrientedPoint createNegativeFacing(final double location,
+            final Precision.DoubleEquivalence precision) {
         return new OrientedPoint(Vector1D.of(location), false, precision);
     }
 }

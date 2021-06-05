@@ -30,10 +30,10 @@ import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.io.core.input.GeometryInput;
 import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class managing IO operations for geometric data formats containing region boundaries.
  * All IO operations are delegated to registered format-specific {@link BoundaryReadHandler read handlers}
@@ -196,7 +196,7 @@ public class BoundaryIOManager<
      *      can be found for the input format
      * @throws IOException if an IO error occurs
      */
-    public B read(final GeometryInput in, final GeometryFormat fmt, final DoublePrecisionContext precision)
+    public B read(final GeometryInput in, final GeometryFormat fmt, final Precision.DoubleEquivalence precision)
             throws IOException {
         return requireReadHandler(in, fmt).read(in, precision);
     }
@@ -221,7 +221,7 @@ public class BoundaryIOManager<
      * @throws IOException if an IO error occurs
      */
     public Stream<H> boundaries(final GeometryInput in, final GeometryFormat fmt,
-            final DoublePrecisionContext precision) throws IOException {
+            final Precision.DoubleEquivalence precision) throws IOException {
         return requireReadHandler(in, fmt).boundaries(in, precision);
     }
 

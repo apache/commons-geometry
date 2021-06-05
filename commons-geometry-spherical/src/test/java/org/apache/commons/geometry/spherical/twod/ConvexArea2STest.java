@@ -25,12 +25,11 @@ import java.util.stream.Collectors;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.Point1S;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,8 +37,8 @@ public class ConvexArea2STest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testFull() {
@@ -50,7 +49,7 @@ public class ConvexArea2STest {
         Assertions.assertTrue(area.isFull());
         Assertions.assertFalse(area.isEmpty());
         Assertions.assertEquals(0, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(4 * PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(4 * Math.PI, area.getSize(), TEST_EPS);
         Assertions.assertNull(area.getCentroid());
 
         Assertions.assertEquals(0, area.getBoundaries().size());
@@ -70,7 +69,7 @@ public class ConvexArea2STest {
         Assertions.assertTrue(area.isFull());
         Assertions.assertFalse(area.isEmpty());
         Assertions.assertEquals(0, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(4 * PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(4 * Math.PI, area.getSize(), TEST_EPS);
         Assertions.assertNull(area.getCentroid());
 
         Assertions.assertEquals(0, area.getBoundaries().size());
@@ -92,8 +91,8 @@ public class ConvexArea2STest {
         // assert
         Assertions.assertFalse(area.isFull());
         Assertions.assertFalse(area.isEmpty());
-        Assertions.assertEquals(2 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(2 * PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(2 * Math.PI, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(2 * Math.PI, area.getSize(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_J, area.getCentroid(), TEST_EPS);
         checkCentroidConsistency(area);
 
@@ -116,7 +115,7 @@ public class ConvexArea2STest {
         // arrange
         final GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
         final GreatCircle b = GreatCircles.fromPoints(
-                Point2S.of(0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO), Point2S.PLUS_K, TEST_PRECISION);
+                Point2S.of(0.25 * Math.PI, Angle.PI_OVER_TWO), Point2S.PLUS_K, TEST_PRECISION);
 
         // act
         final ConvexArea2S area = ConvexArea2S.fromBounds(a, b);
@@ -124,9 +123,9 @@ public class ConvexArea2STest {
         // assert
         Assertions.assertFalse(area.isFull());
         Assertions.assertFalse(area.isEmpty());
-        Assertions.assertEquals(2 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0.125 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO),
+        Assertions.assertEquals(2 * Math.PI, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, area.getSize(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.125 * Math.PI, Angle.PI_OVER_TWO),
                 area.getCentroid(), TEST_EPS);
         checkCentroidConsistency(area);
 
@@ -136,12 +135,12 @@ public class ConvexArea2STest {
         checkArc(arcs.get(1), Point2S.MINUS_K, Point2S.PLUS_K);
 
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
-                Point2S.of(0.125 * PlaneAngleRadians.PI, 0.1),
-                Point2S.of(0.125 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO),
-                Point2S.of(0.125 * PlaneAngleRadians.PI, PlaneAngleRadians.PI - 0.1));
+                Point2S.of(0.125 * Math.PI, 0.1),
+                Point2S.of(0.125 * Math.PI, Angle.PI_OVER_TWO),
+                Point2S.of(0.125 * Math.PI, Math.PI - 0.1));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
-                Point2S.PLUS_I, Point2S.of(0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO),
+                Point2S.PLUS_I, Point2S.of(0.25 * Math.PI, Angle.PI_OVER_TWO),
                 Point2S.PLUS_K, Point2S.MINUS_K);
 
         SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
@@ -160,9 +159,9 @@ public class ConvexArea2STest {
         // assert
         Assertions.assertFalse(area.isFull());
         Assertions.assertFalse(area.isEmpty());
-        Assertions.assertEquals(2 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0, 0.25 * PlaneAngleRadians.PI), area.getCentroid(), TEST_EPS);
+        Assertions.assertEquals(2 * Math.PI, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(Math.PI, area.getSize(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0, 0.25 * Math.PI), area.getCentroid(), TEST_EPS);
         checkCentroidConsistency(area);
 
         final List<GreatArc> arcs = sortArcs(area.getBoundaries());
@@ -171,9 +170,9 @@ public class ConvexArea2STest {
         checkArc(arcs.get(1), Point2S.MINUS_J, Point2S.PLUS_J);
 
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
-                Point2S.of(0, 0.25 * PlaneAngleRadians.PI),
-                Point2S.of(0.25, 0.4 * PlaneAngleRadians.PI),
-                Point2S.of(-0.25, 0.4 * PlaneAngleRadians.PI));
+                Point2S.of(0, 0.25 * Math.PI),
+                Point2S.of(0.25, 0.4 * Math.PI),
+                Point2S.of(-0.25, 0.4 * Math.PI));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_K,
@@ -181,8 +180,8 @@ public class ConvexArea2STest {
 
         SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.MINUS_I, Point2S.MINUS_K,
-                Point2S.of(PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI),
-                Point2S.of(PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI));
+                Point2S.of(Math.PI, 0.25 * Math.PI),
+                Point2S.of(Math.PI, 0.75 * Math.PI));
     }
 
     @Test
@@ -198,8 +197,8 @@ public class ConvexArea2STest {
         // assert
         Assertions.assertFalse(area.isFull());
         Assertions.assertFalse(area.isEmpty());
-        Assertions.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(1.5 * Math.PI, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
         final Point2S expectedCentroid = triangleCentroid(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
         SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
@@ -213,12 +212,12 @@ public class ConvexArea2STest {
         checkArc(arcs.get(2), Point2S.PLUS_J, Point2S.PLUS_K);
 
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
-                Point2S.of(0.25 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
+                Point2S.of(0.25 * Math.PI, 0.25 * Math.PI));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
-                Point2S.of(0, 0.25 * PlaneAngleRadians.PI), Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.304 * PlaneAngleRadians.PI),
-                Point2S.of(0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO));
+                Point2S.of(0, 0.25 * Math.PI), Point2S.of(Angle.PI_OVER_TWO, 0.304 * Math.PI),
+                Point2S.of(0.25 * Math.PI, Angle.PI_OVER_TWO));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
@@ -227,11 +226,11 @@ public class ConvexArea2STest {
     @Test
     public void testFromBounds_triangle_small() {
         // arrange
-        final double azMin = 1.12 * PlaneAngleRadians.PI;
-        final double azMax = 1.375 * PlaneAngleRadians.PI;
+        final double azMin = 1.12 * Math.PI;
+        final double azMax = 1.375 * Math.PI;
         final double azMid = 0.5 * (azMin + azMax);
         final double polarTop = 0.1;
-        final double polarBottom = 0.25 * PlaneAngleRadians.PI;
+        final double polarBottom = 0.25 * Math.PI;
 
         final Point2S p1 = Point2S.of(azMin, polarBottom);
         final Point2S p2 = Point2S.of(azMax, polarBottom);
@@ -249,7 +248,7 @@ public class ConvexArea2STest {
         Assertions.assertFalse(area.isEmpty());
         Assertions.assertEquals(p1.distance(p2) + p2.distance(p3) + p3.distance(p1),
                 area.getBoundarySize(), TEST_EPS);
-        final double size = PlaneAngleRadians.TWO_PI - a.angle(b) - b.angle(c) - c.angle(a);
+        final double size = Angle.TWO_PI - a.angle(b) - b.angle(c) - c.angle(a);
         Assertions.assertEquals(size, area.getSize(), TEST_EPS);
 
         final Point2S expectedCentroid = triangleCentroid(p1, p2, p3);
@@ -296,7 +295,7 @@ public class ConvexArea2STest {
         Assertions.assertEquals(p1.distance(p2) + p2.distance(p3) + p3.distance(p4) + p4.distance(p1),
                 area.getBoundarySize(), TEST_EPS);
 
-        final double size = 2 * PlaneAngleRadians.PI - c1.angle(c2) - c2.angle(c3) - c3.angle(c4) - c4.angle(c1);
+        final double size = 2 * Math.PI - c1.angle(c2) - c2.angle(c3) - c3.angle(c4) - c4.angle(c1);
         Assertions.assertEquals(size, area.getSize(), TEST_EPS);
 
         checkCentroidConsistency(area);
@@ -343,8 +342,8 @@ public class ConvexArea2STest {
         // assert
         Assertions.assertFalse(area.isFull());
         Assertions.assertFalse(area.isEmpty());
-        Assertions.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(1.5 * Math.PI, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
         final Point2S expectedCentroid = triangleCentroid(Point2S.MINUS_I, Point2S.MINUS_K, Point2S.MINUS_J);
         SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
@@ -358,7 +357,7 @@ public class ConvexArea2STest {
         checkArc(arcs.get(2), Point2S.MINUS_K, Point2S.MINUS_J);
 
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
-                Point2S.of(1.25 * PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI));
+                Point2S.of(1.25 * Math.PI, 0.75 * Math.PI));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
@@ -389,9 +388,9 @@ public class ConvexArea2STest {
         // assert
         Assertions.assertFalse(area.isFull());
         Assertions.assertFalse(area.isEmpty());
-        Assertions.assertEquals(2 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0, 0.25 * PlaneAngleRadians.PI), area.getCentroid(), TEST_EPS);
+        Assertions.assertEquals(2 * Math.PI, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(Math.PI, area.getSize(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0, 0.25 * Math.PI), area.getCentroid(), TEST_EPS);
         checkCentroidConsistency(area);
 
         final List<GreatArc> arcs = sortArcs(area.getBoundaries());
@@ -400,9 +399,9 @@ public class ConvexArea2STest {
         checkArc(arcs.get(1), Point2S.MINUS_J, Point2S.PLUS_J);
 
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
-                Point2S.of(-0.25 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI),
-                Point2S.of(0, 0.25 * PlaneAngleRadians.PI),
-                Point2S.of(0.25 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
+                Point2S.of(-0.25 * Math.PI, 0.25 * Math.PI),
+                Point2S.of(0, 0.25 * Math.PI),
+                Point2S.of(0.25 * Math.PI, 0.25 * Math.PI));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_J,
@@ -425,8 +424,8 @@ public class ConvexArea2STest {
         // assert
         Assertions.assertFalse(area.isFull());
         Assertions.assertFalse(area.isEmpty());
-        Assertions.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(1.5 * Math.PI, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
         final Point2S expectedCentroid = triangleCentroid(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
         SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
@@ -440,12 +439,12 @@ public class ConvexArea2STest {
         checkArc(arcs.get(2), Point2S.PLUS_J, Point2S.PLUS_K);
 
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
-                Point2S.of(0.25 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
+                Point2S.of(0.25 * Math.PI, 0.25 * Math.PI));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
-                Point2S.of(0, 0.25 * PlaneAngleRadians.PI), Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.304 * PlaneAngleRadians.PI),
-                Point2S.of(0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO));
+                Point2S.of(0, 0.25 * Math.PI), Point2S.of(Angle.PI_OVER_TWO, 0.304 * Math.PI),
+                Point2S.of(0.25 * Math.PI, Angle.PI_OVER_TWO));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
@@ -460,10 +459,10 @@ public class ConvexArea2STest {
 
         // act
         final ConvexArea2S area = ConvexArea2S.fromVertices(Arrays.asList(
-                p1, Point2S.of(1e-17, PlaneAngleRadians.PI_OVER_TWO), p2, p3, p3, p1), true, TEST_PRECISION);
+                p1, Point2S.of(1e-17, Angle.PI_OVER_TWO), p2, p3, p3, p1), true, TEST_PRECISION);
 
         // assert
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
         final Point2S expectedCentroid = triangleCentroid(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
         SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
@@ -480,7 +479,7 @@ public class ConvexArea2STest {
     public void testFromVertices_invalidArguments() {
         // act/assert
         Assertions.assertThrows(IllegalStateException.class, () -> ConvexArea2S.fromVertices(Collections.singletonList(Point2S.PLUS_I), TEST_PRECISION));
-        Assertions.assertThrows(IllegalStateException.class, () -> ConvexArea2S.fromVertices(Arrays.asList(Point2S.PLUS_I, Point2S.of(1e-16, PlaneAngleRadians.PI_OVER_TWO)), TEST_PRECISION));
+        Assertions.assertThrows(IllegalStateException.class, () -> ConvexArea2S.fromVertices(Arrays.asList(Point2S.PLUS_I, Point2S.of(1e-16, Angle.PI_OVER_TWO)), TEST_PRECISION));
     }
 
     @Test
@@ -496,8 +495,8 @@ public class ConvexArea2STest {
         // assert
         Assertions.assertFalse(area.isFull());
         Assertions.assertFalse(area.isEmpty());
-        Assertions.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(1.5 * Math.PI, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
         final Point2S expectedCentroid = triangleCentroid(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
         SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
@@ -511,12 +510,12 @@ public class ConvexArea2STest {
         checkArc(arcs.get(2), Point2S.PLUS_J, Point2S.PLUS_K);
 
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
-                Point2S.of(0.25 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
+                Point2S.of(0.25 * Math.PI, 0.25 * Math.PI));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
-                Point2S.of(0, 0.25 * PlaneAngleRadians.PI), Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.304 * PlaneAngleRadians.PI),
-                Point2S.of(0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO));
+                Point2S.of(0, 0.25 * Math.PI), Point2S.of(Angle.PI_OVER_TWO, 0.304 * Math.PI),
+                Point2S.of(0.25 * Math.PI, Angle.PI_OVER_TWO));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
@@ -535,14 +534,14 @@ public class ConvexArea2STest {
     public void testGetCentroid_diminishingLunes() {
         // arrange
         final double eps = 1e-14;
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(eps);
 
         final double centerAz = 1;
         final double centerPolar = 0.5 * Math.PI;
         final Point2S center = Point2S.of(centerAz, centerPolar);
         final Point2S pole = Point2S.PLUS_K;
 
-        final double startOffset = PlaneAngleRadians.PI_OVER_TWO;
+        final double startOffset = Angle.PI_OVER_TWO;
         final double minOffset = 1e-14;
 
         ConvexArea2S area;
@@ -570,7 +569,7 @@ public class ConvexArea2STest {
     public void testGetCentroid_diminishingSquares() {
         // arrange
         final double eps = 1e-14;
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(eps);
 
         final double centerAz = 1;
         final double centerPolar = 0.5 * Math.PI;
@@ -654,10 +653,10 @@ public class ConvexArea2STest {
         // assert
         final double[] angles = area.getInteriorAngles();
         Assertions.assertEquals(4, angles.length);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO + 0.2, angles[0], TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI - c1.angle(c2), angles[1], TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO + 0.1, angles[2], TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, angles[3], TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO + 0.2, angles[0], TEST_EPS);
+        Assertions.assertEquals(Math.PI - c1.angle(c2), angles[1], TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO + 0.1, angles[2], TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, angles[3], TEST_EPS);
     }
 
     @Test
@@ -673,8 +672,8 @@ public class ConvexArea2STest {
         // assert
         Assertions.assertFalse(area.isFull());
         Assertions.assertFalse(area.isEmpty());
-        Assertions.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
+        Assertions.assertEquals(1.5 * Math.PI, area.getBoundarySize(), TEST_EPS);
+        Assertions.assertEquals(Angle.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
         final Point2S expectedCentroid = triangleCentroid(Point2S.MINUS_J, Point2S.PLUS_I, Point2S.PLUS_K);
         SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
@@ -688,12 +687,12 @@ public class ConvexArea2STest {
         checkArc(arcs.get(2), Point2S.MINUS_J, Point2S.PLUS_I);
 
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
-                Point2S.of(-0.25 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
+                Point2S.of(-0.25 * Math.PI, 0.25 * Math.PI));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.MINUS_J, Point2S.PLUS_K,
-                Point2S.of(0, 0.25 * PlaneAngleRadians.PI), Point2S.of(-PlaneAngleRadians.PI_OVER_TWO, 0.304 * PlaneAngleRadians.PI),
-                Point2S.of(-0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO));
+                Point2S.of(0, 0.25 * Math.PI), Point2S.of(-Angle.PI_OVER_TWO, 0.304 * Math.PI),
+                Point2S.of(-0.25 * Math.PI, Angle.PI_OVER_TWO));
 
         SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.PLUS_J, Point2S.MINUS_I, Point2S.MINUS_K);
@@ -710,14 +709,14 @@ public class ConvexArea2STest {
         final ConvexArea2S area = ConvexArea2S.fromBounds(c1, c2);
 
         // act/assert
-        checkArc(area.trim(GreatCircles.arcFromPoints(Point2S.of(0.1, PlaneAngleRadians.PI_OVER_TWO), Point2S.MINUS_I, TEST_PRECISION)),
-                Point2S.PLUS_J, Point2S.of(0.75 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO));
+        checkArc(area.trim(GreatCircles.arcFromPoints(Point2S.of(0.1, Angle.PI_OVER_TWO), Point2S.MINUS_I, TEST_PRECISION)),
+                Point2S.PLUS_J, Point2S.of(0.75 * Math.PI, Angle.PI_OVER_TWO));
 
-        checkArc(area.trim(GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.of(0.2, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION)),
-                Point2S.of(0.75 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO), Point2S.PLUS_J);
+        checkArc(area.trim(GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.of(0.2, Angle.PI_OVER_TWO), TEST_PRECISION)),
+                Point2S.of(0.75 * Math.PI, Angle.PI_OVER_TWO), Point2S.PLUS_J);
 
-        checkArc(area.trim(GreatCircles.arcFromPoints(Point2S.of(0.6 * PlaneAngleRadians.PI, 0.1), Point2S.of(0.7 * PlaneAngleRadians.PI, 0.8), TEST_PRECISION)),
-                Point2S.of(0.6 * PlaneAngleRadians.PI, 0.1), Point2S.of(0.7 * PlaneAngleRadians.PI, 0.8));
+        checkArc(area.trim(GreatCircles.arcFromPoints(Point2S.of(0.6 * Math.PI, 0.1), Point2S.of(0.7 * Math.PI, 0.8), TEST_PRECISION)),
+                Point2S.of(0.6 * Math.PI, 0.1), Point2S.of(0.7 * Math.PI, 0.8));
 
         Assertions.assertNull(area.trim(GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION)));
 
@@ -902,7 +901,7 @@ public class ConvexArea2STest {
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE, centroid);
 
         final GreatCircle circle = GreatCircles.fromPole(centroid.getVector(), TEST_PRECISION);
-        for (double az = 0; az <= PlaneAngleRadians.TWO_PI; az += 0.2) {
+        for (double az = 0; az <= Angle.TWO_PI; az += 0.2) {
             final Point2S pt = circle.toSpace(Point1S.of(az));
             final GreatCircle splitter = GreatCircles.fromPoints(centroid, pt, TEST_PRECISION);
 

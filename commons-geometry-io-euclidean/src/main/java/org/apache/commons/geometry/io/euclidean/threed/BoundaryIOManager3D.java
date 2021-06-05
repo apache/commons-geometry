@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
@@ -37,6 +36,7 @@ import org.apache.commons.geometry.io.euclidean.threed.txt.CsvBoundaryReadHandle
 import org.apache.commons.geometry.io.euclidean.threed.txt.CsvBoundaryWriteHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.txt.TextBoundaryReadHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.txt.TextBoundaryWriteHandler3D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class managing IO operations for geometric data formats containing 3D region boundaries.
  * IO operation are performed by read and write handlers registered for specific data formats.
@@ -106,7 +106,7 @@ public class BoundaryIOManager3D extends BoundaryIOManager<
      * @throws IOException if stream creation fails
      */
     public Stream<Triangle3D> triangles(final GeometryInput in, final GeometryFormat fmt,
-            final DoublePrecisionContext precision) throws IOException {
+            final Precision.DoubleEquivalence precision) throws IOException {
         return boundaries(in, fmt, precision)
                 .flatMap(p -> p.toTriangles().stream());
     }
@@ -121,7 +121,7 @@ public class BoundaryIOManager3D extends BoundaryIOManager<
      * @throws IOException if an I/O error occurs
      */
     public TriangleMesh readTriangleMesh(final GeometryInput in, final GeometryFormat fmt,
-            final DoublePrecisionContext precision) throws IOException {
+            final Precision.DoubleEquivalence precision) throws IOException {
         return requireReadHandler(in, fmt).readTriangleMesh(in, precision);
     }
 

@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
@@ -39,7 +37,8 @@ import org.apache.commons.geometry.euclidean.twod.ReverseRay;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath.Builder;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,8 +46,8 @@ public class LinePathTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testFrom_empty() {
@@ -194,7 +193,7 @@ public class LinePathTest {
         // arrange
         final ReverseRay a = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION)
                 .reverseRayTo(1.0);
-        final Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+        final Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), Angle.PI_OVER_TWO, TEST_PRECISION)
                 .rayFrom(0.0);
 
         // act
@@ -249,7 +248,7 @@ public class LinePathTest {
     public void testFrom_finiteAndInfiniteSegments_endInfinite() {
         // arrange
         final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        final Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+        final Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), Angle.PI_OVER_TWO, TEST_PRECISION)
                 .rayFrom(0.0);
 
         // act
@@ -279,7 +278,7 @@ public class LinePathTest {
         final Segment b = Lines.segmentFromPoints(Vector2D.of(1.01, 0), Vector2D.of(1, 0), TEST_PRECISION);
 
         final LineConvexSubset c = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span();
-        final LineConvexSubset d = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).span();
+        final LineConvexSubset d = Lines.fromPointAndAngle(Vector2D.of(1, 0), Angle.PI_OVER_TWO, TEST_PRECISION).span();
 
         // act/assert
         Assertions.assertThrows(IllegalStateException.class, () -> LinePath.from(a, b));
@@ -563,7 +562,7 @@ public class LinePathTest {
                 .close();
 
         final AffineTransformMatrix2D t =
-                AffineTransformMatrix2D.createRotation(Vector2D.of(1, 1), PlaneAngleRadians.PI_OVER_TWO);
+                AffineTransformMatrix2D.createRotation(Vector2D.of(1, 1), Angle.PI_OVER_TWO);
 
         // act
         final LinePath result = path.transform(t);
@@ -824,7 +823,7 @@ public class LinePathTest {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         final Split<LineConvexSubset> split = line.span().split(
-                Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
+                Lines.fromPointAndAngle(Vector2D.ZERO, Angle.PI_OVER_TWO, TEST_PRECISION));
 
         final Builder builder = LinePath.builder(TEST_PRECISION);
         final LinePath path = builder
@@ -1277,7 +1276,7 @@ public class LinePathTest {
         builder
             .append(Vector2D.ZERO)
             .append(Vector2D.Unit.PLUS_X)
-            .append(Lines.fromPointAndAngle(Vector2D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+            .append(Lines.fromPointAndAngle(Vector2D.Unit.PLUS_X, Angle.PI_OVER_TWO, TEST_PRECISION)
                 .rayFrom(0));
 
         // act/assert

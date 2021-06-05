@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing factory methods for constructing {@link CutAngle} instances.
  */
@@ -34,7 +34,7 @@ public final class CutAngles {
      * @return a new instance
      */
     public static CutAngle fromAzimuthAndDirection(final double azimuth, final boolean positiveFacing,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return fromPointAndDirection(Point1S.of(azimuth), positiveFacing, precision);
     }
 
@@ -46,7 +46,7 @@ public final class CutAngles {
      * @return a new instance
      */
     public static CutAngle fromPointAndDirection(final Point1S point, final boolean positiveFacing,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return new CutAngle(point, positiveFacing, precision);
     }
 
@@ -56,7 +56,7 @@ public final class CutAngles {
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static CutAngle createPositiveFacing(final double azimuth, final DoublePrecisionContext precision) {
+    public static CutAngle createPositiveFacing(final double azimuth, final Precision.DoubleEquivalence precision) {
         return createPositiveFacing(Point1S.of(azimuth), precision);
     }
 
@@ -66,7 +66,7 @@ public final class CutAngles {
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static CutAngle createPositiveFacing(final Point1S point, final DoublePrecisionContext precision) {
+    public static CutAngle createPositiveFacing(final Point1S point, final Precision.DoubleEquivalence precision) {
         return fromPointAndDirection(point, true, precision);
     }
 
@@ -76,7 +76,7 @@ public final class CutAngles {
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static CutAngle createNegativeFacing(final double azimuth, final DoublePrecisionContext precision) {
+    public static CutAngle createNegativeFacing(final double azimuth, final Precision.DoubleEquivalence precision) {
         return createNegativeFacing(Point1S.of(azimuth), precision);
     }
 
@@ -86,7 +86,7 @@ public final class CutAngles {
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static CutAngle createNegativeFacing(final Point1S point, final DoublePrecisionContext precision) {
+    public static CutAngle createNegativeFacing(final Point1S point, final Precision.DoubleEquivalence precision) {
         return fromPointAndDirection(point, false, precision);
     }
 }

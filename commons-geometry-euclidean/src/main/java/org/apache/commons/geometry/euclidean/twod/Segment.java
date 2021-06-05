@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a line segment in 2D Euclidean space. A line segment is a portion of
  * a line with finite start and end points.
@@ -156,7 +156,7 @@ public final class Segment extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     RegionLocation classifyAbscissa(final double abscissa) {
-        final DoublePrecisionContext precision = getPrecision();
+        final Precision.DoubleEquivalence precision = getPrecision();
         final int startCmp = precision.compare(abscissa, getSubspaceStart());
         if (startCmp > 0) {
             final int endCmp = precision.compare(abscissa, getSubspaceEnd());
@@ -183,7 +183,7 @@ public final class Segment extends LineConvexSubset {
     Split<LineConvexSubset> splitOnIntersection(final Line splitter, final Vector2D intersection) {
         final Line line = getLine();
 
-        final DoublePrecisionContext splitterPrecision = splitter.getPrecision();
+        final Precision.DoubleEquivalence splitterPrecision = splitter.getPrecision();
 
         final int startCmp = splitterPrecision.compare(splitter.offset(startPoint), 0.0);
         final int endCmp = splitterPrecision.compare(splitter.offset(endPoint), 0.0);

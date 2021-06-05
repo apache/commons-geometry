@@ -19,8 +19,8 @@ package org.apache.commons.geometry.hull.euclidean.twod;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 
 /**
  * Abstract base class for convex hull generators in the two-dimensional Euclidean space.
@@ -28,7 +28,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
 
     /** Precision context used to compare floating point numbers. */
-    private final DoublePrecisionContext precision;
+    private final Precision.DoubleEquivalence precision;
 
     /**
      * Indicates if collinear points on the hull shall be present in the output.
@@ -44,7 +44,7 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
      * @param precision precision context used to compare floating point numbers
      */
     protected AbstractConvexHullGenerator2D(final boolean includeCollinearPoints,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         this.includeCollinearPoints = includeCollinearPoints;
         this.precision = precision;
     }
@@ -52,7 +52,7 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
     /** Get the object used to determine floating point equality for this region.
      * @return the floating point precision context for the instance
      */
-    public DoublePrecisionContext getPrecision() {
+    public Precision.DoubleEquivalence getPrecision() {
         return precision;
     }
 

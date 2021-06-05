@@ -93,16 +93,16 @@
 
       <p>
         We will start our BSP tree building adventure by constructing a simple but essential object:
-        a <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html"
-        >DoublePrecisionContext</a>. Nearly all code that uses <em>Commons Geometry</em> begins with this step.
-        Precision context instances are used to perform floating point comparisons and smooth over floating point
-        errors that accumulate during computations. This allows points and other values that are close but not exact
-        to be considered equal for the purposes of the geometric operation. Without this fuzzy comparison, values that
-        should be equal analytically, such as \(\pi \over 4\) and \(\arcsin{1 \over \sqrt{2}}\), may not be evaluated
-        as equal.
+        a <span class="code">Precision.DoubleEquivalence</span> instance from the
+        <a target="_blank" href="https://commons.apache.org/proper/commons-numbers/">Commons Numbers</a> library.
+        Nearly all code that uses <em>Commons Geometry</em> begins with this step.
+        This class is used to perform floating point comparisons and smooth over floating point errors that accumulate
+        during computations. This allows points and other values that are close but not exact to be considered equal
+        for the purposes of the geometric operation. Without this fuzzy comparison, values that should be equal
+        analytically, such as \(\pi \over 4\) and \(\arcsin{1 \over \sqrt{2}}\), may not be evaluated as equal.
       </p>
       <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);</source>
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6)</source>
 
       <p>
         Our next step is to create an actual BSP tree instance. We will use the
@@ -231,10 +231,11 @@ h.insertCut(Lines.fromPointAndDirection(Vector2D.of(5, -1), Vector2D.Unit.PLUS_Y
       the region boundaries into the top of the tree. These will propagate down through the tree, being split as needed
       at each internal node, until they hit a leaf node. That leaf node (or nodes) will then be cut as demonstrated in the
       bottom-up construction section using the hyperplane of the hyperplane convex subset. Let's start by constructing
-      our precision context and empty tree and inserting our first boundary, which will be the line segment <code>[(-5, 0), (-1, 0)]</code>.
+      our floating point precision object and empty tree and inserting our first boundary, which will be the
+      line segment <code>[(-5, 0), (-1, 0)]</code>.
       </p>
       <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -327,7 +328,7 @@ tree.insert(path);</source>
         start by inserting a cut using this rule that will split our hexagon in two.
       </p>
       <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -353,7 +354,7 @@ tree.insert(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, pre
         builder class to insert a grid of structural cuts centered on the shape centroid before inserting the region boundaries.
       </p>
       <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 LinePath path = LinePath.fromVertexLoop(Arrays.asList(
         Vector2D.of(-4, 0),
@@ -391,7 +392,7 @@ RegionBSPTree2D tree = RegionBSPTree2D.partitionedRegionBuilder()
         <var>result</var>, leaving the two input trees <var>a</var> and <var>b</var> unmodified.
       </p>
       <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 RegionBSPTree2D a = LinePath.fromVertexLoop(Arrays.asList(
         Vector2D.of(2, 0),
@@ -417,7 +418,7 @@ result.union(a, b);
         The next example uses this approach to perform an xor operation.
       </p>
       <source>
-DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 RegionBSPTree2D result = LinePath.fromVertexLoop(Arrays.asList(
         Vector2D.of(2, 0),

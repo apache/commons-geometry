@@ -19,11 +19,10 @@ package org.apache.commons.geometry.enclosing;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.euclidean.threed.WelzlEncloser3D;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +35,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testWelzlEncloser3DExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
         final List<Vector3D> points = Arrays.asList(
                     Vector3D.of(0, 0, 1),

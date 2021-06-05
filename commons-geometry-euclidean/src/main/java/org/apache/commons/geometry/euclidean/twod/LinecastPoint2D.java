@@ -21,8 +21,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractLinecastPoint;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing intersections resulting from linecast operations in Euclidean
  * 2D space. This class contains the intersection point along with the boundary normal
@@ -59,13 +59,13 @@ public class LinecastPoint2D extends AbstractLinecastPoint<Vector2D, Vector2D.Un
      * @param precision precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
      */
-    public boolean eq(final LinecastPoint2D other, final DoublePrecisionContext precision) {
+    public boolean eq(final LinecastPoint2D other, final Precision.DoubleEquivalence precision) {
         return getPoint().eq(other.getPoint(), precision) &&
                 getNormal().eq(other.getNormal(), precision);
     }
 
     /** Sort the given list of linecast points by increasing abscissa value and filter to remove
-     * duplicate entries (as determined by the {@link #eq(LinecastPoint2D, DoublePrecisionContext)} method).
+     * duplicate entries (as determined by the {@link #eq(LinecastPoint2D, Precision.DoubleEquivalence)} method).
      * The argument is modified.
      * @param pts list of points to sort and filter
      */
@@ -101,7 +101,7 @@ public class LinecastPoint2D extends AbstractLinecastPoint<Vector2D, Vector2D.Un
      * @return true if the given linecast point is equivalent to any of those in the given list
      */
     private static boolean containsEq(final LinecastPoint2D pt, final List<? extends LinecastPoint2D> list) {
-        final DoublePrecisionContext precision = pt.getLine().getPrecision();
+        final Precision.DoubleEquivalence precision = pt.getLine().getPrecision();
 
         for (final LinecastPoint2D listPt : list) {
             if (listPt.eq(pt, precision)) {

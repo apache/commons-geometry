@@ -20,10 +20,10 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Extension of the {@link Plane} class that supports embedding of 2D subspaces in the plane.
  * This is accomplished by defining two additional vectors, {@link #getU() u} and {@link #getV() v},
@@ -34,7 +34,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  * <p>The additional {@code u} and {@code v} vectors are not required to fulfill the contract of
  * {@link org.apache.commons.geometry.core.partitioning.Hyperplane Hyperplane}. Therefore, they
  * are not considered when using instances of this type purely as a hyperplane. For example, the
- * {@link Plane#eq(Plane, DoublePrecisionContext) eq} and
+ * {@link Plane#eq(Plane, Precision.DoubleEquivalence) eq} and
  * {@link Plane#similarOrientation(org.apache.commons.geometry.core.partitioning.Hyperplane) similiarOrientation}
  * methods do not consider them.</p>
  */
@@ -53,7 +53,7 @@ public final class EmbeddingPlane extends Plane implements EmbeddingHyperplane<V
      * @param precision precision context used for floating point comparisons
      */
     EmbeddingPlane(final Vector3D.Unit u, final Vector3D.Unit v, final Vector3D.Unit w, final double originOffset,
-                   final DoublePrecisionContext precision) {
+                   final Precision.DoubleEquivalence precision) {
         super(w, originOffset, precision);
 
         this.u = u;

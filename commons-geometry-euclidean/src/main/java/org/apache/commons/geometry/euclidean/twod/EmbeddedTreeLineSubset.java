@@ -25,13 +25,13 @@ import org.apache.commons.geometry.core.internal.HyperplaneSubsets;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoints;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing an arbitrary subset of a line using a {@link RegionBSPTree1D}.
  * This class can represent convex, non-convex, finite, infinite, and empty regions.
@@ -170,7 +170,7 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
     public Split<EmbeddedTreeLineSubset> split(final Hyperplane<Vector2D> splitter) {
         final Line thisLine = getLine();
         final Line splitterLine = (Line) splitter;
-        final DoublePrecisionContext precision = getPrecision();
+        final Precision.DoubleEquivalence precision = getPrecision();
 
         final Vector2D intersection = splitterLine.intersection(thisLine);
         if (intersection == null) {

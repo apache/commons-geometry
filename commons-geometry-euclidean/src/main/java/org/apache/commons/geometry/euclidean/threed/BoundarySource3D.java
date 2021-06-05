@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
+import org.apache.commons.numbers.core.Precision;
 
 /** Extension of the {@link BoundarySource} interface for Euclidean 3D space.
  */
@@ -64,7 +64,7 @@ public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset>, Lin
      * @return a triangle mesh representing the boundaries in this instance
      * @throws IllegalStateException if any boundary in this boundary source is infinite
      */
-    default TriangleMesh toTriangleMesh(final DoublePrecisionContext precision) {
+    default TriangleMesh toTriangleMesh(final Precision.DoubleEquivalence precision) {
         return SimpleTriangleMesh.from(this, precision);
     }
 

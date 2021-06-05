@@ -18,15 +18,14 @@ package org.apache.commons.geometry.euclidean.threed.line;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,13 +33,13 @@ public class LineConvexSubset3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testFromInterval_intervalArg_finite() {
         // arrange
-        final DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 2, intervalPrecision);
 
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
@@ -77,7 +76,7 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_intervalArg_positiveHalfSpace() {
         // arrange
-        final DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.min(-1, intervalPrecision);
 
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
@@ -103,7 +102,7 @@ public class LineConvexSubset3DTest {
     @Test
     public void testFromInterval_intervalArg_negativeHalfSpace() {
         // arrange
-        final DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.max(2, intervalPrecision);
 
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
@@ -256,7 +255,7 @@ public class LineConvexSubset3DTest {
 
         final Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .scale(2, 1, 1)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Angle.PI_OVER_TWO));
 
         // act
         final LineConvexSubset3D transformed = subset.transform(transform);
@@ -276,7 +275,7 @@ public class LineConvexSubset3DTest {
         checkFiniteSegment(subset, start, end, TEST_PRECISION);
     }
 
-    private static void checkFiniteSegment(final LineConvexSubset3D subset, final Vector3D start, final Vector3D end, final DoublePrecisionContext precision) {
+    private static void checkFiniteSegment(final LineConvexSubset3D subset, final Vector3D start, final Vector3D end, final Precision.DoubleEquivalence precision) {
         Assertions.assertFalse(subset.isInfinite());
         Assertions.assertTrue(subset.isFinite());
 

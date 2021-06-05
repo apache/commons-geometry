@@ -27,9 +27,9 @@ import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBou
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConnector;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a finite or infinite convex area in Euclidean 2D space.
  * The boundaries of this area, if any, are composed of convex line subsets.
@@ -206,10 +206,10 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
      * @return a convex polygon constructed using the given vertices
      * @throws IllegalStateException if {@code vertices} contains only a single unique vertex
      * @throws IllegalArgumentException if the constructed path does not define a closed, convex polygon
-     * @see LinePath#fromVertexLoop(Collection, DoublePrecisionContext)
+     * @see LinePath#fromVertexLoop(Collection, Precision.DoubleEquivalence)
      */
     public static ConvexArea convexPolygonFromVertices(final Collection<Vector2D> vertices,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         return convexPolygonFromPath(LinePath.fromVertexLoop(vertices, precision));
     }
 
@@ -234,7 +234,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
         // using the precision context from the first path element
         final LineConvexSubset startElement = elements.get(0);
         final Vector2D startVertex = startElement.getStartPoint();
-        final DoublePrecisionContext precision = startElement.getPrecision();
+        final Precision.DoubleEquivalence precision = startElement.getPrecision();
 
         Vector2D curVector;
         Vector2D prevVector = null;

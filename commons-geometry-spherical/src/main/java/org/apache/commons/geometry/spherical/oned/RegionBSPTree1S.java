@@ -29,9 +29,9 @@ import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 
 /** BSP tree representing regions in 1D spherical space.
  */
@@ -154,12 +154,12 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
                 splitter.getPrecision());
 
         final double plusPoleOffset = splitter.isPositiveFacing() ?
-                +PlaneAngleRadians.PI_OVER_TWO :
-                -PlaneAngleRadians.PI_OVER_TWO;
+                +Angle.PI_OVER_TWO :
+                -Angle.PI_OVER_TWO;
         final Point1S plusPole = Point1S.of(splitter.getAzimuth() + plusPoleOffset);
 
         final boolean zeroOnPlusSide = splitter.getPrecision()
-                .lte(plusPole.distance(Point1S.ZERO), PlaneAngleRadians.PI_OVER_TWO);
+                .lte(plusPole.distance(Point1S.ZERO), Angle.PI_OVER_TWO);
 
         final Split<RegionBSPTree1S> firstSplit = split(splitter);
         final Split<RegionBSPTree1S> secondSplit = split(opposite);
@@ -289,7 +289,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         CutAngle min = start.getMin();
         CutAngle max = end.getMax();
 
-        final DoublePrecisionContext precision = (min != null) ? min.getPrecision() : max.getPrecision();
+        final Precision.DoubleEquivalence precision = (min != null) ? min.getPrecision() : max.getPrecision();
 
         // flip the hyperplanes if needed since there's no
         // guarantee that the inside will be on the minus side
@@ -308,7 +308,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
                 max = max.reverse();
             }
         } else {
-            max = CutAngles.createPositiveFacing(PlaneAngleRadians.TWO_PI, precision);
+            max = CutAngles.createPositiveFacing(Angle.TWO_PI, precision);
         }
 
         return AngularInterval.of(min, max);
@@ -349,7 +349,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
     @Override
     protected RegionSizeProperties<Point1S> computeRegionSizeProperties() {
         if (isFull()) {
-            return new RegionSizeProperties<>(PlaneAngleRadians.TWO_PI, null);
+            return new RegionSizeProperties<>(Angle.TWO_PI, null);
         } else if (isEmpty()) {
             return new RegionSizeProperties<>(0, null);
         }
@@ -366,7 +366,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             scaledCentroidSum = scaledCentroidSum.add(interval.getCentroid().getVector().withNorm(intervalSize));
         }
 
-        final DoublePrecisionContext precision = ((CutAngle) getRoot().getCutHyperplane()).getPrecision();
+        final Precision.DoubleEquivalence precision = ((CutAngle) getRoot().getCutHyperplane()).getPrecision();
 
         final Point1S centroid = scaledCentroidSum.eq(Vector2D.ZERO, precision) ?
                  null :

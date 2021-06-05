@@ -27,45 +27,54 @@
 
     <section name="Apache Commons Geometry" href="summary">
       <p>
-        Commons Geometry provides types and utilities for geometric processing. Key features include
+        Commons Geometry is a general-purpose Java library for geometric processing. The primary goal of the project
+        is to provide a set of geometric types and utilities that are
+        <ul>
+          <li>mathematically correct,</li>
+          <li>numerically accurate,</li>
+          <li>easy to use, and</li>
+          <li>performant.</li>
+        </ul>
+        Key features of the library include
+        <ul>
+          <li>Support for Euclidean space in 1, 2, and 3 dimensions</li>
+          <li>Support for spherical space in 1 and 2 dimensions</li>
+          <li>Support for geometric elements of infinite size</li>
+          <li>Support for boolean operations on regions (union, intersection, difference, xor)</li>
+          <li>Support for reading and writing common geometric data formats, such as STL and OBJ</li>
+          <li>Single external dependency (<a href="https://commons.apache.org/proper/commons-numbers/"
+              >commons-numbers</a>)</li>
+        </ul>
       </p>
-      <ul>
-        <li>Support for Euclidean space in 1, 2, and 3 dimensions</li>
-        <li>Support for spherical space in 1 and 2 dimensions</li>
-        <li>Support for geometric elements of infinite size</li>
-        <li>Support for boolean operations on regions (union, intersection, difference, xor)</li>
-        <li>Single external dependency (<a href="https://commons.apache.org/proper/commons-numbers/"
-            >commons-numbers</a>)</li>
-      </ul>
 
       <p>The code below gives a small sample of the API by computing the difference of a cube and an approximation
-      of a sphere and writing the result to a file using the 
-      <a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">OBJ</a> data format. See the 
+      of a sphere and writing the result to a file using the
+      <a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">OBJ</a> data format. See the
       <a href="userguide/index.html">user guide</a> for more details.
       </p>
 <source class="prettyprint">
-// construct a precision context to handle floating-point comparisons
-final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+// construct a precision instance to handle floating-point comparisons
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
 // create a BSP tree representing the unit cube
-final RegionBSPTree3D tree = Parallelepiped.unitCube(precision).toTree();
+RegionBSPTree3D tree = Parallelepiped.unitCube(precision).toTree();
 
 // create a sphere centered on the origin
-final Sphere sphere = Sphere.from(Vector3D.ZERO, 0.65, precision);
+Sphere sphere = Sphere.from(Vector3D.ZERO, 0.65, precision);
 
 // subtract a BSP tree approximation of the sphere containing 512 facets
 // from the cube, modifying the cube tree in place
 tree.difference(sphere.toTree(3));
 
 // compute some properties of the resulting region
-final double size = tree.getSize(); // 0.11509505362599505
-final Vector3D centroid = tree.getCentroid(); // (0, 0, 0)
+double size = tree.getSize(); // 0.11509505362599505
+Vector3D centroid = tree.getCentroid(); // (0, 0, 0)
 
 // convert to a triangle mesh
-final TriangleMesh mesh = tree.toTriangleMesh(precision);
+TriangleMesh mesh = tree.toTriangleMesh(precision);
 
 // save as an OBJ file
-IO3D.write(mesh, Paths.get("cube-minus-sphere.obj"));
+IO3D.write(mesh, Paths.get("target/cube-minus-sphere.obj"));
 </source>
       <p>Below is an image of the triangle mesh rendered with <a href="https://www.blender.org/" target="_blank">Blender</a>.
       </p>

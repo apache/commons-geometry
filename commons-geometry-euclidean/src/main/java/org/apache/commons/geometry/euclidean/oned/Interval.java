@@ -24,7 +24,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing an interval in one dimension. The interval is defined
  * by minimum and maximum values. One or both of these values may be infinite
@@ -360,7 +360,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      * @throws IllegalArgumentException if either number is {@link Double#NaN NaN} or the numbers
      *      are both infinite and have the same sign
      */
-    public static Interval of(final double a, final double b, final DoublePrecisionContext precision) {
+    public static Interval of(final double a, final double b, final Precision.DoubleEquivalence precision) {
         validateIntervalValues(a, b);
 
         final double min = Math.min(a, b);
@@ -390,7 +390,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      * @throws IllegalArgumentException if either point is {@link Vector1D#isNaN() NaN} or the points
      *      are both {@link Vector1D#isInfinite() infinite} and have the same sign
      */
-    public static Interval of(final Vector1D a, final Vector1D b, final DoublePrecisionContext precision) {
+    public static Interval of(final Vector1D a, final Vector1D b, final Precision.DoubleEquivalence precision) {
         return of(a.getX(), b.getX(), precision);
     }
 
@@ -439,7 +439,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      * @param precision precision context used to compare floating point numbers
      * @return an interval with the given min value and no max.
      */
-    public static Interval min(final double min, final DoublePrecisionContext precision) {
+    public static Interval min(final double min, final Precision.DoubleEquivalence precision) {
         return of(min, Double.POSITIVE_INFINITY, precision);
     }
 
@@ -448,7 +448,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      * @param precision precision context used to compare floating point numbers
      * @return an interval with the given max value and no min.
      */
-    public static Interval max(final double max, final DoublePrecisionContext precision) {
+    public static Interval max(final double max, final Precision.DoubleEquivalence precision) {
         return of(Double.NEGATIVE_INFINITY, max, precision);
     }
 
@@ -457,7 +457,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      * @param precision precision context used to compare floating point numbers
      * @return an interval representing a single point
      */
-    public static Interval point(final double location, final DoublePrecisionContext precision) {
+    public static Interval point(final double location, final Precision.DoubleEquivalence precision) {
         return of(location, location, precision);
     }
 

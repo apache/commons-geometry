@@ -247,7 +247,7 @@ public final class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D
             // the lines are parallel
             final double originOffset = splitter.offset(line.getOrigin());
 
-            final int sign = PartitionTestUtils.PRECISION.sign(originOffset);
+            final double sign = PartitionTestUtils.PRECISION.signum(originOffset);
             if (sign < 0) {
                 return new Split<>(this, null);
             } else if (sign > 0) {
@@ -269,7 +269,7 @@ public final class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D
             }
 
             final double startOffset = splitter.offset(line.toSpace(intersectionAbscissa - 1));
-            final double startCmp = PartitionTestUtils.PRECISION.sign(startOffset);
+            final double startCmp = PartitionTestUtils.PRECISION.signum(startOffset);
 
             final TestLineSegment minus = (startCmp > 0) ? endSegment : startSegment;
             final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
@@ -288,8 +288,8 @@ public final class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D
         final double startOffset = splitter.offset(line.toSpace(start));
         final double endOffset = splitter.offset(line.toSpace(end));
 
-        final int startCmp = PartitionTestUtils.PRECISION.sign(startOffset);
-        final int endCmp = PartitionTestUtils.PRECISION.sign(endOffset);
+        final double startCmp = PartitionTestUtils.PRECISION.signum(startOffset);
+        final double endCmp = PartitionTestUtils.PRECISION.signum(endOffset);
 
         // startCmp |   endCmp  |   result
         // --------------------------------

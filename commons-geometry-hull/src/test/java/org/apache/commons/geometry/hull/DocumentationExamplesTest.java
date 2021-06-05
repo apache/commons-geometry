@@ -19,13 +19,12 @@ package org.apache.commons.geometry.hull;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.hull.euclidean.twod.ConvexHull2D;
 import org.apache.commons.geometry.hull.euclidean.twod.MonotoneChain;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +37,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testMonotoneChainExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
         // create a list of input points for the algorithm
         final List<Vector2D> pts = Arrays.asList(

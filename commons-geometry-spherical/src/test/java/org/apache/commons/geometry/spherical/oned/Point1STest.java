@@ -19,12 +19,10 @@ package org.apache.commons.geometry.spherical.oned;
 import java.util.Comparator;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.angle.PlaneAngle;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +46,7 @@ public class Point1STest {
         Assertions.assertEquals(0, comp.compare(Point1S.of(1), Point1S.of(1)));
         Assertions.assertEquals(-1, comp.compare(Point1S.of(0), Point1S.of(1)));
         Assertions.assertEquals(1, comp.compare(Point1S.of(1), Point1S.of(0)));
-        Assertions.assertEquals(1, comp.compare(Point1S.of(1), Point1S.of(0.1 + PlaneAngleRadians.TWO_PI)));
+        Assertions.assertEquals(1, comp.compare(Point1S.of(1), Point1S.of(0.1 + Angle.TWO_PI)));
 
         Assertions.assertEquals(1, comp.compare(null, Point1S.of(0)));
         Assertions.assertEquals(-1, comp.compare(Point1S.of(0), null));
@@ -60,15 +58,15 @@ public class Point1STest {
         // act/assert
         checkPoint(Point1S.of(0), 0, 0);
         checkPoint(Point1S.of(1), 1, 1);
-        checkPoint(Point1S.of(-1), -1, PlaneAngleRadians.TWO_PI - 1);
+        checkPoint(Point1S.of(-1), -1, Angle.TWO_PI - 1);
 
-        checkPoint(Point1S.of(PlaneAngle.ofDegrees(90)), PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
-        checkPoint(Point1S.of(PlaneAngle.ofTurns(0.5)), PlaneAngleRadians.PI, PlaneAngleRadians.PI);
-        checkPoint(Point1S.of(-PlaneAngleRadians.PI_OVER_TWO), -PlaneAngleRadians.PI_OVER_TWO, 1.5 * PlaneAngleRadians.PI);
+        checkPoint(Point1S.of(Angle.Deg.of(90)), Angle.PI_OVER_TWO, Angle.PI_OVER_TWO);
+        checkPoint(Point1S.of(Angle.Turn.of(0.5)), Math.PI, Math.PI);
+        checkPoint(Point1S.of(-Angle.PI_OVER_TWO), -Angle.PI_OVER_TWO, 1.5 * Math.PI);
 
-        final double base = PlaneAngleRadians.PI_OVER_TWO;
+        final double base = Angle.PI_OVER_TWO;
         for (int k = -3; k <= 3; ++k) {
-            final double az = base + (k * PlaneAngleRadians.TWO_PI);
+            final double az = base + (k * Angle.TWO_PI);
             checkPoint(Point1S.of(az), az, base);
         }
     }
@@ -77,18 +75,18 @@ public class Point1STest {
     public void testFrom_vector() {
         // act/assert
         checkPoint(Point1S.from(Vector2D.of(2, 0)), 0.0);
-        checkPoint(Point1S.from(Vector2D.of(0, 0.1)), PlaneAngleRadians.PI_OVER_TWO);
-        checkPoint(Point1S.from(Vector2D.of(-0.5, 0)), PlaneAngleRadians.PI);
-        checkPoint(Point1S.from(Vector2D.of(0, -100)), 1.5 * PlaneAngleRadians.PI);
+        checkPoint(Point1S.from(Vector2D.of(0, 0.1)), Angle.PI_OVER_TWO);
+        checkPoint(Point1S.from(Vector2D.of(-0.5, 0)), Math.PI);
+        checkPoint(Point1S.from(Vector2D.of(0, -100)), 1.5 * Math.PI);
     }
 
     @Test
     public void testFrom_polar() {
         // act/assert
         checkPoint(Point1S.from(PolarCoordinates.of(100, 0)), 0.0);
-        checkPoint(Point1S.from(PolarCoordinates.of(1, PlaneAngleRadians.PI_OVER_TWO)), PlaneAngleRadians.PI_OVER_TWO);
-        checkPoint(Point1S.from(PolarCoordinates.of(0.5, PlaneAngleRadians.PI)), PlaneAngleRadians.PI);
-        checkPoint(Point1S.from(PolarCoordinates.of(1e-4, -PlaneAngleRadians.PI_OVER_TWO)), 1.5 * PlaneAngleRadians.PI);
+        checkPoint(Point1S.from(PolarCoordinates.of(1, Angle.PI_OVER_TWO)), Angle.PI_OVER_TWO);
+        checkPoint(Point1S.from(PolarCoordinates.of(0.5, Math.PI)), Math.PI);
+        checkPoint(Point1S.from(PolarCoordinates.of(1e-4, -Angle.PI_OVER_TWO)), 1.5 * Math.PI);
     }
 
     @Test
@@ -148,7 +146,7 @@ public class Point1STest {
 
     @Test
     public void testAntipodal() {
-        for (double az = -6 * PlaneAngleRadians.PI; az <= 6 * PlaneAngleRadians.PI; az += 0.1) {
+        for (double az = -6 * Math.PI; az <= 6 * Math.PI; az += 0.1) {
             // arrange
             final Point1S pt = Point1S.of(az);
 
@@ -156,8 +154,8 @@ public class Point1STest {
             final Point1S result = pt.antipodal();
 
             // assert
-            Assertions.assertTrue(result.getAzimuth() >= 0 && result.getAzimuth() < PlaneAngleRadians.TWO_PI);
-            Assertions.assertEquals(PlaneAngleRadians.PI, pt.distance(result), TEST_EPS);
+            Assertions.assertTrue(result.getAzimuth() >= 0 && result.getAzimuth() < Angle.TWO_PI);
+            Assertions.assertEquals(Math.PI, pt.distance(result), TEST_EPS);
         }
     }
 
@@ -167,7 +165,7 @@ public class Point1STest {
         final Point1S a = Point1S.of(1.0);
         final Point1S b = Point1S.of(2.0);
         final Point1S c = Point1S.of(1.0);
-        final Point1S d = Point1S.of(1.0 + PlaneAngleRadians.PI);
+        final Point1S d = Point1S.of(1.0 + Math.PI);
 
         final int hash = a.hashCode();
 
@@ -185,7 +183,7 @@ public class Point1STest {
         // act
         final Point1S a = Point1S.of(1.0);
         final Point1S b = Point1S.of(2.0);
-        final Point1S c = Point1S.of(1.0 + PlaneAngleRadians.PI);
+        final Point1S c = Point1S.of(1.0 + Math.PI);
         final Point1S d = Point1S.of(1.0);
         final Point1S e = Point1S.of(Double.NaN);
 
@@ -227,13 +225,13 @@ public class Point1STest {
     @Test
     public void testEq() {
         // arrange
-        final DoublePrecisionContext highPrecision = new EpsilonDoublePrecisionContext(1e-10);
-        final DoublePrecisionContext lowPrecision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence highPrecision = Precision.doubleEquivalenceOfEpsilon(1e-10);
+        final Precision.DoubleEquivalence lowPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final Point1S a = Point1S.of(1);
         final Point1S b = Point1S.of(0.9999);
         final Point1S c = Point1S.of(1.00001);
-        final Point1S d = Point1S.of(1 + (3 * PlaneAngleRadians.TWO_PI));
+        final Point1S d = Point1S.of(1 + (3 * Angle.TWO_PI));
 
         // act/assert
         Assertions.assertTrue(a.eq(a, highPrecision));
@@ -252,7 +250,7 @@ public class Point1STest {
     @Test
     public void testEq_wrapAround() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
         final Point1S a = Point1S.ZERO;
         final Point1S b = Point1S.of(1e-3);
@@ -272,119 +270,89 @@ public class Point1STest {
     public void testDistance() {
         // arrange
         final Point1S a = Point1S.of(0.0);
-        final Point1S b = Point1S.of(PlaneAngleRadians.PI - 0.5);
-        final Point1S c = Point1S.of(PlaneAngleRadians.PI);
-        final Point1S d = Point1S.of(PlaneAngleRadians.PI + 0.5);
+        final Point1S b = Point1S.of(Math.PI - 0.5);
+        final Point1S c = Point1S.of(Math.PI);
+        final Point1S d = Point1S.of(Math.PI + 0.5);
         final Point1S e = Point1S.of(4.0);
 
         // act/assert
         Assertions.assertEquals(0.0, a.distance(a), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI - 0.5, a.distance(b), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI - 0.5, b.distance(a), TEST_EPS);
+        Assertions.assertEquals(Math.PI - 0.5, a.distance(b), TEST_EPS);
+        Assertions.assertEquals(Math.PI - 0.5, b.distance(a), TEST_EPS);
 
-        Assertions.assertEquals(PlaneAngleRadians.PI, a.distance(c), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI, c.distance(a), TEST_EPS);
+        Assertions.assertEquals(Math.PI, a.distance(c), TEST_EPS);
+        Assertions.assertEquals(Math.PI, c.distance(a), TEST_EPS);
 
-        Assertions.assertEquals(PlaneAngleRadians.PI - 0.5, a.distance(d), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI - 0.5, d.distance(a), TEST_EPS);
+        Assertions.assertEquals(Math.PI - 0.5, a.distance(d), TEST_EPS);
+        Assertions.assertEquals(Math.PI - 0.5, d.distance(a), TEST_EPS);
 
-        Assertions.assertEquals(PlaneAngleRadians.TWO_PI - 4, a.distance(e), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.TWO_PI - 4, e.distance(a), TEST_EPS);
+        Assertions.assertEquals(Angle.TWO_PI - 4, a.distance(e), TEST_EPS);
+        Assertions.assertEquals(Angle.TWO_PI - 4, e.distance(a), TEST_EPS);
     }
 
     @Test
     public void testSignedDistance() {
         // arrange
         final Point1S a = Point1S.of(0.0);
-        final Point1S b = Point1S.of(PlaneAngleRadians.PI - 0.5);
-        final Point1S c = Point1S.of(PlaneAngleRadians.PI);
-        final Point1S d = Point1S.of(PlaneAngleRadians.PI + 0.5);
+        final Point1S b = Point1S.of(Math.PI - 0.5);
+        final Point1S c = Point1S.of(Math.PI);
+        final Point1S d = Point1S.of(Math.PI + 0.5);
         final Point1S e = Point1S.of(4.0);
 
         // act/assert
         Assertions.assertEquals(0.0, a.signedDistance(a), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI - 0.5, a.signedDistance(b), TEST_EPS);
-        Assertions.assertEquals(-PlaneAngleRadians.PI + 0.5, b.signedDistance(a), TEST_EPS);
+        Assertions.assertEquals(Math.PI - 0.5, a.signedDistance(b), TEST_EPS);
+        Assertions.assertEquals(-Math.PI + 0.5, b.signedDistance(a), TEST_EPS);
 
-        Assertions.assertEquals(-PlaneAngleRadians.PI, a.signedDistance(c), TEST_EPS);
-        Assertions.assertEquals(-PlaneAngleRadians.PI, c.signedDistance(a), TEST_EPS);
+        Assertions.assertEquals(-Math.PI, a.signedDistance(c), TEST_EPS);
+        Assertions.assertEquals(-Math.PI, c.signedDistance(a), TEST_EPS);
 
-        Assertions.assertEquals(-PlaneAngleRadians.PI + 0.5, a.signedDistance(d), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.PI - 0.5, d.signedDistance(a), TEST_EPS);
+        Assertions.assertEquals(-Math.PI + 0.5, a.signedDistance(d), TEST_EPS);
+        Assertions.assertEquals(Math.PI - 0.5, d.signedDistance(a), TEST_EPS);
 
-        Assertions.assertEquals(-PlaneAngleRadians.TWO_PI + 4, a.signedDistance(e), TEST_EPS);
-        Assertions.assertEquals(PlaneAngleRadians.TWO_PI - 4, e.signedDistance(a), TEST_EPS);
+        Assertions.assertEquals(-Angle.TWO_PI + 4, a.signedDistance(e), TEST_EPS);
+        Assertions.assertEquals(Angle.TWO_PI - 4, e.signedDistance(a), TEST_EPS);
     }
 
     @Test
     public void testDistance_inRangeZeroToPi() {
-        for (double a = -4 * PlaneAngleRadians.PI; a < 4 * PlaneAngleRadians.PI; a += 0.1) {
-            for (double b = -4 * PlaneAngleRadians.PI; b < 4 * PlaneAngleRadians.PI; b += 0.1) {
+        for (double a = -4 * Math.PI; a < 4 * Math.PI; a += 0.1) {
+            for (double b = -4 * Math.PI; b < 4 * Math.PI; b += 0.1) {
                 // arrange
                 final Point1S p1 = Point1S.of(a);
                 final Point1S p2 = Point1S.of(b);
 
                 // act/assert
                 final double d1 = p1.distance(p2);
-                Assertions.assertTrue(d1 >= 0 && d1 <= PlaneAngleRadians.PI);
+                Assertions.assertTrue(d1 >= 0 && d1 <= Math.PI);
 
                 final double d2 = p2.distance(p1);
-                Assertions.assertTrue(d2 >= 0 && d2 <= PlaneAngleRadians.PI);
+                Assertions.assertTrue(d2 >= 0 && d2 <= Math.PI);
             }
         }
-    }
-
-    @Test
-    public void testNormalize() {
-        for (double az = -PlaneAngleRadians.TWO_PI; az < 2 * PlaneAngleRadians.TWO_PI; az += 0.2) {
-            // arrange
-            final Point1S pt = Point1S.of(az);
-
-            final double expectedPiNorm = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(az);
-            final double expectedZeroNorm = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(az);
-
-            // act
-            final Point1S piNorm = pt.normalize(Point1S.PI);
-            final Point1S zeroNorm = pt.normalize(0.0);
-
-            // assert
-            Assertions.assertEquals(expectedPiNorm, piNorm.getAzimuth(), TEST_EPS);
-            Assertions.assertEquals(pt.getNormalizedAzimuth(), piNorm.getNormalizedAzimuth(), TEST_EPS);
-
-            Assertions.assertEquals(expectedZeroNorm, zeroNorm.getAzimuth(), TEST_EPS);
-            Assertions.assertEquals(pt.getNormalizedAzimuth(), zeroNorm.getNormalizedAzimuth(), TEST_EPS);
-        }
-    }
-
-    @Test
-    public void testNormalize_nonFinite() {
-        // act/assert
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).normalize(0.0));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).normalize(0.0));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NaN).normalize(Point1S.ZERO));
     }
 
     @Test
     public void testAbove() {
         // arrange
         final Point1S p1 = Point1S.ZERO;
-        final Point1S p2 = Point1S.of(PlaneAngle.ofDegrees(90));
+        final Point1S p2 = Point1S.of(Angle.Deg.of(90));
         final Point1S p3 = Point1S.PI;
-        final Point1S p4 = Point1S.of(PlaneAngle.ofDegrees(-90));
-        final Point1S p5 = Point1S.of(PlaneAngleRadians.TWO_PI);
+        final Point1S p4 = Point1S.of(Angle.Deg.of(-90));
+        final Point1S p5 = Point1S.of(Angle.TWO_PI);
 
         // act/assert
         checkPoint(p1.above(p1), 0);
-        checkPoint(p2.above(p1), PlaneAngleRadians.PI_OVER_TWO);
-        checkPoint(p3.above(p1), PlaneAngleRadians.PI);
-        checkPoint(p4.above(p1), 1.5 * PlaneAngleRadians.PI);
+        checkPoint(p2.above(p1), Angle.PI_OVER_TWO);
+        checkPoint(p3.above(p1), Math.PI);
+        checkPoint(p4.above(p1), 1.5 * Math.PI);
         checkPoint(p5.above(p1), 0);
 
-        checkPoint(p1.above(p3), PlaneAngleRadians.TWO_PI);
-        checkPoint(p2.above(p3), 2.5 * PlaneAngleRadians.PI);
-        checkPoint(p3.above(p3), PlaneAngleRadians.PI);
-        checkPoint(p4.above(p3), 1.5 * PlaneAngleRadians.PI);
-        checkPoint(p5.above(p3), PlaneAngleRadians.TWO_PI);
+        checkPoint(p1.above(p3), Angle.TWO_PI);
+        checkPoint(p2.above(p3), 2.5 * Math.PI);
+        checkPoint(p3.above(p3), Math.PI);
+        checkPoint(p4.above(p3), 1.5 * Math.PI);
+        checkPoint(p5.above(p3), Angle.TWO_PI);
     }
 
     @Test
@@ -393,37 +361,6 @@ public class Point1STest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).above(Point1S.ZERO));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).above(Point1S.ZERO));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NaN).above(Point1S.ZERO));
-    }
-
-    @Test
-    public void testBelow() {
-        // arrange
-        final Point1S p1 = Point1S.ZERO;
-        final Point1S p2 = Point1S.of(PlaneAngle.ofDegrees(90));
-        final Point1S p3 = Point1S.PI;
-        final Point1S p4 = Point1S.of(PlaneAngle.ofDegrees(-90));
-        final Point1S p5 = Point1S.of(PlaneAngleRadians.TWO_PI);
-
-        // act/assert
-        checkPoint(p1.below(p1), -PlaneAngleRadians.TWO_PI);
-        checkPoint(p2.below(p1), -1.5 * PlaneAngleRadians.PI);
-        checkPoint(p3.below(p1), -PlaneAngleRadians.PI);
-        checkPoint(p4.below(p1), -PlaneAngleRadians.PI_OVER_TWO);
-        checkPoint(p5.below(p1), -PlaneAngleRadians.TWO_PI);
-
-        checkPoint(p1.below(p3), 0.0);
-        checkPoint(p2.below(p3), PlaneAngleRadians.PI_OVER_TWO);
-        checkPoint(p3.below(p3), -PlaneAngleRadians.PI);
-        checkPoint(p4.below(p3), -PlaneAngleRadians.PI_OVER_TWO);
-        checkPoint(p5.below(p3), 0.0);
-    }
-
-    @Test
-    public void testBelow_nonFinite() {
-        // act/assert
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).below(Point1S.ZERO));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).below(Point1S.ZERO));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NaN).below(Point1S.ZERO));
     }
 
     @Test
@@ -447,7 +384,7 @@ public class Point1STest {
     }
 
     private static void checkPoint(final Point1S pt, final double az) {
-        checkPoint(pt, az, PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(az));
+        checkPoint(pt, az, Angle.Rad.WITHIN_0_AND_2PI.applyAsDouble(az));
     }
 
     private static void checkPoint(final Point1S pt, final double az, final double normAz) {

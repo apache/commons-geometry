@@ -19,9 +19,8 @@ package org.apache.commons.geometry.euclidean.oned;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,8 +28,8 @@ public class IntervalTest {
 
     private static final double TEST_EPS = 1e-15;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testOf_doubles() {
@@ -228,7 +227,7 @@ public class IntervalTest {
     @Test
     public void testClassify_finite() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 1, precision);
 
         // act/assert
@@ -248,7 +247,7 @@ public class IntervalTest {
     @Test
     public void testClassify_singlePoint() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(1, 1, precision);
 
         // act/assert
@@ -264,7 +263,7 @@ public class IntervalTest {
     @Test
     public void testClassify_maxInfinite() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, Double.POSITIVE_INFINITY, precision);
 
         // act/assert
@@ -283,7 +282,7 @@ public class IntervalTest {
     @Test
     public void testClassify_minInfinite() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, precision);
 
         // act/assert
@@ -302,7 +301,7 @@ public class IntervalTest {
     @Test
     public void testClassify_minMaxInfinite() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision);
 
         // act/assert
@@ -315,7 +314,7 @@ public class IntervalTest {
     @Test
     public void testContains_finite() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 1, precision);
 
         // act/assert
@@ -390,7 +389,7 @@ public class IntervalTest {
     @Test
     public void checkToTree_finite() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 1, precision);
 
         // act
@@ -415,7 +414,7 @@ public class IntervalTest {
     @Test
     public void checkToTree_singlePoint() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(1, 1, precision);
 
         // act
@@ -436,7 +435,7 @@ public class IntervalTest {
     @Test
     public void checkToTree_maxInfinite() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, Double.POSITIVE_INFINITY, precision);
 
         // act
@@ -460,7 +459,7 @@ public class IntervalTest {
     @Test
     public void checkToTree_minInfinite() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, precision);
 
         // act
@@ -484,7 +483,7 @@ public class IntervalTest {
     @Test
     public void checkToTree_minMaxInfinite() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision);
 
         // act
@@ -880,7 +879,7 @@ public class IntervalTest {
      * @param max
      * @param precision
      */
-    private static void checkInterval(final Interval interval, final double min, final double max, final DoublePrecisionContext precision) {
+    private static void checkInterval(final Interval interval, final double min, final double max, final Precision.DoubleEquivalence precision) {
         Assertions.assertEquals(min, interval.getMin(), TEST_EPS);
         Assertions.assertEquals(max, interval.getMax(), TEST_EPS);
 

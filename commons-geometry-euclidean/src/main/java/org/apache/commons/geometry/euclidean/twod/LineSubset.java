@@ -23,8 +23,8 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a subset of points on a line in 2D Euclidean space. For example, line segments
  * and rays are line subsets. Line subsets may be finite or infinite.
@@ -123,7 +123,7 @@ public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEm
      * same object used by the underlying {@link Line}).
      * @return precision object used to perform floating point comparisons.
      */
-    public DoublePrecisionContext getPrecision() {
+    public Precision.DoubleEquivalence getPrecision() {
         return line.getPrecision();
     }
 

@@ -19,11 +19,11 @@ package org.apache.commons.geometry.examples.jmh.euclidean;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.shape.Sphere;
+import org.apache.commons.numbers.core.Precision;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -61,7 +61,7 @@ public class RegionBSPTree3DPerformance {
          * @return the boundaries for the instance.
          */
         protected List<PlaneConvexSubset> computeBoundaries() {
-            final Sphere sphere = Sphere.from(Vector3D.ZERO, 1, new EpsilonDoublePrecisionContext(1e-10));
+            final Sphere sphere = Sphere.from(Vector3D.ZERO, 1, Precision.doubleEquivalenceOfEpsilon(1e-10));
             return sphere.toTree(subdivisions).getBoundaries();
         }
     }

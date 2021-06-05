@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing parallelograms, i.e. quadrilaterals with two pairs of parallel sides.
  * @see <a href="https://en.wikipedia.org/wiki/Parallelogram">Parallelogram</a>
@@ -66,7 +66,7 @@ public final class Parallelogram extends ConvexArea {
      * @param precision precision context used to construct boundaries
      * @return a new instance representing a unit square centered on the origin
      */
-    public static Parallelogram unitSquare(final DoublePrecisionContext precision) {
+    public static Parallelogram unitSquare(final Precision.DoubleEquivalence precision) {
         return fromTransformedUnitSquare(AffineTransformMatrix2D.identity(), precision);
     }
 
@@ -81,7 +81,7 @@ public final class Parallelogram extends ConvexArea {
      *      as determined by the given precision context
      */
     public static Parallelogram axisAligned(final Vector2D a, final Vector2D b,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         final double minX = Math.min(a.getX(), b.getX());
         final double maxX = Math.max(a.getX(), b.getX());
@@ -121,7 +121,7 @@ public final class Parallelogram extends ConvexArea {
      *      as determined by the given precision context
      */
     public static Parallelogram fromTransformedUnitSquare(final Transform<Vector2D> transform,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         final List<Vector2D> vertices = UNIT_SQUARE_VERTICES.stream()
                 .map(transform).collect(Collectors.toList());
@@ -157,7 +157,7 @@ public final class Parallelogram extends ConvexArea {
      * @param precision precision context used to create boundaries
      * @return a new {@link Builder} instance
      */
-    public static Builder builder(final DoublePrecisionContext precision) {
+    public static Builder builder(final Precision.DoubleEquivalence precision) {
         return new Builder(precision);
     }
 
@@ -180,12 +180,12 @@ public final class Parallelogram extends ConvexArea {
         private Vector2D position = Vector2D.ZERO;
 
         /** Precision context used to construct boundaries. */
-        private final DoublePrecisionContext precision;
+        private final Precision.DoubleEquivalence precision;
 
         /** Construct a new instance configured with the given precision context.
          * @param precision precision context used to create boundaries
          */
-        private Builder(final DoublePrecisionContext precision) {
+        private Builder(final Precision.DoubleEquivalence precision) {
             this.precision = precision;
         }
 
@@ -266,7 +266,7 @@ public final class Parallelogram extends ConvexArea {
          * @return a new parallelogram instance
          * @throws IllegalArgumentException if the length of any side of the parallelogram is zero,
          *      as determined by the configured precision context
-         * @see Parallelogram#fromTransformedUnitSquare(Transform, DoublePrecisionContext)
+         * @see Parallelogram#fromTransformedUnitSquare(Transform, Precision.DoubleEquivalence)
          */
         public Parallelogram build() {
             final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(scale)

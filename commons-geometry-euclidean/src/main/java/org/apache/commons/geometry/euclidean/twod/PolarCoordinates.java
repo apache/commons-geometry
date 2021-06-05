@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
 
 /** Class representing <a href="https://en.wikipedia.org/wiki/Polar_coordinate_system">polar coordinates</a>
  * in 2 dimensional Euclidean space.
@@ -64,7 +64,7 @@ public final class PolarCoordinates implements Spatial {
         if (rad < 0) {
             // negative radius; flip the angles
             rad = Math.abs(radius);
-            az += PlaneAngleRadians.PI;
+            az += Math.PI;
         }
 
         this.radius = rad;
@@ -233,7 +233,7 @@ public final class PolarCoordinates implements Spatial {
      */
     public static double normalizeAzimuth(final double azimuth) {
         if (Double.isFinite(azimuth)) {
-            return PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(azimuth);
+            return Angle.Rad.WITHIN_0_AND_2PI.applyAsDouble(azimuth);
         }
 
         return azimuth;

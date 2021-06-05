@@ -24,8 +24,6 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
@@ -35,8 +33,8 @@ public class OrientedPointTest {
 
     private static final double TEST_EPS = 1e-15;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testGetDirection() {
@@ -174,8 +172,8 @@ public class OrientedPointTest {
     @Test
     public void testClassify() {
         // arrange
-        final DoublePrecisionContext smallPrecision = new EpsilonDoublePrecisionContext(1e-10);
-        final DoublePrecisionContext largePrecision = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence smallPrecision = Precision.doubleEquivalenceOfEpsilon(1e-10);
+        final Precision.DoubleEquivalence largePrecision = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
         final OrientedPoint smallPosFacing = OrientedPoints.fromLocationAndDirection(1.0, true, smallPrecision);
         final OrientedPoint largeNegFacing = OrientedPoints.fromLocationAndDirection(1.0, false, largePrecision);
@@ -245,7 +243,7 @@ public class OrientedPointTest {
     @Test
     public void testEq() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
         final OrientedPoint a = OrientedPoints.createPositiveFacing(0, precision);
         final OrientedPoint b = OrientedPoints.createPositiveFacing(0, TEST_PRECISION);
@@ -268,8 +266,8 @@ public class OrientedPointTest {
     @Test
     public void testHashCode() {
         // arrange
-        final DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-10);
-        final DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-15);
+        final Precision.DoubleEquivalence precisionA = Precision.doubleEquivalenceOfEpsilon(1e-10);
+        final Precision.DoubleEquivalence precisionB = Precision.doubleEquivalenceOfEpsilon(1e-15);
 
         final OrientedPoint a = OrientedPoints.fromPointAndDirection(Vector1D.of(3.0), true, precisionA);
         final OrientedPoint b = OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), false, precisionA);
@@ -292,8 +290,8 @@ public class OrientedPointTest {
     @Test
     public void testEquals() {
         // arrange
-        final DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-10);
-        final DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-15);
+        final Precision.DoubleEquivalence precisionA = Precision.doubleEquivalenceOfEpsilon(1e-10);
+        final Precision.DoubleEquivalence precisionB = Precision.doubleEquivalenceOfEpsilon(1e-15);
 
         final OrientedPoint a = OrientedPoints.fromPointAndDirection(Vector1D.of(1.0), true, precisionA);
         final OrientedPoint b = OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), true, precisionA);
@@ -361,7 +359,7 @@ public class OrientedPointTest {
     @Test
     public void testFromPointAndDirection_invalidDirection() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(0.1);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(0.1);
 
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(
@@ -393,7 +391,7 @@ public class OrientedPointTest {
     @Test
     public void testSubset_split() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(-1.5, precision);
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();
@@ -440,7 +438,7 @@ public class OrientedPointTest {
     @Test
     public void testSubset_classify() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(1, precision);
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();
 
@@ -462,7 +460,7 @@ public class OrientedPointTest {
     @Test
     public void testSubset_contains() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(1, precision);
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();
 
@@ -484,7 +482,7 @@ public class OrientedPointTest {
     @Test
     public void testSubset_closestContained() {
         // arrange
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(1, precision);
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();
 
@@ -552,7 +550,7 @@ public class OrientedPointTest {
     }
 
     private static void assertOrientedPoint(final OrientedPoint pt, final double location, final boolean positiveFacing,
-                                            final DoublePrecisionContext precision) {
+                                            final Precision.DoubleEquivalence precision) {
         Assertions.assertEquals(location, pt.getPoint().getX(), TEST_EPS);
         Assertions.assertEquals(location, pt.getLocation(), TEST_EPS);
         Assertions.assertEquals(positiveFacing ? 1.0 : -1.0, pt.getDirection().getX(), TEST_EPS);

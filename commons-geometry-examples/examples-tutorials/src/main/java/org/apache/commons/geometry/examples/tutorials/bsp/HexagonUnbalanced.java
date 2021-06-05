@@ -19,12 +19,11 @@ package org.apache.commons.geometry.examples.tutorials.bsp;
 import java.io.File;
 import java.util.Arrays;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Bounds2D;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class containing tutorial code for constructing an unbalanced BSP tree for a hexagon.
  */
@@ -43,7 +42,7 @@ public final class HexagonUnbalanced {
         svgWriter.setTreeParentOffsetFactor(0);
         svgWriter.setTreeParentXOffsetMin(20);
 
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 

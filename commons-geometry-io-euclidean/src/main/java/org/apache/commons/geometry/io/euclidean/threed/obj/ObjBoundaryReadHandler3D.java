@@ -23,13 +23,13 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.geometry.io.core.GeometryFormat;
 import org.apache.commons.geometry.io.core.input.GeometryInput;
 import org.apache.commons.geometry.io.euclidean.threed.AbstractBoundaryReadHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinitionReader;
 import org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D;
+import org.apache.commons.numbers.core.Precision;
 
 /** {@link org.apache.commons.geometry.io.euclidean.threed.BoundaryReadHandler3D BoundaryReadHandler3D}
  * implementation for reading OBJ data. Input is read using the UTF-8 charset by default.
@@ -69,7 +69,7 @@ public class ObjBoundaryReadHandler3D extends AbstractBoundaryReadHandler3D {
 
     /** {@inheritDoc} */
     @Override
-    public TriangleMesh readTriangleMesh(final GeometryInput in, final DoublePrecisionContext precision)
+    public TriangleMesh readTriangleMesh(final GeometryInput in, final Precision.DoubleEquivalence precision)
             throws IOException {
         try (ObjTriangleMeshReader meshReader = new ObjTriangleMeshReader(createReader(in), precision)) {
             return meshReader.readTriangleMesh();

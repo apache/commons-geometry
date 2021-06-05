@@ -17,9 +17,9 @@
 package org.apache.commons.geometry.euclidean.threed.line;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a line segment in 3D Euclidean space. A line segment is a portion of
  * a line with finite start and end points.
@@ -150,7 +150,7 @@ public final class Segment3D extends LineConvexSubset3D {
     /** {@inheritDoc} */
     @Override
     boolean containsAbscissa(final double abscissa) {
-        final DoublePrecisionContext precision = getLine().getPrecision();
+        final Precision.DoubleEquivalence precision = getLine().getPrecision();
         return precision.gte(abscissa, start) &&
                 precision.lte(abscissa, end);
     }

@@ -23,11 +23,11 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.arrays.LinearCombination;
+import org.apache.commons.numbers.core.Precision;
 
 /** This class represents an oriented line in the 2D plane.
 
@@ -73,7 +73,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param originOffset The signed distance between the line and the origin.
      * @param precision Precision context used to compare floating point numbers.
      */
-    Line(final Vector2D.Unit direction, final double originOffset, final DoublePrecisionContext precision) {
+    Line(final Vector2D.Unit direction, final double originOffset, final Precision.DoubleEquivalence precision) {
         super(precision);
 
         this.direction = direction;
@@ -87,7 +87,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      */
     public double getAngle() {
         final double angle = Math.atan2(direction.getY(), direction.getX());
-        return PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(angle);
+        return Angle.Rad.WITHIN_0_AND_2PI.applyAsDouble(angle);
     }
 
     /** Get the direction of the line.
@@ -338,7 +338,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
         final double thisAngle = Math.atan2(direction.getY(), direction.getX());
         final double otherAngle = Math.atan2(other.direction.getY(), other.direction.getX());
 
-        return PlaneAngleRadians.normalizeBetweenMinusPiAndPi(otherAngle - thisAngle);
+        return Angle.Rad.WITHIN_MINUS_PI_AND_PI.applyAsDouble(otherAngle - thisAngle);
     }
 
     /** {@inheritDoc} */
@@ -463,9 +463,9 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param other the point to compare with
      * @param precision precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
-     * @see Vector2D#eq(Vector2D, DoublePrecisionContext)
+     * @see Vector2D#eq(Vector2D, Precision.DoubleEquivalence)
      */
-    public boolean eq(final Line other, final DoublePrecisionContext precision) {
+    public boolean eq(final Line other, final Precision.DoubleEquivalence precision) {
         return getOrigin().eq(other.getOrigin(), precision) &&
                 precision.eq(getAngle(), other.getAngle());
     }

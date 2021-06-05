@@ -36,8 +36,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Bounds2D;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
@@ -47,6 +45,7 @@ import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
+import org.apache.commons.numbers.core.Precision;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -153,7 +152,7 @@ public class BSPTreeSVGWriter {
     private double treeParentXOffsetMin = 0;
 
     /** Precision context used for floating point comparisons. */
-    private final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+    private final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
     /** Construct a new instance that will render regions within the given bounds.
      * @param bounds bounds used to determine what output

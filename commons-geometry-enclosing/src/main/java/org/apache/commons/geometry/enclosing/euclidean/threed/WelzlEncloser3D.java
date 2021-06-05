@@ -16,9 +16,9 @@
  */
 package org.apache.commons.geometry.enclosing.euclidean.threed;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.WelzlEncloser;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Extension of the {@link WelzlEncloser} class for Euclidean 3D space. This is
  * primarily a convenience class to simplify instantiation.
@@ -29,7 +29,7 @@ public class WelzlEncloser3D extends WelzlEncloser<Vector3D> {
      * instance is used as the support ball generator.
      * @param precision precision context to use for floating point comparisons
      */
-    public WelzlEncloser3D(final DoublePrecisionContext precision) {
+    public WelzlEncloser3D(final Precision.DoubleEquivalence precision) {
         super(new SphereGenerator(precision), precision);
     }
 }

@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.euclidean;
 
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Base class representing an axis-aligned bounding box with minimum and maximum bounding points.
  * @param <P> Point implementation type
@@ -78,7 +78,7 @@ public abstract class AbstractBounds<
      * @param precision precision context used for floating point comparisons
      * @return true if the bounding box has non-zero size along each coordinate axis
      */
-    public abstract boolean hasSize(DoublePrecisionContext precision);
+    public abstract boolean hasSize(Precision.DoubleEquivalence precision);
 
     /** Return true if the given point is strictly within or on the boundary of the bounding box.
      * In other words, true if returned if <code>p<sub>t</sub> &gt;= min<sub>t</sub></code> and
@@ -86,7 +86,7 @@ public abstract class AbstractBounds<
      * Floating point comparisons are strict; values are considered equal only if they match exactly.
      * @param pt the point to check
      * @return true if the given point is strictly within or on the boundary of the instance
-     * @see #contains(EuclideanVector, DoublePrecisionContext)
+     * @see #contains(EuclideanVector, Precision.DoubleEquivalence)
      */
     public abstract boolean contains(P pt);
 
@@ -98,9 +98,9 @@ public abstract class AbstractBounds<
      * @param precision precision context used to compare floating point values
      * @return if the given point is within or on the boundary of the bounds, as determined
      *      by the given precision context
-     * @see #contains(EuclideanVector, DoublePrecisionContext)
+     * @see #contains(EuclideanVector, Precision.DoubleEquivalence)
      */
-    public abstract boolean contains(P pt, DoublePrecisionContext precision);
+    public abstract boolean contains(P pt, Precision.DoubleEquivalence precision);
 
     /** Return true if any point on the interior or boundary of this instance is also considered to be
      * on the interior or boundary of the argument. Specifically, true is returned if
@@ -127,7 +127,7 @@ public abstract class AbstractBounds<
      *      region instance
      * @return a hyperplane-bounded region containing the same points as this instance
      */
-    public abstract HyperplaneBoundedRegion<P> toRegion(DoublePrecisionContext precision);
+    public abstract HyperplaneBoundedRegion<P> toRegion(Precision.DoubleEquivalence precision);
 
     /** Return true if the current instance and argument are considered equal as evaluated by the
      * given precision context. Bounds are considered equal if they contain equivalent min and max
@@ -136,9 +136,9 @@ public abstract class AbstractBounds<
      * @param precision precision context to compare floating point numbers
      * @return true if this instance is equivalent to the argument, as evaluated by the given
      *      precision context
-     * @see EuclideanVector#eq(EuclideanVector, DoublePrecisionContext)
+     * @see EuclideanVector#eq(EuclideanVector, Precision.DoubleEquivalence)
      */
-    public boolean eq(final B other, final DoublePrecisionContext precision) {
+    public boolean eq(final B other, final Precision.DoubleEquivalence precision) {
         return min.eq(other.getMin(), precision) &&
                 max.eq(other.getMax(), precision);
     }

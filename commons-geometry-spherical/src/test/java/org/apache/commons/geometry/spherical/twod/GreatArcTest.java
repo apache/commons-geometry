@@ -22,12 +22,11 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,8 +34,8 @@ public class GreatArcTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
     public void testFromInterval_full() {
@@ -54,16 +53,16 @@ public class GreatArcTest {
         Assertions.assertNull(arc.getStartPoint());
         Assertions.assertNull(arc.getEndPoint());
 
-        Assertions.assertEquals(PlaneAngleRadians.TWO_PI, arc.getSize(), TEST_EPS);
+        Assertions.assertEquals(Angle.TWO_PI, arc.getSize(), TEST_EPS);
         Assertions.assertNull(arc.getCentroid());
 
-        for (double az = 0; az < PlaneAngleRadians.TWO_PI; az += 0.1) {
-            checkClassify(arc, RegionLocation.INSIDE, Point2S.of(az, PlaneAngleRadians.PI_OVER_TWO));
+        for (double az = 0; az < Angle.TWO_PI; az += 0.1) {
+            checkClassify(arc, RegionLocation.INSIDE, Point2S.of(az, Angle.PI_OVER_TWO));
         }
 
         checkClassify(arc, RegionLocation.OUTSIDE,
-                Point2S.PLUS_K, Point2S.of(0, PlaneAngleRadians.PI_OVER_TWO + 0.1),
-                Point2S.MINUS_K, Point2S.of(0, PlaneAngleRadians.PI_OVER_TWO - 0.1));
+                Point2S.PLUS_K, Point2S.of(0, Angle.PI_OVER_TWO + 0.1),
+                Point2S.MINUS_K, Point2S.of(0, Angle.PI_OVER_TWO - 0.1));
     }
 
     @Test
@@ -71,7 +70,7 @@ public class GreatArcTest {
         // arrange
         final GreatArc arc = GreatCircles.arcFromInterval(
                 GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION),
-                AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, 1.5 * PlaneAngleRadians.PI, TEST_PRECISION));
+                AngularInterval.Convex.of(Angle.PI_OVER_TWO, 1.5 * Math.PI, TEST_PRECISION));
 
         // assert
         Assertions.assertFalse(arc.isFull());
@@ -101,18 +100,18 @@ public class GreatArcTest {
 
         checkArc(arc, start, end);
 
-        checkClassify(arc, RegionLocation.INSIDE, Point2S.of(0, 0.75 * PlaneAngleRadians.PI));
+        checkClassify(arc, RegionLocation.INSIDE, Point2S.of(0, 0.75 * Math.PI));
         checkClassify(arc, RegionLocation.BOUNDARY, start, end);
         checkClassify(arc, RegionLocation.OUTSIDE,
-                Point2S.of(0, 0.25 * PlaneAngleRadians.PI), Point2S.of(PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI),
-                Point2S.of(PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
+                Point2S.of(0, 0.25 * Math.PI), Point2S.of(Math.PI, 0.75 * Math.PI),
+                Point2S.of(Math.PI, 0.25 * Math.PI));
     }
 
     @Test
     public void testFromPoints_almostPi() {
         // arrange
         final Point2S start = Point2S.PLUS_J;
-        final Point2S end = Point2S.of(1.5 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO - 1e-5);
+        final Point2S end = Point2S.of(1.5 * Math.PI, Angle.PI_OVER_TWO - 1e-5);
 
         // act
         final GreatArc arc = GreatCircles.arcFromPoints(start, end, TEST_PRECISION);
@@ -139,21 +138,21 @@ public class GreatArcTest {
                 Vector3D.Unit.MINUS_Y,
                 GreatCircles.arcFromPoints(
                         Point2S.PLUS_I,
-                        Point2S.of(PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO - 1e-5),
+                        Point2S.of(Math.PI, Angle.PI_OVER_TWO - 1e-5),
                         TEST_PRECISION).getCircle().getPole(), TEST_EPS);
 
         SphericalTestUtils.assertVectorsEqual(
                 Vector3D.Unit.PLUS_Y,
                 GreatCircles.arcFromPoints(
                         Point2S.PLUS_I,
-                        Point2S.of(PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO + 1e-5),
+                        Point2S.of(Math.PI, Angle.PI_OVER_TWO + 1e-5),
                         TEST_PRECISION).getCircle().getPole(), TEST_EPS);
     }
 
     @Test
     public void testFromPoints_invalidPoints() {
         // act/assert
-        Assertions.assertThrows(IllegalArgumentException.class, () -> GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.of(1e-12, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.of(1e-12, Angle.PI_OVER_TWO), TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.MINUS_I, TEST_PRECISION));
     }
 
@@ -162,7 +161,7 @@ public class GreatArcTest {
         // arrange
         final GreatArc arc = GreatCircles.arcFromInterval(
                 GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.MINUS_I, TEST_PRECISION),
-                AngularInterval.Convex.of(0.0, PlaneAngleRadians.PI, TEST_PRECISION));
+                AngularInterval.Convex.of(0.0, Math.PI, TEST_PRECISION));
 
         // act
         final List<GreatArc> result = arc.toConvex();
@@ -193,7 +192,7 @@ public class GreatArcTest {
         // arrange
         final GreatArc arc = GreatCircles.arcFromInterval(
                 GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.MINUS_I, TEST_PRECISION),
-                AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION));
+                AngularInterval.Convex.of(Angle.PI_OVER_TWO, Math.PI, TEST_PRECISION));
 
         // act
         final GreatArc result = arc.reverse();
@@ -208,10 +207,10 @@ public class GreatArcTest {
     public void testTransform() {
         // arrange
         final GreatArc arc = GreatCircles.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION)
-                .arc(PlaneAngleRadians.PI, -PlaneAngleRadians.PI_OVER_TWO);
+                .arc(Math.PI, -Angle.PI_OVER_TWO);
 
-        final Transform2S t = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO)
-                .reflect(Point2S.of(-0.25 * PlaneAngleRadians.PI,  PlaneAngleRadians.PI_OVER_TWO));
+        final Transform2S t = Transform2S.createRotation(Point2S.PLUS_I, Angle.PI_OVER_TWO)
+                .reflect(Point2S.of(-0.25 * Math.PI,  Angle.PI_OVER_TWO));
 
         // act
         final GreatArc result = arc.transform(t);
@@ -249,7 +248,7 @@ public class GreatArcTest {
     public void testSplit_both() {
         // arrange
         final GreatArc arc = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
-                .arc(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI);
+                .arc(Angle.PI_OVER_TWO, Math.PI);
         final GreatCircle splitter = GreatCircles.fromPole(Vector3D.of(0, 1, 1), TEST_PRECISION);
 
         // act
@@ -260,18 +259,18 @@ public class GreatArcTest {
 
         final GreatArc minus = split.getMinus();
         Assertions.assertSame(arc.getCircle(), minus.getCircle());
-        checkArc(minus, Point2S.of(0, 0), Point2S.of(1.5 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
+        checkArc(minus, Point2S.of(0, 0), Point2S.of(1.5 * Math.PI, 0.25 * Math.PI));
 
         final GreatArc plus = split.getPlus();
         Assertions.assertSame(arc.getCircle(), plus.getCircle());
-        checkArc(plus, Point2S.of(1.5 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI), Point2S.MINUS_J);
+        checkArc(plus, Point2S.of(1.5 * Math.PI, 0.25 * Math.PI), Point2S.MINUS_J);
     }
 
     @Test
     public void testSplit_minus() {
         // arrange
         final GreatArc arc = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
-                .arc(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI);
+                .arc(Angle.PI_OVER_TWO, Math.PI);
         final GreatCircle splitter = GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
 
@@ -292,7 +291,7 @@ public class GreatArcTest {
     public void testSplit_plus() {
         // arrange
         final GreatArc arc = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
-                .arc(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI);
+                .arc(Angle.PI_OVER_TWO, Math.PI);
         final GreatCircle splitter = GreatCircles.fromPole(Vector3D.Unit.from(-1, 0, -1), TEST_PRECISION);
 
         // act

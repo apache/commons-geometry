@@ -20,7 +20,7 @@ import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
 
 /** Class representing <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a>
  * in 3 dimensional Euclidean space.
@@ -85,8 +85,8 @@ public final class SphericalCoordinates implements Spatial {
         if (rad < 0) {
             // negative radius; flip the angles
             rad = Math.abs(rad);
-            az += PlaneAngleRadians.PI;
-            pol += PlaneAngleRadians.PI;
+            az += Math.PI;
+            pol += Math.PI;
         }
 
         this.radius = rad;
@@ -159,7 +159,9 @@ public final class SphericalCoordinates implements Spatial {
         if (isNaN()) {
             return 127;
         }
-        return 449 * (79 * Double.hashCode(radius) + Double.hashCode(azimuth) + Double.hashCode(polar));
+        return (Double.hashCode(radius) >> 17) ^
+                (Double.hashCode(azimuth) >> 5) ^
+                Double.hashCode(polar);
     }
 
     /** Test for the equality of two sets of spherical coordinates.
@@ -293,7 +295,7 @@ public final class SphericalCoordinates implements Spatial {
         // normalize the polar angle; this is the angle between the polar vector and the point ray
         // so it is unsigned (unlike the azimuth) and should be in the range [0, pi]
         if (Double.isFinite(polar)) {
-            return Math.abs(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(polar));
+            return Math.abs(Angle.Rad.WITHIN_MINUS_PI_AND_PI.applyAsDouble(polar));
         }
 
         return polar;

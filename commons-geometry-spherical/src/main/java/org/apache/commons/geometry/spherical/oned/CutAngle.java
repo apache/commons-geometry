@@ -27,7 +27,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing an oriented point in 1-dimensional spherical space,
  * meaning an azimuth angle and a direction (increasing or decreasing angles)
@@ -69,7 +69,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
      * @param precision precision context used to compare floating point values
      */
     CutAngle(final Point1S point, final boolean positiveFacing,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         super(precision);
 
         this.point = point;
@@ -126,9 +126,9 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
      * @param other point to compare with
      * @param precision precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
-     * @see Point1S#eq(Point1S, DoublePrecisionContext)
+     * @see Point1S#eq(Point1S, Precision.DoubleEquivalence)
      */
-    public boolean eq(final CutAngle other, final DoublePrecisionContext precision) {
+    public boolean eq(final CutAngle other, final Precision.DoubleEquivalence precision) {
         return point.eq(other.point, precision) &&
                 positiveFacing == other.positiveFacing;
     }
@@ -143,14 +143,14 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
     /** {@inheritDoc} */
     @Override
     public HyperplaneLocation classify(final Point1S pt) {
-        final DoublePrecisionContext precision = getPrecision();
+        final Precision.DoubleEquivalence precision = getPrecision();
 
         final Point1S compPt = Point1S.ZERO.eq(pt, precision) ?
                 Point1S.ZERO :
                 pt;
 
         final double offsetValue = offset(compPt);
-        final int cmp = precision.sign(offsetValue);
+        final double cmp = precision.signum(offsetValue);
 
         if (cmp > 0) {
             return HyperplaneLocation.PLUS;

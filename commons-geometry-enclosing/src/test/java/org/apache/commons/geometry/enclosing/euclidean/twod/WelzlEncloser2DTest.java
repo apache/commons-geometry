@@ -21,11 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
@@ -35,8 +34,8 @@ public class WelzlEncloser2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     private final WelzlEncloser2D encloser = new WelzlEncloser2D(TEST_PRECISION);
 
@@ -127,7 +126,7 @@ public class WelzlEncloser2DTest {
                 Vector2D.of(323.101, 53.972)
         );
         final double precision = 1;
-        final DoublePrecisionContext precisionContext = new EpsilonDoublePrecisionContext(precision);
+        final Precision.DoubleEquivalence precisionContext = Precision.doubleEquivalenceOfEpsilon(precision);
         final WelzlEncloser2D customPrecisionEncloser = new WelzlEncloser2D(precisionContext);
 
         // act

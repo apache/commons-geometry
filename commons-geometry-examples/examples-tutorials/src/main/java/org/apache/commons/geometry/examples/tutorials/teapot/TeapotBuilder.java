@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.function.DoubleFunction;
 import java.util.function.UnaryOperator;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
@@ -43,7 +41,8 @@ import org.apache.commons.geometry.euclidean.threed.shape.Sphere;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.io.euclidean.threed.IO3D;
 import org.apache.commons.geometry.io.euclidean.threed.obj.ObjWriter;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class used to construct a simple 3D teapot shape using the
  * {@code commons-geometry-euclidean} module.
@@ -63,12 +62,12 @@ public class TeapotBuilder {
     private static final String SPOUT_NAME = "spout";
 
     /** Precision context used during region construction. */
-    private final DoublePrecisionContext precision;
+    private final Precision.DoubleEquivalence precision;
 
     /** Construct a new build instance.
      * @param precision precision context to use during region construction
      */
-    public TeapotBuilder(final DoublePrecisionContext precision) {
+    public TeapotBuilder(final Precision.DoubleEquivalence precision) {
         this.precision = precision;
     }
 
@@ -219,9 +218,9 @@ public class TeapotBuilder {
                 AffineTransformMatrix3D.createScale(handleRadius, handleRadius, height);
 
         final QuaternionRotation startRotation =
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -PlaneAngleRadians.PI_OVER_TWO);
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -Angle.PI_OVER_TWO);
         final QuaternionRotation endRotation =
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO);
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Angle.PI_OVER_TWO);
         final DoubleFunction<QuaternionRotation> slerp = startRotation.slerp(endRotation);
 
         final Vector3D curveCenter = Vector3D.of(0.5 * height, 0, 0);
@@ -296,7 +295,7 @@ public class TeapotBuilder {
         final double zDelta = 1.0 / segments;
         double zValue;
 
-        final double azDelta = PlaneAngleRadians.TWO_PI / circleVertexCount;
+        final double azDelta = Angle.TWO_PI / circleVertexCount;
         double az;
 
         Vector3D vertex;
@@ -367,7 +366,7 @@ public class TeapotBuilder {
         }
 
         final Path outputFile = Paths.get(args[0]);
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
         final TeapotBuilder builder = new TeapotBuilder(precision);
 

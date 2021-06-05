@@ -23,8 +23,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -51,7 +49,8 @@ import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -64,8 +63,8 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testPrecisionContextExample() {
-        // create a precision context with an epsilon (aka, tolerance) value of 1e-3
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+        // create a precision instance with an epsilon (aka, tolerance) value of 1e-3
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
         // test for equality using the eq() method
         precision.eq(1.0009, 1.0); // true; difference is less than epsilon
@@ -85,7 +84,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testEqualsVsEqExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         final Vector2D v1 = Vector2D.of(1, 1); // (1.0, 1.0)
         final Vector2D v2 = Vector2D.parse("(1, 1)"); // (1.0, 1.0)
@@ -106,7 +105,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testManualBSPTreeExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a tree representing an empty space (nothing "inside")
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
@@ -149,7 +148,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testHyperplaneSubsetBSPTreeExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a tree representing an empty space (nothing "inside")
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
@@ -177,7 +176,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testIntervalExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a closed interval and a half-open interval with a min but no max
         final Interval closed = Interval.of(1, 2, precision);
@@ -206,7 +205,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testRegionBSPTree1DExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // build a bsp tree from the union of several intervals
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
@@ -228,7 +227,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testLineIntersectionExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create some lines
         final Line a = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), precision);
@@ -247,7 +246,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testLineSegmentIntersectionExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create some line segments
         final Segment segmentA = Lines.segmentFromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1), precision);
@@ -267,7 +266,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testRegionBSPTree2DExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a connected sequence of line segments forming the unit square
         final LinePath path = LinePath.builder(precision)
@@ -306,7 +305,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testLinecast2DExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         final Parallelogram box = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
 
@@ -323,7 +322,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testPlaneIntersectionExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create two planes
         final Plane a = Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, precision);
@@ -352,7 +351,7 @@ public class DocumentationExamplesTest {
                 .translate(Vector3D.of(1, 2, 3));
 
         final QuaternionRotation rot = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z,
-                PlaneAngleRadians.PI_OVER_TWO);
+                Angle.PI_OVER_TWO);
 
         // transform the input points
         final List<Vector3D> matOutput = inputPts.stream()
@@ -377,7 +376,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testRegionBSPTree3DExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create the faces of a pyramid with a square base and its apex pointing along the
         // positive z axis
@@ -419,7 +418,7 @@ public class DocumentationExamplesTest {
 
     @Test
     public void testLinecast3DExample() {
-        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a BSP tree representing an axis-aligned cube with corners at (0, 0, 0) and (1, 1, 1)
         final RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 1, 1), precision)

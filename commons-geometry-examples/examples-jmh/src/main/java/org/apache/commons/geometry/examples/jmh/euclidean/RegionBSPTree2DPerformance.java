@@ -19,11 +19,11 @@ package org.apache.commons.geometry.examples.jmh.euclidean;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shape.Circle;
+import org.apache.commons.numbers.core.Precision;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -59,7 +59,7 @@ public class RegionBSPTree2DPerformance {
          * @return the boundaries for this instance
          */
         protected List<LineConvexSubset> computeBoundaries() {
-            final Circle circle = Circle.from(Vector2D.ZERO, 1, new EpsilonDoublePrecisionContext(1e-10));
+            final Circle circle = Circle.from(Vector2D.ZERO, 1, Precision.doubleEquivalenceOfEpsilon(1e-10));
             return circle.toTree(segments).getBoundaries();
         }
     }

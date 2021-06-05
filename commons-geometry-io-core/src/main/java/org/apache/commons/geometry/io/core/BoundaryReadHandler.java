@@ -21,8 +21,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.io.core.input.GeometryInput;
+import org.apache.commons.numbers.core.Precision;
 
 /** Basic interface for reading geometric boundary representations
  * (<a href="https://en.wikipedia.org/wiki/Boundary_representation">B-reps</a>) from a specific data storage
@@ -50,11 +50,11 @@ public interface BoundaryReadHandler<H extends HyperplaneConvexSubset<?>, B exte
      * @return object containing all boundaries read from {@code input}
      * @throws IOException if an IO error occurs
      */
-    B read(GeometryInput input, DoublePrecisionContext precision) throws IOException;
+    B read(GeometryInput input, Precision.DoubleEquivalence precision) throws IOException;
 
     /** Return a {@link Stream} that can be used to access all boundary information from the given input,
      * which is expected to contain data in the format supported by this handler. Unlike the
-     * {@link #read(GeometryInput, DoublePrecisionContext) read} method, this method does not <em>require</em>
+     * {@link #read(GeometryInput, Precision.DoubleEquivalence) read} method, this method does not <em>require</em>
      * that all input be read immediately and stored in memory (although implementations of this interface are
      * still free to do so). Callers may therefore prefer to use this method in cases where memory usage is a
      * concern or transformations and/or filters must be applied to the boundaries before use.
@@ -76,5 +76,5 @@ public interface BoundaryReadHandler<H extends HyperplaneConvexSubset<?>, B exte
      * @return stream providing access to the boundary information from the given input
      * @throws IOException if an I/O error occurs during stream creation
      */
-    Stream<H> boundaries(GeometryInput in, DoublePrecisionContext precision) throws IOException;
+    Stream<H> boundaries(GeometryInput in, Precision.DoubleEquivalence precision) throws IOException;
 }

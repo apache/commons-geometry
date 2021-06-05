@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 
 /**
  * Implements Andrew's monotone chain method to generate the convex hull of a finite set of
@@ -46,7 +46,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
     /** Create a new instance that only includes extreme points as hull vertices.
      * @param precision precision context used to compare floating point numbers
      */
-    public MonotoneChain(final DoublePrecisionContext precision) {
+    public MonotoneChain(final Precision.DoubleEquivalence precision) {
         this(false, precision);
     }
 
@@ -54,7 +54,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
      * @param includeCollinearPoints whether collinear points shall be added as hull vertices
      * @param precision precision context used to compare floating point numbers
      */
-    public MonotoneChain(final boolean includeCollinearPoints, final DoublePrecisionContext precision) {
+    public MonotoneChain(final boolean includeCollinearPoints, final Precision.DoubleEquivalence precision) {
         super(includeCollinearPoints, precision);
     }
 
@@ -66,7 +66,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
 
         // sort the points in increasing order on the x-axis
         pointsSortedByXAxis.sort((o1, o2) -> {
-            final DoublePrecisionContext precision = getPrecision();
+            final Precision.DoubleEquivalence precision = getPrecision();
             // need to take the tolerance value into account, otherwise collinear points
             // will not be handled correctly when building the upper/lower hull
             final int cmp = precision.compare(o1.getX(), o2.getX());
@@ -115,7 +115,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
      * @param hull the partial hull
      */
     private void updateHull(final Vector2D point, final List<Vector2D> hull) {
-        final DoublePrecisionContext precision = getPrecision();
+        final Precision.DoubleEquivalence precision = getPrecision();
 
         if (hull.size() == 1) {
             // ensure that we do not add an identical point

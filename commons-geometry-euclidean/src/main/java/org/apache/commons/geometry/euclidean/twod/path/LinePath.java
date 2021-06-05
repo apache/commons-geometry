@@ -27,12 +27,12 @@ import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Sized;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.BoundarySource2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a connected path of {@link LineConvexSubset line convex subsets}.
  * The elements in the path are connected end to end, with the end vertex of the previous
@@ -386,34 +386,34 @@ public class LinePath implements BoundarySource2D, Sized {
     /** Build a new path from the given vertices. A line segment is created
      * from the last vertex to the first one, if the two vertices are not already
      * considered equal using the given precision context. This method is equivalent to
-     * calling {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * calling {@link #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
      * fromVertices(vertices, true, precision)}
      * @param vertices the vertices to construct the closed path from
      * @param precision precision context used to construct the line segment
      *      instances for the path
      * @return new closed path constructed from the given vertices
      * @throws IllegalStateException if {@code vertices} contains only a single unique vertex
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * @see #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
      */
     public static LinePath fromVertexLoop(final Collection<Vector2D> vertices,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         return fromVertices(vertices, true, precision);
     }
 
     /** Build a new path from the given vertices. No additional segment is added
      * from the last vertex to the first. This method is equivalent to calling
-     * {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * {@link #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
      * fromVertices(vertices, false, precision)}.
      * @param vertices the vertices to construct the path from
      * @param precision precision context used to construct the line segment
      *      instances for the path
      * @return new path constructed from the given vertices
      * @throws IllegalStateException if {@code vertices} contains only a single unique vertex
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * @see #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
      */
     public static LinePath fromVertices(final Collection<Vector2D> vertices,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
 
         return fromVertices(vertices, false, precision);
     }
@@ -429,7 +429,7 @@ public class LinePath implements BoundarySource2D, Sized {
      * @throws IllegalStateException if {@code vertices} contains only a single unique vertex
      */
     public static LinePath fromVertices(final Collection<Vector2D> vertices,
-            final boolean close, final DoublePrecisionContext precision) {
+            final boolean close, final Precision.DoubleEquivalence precision) {
 
         return builder(precision)
                 .appendVertices(vertices)
@@ -450,7 +450,7 @@ public class LinePath implements BoundarySource2D, Sized {
      *      raw vertices; may be null if raw vertices are not used.
      * @return a new {@link Builder} instance
      */
-    public static Builder builder(final DoublePrecisionContext precision) {
+    public static Builder builder(final Precision.DoubleEquivalence precision) {
         return new Builder(precision);
     }
 
@@ -464,7 +464,7 @@ public class LinePath implements BoundarySource2D, Sized {
         private List<LineConvexSubset> prepended;
 
         /** Precision context used when creating line segments directly from vertices. */
-        private DoublePrecisionContext precision;
+        private Precision.DoubleEquivalence precision;
 
         /** The current vertex at the start of the path. */
         private Vector2D startVertex;
@@ -475,7 +475,7 @@ public class LinePath implements BoundarySource2D, Sized {
         /** The precision context used when performing comparisons involving the current
          * end vertex.
          */
-        private DoublePrecisionContext endVertexPrecision;
+        private Precision.DoubleEquivalence endVertexPrecision;
 
         /** Construct a new instance configured with the given precision context. The
          * precision context is used when building line segments from vertices and
@@ -483,7 +483,7 @@ public class LinePath implements BoundarySource2D, Sized {
          * @param precision precision context to use when creating line segments
          *      from vertices
          */
-        private Builder(final DoublePrecisionContext precision) {
+        private Builder(final Precision.DoubleEquivalence precision) {
             setPrecision(precision);
         }
 
@@ -494,7 +494,7 @@ public class LinePath implements BoundarySource2D, Sized {
          *      from vertices
          * @return this instance
          */
-        public Builder setPrecision(final DoublePrecisionContext builderPrecision) {
+        public Builder setPrecision(final Precision.DoubleEquivalence builderPrecision) {
             this.precision = builderPrecision;
 
             return this;
@@ -541,10 +541,10 @@ public class LinePath implements BoundarySource2D, Sized {
          * using the configured precision context.
          * @param vertex the vertex to add
          * @return this instance
-         * @see #setPrecision(DoublePrecisionContext)
+         * @see #setPrecision(Precision.DoubleEquivalence)
          */
         public Builder append(final Vector2D vertex) {
-            final DoublePrecisionContext vertexPrecision = getAddVertexPrecision();
+            final Precision.DoubleEquivalence vertexPrecision = getAddVertexPrecision();
 
             if (endVertex == null) {
                 // make sure that we're not adding to an infinite element
@@ -609,10 +609,10 @@ public class LinePath implements BoundarySource2D, Sized {
          * using the configured precision context.
          * @param vertex the vertex to add
          * @return this instance
-         * @see #setPrecision(DoublePrecisionContext)
+         * @see #setPrecision(Precision.DoubleEquivalence)
          */
         public Builder prepend(final Vector2D vertex) {
-            final DoublePrecisionContext vertexPrecision = getAddVertexPrecision();
+            final Precision.DoubleEquivalence vertexPrecision = getAddVertexPrecision();
 
             if (startVertex == null) {
                 // make sure that we're not adding to an infinite element
@@ -760,7 +760,7 @@ public class LinePath implements BoundarySource2D, Sized {
             if (previous != null && next != null) {
                 final Vector2D nextStartVertex = next.getStartPoint();
                 final Vector2D previousEndVertex = previous.getEndPoint();
-                final DoublePrecisionContext previousPrecision = previous.getPrecision();
+                final Precision.DoubleEquivalence previousPrecision = previous.getPrecision();
 
                 if (nextStartVertex == null || previousEndVertex == null ||
                         !(nextStartVertex.eq(previousEndVertex, previousPrecision))) {
@@ -777,7 +777,7 @@ public class LinePath implements BoundarySource2D, Sized {
          * @return the precision context used when creating working with raw vertices
          * @throws IllegalStateException if no precision context is configured
          */
-        private DoublePrecisionContext getAddVertexPrecision() {
+        private Precision.DoubleEquivalence getAddVertexPrecision() {
             if (precision == null) {
                 throw new IllegalStateException("Unable to create line segment: no vertex precision specified");
             }

@@ -29,14 +29,13 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.PartitionedRegionBuilder2D;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,8 +43,8 @@ public class RegionBSPTree2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     private static final Comparator<LineConvexSubset> SEGMENT_COMPARATOR =
         (a, b) -> Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getStartPoint(), b.getStartPoint());
@@ -468,8 +467,8 @@ public class RegionBSPTree2DTest {
     public void testToConvex_quadrantComplement() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
-        tree.getRoot().cut(Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION))
-            .getPlus().cut(Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
+        tree.getRoot().cut(Lines.fromPointAndAngle(Vector2D.ZERO, Math.PI, TEST_PRECISION))
+            .getPlus().cut(Lines.fromPointAndAngle(Vector2D.ZERO, Angle.PI_OVER_TWO, TEST_PRECISION));
 
         tree.complement();
 
@@ -572,7 +571,7 @@ public class RegionBSPTree2DTest {
         root.cut(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
         final RegionNode2D minus = root.getMinus();
-        minus.cut(Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
+        minus.cut(Lines.fromPointAndAngle(Vector2D.ZERO, Angle.PI_OVER_TWO, TEST_PRECISION));
 
         final Vector2D origin = Vector2D.ZERO;
 
@@ -600,7 +599,7 @@ public class RegionBSPTree2DTest {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
-        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * Math.PI, TEST_PRECISION);
 
         // act
         final Split<RegionBSPTree2D> split = tree.split(splitter);
@@ -636,7 +635,7 @@ public class RegionBSPTree2DTest {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * Math.PI, TEST_PRECISION);
 
         // act
         final Split<RegionBSPTree2D> split = tree.split(splitter);
@@ -654,7 +653,7 @@ public class RegionBSPTree2DTest {
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
 
-        final Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0.25 * Math.PI, TEST_PRECISION);
 
         // act
         final Split<RegionBSPTree2D> split = tree.split(splitter);
@@ -679,7 +678,7 @@ public class RegionBSPTree2DTest {
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
 
-        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * Math.PI, TEST_PRECISION);
 
         // act
         final Split<RegionBSPTree2D> split = tree.split(splitter);
@@ -701,7 +700,7 @@ public class RegionBSPTree2DTest {
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
 
-        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION)
+        final Line splitter = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * Math.PI, TEST_PRECISION)
                 .reverse();
 
         // act
@@ -1290,7 +1289,7 @@ public class RegionBSPTree2DTest {
                 .toTree();
 
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
-                .rotate(PlaneAngleRadians.PI_OVER_TWO)
+                .rotate(Angle.PI_OVER_TWO)
                 .translate(Vector2D.of(0, -1));
 
         // act
@@ -1315,7 +1314,7 @@ public class RegionBSPTree2DTest {
         tree.getRoot().insertCut(Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
 
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
-                .rotate(PlaneAngleRadians.PI_OVER_TWO)
+                .rotate(Angle.PI_OVER_TWO)
                 .translate(Vector2D.of(1, 0));
 
         // act
@@ -1331,7 +1330,7 @@ public class RegionBSPTree2DTest {
         Assertions.assertNull(segment.getStartPoint());
         Assertions.assertNull(segment.getEndPoint());
 
-        final Line expectedLine = Lines.fromPointAndAngle(Vector2D.of(-1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
+        final Line expectedLine = Lines.fromPointAndAngle(Vector2D.of(-1, 0), Angle.PI_OVER_TWO, TEST_PRECISION);
         Assertions.assertTrue(expectedLine.eq(segment.getLine(), expectedLine.getPrecision()));
     }
 
@@ -1341,7 +1340,7 @@ public class RegionBSPTree2DTest {
         final RegionBSPTree2D full = RegionBSPTree2D.full();
         final RegionBSPTree2D empty = RegionBSPTree2D.empty();
 
-        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(Angle.PI_OVER_TWO);
 
         // act
         full.transform(transform);

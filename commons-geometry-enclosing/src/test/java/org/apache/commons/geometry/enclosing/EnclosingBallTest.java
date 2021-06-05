@@ -21,9 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -110,8 +109,8 @@ public class EnclosingBallTest {
     @Test
     public void testContains_precision() {
         // arrange
-        final DoublePrecisionContext lowerPrecision = new EpsilonDoublePrecisionContext(1e-4);
-        final DoublePrecisionContext higherPrecision = new EpsilonDoublePrecisionContext(1e-10);
+        final Precision.DoubleEquivalence lowerPrecision = Precision.doubleEquivalenceOfEpsilon(1e-4);
+        final Precision.DoubleEquivalence higherPrecision = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
         final Vector2D center = Vector2D.of(1, 2);
         final double radius = 2;

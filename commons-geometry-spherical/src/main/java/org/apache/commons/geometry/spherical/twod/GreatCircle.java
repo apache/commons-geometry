@@ -22,11 +22,11 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.Point1S;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a great circle on the 2-sphere. A great circle is the
  * intersection of a sphere with a plane that passes through its center. It is
@@ -56,7 +56,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param precision precision context used for floating point comparisons
      */
     GreatCircle(final Vector3D.Unit pole, final Vector3D.Unit u, final Vector3D.Unit v,
-            final DoublePrecisionContext precision) {
+            final Precision.DoubleEquivalence precision) {
         super(precision);
 
         this.pole = pole;
@@ -129,7 +129,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @return the offset (oriented distance) of a direction
      */
     public double offset(final Vector3D vec) {
-        return pole.angle(vec) - PlaneAngleRadians.PI_OVER_TWO;
+        return pole.angle(vec) - Angle.PI_OVER_TWO;
     }
 
     /** Get the azimuth angle of a point relative to this great circle instance,
@@ -158,7 +158,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
         // adjust range
         if (az < 0) {
-            az += PlaneAngleRadians.TWO_PI;
+            az += Angle.TWO_PI;
         }
 
         return az;
@@ -325,9 +325,9 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param other great circle to compare with
      * @param precision precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
-     * @see Vector3D#eq(Vector3D, DoublePrecisionContext)
+     * @see Vector3D#eq(Vector3D, Precision.DoubleEquivalence)
      */
-    public boolean eq(final GreatCircle other, final DoublePrecisionContext precision) {
+    public boolean eq(final GreatCircle other, final Precision.DoubleEquivalence precision) {
         return pole.eq(other.pole, precision) &&
                 u.eq(other.u, precision) &&
                 v.eq(other.v, precision);

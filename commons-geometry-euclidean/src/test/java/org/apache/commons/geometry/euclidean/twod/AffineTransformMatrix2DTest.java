@@ -19,11 +19,10 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,8 +30,10 @@ public class AffineTransformMatrix2DTest {
 
     private static final double EPS = 1e-12;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(EPS);
+
+    private static final double THREE_PI_OVER_TWO = 3 * Math.PI / 2;
 
     @Test
     public void testOf() {
@@ -294,7 +295,7 @@ public class AffineTransformMatrix2DTest {
     @Test
     public void testCreateRotation() {
         // act
-        final double angle = PlaneAngleRadians.PI * 2.0 / 3.0;
+        final double angle = Math.PI * 2.0 / 3.0;
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(angle);
 
         // assert
@@ -312,7 +313,7 @@ public class AffineTransformMatrix2DTest {
     public void testCreateRotation_aroundCenter_rawAngle() {
         // act
         final Vector2D center = Vector2D.of(1, 2);
-        final double angle = PlaneAngleRadians.PI * 2.0 / 3.0;
+        final double angle = Math.PI * 2.0 / 3.0;
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(center, angle);
 
         // assert
@@ -330,7 +331,7 @@ public class AffineTransformMatrix2DTest {
     public void testCreateRotation_aroundCenter_rotationInstance() {
         // act
         final Vector2D center = Vector2D.of(1, 2);
-        final double angle = PlaneAngleRadians.PI * 4.0 / 3.0;
+        final double angle = Math.PI * 4.0 / 3.0;
         final Rotation2D rotation = Rotation2D.of(angle);
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(center, rotation);
 
@@ -354,7 +355,7 @@ public class AffineTransformMatrix2DTest {
                 );
 
         // act
-        final AffineTransformMatrix2D result = a.rotate(PlaneAngleRadians.PI_OVER_TWO);
+        final AffineTransformMatrix2D result = a.rotate(Angle.PI_OVER_TWO);
 
         // assert
         final double[] expected = {
@@ -373,7 +374,7 @@ public class AffineTransformMatrix2DTest {
                 );
 
         // act
-        final AffineTransformMatrix2D result = a.rotate(Rotation2D.of(PlaneAngleRadians.PI_OVER_TWO));
+        final AffineTransformMatrix2D result = a.rotate(Rotation2D.of(Angle.PI_OVER_TWO));
 
         // assert
         final double[] expected = {
@@ -394,7 +395,7 @@ public class AffineTransformMatrix2DTest {
                 );
 
         // act
-        final AffineTransformMatrix2D result = a.rotate(center, PlaneAngleRadians.PI_OVER_TWO);
+        final AffineTransformMatrix2D result = a.rotate(center, Angle.PI_OVER_TWO);
 
         // assert
         final double[] expected = {
@@ -415,7 +416,7 @@ public class AffineTransformMatrix2DTest {
                 );
 
         // act
-        final AffineTransformMatrix2D result = a.rotate(center, Rotation2D.of(PlaneAngleRadians.PI_OVER_TWO));
+        final AffineTransformMatrix2D result = a.rotate(center, Rotation2D.of(Angle.PI_OVER_TWO));
 
         // assert
         final double[] expected = {
@@ -492,7 +493,7 @@ public class AffineTransformMatrix2DTest {
     @Test
     public void testApply_translate() {
         // arrange
-        final Vector2D translation = Vector2D.of(1.1, -PlaneAngleRadians.PI);
+        final Vector2D translation = Vector2D.of(1.1, -Math.PI);
 
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .translate(translation);
@@ -529,7 +530,7 @@ public class AffineTransformMatrix2DTest {
     public void testApply_rotate() {
         // arrange
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
-                .rotate(-PlaneAngleRadians.PI_OVER_TWO);
+                .rotate(-Angle.PI_OVER_TWO);
 
         // act/assert
         runWithCoordinates((x, y) -> {
@@ -546,7 +547,7 @@ public class AffineTransformMatrix2DTest {
         // arrange
         final Vector2D center = Vector2D.of(1, 2);
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
-                .rotate(center, -PlaneAngleRadians.PI_OVER_TWO);
+                .rotate(center, -Angle.PI_OVER_TWO);
 
         // act/assert
         runWithCoordinates((x, y) -> {
@@ -564,7 +565,7 @@ public class AffineTransformMatrix2DTest {
         // arrange
         final Vector2D center = Vector2D.of(1, 2);
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
-                .rotate(center, PlaneAngleRadians.PI);
+                .rotate(center, Math.PI);
 
         // act/assert
         runWithCoordinates((x, y) -> {
@@ -662,7 +663,7 @@ public class AffineTransformMatrix2DTest {
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .translate(translation)
                 .scale(scale)
-                .rotate(PlaneAngleRadians.PI_OVER_TWO);
+                .rotate(Angle.PI_OVER_TWO);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(12, -5), transform.apply(Vector2D.of(1, 1)), EPS);
@@ -689,7 +690,7 @@ public class AffineTransformMatrix2DTest {
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .scale(scale)
                 .translate(translation)
-                .rotate(-PlaneAngleRadians.PI_OVER_TWO);
+                .rotate(-Angle.PI_OVER_TWO);
 
         // act/assert
         runWithCoordinates((x, y) -> {
@@ -715,7 +716,7 @@ public class AffineTransformMatrix2DTest {
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .scale(scale)
                 .translate(translation)
-                .rotate(-PlaneAngleRadians.PI_OVER_TWO)
+                .rotate(-Angle.PI_OVER_TWO)
                 .shear(shear.getX(), shear.getY());
 
         // act/assert
@@ -751,7 +752,7 @@ public class AffineTransformMatrix2DTest {
     @Test
     public void testApplyVector_translate() {
         // arrange
-        final Vector2D translation = Vector2D.of(1.1, -PlaneAngleRadians.PI);
+        final Vector2D translation = Vector2D.of(1.1, -Math.PI);
 
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .translate(translation);
@@ -790,7 +791,7 @@ public class AffineTransformMatrix2DTest {
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .scale(1.5)
                 .translate(4, 6)
-                .rotate(PlaneAngleRadians.PI_OVER_TWO);
+                .rotate(Angle.PI_OVER_TWO);
 
         // act/assert
         runWithCoordinates((x, y) -> {
@@ -840,7 +841,7 @@ public class AffineTransformMatrix2DTest {
     @Test
     public void testApplyDirection_translate() {
         // arrange
-        final Vector2D translation = Vector2D.of(1.1, -PlaneAngleRadians.PI);
+        final Vector2D translation = Vector2D.of(1.1, -Math.PI);
 
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .translate(translation);
@@ -879,7 +880,7 @@ public class AffineTransformMatrix2DTest {
         final AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .scale(1.5)
                 .translate(4, 6)
-                .rotate(PlaneAngleRadians.PI_OVER_TWO);
+                .rotate(Angle.PI_OVER_TWO);
 
         // act/assert
         EuclideanTestUtils.permute(-5, 5, 0.5, (x, y) -> {
@@ -1115,7 +1116,7 @@ public class AffineTransformMatrix2DTest {
     @Test
     public void testInverse_rotate() {
         // arrange
-        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(Angle.PI_OVER_TWO);
 
         // act
         final AffineTransformMatrix2D inverse = transform.inverse();
@@ -1132,7 +1133,7 @@ public class AffineTransformMatrix2DTest {
     public void testInverse_rotate_aroundCenter() {
         // arrange
         final Vector2D center = Vector2D.of(1, 2);
-        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(center, PlaneAngleRadians.PI_OVER_TWO);
+        final AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(center, Angle.PI_OVER_TWO);
 
         // act
         final AffineTransformMatrix2D inverse = transform.inverse();
@@ -1253,10 +1254,10 @@ public class AffineTransformMatrix2DTest {
         checkNormalTransform(AffineTransformMatrix2D.createScale(-3, 4));
         checkNormalTransform(AffineTransformMatrix2D.createScale(-2, -5));
 
-        checkNormalTransform(AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO));
-        checkNormalTransform(AffineTransformMatrix2D.createRotation(PlaneAngleRadians.THREE_PI_OVER_TWO));
+        checkNormalTransform(AffineTransformMatrix2D.createRotation(Angle.PI_OVER_TWO));
+        checkNormalTransform(AffineTransformMatrix2D.createRotation(THREE_PI_OVER_TWO));
 
-        checkNormalTransform(AffineTransformMatrix2D.createRotation(Vector2D.of(3, 4), PlaneAngleRadians.THREE_PI_OVER_TWO)
+        checkNormalTransform(AffineTransformMatrix2D.createRotation(Vector2D.of(3, 4), THREE_PI_OVER_TWO)
                 .translate(8, 2)
                 .scale(-3, -2));
         checkNormalTransform(AffineTransformMatrix2D.createScale(2, -1)

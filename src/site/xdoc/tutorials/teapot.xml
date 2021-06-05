@@ -78,22 +78,21 @@
       logic, aptly named
       <a class="code" href="../commons-geometry-examples/commons-geometry-examples-tutorials/apidocs/org/apache/commons/geometry/examples/tutorials/teapot/TeapotBuilder.html">TeapotBuilder</a>.
       The constructor will accept only a single argument: an instance of
-      <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html">DoublePrecisionContext</a>.
+      <span class="code">Precision.DoubleEquivalence</span> from the
+      <a target="_blank" href="https://commons.apache.org/proper/commons-numbers/">Commons Numbers</a> library.
       This is a ubiquitous type in <em>Commons Geometry</em> and is used to provide a method of comparing
       floating point numbers without being susceptible to small floating point errors introduced during computations.
       Typically, users of <em>Commons Geometry</em> will construct a single instance of this type for use by multiple
-      objects throughout an entire operation, or even application. Since we don't want our class to
-      assume such a heavy responsibility, we will simply accept a
-      <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html">DoublePrecisionContext</a>
-      in the constructor.
+      objects throughout an entire operation, or even application. Since we don't want our class to assume such a
+      heavy responsibility, we will simply accept an instance in the constructor.
       </p>
 
       <source>
 public class TeapotBuilder {
 
-    private final DoublePrecisionContext precision;
+    private final Precision.DoubleEquivalence precision;
 
-    public TeapotBuilder(final DoublePrecisionContext precision) {
+    public TeapotBuilder(final Precision.DoubleEquivalence precision) {
         this.precision = precision;
     }
 }</source>
@@ -275,10 +274,9 @@ Plane bottomPlane = Planes.fromPointAndNormal(
         <p>
 
         Here we construct a plane from an arbitrary point lying in the plane, the plane normal, and our good friend
-        <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html">DoublePrecisionContext</a>.
-        We choose a point that is directly "below" the origin (per our previous definition of teapot-space) and
-        that will cause the plane to intersect the bottom of the teapot body. The plane normal points "up", along the
-        positive z axis.
+        <span class="code">Precision.DoubleEquivalence</span>. We choose a point that is directly "below" the origin
+        (per our previous definition of teapot-space) and that will cause the plane to intersect the bottom of the
+        teapot body. The plane normal points "up", along the positive z axis.
         </p>
 
         <source>
@@ -355,9 +353,9 @@ private RegionBSPTree3D buildLid(RegionBSPTree3D body) {
         </p>
 
         <source>
-final RegionBSPTree3D lid = body.copy();
+RegionBSPTree3D lid = body.copy();
 
-final AffineTransformMatrix3D t = AffineTransformMatrix3D.createTranslation(0, 0, 0.03);
+AffineTransformMatrix3D t = AffineTransformMatrix3D.createTranslation(0, 0, 0.03);
 lid.transform(t);</source>
 
         <p>
@@ -413,7 +411,7 @@ SimpleTriangleMesh.Builder builder = SimpleTriangleMesh.builder(precision);</sou
 double zDelta = 1.0 / segments;
 double zValue;
 
-double azDelta = PlaneAngleRadians.TWO_PI / circleVertexCount;
+double azDelta = Angle.TWO_PI / circleVertexCount;
 double az;
 
 Vector3D vertex;
@@ -589,7 +587,7 @@ return buildUnitCylinderMesh(10, 14, vertexTransform).toTree();</source>
 
         <p>Now on to the tricky bit: the rotation. The
         <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/rotation/QuaternionRotation.html">QuaternionRotation</a>
-        class is to go-to class in <em>Commons Geometry</em> for rotations in 3D. Instances of this class can be pictured
+        class is the go-to class in <em>Commons Geometry</em> for rotations in 3D. Instances of this class can be pictured
         as representing a rotation of a certain angle around some axis in 3D space. If we applied the same rotation
         to all vertices in our cylinder, the entire thing would rotate but retain the same shape. This is not what we want.
         We want a curve in the middle of the handle, which means we need to apply different rotations to different vertices.
@@ -600,8 +598,8 @@ return buildUnitCylinderMesh(10, 14, vertexTransform).toTree();</source>
         </p>
 
         <source>
-QuaternionRotation startRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -PlaneAngleRadians.PI_OVER_TWO);
-QuaternionRotation endRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO);
+QuaternionRotation startRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -Angle.PI_OVER_TWO);
+QuaternionRotation endRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Angle.PI_OVER_TWO);
 DoubleFunction&lt;QuaternionRotation&gt; slerp = startRotation.slerp(endRotation);</source>
 
         <p>
@@ -667,8 +665,8 @@ double height = 1 - (2 * handleRadius);
 
 AffineTransformMatrix3D scale = AffineTransformMatrix3D.createScale(handleRadius, handleRadius, height);
 
-QuaternionRotation startRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -PlaneAngleRadians.PI_OVER_TWO);
-QuaternionRotation endRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO);
+QuaternionRotation startRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -Angle.PI_OVER_TWO);
+QuaternionRotation endRotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Angle.PI_OVER_TWO);
 DoubleFunction&lt;QuaternionRotation&gt; slerp = startRotation.slerp(endRotation);
 
 Vector3D curveCenter = Vector3D.of(0.5 * height, 0, 0);
@@ -676,16 +674,16 @@ Vector3D curveCenter = Vector3D.of(0.5 * height, 0, 0);
 AffineTransformMatrix3D translation = AffineTransformMatrix3D.createTranslation(Vector3D.of(-1.38, 0, 0));
 
 UnaryOperator&lt;Vector3D&gt; vertexTransform = v -&gt; {
-    final double t = v.getZ();
+    double t = v.getZ();
 
-    final Vector3D scaled = scale.apply(v);
+    Vector3D scaled = scale.apply(v);
 
-    final QuaternionRotation rot = slerp.apply(t);
-    final AffineTransformMatrix3D mat = AffineTransformMatrix3D.createRotation(curveCenter, rot);
+    QuaternionRotation rot = slerp.apply(t);
+    AffineTransformMatrix3D mat = AffineTransformMatrix3D.createRotation(curveCenter, rot);
 
-    final Vector3D rotated = mat.apply(Vector3D.of(scaled.getX(), scaled.getY(), 0));
+    Vector3D rotated = mat.apply(Vector3D.of(scaled.getX(), scaled.getY(), 0));
 
-    final Vector3D result = (t &gt; 0 &amp;&amp; t &lt; 1) ?
+    Vector3D result = (t &gt; 0 &amp;&amp; t &lt; 1) ?
             rotated :
             rotated.add(Vector3D.Unit.PLUS_X);
 
@@ -929,7 +927,7 @@ public Map&lt;String, RegionBSPTree3D&gt; buildSeparatedTeapot() {
     body.difference(teapot, extractor);
 
     // build the output
-    final Map&lt;String, RegionBSPTree3D&gt; result = new LinkedHashMap&lt;&gt;();
+    Map&lt;String, RegionBSPTree3D&gt; result = new LinkedHashMap&lt;&gt;();
     result.put("lid", lid);
     result.put("body", body);
 

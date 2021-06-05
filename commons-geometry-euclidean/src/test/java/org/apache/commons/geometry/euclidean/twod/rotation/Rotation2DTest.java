@@ -20,15 +20,14 @@ import java.util.function.BiFunction;
 import java.util.function.DoubleFunction;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTransform;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.angle.Angle;
+import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +35,10 @@ public class Rotation2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
-    private static final DoublePrecisionContext TEST_PRECISION =
-            new EpsilonDoublePrecisionContext(TEST_EPS);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
+
+    private static final double THREE_PI_OVER_TWO = 3 * Math.PI / 2;
 
     @Test
     public void testIdentity() {
@@ -65,10 +66,10 @@ public class Rotation2DTest {
         checkApply(1.0, Vector2D.ZERO, Vector2D.ZERO);
 
         checkApply(0.0, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X);
-        checkApply(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
-        checkApply(PlaneAngleRadians.PI, Vector2D.Unit.PLUS_X, Vector2D.Unit.MINUS_X);
-        checkApply(PlaneAngleRadians.THREE_PI_OVER_TWO, Vector2D.Unit.PLUS_X, Vector2D.Unit.MINUS_Y);
-        checkApply(PlaneAngleRadians.TWO_PI, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X);
+        checkApply(Angle.PI_OVER_TWO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
+        checkApply(Math.PI, Vector2D.Unit.PLUS_X, Vector2D.Unit.MINUS_X);
+        checkApply(THREE_PI_OVER_TWO, Vector2D.Unit.PLUS_X, Vector2D.Unit.MINUS_Y);
+        checkApply(Angle.TWO_PI, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X);
 
         checkRotate(Rotation2D::of, Rotation2D::apply);
     }
@@ -79,10 +80,10 @@ public class Rotation2DTest {
         checkApplyVector(1.0, Vector2D.ZERO, Vector2D.ZERO);
 
         checkApplyVector(0.0, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X);
-        checkApplyVector(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
-        checkApplyVector(PlaneAngleRadians.PI, Vector2D.Unit.PLUS_X, Vector2D.Unit.MINUS_X);
-        checkApplyVector(PlaneAngleRadians.THREE_PI_OVER_TWO, Vector2D.Unit.PLUS_X, Vector2D.Unit.MINUS_Y);
-        checkApplyVector(PlaneAngleRadians.TWO_PI, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X);
+        checkApplyVector(Angle.PI_OVER_TWO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
+        checkApplyVector(Math.PI, Vector2D.Unit.PLUS_X, Vector2D.Unit.MINUS_X);
+        checkApplyVector(THREE_PI_OVER_TWO, Vector2D.Unit.PLUS_X, Vector2D.Unit.MINUS_Y);
+        checkApplyVector(Angle.TWO_PI, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X);
 
         checkRotate(Rotation2D::of, Rotation2D::applyVector);
     }
@@ -297,7 +298,7 @@ public class Rotation2DTest {
             final double lineAngle = line.angle(resultLine);
 
             // check that the angle is what we expect
-            Assertions.assertEquals(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(angle), lineAngle, TEST_EPS);
+            Assertions.assertEquals(Angle.Rad.WITHIN_MINUS_PI_AND_PI.applyAsDouble(angle), lineAngle, TEST_EPS);
         }
     }
 }
