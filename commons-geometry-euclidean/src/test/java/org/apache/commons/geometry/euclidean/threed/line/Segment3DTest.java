@@ -27,7 +27,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Segment3DTest {
+class Segment3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -35,7 +35,7 @@ public class Segment3DTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromPoints() {
+    void testFromPoints() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 1, 2);
         final Vector3D p2 = Vector3D.of(1, 3, 2);
@@ -62,7 +62,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testFromPoints_invalidArgs() {
+    void testFromPoints_invalidArgs() {
         // arrange
         final Vector3D p1 = Vector3D.of(0, 2, 4);
         final Vector3D p2 = Vector3D.of(1e-17, 2, 4);
@@ -78,7 +78,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testFromPoints_givenLine() {
+    void testFromPoints_givenLine() {
         // arrange
         final Vector3D p1 = Vector3D.of(-1, -1, 2);
         final Vector3D p2 = Vector3D.of(3, 3, 3);
@@ -107,7 +107,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testFromPoints_givenLine_singlePoint() {
+    void testFromPoints_givenLine_singlePoint() {
         // arrange
         final Vector3D p1 = Vector3D.of(-1, 2, 0);
 
@@ -135,7 +135,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testFromPoints_givenLine_invalidArgs() {
+    void testFromPoints_givenLine_invalidArgs() {
         // arrange
         final Vector3D p0 = Vector3D.of(1, 0, 0);
         final Vector3D p1 = Vector3D.of(2, 0, 0);
@@ -161,7 +161,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testFromLocations() {
+    void testFromLocations() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
@@ -187,7 +187,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testFromLocations_reversedLocationOrder() {
+    void testFromLocations_reversedLocationOrder() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
@@ -213,7 +213,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testFromLocations_singlePoint() {
+    void testFromLocations_singlePoint() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
@@ -239,7 +239,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testFromLocations_invalidArgs() {
+    void testFromLocations_invalidArgs() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
 
@@ -262,7 +262,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
@@ -279,7 +279,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testTransform_reflection() {
+    void testTransform_reflection() {
         // arrange
         final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
@@ -297,7 +297,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         // arrange
         final Vector3D p0 = Vector3D.of(1, 1, 1);
         final Vector3D p1 = Vector3D.of(3, 1, 1);
@@ -321,7 +321,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testGetInterval() {
+    void testGetInterval() {
         // arrange
         final Segment3D seg = Lines3D.segmentFromPoints(Vector3D.of(2, -1, 3), Vector3D.of(2, 2, 3), TEST_PRECISION);
 
@@ -336,7 +336,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testGetInterval_singlePoint() {
+    void testGetInterval_singlePoint() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
         final Segment3D seg = Lines3D.segmentFromLocations(line, 1, 1);
@@ -353,7 +353,7 @@ public class Segment3DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Segment3D seg = Lines3D.segmentFromPoints(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
 

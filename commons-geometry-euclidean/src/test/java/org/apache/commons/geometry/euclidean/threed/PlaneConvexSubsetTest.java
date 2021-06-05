@@ -34,7 +34,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PlaneConvexSubsetTest {
+class PlaneConvexSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -42,7 +42,7 @@ public class PlaneConvexSubsetTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testToConvex() {
+    void testToConvex() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.Unit.PLUS_X,  Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Z), TEST_PRECISION);
@@ -56,7 +56,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 0, 1);
         final Vector3D p2 = Vector3D.of(2, 0, 1);
@@ -81,7 +81,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testTransform_full() {
+    void testTransform_full() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
         final PlaneConvexSubset sp = Planes.subsetFromConvexArea(plane, ConvexArea.full());
@@ -101,7 +101,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testTransform_halfSpace() {
+    void testTransform_halfSpace() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
         final PlaneConvexSubset sp = Planes.subsetFromConvexArea(plane,
@@ -121,7 +121,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testTransform_finite() {
+    void testTransform_finite() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)), TEST_PRECISION);
@@ -145,7 +145,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testTransform_reflection() {
+    void testTransform_reflection() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)), TEST_PRECISION);
@@ -168,7 +168,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_full() {
+    void testSplit_full() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION)
                 .getEmbedding();
@@ -196,7 +196,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_both() {
+    void testSplit_both() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
@@ -218,7 +218,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_plusOnly() {
+    void testSplit_plusOnly() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
@@ -239,7 +239,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_minusOnly() {
+    void testSplit_minusOnly() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
@@ -260,7 +260,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_parallelSplitter_on() {
+    void testSplit_parallelSplitter_on() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
@@ -279,7 +279,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_parallelSplitter_minus() {
+    void testSplit_parallelSplitter_minus() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
@@ -299,7 +299,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_parallelSplitter_plus() {
+    void testSplit_parallelSplitter_plus() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
@@ -319,7 +319,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_antiParallelSplitter_on() {
+    void testSplit_antiParallelSplitter_on() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
@@ -338,7 +338,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_antiParallelSplitter_minus() {
+    void testSplit_antiParallelSplitter_minus() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
@@ -358,7 +358,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_antiParallelSplitter_plus() {
+    void testSplit_antiParallelSplitter_plus() {
         // arrange
         final PlaneConvexSubset ps = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
@@ -378,7 +378,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_usesVertexBasedTypesWhenPossible() {
+    void testSplit_usesVertexBasedTypesWhenPossible() {
         // arrange
         // create an infinite subset
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.ZERO,
@@ -411,7 +411,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testIntersection_line() {
+    void testIntersection_line() {
         // arrange
         final PlaneConvexSubset ps = Planes.convexPolygonFromVertices(Arrays.asList(
                 Vector3D.of(0, 0, 2), Vector3D.of(1, 0, 2), Vector3D.of(1, 1, 2), Vector3D.of(0, 1, 2)),
@@ -431,7 +431,7 @@ public class PlaneConvexSubsetTest {
     }
 
     @Test
-    public void testIntersection_segment() {
+    void testIntersection_segment() {
         // arrange
         final PlaneConvexSubset sp = Planes.convexPolygonFromVertices(Arrays.asList(
                 Vector3D.of(0, 0, 2), Vector3D.of(1, 0, 2), Vector3D.of(1, 1, 2), Vector3D.of(0, 1, 2)),

@@ -30,7 +30,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ObjTriangleMeshReaderTest {
+class ObjTriangleMeshReaderTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -38,7 +38,7 @@ public class ObjTriangleMeshReaderTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testDefaults() {
+    void testDefaults() {
         // arrange
         final ObjTriangleMeshReader reader = reader("");
 
@@ -47,7 +47,7 @@ public class ObjTriangleMeshReaderTest {
     }
 
     @Test
-    public void testClose() throws IOException {
+    void testClose() throws IOException {
         // arrange
         final CloseCountReader closeReader = new CloseCountReader(new StringReader(""));
 
@@ -60,7 +60,7 @@ public class ObjTriangleMeshReaderTest {
     }
 
     @Test
-    public void testReadTriangleMesh_withNormal() throws IOException {
+    void testReadTriangleMesh_withNormal() throws IOException {
         // arrange
         final ObjTriangleMeshReader reader = reader(
                 "o test\n\n" +
@@ -99,7 +99,7 @@ public class ObjTriangleMeshReaderTest {
     }
 
     @Test
-    public void testReadTriangleMesh_withoutNormal() throws IOException {
+    void testReadTriangleMesh_withoutNormal() throws IOException {
         // arrange
         final ObjTriangleMeshReader reader = reader(
                 "o test\n\n" +
@@ -128,7 +128,7 @@ public class ObjTriangleMeshReaderTest {
     }
 
     @Test
-    public void testReadTriangleMesh_failOnNonPolygon() throws IOException {
+    void testReadTriangleMesh_failOnNonPolygon() throws IOException {
         // arrange
         final ObjTriangleMeshReader reader = reader(
                 "o test\n\n" +

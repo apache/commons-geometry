@@ -20,10 +20,10 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-public class TeapotTutorialTest {
+class TeapotTutorialTest {
 
     @Test
-    public void testTeapotBuilder() throws IOException {
+    void testTeapotBuilder() throws IOException {
         // act/assert
         TeapotBuilder.main(new String[] {"target/teapot.stl", "target/teapot-debug"});
     }

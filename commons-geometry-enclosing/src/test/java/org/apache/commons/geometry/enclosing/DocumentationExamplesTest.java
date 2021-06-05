@@ -29,12 +29,12 @@ import org.junit.jupiter.api.Test;
 /** This class contains code listed as examples in the user guide and other documentation.
  * If any portion of this code changes, the corresponding examples in the documentation <em>must</em> be updated.
  */
-public class DocumentationExamplesTest {
+class DocumentationExamplesTest {
 
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    public void testWelzlEncloser3DExample() {
+    void testWelzlEncloser3DExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
         final List<Vector3D> points = Arrays.asList(

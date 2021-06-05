@@ -24,12 +24,12 @@ import org.apache.commons.geometry.io.core.test.CloseCountWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AbstractTextFormatWriterTest {
+class AbstractTextFormatWriterTest {
 
     private StringWriter out = new StringWriter();
 
     @Test
-    public void testDefaults() throws IOException {
+    void testDefaults() throws IOException {
         // act
         try (TestWriter writer = new TestWriter(out)) {
             // assert
@@ -40,7 +40,7 @@ public class AbstractTextFormatWriterTest {
     }
 
     @Test
-    public void testWrite_defaultConfig() throws IOException {
+    void testWrite_defaultConfig() throws IOException {
         // arrange
         final double n = 20000.0 / 3.0;
         final CloseCountWriter closeCountWriter = new CloseCountWriter(out);
@@ -63,7 +63,7 @@ public class AbstractTextFormatWriterTest {
     }
 
     @Test
-    public void testWrite_customConfig() throws IOException {
+    void testWrite_customConfig() throws IOException {
         // arrange
         final CloseCountWriter closeCountWriter = new CloseCountWriter(out);
         try (TestWriter writer = new TestWriter(closeCountWriter)) {

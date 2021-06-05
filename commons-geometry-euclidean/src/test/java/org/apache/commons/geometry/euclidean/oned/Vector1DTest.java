@@ -24,12 +24,12 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Vector1DTest {
+class Vector1DTest {
 
     private static final double TEST_TOLERANCE = 1e-15;
 
     @Test
-    public void testConstants() {
+    void testConstants() {
         // act/assert
         checkVector(Vector1D.ZERO, 0.0);
         checkVector(Vector1D.Unit.PLUS, 1.0);
@@ -40,7 +40,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testConstants_normalize() {
+    void testConstants_normalize() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, Vector1D.ZERO::normalize);
         Assertions.assertThrows(IllegalArgumentException.class, Vector1D.NaN::normalize);
@@ -52,7 +52,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testCoordinateAscendingOrderComparator() {
+    void testCoordinateAscendingOrderComparator() {
         // arrange
         final Comparator<Vector1D> cmp = Vector1D.COORDINATE_ASCENDING_ORDER;
 
@@ -71,7 +71,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testCoordinates() {
+    void testCoordinates() {
         // act/assert
         Assertions.assertEquals(-1, Vector1D.of(-1).getX(), 0.0);
         Assertions.assertEquals(0, Vector1D.of(0).getX(), 0.0);
@@ -79,7 +79,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testDimension() {
+    void testDimension() {
         // arrange
         final Vector1D v = Vector1D.of(2);
 
@@ -88,7 +88,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNaN() {
+    void testNaN() {
         // act/assert
         Assertions.assertTrue(Vector1D.of(Double.NaN).isNaN());
 
@@ -97,7 +97,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testInfinite() {
+    void testInfinite() {
         // act/assert
         Assertions.assertTrue(Vector1D.of(Double.NEGATIVE_INFINITY).isInfinite());
         Assertions.assertTrue(Vector1D.of(Double.POSITIVE_INFINITY).isInfinite());
@@ -107,7 +107,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testFinite() {
+    void testFinite() {
         // act/assert
         Assertions.assertTrue(Vector1D.ZERO.isFinite());
         Assertions.assertTrue(Vector1D.of(1).isFinite());
@@ -119,7 +119,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testZero() {
+    void testZero() {
         // act
         final Vector1D zero = Vector1D.of(1).getZero();
 
@@ -129,7 +129,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNorm() {
+    void testNorm() {
         // act/assert
         Assertions.assertEquals(0.0, Vector1D.ZERO.norm(), TEST_TOLERANCE);
         Assertions.assertEquals(3.0, Vector1D.of(3).norm(), TEST_TOLERANCE);
@@ -137,7 +137,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNorm_unitVectors() {
+    void testNorm_unitVectors() {
         // arrange
         final Vector1D v = Vector1D.of(2.0).normalize();
 
@@ -146,7 +146,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNormSq() {
+    void testNormSq() {
         // act/assert
         Assertions.assertEquals(0.0, Vector1D.of(0).normSq(), TEST_TOLERANCE);
         Assertions.assertEquals(9.0, Vector1D.of(3).normSq(), TEST_TOLERANCE);
@@ -154,7 +154,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNormSq_unitVectors() {
+    void testNormSq_unitVectors() {
         // arrange
         final Vector1D v = Vector1D.of(2.0).normalize();
 
@@ -163,7 +163,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testWithNorm() {
+    void testWithNorm() {
         // act/assert
         checkVector(Vector1D.Unit.PLUS.withNorm(0.0), 0.0);
 
@@ -175,7 +175,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testWithNorm_illegalNorm() {
+    void testWithNorm_illegalNorm() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Vector1D.ZERO.withNorm(2.0));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Vector1D.NaN.withNorm(2.0));
@@ -184,7 +184,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testWithNorm_unitVectors() {
+    void testWithNorm_unitVectors() {
         // arrange
         final Vector1D v = Vector1D.of(2.0).normalize();
 
@@ -198,7 +198,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testAdd() {
+    void testAdd() {
         // arrange
         final Vector1D v1 = Vector1D.of(1);
         final Vector1D v2 = Vector1D.of(-3);
@@ -212,7 +212,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testAdd_scaled() {
+    void testAdd_scaled() {
         // arrange
         final Vector1D v1 = Vector1D.of(1);
         final Vector1D v2 = Vector1D.of(-3);
@@ -229,7 +229,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testSubtract() {
+    void testSubtract() {
         // arrange
         final Vector1D v1 = Vector1D.of(1);
         final Vector1D v2 = Vector1D.of(-3);
@@ -243,7 +243,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testSubtract_scaled() {
+    void testSubtract_scaled() {
         // arrange
         final Vector1D v1 = Vector1D.of(1);
         final Vector1D v2 = Vector1D.of(-3);
@@ -260,7 +260,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNormalize() {
+    void testNormalize() {
         // act/assert
         checkVector(Vector1D.of(1).normalize(), 1);
         checkVector(Vector1D.of(-1).normalize(), -1);
@@ -275,7 +275,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNormalize_illegalNorm() {
+    void testNormalize_illegalNorm() {
         // arrange
         final Pattern illegalNorm = Pattern.compile("^Illegal norm: (0\\.0|-?Infinity|NaN)");
 
@@ -291,7 +291,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNormalize_isIdempotent() {
+    void testNormalize_isIdempotent() {
         // arrange
         final Vector1D v = Vector1D.of(2).normalize();
 
@@ -301,7 +301,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNormalizeOrNull() {
+    void testNormalizeOrNull() {
         // act/assert
         checkVector(Vector1D.of(100).normalizeOrNull(), 1);
         checkVector(Vector1D.of(-100).normalizeOrNull(), -1);
@@ -322,7 +322,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNormalizeOrNull_isIdempotent() {
+    void testNormalizeOrNull_isIdempotent() {
         // arrange
         final Vector1D v = Vector1D.of(2).normalizeOrNull();
 
@@ -332,14 +332,14 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNegate() {
+    void testNegate() {
         // act/assert
         checkVector(Vector1D.of(0.1).negate(), -0.1);
         checkVector(Vector1D.of(-0.1).negate(), 0.1);
     }
 
     @Test
-    public void testNegate_unitVectors() {
+    void testNegate_unitVectors() {
         // arrange
         final Vector1D v1 = Vector1D.of(0.1).normalize();
         final Vector1D v2 = Vector1D.of(-0.1).normalize();
@@ -350,7 +350,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testScalarMultiply() {
+    void testScalarMultiply() {
         // act/assert
         checkVector(Vector1D.of(1).multiply(3), 3);
         checkVector(Vector1D.of(1).multiply(-3), -3);
@@ -360,7 +360,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testDistance() {
+    void testDistance() {
         // arrange
         final Vector1D v1 = Vector1D.of(1);
         final Vector1D v2 = Vector1D.of(-4);
@@ -376,7 +376,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testDistanceSq() {
+    void testDistanceSq() {
         // arrange
         final Vector1D v1 = Vector1D.of(1);
         final Vector1D v2 = Vector1D.of(-4);
@@ -388,7 +388,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testDotProduct() {
+    void testDotProduct() {
         // arrange
         final Vector1D v1 = Vector1D.of(2);
         final Vector1D v2 = Vector1D.of(-3);
@@ -403,7 +403,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testAngle() {
+    void testAngle() {
         // arrange
         final Vector1D v1 = Vector1D.of(2);
         final Vector1D v2 = Vector1D.of(-3);
@@ -433,7 +433,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testAngle_illegalNorm() {
+    void testAngle_illegalNorm() {
         // arrange
         final Vector1D v = Vector1D.of(1.0);
 
@@ -449,7 +449,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testVectorTo() {
+    void testVectorTo() {
         // arrange
         final Vector1D v1 = Vector1D.of(1);
         final Vector1D v2 = Vector1D.of(-4);
@@ -471,7 +471,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testDirectionTo() {
+    void testDirectionTo() {
         // act/assert
         final Vector1D v1 = Vector1D.of(1);
         final Vector1D v2 = Vector1D.of(5);
@@ -486,7 +486,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testDirectionTo_illegalNorm() {
+    void testDirectionTo_illegalNorm() {
         // arrange
         final Vector1D v = Vector1D.of(2);
 
@@ -499,7 +499,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testLerp() {
+    void testLerp() {
         // arrange
         final Vector1D v1 = Vector1D.of(1);
         final Vector1D v2 = Vector1D.of(-4);
@@ -525,7 +525,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
                 .scale(2)
@@ -540,7 +540,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testPrecisionEquals() {
+    void testPrecisionEquals() {
         // arrange
         final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-6);
         final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(1e-1);
@@ -562,7 +562,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testIsZero() {
+    void testIsZero() {
         // arrange
         final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-6);
         final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(1e-1);
@@ -582,7 +582,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Vector1D u = Vector1D.of(1);
         final Vector1D v = Vector1D.of(1 + 10 * Precision.EPSILON);
@@ -597,7 +597,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Vector1D u1 = Vector1D.of(1);
         final Vector1D u2 = Vector1D.of(1);
@@ -615,7 +615,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testEqualsAndHashCode_signedZeroConsistency() {
+    void testEqualsAndHashCode_signedZeroConsistency() {
         // arrange
         final Vector1D a = Vector1D.of(0.0);
         final Vector1D b = Vector1D.of(-0.0);
@@ -634,7 +634,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Vector1D v = Vector1D.of(3);
         final Pattern pattern = Pattern.compile("\\(3.{0,2}\\)");
@@ -647,7 +647,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testParse() {
+    void testParse() {
         // act/assert
         checkVector(Vector1D.parse("(1)"), 1);
         checkVector(Vector1D.parse("(-1)"), -1);
@@ -662,13 +662,13 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testParse_failure() {
+    void testParse_failure() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () ->  Vector1D.parse("abc"));
     }
 
     @Test
-    public void testOf() {
+    void testOf() {
         // act/assert
         checkVector(Vector1D.of(0), 0.0);
         checkVector(Vector1D.of(-1), -1.0);
@@ -680,14 +680,14 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testUnitFrom_coordinates() {
+    void testUnitFrom_coordinates() {
         // act/assert
         checkVector(Vector1D.Unit.from(2.0), 1);
         checkVector(Vector1D.Unit.from(-4.0), -1);
     }
 
     @Test
-    public void testUnitFrom_vector() {
+    void testUnitFrom_vector() {
         // arrange
         final Vector1D vec = Vector1D.of(2);
         final Vector1D unitVec = Vector1D.Unit.from(2);
@@ -698,7 +698,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testUnitFrom_illegalNorm() {
+    void testUnitFrom_illegalNorm() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> Vector1D.Unit.from(0.0));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Vector1D.Unit.from(Double.NaN));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Vector1D.Unit.from(Double.NEGATIVE_INFINITY));
@@ -706,14 +706,14 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testLinearCombination() {
+    void testLinearCombination() {
         // act/assert
         checkVector(Vector1D.linearCombination(2, Vector1D.of(3)), 6);
         checkVector(Vector1D.linearCombination(-2, Vector1D.of(3)), -6);
     }
 
     @Test
-    public void testLinearCombination2() {
+    void testLinearCombination2() {
         // act/assert
         checkVector(Vector1D.linearCombination(
                 2, Vector1D.of(3),
@@ -724,7 +724,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testLinearCombination3() {
+    void testLinearCombination3() {
         // act/assert
         checkVector(Vector1D.linearCombination(
                 2, Vector1D.of(3),
@@ -737,7 +737,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testLinearCombination4() {
+    void testLinearCombination4() {
         // act/assert
         checkVector(Vector1D.linearCombination(
                 2, Vector1D.of(3),
@@ -752,7 +752,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testUnitFactoryOptimization() {
+    void testUnitFactoryOptimization() {
         // An already normalized vector will avoid unnecessary creation.
         final Vector1D v = Vector1D.of(3).normalize();
         Assertions.assertSame(v, v.normalize());

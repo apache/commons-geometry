@@ -27,10 +27,10 @@ import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class EmbeddingTest {
+class EmbeddingTest {
 
     @Test
-    public void testToSubspace_collection_emptyInput() {
+    void testToSubspace_collection_emptyInput() {
         // arrange
         final TestLine line = TestLine.Y_AXIS;
 
@@ -42,7 +42,7 @@ public class EmbeddingTest {
     }
 
     @Test
-    public void testToSubspace_collection() {
+    void testToSubspace_collection() {
         // arrange
         final List<TestPoint2D> pts = Arrays.asList(
                     new TestPoint2D(0, 0),
@@ -63,7 +63,7 @@ public class EmbeddingTest {
     }
 
     @Test
-    public void testToSpace_collection_emptyInput() {
+    void testToSpace_collection_emptyInput() {
         // arrange
         final TestLine line = TestLine.Y_AXIS;
 
@@ -75,7 +75,7 @@ public class EmbeddingTest {
     }
 
     @Test
-    public void testToSpace_collection() {
+    void testToSpace_collection() {
         // arrange
         final List<TestPoint1D> pts = Arrays.asList(
                     new TestPoint1D(0),

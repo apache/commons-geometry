@@ -26,7 +26,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LineTest {
+class LineTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -34,7 +34,7 @@ public class LineTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromPoints() {
+    void testFromPoints() {
         // act/assert
         checkLine(Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
@@ -52,7 +52,7 @@ public class LineTest {
     }
 
     @Test
-    public void testFromPoints_pointsTooClose() {
+    void testFromPoints_pointsTooClose() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> Lines.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
@@ -61,7 +61,7 @@ public class LineTest {
     }
 
     @Test
-    public void testFromPointAndDirection() {
+    void testFromPointAndDirection() {
         // act/assert
         checkLine(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
@@ -77,7 +77,7 @@ public class LineTest {
     }
 
     @Test
-    public void testFromPointAndDirection_directionIsZero() {
+    void testFromPointAndDirection_directionIsZero() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> Lines.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.ZERO, TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
@@ -86,7 +86,7 @@ public class LineTest {
     }
 
     @Test
-    public void testFromPointAndAngle() {
+    void testFromPointAndAngle() {
         // act/assert
         checkLine(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
@@ -101,7 +101,7 @@ public class LineTest {
     }
 
     @Test
-    public void testGetAngle() {
+    void testGetAngle() {
         // arrange
         final Vector2D vec = Vector2D.of(1, 2);
 
@@ -115,7 +115,7 @@ public class LineTest {
     }
 
     @Test
-    public void testGetAngle_multiplesOfPi() {
+    void testGetAngle_multiplesOfPi() {
         // arrange
         final Vector2D vec = Vector2D.of(-1, -2);
 
@@ -130,7 +130,7 @@ public class LineTest {
     }
 
     @Test
-    public void testGetDirection() {
+    void testGetDirection() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X,
                 Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 0), TEST_PRECISION).getDirection(), TEST_EPS);
@@ -154,7 +154,7 @@ public class LineTest {
     }
 
     @Test
-    public void testGetOffsetDirection() {
+    void testGetOffsetDirection() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_Y,
                 Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 0), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
@@ -178,7 +178,7 @@ public class LineTest {
     }
 
     @Test
-    public void testGetOrigin() {
+    void testGetOrigin() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO,
                 Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 0), TEST_PRECISION).getOrigin(), TEST_EPS);
@@ -202,7 +202,7 @@ public class LineTest {
     }
 
     @Test
-    public void testGetOriginOffset() {
+    void testGetOriginOffset() {
         // arrange
         final double sqrt2 = Math.sqrt(2);
 
@@ -224,7 +224,7 @@ public class LineTest {
     }
 
     @Test
-    public void testGetPrecision() {
+    void testGetPrecision() {
         // act/assert
         Assertions.assertSame(TEST_PRECISION, Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
         Assertions.assertSame(TEST_PRECISION, Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
@@ -232,7 +232,7 @@ public class LineTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final Vector2D pt = Vector2D.of(0, 1);
         final Vector2D dir = Vector2D.Unit.PLUS_X;
@@ -251,7 +251,7 @@ public class LineTest {
     }
 
     @Test
-    public void testAbscissa() {
+    void testAbscissa() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(-2, -2), Vector2D.of(2, 1), TEST_PRECISION);
 
@@ -263,7 +263,7 @@ public class LineTest {
     }
 
     @Test
-    public void testToSubspace() {
+    void testToSubspace() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
@@ -275,7 +275,7 @@ public class LineTest {
     }
 
     @Test
-    public void testToSpace_throughOrigin() {
+    void testToSpace_throughOrigin() {
         // arrange
         final double invSqrt2 = 1 / Math.sqrt(2);
         final Vector2D dir = Vector2D.of(invSqrt2, invSqrt2);
@@ -292,7 +292,7 @@ public class LineTest {
     }
 
     @Test
-    public void testToSpace_offsetFromOrigin() {
+    void testToSpace_offsetFromOrigin() {
         // arrange
         final double angle = Math.PI / 6;
         final double cos = Math.cos(angle);
@@ -319,7 +319,7 @@ public class LineTest {
     }
 
     @Test
-    public void testIntersection() {
+    void testIntersection() {
         // arrange
         final Line a = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final Line b = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
@@ -347,7 +347,7 @@ public class LineTest {
     }
 
     @Test
-    public void testIntersection_parallel() {
+    void testIntersection_parallel() {
         // arrange
         final Line a = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final Line b = Lines.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
@@ -364,7 +364,7 @@ public class LineTest {
     }
 
     @Test
-    public void testIntersection_coincident() {
+    void testIntersection_coincident() {
         // arrange
         final Line a = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final Line b = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
@@ -381,7 +381,7 @@ public class LineTest {
     }
 
     @Test
-    public void testAngle() {
+    void testAngle() {
         // arrange
         final Line a = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         final Line b = Lines.fromPointAndAngle(Vector2D.of(1, 4), Math.PI, TEST_PRECISION);
@@ -402,7 +402,7 @@ public class LineTest {
     }
 
     @Test
-    public void testProject() {
+    void testProject() {
         // --- arrange
         final Line xAxis = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final Line yAxis = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
@@ -429,7 +429,7 @@ public class LineTest {
     }
 
     @Test
-    public void testSpan() {
+    void testSpan() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
@@ -442,7 +442,7 @@ public class LineTest {
     }
 
     @Test
-    public void testSegment_doubles() {
+    void testSegment_doubles() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
@@ -456,7 +456,7 @@ public class LineTest {
     }
 
     @Test
-    public void testSegment_pointsOnLine() {
+    void testSegment_pointsOnLine() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
@@ -470,7 +470,7 @@ public class LineTest {
     }
 
     @Test
-    public void testSegment_pointsProjectedOnLine() {
+    void testSegment_pointsProjectedOnLine() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
@@ -484,7 +484,7 @@ public class LineTest {
     }
 
     @Test
-    public void testLineTo_pointOnLine() {
+    void testLineTo_pointOnLine() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), Math.PI, TEST_PRECISION);
 
@@ -502,7 +502,7 @@ public class LineTest {
     }
 
     @Test
-    public void testLineTo_pointProjectedOnLine() {
+    void testLineTo_pointProjectedOnLine() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), Math.PI, TEST_PRECISION);
 
@@ -520,7 +520,7 @@ public class LineTest {
     }
 
     @Test
-    public void testLineTo_double() {
+    void testLineTo_double() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), Math.PI, TEST_PRECISION);
 
@@ -538,7 +538,7 @@ public class LineTest {
     }
 
     @Test
-    public void testRayFrom_pointOnLine() {
+    void testRayFrom_pointOnLine() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), Math.PI, TEST_PRECISION);
 
@@ -556,7 +556,7 @@ public class LineTest {
     }
 
     @Test
-    public void testRayFrom_pointProjectedOnLine() {
+    void testRayFrom_pointProjectedOnLine() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), Math.PI, TEST_PRECISION);
 
@@ -574,7 +574,7 @@ public class LineTest {
     }
 
     @Test
-    public void testRayFrom_double() {
+    void testRayFrom_double() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), Math.PI, TEST_PRECISION);
 
@@ -592,7 +592,7 @@ public class LineTest {
     }
 
     @Test
-    public void testOffset_parallelLines() {
+    void testOffset_parallelLines() {
         // arrange
         final double dist = Math.sin(Math.atan2(2, 1));
 
@@ -613,7 +613,7 @@ public class LineTest {
     }
 
     @Test
-    public void testOffset_coincidentLines() {
+    void testOffset_coincidentLines() {
         // arrange
         final Line a = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
         final Line b = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
@@ -630,7 +630,7 @@ public class LineTest {
     }
 
     @Test
-    public void testOffset_nonParallelLines() {
+    void testOffset_nonParallelLines() {
         // arrange
         final Line a = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final Line b = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
@@ -649,7 +649,7 @@ public class LineTest {
     }
 
     @Test
-    public void testOffset_point() {
+    void testOffset_point() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
         final Line reversed = line.reverse();
@@ -669,7 +669,7 @@ public class LineTest {
     }
 
     @Test
-    public void testOffset_point_permute() {
+    void testOffset_point_permute() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
         final Vector2D lineOrigin = line.getOrigin();
@@ -690,7 +690,7 @@ public class LineTest {
     }
 
     @Test
-    public void testSimilarOrientation() {
+    void testSimilarOrientation() {
         // arrange
         final Line a = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         final Line b = Lines.fromPointAndAngle(Vector2D.of(4, 5), 0.0, TEST_PRECISION);
@@ -723,7 +723,7 @@ public class LineTest {
     }
 
     @Test
-    public void testSimilarOrientation_orthogonal() {
+    void testSimilarOrientation_orthogonal() {
         // arrange
         final Line a = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final Line b = Lines.fromPointAndDirection(Vector2D.of(4, 5), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
@@ -737,7 +737,7 @@ public class LineTest {
     }
 
     @Test
-    public void testDistance_parallelLines() {
+    void testDistance_parallelLines() {
         // arrange
         final double dist = Math.sin(Math.atan2(2, 1));
 
@@ -758,7 +758,7 @@ public class LineTest {
     }
 
     @Test
-    public void testDistance_coincidentLines() {
+    void testDistance_coincidentLines() {
         // arrange
         final Line a = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
         final Line b = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
@@ -775,7 +775,7 @@ public class LineTest {
     }
 
     @Test
-    public void testDistance_nonParallelLines() {
+    void testDistance_nonParallelLines() {
         // arrange
         final Line a = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final Line b = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
@@ -794,7 +794,7 @@ public class LineTest {
     }
 
     @Test
-    public void testDistance() {
+    void testDistance() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
@@ -805,7 +805,7 @@ public class LineTest {
     }
 
     @Test
-    public void testPointAt() {
+    void testPointAt() {
         // arrange
         final Vector2D origin = Vector2D.of(-1, 1);
         final double d = Math.sqrt(2);
@@ -824,7 +824,7 @@ public class LineTest {
     }
 
     @Test
-    public void testPointAt_abscissaOffsetRoundtrip() {
+    void testPointAt_abscissaOffsetRoundtrip() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
@@ -842,7 +842,7 @@ public class LineTest {
     }
 
     @Test
-    public void testContains_line() {
+    void testContains_line() {
         // arrange
         final Vector2D pt = Vector2D.of(1, 2);
         final Vector2D dir = Vector2D.of(3, 7);
@@ -869,7 +869,7 @@ public class LineTest {
     }
 
     @Test
-    public void testIsParallel_closeToEpsilon() {
+    void testIsParallel_closeToEpsilon() {
         // arrange
         final double eps = 1e-3;
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(eps);
@@ -893,7 +893,7 @@ public class LineTest {
     }
 
     @Test
-    public void testContains_point() {
+    void testContains_point() {
         // arrange
         final Vector2D p1 = Vector2D.of(-1, 0);
         final Vector2D p2 = Vector2D.of(0, 2);
@@ -920,7 +920,7 @@ public class LineTest {
     }
 
     @Test
-    public void testContains_point_closeToEpsilon() {
+    void testContains_point_closeToEpsilon() {
         // arrange
         final double eps = 1e-3;
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(eps);
@@ -941,7 +941,7 @@ public class LineTest {
     }
 
     @Test
-    public void testDistance_point() {
+    void testDistance_point() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
         final Line reversed = line.reverse();
@@ -961,7 +961,7 @@ public class LineTest {
     }
 
     @Test
-    public void testDistance_point_permute() {
+    void testDistance_point_permute() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
         final Vector2D lineOrigin = line.getOrigin();
@@ -979,7 +979,7 @@ public class LineTest {
     }
 
     @Test
-    public void testIsParallel() {
+    void testIsParallel() {
         // arrange
         final Vector2D dir = Vector2D.of(3, 7);
         final Line a = Lines.fromPointAndDirection(Vector2D.of(1, 2), dir, TEST_PRECISION);
@@ -1001,7 +1001,7 @@ public class LineTest {
     }
 
     @Test
-    public void testIsParallel_closeToParallel() {
+    void testIsParallel_closeToParallel() {
         // arrange
         final double eps = 1e-3;
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(eps);
@@ -1017,7 +1017,7 @@ public class LineTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix2D scale = AffineTransformMatrix2D.createScale(2, 3);
         final AffineTransformMatrix2D reflect = AffineTransformMatrix2D.createScale(-1, 1);
@@ -1057,7 +1057,7 @@ public class LineTest {
     }
 
     @Test
-    public void testTransform_collapsedPoints() {
+    void testTransform_collapsedPoints() {
         // arrange
         final AffineTransformMatrix2D scaleCollapse = AffineTransformMatrix2D.createScale(0, 1);
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
@@ -1069,7 +1069,7 @@ public class LineTest {
     }
 
     @Test
-    public void testSubspaceTransform() {
+    void testSubspaceTransform() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -1099,7 +1099,7 @@ public class LineTest {
     }
 
     @Test
-    public void testSubspaceTransform_transformsPointsCorrectly() {
+    void testSubspaceTransform_transformsPointsCorrectly() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -1125,7 +1125,7 @@ public class LineTest {
     }
 
     @Test
-    public void testEq() {
+    void testEq() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
@@ -1157,7 +1157,7 @@ public class LineTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Precision.DoubleEquivalence precision1 = Precision.doubleEquivalenceOfEpsilon(1e-4);
         final Precision.DoubleEquivalence precision2 = Precision.doubleEquivalenceOfEpsilon(1e-5);
@@ -1183,7 +1183,7 @@ public class LineTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
      // arrange
         final Precision.DoubleEquivalence precision1 = Precision.doubleEquivalenceOfEpsilon(1e-4);
         final Precision.DoubleEquivalence precision2 = Precision.doubleEquivalenceOfEpsilon(1e-5);
@@ -1208,7 +1208,7 @@ public class LineTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 

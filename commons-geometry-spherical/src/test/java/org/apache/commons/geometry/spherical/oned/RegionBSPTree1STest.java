@@ -28,7 +28,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class RegionBSPTree1STest {
+class RegionBSPTree1STest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -40,7 +40,7 @@ public class RegionBSPTree1STest {
     private static final Transform1S PI_MINUS_AZ = Transform1S.createNegation().rotate(Math.PI);
 
     @Test
-    public void testConstructor_default() {
+    void testConstructor_default() {
         // act
         final RegionBSPTree1S tree = new RegionBSPTree1S();
 
@@ -54,7 +54,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testConstructor_true() {
+    void testConstructor_true() {
         // act
         final RegionBSPTree1S tree = new RegionBSPTree1S(true);
 
@@ -68,7 +68,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testConstructor_false() {
+    void testConstructor_false() {
         // act
         final RegionBSPTree1S tree = new RegionBSPTree1S(false);
 
@@ -82,7 +82,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testFull() {
+    void testFull() {
         // act
         final RegionBSPTree1S tree = RegionBSPTree1S.full();
 
@@ -96,7 +96,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         // act
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
 
@@ -110,7 +110,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testCopy() {
+    void testCopy() {
         // arrange
         final RegionBSPTree1S orig = RegionBSPTree1S.fromInterval(AngularInterval.of(0, Math.PI, TEST_PRECISION));
 
@@ -126,7 +126,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testFromInterval_full() {
+    void testFromInterval_full() {
         // act
         final RegionBSPTree1S tree = RegionBSPTree1S.fromInterval(AngularInterval.full());
 
@@ -135,7 +135,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testFromInterval_nonFull() {
+    void testFromInterval_nonFull() {
         for (double theta = 0.0; theta <= Angle.TWO_PI; theta += 0.2) {
             // arrange
             final double max = theta + Angle.PI_OVER_TWO;
@@ -153,7 +153,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testClassify_full() {
+    void testClassify_full() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.full();
 
@@ -164,7 +164,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testClassify_empty() {
+    void testClassify_empty() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
 
@@ -175,7 +175,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.fromInterval(
                 AngularInterval.of(-Angle.PI_OVER_TWO, Angle.PI_OVER_TWO, TEST_PRECISION));
@@ -194,7 +194,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testToIntervals_full() {
+    void testToIntervals_full() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.full();
 
@@ -209,7 +209,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testToIntervals_empty() {
+    void testToIntervals_empty() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
 
@@ -221,7 +221,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testToIntervals_singleCut() {
+    void testToIntervals_singleCut() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
 
@@ -240,7 +240,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testToIntervals_wrapAround_joinedIntervalsOnPositiveSide() {
+    void testToIntervals_wrapAround_joinedIntervalsOnPositiveSide() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(0.25 * Math.PI, Angle.PI_OVER_TWO, TEST_PRECISION));
@@ -256,7 +256,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testToIntervals_wrapAround_joinedIntervalsOnNegativeSide() {
+    void testToIntervals_wrapAround_joinedIntervalsOnNegativeSide() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(1.75 * Math.PI, Angle.PI_OVER_TWO, TEST_PRECISION));
@@ -272,7 +272,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testToIntervals_multipleIntervals() {
+    void testToIntervals_multipleIntervals() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(-Angle.PI_OVER_TWO, Angle.PI_OVER_TWO, TEST_PRECISION));
@@ -290,7 +290,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testToIntervals_multipleIntervals_complement() {
+    void testToIntervals_multipleIntervals_complement() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(-Angle.PI_OVER_TWO, Angle.PI_OVER_TWO, TEST_PRECISION));
@@ -310,7 +310,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplit_empty() {
+    void testSplit_empty() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
 
@@ -328,7 +328,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplit_full() {
+    void testSplit_full() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.full();
 
@@ -361,7 +361,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplit_full_cutEquivalentToZero() {
+    void testSplit_full_cutEquivalentToZero() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.full();
 
@@ -392,7 +392,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplit_singleInterval() {
+    void testSplit_singleInterval() {
         // arrange
         final AngularInterval interval = AngularInterval.of(Angle.PI_OVER_TWO, -Angle.PI_OVER_TWO, TEST_PRECISION);
         final RegionBSPTree1S tree = interval.toTree();
@@ -428,7 +428,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplit_singleIntervalSplitIntoTwoIntervalsOnSameSide() {
+    void testSplit_singleIntervalSplitIntoTwoIntervalsOnSameSide() {
         // arrange
         final RegionBSPTree1S tree = AngularInterval.of(-Angle.PI_OVER_TWO, Angle.PI_OVER_TWO, TEST_PRECISION).toTree();
 
@@ -450,7 +450,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplit_multipleRegions() {
+    void testSplit_multipleRegions() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(Angle.TWO_PI - 1, Angle.PI_OVER_TWO, TEST_PRECISION));
@@ -478,7 +478,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplitDiameter_full() {
+    void testSplitDiameter_full() {
         // arrange
         final RegionBSPTree1S full = RegionBSPTree1S.full();
         final CutAngle splitter = CutAngles.createPositiveFacing(Angle.PI_OVER_TWO, TEST_PRECISION);
@@ -501,7 +501,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplitDiameter_empty() {
+    void testSplitDiameter_empty() {
         // arrange
         final RegionBSPTree1S empty = RegionBSPTree1S.empty();
         final CutAngle splitter = CutAngles.createPositiveFacing(Angle.PI_OVER_TWO, TEST_PRECISION);
@@ -520,7 +520,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplitDiameter_minus_zeroOnMinusSide() {
+    void testSplitDiameter_minus_zeroOnMinusSide() {
         // arrange
         final RegionBSPTree1S tree = AngularInterval.of(0, 1, TEST_PRECISION).toTree();
         final CutAngle splitter = CutAngles.createPositiveFacing(1, TEST_PRECISION);
@@ -541,7 +541,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplitDiameter_minus_zeroOnPlusSide() {
+    void testSplitDiameter_minus_zeroOnPlusSide() {
         // arrange
         final RegionBSPTree1S tree = AngularInterval.of(1, 2, TEST_PRECISION).toTree();
         final CutAngle splitter = CutAngles.createNegativeFacing(0, TEST_PRECISION);
@@ -562,7 +562,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplitDiameter_plus_zeroOnMinusSide() {
+    void testSplitDiameter_plus_zeroOnMinusSide() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
@@ -587,7 +587,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplitDiameter_plus_zeroOnPlusSide() {
+    void testSplitDiameter_plus_zeroOnPlusSide() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
@@ -612,7 +612,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplitDiameter_both_zeroOnMinusSide() {
+    void testSplitDiameter_both_zeroOnMinusSide() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
@@ -639,7 +639,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testSplitDiameter_both_zeroOnPlusSide() {
+    void testSplitDiameter_both_zeroOnPlusSide() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
@@ -666,7 +666,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testRegionProperties_singleInterval_wrapsZero() {
+    void testRegionProperties_singleInterval_wrapsZero() {
         // arrange
         final RegionBSPTree1S tree = AngularInterval.of(-Angle.PI_OVER_TWO, Math.PI,
                 TEST_PRECISION).toTree();
@@ -678,7 +678,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testRegionProperties_singleInterval_doesNotWrap() {
+    void testRegionProperties_singleInterval_doesNotWrap() {
         // arrange
         final RegionBSPTree1S tree = AngularInterval.of(Angle.PI_OVER_TWO, Angle.TWO_PI,
                 TEST_PRECISION).toTree();
@@ -690,7 +690,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testRegionProperties_multipleIntervals_sameSize() {
+    void testRegionProperties_multipleIntervals_sameSize() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(0, 0.1, TEST_PRECISION));
@@ -703,7 +703,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testRegionProperties_multipleIntervals_differentSizes() {
+    void testRegionProperties_multipleIntervals_differentSizes() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(0, 0.2, TEST_PRECISION));
@@ -719,7 +719,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testRegionProperties_equalAndOppositeIntervals() {
+    void testRegionProperties_equalAndOppositeIntervals() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(-1, 1, TEST_PRECISION));
@@ -732,7 +732,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testTransform_fullAndEmpty() {
+    void testTransform_fullAndEmpty() {
         // arrange
         final RegionBSPTree1S full = RegionBSPTree1S.full();
         final RegionBSPTree1S empty = RegionBSPTree1S.empty();
@@ -750,7 +750,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testTransform_halfPiPlusAz() {
+    void testTransform_halfPiPlusAz() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(-1, 1, TEST_PRECISION));
@@ -770,7 +770,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testTransform_piMinusAz() {
+    void testTransform_piMinusAz() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(-1, 1, TEST_PRECISION));
@@ -790,7 +790,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testProject_fullAndEmpty() {
+    void testProject_fullAndEmpty() {
         // arrange
         final RegionBSPTree1S full = RegionBSPTree1S.full();
         final RegionBSPTree1S empty = RegionBSPTree1S.empty();
@@ -804,7 +804,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testProject_withIntervals() {
+    void testProject_withIntervals() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(-Angle.PI_OVER_TWO, Angle.PI_OVER_TWO, TEST_PRECISION));
@@ -829,7 +829,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testProject_equidistant() {
+    void testProject_equidistant() {
         // arrange
         final RegionBSPTree1S tree = AngularInterval.of(1, 2, TEST_PRECISION).toTree();
         final RegionBSPTree1S treeComplement = tree.copy();
@@ -841,7 +841,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testProject_intervalAroundZero_closerOnMinSide() {
+    void testProject_intervalAroundZero_closerOnMinSide() {
         // arrange
         final double start = -1;
         final double end = 0.5;
@@ -863,7 +863,7 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testProject_intervalAroundZero_closerOnMaxSide() {
+    void testProject_intervalAroundZero_closerOnMaxSide() {
         // arrange
         final double start = -0.5;
         final double end = 1;

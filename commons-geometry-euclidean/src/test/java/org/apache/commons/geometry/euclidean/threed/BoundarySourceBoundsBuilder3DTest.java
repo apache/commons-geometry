@@ -24,7 +24,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BoundarySourceBoundsBuilder3DTest {
+class BoundarySourceBoundsBuilder3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -32,7 +32,7 @@ public class BoundarySourceBoundsBuilder3DTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testGetBounds_noBoundaries() {
+    void testGetBounds_noBoundaries() {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(new ArrayList<>());
         final BoundarySourceBoundsBuilder3D builder = new BoundarySourceBoundsBuilder3D();
@@ -45,7 +45,7 @@ public class BoundarySourceBoundsBuilder3DTest {
     }
 
     @Test
-    public void testGetBounds_singleFiniteBoundary() {
+    void testGetBounds_singleFiniteBoundary() {
         // arrange
         final ConvexPolygon3D poly = Planes.convexPolygonFromVertices(Arrays.asList(
                 Vector3D.of(1, 1, 1),
@@ -66,7 +66,7 @@ public class BoundarySourceBoundsBuilder3DTest {
     }
 
     @Test
-    public void testGetBounds_multipleFiniteBoundaries() {
+    void testGetBounds_multipleFiniteBoundaries() {
         // arrange
         final ConvexPolygon3D poly1 = Planes.convexPolygonFromVertices(Arrays.asList(
                 Vector3D.of(1, 1, 1),
@@ -100,7 +100,7 @@ public class BoundarySourceBoundsBuilder3DTest {
     }
 
     @Test
-    public void testGetBounds_singleInfiniteBoundary() {
+    void testGetBounds_singleInfiniteBoundary() {
         // arrange
         final PlaneConvexSubset boundary = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION)
                 .span();
@@ -115,7 +115,7 @@ public class BoundarySourceBoundsBuilder3DTest {
     }
 
     @Test
-    public void testGetBounds_mixedFiniteAndInfiniteBoundaries() {
+    void testGetBounds_mixedFiniteAndInfiniteBoundaries() {
         // arrange
         final PlaneConvexSubset inf = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION)
                 .span()

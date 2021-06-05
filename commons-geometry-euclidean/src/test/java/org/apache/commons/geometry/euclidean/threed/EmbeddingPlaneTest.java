@@ -27,7 +27,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class EmbeddingPlaneTest {
+class EmbeddingPlaneTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -35,7 +35,7 @@ public class EmbeddingPlaneTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromPointAndPlaneVectors() {
+    void testFromPointAndPlaneVectors() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
 
@@ -51,7 +51,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testFromPointAndPlaneVectors_illegalArguments() {
+    void testFromPointAndPlaneVectors_illegalArguments() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
 
@@ -68,7 +68,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testGetEmbedding() {
+    void testGetEmbedding() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.ZERO,
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.MINUS_Y, TEST_PRECISION);
@@ -78,7 +78,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testPointAt() {
+    void testPointAt() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(pt,
@@ -95,7 +95,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(pt,
@@ -115,7 +115,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testTransform_rotationAroundPoint() {
+    void testTransform_rotationAroundPoint() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(pt, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X, TEST_PRECISION);
@@ -131,7 +131,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testTransform_asymmetricScaling() {
+    void testTransform_asymmetricScaling() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 1, 0);
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(pt, Vector3D.Unit.MINUS_Z, Vector3D.of(-1, 1, 0), TEST_PRECISION);
@@ -156,7 +156,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testTransform_negateOneComponent() {
+    void testTransform_negateOneComponent() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(pt, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -171,7 +171,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testTransform_negateTwoComponents() {
+    void testTransform_negateTwoComponents() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(pt, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -186,7 +186,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testTransform_negateAllComponents() {
+    void testTransform_negateAllComponents() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(pt,
@@ -202,7 +202,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testTransform_consistency() {
+    void testTransform_consistency() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
         final Vector3D normal = Vector3D.Unit.from(1, 1, 1);
@@ -246,7 +246,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testRotate() {
+    void testRotate() {
         // arrange
         final Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         final Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
@@ -272,7 +272,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testTranslate() {
+    void testTranslate() {
         // arrange
         final Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         final Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
@@ -297,7 +297,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testSubspaceTransform() {
+    void testSubspaceTransform() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -331,7 +331,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testSubspaceTransform_transformsPointsCorrectly() {
+    void testSubspaceTransform_transformsPointsCorrectly() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(1, 2, 3),
                 Vector3D.of(-1, -1, 1), Vector3D.of(-1, 1, 1), TEST_PRECISION);
@@ -358,7 +358,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testEq_stdAndEmbedding() {
+    void testEq_stdAndEmbedding() {
         // arrange
         final Plane stdPlane = Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final EmbeddingPlane embeddingPlane = Planes.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1),
@@ -376,7 +376,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testSimilarOrientation_stdAndEmbedding() {
+    void testSimilarOrientation_stdAndEmbedding() {
         // arrange
         final Plane stdPlane = Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final EmbeddingPlane embeddingPlane = Planes.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1),
@@ -394,7 +394,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
         final Vector3D u = Vector3D.Unit.PLUS_X;
@@ -421,7 +421,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
         final Vector3D u = Vector3D.Unit.PLUS_X;
@@ -451,7 +451,7 @@ public class EmbeddingPlaneTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.ZERO,
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);

@@ -20,10 +20,10 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AxisSequenceTest {
+class AxisSequenceTest {
 
     @Test
-    public void testAxes() {
+    void testAxes() {
         // act/assert
         for (final AxisSequence axes : AxisSequence.values()) {
             checkAxes(axes);

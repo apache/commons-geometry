@@ -35,7 +35,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TextBoundaryWriteHandler3DTest {
+class TextBoundaryWriteHandler3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -56,7 +56,7 @@ public class TextBoundaryWriteHandler3DTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // arrange
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
 
@@ -71,7 +71,7 @@ public class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteFacets() throws IOException {
+    void testWriteFacets() throws IOException {
         // arrange
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         final CloseCountOutputStream closeOut = new CloseCountOutputStream(out);
@@ -86,7 +86,7 @@ public class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteFacets_usesOutputCharset() throws IOException {
+    void testWriteFacets_usesOutputCharset() throws IOException {
         // arrange
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         final CloseCountOutputStream closeOut = new CloseCountOutputStream(out);
@@ -101,7 +101,7 @@ public class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteFacets_customConfiguration() throws IOException {
+    void testWriteFacets_customConfiguration() throws IOException {
         // arrange
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         handler.setDefaultCharset(StandardCharsets.UTF_16);
@@ -123,7 +123,7 @@ public class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteBoundarySource() throws IOException {
+    void testWriteBoundarySource() throws IOException {
         // arrange
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         final CloseCountOutputStream closeOut = new CloseCountOutputStream(out);
@@ -138,7 +138,7 @@ public class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteBoundarySource_customConfiguration() throws IOException {
+    void testWriteBoundarySource_customConfiguration() throws IOException {
         // arrange
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         handler.setDefaultCharset(StandardCharsets.UTF_16);

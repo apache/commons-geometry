@@ -30,7 +30,7 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class WelzlEncloser2DTest {
+class WelzlEncloser2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -40,7 +40,7 @@ public class WelzlEncloser2DTest {
     private final WelzlEncloser2D encloser = new WelzlEncloser2D(TEST_PRECISION);
 
     @Test
-    public void testNoPoints() {
+    void testNoPoints() {
         // arrange
         final String msg = "Unable to generate enclosing ball: no points given";
 
@@ -55,7 +55,7 @@ public class WelzlEncloser2DTest {
     }
 
     @Test
-    public void testRegularPoints() {
+    void testRegularPoints() {
         // arrange
         final List<Vector2D> list = buildList(22, 26, 30, 38, 64, 28,  8, 54, 11, 15);
 
@@ -64,7 +64,7 @@ public class WelzlEncloser2DTest {
     }
 
     @Test
-    public void testSolutionOnDiameter() {
+    void testSolutionOnDiameter() {
         // arrange
         final List<Vector2D> list = buildList(22, 26, 30, 38, 64, 28,  8, 54);
 
@@ -73,7 +73,7 @@ public class WelzlEncloser2DTest {
     }
 
     @Test
-    public void testReducingBall1() {
+    void testReducingBall1() {
         // arrange
         final List<Vector2D> list = buildList(0.05380958511396061, 0.57332359658700000,
                                         0.99348810731127870, 0.02056421361521466,
@@ -86,7 +86,7 @@ public class WelzlEncloser2DTest {
     }
 
     @Test
-    public void testReducingBall2() {
+    void testReducingBall2() {
         // arrange
         final List<Vector2D> list = buildList(0.016930586154703, 0.333955448537779,
                                         0.987189104892331, 0.969778855274507,
@@ -98,7 +98,7 @@ public class WelzlEncloser2DTest {
     }
 
     @Test
-    public void testLargeSamples() {
+    void testLargeSamples() {
         // arrange
         final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 0xa2a63cad12c01fb2L);
         for (int k = 0; k < 100; ++k) {
@@ -116,7 +116,7 @@ public class WelzlEncloser2DTest {
     }
 
     @Test
-    public void testEnclosingWithPrecision() {
+    void testEnclosingWithPrecision() {
         // arrange
         final List<Vector2D> points = Arrays.asList(
                 Vector2D.of(271.59, 57.282),

@@ -39,7 +39,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class RegionBSPTree2DTest {
+class RegionBSPTree2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -54,7 +54,7 @@ public class RegionBSPTree2DTest {
     private static final Line Y_AXIS = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
-    public void testCtor_booleanArg_true() {
+    void testCtor_booleanArg_true() {
         // act
         final RegionBSPTree2D tree = new RegionBSPTree2D(true);
 
@@ -65,7 +65,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testCtor_booleanArg_false() {
+    void testCtor_booleanArg_false() {
         // act
         final RegionBSPTree2D tree = new RegionBSPTree2D(false);
 
@@ -76,7 +76,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testCtor_default() {
+    void testCtor_default() {
         // act
         final RegionBSPTree2D tree = new RegionBSPTree2D();
 
@@ -87,7 +87,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testFull_factoryMethod() {
+    void testFull_factoryMethod() {
         // act
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
@@ -98,7 +98,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testEmpty_factoryMethod() {
+    void testEmpty_factoryMethod() {
         // act
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -109,7 +109,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testPartitionedRegionBuilder_halfSpace() {
+    void testPartitionedRegionBuilder_halfSpace() {
         // act
         final RegionBSPTree2D tree = RegionBSPTree2D.partitionedRegionBuilder()
                 .insertPartition(
@@ -128,7 +128,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testPartitionedRegionBuilder_square() {
+    void testPartitionedRegionBuilder_square() {
         // arrange
         final Parallelogram square = Parallelogram.unitSquare(TEST_PRECISION);
         final List<LineConvexSubset> boundaries = square.getBoundaries();
@@ -151,7 +151,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testPartitionedRegionBuilder_nonConvex() {
+    void testPartitionedRegionBuilder_nonConvex() {
         // arrange
         final RegionBSPTree2D src = Parallelogram.unitSquare(TEST_PRECISION).toTree();
         src.union(Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).toTree());
@@ -233,7 +233,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testPartitionedRegionBuilder_insertPartitionAfterBoundary() {
+    void testPartitionedRegionBuilder_insertPartitionAfterBoundary() {
         // arrange
         final PartitionedRegionBuilder2D builder = RegionBSPTree2D.partitionedRegionBuilder();
         builder.insertBoundary(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION));
@@ -261,7 +261,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testCopy() {
+    void testCopy() {
         // arrange
         final RegionBSPTree2D tree = new RegionBSPTree2D(true);
         tree.getRoot().cut(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
@@ -275,7 +275,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testBoundaries() {
+    void testBoundaries() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
@@ -289,7 +289,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGetBoundaries() {
+    void testGetBoundaries() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
@@ -302,7 +302,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testBoundaryStream() {
+    void testBoundaryStream() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
@@ -315,7 +315,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testBoundaryStream_noBoundaries() {
+    void testBoundaryStream_noBoundaries() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
@@ -327,7 +327,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGetBounds_hasBounds() {
+    void testGetBounds_hasBounds() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(2, 3), Vector2D.of(5, 8), TEST_PRECISION)
                 .toTree();
@@ -341,7 +341,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGetBounds_noBounds() {
+    void testGetBounds_noBounds() {
         // act/assert
         Assertions.assertNull(RegionBSPTree2D.empty().getBounds());
         Assertions.assertNull(RegionBSPTree2D.full().getBounds());
@@ -352,7 +352,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGetBoundaryPaths_cachesResult() {
+    void testGetBoundaryPaths_cachesResult() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
@@ -366,7 +366,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGetBoundaryPaths_recomputesResultOnChange() {
+    void testGetBoundaryPaths_recomputesResultOnChange() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
@@ -381,7 +381,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGetBoundaryPaths_isUnmodifiable() {
+    void testGetBoundaryPaths_isUnmodifiable() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
@@ -391,7 +391,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testAdd_convexArea() {
+    void testAdd_convexArea() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -418,7 +418,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testToConvex_full() {
+    void testToConvex_full() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
@@ -431,7 +431,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testToConvex_empty() {
+    void testToConvex_empty() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -443,7 +443,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testToConvex_halfSpace() {
+    void testToConvex_halfSpace() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().insertCut(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
@@ -464,7 +464,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testToConvex_quadrantComplement() {
+    void testToConvex_quadrantComplement() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(Lines.fromPointAndAngle(Vector2D.ZERO, Math.PI, TEST_PRECISION))
@@ -488,7 +488,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testToConvex_square() {
+    void testToConvex_square() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).toTree();
 
@@ -513,7 +513,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testToConvex_multipleConvexAreas() {
+    void testToConvex_multipleConvexAreas() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Arrays.asList(
@@ -563,7 +563,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGetNodeRegion() {
+    void testGetNodeRegion() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -595,7 +595,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testSplit_full() {
+    void testSplit_full() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
@@ -631,7 +631,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testSplit_empty() {
+    void testSplit_empty() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -648,7 +648,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testSplit_bothSides() {
+    void testSplit_bothSides() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
@@ -673,7 +673,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testSplit_plusSideOnly() {
+    void testSplit_plusSideOnly() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
@@ -695,7 +695,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testSplit_minusSideOnly() {
+    void testSplit_minusSideOnly() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
@@ -718,7 +718,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_full() {
+    void testGeometricProperties_full() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
@@ -733,7 +733,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_empty() {
+    void testGeometricProperties_empty() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -748,7 +748,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_halfSpace() {
+    void testGeometricProperties_halfSpace() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(X_AXIS);
@@ -776,7 +776,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_complementedHalfSpace() {
+    void testGeometricProperties_complementedHalfSpace() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(X_AXIS);
@@ -806,7 +806,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_quadrant() {
+    void testGeometricProperties_quadrant() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.getRoot().cut(X_AXIS)
@@ -843,7 +843,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_mixedCutRule() {
+    void testGeometricProperties_mixedCutRule() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -881,7 +881,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_complementedQuadrant() {
+    void testGeometricProperties_complementedQuadrant() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.getRoot().cut(X_AXIS)
@@ -920,7 +920,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_closedRegion() {
+    void testGeometricProperties_closedRegion() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(LinePath.builder(TEST_PRECISION)
@@ -949,7 +949,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_complementedClosedRegion() {
+    void testGeometricProperties_complementedClosedRegion() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(LinePath.builder(TEST_PRECISION)
@@ -980,7 +980,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_regionWithHole() {
+    void testGeometricProperties_regionWithHole() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
                 .toTree();
@@ -1005,7 +1005,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_complementedRegionWithHole() {
+    void testGeometricProperties_complementedRegionWithHole() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
                 .toTree();
@@ -1032,7 +1032,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testFrom_boundaries() {
+    void testFrom_boundaries() {
         // act
         final RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
                     Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span(),
@@ -1052,7 +1052,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testFrom_boundaries_fullIsTrue() {
+    void testFrom_boundaries_fullIsTrue() {
         // act
         final RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
                     Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span(),
@@ -1072,7 +1072,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testFrom_boundaries_noBoundaries() {
+    void testFrom_boundaries_noBoundaries() {
         // act/assert
         Assertions.assertTrue(RegionBSPTree2D.from(Collections.emptyList()).isEmpty());
         Assertions.assertTrue(RegionBSPTree2D.from(Collections.emptyList(), true).isFull());
@@ -1080,7 +1080,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testToList() {
+    void testToList() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).toTree();
 
@@ -1093,14 +1093,14 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testToList_fullAndEmpty() {
+    void testToList_fullAndEmpty() {
         // act/assert
         Assertions.assertEquals(0, RegionBSPTree2D.full().toList().count());
         Assertions.assertEquals(0, RegionBSPTree2D.empty().toList().count());
     }
 
     @Test
-    public void testToTree_returnsSameInstance() {
+    void testToTree_returnsSameInstance() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 2), TEST_PRECISION).toTree();
 
@@ -1109,14 +1109,14 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testProject_fullAndEmpty() {
+    void testProject_fullAndEmpty() {
         // act/assert
         Assertions.assertNull(RegionBSPTree2D.full().project(Vector2D.ZERO));
         Assertions.assertNull(RegionBSPTree2D.empty().project(Vector2D.of(1, 2)));
     }
 
     @Test
-    public void testProject_halfSpace() {
+    void testProject_halfSpace() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(X_AXIS);
@@ -1131,7 +1131,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testProject_rect() {
+    void testProject_rect() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(
                     Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
@@ -1155,7 +1155,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testLinecast_empty() {
+    void testLinecast_empty() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -1170,7 +1170,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testLinecast_full() {
+    void testLinecast_full() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
@@ -1185,7 +1185,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testLinecast() {
+    void testLinecast() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
@@ -1209,7 +1209,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testLinecast_complementedTree() {
+    void testLinecast_complementedTree() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
@@ -1235,7 +1235,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testLinecast_complexRegion() {
+    void testLinecast_complexRegion() {
         // arrange
         final RegionBSPTree2D a = LinePath.fromVertexLoop(Arrays.asList(
                     Vector2D.ZERO, Vector2D.of(0, 1),
@@ -1266,7 +1266,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testLinecast_removesDuplicatePoints() {
+    void testLinecast_removesDuplicatePoints() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
@@ -1283,7 +1283,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(3, 2), TEST_PRECISION)
                 .toTree();
@@ -1308,7 +1308,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testTransform_halfSpace() {
+    void testTransform_halfSpace() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.getRoot().insertCut(Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
@@ -1335,7 +1335,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testTransform_fullAndEmpty() {
+    void testTransform_fullAndEmpty() {
         // arrange
         final RegionBSPTree2D full = RegionBSPTree2D.full();
         final RegionBSPTree2D empty = RegionBSPTree2D.empty();
@@ -1352,7 +1352,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testTransform_reflection() {
+    void testTransform_reflection() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
 
@@ -1374,7 +1374,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testTransform_doubleReflection() {
+    void testTransform_doubleReflection() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(
                     Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
@@ -1397,7 +1397,7 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testBooleanOperations() {
+    void testBooleanOperations() {
         // arrange
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION).toTree();
         RegionBSPTree2D temp;

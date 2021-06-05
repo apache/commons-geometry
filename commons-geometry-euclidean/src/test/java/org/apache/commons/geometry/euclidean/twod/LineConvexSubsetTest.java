@@ -28,7 +28,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LineConvexSubsetTest {
+class LineConvexSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -36,7 +36,7 @@ public class LineConvexSubsetTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromInterval_intervalArg_finite() {
+    void testFromInterval_intervalArg_finite() {
         // arrange
         final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 2, intervalPrecision);
@@ -54,7 +54,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testFromInterval_intervalArg_full() {
+    void testFromInterval_intervalArg_full() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -73,7 +73,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testFromInterval_intervalArg_positiveHalfSpace() {
+    void testFromInterval_intervalArg_positiveHalfSpace() {
         // arrange
         final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.min(-1, intervalPrecision);
@@ -97,7 +97,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testFromInterval_intervalArg_negativeHalfSpace() {
+    void testFromInterval_intervalArg_negativeHalfSpace() {
         // arrange
         final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.max(2, intervalPrecision);
@@ -121,7 +121,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_finite() {
+    void testFromInterval_doubleArgs_finite() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -136,7 +136,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_full() {
+    void testFromInterval_doubleArgs_full() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -154,7 +154,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_positiveHalfSpace() {
+    void testFromInterval_doubleArgs_positiveHalfSpace() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -174,7 +174,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_negativeHalfSpace() {
+    void testFromInterval_doubleArgs_negativeHalfSpace() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -194,7 +194,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_invalid() {
+    void testFromInterval_doubleArgs_invalid() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
@@ -225,7 +225,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testToConvex() {
+    void testToConvex() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(4, 5), TEST_PRECISION);
         final LineConvexSubset sub = Lines.subsetFromInterval(line, 1, 2);
@@ -239,7 +239,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testIntersection_line() {
+    void testIntersection_line() {
         // arrange
         final Segment aSeg = Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(2, 0), TEST_PRECISION);
         final Segment bSeg = Lines.segmentFromPoints(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION);
@@ -259,7 +259,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testIntersection_lineSegment() {
+    void testIntersection_lineSegment() {
         // arrange
         final Segment a = Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(2, 0), TEST_PRECISION);
         final Segment b = Lines.segmentFromPoints(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION);
@@ -278,7 +278,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_finite() {
+    void testSplit_finite() {
         // arrange
         final Vector2D start = Vector2D.of(1, 1);
         final Vector2D end = Vector2D.of(3, 2);
@@ -317,7 +317,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_full() {
+    void testSplit_full() {
         // arrange
         final Vector2D p1 = Vector2D.of(1, 1);
         final Vector2D p2 = Vector2D.of(3, 2);
@@ -350,7 +350,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_positiveHalfSpace() {
+    void testSplit_positiveHalfSpace() {
         // arrange
         final Vector2D p1 = Vector2D.of(1, 1);
         final Vector2D p2 = Vector2D.of(3, 2);
@@ -387,7 +387,7 @@ public class LineConvexSubsetTest {
     }
 
     @Test
-    public void testSplit_negativeHalfSpace() {
+    void testSplit_negativeHalfSpace() {
         // arrange
         final Vector2D p1 = Vector2D.of(1, 1);
         final Vector2D p2 = Vector2D.of(3, 2);

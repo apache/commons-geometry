@@ -23,7 +23,7 @@ import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Test;
 
-public class BoundarySourceLinecaster3DTest {
+class BoundarySourceLinecaster3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -35,7 +35,7 @@ public class BoundarySourceLinecaster3DTest {
             .build();
 
     @Test
-    public void testLinecast_line_simple() {
+    void testLinecast_line_simple() {
         // arrange
         final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
@@ -59,7 +59,7 @@ public class BoundarySourceLinecaster3DTest {
     }
 
     @Test
-    public void testLinecast_line_alongFace() {
+    void testLinecast_line_alongFace() {
         // arrange
         final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
@@ -73,7 +73,7 @@ public class BoundarySourceLinecaster3DTest {
     }
 
     @Test
-    public void testLinecast_line_corners() {
+    void testLinecast_line_corners() {
         // arrange
         final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
@@ -98,7 +98,7 @@ public class BoundarySourceLinecaster3DTest {
     }
 
     @Test
-    public void testLinecast_line_removesDuplicatePoints() {
+    void testLinecast_line_removesDuplicatePoints() {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(
                     Planes.convexPolygonFromVertices(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
@@ -113,7 +113,7 @@ public class BoundarySourceLinecaster3DTest {
     }
 
     @Test
-    public void testLinecast_segment_simple() {
+    void testLinecast_segment_simple() {
         // arrange
         final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
@@ -146,7 +146,7 @@ public class BoundarySourceLinecaster3DTest {
     }
 
     @Test
-    public void testLinecast_segment_boundaryExcluded() {
+    void testLinecast_segment_boundaryExcluded() {
         // arrange
         final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
@@ -164,7 +164,7 @@ public class BoundarySourceLinecaster3DTest {
     }
 
     @Test
-    public void testLinecast_segment_startEndPointsOnBoundaries() {
+    void testLinecast_segment_startEndPointsOnBoundaries() {
         // arrange
         final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
@@ -176,7 +176,7 @@ public class BoundarySourceLinecaster3DTest {
     }
 
     @Test
-    public void testLinecast_segment_alongFace() {
+    void testLinecast_segment_alongFace() {
         // arrange
         final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
@@ -200,7 +200,7 @@ public class BoundarySourceLinecaster3DTest {
     }
 
     @Test
-    public void testLinecast_segment_corners() {
+    void testLinecast_segment_corners() {
         // arrange
         final BoundarySourceLinecaster3D linecaster = new BoundarySourceLinecaster3D(UNIT_CUBE);
 
@@ -231,7 +231,7 @@ public class BoundarySourceLinecaster3DTest {
     }
 
     @Test
-    public void testLinecast_segment_removesDuplicatePoints() {
+    void testLinecast_segment_removesDuplicatePoints() {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(
                     Planes.convexPolygonFromVertices(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),

@@ -36,7 +36,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CircleTest {
+class CircleTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -49,7 +49,7 @@ public class CircleTest {
             b.getLine().getDirection());
 
     @Test
-    public void testFrom() {
+    void testFrom() {
         // arrange
         final Vector2D center = Vector2D.of(1, 2);
 
@@ -69,14 +69,14 @@ public class CircleTest {
     }
 
     @Test
-    public void testFrom_illegalCenter() {
+    void testFrom_illegalCenter() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Circle.from(Vector2D.of(Double.POSITIVE_INFINITY, 1), 1, TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Circle.from(Vector2D.of(Double.NaN, 1), 1, TEST_PRECISION));
     }
 
     @Test
-    public void testFrom_illegalRadius() {
+    void testFrom_illegalRadius() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -89,7 +89,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testGeometricProperties() {
+    void testGeometricProperties() {
         // arrange
         final double r = 2;
         final Circle c = Circle.from(Vector2D.of(1, 2), r, TEST_PRECISION);
@@ -100,7 +100,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(1, 2), 1, TEST_PRECISION);
 
@@ -125,7 +125,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(1, 2), 1, TEST_PRECISION);
 
@@ -150,7 +150,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testProject() {
+    void testProject() {
         // arrange
         final Vector2D center = Vector2D.of(1.5, 2.5);
         final double radius = 3;
@@ -170,7 +170,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testProject_argumentEqualsCenter() {
+    void testProject_argumentEqualsCenter() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(1, 2), 2, TEST_PRECISION);
 
@@ -182,7 +182,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testIntersections() {
+    void testIntersections() {
         // --- arrange
         final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
         final double sqrt3 = Math.sqrt(3);
@@ -223,7 +223,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testLinecast() {
+    void testLinecast() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
         final double sqrt3 = Math.sqrt(3);
@@ -237,7 +237,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testLinecast_intersectionsNotInSegment() {
+    void testLinecast_intersectionsNotInSegment() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
@@ -250,7 +250,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testLinecast_segmentPointOnBoundary() {
+    void testLinecast_segmentPointOnBoundary() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
@@ -265,7 +265,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testToTree_threeSegments() {
+    void testToTree_threeSegments() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
 
@@ -295,7 +295,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testToTree_fourSegments() {
+    void testToTree_fourSegments() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
 
@@ -322,7 +322,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testToTree_multipleApproximationSizes() {
+    void testToTree_multipleApproximationSizes() {
         // -- arrange
         final Circle c = Circle.from(Vector2D.of(-3, 5), 10, TEST_PRECISION);
 
@@ -350,7 +350,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testToTree_closeApproximation() {
+    void testToTree_closeApproximation() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(-2, 0), 1, TEST_PRECISION);
 
@@ -367,7 +367,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testToTree_invalidSegmentCount() {
+    void testToTree_invalidSegmentCount() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
         final String baseMsg = "Circle approximation segment number must be greater than or equal to 3; was ";
@@ -382,7 +382,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -406,7 +406,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -427,7 +427,7 @@ public class CircleTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Circle c = Circle.from(Vector2D.of(1, 2), 3, TEST_PRECISION);
 

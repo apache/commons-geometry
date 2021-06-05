@@ -22,12 +22,12 @@ import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class StreamGeometryOutputTest {
+class StreamGeometryOutputTest {
 
     private final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
     @Test
-    public void testCtor_stream() {
+    void testCtor_stream() {
         // act
         final StreamGeometryOutput out = new StreamGeometryOutput(byteStream);
 
@@ -38,7 +38,7 @@ public class StreamGeometryOutputTest {
     }
 
     @Test
-    public void testCtor_streamAndFileName() {
+    void testCtor_streamAndFileName() {
         // act
         final StreamGeometryOutput out = new StreamGeometryOutput(byteStream, "test.txt");
 
@@ -49,7 +49,7 @@ public class StreamGeometryOutputTest {
     }
 
     @Test
-    public void testCtor_allArgs() {
+    void testCtor_allArgs() {
         // act
         final StreamGeometryOutput out = new StreamGeometryOutput(byteStream, "test.txt", StandardCharsets.UTF_16);
 
@@ -60,7 +60,7 @@ public class StreamGeometryOutputTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final StreamGeometryOutput out = new StreamGeometryOutput(byteStream, "abc.txt");
 

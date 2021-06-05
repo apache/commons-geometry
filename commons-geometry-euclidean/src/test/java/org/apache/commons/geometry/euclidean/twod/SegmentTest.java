@@ -26,7 +26,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SegmentTest {
+class SegmentTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -34,7 +34,7 @@ public class SegmentTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromPoints() {
+    void testFromPoints() {
         // arrange
         final Vector2D p1 = Vector2D.of(1, 2);
         final Vector2D p2 = Vector2D.of(3, 2);
@@ -59,7 +59,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testFromPoints_invalidArgs() {
+    void testFromPoints_invalidArgs() {
         // arrange
         final Vector2D p1 = Vector2D.of(0, 2);
         final Vector2D p2 = Vector2D.of(1e-17, 2);
@@ -75,7 +75,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testFromPoints_givenLine() {
+    void testFromPoints_givenLine() {
         // arrange
         final Vector2D p1 = Vector2D.of(-1, 2);
         final Vector2D p2 = Vector2D.of(3, 3);
@@ -102,7 +102,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testFromPoints_givenLine_singlePoint() {
+    void testFromPoints_givenLine_singlePoint() {
         // arrange
         final Vector2D p1 = Vector2D.of(-1, 2);
 
@@ -128,7 +128,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testFromPoints_givenLine_invalidArgs() {
+    void testFromPoints_givenLine_invalidArgs() {
         // arrange
         final Vector2D p0 = Vector2D.of(1, 0);
         final Vector2D p1 = Vector2D.of(2, 0);
@@ -154,7 +154,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testFromLocations() {
+    void testFromLocations() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.of(-1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
@@ -178,7 +178,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testFromLocations_reversedLocationOrder() {
+    void testFromLocations_reversedLocationOrder() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.of(-1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
@@ -202,7 +202,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testFromLocations_singlePoint() {
+    void testFromLocations_singlePoint() {
         // arrange
         final Line line = Lines.fromPointAndDirection(Vector2D.of(-1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
@@ -226,7 +226,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testFromLocations_invalidArgs() {
+    void testFromLocations_invalidArgs() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
@@ -249,7 +249,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testGetBounds() {
+    void testGetBounds() {
         // arrange
         final Segment seg = Lines.segmentFromPoints(Vector2D.of(-1, 4), Vector2D.of(2, -2), TEST_PRECISION);
 
@@ -262,7 +262,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X);
@@ -278,7 +278,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testTransform_reflection() {
+    void testTransform_reflection() {
         // arrange
         final AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X)
@@ -295,7 +295,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final Vector2D start = Vector2D.of(1, 2);
 
@@ -319,7 +319,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testClosest() {
+    void testClosest() {
         // arrange
         final Vector2D p1 = Vector2D.of(0, -1);
         final Vector2D p2 = Vector2D.of(0, 1);
@@ -342,7 +342,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final Segment seg = Lines.segmentFromPoints(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
 
@@ -359,7 +359,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testSplit() {
+    void testSplit() {
         // --- arrange
         final Vector2D p0 = Vector2D.of(1, 1);
         final Vector2D p1 = Vector2D.of(3, 1);
@@ -428,7 +428,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testSplit_pointsOnSplitterWithLineIntersection() {
+    void testSplit_pointsOnSplitterWithLineIntersection() {
         // arrange
         // Create a segment with both of its points lying on the splitter but with the intersection
         // of the lines lying far enough away from the segment start point along the line to be
@@ -451,7 +451,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testGetInterval() {
+    void testGetInterval() {
         // arrange
         final Segment seg = Lines.segmentFromPoints(Vector2D.of(2, -1), Vector2D.of(2, 2), TEST_PRECISION);
 
@@ -466,7 +466,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testGetInterval_singlePoint() {
+    void testGetInterval_singlePoint() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
         final Segment seg = Lines.segmentFromLocations(line, 1, 1);
@@ -483,7 +483,7 @@ public class SegmentTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Segment seg = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 

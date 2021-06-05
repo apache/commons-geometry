@@ -33,7 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ParallelepipedTest {
+class ParallelepipedTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -52,7 +52,7 @@ public class ParallelepipedTest {
     };
 
     @Test
-    public void testUnitCube() {
+    void testUnitCube() {
         // act
         final Parallelepiped p = Parallelepiped.unitCube(TEST_PRECISION);
 
@@ -78,7 +78,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testFromTransformedUnitCube() {
+    void testFromTransformedUnitCube() {
         // arrange
         final AffineTransformMatrix3D t = AffineTransformMatrix3D.createTranslation(Vector3D.of(1, 0, 2))
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Math.PI * 0.25))
@@ -110,7 +110,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testFromTransformedUnitCube_transformDoesNotPreserveOrientation() {
+    void testFromTransformedUnitCube_transformDoesNotPreserveOrientation() {
         // arrange
         final AffineTransformMatrix3D t = AffineTransformMatrix3D.createTranslation(Vector3D.of(1, 0, 2))
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Math.PI * 0.25))
@@ -142,7 +142,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testFromTransformedUnitCube_zeroSizeRegion() {
+    void testFromTransformedUnitCube_zeroSizeRegion() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Parallelepiped.fromTransformedUnitCube(AffineTransformMatrix3D.createScale(Vector3D.of(1e-16, 1, 1)),
                 TEST_PRECISION));
@@ -153,7 +153,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testAxisAligned_minFirst() {
+    void testAxisAligned_minFirst() {
         // act
         final Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
 
@@ -175,7 +175,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testAxisAligned_maxFirst() {
+    void testAxisAligned_maxFirst() {
         // act
         final Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(4, 5, 6), Vector3D.of(1, 2, 3), TEST_PRECISION);
 
@@ -197,7 +197,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testAxisAligned_illegalArgs() {
+    void testAxisAligned_illegalArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 6), TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 2, 6), TEST_PRECISION));
@@ -205,7 +205,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testBuilder_defaultValues() {
+    void testBuilder_defaultValues() {
         // arrange
         final Parallelepiped.Builder builder = Parallelepiped.builder(TEST_PRECISION);
 
@@ -234,7 +234,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testBuilder_withRotation() {
+    void testBuilder_withRotation() {
         // arrange
         final Parallelepiped.Builder builder = Parallelepiped.builder(TEST_PRECISION);
 
@@ -264,7 +264,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testBuilder_withUniformScale() {
+    void testBuilder_withUniformScale() {
         // arrange
         final Parallelepiped.Builder builder = Parallelepiped.builder(TEST_PRECISION);
 
@@ -292,7 +292,7 @@ public class ParallelepipedTest {
     }
 
     @Test
-    public void testToTree() {
+    void testToTree() {
         // arrange
         final Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
 

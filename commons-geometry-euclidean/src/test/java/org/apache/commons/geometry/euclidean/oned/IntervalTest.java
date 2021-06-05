@@ -24,7 +24,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class IntervalTest {
+class IntervalTest {
 
     private static final double TEST_EPS = 1e-15;
 
@@ -32,7 +32,7 @@ public class IntervalTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testOf_doubles() {
+    void testOf_doubles() {
         // act/assert
         checkInterval(Interval.of(0, 0, TEST_PRECISION), 0, 0);
 
@@ -60,7 +60,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testOf_doubles_invalidIntervals() {
+    void testOf_doubles_invalidIntervals() {
 
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(1, Double.NaN, TEST_PRECISION));
@@ -71,7 +71,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testOf_points() {
+    void testOf_points() {
         // act/assert
         checkInterval(Interval.of(Vector1D.of(1), Vector1D.of(2), TEST_PRECISION), 1, 2);
         checkInterval(Interval.of(Vector1D.of(Double.POSITIVE_INFINITY), Vector1D.of(Double.NEGATIVE_INFINITY), TEST_PRECISION),
@@ -79,7 +79,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testOf_points_invalidIntervals() {
+    void testOf_points_invalidIntervals() {
 
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(Vector1D.of(1), Vector1D.of(Double.NaN), TEST_PRECISION));
@@ -87,7 +87,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testOf_hyperplanes() {
+    void testOf_hyperplanes() {
         // act/assert
         Assertions.assertSame(Interval.full(), Interval.of(null, null));
 
@@ -127,7 +127,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testOf_hyperplanes_invalidArgs() {
+    void testOf_hyperplanes_invalidArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.of(
                 OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION),
@@ -153,7 +153,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testPoint() {
+    void testPoint() {
         // act/assert
         checkInterval(Interval.point(0, TEST_PRECISION), 0, 0);
         checkInterval(Interval.point(1, TEST_PRECISION), 1, 1);
@@ -161,7 +161,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testPoint_invalidArgs() {
+    void testPoint_invalidArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.point(Double.NEGATIVE_INFINITY, TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.point(Double.POSITIVE_INFINITY, TEST_PRECISION));
@@ -169,7 +169,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testMin() {
+    void testMin() {
         // act/assert
         checkInterval(Interval.min(Double.NEGATIVE_INFINITY, TEST_PRECISION),
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -180,14 +180,14 @@ public class IntervalTest {
     }
 
     @Test
-    public void testMin_invalidArgs() {
+    void testMin_invalidArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.min(Double.POSITIVE_INFINITY, TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.min(Double.NaN, TEST_PRECISION));
     }
 
     @Test
-    public void testMax() {
+    void testMax() {
         // act/assert
         checkInterval(Interval.max(Double.POSITIVE_INFINITY, TEST_PRECISION),
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -198,14 +198,14 @@ public class IntervalTest {
     }
 
     @Test
-    public void testMax_invalidArgs() {
+    void testMax_invalidArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.max(Double.NEGATIVE_INFINITY, TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Interval.max(Double.NaN, TEST_PRECISION));
     }
 
     @Test
-    public void testIsInfinite() {
+    void testIsInfinite() {
         // act/assert
         Assertions.assertFalse(Interval.of(1, 2, TEST_PRECISION).isInfinite());
 
@@ -215,7 +215,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testIsFinite() {
+    void testIsFinite() {
         // act/assert
         Assertions.assertTrue(Interval.of(1, 2, TEST_PRECISION).isFinite());
 
@@ -225,7 +225,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testClassify_finite() {
+    void testClassify_finite() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 1, precision);
@@ -245,7 +245,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testClassify_singlePoint() {
+    void testClassify_singlePoint() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(1, 1, precision);
@@ -261,7 +261,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testClassify_maxInfinite() {
+    void testClassify_maxInfinite() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, Double.POSITIVE_INFINITY, precision);
@@ -280,7 +280,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testClassify_minInfinite() {
+    void testClassify_minInfinite() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, precision);
@@ -299,7 +299,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testClassify_minMaxInfinite() {
+    void testClassify_minMaxInfinite() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision);
@@ -312,7 +312,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testContains_finite() {
+    void testContains_finite() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 1, precision);
@@ -332,7 +332,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testIsFull() {
+    void testIsFull() {
         // act/assert
         Assertions.assertFalse(Interval.of(1, 1, TEST_PRECISION).isFull());
         Assertions.assertFalse(Interval.of(-2, 2, TEST_PRECISION).isFull());
@@ -344,7 +344,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testGetSize() {
+    void testGetSize() {
         // act/assert
         Assertions.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).getSize(), TEST_EPS);
 
@@ -361,7 +361,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testGetBoundarySize() {
+    void testGetBoundarySize() {
         // act/assert
         Assertions.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).getBoundarySize(), TEST_EPS);
         Assertions.assertEquals(0, Interval.of(-2, 5, TEST_PRECISION).getBoundarySize(), TEST_EPS);
@@ -369,7 +369,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testGetCentroid() {
+    void testGetCentroid() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.ZERO,
                 Interval.of(-1, 1, TEST_PRECISION).getCentroid(), TEST_EPS);
@@ -499,7 +499,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testProjectToBoundary_full() {
+    void testProjectToBoundary_full() {
         // arrange
         final Interval full = Interval.full();
 
@@ -511,7 +511,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testProjectToBoundary_singlePoint() {
+    void testProjectToBoundary_singlePoint() {
         // arrange
         final Interval interval = Interval.point(1, TEST_PRECISION);
 
@@ -529,7 +529,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testProjectToBoundary_closedInterval() {
+    void testProjectToBoundary_closedInterval() {
         // arrange
         final Interval interval = Interval.of(1, 3, TEST_PRECISION);
 
@@ -551,7 +551,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testProjectToBoundary_noMinBoundary() {
+    void testProjectToBoundary_noMinBoundary() {
         // arrange
         final Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION);
 
@@ -567,7 +567,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testProjectToBoundary_noMaxBoundary() {
+    void testProjectToBoundary_noMaxBoundary() {
         // arrange
         final Interval interval = Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION);
 
@@ -583,7 +583,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(2);
 
@@ -601,7 +601,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testTransform_reflection() {
+    void testTransform_reflection() {
         // arrange
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(-1);
 
@@ -616,7 +616,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_full_positiveFacingSplitter() {
+    void testSplit_full_positiveFacingSplitter() {
         // arrange
         final Interval interval = Interval.full();
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -633,7 +633,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_full_negativeFacingSplitter() {
+    void testSplit_full_negativeFacingSplitter() {
         // arrange
         final Interval interval = Interval.full();
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -650,7 +650,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_halfSpace_positiveFacingSplitter() {
+    void testSplit_halfSpace_positiveFacingSplitter() {
         // arrange
         final Interval interval = Interval.min(-1, TEST_PRECISION);
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -668,7 +668,7 @@ public class IntervalTest {
 
 
     @Test
-    public void testSplit_halfSpace_negativeFacingSplitter() {
+    void testSplit_halfSpace_negativeFacingSplitter() {
         // arrange
         final Interval interval = Interval.min(-1, TEST_PRECISION);
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -685,7 +685,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_splitterBelowInterval() {
+    void testSplit_splitterBelowInterval() {
         // arrange
         final Interval interval = Interval.of(5, 10, TEST_PRECISION);
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -701,7 +701,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_splitterOnMinBoundary() {
+    void testSplit_splitterOnMinBoundary() {
         // arrange
         final Interval interval = Interval.of(5, 10, TEST_PRECISION);
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -717,7 +717,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_splitterAboveInterval() {
+    void testSplit_splitterAboveInterval() {
         // arrange
         final Interval interval = Interval.of(5, 10, TEST_PRECISION);
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -733,7 +733,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_splitterOnMaxBoundary() {
+    void testSplit_splitterOnMaxBoundary() {
         // arrange
         final Interval interval = Interval.of(5, 10, TEST_PRECISION);
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -749,7 +749,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_point_minusOnly() {
+    void testSplit_point_minusOnly() {
         // arrange
         final Interval interval = Interval.point(2, TEST_PRECISION);
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -766,7 +766,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_point_plusOnly() {
+    void testSplit_point_plusOnly() {
         // arrange
         final Interval interval = Interval.point(2, TEST_PRECISION);
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -783,7 +783,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit_point_onPoint() {
+    void testSplit_point_onPoint() {
         // arrange
         final Interval interval = Interval.point(1, TEST_PRECISION);
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
@@ -800,7 +800,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Interval interval = Interval.of(2, 1, TEST_PRECISION);
 
@@ -814,7 +814,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testFull() {
+    void testFull() {
         // act
         final Interval full = Interval.full();
 

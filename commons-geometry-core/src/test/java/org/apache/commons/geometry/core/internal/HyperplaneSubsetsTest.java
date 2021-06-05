@@ -27,10 +27,10 @@ import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class HyperplaneSubsetsTest {
+class HyperplaneSubsetsTest {
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final TestLine line = TestLine.X_AXIS;
         final StubRegion1D region = new StubRegion1D();
@@ -50,7 +50,7 @@ public class HyperplaneSubsetsTest {
     }
 
     @Test
-    public void testClosest() {
+    void testClosest() {
         // arrange
         final TestLine line = TestLine.X_AXIS;
         final StubRegion1D region = new StubRegion1D();

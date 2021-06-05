@@ -37,7 +37,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ObjBoundaryReadHandler3DTest {
+class ObjBoundaryReadHandler3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -47,14 +47,14 @@ public class ObjBoundaryReadHandler3DTest {
     private final ObjBoundaryReadHandler3D handler = new ObjBoundaryReadHandler3D();
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // act/assert
         Assertions.assertEquals(GeometryFormat3D.OBJ, handler.getFormat());
         Assertions.assertEquals(StandardCharsets.UTF_8, handler.getDefaultCharset());
     }
 
     @Test
-    public void testFacetDefinitionReader() throws IOException {
+    void testFacetDefinitionReader() throws IOException {
         // arrange
         final InputStream in = input(
                 "v 0 0 0\n" +
@@ -74,7 +74,7 @@ public class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testFacetDefinitionReader_usesInputCharset() throws IOException {
+    void testFacetDefinitionReader_usesInputCharset() throws IOException {
         // arrange
         final InputStream in = input(
                 "v 0 0 0\n" +
@@ -95,7 +95,7 @@ public class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testFacetDefinitionReader_setDefaultCharset() throws IOException {
+    void testFacetDefinitionReader_setDefaultCharset() throws IOException {
         // arrange
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         final InputStream in = input(
@@ -116,7 +116,7 @@ public class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testFacetDefinitionReader_close() throws IOException {
+    void testFacetDefinitionReader_close() throws IOException {
         // arrange
         final CloseCountInputStream in = input("", StandardCharsets.UTF_8);
 
@@ -129,7 +129,7 @@ public class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testReadTriangleMesh() throws IOException {
+    void testReadTriangleMesh() throws IOException {
         // arrange
         final CloseCountInputStream in = input(
                 "v 0 0 0\n" +
@@ -152,7 +152,7 @@ public class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testReadTriangleMesh_nonDefaultCharset() throws IOException {
+    void testReadTriangleMesh_nonDefaultCharset() throws IOException {
         // arrange
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         final CloseCountInputStream in = input(

@@ -34,7 +34,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TextStlWriterTest {
+class TextStlWriterTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -44,7 +44,7 @@ public class TextStlWriterTest {
     private final StringWriter out = new StringWriter();
 
     @Test
-    public void testDefaultProperties() throws IOException {
+    void testDefaultProperties() throws IOException {
         // act/assert
         try (TextStlWriter writer = new TextStlWriter(out)) {
             Assertions.assertSame(DoubleFormats.DOUBLE_TO_STRING, writer.getDoubleFormat());
@@ -53,7 +53,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testNoContent() throws IOException {
+    void testNoContent() throws IOException {
         // arrange
         final CloseCountWriter countWriter = new CloseCountWriter(out);
 
@@ -68,7 +68,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testStartSolid_alreadyStarted() throws IOException {
+    void testStartSolid_alreadyStarted() throws IOException {
         // arrange
         try (TextStlWriter writer = new TextStlWriter(out)) {
             writer.startSolid();
@@ -81,7 +81,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testEndSolid_notStarted() throws IOException {
+    void testEndSolid_notStarted() throws IOException {
         // arrange
         try (TextStlWriter writer = new TextStlWriter(out)) {
             // act/assert
@@ -92,7 +92,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testEmpty_noName() throws IOException {
+    void testEmpty_noName() throws IOException {
         // arrange
         final CloseCountWriter countWriter = new CloseCountWriter(out);
 
@@ -112,7 +112,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testEmpty_withName() throws IOException {
+    void testEmpty_withName() throws IOException {
         // arrange
         final CloseCountWriter countWriter = new CloseCountWriter(out);
 
@@ -132,7 +132,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testClose_endsSolid() throws IOException {
+    void testClose_endsSolid() throws IOException {
         // arrange
         final CloseCountWriter countWriter = new CloseCountWriter(out);
 
@@ -151,7 +151,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testStartSolid_containsNewLine() throws IOException {
+    void testStartSolid_containsNewLine() throws IOException {
         // arrange
         try (TextStlWriter writer = new TextStlWriter(out)) {
             final String err = "Solid name cannot contain new line characters";
@@ -170,7 +170,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWriteTriangle_noNormal_computesNormal() throws IOException {
+    void testWriteTriangle_noNormal_computesNormal() throws IOException {
         // arrange
         final Vector3D p1 = Vector3D.of(0, 4, 0);
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -196,7 +196,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWriteTriangle_zeroNormal_computesNormal() throws IOException {
+    void testWriteTriangle_zeroNormal_computesNormal() throws IOException {
         // arrange
         final Vector3D p1 = Vector3D.of(0, 4, 0);
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -222,7 +222,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWriteTriangle_noNormal_cannotComputeNormal() throws IOException {
+    void testWriteTriangle_noNormal_cannotComputeNormal() throws IOException {
         // arrange
         final Vector3D p1 = Vector3D.ZERO;
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -248,7 +248,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWriteTriangle_withNormal_correctOrientation() throws IOException {
+    void testWriteTriangle_withNormal_correctOrientation() throws IOException {
         // arrange
         final Vector3D p1 = Vector3D.of(0, 4, 0);
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -276,7 +276,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWriteTriangle_withNormal_reversedOrientation() throws IOException {
+    void testWriteTriangle_withNormal_reversedOrientation() throws IOException {
         // arrange
         final Vector3D p1 = Vector3D.of(0, 4, 0);
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -304,7 +304,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_verticesAndNormal() throws IOException {
+    void testWrite_verticesAndNormal() throws IOException {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));
@@ -348,7 +348,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_verticesAndNormal_moreThanThreeVertices() throws IOException {
+    void testWrite_verticesAndNormal_moreThanThreeVertices() throws IOException {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 0), Vector3D.of(0, 1, 0));
@@ -382,7 +382,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_verticesAndNormal_fewerThanThreeVertices() throws IOException {
+    void testWrite_verticesAndNormal_fewerThanThreeVertices() throws IOException {
         // arrange
         try (TextStlWriter writer = new TextStlWriter(out)) {
             writer.startSolid();
@@ -402,7 +402,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_boundary() throws IOException {
+    void testWrite_boundary() throws IOException {
         // arrange
         final ConvexPolygon3D boundary = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 0, 1), Vector3D.of(0, 0, 1)),
@@ -436,7 +436,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_facetDefinition_noNormal() throws IOException {
+    void testWrite_facetDefinition_noNormal() throws IOException {
         // arrange
         final FacetDefinition facet = new SimpleFacetDefinition(Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 0), Vector3D.of(0, 1, 0)));
@@ -469,7 +469,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_facetDefinition_withNormal() throws IOException {
+    void testWrite_facetDefinition_withNormal() throws IOException {
         // arrange
         final Vector3D normal = Vector3D.Unit.PLUS_Z;
         final FacetDefinition facet = new SimpleFacetDefinition(Arrays.asList(
@@ -504,7 +504,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_noSolidStarted() throws IOException {
+    void testWrite_noSolidStarted() throws IOException {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));
@@ -534,7 +534,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_customFormat() throws IOException {
+    void testWrite_customFormat() throws IOException {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1.0 / 3.0, 0, 0), Vector3D.of(0, 1.0 / 3.0, 0));
@@ -564,7 +564,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_badFacet_withNormal() throws IOException {
+    void testWrite_badFacet_withNormal() throws IOException {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.ZERO, Vector3D.ZERO);
@@ -590,7 +590,7 @@ public class TextStlWriterTest {
     }
 
     @Test
-    public void testWrite_badFacet_noNormal() throws IOException {
+    void testWrite_badFacet_noNormal() throws IOException {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.ZERO, Vector3D.ZERO);

@@ -32,7 +32,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class EmbeddedTreeLineSubset3DTest {
+class EmbeddedTreeLineSubset3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -42,7 +42,7 @@ public class EmbeddedTreeLineSubset3DTest {
     private final Line3D testLine = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 0), TEST_PRECISION);
 
     @Test
-    public void testCtor_default() {
+    void testCtor_default() {
         // act
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine);
 
@@ -53,7 +53,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testCtor_true() {
+    void testCtor_true() {
         // act
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, true);
 
@@ -64,7 +64,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testCtor_false() {
+    void testCtor_false() {
         // act
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, false);
 
@@ -75,7 +75,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testCtor_lineAndRegion() {
+    void testCtor_lineAndRegion() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -89,7 +89,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testProperties_full() {
+    void testProperties_full() {
         // arrange
         final EmbeddedTreeLineSubset3D full = new EmbeddedTreeLineSubset3D(testLine, true);
 
@@ -103,7 +103,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testProperties_empty() {
+    void testProperties_empty() {
         // arrange
         final EmbeddedTreeLineSubset3D empty = new EmbeddedTreeLineSubset3D(testLine, false);
 
@@ -117,7 +117,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testProperties_half() {
+    void testProperties_half() {
         // arrange
         final EmbeddedTreeLineSubset3D half = new EmbeddedTreeLineSubset3D(testLine, false);
         half.getSubspaceRegion().add(Interval.min(1, TEST_PRECISION));
@@ -132,7 +132,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testProperties_finite() {
+    void testProperties_finite() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 0), TEST_PRECISION);
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line);
@@ -154,7 +154,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testTransform_full() {
+    void testTransform_full() {
         // arrange
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, true);
 
@@ -179,7 +179,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testTransform_finite() {
+    void testTransform_finite() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(
@@ -218,7 +218,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testToConvex_full() {
+    void testToConvex_full() {
         // arrange
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, true);
 
@@ -231,7 +231,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testToConvex_finite() {
+    void testToConvex_finite() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(
@@ -252,7 +252,7 @@ public class EmbeddedTreeLineSubset3DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine);
 

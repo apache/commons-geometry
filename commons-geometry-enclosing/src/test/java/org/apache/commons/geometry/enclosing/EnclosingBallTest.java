@@ -26,12 +26,12 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class EnclosingBallTest {
+class EnclosingBallTest {
 
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    public void testProperties_emptySupport() {
+    void testProperties_emptySupport() {
         // arrange
         final Vector2D center = Vector2D.of(1.2, 3.4);
         final double radius = 10;
@@ -50,7 +50,7 @@ public class EnclosingBallTest {
     }
 
     @Test
-    public void testProperties_nonEmptySupport() {
+    void testProperties_nonEmptySupport() {
         // arrange
         final Vector2D center = Vector2D.of(1.2, 3.4);
         final double radius = 10;
@@ -71,7 +71,7 @@ public class EnclosingBallTest {
     }
 
     @Test
-    public void testGetSupport_listCannotBeModified() {
+    void testGetSupport_listCannotBeModified() {
         // arrange
         final List<Vector2D> support = new ArrayList<>(Collections.singletonList(Vector2D.ZERO));
 
@@ -82,7 +82,7 @@ public class EnclosingBallTest {
     }
 
     @Test
-    public void testContains_strict() {
+    void testContains_strict() {
         // arrange
         final Vector2D center = Vector2D.of(1, 2);
         final double radius = 2;
@@ -107,7 +107,7 @@ public class EnclosingBallTest {
     }
 
     @Test
-    public void testContains_precision() {
+    void testContains_precision() {
         // arrange
         final Precision.DoubleEquivalence lowerPrecision = Precision.doubleEquivalenceOfEpsilon(1e-4);
         final Precision.DoubleEquivalence higherPrecision = Precision.doubleEquivalenceOfEpsilon(1e-10);
@@ -138,7 +138,7 @@ public class EnclosingBallTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.ZERO, 1, Collections.singletonList(Vector2D.Unit.PLUS_X));
 

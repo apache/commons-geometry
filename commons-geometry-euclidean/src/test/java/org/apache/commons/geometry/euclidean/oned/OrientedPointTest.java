@@ -29,7 +29,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class OrientedPointTest {
+class OrientedPointTest {
 
     private static final double TEST_EPS = 1e-15;
 
@@ -37,7 +37,7 @@ public class OrientedPointTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testGetDirection() {
+    void testGetDirection() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.Unit.PLUS,
                 OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION).getDirection(),
@@ -48,7 +48,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // act/assert
         assertOrientedPoint(OrientedPoints.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION).reverse(),
                 0.0, false, TEST_PRECISION);
@@ -66,7 +66,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix1D scaleAndTranslate = AffineTransformMatrix1D
                 .createScale(0.5)
@@ -86,7 +86,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testTransform_locationAtInfinity() {
+    void testTransform_locationAtInfinity() {
         // arrange
         final OrientedPoint pos = OrientedPoints.createNegativeFacing(Double.POSITIVE_INFINITY, TEST_PRECISION);
         final OrientedPoint neg = OrientedPoints.createPositiveFacing(Double.NEGATIVE_INFINITY, TEST_PRECISION);
@@ -103,7 +103,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testTransform_zeroScale() {
+    void testTransform_zeroScale() {
         // arrange
         final AffineTransformMatrix1D zeroScale = AffineTransformMatrix1D.createScale(0.0);
 
@@ -116,7 +116,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testOffset_positiveFacing() {
+    void testOffset_positiveFacing() {
         // arrange
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(-2.0), true, TEST_PRECISION);
 
@@ -132,7 +132,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testOffset_negativeFacing() {
+    void testOffset_negativeFacing() {
         // arrange
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(-2.0), false, TEST_PRECISION);
 
@@ -148,7 +148,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testOffset_infinityArguments() {
+    void testOffset_infinityArguments() {
         // arrange
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(-2.0), true, TEST_PRECISION);
 
@@ -158,7 +158,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testOffset_infinityLocation() {
+    void testOffset_infinityLocation() {
         // arrange
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(Double.POSITIVE_INFINITY), true, TEST_PRECISION);
 
@@ -170,7 +170,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final Precision.DoubleEquivalence smallPrecision = Precision.doubleEquivalenceOfEpsilon(1e-10);
         final Precision.DoubleEquivalence largePrecision = Precision.doubleEquivalenceOfEpsilon(1e-1);
@@ -195,7 +195,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSpan() {
+    void testSpan() {
         // arrange
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(1.0), false, TEST_PRECISION);
 
@@ -207,7 +207,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSimilarOrientation() {
+    void testSimilarOrientation() {
         // arrange
         final OrientedPoint negativeDir1 = OrientedPoints.fromPointAndDirection(Vector1D.of(1.0), false, TEST_PRECISION);
         final OrientedPoint negativeDir2 = OrientedPoints.fromPointAndDirection(Vector1D.of(-1.0), false, TEST_PRECISION);
@@ -228,7 +228,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testProject() {
+    void testProject() {
         // arrange
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(1.0), true, TEST_PRECISION);
 
@@ -241,7 +241,7 @@ public class OrientedPointTest {
 
 
     @Test
-    public void testEq() {
+    void testEq() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
@@ -264,7 +264,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Precision.DoubleEquivalence precisionA = Precision.doubleEquivalenceOfEpsilon(1e-10);
         final Precision.DoubleEquivalence precisionB = Precision.doubleEquivalenceOfEpsilon(1e-15);
@@ -288,7 +288,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Precision.DoubleEquivalence precisionA = Precision.doubleEquivalenceOfEpsilon(1e-10);
         final Precision.DoubleEquivalence precisionB = Precision.doubleEquivalenceOfEpsilon(1e-15);
@@ -316,7 +316,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final OrientedPoint pt = OrientedPoints.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION);
 
@@ -330,7 +330,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testFromLocationAndDirection() {
+    void testFromLocationAndDirection() {
         // act/assert
         assertOrientedPoint(OrientedPoints.fromLocationAndDirection(3.0, true, TEST_PRECISION),
                 3.0, true, TEST_PRECISION);
@@ -339,7 +339,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testFromPointAndDirection_pointAndBooleanArgs() {
+    void testFromPointAndDirection_pointAndBooleanArgs() {
         // act/assert
         assertOrientedPoint(OrientedPoints.fromPointAndDirection(Vector1D.of(3.0), true, TEST_PRECISION),
                 3.0, true, TEST_PRECISION);
@@ -348,7 +348,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testFromPointAndDirection_pointAndVectorArgs() {
+    void testFromPointAndDirection_pointAndVectorArgs() {
         // act/assert
         assertOrientedPoint(OrientedPoints.fromPointAndDirection(Vector1D.of(-2.0), Vector1D.of(0.1), TEST_PRECISION),
                 -2.0, true, TEST_PRECISION);
@@ -357,7 +357,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testFromPointAndDirection_invalidDirection() {
+    void testFromPointAndDirection_invalidDirection() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(0.1);
 
@@ -371,7 +371,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testCreatePositiveFacing() {
+    void testCreatePositiveFacing() {
         // act/assert
         assertOrientedPoint(OrientedPoints.createPositiveFacing(Vector1D.of(-2.0), TEST_PRECISION),
                 -2.0, true, TEST_PRECISION);
@@ -380,7 +380,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testCreateNegativeFacing() {
+    void testCreateNegativeFacing() {
         // act/assert
         assertOrientedPoint(OrientedPoints.createNegativeFacing(Vector1D.of(2.0), TEST_PRECISION),
                 2.0, false, TEST_PRECISION);
@@ -389,7 +389,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSubset_split() {
+    void testSubset_split() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
@@ -416,7 +416,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSubset_simpleMethods() {
+    void testSubset_simpleMethods() {
         // arrange
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(2, TEST_PRECISION);
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();
@@ -436,7 +436,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSubset_classify() {
+    void testSubset_classify() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(1, precision);
@@ -458,7 +458,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSubset_contains() {
+    void testSubset_contains() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(1, precision);
@@ -480,7 +480,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSubset_closestContained() {
+    void testSubset_closestContained() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(1, precision);
@@ -495,7 +495,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSubset_transform() {
+    void testSubset_transform() {
         // arrange
         final AffineTransformMatrix1D scaleAndTranslate = AffineTransformMatrix1D
                 .createScale(0.5)
@@ -519,7 +519,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSubset_reverse() {
+    void testSubset_reverse() {
         // arrange
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(2.0, TEST_PRECISION);
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();
@@ -535,7 +535,7 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSubset_toString() {
+    void testSubset_toString() {
         // arrange
         final OrientedPoint pt = OrientedPoints.createPositiveFacing(2, TEST_PRECISION);
         final HyperplaneConvexSubset<Vector1D> sub = pt.span();

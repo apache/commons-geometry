@@ -26,10 +26,10 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class IteratorTransformTest {
+class IteratorTransformTest {
 
     @Test
-    public void testIteration() {
+    void testIteration() {
         // arrange
         final List<Integer> input = Arrays.asList(1, 2, 3, 4, 12, 13);
 
@@ -41,7 +41,7 @@ public class IteratorTransformTest {
     }
 
     @Test
-    public void testThrowsNoSuchElement() {
+    void testThrowsNoSuchElement() {
         // arrange
         final List<Integer> input = Collections.emptyList();
         final EvenCharIterator it = new EvenCharIterator(input.iterator());

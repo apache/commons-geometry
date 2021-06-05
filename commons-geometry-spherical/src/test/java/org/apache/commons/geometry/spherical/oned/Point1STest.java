@@ -26,19 +26,19 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Point1STest {
+class Point1STest {
 
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    public void testConstants() {
+    void testConstants() {
         // act/assert
         Assertions.assertEquals(0.0, Point1S.ZERO.getAzimuth(), TEST_EPS);
         Assertions.assertEquals(Math.PI, Point1S.PI.getAzimuth(), TEST_EPS);
     }
 
     @Test
-    public void testNormalizedAzimuthComparator() {
+    void testNormalizedAzimuthComparator() {
         // arrange
         final Comparator<Point1S> comp = Point1S.NORMALIZED_AZIMUTH_ASCENDING_ORDER;
 
@@ -54,7 +54,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testOf() {
+    void testOf() {
         // act/assert
         checkPoint(Point1S.of(0), 0, 0);
         checkPoint(Point1S.of(1), 1, 1);
@@ -72,7 +72,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testFrom_vector() {
+    void testFrom_vector() {
         // act/assert
         checkPoint(Point1S.from(Vector2D.of(2, 0)), 0.0);
         checkPoint(Point1S.from(Vector2D.of(0, 0.1)), Angle.PI_OVER_TWO);
@@ -81,7 +81,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testFrom_polar() {
+    void testFrom_polar() {
         // act/assert
         checkPoint(Point1S.from(PolarCoordinates.of(100, 0)), 0.0);
         checkPoint(Point1S.from(PolarCoordinates.of(1, Angle.PI_OVER_TWO)), Angle.PI_OVER_TWO);
@@ -90,7 +90,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testFrom_polar_invalidAzimuths() {
+    void testFrom_polar_invalidAzimuths() {
         // act/assert
         checkPoint(Point1S.from(PolarCoordinates.of(100, Double.POSITIVE_INFINITY)), Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         checkPoint(Point1S.from(PolarCoordinates.of(100, Double.NEGATIVE_INFINITY)), Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
@@ -98,7 +98,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testNaN() {
+    void testNaN() {
         // act
         final Point1S pt = Point1S.of(Double.NaN);
 
@@ -115,7 +115,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testGetDimension() {
+    void testGetDimension() {
         // arrange
         final Point1S p = Point1S.of(0.0);
 
@@ -124,7 +124,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testInfinite() {
+    void testInfinite() {
         // act/assert
         Assertions.assertTrue(Point1S.of(Double.POSITIVE_INFINITY).isInfinite());
         Assertions.assertTrue(Point1S.of(Double.NEGATIVE_INFINITY).isInfinite());
@@ -134,7 +134,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testFinite() {
+    void testFinite() {
         // act/assert
         Assertions.assertTrue(Point1S.of(0).isFinite());
         Assertions.assertTrue(Point1S.of(1).isFinite());
@@ -145,7 +145,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testAntipodal() {
+    void testAntipodal() {
         for (double az = -6 * Math.PI; az <= 6 * Math.PI; az += 0.1) {
             // arrange
             final Point1S pt = Point1S.of(az);
@@ -160,7 +160,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // act
         final Point1S a = Point1S.of(1.0);
         final Point1S b = Point1S.of(2.0);
@@ -179,7 +179,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // act
         final Point1S a = Point1S.of(1.0);
         final Point1S b = Point1S.of(2.0);
@@ -204,7 +204,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testEqualsAndHashCode_signedZeroConsistency() {
+    void testEqualsAndHashCode_signedZeroConsistency() {
         // arrange
         final Point1S a = Point1S.of(0.0);
         final Point1S b = Point1S.of(-0.0);
@@ -223,7 +223,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testEq() {
+    void testEq() {
         // arrange
         final Precision.DoubleEquivalence highPrecision = Precision.doubleEquivalenceOfEpsilon(1e-10);
         final Precision.DoubleEquivalence lowPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
@@ -248,7 +248,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testEq_wrapAround() {
+    void testEq_wrapAround() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -267,7 +267,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testDistance() {
+    void testDistance() {
         // arrange
         final Point1S a = Point1S.of(0.0);
         final Point1S b = Point1S.of(Math.PI - 0.5);
@@ -291,7 +291,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testSignedDistance() {
+    void testSignedDistance() {
         // arrange
         final Point1S a = Point1S.of(0.0);
         final Point1S b = Point1S.of(Math.PI - 0.5);
@@ -315,7 +315,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testDistance_inRangeZeroToPi() {
+    void testDistance_inRangeZeroToPi() {
         for (double a = -4 * Math.PI; a < 4 * Math.PI; a += 0.1) {
             for (double b = -4 * Math.PI; b < 4 * Math.PI; b += 0.1) {
                 // arrange
@@ -333,7 +333,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testAbove() {
+    void testAbove() {
         // arrange
         final Point1S p1 = Point1S.ZERO;
         final Point1S p2 = Point1S.of(Angle.Deg.of(90));
@@ -356,7 +356,7 @@ public class Point1STest {
     }
 
     @Test
-    public void testAbove_nonFinite() {
+    void testAbove_nonFinite() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.POSITIVE_INFINITY).above(Point1S.ZERO));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Point1S.of(Double.NEGATIVE_INFINITY).above(Point1S.ZERO));
@@ -364,21 +364,21 @@ public class Point1STest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // act/assert
         Assertions.assertEquals("(0.0)", Point1S.of(0.0).toString());
         Assertions.assertEquals("(1.0)", Point1S.of(1.0).toString());
     }
 
     @Test
-    public void testParse() {
+    void testParse() {
         // act/assert
         checkPoint(Point1S.parse("(0)"), 0.0);
         checkPoint(Point1S.parse("(1)"), 1.0);
     }
 
     @Test
-    public void testParse_failure() {
+    void testParse_failure() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () ->  Point1S.parse("abc"));
     }

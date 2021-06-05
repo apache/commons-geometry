@@ -29,7 +29,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CutAngleTest {
+class CutAngleTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -37,7 +37,7 @@ public class CutAngleTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromAzimuthAndDirection() {
+    void testFromAzimuthAndDirection() {
         // act/assert
         checkCutAngle(CutAngles.fromAzimuthAndDirection(0.0, true, TEST_PRECISION),
                 0.0, true);
@@ -55,7 +55,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testFromPointAndDirection() {
+    void testFromPointAndDirection() {
         // arrange
         final Point1S pt = Point1S.of(-Angle.PI_OVER_TWO);
 
@@ -76,7 +76,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testCreatePositiveFacing() {
+    void testCreatePositiveFacing() {
         // act/assert
         checkCutAngle(CutAngles.createPositiveFacing(Point1S.ZERO, TEST_PRECISION),
                 0.0, true);
@@ -87,7 +87,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testCreateNegativeFacing() {
+    void testCreateNegativeFacing() {
         // act/assert
         checkCutAngle(CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION),
                 0.0, false);
@@ -98,7 +98,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testOffset() {
+    void testOffset() {
         // arrange
         final CutAngle zeroPos = CutAngles.createPositiveFacing(0.0, TEST_PRECISION);
         final CutAngle zeroNeg = CutAngles.createNegativeFacing(0.0, TEST_PRECISION);
@@ -140,7 +140,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final CutAngle zeroPos = CutAngles.createPositiveFacing(0.0, TEST_PRECISION);
         final CutAngle zeroNeg = CutAngles.createNegativeFacing(0.0, TEST_PRECISION);
@@ -168,7 +168,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         // arrange
         final CutAngle pt = CutAngles.createNegativeFacing(Angle.PI_OVER_TWO, TEST_PRECISION);
 
@@ -187,7 +187,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final CutAngle pt = CutAngles.createNegativeFacing(Angle.PI_OVER_TWO, TEST_PRECISION);
 
@@ -202,7 +202,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testProject() {
+    void testProject() {
         // arrange
         final CutAngle pt = CutAngles.createNegativeFacing(Angle.PI_OVER_TWO, TEST_PRECISION);
 
@@ -213,7 +213,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSimilarOrientation() {
+    void testSimilarOrientation() {
         // arrange
         final CutAngle a = CutAngles.createPositiveFacing(0.0, TEST_PRECISION);
         final CutAngle b = CutAngles.createNegativeFacing(0.0, TEST_PRECISION);
@@ -226,7 +226,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testTransform_rotate() {
+    void testTransform_rotate() {
         // arrange
         final Transform1S transform = Transform1S.createRotation(Angle.PI_OVER_TWO);
 
@@ -243,7 +243,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testTransform_negate() {
+    void testTransform_negate() {
         // arrange
         final Transform1S transform = Transform1S.createNegation();
 
@@ -260,7 +260,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSpan() {
+    void testSpan() {
         // arrange
         final CutAngle pt = CutAngles.fromPointAndDirection(Point1S.of(1.0), false, TEST_PRECISION);
 
@@ -272,7 +272,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testEq() {
+    void testEq() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
@@ -301,7 +301,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
@@ -324,7 +324,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
@@ -345,7 +345,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final CutAngle pt = CutAngles.createPositiveFacing(0.0, TEST_PRECISION);
 
@@ -358,7 +358,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSubset_split() {
+    void testSubset_split() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
@@ -385,7 +385,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSubset_simpleMethods() {
+    void testSubset_simpleMethods() {
         // arrange
         final CutAngle pt = CutAngles.createPositiveFacing(1, TEST_PRECISION);
         final HyperplaneConvexSubset<Point1S> sub = pt.span();
@@ -405,7 +405,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSubset_classify() {
+    void testSubset_classify() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final CutAngle pt = CutAngles.createPositiveFacing(1, precision);
@@ -424,7 +424,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSubset_contains() {
+    void testSubset_contains() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final CutAngle pt = CutAngles.createPositiveFacing(1, precision);
@@ -443,7 +443,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSubset_closestContained() {
+    void testSubset_closestContained() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final CutAngle pt = CutAngles.createPositiveFacing(1, precision);
@@ -460,7 +460,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSubset_transform() {
+    void testSubset_transform() {
         // arrange
         final CutAngle pt = CutAngles.fromPointAndDirection(Point1S.of(Angle.PI_OVER_TWO), true, TEST_PRECISION);
 
@@ -474,7 +474,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSubset_reverse() {
+    void testSubset_reverse() {
         // arrange
         final CutAngle pt = CutAngles.createPositiveFacing(2.0, TEST_PRECISION);
         final HyperplaneConvexSubset<Point1S> sub = pt.span();
@@ -490,7 +490,7 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testSubset_toString() {
+    void testSubset_toString() {
         // arrange
         final CutAngle pt = CutAngles.createPositiveFacing(2, TEST_PRECISION);
         final HyperplaneConvexSubset<Point1S> sub = pt.span();

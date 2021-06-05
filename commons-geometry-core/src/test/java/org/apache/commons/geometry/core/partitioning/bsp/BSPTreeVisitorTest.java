@@ -25,10 +25,10 @@ import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BSPTreeVisitorTest {
+class BSPTreeVisitorTest {
 
     @Test
-    public void testDefaultVisitOrder() {
+    void testDefaultVisitOrder() {
         // arrange
         final BSPTreeVisitor<TestPoint2D, TestNode> visitor = n -> BSPTreeVisitor.Result.CONTINUE;
 
@@ -37,7 +37,7 @@ public class BSPTreeVisitorTest {
     }
 
     @Test
-    public void testClosestFirst() {
+    void testClosestFirst() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         final TestNode root = tree.getRoot();
@@ -68,7 +68,7 @@ public class BSPTreeVisitorTest {
     }
 
     @Test
-    public void testFarthestFirst() {
+    void testFarthestFirst() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         final TestNode root = tree.getRoot();

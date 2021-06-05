@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-public class IO3DTest {
+class IO3DTest {
 
     private static final double TEST_EPS = 1e-4;
 
@@ -69,7 +69,7 @@ public class IO3DTest {
     public Path tempDir;
 
     @Test
-    public void testStreamExample() throws IOException {
+    void testStreamExample() throws IOException {
         final Path origFile = tempDir.resolve("orig.obj");
         final Path scaledFile = tempDir.resolve("scaled.csv");
 
@@ -92,7 +92,7 @@ public class IO3DTest {
     }
 
     @Test
-    public void testReadWriteFacets_facetDefinitionReader() throws Exception {
+    void testReadWriteFacets_facetDefinitionReader() throws Exception {
         // act/assert
         testReadWriteWithPath(
                 (fmt, path) -> readerToBoundaryList(IO3D.facetDefinitionReader(path)),
@@ -106,7 +106,7 @@ public class IO3DTest {
     }
 
     @Test
-    public void testReadWriteFacets_facetStream() throws Exception {
+    void testReadWriteFacets_facetStream() throws Exception {
         // act/assert
         testReadWriteWithPath(
                 (fmt, path) -> facetsToBoundaryList(IO3D.facets(path)),
@@ -120,7 +120,7 @@ public class IO3DTest {
     }
 
     @Test
-    public void testReadWriteBoundarySource() throws Exception {
+    void testReadWriteBoundarySource() throws Exception {
         // act/assert
         testReadWriteWithPath(
                 (fmt, path) -> IO3D.read(path, MODEL_PRECISION),
@@ -134,7 +134,7 @@ public class IO3DTest {
     }
 
     @Test
-    public void testReadWriteBoundarySource_triangleMesh() throws Exception {
+    void testReadWriteBoundarySource_triangleMesh() throws Exception {
         // act/assert
         testReadWriteWithPath(
                 (fmt, path) -> IO3D.readTriangleMesh(path, MODEL_PRECISION),
@@ -148,7 +148,7 @@ public class IO3DTest {
     }
 
     @Test
-    public void testReadWriteBoundarySource_boundaryStream() throws Exception {
+    void testReadWriteBoundarySource_boundaryStream() throws Exception {
         // act/assert
         testReadWriteWithPath(
                 (fmt, path) -> boundariesToBoundaryList(IO3D.boundaries(path, MODEL_PRECISION)),
@@ -162,7 +162,7 @@ public class IO3DTest {
     }
 
     @Test
-    public void testReadWriteBoundarySource_triangleStream() throws Exception {
+    void testReadWriteBoundarySource_triangleStream() throws Exception {
         // act/assert
         testReadWriteWithPath(
                 (fmt, path) -> boundariesToBoundaryList(IO3D.triangles(path, MODEL_PRECISION)),
@@ -176,7 +176,7 @@ public class IO3DTest {
     }
 
     @Test
-    public void testWriteBoundaryStream() throws Exception {
+    void testWriteBoundaryStream() throws Exception {
         // act/assert
         testReadWriteWithPath(
                 (fmt, path) -> boundariesToBoundaryList(IO3D.triangles(path, MODEL_PRECISION)),
@@ -190,7 +190,7 @@ public class IO3DTest {
     }
 
     @Test
-    public void testWriteFacetStream() throws Exception {
+    void testWriteFacetStream() throws Exception {
         // act/assert
         testReadWriteWithPath(
                 (fmt, path) -> boundariesToBoundaryList(IO3D.triangles(path, MODEL_PRECISION)),

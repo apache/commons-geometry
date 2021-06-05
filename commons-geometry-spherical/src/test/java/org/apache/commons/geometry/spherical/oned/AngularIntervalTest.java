@@ -27,7 +27,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AngularIntervalTest {
+class AngularIntervalTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -35,7 +35,7 @@ public class AngularIntervalTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testOf_doubles() {
+    void testOf_doubles() {
         // act/assert
         checkInterval(AngularInterval.of(0, 1, TEST_PRECISION), 0, 1);
         checkInterval(AngularInterval.of(1, 0, TEST_PRECISION), 1, Angle.TWO_PI);
@@ -49,7 +49,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testOf_doubles_invalidArgs() {
+    void testOf_doubles_invalidArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> AngularInterval.of(Double.NEGATIVE_INFINITY, 0, TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> AngularInterval.of(0, Double.POSITIVE_INFINITY, TEST_PRECISION));
@@ -60,7 +60,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testOf_points() {
+    void testOf_points() {
         // act/assert
         checkInterval(AngularInterval.of(Point1S.of(0), Point1S.of(1), TEST_PRECISION), 0, 1);
         checkInterval(AngularInterval.of(Point1S.of(1), Point1S.of(0), TEST_PRECISION), 1, Angle.TWO_PI);
@@ -73,7 +73,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testOf_points_invalidArgs() {
+    void testOf_points_invalidArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> AngularInterval.of(Point1S.of(Double.NEGATIVE_INFINITY), Point1S.ZERO, TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> AngularInterval.of(Point1S.ZERO, Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION));
@@ -84,7 +84,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testOf_orientedPoints() {
+    void testOf_orientedPoints() {
         // arrange
         final Precision.DoubleEquivalence precisionA = Precision.doubleEquivalenceOfEpsilon(1e-3);
         final Precision.DoubleEquivalence precisionB = Precision.doubleEquivalenceOfEpsilon(1e-2);
@@ -110,7 +110,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testOf_orientedPoints_invalidArgs() {
+    void testOf_orientedPoints_invalidArgs() {
         // arrange
         final CutAngle pt = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
         final CutAngle nan = CutAngles.createPositiveFacing(Point1S.NaN, TEST_PRECISION);
@@ -122,7 +122,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testFull() {
+    void testFull() {
         // act
         final AngularInterval.Convex interval = AngularInterval.full();
 
@@ -131,7 +131,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testClassify_full() {
+    void testClassify_full() {
         // arrange
         final AngularInterval interval = AngularInterval.full();
 
@@ -142,7 +142,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testClassify_almostFull() {
+    void testClassify_almostFull() {
         // arrange
         final AngularInterval interval = AngularInterval.of(1 + 2e-10, 1, TEST_PRECISION);
 
@@ -158,7 +158,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testClassify_sizeableGap() {
+    void testClassify_sizeableGap() {
         // arrange
         final AngularInterval interval = AngularInterval.of(0.25, -0.25, TEST_PRECISION);
 
@@ -172,7 +172,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testClassify_halfPi() {
+    void testClassify_halfPi() {
         // arrange
         final AngularInterval interval = AngularInterval.of(Angle.PI_OVER_TWO, -Angle.PI_OVER_TWO, TEST_PRECISION);
 
@@ -186,7 +186,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testClassify_almostEmpty() {
+    void testClassify_almostEmpty() {
         // arrange
         final AngularInterval interval = AngularInterval.of(1, 1 + 2e-10, TEST_PRECISION);
 
@@ -202,7 +202,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testProject_full() {
+    void testProject_full() {
         // arrange
         final AngularInterval interval = AngularInterval.full();
 
@@ -212,7 +212,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testProject() {
+    void testProject() {
         // arrange
         final AngularInterval interval = AngularInterval.of(1, 2, TEST_PRECISION);
 
@@ -230,7 +230,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testTransform_full() {
+    void testTransform_full() {
         // arrange
         final AngularInterval interval = AngularInterval.full();
 
@@ -243,7 +243,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AngularInterval interval = AngularInterval.of(Angle.PI_OVER_TWO, Math.PI, TEST_PRECISION);
 
@@ -256,7 +256,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testWrapsZero() {
+    void testWrapsZero() {
         // act/assert
         Assertions.assertFalse(AngularInterval.full().wrapsZero());
         Assertions.assertFalse(AngularInterval.of(0, Angle.PI_OVER_TWO, TEST_PRECISION).wrapsZero());
@@ -270,7 +270,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testToTree_full() {
+    void testToTree_full() {
         // arrange
         final AngularInterval interval = AngularInterval.full();
 
@@ -287,7 +287,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testToTree_intervalEqualToPi() {
+    void testToTree_intervalEqualToPi() {
         // arrange
         final AngularInterval interval = AngularInterval.of(0.0, Math.PI, TEST_PRECISION);
 
@@ -311,7 +311,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testToTree_intervalLessThanPi() {
+    void testToTree_intervalLessThanPi() {
         // arrange
         final AngularInterval interval = AngularInterval.of(Angle.PI_OVER_TWO, Math.PI, TEST_PRECISION);
 
@@ -335,7 +335,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testToTree_intervalGreaterThanPi() {
+    void testToTree_intervalGreaterThanPi() {
         // arrange
         final AngularInterval interval = AngularInterval.of(Math.PI, Angle.PI_OVER_TWO, TEST_PRECISION);
 
@@ -359,7 +359,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testToConvex_lessThanPi() {
+    void testToConvex_lessThanPi() {
         // arrange
         final AngularInterval interval = AngularInterval.of(0, Angle.PI_OVER_TWO, TEST_PRECISION);
 
@@ -372,7 +372,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testToConvex_equalToPi() {
+    void testToConvex_equalToPi() {
         // arrange
         final AngularInterval interval = AngularInterval.of(Math.PI, Angle.TWO_PI, TEST_PRECISION);
 
@@ -385,7 +385,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testToConvex_overPi() {
+    void testToConvex_overPi() {
         // arrange
         final AngularInterval interval = AngularInterval.of(Math.PI, Angle.PI_OVER_TWO, TEST_PRECISION);
 
@@ -399,7 +399,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testToConvex_overPi_splitAtZero() {
+    void testToConvex_overPi_splitAtZero() {
         // arrange
         final AngularInterval interval = AngularInterval.of(1.25 * Math.PI, 2.75 * Math.PI, TEST_PRECISION);
 
@@ -413,7 +413,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplit_full() {
+    void testSplit_full() {
         // arrange
         final AngularInterval interval = AngularInterval.full();
         final CutAngle pt = CutAngles.createNegativeFacing(Angle.PI_OVER_TWO, TEST_PRECISION);
@@ -440,7 +440,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplit_interval_both() {
+    void testSplit_interval_both() {
         // arrange
         final AngularInterval interval = AngularInterval.of(Angle.PI_OVER_TWO, Math.PI, TEST_PRECISION);
         final CutAngle cut = CutAngles.createNegativeFacing(0.75 * Math.PI, TEST_PRECISION);
@@ -467,7 +467,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final AngularInterval interval = AngularInterval.of(1, 2, TEST_PRECISION);
 
@@ -481,7 +481,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_of_doubles() {
+    void testConvex_of_doubles() {
         // act/assert
         checkInterval(AngularInterval.Convex.of(0, 1, TEST_PRECISION), 0, 1);
         checkInterval(AngularInterval.Convex.of(0, Math.PI, TEST_PRECISION), 0, Math.PI);
@@ -495,7 +495,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_of_doubles_invalidArgs() {
+    void testConvex_of_doubles_invalidArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> AngularInterval.Convex.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> AngularInterval.Convex.of(0, Math.PI + 1e-1, TEST_PRECISION));
@@ -504,7 +504,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_of_points() {
+    void testConvex_of_points() {
         // act/assert
         checkInterval(AngularInterval.Convex.of(Point1S.of(0), Point1S.of(1), TEST_PRECISION), 0, 1);
         checkInterval(AngularInterval.Convex.of(Point1S.of(0), Point1S.of(Math.PI), TEST_PRECISION),
@@ -520,7 +520,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_of_points_invalidArgs() {
+    void testConvex_of_points_invalidArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> AngularInterval.Convex.of(Point1S.of(Double.NEGATIVE_INFINITY),
                 Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION));
@@ -531,7 +531,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_of_cutAngles() {
+    void testConvex_of_cutAngles() {
         // arrange
         final Precision.DoubleEquivalence precisionA = Precision.doubleEquivalenceOfEpsilon(1e-3);
         final Precision.DoubleEquivalence precisionB = Precision.doubleEquivalenceOfEpsilon(1e-2);
@@ -557,7 +557,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_of_cutAngles_invalidArgs() {
+    void testConvex_of_cutAngles_invalidArgs() {
         // arrange
         final CutAngle pt = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
         final CutAngle nan = CutAngles.createPositiveFacing(Point1S.NaN, TEST_PRECISION);
@@ -572,7 +572,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_toConvex() {
+    void testConvex_toConvex() {
         // arrange
         final AngularInterval.Convex full = AngularInterval.full();
         final AngularInterval.Convex interval = AngularInterval.Convex.of(0, 1, TEST_PRECISION);
@@ -590,7 +590,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_full() {
+    void testSplitDiameter_full() {
         // arrange
         final AngularInterval.Convex full = AngularInterval.full();
         final CutAngle splitter = CutAngles.createPositiveFacing(Point1S.of(Angle.PI_OVER_TWO), TEST_PRECISION);
@@ -606,7 +606,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_full_splitOnZero() {
+    void testSplitDiameter_full_splitOnZero() {
         // arrange
         final AngularInterval.Convex full = AngularInterval.full();
         final CutAngle splitter = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
@@ -622,7 +622,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_minus() {
+    void testSplitDiameter_minus() {
         // arrange
         final AngularInterval.Convex interval = AngularInterval.Convex.of(0.1, Angle.PI_OVER_TWO, TEST_PRECISION);
         final CutAngle splitter = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
@@ -638,7 +638,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_plus() {
+    void testSplitDiameter_plus() {
         // arrange
         final AngularInterval.Convex interval = AngularInterval.Convex.of(-0.4 * Math.PI, 0.4 * Math.PI, TEST_PRECISION);
         final CutAngle splitter = CutAngles.createNegativeFacing(Point1S.of(Angle.PI_OVER_TWO), TEST_PRECISION);
@@ -654,7 +654,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_both_negativeFacingSplitter() {
+    void testSplitDiameter_both_negativeFacingSplitter() {
         // arrange
         final AngularInterval.Convex interval = AngularInterval.Convex.of(Angle.PI_OVER_TWO, -Angle.PI_OVER_TWO, TEST_PRECISION);
         final CutAngle splitter = CutAngles.createNegativeFacing(Point1S.of(Math.PI), TEST_PRECISION);
@@ -670,7 +670,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_both_positiveFacingSplitter() {
+    void testSplitDiameter_both_positiveFacingSplitter() {
         // arrange
         final AngularInterval.Convex interval = AngularInterval.Convex.of(Angle.PI_OVER_TWO, -Angle.PI_OVER_TWO, TEST_PRECISION);
         final CutAngle splitter = CutAngles.createPositiveFacing(Point1S.of(Math.PI), TEST_PRECISION);
@@ -686,7 +686,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_both_antipodal_negativeFacingSplitter() {
+    void testSplitDiameter_both_antipodal_negativeFacingSplitter() {
         // arrange
         final AngularInterval.Convex interval = AngularInterval.Convex.of(Angle.PI_OVER_TWO, -Angle.PI_OVER_TWO, TEST_PRECISION);
         final CutAngle splitter = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
@@ -702,7 +702,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_both_antipodal_positiveFacingSplitter() {
+    void testSplitDiameter_both_antipodal_positiveFacingSplitter() {
         // arrange
         final AngularInterval.Convex interval = AngularInterval.Convex.of(Angle.PI_OVER_TWO, -Angle.PI_OVER_TWO, TEST_PRECISION);
         final CutAngle splitter = CutAngles.createPositiveFacing(Point1S.ZERO, TEST_PRECISION);
@@ -718,7 +718,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_splitOnBoundary_negativeFacing() {
+    void testSplitDiameter_splitOnBoundary_negativeFacing() {
         // arrange
         final AngularInterval.Convex interval = AngularInterval.Convex.of(Angle.PI_OVER_TWO, -Angle.PI_OVER_TWO, TEST_PRECISION);
         final CutAngle splitter = CutAngles.createNegativeFacing(Point1S.of(Angle.PI_OVER_TWO), TEST_PRECISION);
@@ -734,7 +734,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_splitOnBoundary_positiveFacing() {
+    void testSplitDiameter_splitOnBoundary_positiveFacing() {
         // arrange
         final AngularInterval.Convex interval = AngularInterval.Convex.of(0, Math.PI, TEST_PRECISION);
         final CutAngle splitter = CutAngles.createPositiveFacing(Point1S.of(Math.PI), TEST_PRECISION);
@@ -750,7 +750,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_transform() {
+    void testConvex_transform() {
         // arrange
         final AngularInterval.Convex interval = AngularInterval.Convex.of(Angle.PI_OVER_TWO, Math.PI, TEST_PRECISION);
 

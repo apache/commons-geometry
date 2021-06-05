@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class AbstractRegionBSPTreeTest {
+class AbstractRegionBSPTreeTest {
 
     private TestRegionBSPTree tree;
 
@@ -57,7 +57,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         // assert
         Assertions.assertNotNull(root);
         Assertions.assertNull(root.getParent());
@@ -72,7 +72,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testParameterizedConstructor_true() {
+    void testParameterizedConstructor_true() {
         // act
         tree = new TestRegionBSPTree(true);
         root = tree.getRoot();
@@ -91,7 +91,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testParameterizedConstructor_false() {
+    void testParameterizedConstructor_false() {
         // act
         tree = new TestRegionBSPTree(false);
         root = tree.getRoot();
@@ -110,7 +110,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testInsert_hyperplaneSubsets_mixedCutRules() {
+    void testInsert_hyperplaneSubsets_mixedCutRules() {
         // act/assert
         checkMixedCutRuleInsertion(segs -> {
             tree.insert(new TestLineSegmentCollection(Collections.singletonList(segs[0])), RegionCutRule.PLUS_INSIDE);
@@ -123,7 +123,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testInsert_hyperplaneConvexSubsets_mixedCutRules() {
+    void testInsert_hyperplaneConvexSubsets_mixedCutRules() {
         // act/assert
         checkMixedCutRuleInsertion(segs -> {
             tree.insert(segs[0], RegionCutRule.PLUS_INSIDE);
@@ -135,7 +135,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testInsert_hyperplaneConvexSubsetList_mixedCutRules() {
+    void testInsert_hyperplaneConvexSubsetList_mixedCutRules() {
         // act/assert
         checkMixedCutRuleInsertion(segs -> {
             tree.insert(Collections.singletonList(segs[0]), RegionCutRule.PLUS_INSIDE);
@@ -147,7 +147,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testInsert_boundarySource_mixedCutRules() {
+    void testInsert_boundarySource_mixedCutRules() {
         // arrange
         final Function<TestLineSegment, BoundarySource<TestLineSegment>> factory = seg -> () -> Stream.of(seg);
 
@@ -208,13 +208,13 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetLocation_emptyRoot() {
+    void testGetLocation_emptyRoot() {
         // act/assert
         Assertions.assertEquals(RegionLocation.INSIDE, root.getLocation());
     }
 
     @Test
-    public void testGetLocation_singleCut() {
+    void testGetLocation_singleCut() {
         // arrange
         root.insertCut(TestLine.X_AXIS);
 
@@ -235,7 +235,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetLocation_multipleCuts() {
+    void testGetLocation_multipleCuts() {
         // arrange
         tree.insert(Arrays.asList(
                 new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
@@ -265,7 +265,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSetLocation() {
+    void testSetLocation() {
         // arrange
         tree = emptyTree();
         tree.insert(TestLine.Y_AXIS.span());
@@ -281,7 +281,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSetLocation_invalidatesRegionProperties() {
+    void testSetLocation_invalidatesRegionProperties() {
         // arrange
         tree = emptyTree();
         tree.insert(TestLine.Y_AXIS.span());
@@ -298,7 +298,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSetLocation_noChange_doesNotInvalidateTree() {
+    void testSetLocation_noChange_doesNotInvalidateTree() {
         // arrange
         tree = emptyTree();
         tree.insert(TestLine.Y_AXIS.span());
@@ -315,7 +315,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSetLocation_invalidArgs() {
+    void testSetLocation_invalidArgs() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> root.setLocation(null),
                 IllegalArgumentException.class, "Invalid node location: null");
@@ -324,7 +324,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testCondense() {
+    void testCondense() {
         // arrange
         tree = emptyTree();
         tree.insert(TestLine.Y_AXIS.span(), RegionCutRule.MINUS_INSIDE);
@@ -343,7 +343,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testCondense_alreadyCondensed() {
+    void testCondense_alreadyCondensed() {
         // arrange
         tree = emptyTree();
         tree.insert(TestLine.Y_AXIS.span(), RegionCutRule.MINUS_INSIDE);
@@ -361,7 +361,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testCondense_invalidatesTreeWhenChanged() {
+    void testCondense_invalidatesTreeWhenChanged() {
         // arrange
         tree = emptyTree();
         tree.insert(TestLine.Y_AXIS.span(), RegionCutRule.MINUS_INSIDE);
@@ -379,7 +379,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testCondense_doesNotInvalidateTreeWhenNotChanged() {
+    void testCondense_doesNotInvalidateTreeWhenNotChanged() {
         // arrange
         tree = emptyTree();
 
@@ -395,7 +395,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testCut_nodeMethod() {
+    void testCut_nodeMethod() {
         // arrange
         tree = emptyTree();
 
@@ -423,7 +423,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testBoundaries_fullAndEmpty() {
+    void testBoundaries_fullAndEmpty() {
         // act/assert
         tree.setFull();
         Assertions.assertFalse(tree.boundaries().iterator().hasNext());
@@ -433,7 +433,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testBoundaries_finite() {
+    void testBoundaries_finite() {
         // arrange
         insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
 
@@ -453,7 +453,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testBoundaries_finite_inverted() {
+    void testBoundaries_finite_inverted() {
         // arrange
         insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
         tree.complement();
@@ -474,7 +474,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetBoundaries_fullAndEmpty() {
+    void testGetBoundaries_fullAndEmpty() {
         // act/assert
         tree.setFull();
         Assertions.assertEquals(0, tree.getBoundaries().size());
@@ -484,7 +484,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetBoundaries_finite() {
+    void testGetBoundaries_finite() {
         // arrange
         insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
 
@@ -504,7 +504,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetBoundaries_finite_inverted() {
+    void testGetBoundaries_finite_inverted() {
         // arrange
         insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
         tree.complement();
@@ -525,7 +525,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -553,19 +553,19 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testClassify_emptyTree() {
+    void testClassify_emptyTree() {
         // act/assert
         Assertions.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
     }
 
     @Test
-    public void testClassify_NaN() {
+    void testClassify_NaN() {
         // act/assert
         Assertions.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, Double.NaN)));
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -595,7 +595,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSetFull() {
+    void testSetFull() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -611,7 +611,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSetEmpty() {
+    void testSetEmpty() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -627,7 +627,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetRegionSizeProperties_cachesValueBasedOnVersion() {
+    void testGetRegionSizeProperties_cachesValueBasedOnVersion() {
         // act
         final RegionSizeProperties<TestPoint2D> first = tree.getRegionSizeProperties();
         final RegionSizeProperties<TestPoint2D> second = tree.getRegionSizeProperties();
@@ -643,28 +643,28 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetSize() {
+    void testGetSize() {
         // act/assert
         // make sure our stub value is pulled
         Assertions.assertEquals(1234, tree.getSize(), PartitionTestUtils.EPS);
     }
 
     @Test
-    public void testGetCentroid() {
+    void testGetCentroid() {
         // act/assert
         // make sure our stub value is pulled
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(12, 34), tree.getCentroid());
     }
 
     @Test
-    public void testGetBoundarySize_fullAndEmpty() {
+    void testGetBoundarySize_fullAndEmpty() {
         // act/assert
         Assertions.assertEquals(0.0, fullTree().getBoundarySize(), PartitionTestUtils.EPS);
         Assertions.assertEquals(0.0, emptyTree().getBoundarySize(), PartitionTestUtils.EPS);
     }
 
     @Test
-    public void testGetBoundarySize_infinite() {
+    void testGetBoundarySize_infinite() {
         // arrange
         final TestRegionBSPTree halfPos = new TestRegionBSPTree(true);
         halfPos.getRoot().cut(TestLine.X_AXIS);
@@ -678,7 +678,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetBoundarySize_alignedCuts() {
+    void testGetBoundarySize_alignedCuts() {
         // arrange
         final TestPoint2D p0 = TestPoint2D.ZERO;
         final TestPoint2D p1 = new TestPoint2D(0, 3);
@@ -701,7 +701,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetBoundarySize_box() {
+    void testGetBoundarySize_box() {
         // arrange
         insertBox(tree, new TestPoint2D(2, 2), new TestPoint2D(4, 1));
 
@@ -710,7 +710,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetBoundarySize_boxComplement() {
+    void testGetBoundarySize_boxComplement() {
         // arrange
         insertBox(tree, new TestPoint2D(2, 2), new TestPoint2D(4, 1));
         tree.complement();
@@ -720,7 +720,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetBoundarySize_recomputesAfterChange() {
+    void testGetBoundarySize_recomputesAfterChange() {
         // arrange
         insertBox(tree, new TestPoint2D(2, 2), new TestPoint2D(4, 1));
 
@@ -738,7 +738,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetCutBoundary_emptyTree() {
+    void testGetCutBoundary_emptyTree() {
         // act
         final RegionCutBoundary<TestPoint2D> boundary = root.getCutBoundary();
 
@@ -747,7 +747,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetCutBoundary_singleCut() {
+    void testGetCutBoundary_singleCut() {
         // arrange
         tree.insert(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
 
@@ -762,7 +762,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetCutBoundary_singleCut_leafNode() {
+    void testGetCutBoundary_singleCut_leafNode() {
         // arrange
         tree.insert(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
 
@@ -774,7 +774,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetCutBoundary_singleCorner() {
+    void testGetCutBoundary_singleCorner() {
         // arrange
         tree.insert(new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)));
         tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
@@ -793,7 +793,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetCutBoundary_leafNode() {
+    void testGetCutBoundary_leafNode() {
         // arrange
         tree.insert(new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)));
         tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
@@ -805,7 +805,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testFullEmpty_fullTree() {
+    void testFullEmpty_fullTree() {
         // act/assert
         Assertions.assertTrue(tree.isFull());
         Assertions.assertFalse(tree.isEmpty());
@@ -813,7 +813,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testFullEmpty_emptyTree() {
+    void testFullEmpty_emptyTree() {
         // arrange
         tree.complement();
 
@@ -824,7 +824,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testTransform_noCuts() {
+    void testTransform_noCuts() {
         // arrange
         final Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(p.getX(), p.getY() + 2));
 
@@ -839,7 +839,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testTransform_singleCut() {
+    void testTransform_singleCut() {
         // arrange
         tree.getRoot().insertCut(TestLine.X_AXIS);
 
@@ -862,7 +862,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testTransform_multipleCuts() {
+    void testTransform_multipleCuts() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -886,7 +886,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testTransform_xAxisReflection() {
+    void testTransform_xAxisReflection() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -911,7 +911,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testTransform_yAxisReflection() {
+    void testTransform_yAxisReflection() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -936,7 +936,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testTransform_xAndYAxisReflection() {
+    void testTransform_xAndYAxisReflection() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -961,7 +961,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testTransform_resetsCutBoundary() {
+    void testTransform_resetsCutBoundary() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -986,7 +986,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplement_rootOnly() {
+    void testComplement_rootOnly() {
         // act
         tree.complement();
 
@@ -999,7 +999,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplement_singleCut() {
+    void testComplement_singleCut() {
         // arrange
         root.insertCut(TestLine.X_AXIS);
 
@@ -1019,7 +1019,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplement_skewedBowtie() {
+    void testComplement_skewedBowtie() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -1053,7 +1053,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplement_addCutAfterComplement() {
+    void testComplement_addCutAfterComplement() {
         // arrange
         tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)));
         tree.complement();
@@ -1074,7 +1074,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplement_clearCutAfterComplement() {
+    void testComplement_clearCutAfterComplement() {
         // arrange
         tree.insert(Arrays.asList(
                     new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
@@ -1098,7 +1098,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplement_clearRootAfterComplement() {
+    void testComplement_clearRootAfterComplement() {
         // arrange
         tree.insert(Arrays.asList(
                     new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
@@ -1117,7 +1117,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplement_isReversible_root() {
+    void testComplement_isReversible_root() {
         // act
         tree.complement();
         tree.complement();
@@ -1131,7 +1131,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplement_isReversible_skewedBowtie() {
+    void testComplement_isReversible_skewedBowtie() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -1163,7 +1163,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplement_getCutBoundary() {
+    void testComplement_getCutBoundary() {
         // arrange
         tree.insert(Arrays.asList(
                 new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
@@ -1197,7 +1197,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplementOf_rootOnly() {
+    void testComplementOf_rootOnly() {
         // arrange
         final TestRegionBSPTree other = fullTree();
         insertSkewedBowtie(other);
@@ -1220,7 +1220,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testComplementOf_skewedBowtie() {
+    void testComplementOf_skewedBowtie() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -1259,7 +1259,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testCopy() {
+    void testCopy() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -1281,7 +1281,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testExtract() {
+    void testExtract() {
         // arrange
         insertSkewedBowtie(tree);
 
@@ -1307,7 +1307,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testExtract_complementedTree() {
+    void testExtract_complementedTree() {
         // arrange
         insertSkewedBowtie(tree);
         tree.complement();
@@ -1336,7 +1336,7 @@ public class AbstractRegionBSPTreeTest {
 
 
     @Test
-    public void testProject_emptyAndFull() {
+    void testProject_emptyAndFull() {
         // arrange
         final TestRegionBSPTree full = fullTree();
         final TestRegionBSPTree empty = emptyTree();
@@ -1347,7 +1347,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testProject_halfSpace() {
+    void testProject_halfSpace() {
         // arrange
         tree.getRoot().cut(TestLine.X_AXIS);
 
@@ -1362,7 +1362,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testProject_box() {
+    void testProject_box() {
         // arrange
         insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
 
@@ -1376,7 +1376,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSplit_empty() {
+    void testSplit_empty() {
         // arrange
         tree = emptyTree();
 
@@ -1391,7 +1391,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSplit_full() {
+    void testSplit_full() {
         // arrange
         tree = fullTree();
 
@@ -1419,7 +1419,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSplit_halfSpace() {
+    void testSplit_halfSpace() {
         // arrange
         tree.getRoot().insertCut(TestLine.X_AXIS);
 
@@ -1443,7 +1443,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSplit_box() {
+    void testSplit_box() {
         // arrange
         insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
 
@@ -1471,7 +1471,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSplit_box_onMinusOnly() {
+    void testSplit_box_onMinusOnly() {
         // arrange
         insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
 
@@ -1493,7 +1493,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testSplit_box_onPlusOnly() {
+    void testSplit_box_onPlusOnly() {
         // arrange
         insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
 
@@ -1515,7 +1515,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         tree.getRoot().cut(TestLine.X_AXIS);
 

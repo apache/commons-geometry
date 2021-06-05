@@ -43,7 +43,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AbstractBoundaryReadHandler3DTest {
+class AbstractBoundaryReadHandler3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -56,7 +56,7 @@ public class AbstractBoundaryReadHandler3DTest {
             Vector3D.ZERO, Vector3D.of(0, 1, 0), Vector3D.of(-1, 1, 0), Vector3D.of(-1, 0, 0)));
 
     @Test
-    public void testRead() throws IOException {
+    void testRead() throws IOException {
         // arrange
         final List<FacetDefinition> facets = Arrays.asList(FACET_1, FACET_2);
         final TestReadHandler3D handler = new TestReadHandler3D(facets);
@@ -74,7 +74,7 @@ public class AbstractBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testReadTriangleMesh() throws IOException {
+    void testReadTriangleMesh() throws IOException {
         // arrange
         final List<FacetDefinition> facets = Arrays.asList(FACET_1, FACET_2);
         final TestReadHandler3D handler = new TestReadHandler3D(facets);
@@ -93,7 +93,7 @@ public class AbstractBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testBoundaries() throws IOException {
+    void testBoundaries() throws IOException {
         // arrange
         final List<FacetDefinition> facets = Arrays.asList(FACET_1, FACET_2);
         final TestReadHandler3D handler = new TestReadHandler3D(facets);
@@ -117,7 +117,7 @@ public class AbstractBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testFacets() throws IOException {
+    void testFacets() throws IOException {
         // arrange
         final List<FacetDefinition> facets = Arrays.asList(FACET_1, FACET_2);
         final TestReadHandler3D handler = new TestReadHandler3D(facets);
@@ -141,7 +141,7 @@ public class AbstractBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testFacetIterator() {
+    void testFacetIterator() {
         // arrange
         final StubFacetDefinitionReader reader = new StubFacetDefinitionReader(Arrays.asList(FACET_1, FACET_2));
         final FacetDefinitionReaderIterator it = new FacetDefinitionReaderIterator(reader);
@@ -158,7 +158,7 @@ public class AbstractBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testFacetIterator_readFails() {
+    void testFacetIterator_readFails() {
         // arrange
         final StubFacetDefinitionReader reader = new StubFacetDefinitionReader(Arrays.asList(FACET_1, FACET_2));
         reader.fail = true;

@@ -30,12 +30,12 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PolygonObjParserTest {
+class PolygonObjParserTest {
 
     private static final double EPS = 1e-10;
 
     @Test
-    public void testInitialState() {
+    void testInitialState() {
         // act
         final PolygonObjParser p = parser("");
 
@@ -48,7 +48,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testNextKeyword() throws IOException {
+    void testNextKeyword() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "#comment",
@@ -81,7 +81,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testNextKeyword_polygonKeywordsOnly_valid() throws IOException {
+    void testNextKeyword_polygonKeywordsOnly_valid() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v",
@@ -111,7 +111,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testNextKeyword_polygonKeywordsOnly_invalid() throws IOException {
+    void testNextKeyword_polygonKeywordsOnly_invalid() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "",
@@ -128,7 +128,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testNextKeyword_emptyContent() throws IOException {
+    void testNextKeyword_emptyContent() throws IOException {
         // arrange
         final PolygonObjParser p = parser("");
 
@@ -137,7 +137,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testNextKeyword_unexpectedContent() throws IOException {
+    void testNextKeyword_unexpectedContent() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                     " f",
@@ -157,7 +157,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadDataLine() throws IOException {
+    void testReadDataLine() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "  line\t",
@@ -177,7 +177,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testDiscardDataLine() throws IOException {
+    void testDiscardDataLine() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "  line\t",
@@ -208,7 +208,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadVector() throws IOException {
+    void testReadVector() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "1.01 3e-02 123.999 extra"
@@ -219,7 +219,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadVector_parseFailures() throws IOException {
+    void testReadVector_parseFailures() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "0.1 0.2 a",
@@ -240,7 +240,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadDoubles() throws IOException {
+    void testReadDoubles() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "0.1 0.2 3e2 4e2 500.01",
@@ -269,7 +269,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadDoubles_parseFailures() throws IOException {
+    void testReadDoubles_parseFailures() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "0.1 0.2 a",
@@ -289,7 +289,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadFace() throws IOException {
+    void testReadFace() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -394,7 +394,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadFace_notEnoughVertices() throws IOException {
+    void testReadFace_notEnoughVertices() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -413,7 +413,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadFace_invalidVertexIndex() throws IOException {
+    void testReadFace_invalidVertexIndex() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -453,7 +453,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadFace_invalidTextureIndex() throws IOException {
+    void testReadFace_invalidTextureIndex() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -496,7 +496,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testReadFace_invalidNormalIndex() throws IOException {
+    void testReadFace_invalidNormalIndex() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -539,7 +539,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testParse() throws IOException {
+    void testParse() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -627,7 +627,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testFace_getDefinedCompositeNormal() throws IOException {
+    void testFace_getDefinedCompositeNormal() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",
@@ -675,7 +675,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testFace_computeNormalFromVertices() throws IOException {
+    void testFace_computeNormalFromVertices() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",
@@ -706,7 +706,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testFace_getVertexAttributesCounterClockwise() throws IOException {
+    void testFace_getVertexAttributesCounterClockwise() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",
@@ -742,7 +742,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testFace_getVertices() throws IOException {
+    void testFace_getVertices() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",
@@ -770,7 +770,7 @@ public class PolygonObjParserTest {
     }
 
     @Test
-    public void testFace_getVerticesCounterClockwise() throws IOException {
+    void testFace_getVerticesCounterClockwise() throws IOException {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",

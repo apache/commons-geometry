@@ -27,7 +27,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BinaryStlWriterTest {
+class BinaryStlWriterTest {
 
     private static final double TEST_EPS = 1e-7;
 
@@ -36,7 +36,7 @@ public class BinaryStlWriterTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     @Test
-    public void testWriteHeader_nullHeaderContent() throws IOException {
+    void testWriteHeader_nullHeaderContent() throws IOException {
         // act
         try (BinaryStlWriter writer = new BinaryStlWriter(out)) {
             writer.writeHeader(null, Short.MAX_VALUE);
@@ -51,7 +51,7 @@ public class BinaryStlWriterTest {
     }
 
     @Test
-    public void testWriteHeader_givenHeaderContent() throws IOException {
+    void testWriteHeader_givenHeaderContent() throws IOException {
         // arrange
         final byte[] headerContent = new byte[StlConstants.BINARY_HEADER_BYTES];
         Arrays.fill(headerContent, (byte) 1);
@@ -70,7 +70,7 @@ public class BinaryStlWriterTest {
     }
 
     @Test
-    public void testWriteHeader_givenHeaderContentExceedsMaxLength() throws IOException {
+    void testWriteHeader_givenHeaderContentExceedsMaxLength() throws IOException {
         // arrange
         final byte[] headerContent = new byte[2 * StlConstants.BINARY_HEADER_BYTES];
         Arrays.fill(headerContent, (byte) 1);
@@ -89,7 +89,7 @@ public class BinaryStlWriterTest {
     }
 
     @Test
-    public void testWriteFacet() throws IOException {
+    void testWriteFacet() throws IOException {
         // arrange
         try (BinaryStlWriter writer = new BinaryStlWriter(out)) {
             writer.writeHeader(null, 2);
@@ -143,7 +143,7 @@ public class BinaryStlWriterTest {
     }
 
     @Test
-    public void testWriteFacet_ordersFacetCounterClockwise() throws IOException {
+    void testWriteFacet_ordersFacetCounterClockwise() throws IOException {
         // arrange
         try (BinaryStlWriter writer = new BinaryStlWriter(out)) {
             writer.writeHeader(null, 2);
@@ -196,7 +196,7 @@ public class BinaryStlWriterTest {
     }
 
     @Test
-    public void testWriteFacet_invalidNormalGiven() throws IOException {
+    void testWriteFacet_invalidNormalGiven() throws IOException {
         // arrange
         try (BinaryStlWriter writer = new BinaryStlWriter(out)) {
             writer.writeHeader(null, 3);

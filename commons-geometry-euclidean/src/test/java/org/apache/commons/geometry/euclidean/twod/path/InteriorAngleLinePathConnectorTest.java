@@ -36,7 +36,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class InteriorAngleLinePathConnectorTest {
+class InteriorAngleLinePathConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -44,7 +44,7 @@ public class InteriorAngleLinePathConnectorTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testConnectAll_noSegments() {
+    void testConnectAll_noSegments() {
         runWithMaxAndMin(connector -> {
             // arrange
             final List<LineConvexSubset> segments = new ArrayList<>();
@@ -58,7 +58,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleFiniteSegment() {
+    void testConnectAll_singleFiniteSegment() {
         runWithMaxAndMin(connector -> {
             // arrange
             final List<LineConvexSubset> segments = Collections.singletonList(
@@ -76,7 +76,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_dualConnectedSegments() {
+    void testConnectAll_dualConnectedSegments() {
         runWithMaxAndMin(connector -> {
             // arrange
             final List<LineConvexSubset> segments = Arrays.asList(
@@ -96,7 +96,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleFiniteSegmentLoop() {
+    void testConnectAll_singleFiniteSegmentLoop() {
         runWithMaxAndMin(connector -> {
             // arrange
             final List<LineConvexSubset> segments = shuffle(createSquare(Vector2D.ZERO, 1, 1));
@@ -114,7 +114,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_disjointPaths() {
+    void testConnectAll_disjointPaths() {
         runWithMaxAndMin(connector -> {
             // arrange
             final List<LineConvexSubset> segments = new ArrayList<>(createSquare(Vector2D.ZERO, 1, 1));
@@ -143,7 +143,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_squaresJoinedAtVertex_maximize() {
+    void testConnectAll_squaresJoinedAtVertex_maximize() {
         // arrange
         final Maximize connector = new Maximize();
 
@@ -167,7 +167,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_multipleSegmentsAtVertex_maximize() {
+    void testConnectAll_multipleSegmentsAtVertex_maximize() {
         // arrange
         final Maximize connector = new Maximize();
 
@@ -190,7 +190,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_squaresJoinedAtVertex_minimize() {
+    void testConnectAll_squaresJoinedAtVertex_minimize() {
         // arrange
         final Minimize connector = new Minimize();
 
@@ -216,7 +216,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_multipleSegmentsAtVertex_minimize() {
+    void testConnectAll_multipleSegmentsAtVertex_minimize() {
         // arrange
         final Minimize connector = new Minimize();
 
@@ -239,7 +239,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectMaximized() {
+    void testConnectMaximized() {
         // arrange
         final List<LineConvexSubset> segments = new ArrayList<>();
         segments.add(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
@@ -260,7 +260,7 @@ public class InteriorAngleLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectMinimized() {
+    void testConnectMinimized() {
         // arrange
         final List<LineConvexSubset> segments = new ArrayList<>();
         segments.add(Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));

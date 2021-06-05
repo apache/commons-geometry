@@ -25,13 +25,13 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SimpleFacetDefinitionTest {
+class SimpleFacetDefinitionTest {
 
     private static final List<Vector3D> FACET_PTS = Arrays.asList(
             Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 0), Vector3D.of(0, 1, 0));
 
     @Test
-    public void testProperties_verticesOnly() {
+    void testProperties_verticesOnly() {
         // act
         final SimpleFacetDefinition f = new SimpleFacetDefinition(new ArrayList<>(FACET_PTS));
 
@@ -48,7 +48,7 @@ public class SimpleFacetDefinitionTest {
     }
 
     @Test
-    public void testProperties_verticesAndNormal() {
+    void testProperties_verticesAndNormal() {
         // arrange
         final Vector3D normal = Vector3D.ZERO; // invalid normal is accepted
 
@@ -68,7 +68,7 @@ public class SimpleFacetDefinitionTest {
     }
 
     @Test
-    public void testCtor_invalidArgs() {
+    void testCtor_invalidArgs() {
         // arrange
         final Vector3D normal = Vector3D.ZERO;
         final List<Vector3D> invalid = Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X);
@@ -95,7 +95,7 @@ public class SimpleFacetDefinitionTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final SimpleFacetDefinition f = new SimpleFacetDefinition(FACET_PTS, Vector3D.Unit.PLUS_Z);
 

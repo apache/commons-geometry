@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test class for MonotoneChain.
  */
-public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
+class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
 
     @Override
     protected ConvexHullGenerator2D createConvexHullGenerator(final boolean includeCollinearPoints) {
@@ -37,7 +37,7 @@ public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
     // ------------------------------------------------------------------------------
 
     @Test
-    public void testConvergenceException() {
+    void testConvergenceException() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
 

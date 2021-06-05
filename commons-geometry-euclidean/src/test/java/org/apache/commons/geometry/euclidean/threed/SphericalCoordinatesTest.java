@@ -23,7 +23,7 @@ import org.apache.commons.numbers.angle.Angle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SphericalCoordinatesTest {
+class SphericalCoordinatesTest {
 
     private static final double EPS = 1e-10;
 
@@ -35,7 +35,7 @@ public class SphericalCoordinatesTest {
     private static final double MINUS_THREE_QUARTER_PI = -0.75 * Math.PI;
 
     @Test
-    public void testOf() {
+    void testOf() {
         // act/assert
         checkSpherical(SphericalCoordinates.of(0, 0, 0), 0, 0, 0);
         checkSpherical(SphericalCoordinates.of(0.1, 0.2, 0.3), 0.1, 0.2, 0.3);
@@ -47,7 +47,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testOf_normalizesAzimuthAngle() {
+    void testOf_normalizesAzimuthAngle() {
         // act/assert
         checkSpherical(SphericalCoordinates.of(2, Angle.TWO_PI, 0), 2, 0, 0);
         checkSpherical(SphericalCoordinates.of(2, Angle.PI_OVER_TWO + Angle.TWO_PI, 0), 2, Angle.PI_OVER_TWO, 0);
@@ -56,7 +56,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testOf_normalizesPolarAngle() {
+    void testOf_normalizesPolarAngle() {
         // act/assert
         checkSpherical(SphericalCoordinates.of(1, 0, 0), 1, 0, 0);
 
@@ -74,7 +74,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testOf_angleWrapAround() {
+    void testOf_angleWrapAround() {
         // act/assert
         checkOfWithAngleWrapAround(1, 0, 0);
         checkOfWithAngleWrapAround(1, QUARTER_PI, QUARTER_PI);
@@ -92,7 +92,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testOf_negativeRadius() {
+    void testOf_negativeRadius() {
         // act/assert
         checkSpherical(SphericalCoordinates.of(-2, 0, 0), 2, Math.PI, Math.PI);
         checkSpherical(SphericalCoordinates.of(-2, Math.PI, Math.PI), 2, 0, 0);
@@ -105,7 +105,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testOf_NaNAndInfinite() {
+    void testOf_NaNAndInfinite() {
         // act/assert
         checkSpherical(SphericalCoordinates.of(Double.NaN, Double.NaN, Double.NaN),
                 Double.NaN, Double.NaN, Double.NaN);
@@ -116,7 +116,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testFromCartesian_coordinates() {
+    void testFromCartesian_coordinates() {
         // arrange
         final double sqrt3 = Math.sqrt(3);
 
@@ -137,7 +137,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testFromCartesian_vector() {
+    void testFromCartesian_vector() {
         // arrange
         final double sqrt3 = Math.sqrt(3);
 
@@ -158,7 +158,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testToVector() {
+    void testToVector() {
         // arrange
         final double sqrt3 = Math.sqrt(3);
 
@@ -179,7 +179,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testToCartesian_static() {
+    void testToCartesian_static() {
         // arrange
         final double sqrt3 = Math.sqrt(3);
 
@@ -200,7 +200,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testGetDimension() {
+    void testGetDimension() {
         // arrange
         final SphericalCoordinates s = SphericalCoordinates.of(0, 0, 0);
 
@@ -209,7 +209,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testNaN() {
+    void testNaN() {
         // act/assert
         Assertions.assertTrue(SphericalCoordinates.of(0, 0, Double.NaN).isNaN());
         Assertions.assertTrue(SphericalCoordinates.of(0, Double.NaN, 0).isNaN());
@@ -222,7 +222,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testInfinite() {
+    void testInfinite() {
         // act/assert
         Assertions.assertTrue(SphericalCoordinates.of(0, 0, Double.NEGATIVE_INFINITY).isInfinite());
         Assertions.assertTrue(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, 0).isInfinite());
@@ -240,7 +240,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testFinite() {
+    void testFinite() {
         // act/assert
         Assertions.assertTrue(SphericalCoordinates.of(1, 1, 1).isFinite());
 
@@ -259,7 +259,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final SphericalCoordinates a = SphericalCoordinates.of(1, 2, 3);
         final SphericalCoordinates b = SphericalCoordinates.of(10, 2, 3);
@@ -278,7 +278,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testHashCode_NaNInstancesHaveSameHashCode() {
+    void testHashCode_NaNInstancesHaveSameHashCode() {
         // arrange
         final SphericalCoordinates a = SphericalCoordinates.of(1, 2, Double.NaN);
         final SphericalCoordinates b = SphericalCoordinates.of(1, Double.NaN, 3);
@@ -290,7 +290,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final SphericalCoordinates a = SphericalCoordinates.of(1, 2, 3);
         final SphericalCoordinates b = SphericalCoordinates.of(10, 2, 3);
@@ -309,7 +309,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testEquals_NaNInstancesEqual() {
+    void testEquals_NaNInstancesEqual() {
         // arrange
         final SphericalCoordinates a = SphericalCoordinates.of(1, 2, Double.NaN);
         final SphericalCoordinates b = SphericalCoordinates.of(1, Double.NaN, 3);
@@ -321,7 +321,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testEqualsAndHashCode_signedZeroConsistency() {
+    void testEqualsAndHashCode_signedZeroConsistency() {
         // arrange
         final SphericalCoordinates a = SphericalCoordinates.of(0.0, -0.0, 0.0);
         final SphericalCoordinates b = SphericalCoordinates.of(-0.0, 0.0, -0.0);
@@ -340,7 +340,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final SphericalCoordinates sph = SphericalCoordinates.of(1, 2, 3);
         final Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}, 3.{0,2}\\)");
@@ -353,7 +353,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testParse() {
+    void testParse() {
         // act/assert
         checkSpherical(SphericalCoordinates.parse("(1, 2, 3)"), 1, 2, 3);
         checkSpherical(SphericalCoordinates.parse("(  -2.0 , 1 , -5e-1)"), 2, 1 + Math.PI, Math.PI - 0.5);
@@ -361,13 +361,13 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testParse_failure() {
+    void testParse_failure() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> SphericalCoordinates.parse("abc"));
     }
 
     @Test
-    public void testNormalizeAzimuth() {
+    void testNormalizeAzimuth() {
         // act/assert
         Assertions.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(0), EPS);
 
@@ -383,7 +383,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testNormalizeAzimuth_NaNAndInfinite() {
+    void testNormalizeAzimuth_NaNAndInfinite() {
         // act/assert
         Assertions.assertEquals(Double.NaN, SphericalCoordinates.normalizeAzimuth(Double.NaN), EPS);
         Assertions.assertEquals(Double.NEGATIVE_INFINITY, SphericalCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), EPS);
@@ -391,7 +391,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testNormalizePolar() {
+    void testNormalizePolar() {
         // act/assert
         Assertions.assertEquals(0.0, SphericalCoordinates.normalizePolar(0), EPS);
 
@@ -407,7 +407,7 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testNormalizePolar_NaNAndInfinite() {
+    void testNormalizePolar_NaNAndInfinite() {
         // act/assert
         Assertions.assertEquals(Double.NaN, SphericalCoordinates.normalizePolar(Double.NaN), EPS);
         Assertions.assertEquals(Double.NEGATIVE_INFINITY, SphericalCoordinates.normalizePolar(Double.NEGATIVE_INFINITY), EPS);

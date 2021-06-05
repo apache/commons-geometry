@@ -30,13 +30,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-public class UrlGeometryInputTest {
+class UrlGeometryInputTest {
 
     @TempDir
     Path tempDir;
 
     @Test
-    public void testCtor_fileOnly() throws IOException {
+    void testCtor_fileOnly() throws IOException {
         // arrange
         final URL url = Paths.get("some/path/test.txt").toUri().toURL();
 
@@ -50,7 +50,7 @@ public class UrlGeometryInputTest {
     }
 
     @Test
-    public void testCtor_fileAndCharset() throws IOException {
+    void testCtor_fileAndCharset() throws IOException {
         // arrange
         final URL url = getClass().getResource("/java/lang/String.class");
         final Charset charset = StandardCharsets.UTF_8;
@@ -65,7 +65,7 @@ public class UrlGeometryInputTest {
     }
 
     @Test
-    public void testGetInputStream() throws IOException {
+    void testGetInputStream() throws IOException {
         // arrange
         final Path file = tempDir.resolve("test");
         final byte[] bytes = "abc".getBytes(StandardCharsets.UTF_8);
@@ -85,7 +85,7 @@ public class UrlGeometryInputTest {
     }
 
     @Test
-    public void testToString() throws IOException {
+    void testToString() throws IOException {
         // arrange
         final UrlGeometryInput in = new UrlGeometryInput(Paths.get("some/path/test.txt").toUri().toURL());
 

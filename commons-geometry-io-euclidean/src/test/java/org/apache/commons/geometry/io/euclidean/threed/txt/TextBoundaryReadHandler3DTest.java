@@ -34,21 +34,21 @@ import org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TextBoundaryReadHandler3DTest {
+class TextBoundaryReadHandler3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
     private final TextBoundaryReadHandler3D handler = new TextBoundaryReadHandler3D();
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // act/assert
         Assertions.assertEquals(GeometryFormat3D.TXT, handler.getFormat());
         Assertions.assertEquals(StandardCharsets.UTF_8, handler.getDefaultCharset());
     }
 
     @Test
-    public void testFacetDefinitionReader() throws IOException {
+    void testFacetDefinitionReader() throws IOException {
         // arrange
         final InputStream in = input("0 0 0; 1 1 0; 0 1 0", StandardCharsets.UTF_8);
 
@@ -64,7 +64,7 @@ public class TextBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testFacetDefinitionReader_usesInputCharset() throws IOException {
+    void testFacetDefinitionReader_usesInputCharset() throws IOException {
         // arrange
         final InputStream in = input("0 0 0; 1 1 0; 0 1 0", StandardCharsets.UTF_16);
 
@@ -80,7 +80,7 @@ public class TextBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testFacetDefinitionReader_setDefaultCharset() throws IOException {
+    void testFacetDefinitionReader_setDefaultCharset() throws IOException {
         // arrange
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         final InputStream in = input("0 0 0; 1 1 0; 0 1 0", StandardCharsets.UTF_16);
@@ -97,7 +97,7 @@ public class TextBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testFacetDefinitionReader_close() throws IOException {
+    void testFacetDefinitionReader_close() throws IOException {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(input("", StandardCharsets.UTF_8));
 

@@ -29,7 +29,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ConvexHull2DTest {
+class ConvexHull2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -37,7 +37,7 @@ public class ConvexHull2DTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testProperties_noPoints() {
+    void testProperties_noPoints() {
         // act
         final ConvexHull2D hull = new ConvexHull2D(Collections.emptyList(), TEST_PRECISION);
 
@@ -54,7 +54,7 @@ public class ConvexHull2DTest {
     }
 
     @Test
-    public void testProperties_singlePoint() {
+    void testProperties_singlePoint() {
         // arrange
         final List<Vector2D> vertices = Collections.singletonList(Vector2D.Unit.PLUS_X);
 
@@ -74,7 +74,7 @@ public class ConvexHull2DTest {
     }
 
     @Test
-    public void testProperties_twoPoints() {
+    void testProperties_twoPoints() {
         // arrange
         final List<Vector2D> vertices = Arrays.asList(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
 
@@ -96,7 +96,7 @@ public class ConvexHull2DTest {
     }
 
     @Test
-    public void testProperties_threePoints() {
+    void testProperties_threePoints() {
         // arrange
         final List<Vector2D> vertices = Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y);
 
@@ -120,7 +120,7 @@ public class ConvexHull2DTest {
     }
 
     @Test
-    public void testProperties_fourPoints() {
+    void testProperties_fourPoints() {
         // arrange
         final List<Vector2D> vertices = Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X,
                 Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y);
@@ -146,7 +146,7 @@ public class ConvexHull2DTest {
     }
 
     @Test
-    public void testVertexListCannotBeModified() {
+    void testVertexListCannotBeModified() {
         // arrange
         final List<Vector2D> vertices = new ArrayList<>();
         vertices.add(Vector2D.Unit.PLUS_X);
@@ -163,7 +163,7 @@ public class ConvexHull2DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final List<Vector2D> vertices = Collections.singletonList(Vector2D.Unit.PLUS_X);
         final ConvexHull2D hull = new ConvexHull2D(vertices, TEST_PRECISION);

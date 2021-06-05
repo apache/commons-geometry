@@ -31,7 +31,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PlaneTest {
+class PlaneTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -39,7 +39,7 @@ public class PlaneTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromNormal() {
+    void testFromNormal() {
         // act/assert
         checkPlane(Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION), Vector3D.ZERO, Vector3D.Unit.PLUS_X);
         checkPlane(Planes.fromNormal(Vector3D.of(7, 0, 0), TEST_PRECISION), Vector3D.ZERO, Vector3D.Unit.PLUS_X);
@@ -52,13 +52,13 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromNormal_illegalArguments() {
+    void testFromNormal_illegalArguments() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromNormal(Vector3D.ZERO, TEST_PRECISION));
     }
 
     @Test
-    public void testFromPointAndNormal() {
+    void testFromPointAndNormal() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
 
@@ -72,7 +72,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPointAndNormal_illegalArguments() {
+    void testFromPointAndNormal_illegalArguments() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
 
@@ -81,7 +81,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints() {
+    void testFromPoints() {
         // arrange
         final Vector3D a = Vector3D.of(1, 1, 1);
         final Vector3D b = Vector3D.of(1, 1, 4.3);
@@ -96,7 +96,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_planeContainsSourcePoints() {
+    void testFromPoints_planeContainsSourcePoints() {
         // arrange
         final Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         final Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
@@ -112,7 +112,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_illegalArguments() {
+    void testFromPoints_illegalArguments() {
         // arrange
         final Vector3D a = Vector3D.of(1, 0, 0);
         final Vector3D b = Vector3D.of(0, 1, 0);
@@ -126,7 +126,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_collection_threePoints() {
+    void testFromPoints_collection_threePoints() {
         // arrange
         final List<Vector3D> pts = Arrays.asList(
                     Vector3D.of(1, 1, 0),
@@ -146,7 +146,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_collection_someCollinearPoints() {
+    void testFromPoints_collection_someCollinearPoints() {
         // arrange
         final List<Vector3D> pts = Arrays.asList(
                     Vector3D.of(1, 0, 2),
@@ -168,7 +168,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_collection_concaveWithCollinearAndDuplicatePoints() {
+    void testFromPoints_collection_concaveWithCollinearAndDuplicatePoints() {
         // arrange
         final List<Vector3D> pts = Arrays.asList(
                     Vector3D.of(1, 0, 1),
@@ -198,7 +198,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_collection_choosesBestOrientation() {
+    void testFromPoints_collection_choosesBestOrientation() {
         // act/assert
         checkPlane(Planes.fromPoints(Arrays.asList(
                 Vector3D.of(1, 0, 2),
@@ -266,7 +266,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_collection_illegalArguments() {
+    void testFromPoints_collection_illegalArguments() {
         // arrange
         final Vector3D a = Vector3D.ZERO;
         final Vector3D b = Vector3D.Unit.PLUS_X;
@@ -279,7 +279,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_collection_allPointsCollinear() {
+    void testFromPoints_collection_allPointsCollinear() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Arrays.asList(
                 Vector3D.ZERO,
@@ -295,7 +295,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_collection_notEnoughUniquePoints() {
+    void testFromPoints_collection_notEnoughUniquePoints() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Arrays.asList(
                 Vector3D.ZERO,
@@ -311,7 +311,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testFromPoints_collection_pointsNotOnSamePlane() {
+    void testFromPoints_collection_pointsNotOnSamePlane() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Planes.fromPoints(Arrays.asList(
                 Vector3D.ZERO,
@@ -322,7 +322,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testGetEmbedding() {
+    void testGetEmbedding() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
         EuclideanTestUtils.permuteSkipZero(-4, 4, 1, (x, y, z) -> {
@@ -353,7 +353,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testContains_point() {
+    void testContains_point() {
         // arrange
         final Plane plane = Planes.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
         final double halfEps = 0.5 * TEST_EPS;
@@ -371,7 +371,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testContains_line() {
+    void testContains_line() {
         // arrange
         final Plane plane = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
@@ -388,7 +388,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testContains_plane() {
+    void testContains_plane() {
         // arrange
         final Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         final Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
@@ -414,7 +414,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final Plane plane = Planes.fromPointAndNormal(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -433,7 +433,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIsParallelAndOffset_line() {
+    void testIsParallelAndOffset_line() {
         // arrange
         final Plane plane = Planes.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
 
@@ -453,7 +453,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIsParallelAndOffset_plane() {
+    void testIsParallelAndOffset_plane() {
         // arrange
         final Plane plane = Planes.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
         final Plane parallelPlane = Planes.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
@@ -481,7 +481,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testOffset_point() {
+    void testOffset_point() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 1, 1);
         final Plane plane = Planes.fromPointAndNormal(p1, Vector3D.of(0.2, 0, 0), TEST_PRECISION);
@@ -498,7 +498,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testProject_point() {
+    void testProject_point() {
         // arrange
         final Vector3D pt = Vector3D.of(-3, -2, -1);
         EuclideanTestUtils.permuteSkipZero(-4, 4, 1, (nx, ny, nz) -> {
@@ -519,7 +519,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testProject_line() {
+    void testProject_line() {
         // arrange
         final Plane plane = Planes.fromPointAndNormal(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final Line3D line = Lines3D.fromPoints(Vector3D.of(1, 0, 1), Vector3D.of(2, 0, 2), TEST_PRECISION);
@@ -538,7 +538,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testTransform_rotationAroundPoint() {
+    void testTransform_rotationAroundPoint() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final Plane plane = Planes.fromPointAndNormal(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -554,7 +554,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testTransform_asymmetricScaling() {
+    void testTransform_asymmetricScaling() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 1, 0);
         final Plane plane = Planes.fromPointAndNormal(pt, Vector3D.of(1, 1, 0), TEST_PRECISION);
@@ -576,7 +576,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testTransform_negateOneComponent() {
+    void testTransform_negateOneComponent() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final Plane plane = Planes.fromPointAndNormal(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -595,7 +595,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testTransform_negateTwoComponents() {
+    void testTransform_negateTwoComponents() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final Plane plane = Planes.fromPointAndNormal(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -610,7 +610,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testTransform_negateAllComponents() {
+    void testTransform_negateAllComponents() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
         final Plane plane = Planes.fromPointAndNormal(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -625,7 +625,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testTransform_consistency() {
+    void testTransform_consistency() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
         final Vector3D normal = Vector3D.Unit.of(1, 1, 1);
@@ -667,7 +667,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testRotate() {
+    void testRotate() {
         // arrange
         final Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         final Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
@@ -693,7 +693,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testTranslate() {
+    void testTranslate() {
         // arrange
         final Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         final Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
@@ -718,7 +718,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_withLine() {
+    void testIntersection_withLine() {
         // arrange
         final Plane plane = Planes.fromPointAndNormal(Vector3D.of(1, 2, 3), Vector3D.of(-4, 1, -5), TEST_PRECISION);
         final Line3D line = Lines3D.fromPoints(Vector3D.of(0.2, -3.5, 0.7), Vector3D.of(1.2, -2.5, -0.3), TEST_PRECISION);
@@ -735,7 +735,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_withLine_noIntersection() {
+    void testIntersection_withLine_noIntersection() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
         final Vector3D normal = Vector3D.of(-4, 1, -5);
@@ -752,7 +752,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_withPlane() {
+    void testIntersection_withPlane() {
         // arrange
         final Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         final Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
@@ -772,7 +772,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_withPlane_noIntersection() {
+    void testIntersection_withPlane_noIntersection() {
         // arrange
         final Plane plane = Planes.fromPointAndNormal(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
@@ -785,7 +785,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_threePlanes() {
+    void testIntersection_threePlanes() {
         // arrange
         final Vector3D pt = Vector3D.of(1.2, 3.4, -5.8);
         final Plane a = Planes.fromPointAndNormal(pt, Vector3D.of(1, 3, 3), TEST_PRECISION);
@@ -800,7 +800,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_threePlanes_intersectInLine() {
+    void testIntersection_threePlanes_intersectInLine() {
         // arrange
         final Plane a = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
         final Plane b = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.of(1, 0.5, 0), TEST_PRECISION);
@@ -814,7 +814,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_threePlanes_twoParallel() {
+    void testIntersection_threePlanes_twoParallel() {
         // arrange
         final Plane a = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final Plane b = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
@@ -828,7 +828,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_threePlanes_allParallel() {
+    void testIntersection_threePlanes_allParallel() {
         // arrange
         final Plane a = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final Plane b = Planes.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -842,7 +842,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_threePlanes_coincidentPlanes() {
+    void testIntersection_threePlanes_coincidentPlanes() {
         // arrange
         final Plane a = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final Plane b = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -856,7 +856,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testSpan() {
+    void testSpan() {
         // arrange
         final Plane plane = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
@@ -877,7 +877,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testSimilarOrientation() {
+    void testSimilarOrientation() {
         // arrange
         final Plane plane = Planes.fromNormal(Vector3D.of(1, 0, 0), TEST_PRECISION);
 
@@ -893,7 +893,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testEq() {
+    void testEq() {
         // arrange
         final double eps = 1e-3;
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(eps);
@@ -924,7 +924,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
         final Vector3D normal = Vector3D.Unit.PLUS_X;
@@ -948,7 +948,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 2, 3);
         final Vector3D normal = Vector3D.Unit.PLUS_X;
@@ -971,7 +971,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Plane plane = Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 

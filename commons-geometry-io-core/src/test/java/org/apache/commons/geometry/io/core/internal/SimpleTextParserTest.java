@@ -25,14 +25,14 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SimpleTextParserTest {
+class SimpleTextParserTest {
 
     private static final double EPS = 1e-20;
 
     private static final int EOF = -1;
 
     @Test
-    public void testMaxStringLength_defaultValue() {
+    void testMaxStringLength_defaultValue() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -41,7 +41,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testMaxStringLength_illegalArg() throws IOException {
+    void testMaxStringLength_illegalArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -52,14 +52,14 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testCharacterSequence() throws IOException {
+    void testCharacterSequence() throws IOException {
         // act/assert
         assertCharacterSequence(parser(""), "");
         assertCharacterSequence(parser("abc def"), "abc def");
     }
 
     @Test
-    public void testCharacterPosition() throws IOException {
+    void testCharacterPosition() throws IOException {
         // arrange
         final SimpleTextParser p = parser(
                 "a b\n" +
@@ -103,7 +103,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testCharacterPosition_givenPosition() throws IOException {
+    void testCharacterPosition_givenPosition() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc\rdef");
 
@@ -125,7 +125,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testHasMoreCharacters() throws IOException {
+    void testHasMoreCharacters() throws IOException {
         // arrange
         final SimpleTextParser empty = parser("");
         final SimpleTextParser nonEmpty = parser("a");
@@ -139,7 +139,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testHasMoreCharactersOnLine() throws IOException {
+    void testHasMoreCharactersOnLine() throws IOException {
         // arrange
         final SimpleTextParser empty = parser("");
         final SimpleTextParser singleLine = parser("a");
@@ -181,7 +181,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testBasicTokenMethods() throws IOException {
+    void testBasicTokenMethods() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef\r\n\r ghi");
 
@@ -212,7 +212,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testGetCurrentTokenAsDouble() throws IOException {
+    void testGetCurrentTokenAsDouble() throws IOException {
         // arrange
         final SimpleTextParser p = parser("1e-4\n+5\n-4.001");
 
@@ -228,7 +228,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testGetCurrentTokenAsDouble_failures() throws IOException {
+    void testGetCurrentTokenAsDouble_failures() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc\n1.1.1a");
 
@@ -276,7 +276,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testGetCurrentTokenAsDouble_includedNumberFormatExceptionOnFailure() throws IOException {
+    void testGetCurrentTokenAsDouble_includedNumberFormatExceptionOnFailure() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
         p.nextLine();
@@ -287,7 +287,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testGetCurrentTokenAsInt() throws IOException {
+    void testGetCurrentTokenAsInt() throws IOException {
         // arrange
         final SimpleTextParser p = parser("0\n+5\n-401");
 
@@ -303,7 +303,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testGetCurrentTokenAsInt_failures() throws IOException {
+    void testGetCurrentTokenAsInt_failures() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc\n1.1.1a");
 
@@ -351,7 +351,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testGetCurrentTokenAsInt_includedNumberFormatExceptionOnFailure() throws IOException {
+    void testGetCurrentTokenAsInt_includedNumberFormatExceptionOnFailure() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
         p.nextLine();
@@ -362,7 +362,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testNext_lenArg() throws IOException {
+    void testNext_lenArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef\r\n\r ghi");
 
@@ -377,7 +377,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testNextWithLineContinuation_lenArg() throws IOException {
+    void testNextWithLineContinuation_lenArg() throws IOException {
         // arrange
         final char cont = '\\';
         final SimpleTextParser p = parser("a\\bcdef\\\r\n\r ghi\\\n\\\n\\\rj");
@@ -393,7 +393,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testNext_lenArg_invalidArg() throws IOException {
+    void testNext_lenArg_invalidArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
         p.setMaxStringLength(2);
@@ -409,7 +409,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testNext_predicateArg() throws IOException {
+    void testNext_predicateArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("a\n 012\r\ndef");
 
@@ -433,7 +433,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testNext_predicateArg_exceedsMaxStringLength() throws IOException {
+    void testNext_predicateArg_exceedsMaxStringLength() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
         p.setMaxStringLength(4);
@@ -445,7 +445,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testNextWithLineContinuation_predicateArg() throws IOException {
+    void testNextWithLineContinuation_predicateArg() throws IOException {
         // arrange
         final char cont = '|';
         final SimpleTextParser p = parser("|\na\n 0|\r\n|\r12\r\nd|ef");
@@ -470,7 +470,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testNextLine() throws IOException {
+    void testNextLine() throws IOException {
         // arrange
         final SimpleTextParser p = parser("a\n 012\r\ndef\n\nx");
 
@@ -489,7 +489,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testNextAlphanumeric() throws IOException {
+    void testNextAlphanumeric() throws IOException {
         // arrange
         final SimpleTextParser p = parser("a10Fd;X23456789-0\ny");
 
@@ -511,7 +511,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testDiscard_lenArg() throws IOException {
+    void testDiscard_lenArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("\na,b c\r\n12.3\rdef\n");
 
@@ -542,7 +542,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testDiscardWithLineContinuation_lenArg() throws IOException {
+    void testDiscardWithLineContinuation_lenArg() throws IOException {
         // arrange
         final char cont = '|';
         final SimpleTextParser p = parser("\n|a|\r\n,b|\n|\r c\r\n12.3\rdef\n");
@@ -574,7 +574,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testDiscard_predicateArg() throws IOException {
+    void testDiscard_predicateArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("\na,b c\r\n12.3\rdef\n");
 
@@ -609,7 +609,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testDiscardWithLineContinuation_predicateArg() throws IOException {
+    void testDiscardWithLineContinuation_predicateArg() throws IOException {
         // arrange
         final char cont = '|';
         final SimpleTextParser p = parser("\na,|\r\nb |c\r\n1|\r|\n2.3\rdef\n");
@@ -645,7 +645,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testDiscardWhitespace() throws IOException {
+    void testDiscardWhitespace() throws IOException {
         // arrange
         final SimpleTextParser p = parser("a\t\n\r\n   b c");
 
@@ -668,7 +668,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testDiscardLineWhitespace() throws IOException {
+    void testDiscardLineWhitespace() throws IOException {
         // arrange
         final SimpleTextParser p = parser("a\t\n\r\n   b c");
 
@@ -707,7 +707,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testDiscardNewLineSequence() throws IOException {
+    void testDiscardNewLineSequence() throws IOException {
         // arrange
         final SimpleTextParser p = parser("a\t\n\r\n   b\rc");
 
@@ -742,7 +742,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testDiscardLine() throws IOException {
+    void testDiscardLine() throws IOException {
         // arrange
         final SimpleTextParser p = parser("a\t\n\r\n   b c");
 
@@ -765,7 +765,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testPeek_lenArg() throws IOException {
+    void testPeek_lenArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef\r\n\r ghi");
 
@@ -796,7 +796,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testPeek_lenArg_invalidArg() throws IOException {
+    void testPeek_lenArg_invalidArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
         p.setMaxStringLength(4);
@@ -812,7 +812,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testPeek_predicateArg() throws IOException {
+    void testPeek_predicateArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef\r\n\r ghi");
 
@@ -837,7 +837,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testPeek_predicateArg_exceedsMaxStringLength() throws IOException {
+    void testPeek_predicateArg_exceedsMaxStringLength() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
         p.setMaxStringLength(4);
@@ -849,7 +849,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testMatch() throws IOException {
+    void testMatch() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -863,7 +863,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testMatch_failure() throws IOException {
+    void testMatch_failure() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -887,7 +887,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testMatch_ignoreCase() throws IOException {
+    void testMatch_ignoreCase() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -901,7 +901,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testMatchIgnoreCase_failure() throws IOException {
+    void testMatchIgnoreCase_failure() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -921,7 +921,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTryMatch() throws IOException {
+    void testTryMatch() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -942,7 +942,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTryMatch_noToken() throws IOException {
+    void testTryMatch_noToken() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -953,7 +953,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTryMatchIgnoreCase() throws IOException {
+    void testTryMatchIgnoreCase() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -973,7 +973,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTryMatchIgnoreCase_noToken() throws IOException {
+    void testTryMatchIgnoreCase_noToken() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -984,7 +984,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testChoose() throws IOException {
+    void testChoose() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1005,7 +1005,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testChoose_failure() throws IOException {
+    void testChoose_failure() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1033,7 +1033,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testChooseIgnoreCase() throws IOException {
+    void testChooseIgnoreCase() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1054,7 +1054,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testChooseIgnoreCase_failure() throws IOException {
+    void testChooseIgnoreCase_failure() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1078,7 +1078,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTryChoose() throws IOException {
+    void testTryChoose() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1103,7 +1103,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTryChoose_noToken() throws IOException {
+    void testTryChoose_noToken() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -1114,7 +1114,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTryChooseIgnoreCase() throws IOException {
+    void testTryChooseIgnoreCase() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1139,7 +1139,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTryChooseIgnoreCase_noToken() throws IOException {
+    void testTryChooseIgnoreCase_noToken() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -1150,7 +1150,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testUnexpectedToken() throws IOException {
+    void testUnexpectedToken() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc\ndef");
 
@@ -1178,7 +1178,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testUnexpectedToken_causeArg() throws IOException {
+    void testUnexpectedToken_causeArg() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
         final Exception cause = new Exception("test");
@@ -1193,7 +1193,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testUnexpectedToken_ioError() throws IOException {
+    void testUnexpectedToken_ioError() throws IOException {
         // arrange
         final FailBuffer b = new FailBuffer(new StringReader("abc"));
         final SimpleTextParser p = new SimpleTextParser(b);
@@ -1219,7 +1219,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTokenError() throws IOException {
+    void testTokenError() throws IOException {
         // arrange
         final SimpleTextParser p = parser("a\nbc");
         p.nextLine();
@@ -1234,7 +1234,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTokenError_noTokenSet() throws IOException {
+    void testTokenError_noTokenSet() throws IOException {
         // arrange
         final SimpleTextParser p = parser("ab\nc");
         p.readChar();
@@ -1247,7 +1247,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testTokenError_withCause() throws IOException {
+    void testTokenError_withCause() throws IOException {
         // arrange
         SimpleTextParser p = parser("a\nbc");
         p.nextLine();
@@ -1264,7 +1264,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testParseError_currentLineCol() throws IOException {
+    void testParseError_currentLineCol() throws IOException {
         // arrange
         final SimpleTextParser p = parser("a\nbc");
         p.discard(ch -> ch != 'b');
@@ -1277,7 +1277,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testParseError_currentLineCol_withCause() throws IOException {
+    void testParseError_currentLineCol_withCause() throws IOException {
         // arrange
         final SimpleTextParser p = parser("abc");
         p.readChar();
@@ -1291,7 +1291,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testParseError_givenLineCol() {
+    void testParseError_givenLineCol() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1303,7 +1303,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testParseError_givenLineCol_withCause() {
+    void testParseError_givenLineCol_withCause() {
         // arrange
         final SimpleTextParser p = parser("abc");
         final Exception cause = new Exception("test");
@@ -1316,7 +1316,7 @@ public class SimpleTextParserTest {
     }
 
     @Test
-    public void testCharacterPredicates() {
+    void testCharacterPredicates() {
         // act/assert
         assertMatchesAll(SimpleTextParser::isWhitespace, " \t\n\r");
         assertDoesNotMatchAny(SimpleTextParser::isWhitespace, "abcABC<>,./?:;'\"[]{}`~!@#$%^&*()_+-=");

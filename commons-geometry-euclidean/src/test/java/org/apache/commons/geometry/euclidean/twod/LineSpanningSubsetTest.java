@@ -25,7 +25,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LineSpanningSubsetTest {
+class LineSpanningSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -33,7 +33,7 @@ public class LineSpanningSubsetTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
@@ -60,7 +60,7 @@ public class LineSpanningSubsetTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(-0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X)
@@ -77,7 +77,7 @@ public class LineSpanningSubsetTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final LineConvexSubset span =
                 Lines.fromPointAndDirection(Vector2D.of(1, 2), Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
@@ -91,7 +91,7 @@ public class LineSpanningSubsetTest {
     }
 
     @Test
-    public void testClosest() {
+    void testClosest() {
         // arrange
         final Vector2D p1 = Vector2D.of(0, -1);
         final Vector2D p2 = Vector2D.of(0, 1);
@@ -115,7 +115,7 @@ public class LineSpanningSubsetTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final LineConvexSubset span =
                 Lines.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
@@ -130,7 +130,7 @@ public class LineSpanningSubsetTest {
     }
 
     @Test
-    public void testSplit() {
+    void testSplit() {
         // --- arrange
         final Vector2D pt = Vector2D.of(1, 1);
 
@@ -163,7 +163,7 @@ public class LineSpanningSubsetTest {
     }
 
     @Test
-    public void testGetInterval() {
+    void testGetInterval() {
         // arrange
         final LineConvexSubset span =
                 Lines.fromPointAndDirection(Vector2D.of(2, -1), Vector2D.Unit.PLUS_X, TEST_PRECISION).span();
@@ -177,7 +177,7 @@ public class LineSpanningSubsetTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final LineConvexSubset span =
                 Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span();

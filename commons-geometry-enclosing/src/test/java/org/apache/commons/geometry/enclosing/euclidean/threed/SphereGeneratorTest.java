@@ -30,7 +30,7 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SphereGeneratorTest {
+class SphereGeneratorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -40,7 +40,7 @@ public class SphereGeneratorTest {
     private final SphereGenerator generator = new SphereGenerator(TEST_PRECISION);
 
     @Test
-    public void testSupport0Point() {
+    void testSupport0Point() {
         // arrange
         final List<Vector3D> support = Collections.emptyList();
 
@@ -54,7 +54,7 @@ public class SphereGeneratorTest {
     }
 
     @Test
-    public void testSupport1Point() {
+    void testSupport1Point() {
         // arrange
         final Precision.DoubleEquivalence lowPrecision = Precision.doubleEquivalenceOfEpsilon(0.5);
         final Precision.DoubleEquivalence highPrecision = Precision.doubleEquivalenceOfEpsilon(0.001);
@@ -83,7 +83,7 @@ public class SphereGeneratorTest {
     }
 
     @Test
-    public void testSupport2Points() {
+    void testSupport2Points() {
         // arrange
         final List<Vector3D> support = Arrays.asList(Vector3D.of(1, 0, 0),
                                                Vector3D.of(3, 0, 0));
@@ -108,7 +108,7 @@ public class SphereGeneratorTest {
     }
 
     @Test
-    public void testSupport3Points() {
+    void testSupport3Points() {
         // arrange
         final List<Vector3D> support = Arrays.asList(Vector3D.of(1, 0, 0),
                                                Vector3D.of(3, 0, 0),
@@ -139,7 +139,7 @@ public class SphereGeneratorTest {
     }
 
     @Test
-    public void testSupport4Points() {
+    void testSupport4Points() {
         // arrange
         final List<Vector3D> support = Arrays.asList(Vector3D.of(17, 14, 18),
                                                Vector3D.of(11, 14, 22),
@@ -176,7 +176,7 @@ public class SphereGeneratorTest {
     }
 
     @Test
-    public void testRandom() {
+    void testRandom() {
         // arrange
         final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A,
                                                                  0xd015982e9f31ee04L);
@@ -200,7 +200,7 @@ public class SphereGeneratorTest {
     }
 
     @Test
-    public void testDegeneratedCase() {
+    void testDegeneratedCase() {
         // --- arrange
         final List<Vector3D> support =
                Arrays.asList(Vector3D.of(Math.scalb(-8039905610797991.0, -50),   //   -7.140870659936730

@@ -27,10 +27,10 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ParsedDoubleTest {
+class ParsedDoubleTest {
 
     @Test
-    public void testFrom() {
+    void testFrom() {
         // act/assert
         checkFrom(0.0, "0", 0);
 
@@ -72,7 +72,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testFrom_notFinite() {
+    void testFrom_notFinite() {
         // arrange
         final String msg = "Double is not finite";
 
@@ -86,7 +86,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testIsZero() {
+    void testIsZero() {
         // act/assert
         Assertions.assertTrue(ParsedDouble.from(0.0).isZero());
         Assertions.assertTrue(ParsedDouble.from(-0.0).isZero());
@@ -102,7 +102,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testRound_one() {
+    void testRound_one() {
         // arrange
         final ParsedDouble a = ParsedDouble.from(1e-10);
         final ParsedDouble b = ParsedDouble.from(-1);
@@ -123,7 +123,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testRound_nine() {
+    void testRound_nine() {
         // arrange
         final ParsedDouble a = ParsedDouble.from(9e-10);
         final ParsedDouble b = ParsedDouble.from(-9);
@@ -144,7 +144,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testRound_mixed() {
+    void testRound_mixed() {
         // arrange
         final ParsedDouble a = ParsedDouble.from(9.94e-10);
         final ParsedDouble b = ParsedDouble.from(-3.1415);
@@ -176,7 +176,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testMaxPrecision() {
+    void testMaxPrecision() {
         // arrange
         final ParsedDouble d = ParsedDouble.from(1.02576552);
 
@@ -194,7 +194,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testMaxPrecision_carry() {
+    void testMaxPrecision_carry() {
         // arrange
         final ParsedDouble d = ParsedDouble.from(-999.0999e50);
 
@@ -210,7 +210,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testMaxPrecision_halfEvenRounding() {
+    void testMaxPrecision_halfEvenRounding() {
         // act/assert
         // Test values taken from RoundingMode.HALF_EVEN javadocs
         assertParsedDouble(ParsedDouble.from(5.5).maxPrecision(1), false, "6", 0);
@@ -227,7 +227,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testMaxPrecision_singleDigits() {
+    void testMaxPrecision_singleDigits() {
         // act
         assertParsedDouble(ParsedDouble.from(9.0).maxPrecision(1), false, "9", 0);
         assertParsedDouble(ParsedDouble.from(1.0).maxPrecision(1), false, "1", 0);
@@ -238,7 +238,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testMaxPrecision_random() {
+    void testMaxPrecision_random() {
         // arrange
         final UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP, 0L);
 
@@ -261,7 +261,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testMaxPrecision_invalidArg() {
+    void testMaxPrecision_invalidArg() {
         // arrange
         final ParsedDouble d = ParsedDouble.from(10);
         final String baseMsg = "Precision must be greater than zero; was ";
@@ -274,7 +274,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testToPlainString() {
+    void testToPlainString() {
         // act/assert
         checkToPlainString(0.0, "0.0", "0");
         checkToPlainString(1.0, "1.0", "1");
@@ -292,7 +292,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testToScientificString() {
+    void testToScientificString() {
         // act/assert
         checkToScientificString(0.0, "0.0", "0");
         checkToScientificString(1.0, "1.0", "1");
@@ -310,7 +310,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testToEngineeringString() {
+    void testToEngineeringString() {
         // act/assert
         checkToEngineeringString(0.0, "0.0", "0");
         checkToEngineeringString(1.0, "1.0", "1");
@@ -330,7 +330,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testStringMethodAccuracy_sequence() {
+    void testStringMethodAccuracy_sequence() {
         // arrange
         final double min = -1000;
         final double max = 1000;
@@ -352,7 +352,7 @@ public class ParsedDoubleTest {
     }
 
     @Test
-    public void testStringMethodAccuracy_random() {
+    void testStringMethodAccuracy_random() {
         // arrange
         final UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP, 0L);
 

@@ -23,7 +23,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 /**
  * Test class for AklToussaintHeuristic.
  */
-public class AklToussaintHeuristicTest extends ConvexHullGenerator2DAbstractTest {
+class AklToussaintHeuristicTest extends ConvexHullGenerator2DAbstractTest {
 
     @Override
     protected ConvexHullGenerator2D createConvexHullGenerator(final boolean includeCollinearPoints) {

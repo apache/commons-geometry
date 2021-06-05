@@ -23,10 +23,10 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AbstractHyperplaneTest {
+class AbstractHyperplaneTest {
 
     @Test
-    public void testGetPrecision() {
+    void testGetPrecision() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final StubHyperplane hyper = new StubHyperplane(precision);
@@ -36,7 +36,7 @@ public class AbstractHyperplaneTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final StubHyperplane hyper = new StubHyperplane(precision);
@@ -52,7 +52,7 @@ public class AbstractHyperplaneTest {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final StubHyperplane hyper = new StubHyperplane(precision);
@@ -67,9 +67,9 @@ public class AbstractHyperplaneTest {
         Assertions.assertFalse(hyper.contains(new TestPoint2D(1, -1)));
     }
 
-    public static class StubHyperplane extends AbstractHyperplane<TestPoint2D> {
+    private static class StubHyperplane extends AbstractHyperplane<TestPoint2D> {
 
-        public StubHyperplane(final Precision.DoubleEquivalence precision) {
+        StubHyperplane(final Precision.DoubleEquivalence precision) {
             super(precision);
         }
 

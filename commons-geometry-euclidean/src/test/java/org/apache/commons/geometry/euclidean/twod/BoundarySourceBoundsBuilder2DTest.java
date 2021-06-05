@@ -23,7 +23,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BoundarySourceBoundsBuilder2DTest {
+class BoundarySourceBoundsBuilder2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -31,7 +31,7 @@ public class BoundarySourceBoundsBuilder2DTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testGetBounds_noBoundaries() {
+    void testGetBounds_noBoundaries() {
         // arrange
         final BoundarySource2D src = BoundarySource2D.of(new ArrayList<>());
         final BoundarySourceBoundsBuilder2D builder = new BoundarySourceBoundsBuilder2D();
@@ -44,7 +44,7 @@ public class BoundarySourceBoundsBuilder2DTest {
     }
 
     @Test
-    public void testGetBounds_singleFiniteBoundary() {
+    void testGetBounds_singleFiniteBoundary() {
         // arrange
         final Segment seg = Lines.segmentFromPoints(Vector2D.of(1, -2), Vector2D.of(-3, 4), TEST_PRECISION);
 
@@ -61,7 +61,7 @@ public class BoundarySourceBoundsBuilder2DTest {
     }
 
     @Test
-    public void testGetBounds_multipleFiniteBoundaries() {
+    void testGetBounds_multipleFiniteBoundaries() {
         // arrange
         final Segment seg1 = Lines.segmentFromPoints(Vector2D.of(1, -2), Vector2D.of(-3, 4), TEST_PRECISION);
         final Segment seg2 = Lines.segmentFromPoints(Vector2D.of(0, 1), Vector2D.of(7, 0), TEST_PRECISION);
@@ -83,7 +83,7 @@ public class BoundarySourceBoundsBuilder2DTest {
     }
 
     @Test
-    public void testGetBounds_singleInfiniteBoundary() {
+    void testGetBounds_singleInfiniteBoundary() {
         // arrange
         final LineConvexSubset boundary = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION)
                 .span();
@@ -98,7 +98,7 @@ public class BoundarySourceBoundsBuilder2DTest {
     }
 
     @Test
-    public void testGetBounds_mixedFiniteAndInfiniteBoundaries() {
+    void testGetBounds_mixedFiniteAndInfiniteBoundaries() {
         // arrange
         final LineConvexSubset inf = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION)
                 .span()

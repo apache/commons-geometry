@@ -30,14 +30,14 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class DiskGeneratorTest {
+class DiskGeneratorTest {
 
     private static final double TEST_EPS = 1e-10;
 
     private final DiskGenerator generator = new DiskGenerator();
 
     @Test
-    public void testSupport0Point() {
+    void testSupport0Point() {
         // arrange
         final List<Vector2D> support = Collections.emptyList();
 
@@ -51,7 +51,7 @@ public class DiskGeneratorTest {
     }
 
     @Test
-    public void testSupport1Point() {
+    void testSupport1Point() {
         // arrange
         final Precision.DoubleEquivalence lowPrecision = Precision.doubleEquivalenceOfEpsilon(0.5);
         final Precision.DoubleEquivalence highPrecision = Precision.doubleEquivalenceOfEpsilon(0.001);
@@ -76,7 +76,7 @@ public class DiskGeneratorTest {
     }
 
     @Test
-    public void testSupport2Points() {
+    void testSupport2Points() {
         // arrange
         final List<Vector2D> support = Arrays.asList(Vector2D.of(1, 0),
                                                Vector2D.of(3, 0));
@@ -101,7 +101,7 @@ public class DiskGeneratorTest {
     }
 
     @Test
-    public void testSupport3Points() {
+    void testSupport3Points() {
         // arrange
         final List<Vector2D> support = Arrays.asList(Vector2D.of(1, 0),
                                                Vector2D.of(3, 0),
@@ -130,7 +130,7 @@ public class DiskGeneratorTest {
     }
 
     @Test
-    public void testRandom() {
+    void testRandom() {
         // arrange
         final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A,
                                                                  0x12faa818373ffe90L);

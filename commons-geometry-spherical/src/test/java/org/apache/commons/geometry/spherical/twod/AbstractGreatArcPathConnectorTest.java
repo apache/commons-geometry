@@ -27,7 +27,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AbstractGreatArcPathConnectorTest {
+class AbstractGreatArcPathConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -43,7 +43,7 @@ public class AbstractGreatArcPathConnectorTest {
     private final TestConnector connector = new TestConnector();
 
     @Test
-    public void testConnectAll_emptyCollection() {
+    void testConnectAll_emptyCollection() {
         // act
         final List<GreatArcPath> paths = connector.connectAll(Collections.emptyList());
 
@@ -52,7 +52,7 @@ public class AbstractGreatArcPathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleFullArc() {
+    void testConnectAll_singleFullArc() {
         // act
         connector.add(Collections.singletonList(XY_PLANE.span()));
         final List<GreatArcPath> paths = connector.connectAll();
@@ -66,7 +66,7 @@ public class AbstractGreatArcPathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_twoFullArcs() {
+    void testConnectAll_twoFullArcs() {
         // act
         connector.add(XZ_PLANE.span());
         final List<GreatArcPath> paths = connector.connectAll(Collections.singletonList(XY_PLANE.span()));
@@ -84,7 +84,7 @@ public class AbstractGreatArcPathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleLune() {
+    void testConnectAll_singleLune() {
         // arrange
         final GreatCircle upperBound = GreatCircles.fromPoleAndU(
                 Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
@@ -105,7 +105,7 @@ public class AbstractGreatArcPathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleLune_pathsNotOrientedCorrectly() {
+    void testConnectAll_singleLune_pathsNotOrientedCorrectly() {
         // arrange
         final GreatCircle upperBound = GreatCircles.fromPoleAndU(
                 Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
@@ -129,7 +129,7 @@ public class AbstractGreatArcPathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_largeTriangle() {
+    void testConnectAll_largeTriangle() {
         // arrange
         final Point2S p1 = Point2S.PLUS_I;
         final Point2S p2 = Point2S.PLUS_J;
@@ -152,7 +152,7 @@ public class AbstractGreatArcPathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_smallTriangleWithDisconnectedLuneAndArc() {
+    void testConnectAll_smallTriangleWithDisconnectedLuneAndArc() {
         // arrange
         final Point2S p1 = Point2S.of(0, 0);
         final Point2S p2 = Point2S.of(0, 0.1 * Math.PI);
@@ -202,7 +202,7 @@ public class AbstractGreatArcPathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_choosesBestPointLikeConnection() {
+    void testConnectAll_choosesBestPointLikeConnection() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
@@ -231,7 +231,7 @@ public class AbstractGreatArcPathConnectorTest {
     }
 
     @Test
-    public void testConnect() {
+    void testConnect() {
         // arrange
         final GreatArc arcA = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
         final GreatArc arcB = GreatCircles.arcFromPoints(Point2S.PLUS_J, Point2S.MINUS_I, TEST_PRECISION);
@@ -260,7 +260,7 @@ public class AbstractGreatArcPathConnectorTest {
     }
 
     @Test
-    public void testConnectorCanBeReused() {
+    void testConnectorCanBeReused() {
         // arrange
         final GreatArc a = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
         final GreatArc b = GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);

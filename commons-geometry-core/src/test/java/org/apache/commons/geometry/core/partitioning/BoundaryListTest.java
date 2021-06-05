@@ -27,10 +27,10 @@ import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BoundaryListTest {
+class BoundaryListTest {
 
     @Test
-    public void testBoundaries() {
+    void testBoundaries() {
         // arrange
         final List<TestLineSegment> boundaries = new ArrayList<>();
         boundaries.add(new TestLineSegment(0, 0, 1, 1));
@@ -46,7 +46,7 @@ public class BoundaryListTest {
     }
 
     @Test
-    public void testGetBoundaries_listCannotBeModified() {
+    void testGetBoundaries_listCannotBeModified() {
         // arrange
         final List<TestLineSegment> boundaries = new ArrayList<>();
         boundaries.add(new TestLineSegment(0, 0, 1, 1));
@@ -58,7 +58,7 @@ public class BoundaryListTest {
     }
 
     @Test
-    public void testCount() {
+    void testCount() {
         // act/assert
         Assertions.assertEquals(0, new BoundaryList<>(Collections.emptyList()).count());
         Assertions.assertEquals(1, new BoundaryList<>(Collections.singletonList(
@@ -71,7 +71,7 @@ public class BoundaryListTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final BoundaryList<TestPoint2D, TestLineSegment> empty = new BoundaryList<>(Collections.emptyList());
         final BoundaryList<TestPoint2D, TestLineSegment> single = new BoundaryList<>(Collections.singletonList(

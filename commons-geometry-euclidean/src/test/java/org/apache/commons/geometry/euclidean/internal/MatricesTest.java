@@ -20,12 +20,12 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class MatricesTest {
+class MatricesTest {
 
     private static final double EPS = 1e-12;
 
     @Test
-    public void testDeterminant_2x2() {
+    void testDeterminant_2x2() {
         // act/assert
         Assertions.assertEquals(1, Matrices.determinant(
                 1, 0,
@@ -53,7 +53,7 @@ public class MatricesTest {
     }
 
     @Test
-    public void testDeterminant_3x3() {
+    void testDeterminant_3x3() {
         // act/assert
         Assertions.assertEquals(1, Matrices.determinant(
                 1, 0, 0,
@@ -83,14 +83,14 @@ public class MatricesTest {
     }
 
     @Test
-    public void testCheckDeterminantForInverse() {
+    void testCheckDeterminantForInverse() {
         // act/assert
         Assertions.assertEquals(1.0, Matrices.checkDeterminantForInverse(1.0), EPS);
         Assertions.assertEquals(-1.0, Matrices.checkDeterminantForInverse(-1.0), EPS);
     }
 
     @Test
-    public void testCheckDeterminantForInverse_invalid() {
+    void testCheckDeterminantForInverse_invalid() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             Matrices.checkDeterminantForInverse(0);
@@ -110,7 +110,7 @@ public class MatricesTest {
     }
 
     @Test
-    public void testCheckElementForInverse() {
+    void testCheckElementForInverse() {
         // act/assert
         Assertions.assertEquals(0.0, Matrices.checkElementForInverse(0.0), EPS);
 
@@ -119,7 +119,7 @@ public class MatricesTest {
     }
 
     @Test
-    public void testCheckElementForInverse_invalid() {
+    void testCheckElementForInverse_invalid() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             Matrices.checkElementForInverse(Double.NaN);

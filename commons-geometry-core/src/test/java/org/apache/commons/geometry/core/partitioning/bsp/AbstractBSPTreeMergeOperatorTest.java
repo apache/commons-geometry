@@ -26,10 +26,10 @@ import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AbstractBSPTreeMergeOperatorTest {
+class AbstractBSPTreeMergeOperatorTest {
 
     @Test
-    public void testMerge_singleNodeTreeWithSingleNodeTree() {
+    void testMerge_singleNodeTreeWithSingleNodeTree() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().setAttribute("A");
@@ -66,7 +66,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_singleNodeTreeWithMultiNodeTree() {
+    void testMerge_singleNodeTreeWithMultiNodeTree() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -106,7 +106,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_multiNodeTreeWithSingleNodeTree() {
+    void testMerge_multiNodeTreeWithSingleNodeTree() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().setAttribute("A");
@@ -146,7 +146,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_cutsIntersect() {
+    void testMerge_cutsIntersect() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -189,7 +189,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_cutsParallel() {
+    void testMerge_cutsParallel() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -232,7 +232,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_cutsAntiParallel() {
+    void testMerge_cutsAntiParallel() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -275,7 +275,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_cutOnPlusSide_parallel() {
+    void testMerge_cutOnPlusSide_parallel() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -321,7 +321,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_cutOnPlusSide_antiParallel() {
+    void testMerge_cutOnPlusSide_antiParallel() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -367,7 +367,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_cutOnMinusSide_parallel() {
+    void testMerge_cutOnMinusSide_parallel() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -413,7 +413,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_cutOnMinusSide_antiParallel() {
+    void testMerge_cutOnMinusSide_antiParallel() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -459,7 +459,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_outputIsFirstInput() {
+    void testMerge_outputIsFirstInput() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -495,7 +495,7 @@ public class AbstractBSPTreeMergeOperatorTest {
     }
 
     @Test
-    public void testMerge_outputIsSecondInput() {
+    void testMerge_outputIsSecondInput() {
         // arrange
         final AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)

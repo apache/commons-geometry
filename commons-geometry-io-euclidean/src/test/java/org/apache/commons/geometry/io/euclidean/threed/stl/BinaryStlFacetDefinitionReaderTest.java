@@ -29,7 +29,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BinaryStlFacetDefinitionReaderTest {
+class BinaryStlFacetDefinitionReaderTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -39,7 +39,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     @Test
-    public void testHeader_zeros() throws IOException {
+    void testHeader_zeros() throws IOException {
         // arrange
         final byte[] bytes = new byte[StlConstants.BINARY_HEADER_BYTES + 4];
         out.write(bytes);
@@ -57,7 +57,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testHeader_ones() throws IOException {
+    void testHeader_ones() throws IOException {
         // arrange
         final byte[] bytes = new byte[StlConstants.BINARY_HEADER_BYTES + 4];
         Arrays.fill(bytes, (byte) -1);
@@ -74,7 +74,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testHeader_shortString() throws IOException {
+    void testHeader_shortString() throws IOException {
         // arrange
         out.write(createHeader("Hello!", StandardCharsets.UTF_8, 1));
 
@@ -86,7 +86,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testHeader_longString() throws IOException {
+    void testHeader_longString() throws IOException {
         // arrange
         out.write(createHeader(LONG_STRING, StandardCharsets.UTF_8, 8736720));
 
@@ -99,7 +99,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testHeader_longString_givenCharset() throws IOException {
+    void testHeader_longString_givenCharset() throws IOException {
         // arrange
         out.write(createHeader(LONG_STRING, StandardCharsets.UTF_16, 256));
 
@@ -112,7 +112,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testGetHeader_noData() throws IOException {
+    void testGetHeader_noData() throws IOException {
         // arrange
         out.write(new byte[32]);
 
@@ -125,7 +125,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testGetHeader_noTriangleCount() throws IOException {
+    void testGetHeader_noTriangleCount() throws IOException {
         // arrange
         out.write(new byte[StlConstants.BINARY_HEADER_BYTES]);
 
@@ -138,7 +138,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_noData() throws IOException {
+    void testReadFacet_noData() throws IOException {
         // arrange
         out.write(createHeader(1));
 
@@ -152,7 +152,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet() throws IOException {
+    void testReadFacet() throws IOException {
         // arrange
         out.write(createHeader(2));
 
@@ -196,7 +196,7 @@ public class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_stopsWhenTriangleCountReached() throws IOException {
+    void testReadFacet_stopsWhenTriangleCountReached() throws IOException {
         // arrange
         out.write(createHeader(1));
 

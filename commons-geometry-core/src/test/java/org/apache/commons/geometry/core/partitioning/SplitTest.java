@@ -19,10 +19,10 @@ package org.apache.commons.geometry.core.partitioning;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SplitTest {
+class SplitTest {
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // arrange
         final Object a = new Object();
         final Object b = new Object();
@@ -36,7 +36,7 @@ public class SplitTest {
     }
 
     @Test
-    public void testGetLocation() {
+    void testGetLocation() {
         // arrange
         final Object a = new Object();
         final Object b = new Object();
@@ -49,7 +49,7 @@ public class SplitTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Split<String> split = new Split<>("a", "b");
 

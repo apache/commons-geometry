@@ -19,10 +19,10 @@ package org.apache.commons.geometry.core.internal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class GeometryInternalErrorTest {
+class GeometryInternalErrorTest {
 
     @Test
-    public void testMessage() {
+    void testMessage() {
         // act
         final GeometryInternalError err = new GeometryInternalError();
 

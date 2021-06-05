@@ -37,7 +37,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class EmbeddedTreePlaneSubsetTest {
+class EmbeddedTreePlaneSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -48,7 +48,7 @@ public class EmbeddedTreePlaneSubsetTest {
             Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
-    public void testCtor_plane() {
+    void testCtor_plane() {
         // act
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE);
 
@@ -60,7 +60,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testCtor_plane_booleanFalse() {
+    void testCtor_plane_booleanFalse() {
         // act
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
 
@@ -72,7 +72,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testCtor_plane_booleanTrue() {
+    void testCtor_plane_booleanTrue() {
         // act
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, true);
 
@@ -84,7 +84,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testSpaceConversion() {
+    void testSpaceConversion() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(1, 0, 0),
                 Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -97,7 +97,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testToConvex_full() {
+    void testToConvex_full() {
         // act
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, true);
 
@@ -110,7 +110,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testToConvex_empty() {
+    void testToConvex_empty() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
 
@@ -122,7 +122,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testToConvex_nonConvexRegion() {
+    void testToConvex_nonConvexRegion() {
         // act
         final ConvexArea a = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.of(0, 0), Vector2D.of(1, 0),
@@ -147,7 +147,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testToTriangles_empty() {
+    void testToTriangles_empty() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
 
@@ -159,7 +159,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testToTriangles_infinite() {
+    void testToTriangles_infinite() {
         // arrange
         final Pattern pattern = Pattern.compile("^Cannot convert infinite plane subset to triangles: .*");
 
@@ -188,7 +188,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testToTriangles_finite() {
+    void testToTriangles_finite() {
         // arrange
         final Vector3D p1 = Vector3D.ZERO;
         final Vector3D p2 = Vector3D.of(1, 0, 0);
@@ -213,7 +213,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testToTriangles_finite_disjoint() {
+    void testToTriangles_finite_disjoint() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE);
         ps.add(Planes.convexPolygonFromVertices(Arrays.asList(
@@ -233,7 +233,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testGetBounds_noBounds() {
+    void testGetBounds_noBounds() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
                 Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X, TEST_PRECISION);
@@ -251,7 +251,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testGetBounds_hasBounds() {
+    void testGetBounds_hasBounds() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
                 Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X, TEST_PRECISION);
@@ -270,7 +270,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testSplit_empty() {
+    void testSplit_empty() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
 
@@ -287,7 +287,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testSplit_halfSpace() {
+    void testSplit_halfSpace() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
         ps.getSubspaceRegion().getRoot().cut(
@@ -311,7 +311,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testSplit_both() {
+    void testSplit_both() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
         ps.getSubspaceRegion().union(
@@ -339,7 +339,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testSplit_intersects_plusOnly() {
+    void testSplit_intersects_plusOnly() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
         ps.getSubspaceRegion().union(
@@ -358,7 +358,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testSplit_intersects_minusOnly() {
+    void testSplit_intersects_minusOnly() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
         ps.getSubspaceRegion().union(
@@ -377,7 +377,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testSplit_parallel_plusOnly() {
+    void testSplit_parallel_plusOnly() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
         ps.getSubspaceRegion().union(
@@ -396,7 +396,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testSplit_parallel_minusOnly() {
+    void testSplit_parallel_minusOnly() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
         ps.getSubspaceRegion().union(
@@ -415,7 +415,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testSplit_coincident() {
+    void testSplit_coincident() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
         ps.getSubspaceRegion().union(
@@ -432,7 +432,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testTransform_empty() {
+    void testTransform_empty() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
 
@@ -453,7 +453,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testTransform_full() {
+    void testTransform_full() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, true);
 
@@ -474,7 +474,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final ConvexArea area = ConvexArea.convexPolygonFromVertices(
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
@@ -504,7 +504,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testTransform_reflection() {
+    void testTransform_reflection() {
         // arrange
         final ConvexArea area = ConvexArea.convexPolygonFromVertices(
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
@@ -532,7 +532,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testAddMethods() {
+    void testAddMethods() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(
                 Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -568,7 +568,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testAddMethods_rotatesEquivalentPlanesWithDifferentUAndV() {
+    void testAddMethods_rotatesEquivalentPlanesWithDifferentUAndV() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(
                 Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -600,7 +600,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testAddMethods_rotatesEquivalentPlanesWithDifferentUAndV_singleConvexArea() {
+    void testAddMethods_rotatesEquivalentPlanesWithDifferentUAndV_singleConvexArea() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(
                 Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -627,7 +627,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testAddMethods_rotatesEquivalentPlanesWithDifferentUAndV_singleTree() {
+    void testAddMethods_rotatesEquivalentPlanesWithDifferentUAndV_singleTree() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(
                 Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -654,7 +654,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testAddMethods_validatesPlane() {
+    void testAddMethods_validatesPlane() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(XY_PLANE, false);
 
@@ -668,7 +668,7 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final EmbeddedTreePlaneSubset ps = new EmbeddedTreePlaneSubset(
                 Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION).getEmbedding());

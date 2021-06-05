@@ -22,12 +22,12 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class VectorsTest {
+class VectorsTest {
 
     private static final double EPS = Math.ulp(1d);
 
     @Test
-    public void testIsRealNonZero() {
+    void testIsRealNonZero() {
         // act/assert
         Assertions.assertTrue(Vectors.isRealNonZero(1e-20));
         Assertions.assertTrue(Vectors.isRealNonZero(1e20));
@@ -42,7 +42,7 @@ public class VectorsTest {
     }
 
     @Test
-    public void testCheckedNorm_normArg() {
+    void testCheckedNorm_normArg() {
         // act/assert
         Assertions.assertEquals(1.0, Vectors.checkedNorm(1.0), EPS);
         Assertions.assertEquals(23.12, Vectors.checkedNorm(23.12), EPS);
@@ -63,7 +63,7 @@ public class VectorsTest {
     }
 
     @Test
-    public void testCheckedNorm_vectorArg() {
+    void testCheckedNorm_vectorArg() {
         // act/assert
         Assertions.assertEquals(1.0, Vectors.checkedNorm(Vector1D.of(1.0)), EPS);
         Assertions.assertEquals(23.12, Vectors.checkedNorm(Vector1D.of(23.12)), EPS);
@@ -84,7 +84,7 @@ public class VectorsTest {
     }
 
     @Test
-    public void testNorm_oneD() {
+    void testNorm_oneD() {
         // act/assert
         Assertions.assertEquals(0.0, Vectors.norm(0.0), EPS);
 
@@ -96,7 +96,7 @@ public class VectorsTest {
     }
 
     @Test
-    public void testNorm_twoD() {
+    void testNorm_twoD() {
         // act/assert
         Assertions.assertEquals(0.0, Vectors.norm(0.0, 0.0), EPS);
 
@@ -107,7 +107,7 @@ public class VectorsTest {
     }
 
     @Test
-    public void testNorm_threeD() {
+    void testNorm_threeD() {
         // act/assert
         Assertions.assertEquals(0.0, Vectors.norm(0.0, 0.0, 0.0), EPS);
 
@@ -122,7 +122,7 @@ public class VectorsTest {
     }
 
     @Test
-    public void testNormSq_oneD() {
+    void testNormSq_oneD() {
         // act/assert
         Assertions.assertEquals(0.0, Vectors.normSq(0.0), EPS);
 
@@ -134,7 +134,7 @@ public class VectorsTest {
     }
 
     @Test
-    public void testNormSq_twoD() {
+    void testNormSq_twoD() {
         // act/assert
         Assertions.assertEquals(0.0, Vectors.normSq(0.0, 0.0), EPS);
 
@@ -145,7 +145,7 @@ public class VectorsTest {
     }
 
     @Test
-    public void testNormSq_threeD() {
+    void testNormSq_threeD() {
         // act/assert
         Assertions.assertEquals(0.0, Vectors.normSq(0.0, 0.0, 0.0), EPS);
 

@@ -35,7 +35,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class RegionBSPTree2STest {
+class RegionBSPTree2STest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -56,7 +56,7 @@ public class RegionBSPTree2STest {
             Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
-    public void testCtor_booleanArg_true() {
+    void testCtor_booleanArg_true() {
         // act
         final RegionBSPTree2S tree = new RegionBSPTree2S(true);
 
@@ -67,7 +67,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testCtor_booleanArg_false() {
+    void testCtor_booleanArg_false() {
         // act
         final RegionBSPTree2S tree = new RegionBSPTree2S(false);
 
@@ -78,7 +78,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testCtor_default() {
+    void testCtor_default() {
         // act
         final RegionBSPTree2S tree = new RegionBSPTree2S();
 
@@ -89,7 +89,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testFull_factoryMethod() {
+    void testFull_factoryMethod() {
         // act
         final RegionBSPTree2S tree = RegionBSPTree2S.full();
 
@@ -100,7 +100,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testEmpty_factoryMethod() {
+    void testEmpty_factoryMethod() {
         // act
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
 
@@ -111,7 +111,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testFrom_boundaries_noBoundaries() {
+    void testFrom_boundaries_noBoundaries() {
         // act/assert
         Assertions.assertTrue(RegionBSPTree2S.from(Collections.emptyList()).isEmpty());
         Assertions.assertTrue(RegionBSPTree2S.from(Collections.emptyList(), true).isFull());
@@ -119,7 +119,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testFrom_boundaries() {
+    void testFrom_boundaries() {
         // act
         final RegionBSPTree2S tree = RegionBSPTree2S.from(Arrays.asList(
                     EQUATOR.arc(Point2S.PLUS_I, Point2S.PLUS_J),
@@ -139,7 +139,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testFrom_boundaries_fullIsTrue() {
+    void testFrom_boundaries_fullIsTrue() {
         // act
         final RegionBSPTree2S tree = RegionBSPTree2S.from(Arrays.asList(
                     EQUATOR.arc(Point2S.PLUS_I, Point2S.PLUS_J),
@@ -159,7 +159,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testCopy() {
+    void testCopy() {
         // arrange
         final RegionBSPTree2S tree = new RegionBSPTree2S(true);
         tree.getRoot().cut(EQUATOR);
@@ -173,7 +173,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testBoundaries() {
+    void testBoundaries() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
         insertPositiveQuadrant(tree);
@@ -187,7 +187,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGetBoundaries() {
+    void testGetBoundaries() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
         insertPositiveQuadrant(tree);
@@ -200,7 +200,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testBoundaryStream() {
+    void testBoundaryStream() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
         insertPositiveQuadrant(tree);
@@ -213,7 +213,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testBoundaryStream_noBoundaries() {
+    void testBoundaryStream_noBoundaries() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
 
@@ -225,14 +225,14 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testToList_fullAndEmpty() {
+    void testToList_fullAndEmpty() {
         // act/assert
         Assertions.assertEquals(0, RegionBSPTree2S.full().toList().count());
         Assertions.assertEquals(0, RegionBSPTree2S.empty().toList().count());
     }
 
     @Test
-    public void testToList() {
+    void testToList() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
         insertPositiveQuadrant(tree);
@@ -246,7 +246,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testToTree_returnsSameInstance() {
+    void testToTree_returnsSameInstance() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
         insertPositiveQuadrant(tree);
@@ -256,7 +256,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGetBoundaryPaths_cachesResult() {
+    void testGetBoundaryPaths_cachesResult() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
         insertPositiveQuadrant(tree);
@@ -270,7 +270,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGetBoundaryPaths_recomputesResultOnChange() {
+    void testGetBoundaryPaths_recomputesResultOnChange() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
         tree.insert(EQUATOR.span());
@@ -285,7 +285,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGetBoundaryPaths_isUnmodifiable() {
+    void testGetBoundaryPaths_isUnmodifiable() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
         tree.insert(EQUATOR.span());
@@ -295,7 +295,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testToConvex_full() {
+    void testToConvex_full() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.full();
 
@@ -308,7 +308,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testToConvex_empty() {
+    void testToConvex_empty() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
 
@@ -320,7 +320,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testToConvex_doubleLune() {
+    void testToConvex_doubleLune() {
         // arrange
         final RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
                 .append(EQUATOR.arc(0,  Math.PI))
@@ -341,7 +341,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testToConvex_doubleLune_complement() {
+    void testToConvex_doubleLune_complement() {
         // arrange
         final RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
                 .append(EQUATOR.arc(0,  Math.PI))
@@ -362,7 +362,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testProject() {
+    void testProject() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
         tree.insert(EQUATOR.arc(0, Math.PI));
@@ -387,14 +387,14 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testProject_noBoundaries() {
+    void testProject_noBoundaries() {
         // act/assert
         Assertions.assertNull(RegionBSPTree2S.empty().project(Point2S.PLUS_I));
         Assertions.assertNull(RegionBSPTree2S.full().project(Point2S.PLUS_I));
     }
 
     @Test
-    public void testGeometricProperties_full() {
+    void testGeometricProperties_full() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.full();
 
@@ -409,7 +409,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_empty() {
+    void testGeometricProperties_empty() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
 
@@ -424,7 +424,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_halfSpace() {
+    void testGeometricProperties_halfSpace() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.full();
         tree.getRoot().cut(EQUATOR);
@@ -453,7 +453,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_doubleLune() {
+    void testGeometricProperties_doubleLune() {
         // act
         final RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
                 .append(EQUATOR.arc(0,  Math.PI))
@@ -484,7 +484,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_quadrant() {
+    void testGeometricProperties_quadrant() {
         // act
         final RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
                 .appendVertices(Point2S.MINUS_K, Point2S.PLUS_I, Point2S.MINUS_J)
@@ -515,7 +515,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_quadrant_complement() {
+    void testGeometricProperties_quadrant_complement() {
         // arrange
         final RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
                 .appendVertices(Point2S.MINUS_K, Point2S.PLUS_I, Point2S.MINUS_J)
@@ -549,7 +549,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_polygonWithHole() {
+    void testGeometricProperties_polygonWithHole() {
         // arrange
         final Point2S center = Point2S.of(0.5, 2);
 
@@ -582,7 +582,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_polygonWithHole_small() {
+    void testGeometricProperties_polygonWithHole_small() {
         // arrange
         final Point2S center = Point2S.of(0.5, 2);
 
@@ -618,7 +618,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_polygonWithHole_complex() {
+    void testGeometricProperties_polygonWithHole_complex() {
         // arrange
         final Point2S center = Point2S.of(0.5, 2);
 
@@ -660,7 +660,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_smallRightTriangle() {
+    void testGeometricProperties_smallRightTriangle() {
         // arrange
         final double azOffset = 1e-5;
         final double polarOffset = 1e-6;
@@ -713,7 +713,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeometricProperties_equalAndOppositeRegions() {
+    void testGeometricProperties_equalAndOppositeRegions() {
         // arrange
         final Point2S center = Point2S.PLUS_I;
         final double radius = 0.25 * Math.PI;
@@ -737,7 +737,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testSplit_both() {
+    void testSplit_both() {
         // arrange
         final GreatCircle c1 = GreatCircles.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
         final GreatCircle c2 = GreatCircles.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
@@ -769,7 +769,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testSplit_minus() {
+    void testSplit_minus() {
         // arrange
         final RegionBSPTree2S tree = ConvexArea2S.fromVertexLoop(Arrays.asList(
                     Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
@@ -791,7 +791,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testSplit_plus() {
+    void testSplit_plus() {
         // arrange
         final RegionBSPTree2S tree = ConvexArea2S.fromVertexLoop(Arrays.asList(
                     Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
@@ -813,7 +813,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final Transform2S t = Transform2S.createReflection(Point2S.PLUS_J);
         final RegionBSPTree2S tree = ConvexArea2S.fromVertexLoop(
@@ -846,7 +846,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testRegionNode_getNodeRegion() {
+    void testRegionNode_getNodeRegion() {
         // arrange
         final RegionBSPTree2S tree = RegionBSPTree2S.empty();
 
@@ -870,7 +870,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testGeographicMap() {
+    void testGeographicMap() {
         // arrange
         final RegionBSPTree2S continental = latLongToTree(TEST_PRECISION, new double[][] {
                 {51.14850,  2.51357}, {50.94660,  1.63900}, {50.12717,  1.33876}, {49.34737, -0.98946},
@@ -902,7 +902,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testCircleToPolygonCentroid() {
+    void testCircleToPolygonCentroid() {
         final double radius = 0.0001;
         final Point2S center = Point2S.of(1.0, 1.0);
         final int numPts = 200;
@@ -918,7 +918,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testCircleToPolygonSize() {
+    void testCircleToPolygonSize() {
         final double radius = 0.0001;
         final Point2S center = Point2S.of(1.0, 1.0);
         final int numPts = 200;
@@ -935,7 +935,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testCircleToPolygonBoundarySize() {
+    void testCircleToPolygonBoundarySize() {
         final double radius = 0.0001;
         final Point2S center = Point2S.of(1.0, 1.0);
         final int numPts = 200;
@@ -951,7 +951,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testSmallCircleToPolygon() {
+    void testSmallCircleToPolygon() {
         // arrange
         final double radius = 5.0e-8;
         final Point2S center = Point2S.of(0.5, 1.5);
@@ -971,7 +971,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testSmallGeographicalRectangle() {
+    void testSmallGeographicalRectangle() {
         // arrange
         final double[][] vertices = {
             {42.656216727628696, -70.61919768884546},

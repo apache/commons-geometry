@@ -31,12 +31,12 @@ import org.junit.jupiter.api.Test;
 /** This class contains code listed as examples in the user guide and other documentation.
  * If any portion of this code changes, the corresponding examples in the documentation <em>must</em> be updated.
  */
-public class DocumentationExamplesTest {
+class DocumentationExamplesTest {
 
     private static final double TEST_EPS = 1e-15;
 
     @Test
-    public void testMonotoneChainExample() {
+    void testMonotoneChainExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
 
         // create a list of input points for the algorithm

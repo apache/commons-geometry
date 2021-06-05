@@ -30,14 +30,14 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class DoubleFormatsTest {
+class DoubleFormatsTest {
 
     private static final double[] EXAMPLE_VALUES = {
         0.0001, -0.0635, 510.751, -123456.0, 42078500.0
     };
 
     @Test
-    public void testDoubleToString() {
+    void testDoubleToString() {
         // arrange
         final DoubleFormat fmt = DoubleFormats.DOUBLE_TO_STRING;
 
@@ -72,7 +72,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testFloatToString() {
+    void testFloatToString() {
         // arrange
         final DoubleFormat fmt = DoubleFormats.FLOAT_TO_STRING;
 
@@ -107,7 +107,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testDefault_noPrecisionLimit_noMinExponent() {
+    void testDefault_noPrecisionLimit_noMinExponent() {
         // arrange
         final int maxPrecision = 0;
 
@@ -147,7 +147,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testDefault_noPrecisionLimit_withMinExponent() {
+    void testDefault_noPrecisionLimit_withMinExponent() {
         // arrange
         final int maxPrecision = 0;
         final int minExponent = -3;
@@ -187,7 +187,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testDefault_withPrecisionLimit_noMinExponent() {
+    void testDefault_withPrecisionLimit_noMinExponent() {
         // arrange
         final int maxPrecision = 4;
         final int minExponent = Integer.MIN_VALUE;
@@ -230,7 +230,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testDefault_withPrecisionLimit_withMinExponent() {
+    void testDefault_withPrecisionLimit_withMinExponent() {
         // arrange
         final int maxPrecision = 3;
         final int minExponent = -3;
@@ -270,7 +270,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testPlain_noPrecisionLimit_noMinExponent() {
+    void testPlain_noPrecisionLimit_noMinExponent() {
         // arrange
         final int maxPrecision = 0;
 
@@ -309,7 +309,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testPlain_noPrecisionLimit_withMinExponent() {
+    void testPlain_noPrecisionLimit_withMinExponent() {
         // arrange
         final int maxPrecision = 0;
         final int minExponent = -2;
@@ -349,7 +349,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testPlain_withPrecisionLimit_noMinExponent() {
+    void testPlain_withPrecisionLimit_noMinExponent() {
         // arrange
         final int maxPrecision = 3;
         final int minExponent = Integer.MIN_VALUE;
@@ -389,7 +389,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testPlain_withPrecisionLimit_withMinExponent() {
+    void testPlain_withPrecisionLimit_withMinExponent() {
         // arrange
         final int maxPrecision = 4;
         final int minExponent = -2;
@@ -429,7 +429,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testScientific_noPrecisionLimit_noMinExponent() {
+    void testScientific_noPrecisionLimit_noMinExponent() {
         // arrange
         final int maxPrecision = 0;
 
@@ -469,7 +469,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testScientific_noPrecisionLimit_withMinExponent() {
+    void testScientific_noPrecisionLimit_withMinExponent() {
         // arrange
         final int maxPrecision = 0;
         final int minExponent = -3;
@@ -509,7 +509,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testScientific_withPrecisionLimit_noMinExponent() {
+    void testScientific_withPrecisionLimit_noMinExponent() {
         // arrange
         final int maxPrecision = 3;
         final int minExponent = Integer.MIN_VALUE;
@@ -552,7 +552,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testScientific_withPrecisionLimit_withMinExponent() {
+    void testScientific_withPrecisionLimit_withMinExponent() {
         // arrange
         final int maxPrecision = 3;
         final int minExponent = -3;
@@ -592,7 +592,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testEngineering_noPrecisionLimit_noMinExponent() {
+    void testEngineering_noPrecisionLimit_noMinExponent() {
         // arrange
         final int maxPrecision = 0;
 
@@ -632,7 +632,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testEngineering_noPrecisionLimit_withMinExponent() {
+    void testEngineering_noPrecisionLimit_withMinExponent() {
         // arrange
         final int maxPrecision = 0;
         final int minExponent = -3;
@@ -672,7 +672,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testEngineering_withPrecisionLimit_noMinExponent() {
+    void testEngineering_withPrecisionLimit_noMinExponent() {
         // arrange
         final int maxPrecision = 3;
         final int minExponent = Integer.MIN_VALUE;
@@ -712,7 +712,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testEngineering_withPrecisionLimit_withMinExponent() {
+    void testEngineering_withPrecisionLimit_withMinExponent() {
         // arrange
         final int maxPrecision = 3;
         final int minExponent = -3;
@@ -752,7 +752,7 @@ public class DoubleFormatsTest {
     }
 
     @Test
-    public void testPrecisionValidation() {
+    void testPrecisionValidation() {
         // arrange
         final List<IntFunction<DoubleFormat>> fns = Arrays.asList(
                     DoubleFormats::createDefault,

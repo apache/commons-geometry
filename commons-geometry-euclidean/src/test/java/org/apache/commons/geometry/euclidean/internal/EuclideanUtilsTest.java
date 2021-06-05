@@ -29,7 +29,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class EuclideanUtilsTest {
+class EuclideanUtilsTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -37,7 +37,7 @@ public class EuclideanUtilsTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testConvexPolygonToTriangleFan_threeVertices() {
+    void testConvexPolygonToTriangleFan_threeVertices() {
         // arrange
         final Vector3D p1 = Vector3D.ZERO;
         final Vector3D p2 = Vector3D.of(1, 0, 0);
@@ -54,7 +54,7 @@ public class EuclideanUtilsTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_fourVertices() {
+    void testConvexPolygonToTriangleFan_fourVertices() {
         // arrange
         final Vector3D p1 = Vector3D.ZERO;
         final Vector3D p2 = Vector3D.of(1, 0, 0);
@@ -74,7 +74,7 @@ public class EuclideanUtilsTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_fourVertices_chooseLargestInteriorAngleForBase() {
+    void testConvexPolygonToTriangleFan_fourVertices_chooseLargestInteriorAngleForBase() {
         // arrange
         final Vector3D p1 = Vector3D.ZERO;
         final Vector3D p2 = Vector3D.of(1, 0, 0);
@@ -93,7 +93,7 @@ public class EuclideanUtilsTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_fourVertices_distancesLessThanPrecision() {
+    void testConvexPolygonToTriangleFan_fourVertices_distancesLessThanPrecision() {
         // This test checks that the triangle fan algorithm is not affected by the distances between
         // the vertices, just as long as the points are not exactly equal. Callers are responsible for
         // ensuring that the points are actually distinct according to the relevant precision context.
@@ -116,7 +116,7 @@ public class EuclideanUtilsTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_sixVertices() {
+    void testConvexPolygonToTriangleFan_sixVertices() {
         // arrange
         final Vector3D p1 = Vector3D.ZERO;
         final Vector3D p2 = Vector3D.of(1, -1, 0);
@@ -139,7 +139,7 @@ public class EuclideanUtilsTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_notEnoughVertices() {
+    void testConvexPolygonToTriangleFan_notEnoughVertices() {
         // arrange
         final String baseMsg = "Cannot create triangle fan: 3 or more vertices are required but found only ";
 

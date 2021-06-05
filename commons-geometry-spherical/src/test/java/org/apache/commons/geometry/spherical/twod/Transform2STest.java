@@ -24,12 +24,12 @@ import org.apache.commons.numbers.angle.Angle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Transform2STest {
+class Transform2STest {
 
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    public void testIdentity() {
+    void testIdentity() {
         // act
         final Transform2S t = Transform2S.identity();
 
@@ -49,7 +49,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testRotation() {
+    void testRotation() {
         // arrange
         final Transform2S aroundPole = Transform2S.createRotation(Point2S.PLUS_K, Angle.PI_OVER_TWO);
         final Transform2S aroundX = Transform2S.createRotation(Vector3D.Unit.PLUS_X, -Angle.PI_OVER_TWO);
@@ -74,7 +74,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testMultipleRotations() {
+    void testMultipleRotations() {
         // act
         final Transform2S t = Transform2S.identity()
                 .rotate(Point2S.PLUS_K, Angle.PI_OVER_TWO)
@@ -90,7 +90,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testMultiply() {
+    void testMultiply() {
         // act
         final Transform2S t = Transform2S.identity()
                 .multiply(Transform2S.createRotation(Point2S.PLUS_K, Angle.PI_OVER_TWO))
@@ -105,7 +105,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testPremultiply() {
+    void testPremultiply() {
         // act
         final Transform2S t = Transform2S.identity()
                 .premultiply(Transform2S.createRotation(Point2S.PLUS_K, Angle.PI_OVER_TWO))
@@ -120,7 +120,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testReflection_point() {
+    void testReflection_point() {
         // arrange
         final Point2S a = Point2S.of(1, 1);
         final Point2S b = Point2S.of(-1, 1);
@@ -148,7 +148,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testReflection_vector() {
+    void testReflection_vector() {
         // arrange
         final Point2S a = Point2S.of(1, 1);
         final Point2S b = Point2S.of(-1, 1);
@@ -176,7 +176,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testDoubleReflection() {
+    void testDoubleReflection() {
         // arrange
         final Point2S a = Point2S.of(1, 1);
         final Point2S b = Point2S.of(-1, 1);
@@ -206,7 +206,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testHashcode() {
+    void testHashcode() {
         // arrange
         final Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, Angle.PI_OVER_TWO);
         final Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, Angle.PI_OVER_TWO);
@@ -226,7 +226,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, Angle.PI_OVER_TWO);
         final Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, Angle.PI_OVER_TWO);
@@ -244,7 +244,7 @@ public class Transform2STest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Transform2S t = Transform2S.identity();
 

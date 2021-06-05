@@ -41,10 +41,10 @@ import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AbstractBSPTreeTest {
+class AbstractBSPTreeTest {
 
     @Test
-    public void testInitialization() {
+    void testInitialization() {
         // act
         final TestBSPTree tree = new TestBSPTree();
 
@@ -62,7 +62,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testNodeStateGetters() {
+    void testNodeStateGetters() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -90,7 +90,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsertCut() {
+    void testInsertCut() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         final TestLine line = TestLine.X_AXIS;
@@ -111,7 +111,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsertCut_fitsCutterToCell() {
+    void testInsertCut_fitsCutterToCell() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -135,7 +135,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsertCut_doesNotPassThroughCell_intersects() {
+    void testInsertCut_doesNotPassThroughCell_intersects() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -154,7 +154,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsertCut_doesNotPassThroughCell_parallel() {
+    void testInsertCut_doesNotPassThroughCell_parallel() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -171,7 +171,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsertCut_doesNotPassThroughCell_removesExistingChildren() {
+    void testInsertCut_doesNotPassThroughCell_removesExistingChildren() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -191,7 +191,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsertCut_cutExistsInTree_sameOrientation() {
+    void testInsertCut_cutExistsInTree_sameOrientation() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -211,7 +211,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsertCut_cutExistsInTree_oppositeOrientation() {
+    void testInsertCut_cutExistsInTree_oppositeOrientation() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -231,7 +231,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsertCut_createRegionWithThicknessOfHyperplane() {
+    void testInsertCut_createRegionWithThicknessOfHyperplane() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -251,7 +251,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testClearCut_cutExists() {
+    void testClearCut_cutExists() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -271,7 +271,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testClearCut_cutDoesNotExist() {
+    void testClearCut_cutDoesNotExist() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -292,7 +292,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testClearCut_root_fullTree() {
+    void testClearCut_root_fullTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -315,7 +315,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testClearCut_root_emptyTree() {
+    void testClearCut_root_emptyTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         final TestNode node = tree.getRoot();
@@ -333,7 +333,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testFindNode_emptyTree() {
+    void testFindNode_emptyTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         final TestNode root = tree.getRoot();
@@ -369,7 +369,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testFindNode_singleArg() {
+    void testFindNode_singleArg() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -407,7 +407,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testFindNode_nodeCutBehavior() {
+    void testFindNode_nodeCutBehavior() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -447,7 +447,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testFindNode_minusCutBehavior() {
+    void testFindNode_minusCutBehavior() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -487,7 +487,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testFindNode_plusCutBehavior() {
+    void testFindNode_plusCutBehavior() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -527,7 +527,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsert_convex_emptyTree() {
+    void testInsert_convex_emptyTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -550,7 +550,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsert_convex_noSplit() {
+    void testInsert_convex_noSplit() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot()
@@ -576,7 +576,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsert_convex_split() {
+    void testInsert_convex_split() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot()
@@ -613,7 +613,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsert_convexList_convexRegion() {
+    void testInsert_convexList_convexRegion() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -639,7 +639,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsert_convexList_concaveRegion() {
+    void testInsert_convexList_concaveRegion() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -676,7 +676,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsert_hyperplaneSubset_concaveRegion() {
+    void testInsert_hyperplaneSubset_concaveRegion() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -716,7 +716,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsert_boundarySource() {
+    void testInsert_boundarySource() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -755,7 +755,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsert_boundarySource_emptySource() {
+    void testInsert_boundarySource_emptySource() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -769,7 +769,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testCount() {
+    void testCount() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -799,7 +799,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testHeight() {
+    void testHeight() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -836,7 +836,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testDepth() {
+    void testDepth() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -856,7 +856,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testVisit_defaultOrder() {
+    void testVisit_defaultOrder() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -883,7 +883,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testVisit_specifiedOrder() {
+    void testVisit_specifiedOrder() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -934,7 +934,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testVisit_nullVisitOrderSkipsSubtree() {
+    void testVisit_nullVisitOrderSkipsSubtree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -964,7 +964,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testVisit_noneVisitOrderSkipsSubtree() {
+    void testVisit_noneVisitOrderSkipsSubtree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -994,7 +994,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testVisit_visitorReturnsNull_terminatesEarly() {
+    void testVisit_visitorReturnsNull_terminatesEarly() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -1027,7 +1027,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testVisit_visitorReturnsTerminate_terminatesEarly() {
+    void testVisit_visitorReturnsTerminate_terminatesEarly() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -1060,7 +1060,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testVisit_earlyTerminationPermutations() {
+    void testVisit_earlyTerminationPermutations() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -1111,7 +1111,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testVisit_visitNode() {
+    void testVisit_visitNode() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -1137,7 +1137,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testNodesIterable_emptyTree() {
+    void testNodesIterable_emptyTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         final List<TestNode> nodes = new ArrayList<>();
@@ -1153,7 +1153,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testNodesIterable_multipleNodes() {
+    void testNodesIterable_multipleNodes() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -1187,7 +1187,7 @@ public class AbstractBSPTreeTest {
 
 
     @Test
-    public void testNodesIterable_iteratorThrowsNoSuchElementExceptionAtEnd() {
+    void testNodesIterable_iteratorThrowsNoSuchElementExceptionAtEnd() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -1204,7 +1204,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testSubtreeNodesIterable_singleNodeSubtree() {
+    void testSubtreeNodesIterable_singleNodeSubtree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         final TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
@@ -1224,7 +1224,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testSubtreeNodesIterable_multipleNodeSubtree() {
+    void testSubtreeNodesIterable_multipleNodeSubtree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         final TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
@@ -1245,7 +1245,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testNodeTrim() {
+    void testNodeTrim() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.Y_AXIS)
@@ -1280,7 +1280,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testCopy_rootOnly() {
+    void testCopy_rootOnly() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -1296,7 +1296,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testCopy_withCuts() {
+    void testCopy_withCuts() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot()
@@ -1315,7 +1315,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testCopy_changesToOneTreeDoNotAffectCopy() {
+    void testCopy_changesToOneTreeDoNotAffectCopy() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot()
@@ -1334,7 +1334,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testCopy_instancePassedAsArgument() {
+    void testCopy_instancePassedAsArgument() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot()
@@ -1350,7 +1350,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testExtract_singleNodeTree() {
+    void testExtract_singleNodeTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -1370,7 +1370,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testExtract_clearsExistingNodesInCallingTree() {
+    void testExtract_clearsExistingNodesInCallingTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -1391,7 +1391,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testExtract_internalNode() {
+    void testExtract_internalNode() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.insert(Arrays.asList(
@@ -1433,7 +1433,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testExtract_leafNode() {
+    void testExtract_leafNode() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.insert(Arrays.asList(
@@ -1482,7 +1482,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testExtract_extractFromSameTree() {
+    void testExtract_extractFromSameTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.insert(Arrays.asList(
@@ -1524,7 +1524,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTransform_singleNodeTree() {
+    void testTransform_singleNodeTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -1539,7 +1539,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTransform_singleCut() {
+    void testTransform_singleCut() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().insertCut(TestLine.X_AXIS);
@@ -1561,7 +1561,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTransform_multipleCuts() {
+    void testTransform_multipleCuts() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.insert(Arrays.asList(
@@ -1599,7 +1599,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTransform_xAxisReflection() {
+    void testTransform_xAxisReflection() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.insert(Arrays.asList(
@@ -1623,7 +1623,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTransform_yAxisReflection() {
+    void testTransform_yAxisReflection() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.insert(Arrays.asList(
@@ -1647,7 +1647,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTransform_xAndYAxisReflection() {
+    void testTransform_xAndYAxisReflection() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.insert(Arrays.asList(
@@ -1671,7 +1671,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTreeString() {
+    void testTreeString() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -1691,7 +1691,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTreeString_emptyTree() {
+    void testTreeString_emptyTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
 
@@ -1703,7 +1703,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTreeString_reachesMaxDepth() {
+    void testTreeString_reachesMaxDepth() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -1723,7 +1723,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTreeString_zeroMaxDepth() {
+    void testTreeString_zeroMaxDepth() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -1741,7 +1741,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testTreeString_negativeMaxDepth() {
+    void testTreeString_negativeMaxDepth() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS)
@@ -1756,7 +1756,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().insertCut(TestLine.Y_AXIS);
@@ -1773,7 +1773,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testNodeToString() {
+    void testNodeToString() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot().cut(TestLine.X_AXIS);
@@ -1787,7 +1787,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testSplitIntoTree() {
+    void testSplitIntoTree() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot()
@@ -1832,7 +1832,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testSplitIntoTree_minusOnly() {
+    void testSplitIntoTree_minusOnly() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot()
@@ -1865,7 +1865,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testSplitIntoTree_plusOnly() {
+    void testSplitIntoTree_plusOnly() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();
         tree.getRoot()

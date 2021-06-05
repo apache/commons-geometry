@@ -29,13 +29,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-public class FileGeometryOutputTest {
+class FileGeometryOutputTest {
 
     @TempDir
     Path tempDir;
 
     @Test
-    public void testCtor_fileOnly() {
+    void testCtor_fileOnly() {
         // arrange
         final Path file = Paths.get("some/path/test.txt");
 
@@ -49,7 +49,7 @@ public class FileGeometryOutputTest {
     }
 
     @Test
-    public void testCtor_fileAndCharset() {
+    void testCtor_fileAndCharset() {
         // arrange
         final Path file = Paths.get("TEST");
         final Charset charset = StandardCharsets.UTF_8;
@@ -64,7 +64,7 @@ public class FileGeometryOutputTest {
     }
 
     @Test
-    public void testGetOutputStream() throws IOException {
+    void testGetOutputStream() throws IOException {
         // arrange
         final Path file = tempDir.resolve("test");
         final byte[] bytes = "abc".getBytes(StandardCharsets.UTF_8);
@@ -82,7 +82,7 @@ public class FileGeometryOutputTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final FileGeometryOutput out = new FileGeometryOutput(Paths.get("some/path/test.txt"));
 

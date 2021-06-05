@@ -33,10 +33,10 @@ import org.apache.commons.geometry.io.core.test.CloseCountInputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class GeometryIOUtilsTest {
+class GeometryIOUtilsTest {
 
     @Test
-    public void testGetFileName_path() {
+    void testGetFileName_path() {
         // act/assert
         Assertions.assertNull(GeometryIOUtils.getFileName((Path) null));
         Assertions.assertNull(GeometryIOUtils.getFileName(Paths.get("")));
@@ -46,7 +46,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testGetFileName_url() throws MalformedURLException {
+    void testGetFileName_url() throws MalformedURLException {
         // act/assert
         Assertions.assertNull(GeometryIOUtils.getFileName((URL) null));
         Assertions.assertNull(GeometryIOUtils.getFileName(new URL("http://test.com/")));
@@ -56,7 +56,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testGetFileName_string() {
+    void testGetFileName_string() {
         // act/assert
         Assertions.assertNull(GeometryIOUtils.getFileName((String) null));
         Assertions.assertNull(GeometryIOUtils.getFileName(""));
@@ -71,7 +71,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testGetFileExtension() {
+    void testGetFileExtension() {
         // act/assert
         Assertions.assertEquals(null, GeometryIOUtils.getFileExtension(null));
         Assertions.assertEquals("", GeometryIOUtils.getFileExtension(""));
@@ -83,7 +83,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testCreateUnchecked() {
+    void testCreateUnchecked() {
         // arrange
         final FileNotFoundException exc = new FileNotFoundException("test");
 
@@ -96,7 +96,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testTryApplyCloseable() throws IOException {
+    void testTryApplyCloseable() throws IOException {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new ByteArrayInputStream(new byte[] {1}));
 
@@ -109,7 +109,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testTryApplyCloseable_supplierThrows() throws IOException {
+    void testTryApplyCloseable_supplierThrows() throws IOException {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             GeometryIOUtils.tryApplyCloseable(i -> {
@@ -121,7 +121,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testTryApplyCloseable_functionThrows() throws IOException {
+    void testTryApplyCloseable_functionThrows() throws IOException {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new ByteArrayInputStream(new byte[0]));
 
@@ -136,7 +136,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testTryApplyCloseable_functionThrows_inputCloseThrows() throws IOException {
+    void testTryApplyCloseable_functionThrows_inputCloseThrows() throws IOException {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new CloseFailByteArrayInputStream(new byte[0]));
 
@@ -154,7 +154,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testCreateCloseableStream() throws IOException {
+    void testCreateCloseableStream() throws IOException {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new ByteArrayInputStream(new byte[0]));
 
@@ -168,7 +168,7 @@ public class GeometryIOUtilsTest {
     }
 
     @Test
-    public void testCreateCloseableStream_closeThrows() throws IOException {
+    void testCreateCloseableStream_closeThrows() throws IOException {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new CloseFailByteArrayInputStream(new byte[0]));
 

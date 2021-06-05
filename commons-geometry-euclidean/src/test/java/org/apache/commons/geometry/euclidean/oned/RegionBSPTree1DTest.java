@@ -30,7 +30,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class RegionBSPTree1DTest {
+class RegionBSPTree1DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -38,7 +38,7 @@ public class RegionBSPTree1DTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testCopy() {
+    void testCopy() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D(true);
         tree.getRoot().cut(OrientedPoints.createPositiveFacing(1.0, TEST_PRECISION));
@@ -52,7 +52,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testClassify_fullRegion() {
+    void testClassify_fullRegion() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D(true);
 
@@ -64,7 +64,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testClassify_emptyRegion() {
+    void testClassify_emptyRegion() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
 
@@ -76,7 +76,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testClassify_singleClosedInterval() {
+    void testClassify_singleClosedInterval() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.insert(Arrays.asList(
@@ -95,7 +95,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testContains_fullRegion() {
+    void testContains_fullRegion() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D(true);
 
@@ -107,7 +107,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testContains_emptyRegion() {
+    void testContains_emptyRegion() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
 
@@ -119,7 +119,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testContains_singleClosedInterval() {
+    void testContains_singleClosedInterval() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.insert(Arrays.asList(
@@ -138,7 +138,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetBoundarySize_alwaysReturnsZero() {
+    void testGetBoundarySize_alwaysReturnsZero() {
         // act/assert
         Assertions.assertEquals(0.0, RegionBSPTree1D.full().getBoundarySize(), TEST_EPS);
         Assertions.assertEquals(0.0, RegionBSPTree1D.empty().getBoundarySize(), TEST_EPS);
@@ -149,7 +149,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProject_full() {
+    void testProject_full() {
         // arrange
         final RegionBSPTree1D full = RegionBSPTree1D.full();
 
@@ -160,7 +160,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProject_empty() {
+    void testProject_empty() {
         // arrange
         final RegionBSPTree1D empty = RegionBSPTree1D.empty();
 
@@ -171,7 +171,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProject_singlePoint() {
+    void testProject_singlePoint() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1, TEST_PRECISION));
 
@@ -189,7 +189,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProject_noMinBoundary() {
+    void testProject_noMinBoundary() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION));
 
@@ -205,7 +205,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProject_noMaxBoundary() {
+    void testProject_noMaxBoundary() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION));
 
@@ -221,7 +221,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProject_closedInterval() {
+    void testProject_closedInterval() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.of(1, 3, TEST_PRECISION));
 
@@ -243,7 +243,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProject_multipleIntervals() {
+    void testProject_multipleIntervals() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.max(-1, TEST_PRECISION),
@@ -295,7 +295,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testAdd_interval() {
+    void testAdd_interval() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -314,7 +314,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testAdd_adjacentIntervals() {
+    void testAdd_adjacentIntervals() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -332,7 +332,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testAdd_addFullInterval() {
+    void testAdd_addFullInterval() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -346,7 +346,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testAdd_interval_duplicateBoundaryPoint() {
+    void testAdd_interval_duplicateBoundaryPoint() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
 
@@ -365,7 +365,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_fullRegion() {
+    void testToIntervals_fullRegion() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D(true);
 
@@ -378,7 +378,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_emptyRegion() {
+    void testToIntervals_emptyRegion() {
         // arrange
         final RegionBSPTree1D tree = new RegionBSPTree1D(false);
 
@@ -390,7 +390,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_halfOpen_negative() {
+    void testToIntervals_halfOpen_negative() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -406,7 +406,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_halfOpen_positive() {
+    void testToIntervals_halfOpen_positive() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -422,7 +422,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_singleClosedInterval() {
+    void testToIntervals_singleClosedInterval() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -438,7 +438,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_singleClosedInterval_complement() {
+    void testToIntervals_singleClosedInterval_complement() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -456,7 +456,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_openAndClosedIntervals() {
+    void testToIntervals_openAndClosedIntervals() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -476,7 +476,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_singlePoint() {
+    void testToIntervals_singlePoint() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -492,7 +492,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_singlePoint_complement() {
+    void testToIntervals_singlePoint_complement() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -510,7 +510,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_multiplePoints() {
+    void testToIntervals_multiplePoints() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -528,7 +528,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_multiplePoints_complement() {
+    void testToIntervals_multiplePoints_complement() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -548,7 +548,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_adjacentIntervals() {
+    void testToIntervals_adjacentIntervals() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -564,7 +564,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_multipleAdjacentIntervals() {
+    void testToIntervals_multipleAdjacentIntervals() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -586,7 +586,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals() {
+    void testToIntervals() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -602,7 +602,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetNodeRegion() {
+    void testGetNodeRegion() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -623,7 +623,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testTransform_full() {
+    void testTransform_full() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.full();
 
@@ -637,7 +637,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testTransform_noReflection() {
+    void testTransform_noReflection() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),
@@ -659,7 +659,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testTransform_withReflection() {
+    void testTransform_withReflection() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),
@@ -681,7 +681,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testTransform_withReflection_functionBasedTransform() {
+    void testTransform_withReflection_functionBasedTransform() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),
@@ -702,7 +702,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testSplit_full() {
+    void testSplit_full() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.full();
         final OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(2, true, TEST_PRECISION);
@@ -723,7 +723,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testSplit_empty() {
+    void testSplit_empty() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         final OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(2, true, TEST_PRECISION);
@@ -739,7 +739,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testSplit_bothSides() {
+    void testSplit_bothSides() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.max(-2, TEST_PRECISION));
@@ -764,7 +764,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testSplit_splitterOnBoundary_minus() {
+    void testSplit_splitterOnBoundary_minus() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 4, TEST_PRECISION));
@@ -785,7 +785,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testSplit_splitterOnBoundary_plus() {
+    void testSplit_splitterOnBoundary_plus() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 4, TEST_PRECISION));
@@ -806,7 +806,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testSplit_point() {
+    void testSplit_point() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1.0, TEST_PRECISION));
 
@@ -826,7 +826,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testSplit_point_splitOnPoint_positiveFacingSplitter() {
+    void testSplit_point_splitOnPoint_positiveFacingSplitter() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1, TEST_PRECISION));
 
@@ -846,7 +846,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testSplit_point_splitOnPoint_negativeFacingSplitter() {
+    void testSplit_point_splitOnPoint_negativeFacingSplitter() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1, TEST_PRECISION));
 
@@ -866,7 +866,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetSize_infinite() {
+    void testGetSize_infinite() {
         // arrange
         final RegionBSPTree1D full = RegionBSPTree1D.full();
 
@@ -883,7 +883,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetSize_empty() {
+    void testGetSize_empty() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -892,7 +892,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetSize_exactPoints() {
+    void testGetSize_exactPoints() {
         // arrange
         final RegionBSPTree1D singlePoint = RegionBSPTree1D.empty();
         singlePoint.add(Interval.of(1, 1, TEST_PRECISION));
@@ -908,7 +908,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetSize_pointsWithinPrecision() {
+    void testGetSize_pointsWithinPrecision() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
@@ -926,7 +926,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetSize_nonEmptyIntervals() {
+    void testGetSize_nonEmptyIntervals() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 2, TEST_PRECISION));
@@ -937,7 +937,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetSize_intervalWithPoints() {
+    void testGetSize_intervalWithPoints() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 2, TEST_PRECISION));
@@ -949,7 +949,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetSize_complementedRegion() {
+    void testGetSize_complementedRegion() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION));
@@ -962,7 +962,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetCentroid_infinite() {
+    void testGetCentroid_infinite() {
         // arrange
         final RegionBSPTree1D full = RegionBSPTree1D.full();
 
@@ -979,7 +979,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetCentroid_empty() {
+    void testGetCentroid_empty() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -988,7 +988,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetCentroid_exactPoints() {
+    void testGetCentroid_exactPoints() {
         // arrange
         final RegionBSPTree1D singlePoint = RegionBSPTree1D.empty();
         singlePoint.add(Interval.of(1, 1, TEST_PRECISION));
@@ -1004,7 +1004,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetCentroid_pointsWithinPrecision() {
+    void testGetCentroid_pointsWithinPrecision() {
      // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
 
@@ -1022,7 +1022,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetCentroid_nonEmptyIntervals() {
+    void testGetCentroid_nonEmptyIntervals() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 2, TEST_PRECISION));
@@ -1033,7 +1033,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetCentroid_complementedRegion() {
+    void testGetCentroid_complementedRegion() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION));
@@ -1046,7 +1046,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetCentroid_intervalWithPoints() {
+    void testGetCentroid_intervalWithPoints() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 2, TEST_PRECISION));
@@ -1058,7 +1058,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetMinMax_full() {
+    void testGetMinMax_full() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -1068,7 +1068,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetMinMax_empty() {
+    void testGetMinMax_empty() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -1078,7 +1078,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetMinMax_halfSpaces() {
+    void testGetMinMax_halfSpaces() {
         // arrange
         final RegionBSPTree1D posHalfSpace = RegionBSPTree1D.empty();
         posHalfSpace.getRoot().cut(OrientedPoints.createNegativeFacing(-2.0, TEST_PRECISION));
@@ -1095,7 +1095,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetMinMax_multipleIntervals() {
+    void testGetMinMax_multipleIntervals() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Arrays.asList(
                     Interval.of(3, 5, TEST_PRECISION),
@@ -1109,7 +1109,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetMinMax_pointsAtMinAndMax() {
+    void testGetMinMax_pointsAtMinAndMax() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Arrays.asList(
                     Interval.of(5, 5, TEST_PRECISION),
@@ -1123,7 +1123,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testFull_factoryMethod() {
+    void testFull_factoryMethod() {
         // act
         final RegionBSPTree1D tree = RegionBSPTree1D.full();
 
@@ -1134,7 +1134,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testEmpty_factoryMethod() {
+    void testEmpty_factoryMethod() {
         // act
         final RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
@@ -1145,7 +1145,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testFromIntervals_iterable() {
+    void testFromIntervals_iterable() {
         // act
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Arrays.asList(
                     Interval.of(1, 2, TEST_PRECISION),
@@ -1164,7 +1164,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testFromIntervals_iterable_noItervals() {
+    void testFromIntervals_iterable_noItervals() {
         // act
         final RegionBSPTree1D tree = RegionBSPTree1D.from(Collections.emptyList());
 
@@ -1176,7 +1176,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testFromIntervals_varargs() {
+    void testFromIntervals_varargs() {
         // act
         final RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),

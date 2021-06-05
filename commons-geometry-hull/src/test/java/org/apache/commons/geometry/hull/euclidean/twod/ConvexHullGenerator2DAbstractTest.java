@@ -64,7 +64,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     // ------------------------------------------------------------------------------
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         // act
         final ConvexHull2D hull = generator.generate(Collections.emptyList());
 
@@ -75,7 +75,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testOnePoint() {
+    void testOnePoint() {
         // arrange
         final List<Vector2D> points = createRandomPoints(1);
 
@@ -89,7 +89,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testTwoPoints() {
+    void testTwoPoints() {
         // arrange
         final List<Vector2D> points = createRandomPoints(2);
 
@@ -103,7 +103,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testAllIdentical() {
+    void testAllIdentical() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
@@ -121,7 +121,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testConvexHull() {
+    void testConvexHull() {
         // execute 100 random variations
         for (int i = 0; i < 100; i++) {
             // randomize the size from 4 to 100
@@ -138,7 +138,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testCollinearPoints() {
+    void testCollinearPoints() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
@@ -155,7 +155,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testCollinearPointsReverse() {
+    void testCollinearPointsReverse() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
@@ -172,7 +172,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testCollinearPointsIncluded() {
+    void testCollinearPointsIncluded() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
@@ -189,7 +189,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testCollinearPointsIncludedReverse() {
+    void testCollinearPointsIncludedReverse() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
@@ -206,7 +206,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testIdenticalPoints() {
+    void testIdenticalPoints() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
@@ -223,7 +223,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testIdenticalPoints2() {
+    void testIdenticalPoints2() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
@@ -240,7 +240,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testClosePoints() {
+    void testClosePoints() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
@@ -257,7 +257,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testCollinearPointOnExistingBoundary() {
+    void testCollinearPointOnExistingBoundary() {
         // --- arrange
         // MATH-1135: check that collinear points on the hull are handled correctly
         //            when only a minimal hull shall be constructed
@@ -281,7 +281,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testCollinearPointsInAnyOrder_threeCollinearPoints() {
+    void testCollinearPointsInAnyOrder_threeCollinearPoints() {
         // --- arrange
         // MATH-1148: collinear points on the hull might be in any order
         //            make sure that they are processed in the proper order
@@ -302,7 +302,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testCollinearPointsInAnyOrder_multipleCollinearPoints() {
+    void testCollinearPointsInAnyOrder_multipleCollinearPoints() {
         // --- arrange
         // MATH-1148: collinear points on the hull might be in any order
         //            make sure that they are processed in the proper order
@@ -328,7 +328,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     }
 
     @Test
-    public void testIssue1123() {
+    void testIssue1123() {
         // arrange
         final List<Vector2D> points = new ArrayList<>();
 

@@ -20,7 +20,7 @@ import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Test;
 
-public class BoundarySourceLinecaster2DTest {
+class BoundarySourceLinecaster2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -31,7 +31,7 @@ public class BoundarySourceLinecaster2DTest {
             Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
     @Test
-    public void testLinecast_line_simple() {
+    void testLinecast_line_simple() {
         // arrange
         final BoundarySourceLinecaster2D linecaster = new BoundarySourceLinecaster2D(UNIT_SQUARE);
 
@@ -55,7 +55,7 @@ public class BoundarySourceLinecaster2DTest {
     }
 
     @Test
-    public void testLinecast_line_alongFace() {
+    void testLinecast_line_alongFace() {
         // arrange
         final BoundarySourceLinecaster2D linecaster = new BoundarySourceLinecaster2D(UNIT_SQUARE);
 
@@ -67,7 +67,7 @@ public class BoundarySourceLinecaster2DTest {
     }
 
     @Test
-    public void testLinecast_line_corners() {
+    void testLinecast_line_corners() {
         // arrange
         final BoundarySourceLinecaster2D linecaster = new BoundarySourceLinecaster2D(UNIT_SQUARE);
 
@@ -89,7 +89,7 @@ public class BoundarySourceLinecaster2DTest {
     }
 
     @Test
-    public void testLinecast_line_removesDuplicatePoints() {
+    void testLinecast_line_removesDuplicatePoints() {
         // arrange
         final BoundarySource2D src = BoundarySource2D.of(
                     Lines.segmentFromPoints(Vector2D.of(-1, -1), Vector2D.ZERO, TEST_PRECISION),
@@ -104,7 +104,7 @@ public class BoundarySourceLinecaster2DTest {
     }
 
     @Test
-    public void testLinecast_segment_simple() {
+    void testLinecast_segment_simple() {
         // arrange
         final BoundarySourceLinecaster2D linecaster = new BoundarySourceLinecaster2D(UNIT_SQUARE);
 
@@ -137,7 +137,7 @@ public class BoundarySourceLinecaster2DTest {
     }
 
     @Test
-    public void testLinecast_segment_boundaryExcluded() {
+    void testLinecast_segment_boundaryExcluded() {
         // arrange
         final BoundarySourceLinecaster2D linecaster = new BoundarySourceLinecaster2D(UNIT_SQUARE);
 
@@ -155,7 +155,7 @@ public class BoundarySourceLinecaster2DTest {
     }
 
     @Test
-    public void testLinecast_segment_startEndPointsOnBoundaries() {
+    void testLinecast_segment_startEndPointsOnBoundaries() {
         // arrange
         final BoundarySourceLinecaster2D linecaster = new BoundarySourceLinecaster2D(UNIT_SQUARE);
 
@@ -167,7 +167,7 @@ public class BoundarySourceLinecaster2DTest {
     }
 
     @Test
-    public void testLinecast_segment_alongFace() {
+    void testLinecast_segment_alongFace() {
         // arrange
         final BoundarySourceLinecaster2D linecaster = new BoundarySourceLinecaster2D(UNIT_SQUARE);
 
@@ -191,7 +191,7 @@ public class BoundarySourceLinecaster2DTest {
     }
 
     @Test
-    public void testLinecast_segment_corners() {
+    void testLinecast_segment_corners() {
         // arrange
         final BoundarySourceLinecaster2D linecaster = new BoundarySourceLinecaster2D(UNIT_SQUARE);
 
@@ -217,7 +217,7 @@ public class BoundarySourceLinecaster2DTest {
     }
 
     @Test
-    public void testLinecast_segment_removesDuplicatePoints() {
+    void testLinecast_segment_removesDuplicatePoints() {
         // arrange
         final BoundarySource2D src = BoundarySource2D.of(
                     Lines.segmentFromPoints(Vector2D.of(-1, -1), Vector2D.ZERO, TEST_PRECISION),

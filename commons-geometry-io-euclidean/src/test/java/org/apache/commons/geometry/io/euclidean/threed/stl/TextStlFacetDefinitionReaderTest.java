@@ -30,12 +30,12 @@ import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TextStlFacetDefinitionReaderTest {
+class TextStlFacetDefinitionReaderTest {
 
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    public void testGetSolidName() throws IOException {
+    void testGetSolidName() throws IOException {
         // act/assert
         Assertions.assertEquals("Test Name", facetReader("solid    Test Name  \r\n").getSolidName());
         Assertions.assertEquals("Test", facetReader("solid    Test  ").getSolidName());
@@ -44,7 +44,7 @@ public class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testClose() throws IOException {
+    void testClose() throws IOException {
         // arrange
         final CloseCountReader countReader = new CloseCountReader(new StringReader(""));
         final TextStlFacetDefinitionReader reader = new TextStlFacetDefinitionReader(countReader);
@@ -57,7 +57,7 @@ public class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testEmpty() throws IOException {
+    void testEmpty() throws IOException {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid \n" +
@@ -74,7 +74,7 @@ public class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testSingleFacet() throws IOException {
+    void testSingleFacet() throws IOException {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid test\n" +
@@ -104,7 +104,7 @@ public class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testMultipleFacets() throws IOException {
+    void testMultipleFacets() throws IOException {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid test solid\r\n\n" +
@@ -158,7 +158,7 @@ public class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testNoName() throws IOException {
+    void testNoName() throws IOException {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid\n" +
@@ -188,7 +188,7 @@ public class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testContentEndsEarly() throws IOException {
+    void testContentEndsEarly() throws IOException {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid test\n" +
@@ -217,7 +217,7 @@ public class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testParseErrors() throws IOException {
+    void testParseErrors() throws IOException {
         // act/assert
         assertParseError(
                 "soli test\n" +

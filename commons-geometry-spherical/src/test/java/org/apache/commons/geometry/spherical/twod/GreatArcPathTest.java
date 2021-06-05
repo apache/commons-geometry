@@ -33,7 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class GreatArcPathTest {
+class GreatArcPathTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -41,7 +41,7 @@ public class GreatArcPathTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         // act
         final GreatArcPath path = GreatArcPath.empty();
 
@@ -60,7 +60,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testFromVertices_boolean_empty() {
+    void testFromVertices_boolean_empty() {
         // act
         final GreatArcPath path = GreatArcPath.fromVertices(Collections.emptyList(), true, TEST_PRECISION);
 
@@ -78,7 +78,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testFromVertices_boolean_notClosed() {
+    void testFromVertices_boolean_notClosed() {
         // arrange
         final List<Point2S> points = Arrays.asList(
                 Point2S.PLUS_I,
@@ -104,7 +104,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testFromVertices_boolean_closed() {
+    void testFromVertices_boolean_closed() {
         // arrange
         final List<Point2S> points = Arrays.asList(
                 Point2S.PLUS_I,
@@ -135,7 +135,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testFromVertices_boolean_closed_pointsConsideredEqual() {
+    void testFromVertices_boolean_closed_pointsConsideredEqual() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -171,7 +171,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testFromVertices() {
+    void testFromVertices() {
         // arrange
         final List<Point2S> points = Arrays.asList(
                 Point2S.MINUS_I,
@@ -197,7 +197,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testFromVertexLoop() {
+    void testFromVertexLoop() {
         // arrange
         final List<Point2S> points = Arrays.asList(
                 Point2S.MINUS_I,
@@ -228,7 +228,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testFromArcs() {
+    void testFromArcs() {
         // arrange
         final Point2S ptA = Point2S.PLUS_I;
         final Point2S ptB = Point2S.of(1, Angle.PI_OVER_TWO);
@@ -259,7 +259,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testFromArcs_full() {
+    void testFromArcs_full() {
         // arrange
         final GreatArc fullArc = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
 
@@ -283,7 +283,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBoundaryStream() {
+    void testBoundaryStream() {
         // arrange
         final GreatArc fullArc = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
         final GreatArcPath path = GreatArcPath.fromArcs(fullArc);
@@ -297,7 +297,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBoundaryStream_noBoundaries() {
+    void testBoundaryStream_noBoundaries() {
         // arrange
         final GreatArcPath path = GreatArcPath.empty();
 
@@ -309,7 +309,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testToTree_empty() {
+    void testToTree_empty() {
         // act
         final RegionBSPTree2S tree = GreatArcPath.empty().toTree();
 
@@ -319,7 +319,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testToTree_halfSpace() {
+    void testToTree_halfSpace() {
         // arrange
         final GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)
@@ -341,7 +341,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testToTree_triangle() {
+    void testToTree_triangle() {
         // arrange
         final GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)
@@ -370,7 +370,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBuilder_append() {
+    void testBuilder_append() {
         // arrange
         final Point2S a = Point2S.PLUS_I;
         final Point2S b = Point2S.PLUS_J;
@@ -406,7 +406,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBuilder_prepend() {
+    void testBuilder_prepend() {
         // arrange
         final Point2S a = Point2S.PLUS_I;
         final Point2S b = Point2S.PLUS_J;
@@ -442,7 +442,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBuilder_appendAndPrepend_points() {
+    void testBuilder_appendAndPrepend_points() {
         // arrange
         final Point2S a = Point2S.PLUS_I;
         final Point2S b = Point2S.PLUS_J;
@@ -478,7 +478,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBuilder_appendAndPrepend_mixedArguments() {
+    void testBuilder_appendAndPrepend_mixedArguments() {
         // arrange
         final Point2S a = Point2S.PLUS_I;
         final Point2S b = Point2S.PLUS_J;
@@ -515,7 +515,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBuilder_points_noPrecisionGiven() {
+    void testBuilder_points_noPrecisionGiven() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> GreatArcPath.builder(null)
             .append(Point2S.PLUS_I)
@@ -527,7 +527,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBuilder_arcsNotConnected() {
+    void testBuilder_arcsNotConnected() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> GreatArcPath.builder(TEST_PRECISION)
             .append(Point2S.PLUS_I)
@@ -541,7 +541,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBuilder_addToFullArc() {
+    void testBuilder_addToFullArc() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> GreatArcPath.builder(TEST_PRECISION)
             .append(GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
@@ -553,7 +553,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBuilder_onlySinglePointGiven() {
+    void testBuilder_onlySinglePointGiven() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> GreatArcPath.builder(TEST_PRECISION)
             .append(Point2S.PLUS_J)
@@ -565,7 +565,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testBuilder_cannotClose() {
+    void testBuilder_cannotClose() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> GreatArcPath.builder(TEST_PRECISION)
             .append(GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
@@ -573,7 +573,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testToString_empty() {
+    void testToString_empty() {
         // arrange
         final GreatArcPath path = GreatArcPath.empty();
 
@@ -585,7 +585,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testToString_singleFullArc() {
+    void testToString_singleFullArc() {
         // arrange
         final GreatArcPath path = GreatArcPath.fromArcs(GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION).span());
 
@@ -597,7 +597,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testToString_nonFullArcs() {
+    void testToString_nonFullArcs() {
         // arrange
         final GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)

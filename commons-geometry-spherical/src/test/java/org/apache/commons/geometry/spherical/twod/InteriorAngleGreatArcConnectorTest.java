@@ -29,7 +29,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class InteriorAngleGreatArcConnectorTest {
+class InteriorAngleGreatArcConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -37,7 +37,7 @@ public class InteriorAngleGreatArcConnectorTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testConnectAll_empty() {
+    void testConnectAll_empty() {
         runWithMaxAndMin(connector -> {
             // arrange
             final List<GreatArc> arcs = new ArrayList<>();
@@ -52,7 +52,7 @@ public class InteriorAngleGreatArcConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singlePath() {
+    void testConnectAll_singlePath() {
         runWithMaxAndMin(connector -> {
             // arrange
             final List<GreatArc> arcs = Collections.singletonList(
@@ -73,7 +73,7 @@ public class InteriorAngleGreatArcConnectorTest {
     }
 
     @Test
-    public void testConnectAll_maximize_instance() {
+    void testConnectAll_maximize_instance() {
         // arrange
         final GreatArc a1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
         final GreatArc a2 = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
@@ -103,7 +103,7 @@ public class InteriorAngleGreatArcConnectorTest {
     }
 
     @Test
-    public void testConnectAll_maximize_method() {
+    void testConnectAll_maximize_method() {
         // arrange
         final GreatArc a1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
         final GreatArc a2 = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
@@ -132,7 +132,7 @@ public class InteriorAngleGreatArcConnectorTest {
     }
 
     @Test
-    public void testConnectAll_minimize_instance() {
+    void testConnectAll_minimize_instance() {
         // arrange
         final GreatArc a1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
         final GreatArc a2 = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
@@ -166,7 +166,7 @@ public class InteriorAngleGreatArcConnectorTest {
     }
 
     @Test
-    public void testConnectAll_minimize_method() {
+    void testConnectAll_minimize_method() {
         // arrange
         final GreatArc a1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
         final GreatArc a2 = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);

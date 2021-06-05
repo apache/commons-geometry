@@ -33,7 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ConvexArea2STest {
+class ConvexArea2STest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -41,7 +41,7 @@ public class ConvexArea2STest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFull() {
+    void testFull() {
         // act
         final ConvexArea2S area = ConvexArea2S.full();
 
@@ -61,7 +61,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromBounds_empty() {
+    void testFromBounds_empty() {
         // act
         final ConvexArea2S area = ConvexArea2S.fromBounds();
 
@@ -81,7 +81,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromBounds_singleBound() {
+    void testFromBounds_singleBound() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
 
@@ -111,7 +111,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromBounds_lune_intersectionAtPoles() {
+    void testFromBounds_lune_intersectionAtPoles() {
         // arrange
         final GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
         final GreatCircle b = GreatCircles.fromPoints(
@@ -148,7 +148,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromBounds_lune_intersectionAtEquator() {
+    void testFromBounds_lune_intersectionAtEquator() {
         // arrange
         final GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
         final GreatCircle b = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
@@ -185,7 +185,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromBounds_triangle_large() {
+    void testFromBounds_triangle_large() {
         // arrange
         final GreatCircle a = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
         final GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -224,7 +224,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromBounds_triangle_small() {
+    void testFromBounds_triangle_small() {
         // arrange
         final double azMin = 1.12 * Math.PI;
         final double azMax = 1.375 * Math.PI;
@@ -274,7 +274,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromBounds_quad() {
+    void testFromBounds_quad() {
         // arrange
         final Point2S p1 = Point2S.of(0.2, 0.1);
         final Point2S p2 = Point2S.of(0.1, 0.2);
@@ -319,7 +319,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromPath_empty() {
+    void testFromPath_empty() {
         // act
         final ConvexArea2S area = ConvexArea2S.fromPath(GreatArcPath.empty());
 
@@ -328,7 +328,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromPath() {
+    void testFromPath() {
         // arrange
         final GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.MINUS_I)
@@ -367,7 +367,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromVertices_empty() {
+    void testFromVertices_empty() {
         // act
         final ConvexArea2S area = ConvexArea2S.fromVertices(Collections.emptyList(), TEST_PRECISION);
 
@@ -376,7 +376,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromVertices() {
+    void testFromVertices() {
         // arrange
         final Point2S p1 = Point2S.PLUS_I;
         final Point2S p2 = Point2S.PLUS_J;
@@ -412,7 +412,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromVertices_lastVertexRepeated() {
+    void testFromVertices_lastVertexRepeated() {
         // arrange
         final Point2S p1 = Point2S.PLUS_I;
         final Point2S p2 = Point2S.PLUS_J;
@@ -451,7 +451,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromVertices_verticesRepeated() {
+    void testFromVertices_verticesRepeated() {
         // arrange
         final Point2S p1 = Point2S.PLUS_I;
         final Point2S p2 = Point2S.PLUS_J;
@@ -476,14 +476,14 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromVertices_invalidArguments() {
+    void testFromVertices_invalidArguments() {
         // act/assert
         Assertions.assertThrows(IllegalStateException.class, () -> ConvexArea2S.fromVertices(Collections.singletonList(Point2S.PLUS_I), TEST_PRECISION));
         Assertions.assertThrows(IllegalStateException.class, () -> ConvexArea2S.fromVertices(Arrays.asList(Point2S.PLUS_I, Point2S.of(1e-16, Angle.PI_OVER_TWO)), TEST_PRECISION));
     }
 
     @Test
-    public void testFromVertexLoop() {
+    void testFromVertexLoop() {
         // arrange
         final Point2S p1 = Point2S.PLUS_I;
         final Point2S p2 = Point2S.PLUS_J;
@@ -522,7 +522,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testFromVertexLoop_empty() {
+    void testFromVertexLoop_empty() {
         // act
         final ConvexArea2S area = ConvexArea2S.fromVertexLoop(Collections.emptyList(), TEST_PRECISION);
 
@@ -531,7 +531,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testGetCentroid_diminishingLunes() {
+    void testGetCentroid_diminishingLunes() {
         // arrange
         final double eps = 1e-14;
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(eps);
@@ -566,7 +566,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testGetCentroid_diminishingSquares() {
+    void testGetCentroid_diminishingSquares() {
         // arrange
         final double eps = 1e-14;
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(eps);
@@ -601,7 +601,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testBoundaryStream() {
+    void testBoundaryStream() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
         final ConvexArea2S area = ConvexArea2S.fromBounds(circle);
@@ -615,7 +615,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testBoundaryStream_noBoundaries() {
+    void testBoundaryStream_noBoundaries() {
         // arrange
         final ConvexArea2S area = ConvexArea2S.full();
 
@@ -627,7 +627,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testGetInteriorAngles_noAngles() {
+    void testGetInteriorAngles_noAngles() {
         // act/assert
         Assertions.assertEquals(0, ConvexArea2S.full().getInteriorAngles().length);
         Assertions.assertEquals(0, ConvexArea2S.fromBounds(GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION))
@@ -635,7 +635,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testGetInteriorAngles() {
+    void testGetInteriorAngles() {
         // arrange
         final Point2S p1 = Point2S.PLUS_K;
         final Point2S p2 = Point2S.PLUS_I;
@@ -660,7 +660,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final Transform2S t = Transform2S.createReflection(Point2S.PLUS_J);
         final ConvexArea2S input = ConvexArea2S.fromVertexLoop(
@@ -699,7 +699,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testTrim() {
+    void testTrim() {
         // arrange
         final GreatCircle c1 = GreatCircles.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
         final GreatCircle c2 = GreatCircles.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
@@ -724,7 +724,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testSplit_both() {
+    void testSplit_both() {
         // arrange
         final GreatCircle c1 = GreatCircles.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
         final GreatCircle c2 = GreatCircles.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
@@ -752,7 +752,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testSplit_minus() {
+    void testSplit_minus() {
         // arrange
         final ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
                     Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
@@ -771,7 +771,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testSplit_plus() {
+    void testSplit_plus() {
         // arrange
         final ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
                     Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
@@ -790,7 +790,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testToList_full() {
+    void testToList_full() {
         // arrange
         final ConvexArea2S area = ConvexArea2S.full();
 
@@ -802,7 +802,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testToList() {
+    void testToList() {
         // arrange
         final ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
                     Point2S.of(0.1, 0.1), Point2S.of(-0.4, 1),
@@ -819,7 +819,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testToTree_full() {
+    void testToTree_full() {
         // arrange
         final ConvexArea2S area = ConvexArea2S.full();
 
@@ -832,7 +832,7 @@ public class ConvexArea2STest {
     }
 
     @Test
-    public void testToTree() {
+    void testToTree() {
         // arrange
         final ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
                     Point2S.of(0.1, 0.1), Point2S.of(-0.4, 1),

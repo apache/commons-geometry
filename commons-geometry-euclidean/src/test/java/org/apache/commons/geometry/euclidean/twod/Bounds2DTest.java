@@ -30,7 +30,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Bounds2DTest {
+class Bounds2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -43,7 +43,7 @@ public class Bounds2DTest {
             Pattern.compile("^Invalid bounds: min= \\([^\\)]+\\), max= \\([^\\)]+\\)");
 
     @Test
-    public void testFrom_varargs_singlePoint() {
+    void testFrom_varargs_singlePoint() {
         // arrange
         final Vector2D p1 = Vector2D.of(-1, 2);
 
@@ -58,7 +58,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testFrom_varargs_multiplePoints() {
+    void testFrom_varargs_multiplePoints() {
         // arrange
         final Vector2D p1 = Vector2D.of(1, 6);
         final Vector2D p2 = Vector2D.of(0, 5);
@@ -75,7 +75,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testFrom_iterable_singlePoint() {
+    void testFrom_iterable_singlePoint() {
         // arrange
         final Vector2D p1 = Vector2D.of(-1, 2);
 
@@ -90,7 +90,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testFrom_iterable_multiplePoints() {
+    void testFrom_iterable_multiplePoints() {
         // arrange
         final Vector2D p1 = Vector2D.of(1, 6);
         final Vector2D p2 = Vector2D.of(2, 5);
@@ -107,7 +107,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testFrom_iterable_noPoints() {
+    void testFrom_iterable_noPoints() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             Bounds2D.from(new ArrayList<>());
@@ -115,7 +115,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testFrom_invalidBounds() {
+    void testFrom_invalidBounds() {
         // arrange
         final Vector2D good = Vector2D.of(1, 1);
 
@@ -150,7 +150,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testHasSize() {
+    void testHasSize() {
         // arrange
         final Precision.DoubleEquivalence low = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Precision.DoubleEquivalence high = Precision.doubleEquivalenceOfEpsilon(1e-10);
@@ -177,7 +177,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testContains_strict() {
+    void testContains_strict() {
         // arrange
         final Bounds2D b = Bounds2D.from(
                 Vector2D.of(0, 4),
@@ -199,7 +199,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testContains_precision() {
+    void testContains_precision() {
         // arrange
         final Bounds2D b = Bounds2D.from(
                 Vector2D.of(0, 4),
@@ -220,7 +220,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testIntersects() {
+    void testIntersects() {
         // arrange
         final Bounds2D b = Bounds2D.from(Vector2D.ZERO, Vector2D.of(1, 1));
 
@@ -284,7 +284,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testIntersection() {
+    void testIntersection() {
         // -- arrange
         final Bounds2D b = Bounds2D.from(Vector2D.ZERO, Vector2D.of(1, 1));
 
@@ -356,7 +356,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testEq() {
+    void testEq() {
         // arrange
         final Precision.DoubleEquivalence low = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Precision.DoubleEquivalence high = Precision.doubleEquivalenceOfEpsilon(1e-10);
@@ -382,7 +382,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Bounds2D b1 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 
@@ -408,7 +408,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Bounds2D b1 = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 
@@ -431,7 +431,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Bounds2D b = Bounds2D.from(Vector2D.of(1, 1), Vector2D.of(2, 2));
 
@@ -444,7 +444,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testBuilder_addMethods() {
+    void testBuilder_addMethods() {
         // arrange
         final Vector2D p1 = Vector2D.of(1, 10);
         final Vector2D p2 = Vector2D.of(2, 9);
@@ -466,7 +466,7 @@ public class Bounds2DTest {
     }
 
     @Test
-    public void testBuilder_hasBounds() {
+    void testBuilder_hasBounds() {
         // act/assert
         Assertions.assertFalse(Bounds2D.builder().hasBounds());
 

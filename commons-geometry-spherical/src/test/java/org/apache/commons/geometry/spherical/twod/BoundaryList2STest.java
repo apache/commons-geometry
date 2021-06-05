@@ -23,7 +23,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BoundaryList2STest {
+class BoundaryList2STest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -31,7 +31,7 @@ public class BoundaryList2STest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testCtor() {
+    void testCtor() {
         // arrange
         final List<GreatArc> boundaries = Collections.singletonList(
                 GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION)
@@ -47,7 +47,7 @@ public class BoundaryList2STest {
     }
 
     @Test
-    public void testToList() {
+    void testToList() {
         // arrange
         final BoundaryList2S list = new BoundaryList2S(Collections.emptyList());
 
@@ -56,7 +56,7 @@ public class BoundaryList2STest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final BoundaryList2S list = new BoundaryList2S(Collections.emptyList());
 

@@ -43,7 +43,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class StlBoundaryWriteHandler3DTest {
+class StlBoundaryWriteHandler3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -58,14 +58,14 @@ public class StlBoundaryWriteHandler3DTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // assert
         Assertions.assertEquals(GeometryFormat3D.STL, handler.getFormat());
         Assertions.assertEquals(51200, handler.getinitialBufferSize());
     }
 
     @Test
-    public void testSetInitialBufferSize() {
+    void testSetInitialBufferSize() {
         // act
         handler.setInitialBufferSize(10);
 
@@ -82,7 +82,7 @@ public class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWrite_boundarySource_empty() throws IOException {
+    void testWrite_boundarySource_empty() throws IOException {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of();
 
@@ -94,7 +94,7 @@ public class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWrite_boundaryList() throws IOException {
+    void testWrite_boundaryList() throws IOException {
         // arrange
         final BoundarySource3D src = EuclideanIOTestUtils.cubeMinusSphere(TEST_PRECISION);
 
@@ -106,7 +106,7 @@ public class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWrite_triangleMesh() throws IOException {
+    void testWrite_triangleMesh() throws IOException {
         // arrange
         final TriangleMesh mesh = EuclideanIOTestUtils.cubeMinusSphere(TEST_PRECISION)
                 .toTriangleMesh(TEST_PRECISION);
@@ -119,7 +119,7 @@ public class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWrite_triangleMesh_empty() throws IOException {
+    void testWrite_triangleMesh_empty() throws IOException {
         // arrange
         final TriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION)
                 .build();
@@ -132,7 +132,7 @@ public class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteFacets_list() throws IOException {
+    void testWriteFacets_list() throws IOException {
         // arrange
         final List<FacetDefinition> facets = cubeFacets();
 
@@ -144,7 +144,7 @@ public class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteFacets_list_empty() throws IOException {
+    void testWriteFacets_list_empty() throws IOException {
         // act
         handler.writeFacets(Collections.emptyList(), new StreamGeometryOutput(out));
 
@@ -153,7 +153,7 @@ public class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteFacets_includesStlFacetAttribute() throws IOException {
+    void testWriteFacets_includesStlFacetAttribute() throws IOException {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));
         final Vector3D normal = Vector3D.Unit.PLUS_Z;

@@ -42,7 +42,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LinePathTest {
+class LinePathTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -50,7 +50,7 @@ public class LinePathTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFrom_empty() {
+    void testFrom_empty() {
         // act
         final LinePath path = LinePath.from(new ArrayList<>());
 
@@ -71,7 +71,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFrom_singleFiniteSegment() {
+    void testFrom_singleFiniteSegment() {
         // arrange
         final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
@@ -97,7 +97,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFrom_singleInfiniteSegment() {
+    void testFrom_singleInfiniteSegment() {
         // arrange
         final LineConvexSubset a = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION).span();
 
@@ -123,7 +123,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFrom_finiteSegments_notClosed() {
+    void testFrom_finiteSegments_notClosed() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -155,7 +155,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFrom_finiteSegments_closed() {
+    void testFrom_finiteSegments_closed() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -189,7 +189,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFrom_infiniteSegments() {
+    void testFrom_infiniteSegments() {
         // arrange
         final ReverseRay a = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION)
                 .reverseRayTo(1.0);
@@ -219,7 +219,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFrom_finiteAndInfiniteSegments_startInfinite() {
+    void testFrom_finiteAndInfiniteSegments_startInfinite() {
         // arrange
         final ReverseRay a = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).reverseRayTo(1.0);
         final Segment b = Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
@@ -245,7 +245,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFrom_finiteAndInfiniteSegments_endInfinite() {
+    void testFrom_finiteAndInfiniteSegments_endInfinite() {
         // arrange
         final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
         final Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), Angle.PI_OVER_TWO, TEST_PRECISION)
@@ -272,7 +272,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFrom_segmentsNotConnected() {
+    void testFrom_segmentsNotConnected() {
         // arrange
         final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
         final Segment b = Lines.segmentFromPoints(Vector2D.of(1.01, 0), Vector2D.of(1, 0), TEST_PRECISION);
@@ -287,7 +287,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFromVertices_empty() {
+    void testFromVertices_empty() {
         // act
         final LinePath path = LinePath.fromVertices(new ArrayList<>(), TEST_PRECISION);
 
@@ -306,13 +306,13 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFromVertices_singleVertex_failsToCreatePath() {
+    void testFromVertices_singleVertex_failsToCreatePath() {
         // act/assert
         Assertions.assertThrows(IllegalStateException.class, () -> LinePath.fromVertices(Collections.singletonList(Vector2D.ZERO), TEST_PRECISION));
     }
 
     @Test
-    public void testFromVertices_twoVertices() {
+    void testFromVertices_twoVertices() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -337,7 +337,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFromVertices_multipleVertices_notClosed() {
+    void testFromVertices_multipleVertices_notClosed() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -366,7 +366,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFromVertices_multipleVertices_closed() {
+    void testFromVertices_multipleVertices_closed() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -396,7 +396,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFromVertexLoop_empty() {
+    void testFromVertexLoop_empty() {
         // act
         final LinePath path = LinePath.fromVertexLoop(new ArrayList<>(), TEST_PRECISION);
 
@@ -415,13 +415,13 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFromVertexLoop_singleVertex_failsToCreatePath() {
+    void testFromVertexLoop_singleVertex_failsToCreatePath() {
         // act/assert
         Assertions.assertThrows(IllegalStateException.class, () -> LinePath.fromVertexLoop(Collections.singletonList(Vector2D.ZERO), TEST_PRECISION));
     }
 
     @Test
-    public void testFromVertexLoop_closeRequired() {
+    void testFromVertexLoop_closeRequired() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -446,7 +446,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFromVertexLoop_closeNotRequired() {
+    void testFromVertexLoop_closeNotRequired() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -471,7 +471,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testFromVertices_booleanArg() {
+    void testFromVertices_booleanArg() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -499,7 +499,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testGetElements_listIsNotModifiable() {
+    void testGetElements_listIsNotModifiable() {
         // arrange
         final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
         final List<LineConvexSubset> inputSegments = new ArrayList<>(Collections.singletonList(a));
@@ -517,7 +517,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBoundaryStream() {
+    void testBoundaryStream() {
         // arrange
         final Segment seg = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
         final LinePath path = LinePath.from(Collections.singletonList(seg));
@@ -531,7 +531,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBoundaryStream_empty() {
+    void testBoundaryStream_empty() {
         // arrange
         final LinePath path = LinePath.empty();
 
@@ -543,7 +543,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testTransform_empty() {
+    void testTransform_empty() {
         // arrange
         final LinePath path = LinePath.empty();
         final AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.Unit.PLUS_X);
@@ -553,7 +553,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testTransform_finite() {
+    void testTransform_finite() {
         // arrange
         final LinePath path = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.Unit.ZERO)
@@ -581,7 +581,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testTransform_infinite() {
+    void testTransform_infinite() {
         // arrange
         final LinePath path = LinePath.from(
                 Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
@@ -608,7 +608,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testReverse_empty() {
+    void testReverse_empty() {
         // arrange
         final LinePath path = LinePath.empty();
 
@@ -617,7 +617,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final LinePath path = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.Unit.ZERO)
@@ -642,7 +642,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testReverse_singleInfinite() {
+    void testReverse_singleInfinite() {
         // arrange
         final LinePath path = LinePath.from(
                 Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
@@ -667,7 +667,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testReverse_doubleInfinite() {
+    void testReverse_doubleInfinite() {
         // arrange
         final LineConvexSubset a = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).reverseRayTo(Vector2D.ZERO);
         final LineConvexSubset b = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).rayFrom(Vector2D.ZERO);
@@ -701,7 +701,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testToTree() {
+    void testToTree() {
         // arrange
         final LinePath path = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.of(0, 1))
@@ -723,7 +723,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testSimplify() {
+    void testSimplify() {
         // arrange
         final Builder builder = LinePath.builder(TEST_PRECISION);
 
@@ -746,7 +746,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testSimplify_startAndEndCombined() {
+    void testSimplify_startAndEndCombined() {
         // arrange
         final Builder builder = LinePath.builder(TEST_PRECISION);
 
@@ -773,7 +773,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testSimplify_empty() {
+    void testSimplify_empty() {
         // arrange
         final Builder builder = LinePath.builder(TEST_PRECISION);
 
@@ -792,7 +792,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testSimplify_infiniteSegment() {
+    void testSimplify_infiniteSegment() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
 
@@ -819,7 +819,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testSimplify_combinedInfiniteSegment() {
+    void testSimplify_combinedInfiniteSegment() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         final Split<LineConvexSubset> split = line.span().split(
@@ -849,7 +849,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testSimplify_startAndEndNotCombinedWhenNotClosed() {
+    void testSimplify_startAndEndNotCombinedWhenNotClosed() {
         // arrange
         final Line xAxis = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         final Builder builder = LinePath.builder(TEST_PRECISION);
@@ -879,7 +879,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testSimplify_subsequentCallsToReturnedObjectReturnSameObject() {
+    void testSimplify_subsequentCallsToReturnedObjectReturnSameObject() {
         // arrange
         final Builder builder = LinePath.builder(TEST_PRECISION);
         final LinePath path = builder.appendVertices(
@@ -897,7 +897,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testLinecast_empty() {
+    void testLinecast_empty() {
         // arrange
         final LinePath path = LinePath.empty();
 
@@ -912,7 +912,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testLinecast() {
+    void testLinecast() {
         // arrange
         final LinePath path = LinePath.fromVertexLoop(Arrays.asList(
                     Vector2D.ZERO, Vector2D.of(1, 0),
@@ -938,7 +938,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Line yAxis = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
         final Line xAxis = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
@@ -997,7 +997,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_prependAndAppend_segments() {
+    void testBuilder_prependAndAppend_segments() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -1029,7 +1029,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_prependAndAppend_disconnectedSegments() {
+    void testBuilder_prependAndAppend_disconnectedSegments() {
         // arrange
         final Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
@@ -1042,7 +1042,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_prependAndAppend_vertices() {
+    void testBuilder_prependAndAppend_vertices() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -1070,7 +1070,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_prependAndAppend_noPrecisionSpecified() {
+    void testBuilder_prependAndAppend_noPrecisionSpecified() {
         // arrange
         final Vector2D p = Vector2D.ZERO;
         final Builder builder = LinePath.builder(null);
@@ -1088,7 +1088,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_prependAndAppend_addingToInfinitePath() {
+    void testBuilder_prependAndAppend_addingToInfinitePath() {
         // arrange
         final Vector2D p = Vector2D.Unit.PLUS_X;
         final Builder builder = LinePath.builder(TEST_PRECISION);
@@ -1101,7 +1101,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_prependAndAppend_ignoresEquivalentVertices() {
+    void testBuilder_prependAndAppend_ignoresEquivalentVertices() {
         // arrange
         final Vector2D p = Vector2D.ZERO;
 
@@ -1125,7 +1125,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_prependAndAppend_mixedVerticesAndSegments() {
+    void testBuilder_prependAndAppend_mixedVerticesAndSegments() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -1156,7 +1156,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_appendVertices() {
+    void testBuilder_appendVertices() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -1181,7 +1181,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_prependVertices() {
+    void testBuilder_prependVertices() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -1206,7 +1206,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_close_notYetClosed() {
+    void testBuilder_close_notYetClosed() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -1230,7 +1230,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_close_alreadyClosed() {
+    void testBuilder_close_alreadyClosed() {
         // arrange
         final Vector2D p1 = Vector2D.ZERO;
         final Vector2D p2 = Vector2D.of(1, 0);
@@ -1255,7 +1255,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_close_infiniteSegmentAtStart() {
+    void testBuilder_close_infiniteSegmentAtStart() {
         // arrange
         final Builder builder = LinePath.builder(TEST_PRECISION);
 
@@ -1269,7 +1269,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_close_infiniteSegmentAtEnd() {
+    void testBuilder_close_infiniteSegmentAtEnd() {
         // arrange
         final Builder builder = LinePath.builder(TEST_PRECISION);
 
@@ -1285,7 +1285,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_close_emptyPath() {
+    void testBuilder_close_emptyPath() {
         // arrange
         final Builder builder = LinePath.builder(TEST_PRECISION);
 
@@ -1297,7 +1297,7 @@ public class LinePathTest {
     }
 
     @Test
-    public void testBuilder_close_obtuseTriangle() {
+    void testBuilder_close_obtuseTriangle() {
         // arrange
         final Builder builder = LinePath.builder(TEST_PRECISION);
         builder.appendVertices(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1));

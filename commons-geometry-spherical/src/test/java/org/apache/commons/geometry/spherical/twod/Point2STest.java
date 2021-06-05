@@ -28,12 +28,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-public class Point2STest {
+class Point2STest {
 
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         for (int k = -2; k < 3; ++k) {
             // arrange
             final Point2S p = Point2S.of(1.0 + k * Angle.TWO_PI, 1.4);
@@ -51,7 +51,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testAzimuthPolarComparator() {
+    void testAzimuthPolarComparator() {
         // arrange
         final Comparator<Point2S> comp = Point2S.POLAR_AZIMUTH_ASCENDING_ORDER;
 
@@ -69,7 +69,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testFrom_vector() {
+    void testFrom_vector() {
         // arrange
         final double quarterPi = 0.25 * Math.PI;
 
@@ -84,7 +84,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testNaN() {
+    void testNaN() {
         // act/assert
         Assertions.assertTrue(Point2S.NaN.isNaN());
         Assertions.assertEquals(Point2S.NaN, Point2S.of(Double.NaN, 1.0));
@@ -95,7 +95,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testInfinite() {
+    void testInfinite() {
         // act/assert
         Assertions.assertTrue(Point2S.of(0, Double.POSITIVE_INFINITY).isInfinite());
         Assertions.assertTrue(Point2S.of(Double.POSITIVE_INFINITY, 0).isInfinite());
@@ -108,7 +108,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testFinite() {
+    void testFinite() {
         // act/assert
         Assertions.assertTrue(Point2S.of(0, 0).isFinite());
         Assertions.assertTrue(Point2S.of(1, 1).isFinite());
@@ -121,7 +121,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testDistance() {
+    void testDistance() {
         // arrange
         final Point2S a = Point2S.of(1.0, 0.5 * Math.PI);
         final Point2S b = Point2S.of(a.getAzimuth() + 0.5 * Math.PI, a.getPolar());
@@ -134,7 +134,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testSlerp_alongEquator() {
+    void testSlerp_alongEquator() {
         // arrange
         final Point2S p1 = Point2S.PLUS_I;
         final Point2S p2 = Point2S.PLUS_J;
@@ -157,7 +157,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testSlerp_alongMeridian() {
+    void testSlerp_alongMeridian() {
         // arrange
         final Point2S p1 = Point2S.PLUS_J;
         final Point2S p2 = Point2S.PLUS_K;
@@ -180,7 +180,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testSlerp_samePoint() {
+    void testSlerp_samePoint() {
         // arrange
         final Point2S p1 = Point2S.PLUS_I;
 
@@ -191,7 +191,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testSlerp_antipodal() {
+    void testSlerp_antipodal() {
         // arrange
         final Point2S p1 = Point2S.PLUS_I;
         final Point2S p2 = Point2S.MINUS_I;
@@ -205,7 +205,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testAntipodal() {
+    void testAntipodal() {
         for (double az = -6 * Math.PI; az <= 6 * Math.PI; az += 0.1) {
             for (double p = 0; p <= Math.PI; p += 0.1) {
                 // arrange
@@ -229,7 +229,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testAntipodal_numericalStability() {
+    void testAntipodal_numericalStability() {
         // arrange
         final double eps = 1e-16;
         final Point2S pt = Point2S.of(1, 2);
@@ -243,7 +243,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testDimension() {
+    void testDimension() {
         // arrange
         final Point2S pt = Point2S.of(1, 2);
 
@@ -252,7 +252,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testEq() {
+    void testEq() {
         // arrange
         final Precision.DoubleEquivalence smallEps = Precision.doubleEquivalenceOfEpsilon(1e-5);
         final Precision.DoubleEquivalence largeEps = Precision.doubleEquivalenceOfEpsilon(5e-1);
@@ -278,7 +278,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Point2S a = Point2S.of(1.0, 2.0);
         final Point2S b = Point2S.of(1.0, 3.0);
@@ -298,7 +298,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Point2S a = Point2S.of(1.0, 2.0);
         final Point2S b = Point2S.of(1.0, 3.0);
@@ -316,7 +316,7 @@ public class Point2STest {
     }
 
     @Test
-    public void testEquals_poles() {
+    void testEquals_poles() {
         // arrange
         final Point2S a = Point2S.of(1.0, 0.0);
         final Point2S b = Point2S.of(0.0, 0.0);
@@ -337,21 +337,21 @@ public class Point2STest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // act/assert
         Assertions.assertEquals("(0.0, 0.0)", Point2S.of(0.0, 0.0).toString());
         Assertions.assertEquals("(1.0, 2.0)", Point2S.of(1.0, 2.0).toString());
     }
 
     @Test
-    public void testParse() {
+    void testParse() {
         // act/assert
         checkPoint(Point2S.parse("(0,0)"), 0.0, 0.0);
         checkPoint(Point2S.parse("(1,2)"), 1.0, 2.0);
     }
 
     @Test
-    public void testParse_failure() {
+    void testParse_failure() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Point2S.parse("abc"));
     }

@@ -36,7 +36,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ObjBoundaryWriteHandler3DTest {
+class ObjBoundaryWriteHandler3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -52,7 +52,7 @@ public class ObjBoundaryWriteHandler3DTest {
     private final ObjBoundaryWriteHandler3D handler = new ObjBoundaryWriteHandler3D();
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // act/assert
         Assertions.assertEquals(GeometryFormat3D.OBJ, handler.getFormat());
         Assertions.assertEquals(StandardCharsets.UTF_8, handler.getDefaultCharset());
@@ -62,7 +62,7 @@ public class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteFacets() throws IOException {
+    void testWriteFacets() throws IOException {
         // act
         handler.setDoubleFormat(DoubleFormats.createDefault(0, -6));
         handler.writeFacets(FACETS, new StreamGeometryOutput(out));
@@ -79,7 +79,7 @@ public class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteFacets_usesOutputCharset() throws IOException {
+    void testWriteFacets_usesOutputCharset() throws IOException {
         // act
         handler.setDoubleFormat(DoubleFormats.createDefault(0, -6));
         handler.writeFacets(FACETS, new StreamGeometryOutput(out, null, StandardCharsets.UTF_16));
@@ -96,7 +96,7 @@ public class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWriteFacets_customConfig() throws IOException {
+    void testWriteFacets_customConfig() throws IOException {
         // arrange
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         handler.setLineSeparator("\r\n");
@@ -120,7 +120,7 @@ public class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWrite() throws IOException {
+    void testWrite() throws IOException {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(FACETS.stream()
                 .map(f -> FacetDefinitions.toPolygon(f, TEST_PRECISION))
@@ -141,7 +141,7 @@ public class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWrite_customConfig() throws IOException {
+    void testWrite_customConfig() throws IOException {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(FACETS.stream()
                 .map(f -> FacetDefinitions.toPolygon(f, TEST_PRECISION))
@@ -169,7 +169,7 @@ public class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void testWrite_mesh() throws IOException {
+    void testWrite_mesh() throws IOException {
         // arrange
         final SimpleTriangleMesh.Builder builder = SimpleTriangleMesh.builder(TEST_PRECISION);
         builder.addFaceAndVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));

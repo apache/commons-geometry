@@ -22,7 +22,7 @@ import org.apache.commons.numbers.angle.Angle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Transform1STest {
+class Transform1STest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -35,7 +35,7 @@ public class Transform1STest {
     private static final Point1S MINUS_HALF_PI = Point1S.of(-Angle.PI_OVER_TWO);
 
     @Test
-    public void testIdentity() {
+    void testIdentity() {
         // act
         final Transform1S t = Transform1S.identity();
 
@@ -53,7 +53,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testRotate_positive() {
+    void testRotate_positive() {
         // arrange
         final Transform1S t = Transform1S.createRotation(Angle.PI_OVER_TWO);
 
@@ -71,7 +71,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testRotate_negative() {
+    void testRotate_negative() {
         // arrange
         final Transform1S t = Transform1S.createRotation(-Angle.PI_OVER_TWO);
 
@@ -89,7 +89,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testNegate() {
+    void testNegate() {
         // arrange
         final Transform1S t = Transform1S.createNegation();
 
@@ -107,7 +107,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testNegateThenRotate() {
+    void testNegateThenRotate() {
         // arrange
         final Transform1S t = Transform1S.createNegation().rotate(Angle.PI_OVER_TWO);
 
@@ -125,7 +125,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testRotateThenNegate() {
+    void testRotateThenNegate() {
         // arrange
         final Transform1S t = Transform1S.createRotation(Angle.PI_OVER_TWO).negate();
 
@@ -143,7 +143,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testMultiply() {
+    void testMultiply() {
         // arrange
         final Transform1S neg = Transform1S.identity().negate();
         final Transform1S rot = Transform1S.identity().rotate(Angle.PI_OVER_TWO);
@@ -165,7 +165,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testPreultiply() {
+    void testPreultiply() {
         // arrange
         final Transform1S neg = Transform1S.identity().negate();
         final Transform1S rot = Transform1S.identity().rotate(Angle.PI_OVER_TWO);
@@ -187,7 +187,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Transform1S a = Transform1S.identity().negate().rotate(Angle.PI_OVER_TWO);
         final Transform1S b = Transform1S.identity().rotate(Angle.PI_OVER_TWO);
@@ -207,7 +207,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Transform1S a = Transform1S.identity().negate().rotate(Angle.PI_OVER_TWO);
         final Transform1S b = Transform1S.identity().rotate(Angle.PI_OVER_TWO);
@@ -225,7 +225,7 @@ public class Transform1STest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Transform1S t = Transform1S.identity().negate().rotate(1);
 

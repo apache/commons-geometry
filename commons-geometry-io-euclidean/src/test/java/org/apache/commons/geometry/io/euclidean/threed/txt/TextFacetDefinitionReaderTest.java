@@ -29,12 +29,12 @@ import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TextFacetDefinitionReaderTest {
+class TextFacetDefinitionReaderTest {
 
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    public void testPropertyDefaults() {
+    void testPropertyDefaults() {
         // arrange
         TextFacetDefinitionReader reader = facetReader("");
 
@@ -43,7 +43,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testSetCommentToken_invalidArgs() {
+    void testSetCommentToken_invalidArgs() {
         // arrange
         TextFacetDefinitionReader reader = facetReader("");
         String baseMsg = "Comment token cannot contain whitespace; was [";
@@ -59,7 +59,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_empty() throws IOException {
+    void testReadFacet_empty() throws IOException {
         // arrange
         TextFacetDefinitionReader reader = facetReader("");
 
@@ -71,7 +71,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_singleFacet() throws IOException {
+    void testReadFacet_singleFacet() throws IOException {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "1.0 2.0 3.0 40 50 60 7.0e-2 8e-2 9E-02 1.01e+1 -11.02 +12");
@@ -90,7 +90,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_multipleFacets() throws IOException {
+    void testReadFacet_multipleFacets() throws IOException {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "1,2,3    4,5,6 7,8,9    10,11,12\r" +
@@ -123,7 +123,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_blankLinesAndComments() throws IOException {
+    void testReadFacet_blankLinesAndComments() throws IOException {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "# some ignored numbers: 1 2 3 4 5 6\n" +
@@ -158,7 +158,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_nonDefaultCommentToken() throws IOException {
+    void testReadFacet_nonDefaultCommentToken() throws IOException {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "5$ some ignored numbers: 1 2 3 4 5 6\n" +
@@ -195,7 +195,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_longCommentToken() throws IOException {
+    void testReadFacet_longCommentToken() throws IOException {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "this_is-a-comment some ignored numbers: 1 2 3 4 5 6\n" +
@@ -232,7 +232,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_emptyCommentToken() {
+    void testReadFacet_emptyCommentToken() {
         // arrange
         TextFacetDefinitionReader reader = facetReader("# line comment\n");
         reader.setCommentToken("");
@@ -245,7 +245,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_nullCommentToken() {
+    void testReadFacet_nullCommentToken() {
         // arrange
         TextFacetDefinitionReader reader = facetReader("# line comment\n");
         reader.setCommentToken(null);
@@ -258,7 +258,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_invalidTokens() {
+    void testReadFacet_invalidTokens() {
         // arrange
         TextFacetDefinitionReader reader = facetReader("1 abc 3 ; 4 5 6 ; 7 8 9");
 
@@ -270,7 +270,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_notEnoughVectors() {
+    void testReadFacet_notEnoughVectors() {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "1\n" +
@@ -301,7 +301,7 @@ public class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testClose() throws IOException {
+    void testClose() throws IOException {
         // arrange
         final CloseCountReader countReader = new CloseCountReader(new StringReader(""));
         final TextFacetDefinitionReader reader = new TextFacetDefinitionReader(countReader);

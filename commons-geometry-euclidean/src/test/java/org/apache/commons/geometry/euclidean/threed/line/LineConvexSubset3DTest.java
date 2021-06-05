@@ -29,7 +29,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LineConvexSubset3DTest {
+class LineConvexSubset3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -37,7 +37,7 @@ public class LineConvexSubset3DTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromInterval_intervalArg_finite() {
+    void testFromInterval_intervalArg_finite() {
         // arrange
         final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 2, intervalPrecision);
@@ -53,7 +53,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testFromInterval_intervalArg_full() {
+    void testFromInterval_intervalArg_full() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
@@ -74,7 +74,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testFromInterval_intervalArg_positiveHalfSpace() {
+    void testFromInterval_intervalArg_positiveHalfSpace() {
         // arrange
         final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.min(-1, intervalPrecision);
@@ -100,7 +100,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testFromInterval_intervalArg_negativeHalfSpace() {
+    void testFromInterval_intervalArg_negativeHalfSpace() {
         // arrange
         final Precision.DoubleEquivalence intervalPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.max(2, intervalPrecision);
@@ -123,7 +123,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_finite() {
+    void testFromInterval_doubleArgs_finite() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
@@ -136,7 +136,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_full() {
+    void testFromInterval_doubleArgs_full() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
@@ -152,7 +152,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_positiveHalfSpace() {
+    void testFromInterval_doubleArgs_positiveHalfSpace() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
@@ -170,7 +170,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_negativeHalfSpace() {
+    void testFromInterval_doubleArgs_negativeHalfSpace() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
@@ -188,7 +188,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testFromInterval_doubleArgs_invalidArgs() {
+    void testFromInterval_doubleArgs_invalidArgs() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
@@ -211,7 +211,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testFromInterval_vectorArgs() {
+    void testFromInterval_vectorArgs() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
@@ -224,7 +224,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testSpaceSubspaceConversion() {
+    void testSpaceSubspaceConversion() {
         // arrange
         final Segment3D segment = Lines3D.segmentFromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
@@ -234,7 +234,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testGetSubspaceRegion() {
+    void testGetSubspaceRegion() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
         final Interval interval = Interval.full();
@@ -247,7 +247,7 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
-    public void testTransform_infinite() {
+    void testTransform_infinite() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, -1), TEST_PRECISION);
         final LineConvexSubset3D subset = Lines3D.subsetFromInterval(line,

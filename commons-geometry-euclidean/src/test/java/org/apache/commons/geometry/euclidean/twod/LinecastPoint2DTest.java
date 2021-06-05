@@ -25,7 +25,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LinecastPoint2DTest {
+class LinecastPoint2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -39,7 +39,7 @@ public class LinecastPoint2DTest {
             Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // arrange
         final Vector2D pt = Vector2D.of(1, 1);
         final Vector2D normal = Vector2D.Unit.PLUS_X;
@@ -54,7 +54,7 @@ public class LinecastPoint2DTest {
     }
 
     @Test
-    public void testAbscissaOrder() {
+    void testAbscissaOrder() {
         // arrange
         final LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
 
@@ -71,7 +71,7 @@ public class LinecastPoint2DTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
         final LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, X_AXIS);
@@ -93,7 +93,7 @@ public class LinecastPoint2DTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
         final LinecastPoint2D b = new LinecastPoint2D(Vector2D.of(2, 2), Vector2D.Unit.PLUS_X, X_AXIS);
@@ -113,7 +113,7 @@ public class LinecastPoint2DTest {
     }
 
     @Test
-    public void testEq() {
+    void testEq() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -140,7 +140,7 @@ public class LinecastPoint2DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final LinecastPoint2D it = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, X_AXIS);
 
@@ -152,7 +152,7 @@ public class LinecastPoint2DTest {
     }
 
     @Test
-    public void testSortAndFilter_empty() {
+    void testSortAndFilter_empty() {
         // arrange
         final List<LinecastPoint2D> pts = new ArrayList<>();
 
@@ -164,7 +164,7 @@ public class LinecastPoint2DTest {
     }
 
     @Test
-    public void testSortAndFilter() {
+    void testSortAndFilter() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 

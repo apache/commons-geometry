@@ -42,7 +42,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BoundaryIOManager3DTest {
+class BoundaryIOManager3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -74,7 +74,7 @@ public class BoundaryIOManager3DTest {
     private final BoundaryIOManager3D manager = new BoundaryIOManager3D();
 
     @Test
-    public void testRegisterDefaultHandlers() {
+    void testRegisterDefaultHandlers() {
         // act
         manager.registerDefaultHandlers();
 
@@ -92,7 +92,7 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testFacetDefinitionReader_formatGiven() throws IOException {
+    void testFacetDefinitionReader_formatGiven() throws IOException {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -108,7 +108,7 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testFacetDefinitionReader_nullFormat() throws IOException {
+    void testFacetDefinitionReader_nullFormat() throws IOException {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -124,13 +124,13 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testFacetDefinitionReader_unknownHandler() throws IOException {
+    void testFacetDefinitionReader_unknownHandler() throws IOException {
         // act/assert
         checkUnknownReadHandler(manager::facetDefinitionReader);
     }
 
     @Test
-    public void testFacets_formatGiven() throws IOException {
+    void testFacets_formatGiven() throws IOException {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -146,7 +146,7 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testFacets_nullFormat() throws IOException {
+    void testFacets_nullFormat() throws IOException {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -162,13 +162,13 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testFacets_unknownHandler() throws IOException {
+    void testFacets_unknownHandler() throws IOException {
         // act/assert
         checkUnknownReadHandler(manager::facets);
     }
 
     @Test
-    public void testTriangles_formatGiven() throws IOException {
+    void testTriangles_formatGiven() throws IOException {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -185,7 +185,7 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testTriangles_nullFormat() throws IOException {
+    void testTriangles_nullFormat() throws IOException {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -202,13 +202,13 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testTriangles_unknownHandler() throws IOException {
+    void testTriangles_unknownHandler() throws IOException {
         // act/assert
         checkUnknownReadHandler((in, fmt) -> manager.triangles(in, fmt, TEST_PRECISION));
     }
 
     @Test
-    public void testReadTriangleMesh_formatGiven() throws IOException {
+    void testReadTriangleMesh_formatGiven() throws IOException {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -225,7 +225,7 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testReadTriangleMesh_nullFormat() throws IOException {
+    void testReadTriangleMesh_nullFormat() throws IOException {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -242,13 +242,13 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testReadTriangleMesh_unknownHandler() throws IOException {
+    void testReadTriangleMesh_unknownHandler() throws IOException {
         // act/assert
         checkUnknownReadHandler((in, fmt) -> manager.readTriangleMesh(in, fmt, TEST_PRECISION));
     }
 
     @Test
-    public void testWrite_stream_formatGiven() throws IOException {
+    void testWrite_stream_formatGiven() throws IOException {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -264,7 +264,7 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testWrite_stream_nullFormat() throws IOException {
+    void testWrite_stream_nullFormat() throws IOException {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -280,13 +280,13 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testWrite_stream_unknownHandler() throws IOException {
+    void testWrite_stream_unknownHandler() throws IOException {
         // act/assert
         checkUnknownWriteHandler((out, fmt) -> manager.write(Stream.of(TRI), out, fmt));
     }
 
     @Test
-    public void testWriteFacets_stream_formatGiven() throws IOException {
+    void testWriteFacets_stream_formatGiven() throws IOException {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -302,7 +302,7 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testWriteFacets_stream_nullFormat() throws IOException {
+    void testWriteFacets_stream_nullFormat() throws IOException {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -318,13 +318,13 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testWriteFacets_stream_unknownHandler() throws IOException {
+    void testWriteFacets_stream_unknownHandler() throws IOException {
         // act/assert
         checkUnknownWriteHandler((out, fmt) -> manager.writeFacets(Stream.of(FACET), out, fmt));
     }
 
     @Test
-    public void testWriteFacets_collection_formatGiven() throws IOException {
+    void testWriteFacets_collection_formatGiven() throws IOException {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -340,7 +340,7 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testWriteFacets_collection_nullFormat() throws IOException {
+    void testWriteFacets_collection_nullFormat() throws IOException {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -356,7 +356,7 @@ public class BoundaryIOManager3DTest {
     }
 
     @Test
-    public void testWriteFacets_collection_unknownHandler() throws IOException {
+    void testWriteFacets_collection_unknownHandler() throws IOException {
         // act/assert
         checkUnknownWriteHandler((out, fmt) -> manager.writeFacets(Collections.singletonList(FACET), out, fmt));
     }

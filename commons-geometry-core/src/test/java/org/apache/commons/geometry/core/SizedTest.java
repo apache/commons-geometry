@@ -19,10 +19,10 @@ package org.apache.commons.geometry.core;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SizedTest {
+class SizedTest {
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // arrange
         final Sized finite = new StubSized(1);
         final Sized infinite = new StubSized(Double.POSITIVE_INFINITY);

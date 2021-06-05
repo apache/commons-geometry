@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-public class    EmbeddedTreeSubGreatCircleTest {
+class    EmbeddedTreeSubGreatCircleTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -44,7 +44,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
             Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
     @Test
-    public void testCtor_default() {
+    void testCtor_default() {
         // act
         final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(XY_CIRCLE);
 
@@ -65,7 +65,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testCtor_boolean_true() {
+    void testCtor_boolean_true() {
         // act
         final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(XY_CIRCLE, true);
 
@@ -88,7 +88,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testCtor_boolean_false() {
+    void testCtor_boolean_false() {
         // act
         final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(XY_CIRCLE, false);
 
@@ -109,7 +109,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testCtor_tree() {
+    void testCtor_tree() {
         // arrange
         final RegionBSPTree1S tree = RegionBSPTree1S.fromInterval(AngularInterval.of(1, 2, TEST_PRECISION));
 
@@ -137,7 +137,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
         final RegionBSPTree1S region = RegionBSPTree1S.empty();
@@ -161,7 +161,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testSplit_full() {
+    void testSplit_full() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
         final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(circle, true);
@@ -196,7 +196,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testSplit_empty() {
+    void testSplit_empty() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
         final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(circle, false);
@@ -217,7 +217,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testSplit_both() {
+    void testSplit_both() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
@@ -253,7 +253,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testSplit_minus() {
+    void testSplit_minus() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
         final RegionBSPTree1S tree = AngularInterval.of(Angle.PI_OVER_TWO, Math.PI, TEST_PRECISION).toTree();
@@ -276,7 +276,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testSplit_plus() {
+    void testSplit_plus() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
         final RegionBSPTree1S tree = AngularInterval.of(Angle.PI_OVER_TWO, Math.PI, TEST_PRECISION).toTree();
@@ -299,7 +299,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testSplit_parallelAndAntiparallel() {
+    void testSplit_parallelAndAntiparallel() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
         final RegionBSPTree1S tree = AngularInterval.of(Angle.PI_OVER_TWO, Math.PI, TEST_PRECISION).toTree();
@@ -314,7 +314,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testAdd_arc() {
+    void testAdd_arc() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
         final GreatCircle closeCircle = GreatCircles.fromPoints(Point2S.MINUS_K,
@@ -334,7 +334,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testAdd_arc_differentCircle() {
+    void testAdd_arc_differentCircle() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
         final GreatCircle otherCircle = GreatCircles.fromPoints(Point2S.MINUS_K,
@@ -346,7 +346,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testAdd_subGreatCircle() {
+    void testAdd_subGreatCircle() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
         final GreatCircle closeCircle = GreatCircles.fromPoints(Point2S.MINUS_K,
@@ -374,7 +374,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testAdd_subGreatCircle_otherCircle() {
+    void testAdd_subGreatCircle_otherCircle() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
         final GreatCircle otherCircle = GreatCircles.fromPoints(Point2S.MINUS_K, Point2S.of((1.5 * Math.PI) - 1e-5, Angle.PI_OVER_TWO), TEST_PRECISION);
@@ -386,7 +386,7 @@ public class    EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
         final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(circle);

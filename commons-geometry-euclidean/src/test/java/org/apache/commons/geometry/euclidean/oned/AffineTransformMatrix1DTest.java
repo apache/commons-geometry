@@ -23,12 +23,12 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AffineTransformMatrix1DTest {
+class AffineTransformMatrix1DTest {
 
     private static final double EPS = 1e-12;
 
     @Test
-    public void testOf() {
+    void testOf() {
         // act
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.of(1, 2);
 
@@ -40,14 +40,14 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testOf_invalidDimensions() {
+    void testOf_invalidDimensions() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> AffineTransformMatrix1D.of(1),
                 IllegalArgumentException.class, "Dimension mismatch: 1 != 2");
     }
 
     @Test
-    public void testFrom() {
+    void testFrom() {
         // act/assert
         Assertions.assertArrayEquals(new double[] {1, 0},
                 AffineTransformMatrix1D.from(UnaryOperator.identity()).toArray(), EPS);
@@ -60,13 +60,13 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testFrom_invalidFunction() {
+    void testFrom_invalidFunction() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix1D.from(v -> v.multiply(0)));
     }
 
     @Test
-    public void testIdentity() {
+    void testIdentity() {
         // act
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity();
 
@@ -78,7 +78,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testCreateTranslation_value() {
+    void testCreateTranslation_value() {
         // act
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createTranslation(2);
 
@@ -90,7 +90,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testCreateTranslation_vector() {
+    void testCreateTranslation_vector() {
         // act
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createTranslation(Vector1D.of(5));
 
@@ -102,7 +102,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testTranslate_value() {
+    void testTranslate_value() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(2, 10);
 
@@ -117,7 +117,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testTranslate_vector() {
+    void testTranslate_vector() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(2, 10);
 
@@ -132,7 +132,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testCreateScale_vector() {
+    void testCreateScale_vector() {
         // act
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(Vector1D.of(4));
 
@@ -144,7 +144,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testCreateScale_value() {
+    void testCreateScale_value() {
         // act
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(7);
 
@@ -156,7 +156,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testScale_value() {
+    void testScale_value() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(2, 10);
 
@@ -171,7 +171,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testScale_vector() {
+    void testScale_vector() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(2, 10);
 
@@ -186,7 +186,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApply_identity() {
+    void testApply_identity() {
         // arrange
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity();
 
@@ -199,7 +199,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApply_translate() {
+    void testApply_translate() {
         // arrange
         final Vector1D translation = Vector1D.of(-Math.PI);
 
@@ -217,7 +217,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApply_scale() {
+    void testApply_scale() {
         // arrange
         final Vector1D factor = Vector1D.of(2.0);
 
@@ -235,7 +235,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApply_translateThenScale() {
+    void testApply_translateThenScale() {
         // arrange
         final Vector1D translation = Vector1D.of(-2.0);
         final Vector1D scale = Vector1D.of(5.0);
@@ -259,7 +259,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApply_scaleThenTranslate() {
+    void testApply_scaleThenTranslate() {
         // arrange
         final Vector1D scale = Vector1D.of(5.0);
         final Vector1D translation = Vector1D.of(-2.0);
@@ -281,7 +281,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyX() {
+    void testApplyX() {
         // arrange
         final Vector1D translation = Vector1D.of(-2.0);
         final Vector1D scale = Vector1D.of(5.0);
@@ -299,7 +299,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyVector_identity() {
+    void testApplyVector_identity() {
         // arrange
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity();
 
@@ -312,7 +312,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyVector_translate() {
+    void testApplyVector_translate() {
         // arrange
         final Vector1D translation = Vector1D.of(-Math.PI);
 
@@ -328,7 +328,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyVector_scale() {
+    void testApplyVector_scale() {
         // arrange
         final Vector1D factor = Vector1D.of(2.0);
 
@@ -346,7 +346,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyVector_representsDisplacement() {
+    void testApplyVector_representsDisplacement() {
         // arrange
         final Vector1D p1 = Vector1D.of(Math.PI);
 
@@ -369,7 +369,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyVectorX() {
+    void testApplyVectorX() {
         // arrange
         final Vector1D p1 = Vector1D.of(Math.PI);
 
@@ -391,7 +391,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyDirection_identity() {
+    void testApplyDirection_identity() {
         // arrange
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity();
 
@@ -404,7 +404,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyDirection_translate() {
+    void testApplyDirection_translate() {
         // arrange
         final Vector1D translation = Vector1D.of(-Math.PI);
 
@@ -420,7 +420,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyDirection_scale() {
+    void testApplyDirection_scale() {
         // arrange
         final Vector1D factor = Vector1D.of(2.0);
 
@@ -438,7 +438,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyDirection_representsNormalizedDisplacement() {
+    void testApplyDirection_representsNormalizedDisplacement() {
         // arrange
         final Vector1D p1 = Vector1D.of(Math.PI);
 
@@ -461,14 +461,14 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testApplyDirection_illegalNorm() {
+    void testApplyDirection_illegalNorm() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix1D.createScale(0).applyDirection(Vector1D.Unit.PLUS));
         Assertions.assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix1D.createScale(2).applyDirection(Vector1D.ZERO));
     }
 
     @Test
-    public void testDeterminant() {
+    void testDeterminant() {
         // act/assert
         Assertions.assertEquals(0.0, AffineTransformMatrix1D.of(0, 1).determinant(), EPS);
         Assertions.assertEquals(1.0, AffineTransformMatrix1D.of(1, 0).determinant(), EPS);
@@ -476,7 +476,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testPreservesOrientation() {
+    void testPreservesOrientation() {
         // act/assert
         Assertions.assertFalse(AffineTransformMatrix1D.of(0, 1).preservesOrientation());
         Assertions.assertTrue(AffineTransformMatrix1D.of(1, 0).preservesOrientation());
@@ -484,7 +484,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testMultiply() {
+    void testMultiply() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(2, 3);
         final AffineTransformMatrix1D b = AffineTransformMatrix1D.of(13, 14);
@@ -498,7 +498,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testMultiply_combinesTransformOperations() {
+    void testMultiply_combinesTransformOperations() {
         // arrange
         final Vector1D translation1 = Vector1D.of(1);
         final double scale = 2.0;
@@ -526,7 +526,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testPremultiply() {
+    void testPremultiply() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(2, 3);
         final AffineTransformMatrix1D b = AffineTransformMatrix1D.of(13, 14);
@@ -540,7 +540,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testPremultiply_combinesTransformOperations() {
+    void testPremultiply_combinesTransformOperations() {
         // arrange
         final Vector1D translation1 = Vector1D.of(1);
         final double scale = 2.0;
@@ -568,7 +568,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testLinear() {
+    void testLinear() {
         // arrange
         final AffineTransformMatrix1D mat = AffineTransformMatrix1D.of(2, 3);
 
@@ -580,7 +580,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testLinearTranspose() {
+    void testLinearTranspose() {
         // arrange
         final AffineTransformMatrix1D mat = AffineTransformMatrix1D.of(2, 3);
 
@@ -592,7 +592,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testNormalTransform() {
+    void testNormalTransform() {
         // act/assert
         checkNormalTransform(AffineTransformMatrix1D.identity());
 
@@ -626,13 +626,13 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testNormalTransform_nonInvertible() {
+    void testNormalTransform_nonInvertible() {
         // act/assert
         Assertions.assertThrows(IllegalStateException.class, () -> AffineTransformMatrix1D.createScale(0).normalTransform());
     }
 
     @Test
-    public void testInverse_identity() {
+    void testInverse_identity() {
         // act
         final AffineTransformMatrix1D inverse = AffineTransformMatrix1D.identity().inverse();
 
@@ -642,7 +642,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testInverse_multiplyByInverse_producesIdentity() {
+    void testInverse_multiplyByInverse_producesIdentity() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(1, 3);
 
@@ -657,7 +657,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testInverse_translate() {
+    void testInverse_translate() {
         // arrange
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createTranslation(3);
 
@@ -670,7 +670,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testInverse_scale() {
+    void testInverse_scale() {
         // arrange
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(10);
 
@@ -683,7 +683,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testInverse_undoesOriginalTransform_translationAndScale() {
+    void testInverse_undoesOriginalTransform_translationAndScale() {
         // arrange
         final Vector1D v1 = Vector1D.ZERO;
         final Vector1D v2 = Vector1D.Unit.PLUS;
@@ -707,7 +707,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testInverse_nonInvertible() {
+    void testInverse_nonInvertible() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             AffineTransformMatrix1D.of(0, 0).inverse();
@@ -739,7 +739,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // act
         final int orig = AffineTransformMatrix1D.of(1, 2).hashCode();
         final int same = AffineTransformMatrix1D.of(1, 2).hashCode();
@@ -752,7 +752,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(1, 2);
 
@@ -764,7 +764,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testEqualsAndHashCode_signedZeroConsistency() {
+    void testEqualsAndHashCode_signedZeroConsistency() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(0.0, -0.0);
         final AffineTransformMatrix1D b = AffineTransformMatrix1D.of(-0.0, 0.0);
@@ -782,7 +782,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final AffineTransformMatrix1D a = AffineTransformMatrix1D.of(1, 2);
 

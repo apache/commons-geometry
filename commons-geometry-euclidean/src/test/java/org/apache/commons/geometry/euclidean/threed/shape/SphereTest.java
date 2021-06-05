@@ -43,7 +43,7 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SphereTest {
+class SphereTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -51,7 +51,7 @@ public class SphereTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFrom() {
+    void testFrom() {
         // arrange
         final Vector3D center = Vector3D.of(1, 2, 3);
 
@@ -71,14 +71,14 @@ public class SphereTest {
     }
 
     @Test
-    public void testFrom_illegalCenter() {
+    void testFrom_illegalCenter() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Sphere.from(Vector3D.of(Double.POSITIVE_INFINITY, 1, 2), 1, TEST_PRECISION));
         Assertions.assertThrows(IllegalArgumentException.class, () -> Sphere.from(Vector3D.of(Double.NaN, 1, 2), 1, TEST_PRECISION));
     }
 
     @Test
-    public void testFrom_illegalRadius() {
+    void testFrom_illegalRadius() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -91,7 +91,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testGeometricProperties() {
+    void testGeometricProperties() {
         // arrange
         final double r = 2;
         final Sphere s = Sphere.from(Vector3D.of(1, 2, 3), r, TEST_PRECISION);
@@ -102,7 +102,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final Vector3D center = Vector3D.of(1, 2, 3);
         final double radius = 4;
@@ -128,7 +128,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
      // arrange
         final Vector3D center = Vector3D.of(1, 2, 3);
         final double radius = 4;
@@ -152,7 +152,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testProject() {
+    void testProject() {
         // arrange
         final Vector3D center = Vector3D.of(1.5, 2.5, 3.5);
         final double radius = 3;
@@ -172,7 +172,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testProject_argumentEqualsCenter() {
+    void testProject_argumentEqualsCenter() {
         // arrange
         final Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
 
@@ -184,7 +184,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testIntersections() {
+    void testIntersections() {
         // --- arrange
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
         final double sqrt3 = Math.sqrt(3);
@@ -239,7 +239,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testLinecast() {
+    void testLinecast() {
         // arrange
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
         final double sqrt3 = Math.sqrt(3);
@@ -253,7 +253,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testLinecast_intersectionsNotInSegment() {
+    void testLinecast_intersectionsNotInSegment() {
         // arrange
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
@@ -266,7 +266,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testLinecast_segmentPointOnBoundary() {
+    void testLinecast_segmentPointOnBoundary() {
         // arrange
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
@@ -281,7 +281,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_zeroSubdivisions() throws IOException {
+    void testToTree_zeroSubdivisions() throws IOException {
         // arrange
         final double r = 2;
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
@@ -303,7 +303,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_oneSubdivision() throws IOException {
+    void testToTree_oneSubdivision() throws IOException {
         // arrange
         final double r = 2;
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), r, TEST_PRECISION);
@@ -324,7 +324,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_multipleSubdivisionCounts() {
+    void testToTree_multipleSubdivisionCounts() {
         // -- arrange
         final Sphere s = Sphere.from(Vector3D.of(-3, 5, 1), 10, TEST_PRECISION);
 
@@ -360,7 +360,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_randomSpheres() {
+    void testToTree_randomSpheres() {
         // arrange
         final UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP, 1L);
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
@@ -393,7 +393,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_closeApproximation() throws IOException {
+    void testToTree_closeApproximation() throws IOException {
         // arrange
         final Sphere s = Sphere.from(Vector3D.ZERO, 1, TEST_PRECISION);
 
@@ -411,7 +411,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_subdivideFails() {
+    void testToTree_subdivideFails() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-5);
         final Sphere s = Sphere.from(Vector3D.ZERO, 1, precision);
@@ -424,7 +424,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToTree_invalidArgs() {
+    void testToTree_invalidArgs() {
         // arrange
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
 
@@ -436,7 +436,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToMesh_zeroSubdivisions() {
+    void testToMesh_zeroSubdivisions() {
         // arrange
         final Sphere s = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
 
@@ -455,7 +455,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToMesh_manySubdivisions() {
+    void testToMesh_manySubdivisions() {
         // arrange
         final Sphere s = Sphere.from(Vector3D.of(1, 2, 3), 2, TEST_PRECISION);
         final int subdivisions = 5;
@@ -485,7 +485,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToMesh_invalidArgs() {
+    void testToMesh_invalidArgs() {
         // arrange
         final Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
 
@@ -497,7 +497,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Precision.DoubleEquivalence otherPrecision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -521,7 +521,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -542,7 +542,7 @@ public class SphereTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Sphere c = Sphere.from(Vector3D.of(1, 2, 3), 3, TEST_PRECISION);
 

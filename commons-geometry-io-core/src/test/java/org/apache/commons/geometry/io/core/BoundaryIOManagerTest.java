@@ -37,7 +37,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BoundaryIOManagerTest {
+class BoundaryIOManagerTest {
 
     private static final TestLineSegment SEGMENT = new TestLineSegment(TestPoint2D.ZERO, TestPoint2D.PLUS_X);
 
@@ -56,7 +56,7 @@ public class BoundaryIOManagerTest {
     private final TestManager manager = new TestManager();
 
     @Test
-    public void testRegisterReadHandler() {
+    void testRegisterReadHandler() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         final StubReadHandler r2 = new StubReadHandler(FMT_B);
@@ -80,7 +80,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRegisterReadHandler_multipleFileExtensions() {
+    void testRegisterReadHandler_multipleFileExtensions() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
 
@@ -95,7 +95,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRegisterReadHandler_nullAndMissingFileExt() {
+    void testRegisterReadHandler_nullAndMissingFileExt() {
         // arrange
         final StubGeometryFormat noExts = new StubGeometryFormat("a", null);
         final StubGeometryFormat nullExts = new StubGeometryFormat("b", Arrays.asList("bext", null, null));
@@ -116,7 +116,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRegisterReadHandler_illegalArgs() {
+    void testRegisterReadHandler_illegalArgs() {
         // arrange
         final StubReadHandler nullFmt = new StubReadHandler(null);
         final StubReadHandler nullFmtName = new StubReadHandler(new StubGeometryFormat(null));
@@ -134,7 +134,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testUnregisterReadHandler() {
+    void testUnregisterReadHandler() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         final StubReadHandler r2 = new StubReadHandler(FMT_B);
@@ -153,7 +153,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testUnregisterReadHandler_argsNotRegistered() {
+    void testUnregisterReadHandler_argsNotRegistered() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         final StubReadHandler r2 = new StubReadHandler(FMT_B);
@@ -169,7 +169,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testGetReadHandlerForFormat() {
+    void testGetReadHandlerForFormat() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         final StubReadHandler r2 = new StubReadHandler(FMT_B);
@@ -188,7 +188,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testGetReadHandlerForFileExtension() {
+    void testGetReadHandlerForFileExtension() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         final StubReadHandler r2 = new StubReadHandler(FMT_B);
@@ -211,7 +211,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRequireReadHandler() {
+    void testRequireReadHandler() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         final GeometryInput aInput = new StubGeometryInput("/some/path/to/a/file.AEXT");
@@ -246,7 +246,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testGetReadFormats() {
+    void testGetReadFormats() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         final StubReadHandler r2 = new StubReadHandler(FMT_B);
@@ -265,13 +265,13 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testGetReadFormats_empty() {
+    void testGetReadFormats_empty() {
         // act/assert
         Assertions.assertEquals(0, manager.getReadFormats().size());
     }
 
     @Test
-    public void testRegisterWriteHandler() {
+    void testRegisterWriteHandler() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         final StubWriteHandler w2 = new StubWriteHandler(FMT_B);
@@ -295,7 +295,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRegisterWriteHandler_multipleFileExtensions() {
+    void testRegisterWriteHandler_multipleFileExtensions() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
 
@@ -310,7 +310,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRegisterWriteHandler_nullAndMissingFileExt() {
+    void testRegisterWriteHandler_nullAndMissingFileExt() {
         // arrange
         final StubGeometryFormat noExts = new StubGeometryFormat("a", null);
         final StubGeometryFormat nullExts = new StubGeometryFormat("b", Arrays.asList("bext", null, null));
@@ -331,7 +331,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testUnregisterWriteHandler() {
+    void testUnregisterWriteHandler() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         final StubWriteHandler w2 = new StubWriteHandler(FMT_B);
@@ -350,7 +350,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testUnregisterWriteHandler_argsNotRegistered() {
+    void testUnregisterWriteHandler_argsNotRegistered() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         final StubWriteHandler w2 = new StubWriteHandler(FMT_B);
@@ -368,7 +368,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testGetWriteFormats() {
+    void testGetWriteFormats() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         final StubWriteHandler w2 = new StubWriteHandler(FMT_B);
@@ -387,13 +387,13 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testGetWriteFormats_empty() {
+    void testGetWriteFormats_empty() {
         // act/assert
         Assertions.assertEquals(0, manager.getWriteFormats().size());
     }
 
     @Test
-    public void testRegisterWriteHandler_illegalArgs() {
+    void testRegisterWriteHandler_illegalArgs() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(
                 () -> manager.registerWriteHandler(null),
@@ -407,7 +407,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testGetWriteHandlerForFormat() {
+    void testGetWriteHandlerForFormat() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         final StubWriteHandler w2 = new StubWriteHandler(FMT_B);
@@ -426,7 +426,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testGetWriteHandlerForFileExtension() {
+    void testGetWriteHandlerForFileExtension() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         final StubWriteHandler w2 = new StubWriteHandler(FMT_B);
@@ -449,7 +449,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRequireWriteHandler() {
+    void testRequireWriteHandler() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         final GeometryOutput aInput = new StubGeometryOutput("/some/path/to/a/file.AEXT");
@@ -484,7 +484,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRead_formatGiven() throws IOException {
+    void testRead_formatGiven() throws IOException {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -502,7 +502,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRead_noFormatGiven() throws IOException {
+    void testRead_noFormatGiven() throws IOException {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -520,7 +520,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testRead_handlerNotFound() throws IOException {
+    void testRead_handlerNotFound() throws IOException {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -541,7 +541,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testBoundaries_formatGiven() throws IOException {
+    void testBoundaries_formatGiven() throws IOException {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -559,7 +559,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testBoundaries_noFormatGiven() throws IOException {
+    void testBoundaries_noFormatGiven() throws IOException {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -577,7 +577,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testBoundaries_handlerNotFound() throws IOException {
+    void testBoundaries_handlerNotFound() throws IOException {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -598,7 +598,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testWrite_formatGiven() throws IOException {
+    void testWrite_formatGiven() throws IOException {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         manager.registerWriteHandler(w1);
@@ -615,7 +615,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testWrite_noFormatGiven() throws IOException {
+    void testWrite_noFormatGiven() throws IOException {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         manager.registerWriteHandler(w1);
@@ -632,7 +632,7 @@ public class BoundaryIOManagerTest {
     }
 
     @Test
-    public void testWrite_handlerNotFound() throws IOException {
+    void testWrite_handlerNotFound() throws IOException {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         manager.registerWriteHandler(w1);

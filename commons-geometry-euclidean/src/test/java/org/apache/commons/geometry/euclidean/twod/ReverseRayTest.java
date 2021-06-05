@@ -26,7 +26,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ReverseRayTest {
+class ReverseRayTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -34,7 +34,7 @@ public class ReverseRayTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromPointAndDirection() {
+    void testFromPointAndDirection() {
         // arrange
         final Vector2D p0 = Vector2D.of(1, 2);
         final Vector2D p1 = Vector2D.of(2, 2);
@@ -60,7 +60,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testFromPointAndDirection_invalidArgs() {
+    void testFromPointAndDirection_invalidArgs() {
         // arrange
         final Vector2D p = Vector2D.of(0, 2);
         final Vector2D d = Vector2D.of(1e-17, -1e-12);
@@ -72,7 +72,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testFromPoint() {
+    void testFromPoint() {
         // arrange
         final Vector2D p0 = Vector2D.of(1, 1);
         final Vector2D p1 = Vector2D.of(1, 2);
@@ -101,7 +101,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testFromPoint_invalidArgs() {
+    void testFromPoint_invalidArgs() {
         // arrange
         final Vector2D p = Vector2D.of(0, 2);
         final Vector2D d = Vector2D.of(1, 1);
@@ -122,7 +122,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testFromLocation() {
+    void testFromLocation() {
         // arrange
         final Vector2D p0 = Vector2D.of(1, 1);
         final Vector2D p1 = Vector2D.of(1, 2);
@@ -150,7 +150,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testFromLocation_invalidArgs() {
+    void testFromLocation_invalidArgs() {
         // arrange
         final Vector2D p = Vector2D.of(0, 2);
         final Vector2D d = Vector2D.of(1, 1);
@@ -171,7 +171,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(-0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X);
@@ -186,7 +186,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testTransform_reflection() {
+    void testTransform_reflection() {
         // arrange
         final AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X)
@@ -203,7 +203,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final Vector2D start = Vector2D.of(1, 2);
 
@@ -224,7 +224,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testClosest() {
+    void testClosest() {
         // arrange
         final Vector2D p1 = Vector2D.of(0, -1);
         final Vector2D p2 = Vector2D.of(0, 1);
@@ -247,7 +247,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(1, 1),
                 Vector2D.Unit.PLUS_X, TEST_PRECISION);
@@ -265,7 +265,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testSplit() {
+    void testSplit() {
         // --- arrange
         final Vector2D p0 = Vector2D.of(1, 1);
         final Vector2D p1 = Vector2D.of(-3, 1);
@@ -316,7 +316,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testSplit_smallAngle_pointOnSplitter() {
+    void testSplit_smallAngle_pointOnSplitter() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-5);
 
@@ -336,7 +336,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testGetInterval() {
+    void testGetInterval() {
         // arrange
         final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.of(2, -1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
@@ -351,7 +351,7 @@ public class ReverseRayTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final ReverseRay revRay = Lines.reverseRayFromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 

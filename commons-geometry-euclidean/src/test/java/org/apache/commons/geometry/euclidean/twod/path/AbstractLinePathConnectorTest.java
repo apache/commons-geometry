@@ -34,7 +34,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AbstractLinePathConnectorTest {
+class AbstractLinePathConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -47,7 +47,7 @@ public class AbstractLinePathConnectorTest {
     private final TestConnector connector = new TestConnector();
 
     @Test
-    public void testConnectAll_emptyCollection() {
+    void testConnectAll_emptyCollection() {
         // act
         final List<LinePath> paths = connector.connectAll(Collections.emptyList());
 
@@ -56,7 +56,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleInfiniteLine() {
+    void testConnectAll_singleInfiniteLine() {
         // arrange
         final LineConvexSubset segment = Y_AXIS.span();
 
@@ -72,7 +72,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleHalfInfiniteLine_noEndPoint() {
+    void testConnectAll_singleHalfInfiniteLine_noEndPoint() {
         // arrange
         final LineConvexSubset segment = Y_AXIS.rayFrom(Vector2D.ZERO);
 
@@ -88,7 +88,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleHalfInfiniteLine_noStartPoint() {
+    void testConnectAll_singleHalfInfiniteLine_noStartPoint() {
         // arrange
         final LineConvexSubset segment = Y_AXIS.reverseRayTo(Vector2D.ZERO);
 
@@ -104,7 +104,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_disjointSegments() {
+    void testConnectAll_disjointSegments() {
         // arrange
         final LineConvexSubset a = Y_AXIS.segment(Vector2D.of(0, 1), Vector2D.of(0, 2));
         final LineConvexSubset b = Y_AXIS.segment(Vector2D.of(0, -1), Vector2D.ZERO);
@@ -122,7 +122,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleClosedPath() {
+    void testConnectAll_singleClosedPath() {
         // arrange
         final LinePath input = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
@@ -142,7 +142,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_multipleClosedPaths() {
+    void testConnectAll_multipleClosedPaths() {
         // arrange
         final LinePath a = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
@@ -180,7 +180,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singleOpenPath() {
+    void testConnectAll_singleOpenPath() {
         // arrange
         final LinePath input = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
@@ -200,7 +200,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_mixOfOpenConnectedAndInfinite() {
+    void testConnectAll_mixOfOpenConnectedAndInfinite() {
         // arrange
         final LineConvexSubset inputYInf = Y_AXIS.reverseRayTo(Vector2D.ZERO);
         final LineConvexSubset inputXInf = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.MINUS_X, TEST_PRECISION)
@@ -242,7 +242,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_pathWithSinglePoint() {
+    void testConnectAll_pathWithSinglePoint() {
         // arrange
         final Vector2D p0 = Vector2D.ZERO;
 
@@ -258,7 +258,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_pathWithPointLikeConnectedSegments() {
+    void testConnectAll_pathWithPointLikeConnectedSegments() {
         // arrange
         final Vector2D p0 = Vector2D.ZERO;
         final Vector2D p1 = Vector2D.of(1, 0);
@@ -290,7 +290,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_flatLineRegion() {
+    void testConnectAll_flatLineRegion() {
         // arrange
         final Vector2D p0 = Vector2D.ZERO;
         final Vector2D p1 = Vector2D.of(1, 0);
@@ -317,7 +317,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_singlePointRegion() {
+    void testConnectAll_singlePointRegion() {
         // arrange
         final Vector2D p0 = Vector2D.of(1, 0);
 
@@ -343,7 +343,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_pathWithPointLikeUnconnectedSegments() {
+    void testConnectAll_pathWithPointLikeUnconnectedSegments() {
         // arrange
         final Vector2D p0 = Vector2D.ZERO;
         final Vector2D p1 = Vector2D.of(1, 0);
@@ -373,7 +373,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_pathStartingWithPoint() {
+    void testConnectAll_pathStartingWithPoint() {
         // arrange
         final Vector2D p0 = Vector2D.ZERO;
         final Vector2D p1 = Vector2D.of(1, 0);
@@ -400,7 +400,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectAll_intersectingPaths() {
+    void testConnectAll_intersectingPaths() {
         // arrange
         final LinePath a = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(-1, 1), Vector2D.of(0.5, 0), Vector2D.of(-1, -1))
@@ -430,7 +430,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testInstancesCanBeReused() {
+    void testInstancesCanBeReused() {
         // arrange
         final LineConvexSubset a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final LineConvexSubset b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
@@ -448,7 +448,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testAdd() {
+    void testAdd() {
         // arrange
         final LineConvexSubset a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final LineConvexSubset b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
@@ -468,7 +468,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnect() {
+    void testConnect() {
         // arrange
         final LineConvexSubset a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final LineConvexSubset b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
@@ -488,7 +488,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectableSegment_hashCode() {
+    void testConnectableSegment_hashCode() {
         // arrange
         final LineConvexSubset segA = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final LineConvexSubset segB = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
@@ -508,7 +508,7 @@ public class AbstractLinePathConnectorTest {
     }
 
     @Test
-    public void testConnectableSegment_equals() {
+    void testConnectableSegment_equals() {
         // arrange
         final LineConvexSubset segA = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         final LineConvexSubset segB = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);

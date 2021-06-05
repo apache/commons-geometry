@@ -30,10 +30,10 @@ import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AbstractPartitionedRegionBuilderTest {
+class AbstractPartitionedRegionBuilderTest {
 
     @Test
-    public void testCtor_invalidTree() {
+    void testCtor_invalidTree() {
         // arrange
         final TestRegionBSPTree tree = new TestRegionBSPTree(true);
 
@@ -44,7 +44,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_empty() {
+    void testBuildRegion_empty() {
         // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -58,7 +58,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testInsertPartition_cannotInsertAfterBoundary() {
+    void testInsertPartition_cannotInsertAfterBoundary() {
         // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -71,7 +71,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_noPartitions_halfSpace() {
+    void testBuildRegion_noPartitions_halfSpace() {
         // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -97,7 +97,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_boundaryOnPartition_sameOrientation() {
+    void testBuildRegion_boundaryOnPartition_sameOrientation() {
      // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -122,7 +122,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_boundaryOnPartition_oppositeOrientation() {
+    void testBuildRegion_boundaryOnPartition_oppositeOrientation() {
      // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -147,7 +147,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_boundaryOnPartition_multipleBoundaries_sameOrientation() {
+    void testBuildRegion_boundaryOnPartition_multipleBoundaries_sameOrientation() {
      // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -172,7 +172,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_boundaryOnPartition_multipleBoundaries_oppositeOrientation() {
+    void testBuildRegion_boundaryOnPartition_multipleBoundaries_oppositeOrientation() {
      // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -197,7 +197,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_multipleBoundariesOnPartition() {
+    void testBuildRegion_multipleBoundariesOnPartition() {
         // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -226,7 +226,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_grid_halfSpace_boundaryOnPartition() {
+    void testBuildRegion_grid_halfSpace_boundaryOnPartition() {
         // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -251,7 +251,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_boundariesOnPartitionPropagateInsideCorrectly() {
+    void testBuildRegion_boundariesOnPartitionPropagateInsideCorrectly() {
         // arrange
         final TestRegionBuilder builder = new TestRegionBuilder(new TestRegionBSPTree(false));
 
@@ -279,7 +279,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_grid_cube() {
+    void testBuildRegion_grid_cube() {
         // arrange
         final int maxCount = 5;
 
@@ -322,7 +322,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_grid_diamond() {
+    void testBuildRegion_grid_diamond() {
         // arrange
         final int maxCount = 5;
 
@@ -365,7 +365,7 @@ public class AbstractPartitionedRegionBuilderTest {
     }
 
     @Test
-    public void testBuildRegion_grid_horseshoe() {
+    void testBuildRegion_grid_horseshoe() {
         // arrange
         final int maxCount = 5;
 

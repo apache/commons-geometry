@@ -31,7 +31,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class StlFacetDefinitionReadersTest {
+class StlFacetDefinitionReadersTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -39,7 +39,7 @@ public class StlFacetDefinitionReadersTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testCreate_cubeBinaryFile() throws IOException {
+    void testCreate_cubeBinaryFile() throws IOException {
         // arrange
         final URL url = EuclideanIOTestUtils.resource("/models/cube-binary.stl");
 
@@ -57,7 +57,7 @@ public class StlFacetDefinitionReadersTest {
     }
 
     @Test
-    public void testCreate_cubeAsciiFile() throws IOException {
+    void testCreate_cubeAsciiFile() throws IOException {
         // arrange
         final URL url = EuclideanIOTestUtils.resource("/models/cube-ascii.stl");
 
@@ -75,7 +75,7 @@ public class StlFacetDefinitionReadersTest {
     }
 
     @Test
-    public void testCreate_nonStandardCharset_charsetGiven() throws IOException {
+    void testCreate_nonStandardCharset_charsetGiven() throws IOException {
         // arrange
         final String content = "solid test\n" +
                 "facet normal 1 2 3 " +
@@ -101,7 +101,7 @@ public class StlFacetDefinitionReadersTest {
     }
 
     @Test
-    public void testCreate_nonStandardCharset_noCharsetGiven() throws IOException {
+    void testCreate_nonStandardCharset_noCharsetGiven() throws IOException {
         // arrange
         final String content = "solid test\n" +
                 "facet normal 1 2 3 " +
@@ -128,7 +128,7 @@ public class StlFacetDefinitionReadersTest {
     }
 
     @Test
-    public void testCreate_notEnoughBytes() {
+    void testCreate_notEnoughBytes() {
         // arrange
         final byte[] bytes = new byte[1];
         final ByteArrayInputStream in = new ByteArrayInputStream(bytes);

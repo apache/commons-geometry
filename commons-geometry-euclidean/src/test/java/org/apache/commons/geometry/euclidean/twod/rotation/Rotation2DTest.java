@@ -31,7 +31,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Rotation2DTest {
+class Rotation2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -41,7 +41,7 @@ public class Rotation2DTest {
     private static final double THREE_PI_OVER_TWO = 3 * Math.PI / 2;
 
     @Test
-    public void testIdentity() {
+    void testIdentity() {
         // act
         final Rotation2D r = Rotation2D.identity();
 
@@ -51,7 +51,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // act
         final Rotation2D r = Rotation2D.of(100.0);
 
@@ -61,7 +61,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testApply() {
+    void testApply() {
         // act/assert
         checkApply(1.0, Vector2D.ZERO, Vector2D.ZERO);
 
@@ -75,7 +75,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testApplyVector() {
+    void testApplyVector() {
         // act/assert
         checkApplyVector(1.0, Vector2D.ZERO, Vector2D.ZERO);
 
@@ -89,7 +89,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testInverse_properties() {
+    void testInverse_properties() {
         // arrange
         final Rotation2D orig = Rotation2D.of(100.0);
 
@@ -102,7 +102,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testInverse_apply() {
+    void testInverse_apply() {
         // arrange
         final Rotation2D orig = Rotation2D.of(100.0);
         final Rotation2D inv = orig.inverse();
@@ -120,7 +120,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testToMatrix() {
+    void testToMatrix() {
         // arrange
         final double angle = 0.1 * Math.PI;
 
@@ -139,13 +139,13 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testToMatrix_apply() {
+    void testToMatrix_apply() {
         // act/assert
         checkRotate(angle -> Rotation2D.of(angle).toMatrix(), AffineTransformMatrix2D::apply);
     }
 
     @Test
-    public void testCreateRotationVector() {
+    void testCreateRotationVector() {
         // arrange
         final double min = -8;
         final double max = 8;
@@ -168,7 +168,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testCreateRotationVector_invalidVectors() {
+    void testCreateRotationVector_invalidVectors() {
         // arrange
         final Vector2D vec = Vector2D.of(1, 1);
 
@@ -189,7 +189,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final Rotation2D a = Rotation2D.of(1.0);
         final Rotation2D b = Rotation2D.of(0.0);
@@ -208,7 +208,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final Rotation2D a = Rotation2D.of(1.0);
         final Rotation2D b = Rotation2D.of(0.0);
@@ -226,7 +226,7 @@ public class Rotation2DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Rotation2D r = Rotation2D.of(1.0);
 

@@ -29,7 +29,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ParallelogramTest {
+class ParallelogramTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -37,7 +37,7 @@ public class ParallelogramTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testUnitSquare() {
+    void testUnitSquare() {
         // act
         final Parallelogram box = Parallelogram.unitSquare(TEST_PRECISION);
 
@@ -55,7 +55,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testFromTransformedUnitSquare() {
+    void testFromTransformedUnitSquare() {
         // arrange
         final AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.of(1, 0))
                 .rotate(Math.PI * 0.25)
@@ -81,7 +81,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testFromTransformedUnitSquare_transformDoesNotPreserveOrientation() {
+    void testFromTransformedUnitSquare_transformDoesNotPreserveOrientation() {
         // arrange
         final AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.of(1, 0))
                 .rotate(Math.PI * 0.25)
@@ -107,7 +107,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testFromTransformedUnitSquare_zeroSizeRegion() {
+    void testFromTransformedUnitSquare_zeroSizeRegion() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () ->  Parallelogram.fromTransformedUnitSquare(AffineTransformMatrix2D.createScale(Vector2D.of(1e-16, 1)),
                 TEST_PRECISION));
@@ -117,7 +117,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testAxisAligned_minFirst() {
+    void testAxisAligned_minFirst() {
         // act
         final Parallelogram box = Parallelogram.axisAligned(Vector2D.of(1, 2), Vector2D.of(3, 4), TEST_PRECISION);
 
@@ -135,7 +135,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testAxisAligned_maxFirst() {
+    void testAxisAligned_maxFirst() {
         // act
         final Parallelogram box = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(-1, -2), TEST_PRECISION);
 
@@ -153,7 +153,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testAxisAligned_illegalArgs() {
+    void testAxisAligned_illegalArgs() {
         // act/assert
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->  Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(1, 3), TEST_PRECISION));
@@ -162,7 +162,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testBuilder_defaultValues() {
+    void testBuilder_defaultValues() {
         // arrange
         final Parallelogram.Builder builder = Parallelogram.builder(TEST_PRECISION);
 
@@ -183,7 +183,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testBuilder_rotatedRect_withXDirection() {
+    void testBuilder_rotatedRect_withXDirection() {
         // arrange
         final Parallelogram.Builder builder = Parallelogram.builder(TEST_PRECISION);
 
@@ -208,7 +208,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testBuilder_rotatedRect_withYDirection() {
+    void testBuilder_rotatedRect_withYDirection() {
         // arrange
         final Parallelogram.Builder builder = Parallelogram.builder(TEST_PRECISION);
 
@@ -233,7 +233,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testBuilder_rotatedRect_withRotation() {
+    void testBuilder_rotatedRect_withRotation() {
         // arrange
         final Parallelogram.Builder builder = Parallelogram.builder(TEST_PRECISION);
 
@@ -260,7 +260,7 @@ public class ParallelogramTest {
     }
 
     @Test
-    public void testToTree() {
+    void testToTree() {
         // act
         final RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 4), TEST_PRECISION)
                 .toTree();

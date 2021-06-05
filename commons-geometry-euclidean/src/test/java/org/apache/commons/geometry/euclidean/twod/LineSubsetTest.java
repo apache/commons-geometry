@@ -21,7 +21,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Test;
 
-public class LineSubsetTest {
+class LineSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -29,7 +29,7 @@ public class LineSubsetTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testToSubspaceAndToSpace() {
+    void testToSubspaceAndToSpace() {
         // arrange
         final LineSubset subset = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION)
                 .span();

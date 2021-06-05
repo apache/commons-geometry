@@ -33,7 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ConvexVolumeTest {
+class ConvexVolumeTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -41,7 +41,7 @@ public class ConvexVolumeTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFull() {
+    void testFull() {
         // act
         final ConvexVolume vol = ConvexVolume.full();
 
@@ -57,7 +57,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testBoundaryStream() {
+    void testBoundaryStream() {
         // arrange
         final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final ConvexVolume volume = ConvexVolume.fromBounds(plane);
@@ -75,7 +75,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testBoundaryStream_noBoundaries() {
+    void testBoundaryStream_noBoundaries() {
         // arrange
         final ConvexVolume volume = ConvexVolume.full();
 
@@ -87,7 +87,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testTriangleStream_noBoundaries() {
+    void testTriangleStream_noBoundaries() {
         // arrange
         final ConvexVolume full = ConvexVolume.full();
 
@@ -99,7 +99,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testTriangleStream_infinite() {
+    void testTriangleStream_infinite() {
         // arrange
         final Pattern pattern = Pattern.compile("^Cannot convert infinite plane subset to triangles: .*");
 
@@ -124,7 +124,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testTriangleStream_finite() {
+    void testTriangleStream_finite() {
         // arrange
         final Vector3D min = Vector3D.ZERO;
         final Vector3D max = Vector3D.of(1, 1, 1);
@@ -154,7 +154,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testGetBounds_noBounds() {
+    void testGetBounds_noBounds() {
         // arrange
         final ConvexVolume full = ConvexVolume.full();
         final ConvexVolume halfFull = ConvexVolume.fromBounds(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
@@ -165,7 +165,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testGetBounds_hasBounds() {
+    void testGetBounds_hasBounds() {
         // arrange
         final ConvexVolume vol = rect(Vector3D.of(1, 1, 1), 0.5, 1, 2);
 
@@ -178,7 +178,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testToList_full() {
+    void testToList_full() {
         // arrange
         final ConvexVolume volume = ConvexVolume.full();
 
@@ -190,7 +190,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testToList() {
+    void testToList() {
         // arrange
         final ConvexVolume volume = ConvexVolume.fromBounds(
                     Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
@@ -211,7 +211,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testToTree_full() {
+    void testToTree_full() {
         // arrange
         final ConvexVolume volume = ConvexVolume.full();
 
@@ -224,7 +224,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testToTree() {
+    void testToTree() {
         // arrange
         final ConvexVolume volume = ConvexVolume.fromBounds(
                     Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
@@ -253,7 +253,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testFromBounds_noPlanes() {
+    void testFromBounds_noPlanes() {
         // act
         final ConvexVolume vol = ConvexVolume.fromBounds();
 
@@ -262,7 +262,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testFromBounds_halfspace() {
+    void testFromBounds_halfspace() {
         // act
         final ConvexVolume vol = ConvexVolume.fromBounds(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
@@ -282,7 +282,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testFromBounds_cube() {
+    void testFromBounds_cube() {
         // act
         final ConvexVolume vol = rect(Vector3D.of(1, 1, 1), 0.5, 1, 2);
 
@@ -308,7 +308,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testTrim() {
+    void testTrim() {
         // arrange
         final ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 
@@ -331,7 +331,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testSplit() {
+    void testSplit() {
         // arrange
         final ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 
@@ -353,7 +353,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testLinecast_full() {
+    void testLinecast_full() {
         // arrange
         final ConvexVolume volume = ConvexVolume.full();
 
@@ -368,7 +368,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testLinecast() {
+    void testLinecast() {
         // arrange
         final ConvexVolume volume = rect(Vector3D.of(0.5, 0.5, 0.5), 0.5, 0.5, 0.5);
 
@@ -394,7 +394,7 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 

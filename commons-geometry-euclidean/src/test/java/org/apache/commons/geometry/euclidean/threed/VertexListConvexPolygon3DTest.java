@@ -33,7 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class VertexListConvexPolygon3DTest {
+class VertexListConvexPolygon3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -47,7 +47,7 @@ public class VertexListConvexPolygon3DTest {
             Arrays.asList(Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1));
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // act
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
@@ -73,7 +73,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testCtor_validatesVertexListSize() {
+    void testCtor_validatesVertexListSize() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X));
@@ -81,7 +81,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testVertices_listIsImmutable() {
+    void testVertices_listIsImmutable() {
         // arrange
         final List<Vector3D> vertices = new ArrayList<>(TRIANGLE_VERTICES);
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, vertices);
@@ -91,7 +91,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testGetCentroid_linearVertices() {
+    void testGetCentroid_linearVertices() {
         // this should not happen with all of the checks in place for constructing these
         // instances; this test is to ensure that the centroid computation can still handle
         // the situation
@@ -108,7 +108,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testGetSubspaceRegion() {
+    void testGetSubspaceRegion() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
@@ -131,7 +131,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testToTriangles_threeVertices() {
+    void testToTriangles_threeVertices() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
@@ -147,7 +147,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testToTriangles_fiveVertices() {
+    void testToTriangles_fiveVertices() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 1, 1);
         final Vector3D p2 = Vector3D.of(2, 1.2, 1);
@@ -177,7 +177,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
                     Vector3D.of(1, 2, 1), Vector3D.of(3, 2, 1),
@@ -196,7 +196,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testClosest() {
+    void testClosest() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
                 Vector3D.of(1, 2, 1), Vector3D.of(3, 2, 1),
@@ -238,7 +238,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix3D t = AffineTransformMatrix3D.identity()
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, -Angle.PI_OVER_TWO))
@@ -269,7 +269,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, Arrays.asList(
                 Vector3D.of(1, 2, 1), Vector3D.of(3, 2, 1),
@@ -295,7 +295,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testSplit_plus() {
+    void testSplit_plus() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
@@ -312,7 +312,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testSplit_minus() {
+    void testSplit_minus() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
@@ -329,7 +329,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testSplit_both() {
+    void testSplit_both() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
@@ -353,7 +353,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testSplit_neither() {
+    void testSplit_neither() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 
@@ -370,7 +370,7 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, TRIANGLE_VERTICES);
 

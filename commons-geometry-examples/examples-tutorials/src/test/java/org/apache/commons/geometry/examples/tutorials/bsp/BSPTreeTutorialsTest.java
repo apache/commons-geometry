@@ -18,42 +18,42 @@ package org.apache.commons.geometry.examples.tutorials.bsp;
 
 import org.junit.jupiter.api.Test;
 
-public class BSPTreeTutorialsTest {
+class BSPTreeTutorialsTest {
 
     private static final String[] ARGS = {"target"};
 
     @Test
-    public void testBottomUp() {
+    void testBottomUp() {
         BottomUpBSPTreeConstruction.main(ARGS);
     }
 
     @Test
-    public void testTopDown() {
+    void testTopDown() {
         TopDownBSPTreeConstruction.main(ARGS);
     }
 
     @Test
-    public void testHexagonUnbalanced() {
+    void testHexagonUnbalanced() {
         HexagonUnbalanced.main(ARGS);
     }
 
     @Test
-    public void testHexagonStructuralCut() {
+    void testHexagonStructuralCut() {
         HexagonStructuralCut.main(ARGS);
     }
 
     @Test
-    public void testHexagonPartitionedRegion() {
+    void testHexagonPartitionedRegion() {
         HexagonPartitionedRegion.main(ARGS);
     }
 
     @Test
-    public void testUnion() {
+    void testUnion() {
         BSPTreeUnion.main(ARGS);
     }
 
     @Test
-    public void testXor() {
+    void testXor() {
         BSPTreeXor.main(ARGS);
     }
 }

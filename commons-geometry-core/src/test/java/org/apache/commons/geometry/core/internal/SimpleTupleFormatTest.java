@@ -19,7 +19,7 @@ package org.apache.commons.geometry.core.internal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SimpleTupleFormatTest {
+class SimpleTupleFormatTest {
 
     private static final double EPS = 1e-10;
 
@@ -51,7 +51,7 @@ public class SimpleTupleFormatTest {
     };
 
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         // act
         final SimpleTupleFormat formatter = new SimpleTupleFormat("|", "{", "}");
 
@@ -62,7 +62,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testConstructor_defaultSeparator() {
+    void testConstructor_defaultSeparator() {
         // act
         final SimpleTupleFormat formatter = new SimpleTupleFormat("{", "}");
 
@@ -73,7 +73,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testFormat1D() {
+    void testFormat1D() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -86,7 +86,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testFormat1D_noPrefixSuffix() {
+    void testFormat1D_noPrefixSuffix() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
@@ -99,7 +99,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testFormat2D() {
+    void testFormat2D() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -111,7 +111,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testFormat2D_noPrefixSuffix() {
+    void testFormat2D_noPrefixSuffix() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
@@ -123,7 +123,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testFormat3D() {
+    void testFormat3D() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -134,7 +134,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testFormat3D_noPrefixSuffix() {
+    void testFormat3D_noPrefixSuffix() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
@@ -145,7 +145,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testFormat4D() {
+    void testFormat4D() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -156,7 +156,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testFormat4D_noPrefixSuffix() {
+    void testFormat4D_noPrefixSuffix() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
@@ -167,7 +167,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testFormat_longTokens() {
+    void testFormat_longTokens() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
@@ -178,7 +178,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse1D() {
+    void testParse1D() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -204,7 +204,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse1D_noPrefixSuffix() {
+    void testParse1D_noPrefixSuffix() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
@@ -230,7 +230,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse1D_failure() {
+    void testParse1D_failure() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -244,7 +244,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse2D() {
+    void testParse2D() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -268,7 +268,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse2D_noPrefixSuffix() {
+    void testParse2D_noPrefixSuffix() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
@@ -292,7 +292,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse2D_failure() {
+    void testParse2D_failure() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -306,7 +306,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse3D() {
+    void testParse3D() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -329,7 +329,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse3D_noPrefixSuffix() {
+    void testParse3D_noPrefixSuffix() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
@@ -352,7 +352,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse3D_failure() {
+    void testParse3D_failure() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
@@ -366,7 +366,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse_longTokens() {
+    void testParse_longTokens() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
@@ -377,7 +377,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testParse_longTokens_failure() {
+    void testParse_longTokens_failure() {
         // arrange
         final SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
@@ -389,7 +389,7 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
-    public void testDefaultInstance() {
+    void testDefaultInstance() {
         // act
         final SimpleTupleFormat formatter = SimpleTupleFormat.getDefault();
 

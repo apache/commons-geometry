@@ -30,12 +30,12 @@ import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class RegionCutBoundaryTest {
+class RegionCutBoundaryTest {
 
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // arrange
         final List<HyperplaneConvexSubset<TestPoint2D>> insideFacing =
                 Collections.singletonList(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)));
@@ -54,7 +54,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testProperties_nullLists() {
+    void testProperties_nullLists() {
         // act
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(null, null);
 
@@ -64,7 +64,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testGetSize_noSize() {
+    void testGetSize_noSize() {
         // act
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(null, null);
 
@@ -73,7 +73,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testGetSize_infinite() {
+    void testGetSize_infinite() {
         // act
         final TestLine line = new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0));
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(
@@ -85,7 +85,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testGetSize_finite() {
+    void testGetSize_finite() {
         // act
         final TestLine line = new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0));
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(
@@ -97,7 +97,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testClosest() {
+    void testClosest() {
         // arrange
         final TestPoint2D a = new TestPoint2D(-1, 0);
         final TestPoint2D b = TestPoint2D.ZERO;
@@ -120,7 +120,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testClosest_nullInsideFacing() {
+    void testClosest_nullInsideFacing() {
         // arrange
         final TestPoint2D a = new TestPoint2D(-1, 0);
         final TestPoint2D b = TestPoint2D.ZERO;
@@ -137,7 +137,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testClosest_nullOutsideFacing() {
+    void testClosest_nullOutsideFacing() {
         // arrange
         final TestPoint2D a = new TestPoint2D(-1, 0);
         final TestPoint2D b = TestPoint2D.ZERO;
@@ -154,7 +154,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testClosest_nullInsideAndOutsideFacing() {
+    void testClosest_nullInsideAndOutsideFacing() {
         // arrange
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(null, null);
 
@@ -164,7 +164,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         // arrange
         final TestPoint2D a = new TestPoint2D(-1, 0);
         final TestPoint2D b = TestPoint2D.ZERO;
@@ -193,7 +193,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testContains_nullHyperplaneSubsets() {
+    void testContains_nullHyperplaneSubsets() {
         // arrange
         final RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(null, null);
 

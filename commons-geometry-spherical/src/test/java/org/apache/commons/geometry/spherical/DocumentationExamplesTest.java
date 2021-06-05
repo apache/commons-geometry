@@ -37,12 +37,12 @@ import org.junit.jupiter.api.Test;
 /** This class contains code listed as examples in the user guide and other documentation.
  * If any portion of this code changes, the corresponding examples in the documentation <em>must</em> be updated.
  */
-public class DocumentationExamplesTest {
+class DocumentationExamplesTest {
 
     private static final double TEST_EPS = 1e-12;
 
     @Test
-    public void testAngularIntervalExample() {
+    void testAngularIntervalExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create angular intervals of different sizes, one of size pi/2 and one of size 3pi/2
@@ -65,7 +65,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testRegionBSPTree1SExample() {
+    void testRegionBSPTree1SExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a region from the union of multiple angular intervals
@@ -86,7 +86,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testGreatCircleIntersectionExample() {
+    void testGreatCircleIntersectionExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create two great circles
@@ -103,7 +103,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testRegionBSPTree2SExample() {
+    void testRegionBSPTree2SExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a path outlining a quadrant triangle

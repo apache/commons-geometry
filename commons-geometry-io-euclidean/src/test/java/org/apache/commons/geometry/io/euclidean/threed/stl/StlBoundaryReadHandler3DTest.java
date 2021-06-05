@@ -41,7 +41,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class StlBoundaryReadHandler3DTest {
+class StlBoundaryReadHandler3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -51,14 +51,14 @@ public class StlBoundaryReadHandler3DTest {
     private final StlBoundaryReadHandler3D handler = new StlBoundaryReadHandler3D();
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // assert
         Assertions.assertEquals(GeometryFormat3D.STL, handler.getFormat());
         Assertions.assertEquals(StandardCharsets.UTF_8, handler.getDefaultCharset());
     }
 
     @Test
-    public void testReadMethods_cubeAscii() throws IOException {
+    void testReadMethods_cubeAscii() throws IOException {
         // arrange
         final URL url = EuclideanIOTestUtils.resource("/models/cube-ascii.stl");
         final GeometryInput input = new UrlGeometryInput(url);
@@ -73,7 +73,7 @@ public class StlBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testReadMethods_cubeBinary() throws IOException {
+    void testReadMethods_cubeBinary() throws IOException {
         // arrange
         final URL url = EuclideanIOTestUtils.resource("/models/cube-ascii.stl");
         final GeometryInput input = new UrlGeometryInput(url);
@@ -88,7 +88,7 @@ public class StlBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testRead_usesInputCharset() throws IOException {
+    void testRead_usesInputCharset() throws IOException {
         // arrange
         final String content = "solid test\n" +
                 "facet normal 1 2 3 " +
@@ -111,7 +111,7 @@ public class StlBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testRead_setDefaultCharset() throws IOException {
+    void testRead_setDefaultCharset() throws IOException {
         // arrange
         final String content = "solid test\n" +
                 "facet normal 1 2 3 " +
@@ -137,7 +137,7 @@ public class StlBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testRead_incorrectCharset() throws IOException {
+    void testRead_incorrectCharset() throws IOException {
         // arrange
         final String content = "solid test\n" +
                 "facet normal 1 2 3 " +
@@ -162,7 +162,7 @@ public class StlBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testRead_notEnoughBytes() throws IOException {
+    void testRead_notEnoughBytes() throws IOException {
         // arrange
         final ByteArrayInputStream in = new ByteArrayInputStream(new byte[1]);
         final GeometryInput input = new StreamGeometryInput(in);
@@ -172,7 +172,7 @@ public class StlBoundaryReadHandler3DTest {
     }
 
     @Test
-    public void testRead_closesInputOnReaderCreationFailure() throws IOException {
+    void testRead_closesInputOnReaderCreationFailure() throws IOException {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new ByteArrayInputStream(new byte[1]));
         final GeometryInput input = new StreamGeometryInput(in);

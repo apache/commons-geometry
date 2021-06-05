@@ -29,7 +29,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class EmbeddedTreeLineSubsetTest {
+class EmbeddedTreeLineSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -40,7 +40,7 @@ public class EmbeddedTreeLineSubsetTest {
             Lines.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
     @Test
-    public void testCtor_lineOnly() {
+    void testCtor_lineOnly() {
         // act
         final EmbeddedTreeLineSubset sub = new EmbeddedTreeLineSubset(DEFAULT_TEST_LINE);
 
@@ -58,7 +58,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testCtor_lineAndBoolean() {
+    void testCtor_lineAndBoolean() {
         // act
         final EmbeddedTreeLineSubset sub = new EmbeddedTreeLineSubset(DEFAULT_TEST_LINE, true);
 
@@ -76,7 +76,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testCtor_lineAndRegion() {
+    void testCtor_lineAndRegion() {
         // arrange
         final RegionBSPTree1D tree = RegionBSPTree1D.full();
 
@@ -98,7 +98,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testToConvex_full() {
+    void testToConvex_full() {
         // arrange
         final EmbeddedTreeLineSubset sub = new EmbeddedTreeLineSubset(DEFAULT_TEST_LINE, true);
 
@@ -113,7 +113,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testToConvex_empty() {
+    void testToConvex_empty() {
         // arrange
         final EmbeddedTreeLineSubset sub = new EmbeddedTreeLineSubset(DEFAULT_TEST_LINE, false);
 
@@ -125,7 +125,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testToConvex_finiteAndInfiniteSegments() {
+    void testToConvex_finiteAndInfiniteSegments() {
         // arrange
         final EmbeddedTreeLineSubset sub = new EmbeddedTreeLineSubset(DEFAULT_TEST_LINE, false);
         final RegionBSPTree1D tree = sub.getSubspaceRegion();
@@ -146,7 +146,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testAdd_lineSegment() {
+    void testAdd_lineSegment() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         final Line otherLine = Lines.fromPointAndAngle(Vector2D.of(0, 1), 1e-11, TEST_PRECISION);
@@ -175,7 +175,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testAdd_subset() {
+    void testAdd_subset() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
@@ -220,7 +220,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testAdd_argumentsFromDifferentLine() {
+    void testAdd_argumentsFromDifferentLine() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         final Line otherLine = Lines.fromPointAndAngle(Vector2D.of(0, 1), 1e-2, TEST_PRECISION);
@@ -233,7 +233,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testGetBounds_noBounds() {
+    void testGetBounds_noBounds() {
         // arrange
         final Line line = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * Math.PI, TEST_PRECISION);
 
@@ -248,7 +248,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testGetBounds_hasBounds() {
+    void testGetBounds_hasBounds() {
         // arrange
         final Line line = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -267,7 +267,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testSplit_both_anglePositive() {
+    void testSplit_both_anglePositive() {
         // arrange
         final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
@@ -295,7 +295,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testSplit_both_angleNegative() {
+    void testSplit_both_angleNegative() {
         // arrange
         final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
@@ -323,7 +323,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testSplit_intersection_plusOnly() {
+    void testSplit_intersection_plusOnly() {
         // arrange
         final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
@@ -345,7 +345,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testSplit_intersection_minusOnly() {
+    void testSplit_intersection_minusOnly() {
         // arrange
         final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
@@ -367,7 +367,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testSplit_parallel_plus() {
+    void testSplit_parallel_plus() {
         // arrange
         final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
@@ -389,7 +389,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testSplit_parallel_minus() {
+    void testSplit_parallel_minus() {
         // arrange
         final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
@@ -411,7 +411,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testSplit_coincident_sameDirection() {
+    void testSplit_coincident_sameDirection() {
         // arrange
         final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
@@ -433,7 +433,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testSplit_coincident_oppositeDirection() {
+    void testSplit_coincident_oppositeDirection() {
         // arrange
         final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
@@ -455,7 +455,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix2D mat = AffineTransformMatrix2D
                 .createRotation(Vector2D.of(0, 1), Angle.PI_OVER_TWO)
@@ -485,7 +485,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testTransform_reflection() {
+    void testTransform_reflection() {
         // arrange
         final AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(-1, 2));
 
@@ -509,7 +509,7 @@ public class EmbeddedTreeLineSubsetTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final EmbeddedTreeLineSubset sub = new EmbeddedTreeLineSubset(DEFAULT_TEST_LINE);
 

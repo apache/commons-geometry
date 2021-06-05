@@ -27,7 +27,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class FacetDefinitionsTest {
+class FacetDefinitionsTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -37,7 +37,7 @@ public class FacetDefinitionsTest {
             Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 0), Vector3D.of(0, 1, 0));
 
     @Test
-    public void testToPolygon_noNormal() {
+    void testToPolygon_noNormal() {
         // arrange
         final SimpleFacetDefinition f = new SimpleFacetDefinition(FACET_PTS);
 
@@ -53,7 +53,7 @@ public class FacetDefinitionsTest {
     }
 
     @Test
-    public void testToPolygon_withNormal_similarDirection() {
+    void testToPolygon_withNormal_similarDirection() {
         // arrange
         final Vector3D normal = Vector3D.of(0.1, 0.2, 0.3);
         final SimpleFacetDefinition f = new SimpleFacetDefinition(FACET_PTS, normal);
@@ -70,7 +70,7 @@ public class FacetDefinitionsTest {
     }
 
     @Test
-    public void testToPolygon_withNormal_differentDirection() {
+    void testToPolygon_withNormal_differentDirection() {
         // arrange
         final Vector3D normal = Vector3D.of(0.1, 0.2, -0.3);
         final SimpleFacetDefinition f = new SimpleFacetDefinition(FACET_PTS, normal);
@@ -87,7 +87,7 @@ public class FacetDefinitionsTest {
     }
 
     @Test
-    public void testToPolygon_failure() {
+    void testToPolygon_failure() {
         // arrange
         final SimpleFacetDefinition f = new SimpleFacetDefinition(Arrays.asList(
                 Vector3D.ZERO, Vector3D.ZERO, Vector3D.ZERO));
@@ -97,7 +97,7 @@ public class FacetDefinitionsTest {
     }
 
     @Test
-    public void testToPolygon_invalidArgs() {
+    void testToPolygon_invalidArgs() {
         // arrange
         final SimpleFacetDefinition f = new SimpleFacetDefinition(Arrays.asList(
                 Vector3D.ZERO, Vector3D.ZERO, Vector3D.ZERO));

@@ -23,14 +23,14 @@ import org.apache.commons.numbers.angle.Angle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PolarCoordinatesTest {
+class PolarCoordinatesTest {
 
     private static final double EPS = 1e-10;
 
     private static final double THREE_PI_OVER_TWO = 3 * Math.PI / 2;
 
     @Test
-    public void testOf() {
+    void testOf() {
         // act/assert
         checkPolar(PolarCoordinates.of(0, 0), 0, 0);
 
@@ -41,7 +41,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testOf_unnormalizedAngles() {
+    void testOf_unnormalizedAngles() {
         // act/assert
         checkPolar(PolarCoordinates.of(2, Angle.TWO_PI), 2, 0);
         checkPolar(PolarCoordinates.of(2, Angle.PI_OVER_TWO + Angle.TWO_PI), 2, Angle.PI_OVER_TWO);
@@ -50,7 +50,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testOf_azimuthWrapAround() {
+    void testOf_azimuthWrapAround() {
         // arrange
         final double delta = 1e-6;
 
@@ -77,7 +77,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testOf_negativeRadius() {
+    void testOf_negativeRadius() {
         // act/assert
         checkPolar(PolarCoordinates.of(-1, 0), 1, Math.PI);
         checkPolar(PolarCoordinates.of(-1e-6, Angle.PI_OVER_TWO), 1e-6, THREE_PI_OVER_TWO);
@@ -86,7 +86,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testOf_NaNAndInfinite() {
+    void testOf_NaNAndInfinite() {
         // act/assert
         checkPolar(PolarCoordinates.of(Double.NaN, 0), Double.NaN, 0);
         checkPolar(PolarCoordinates.of(Double.NEGATIVE_INFINITY, 0), Double.POSITIVE_INFINITY, Math.PI);
@@ -98,7 +98,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testFromCartesian_coordinates() {
+    void testFromCartesian_coordinates() {
         // arrange
         final double sqrt2 = Math.sqrt(2);
 
@@ -118,7 +118,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testFromCartesian_vector() {
+    void testFromCartesian_vector() {
         // arrange
         final double sqrt2 = Math.sqrt(2);
 
@@ -138,7 +138,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testDimension() {
+    void testDimension() {
         // arrange
         final PolarCoordinates p = PolarCoordinates.of(1, 0);
 
@@ -147,7 +147,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testIsNaN() {
+    void testIsNaN() {
         // act/assert
         Assertions.assertFalse(PolarCoordinates.of(1, 0).isNaN());
         Assertions.assertFalse(PolarCoordinates.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isNaN());
@@ -158,7 +158,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testIsInfinite() {
+    void testIsInfinite() {
         // act/assert
         Assertions.assertFalse(PolarCoordinates.of(1, 0).isInfinite());
         Assertions.assertFalse(PolarCoordinates.of(Double.NaN, Double.NaN).isInfinite());
@@ -176,7 +176,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testIsFinite() {
+    void testIsFinite() {
         // act/assert
         Assertions.assertTrue(PolarCoordinates.of(1, 0).isFinite());
         Assertions.assertTrue(PolarCoordinates.of(1, Math.PI).isFinite());
@@ -196,7 +196,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final PolarCoordinates a = PolarCoordinates.of(1, 2);
         final PolarCoordinates b = PolarCoordinates.of(10, 2);
@@ -215,7 +215,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testHashCode_NaNInstancesHaveSameHashCode() {
+    void testHashCode_NaNInstancesHaveSameHashCode() {
         // arrange
         final PolarCoordinates a = PolarCoordinates.of(1, Double.NaN);
         final PolarCoordinates b = PolarCoordinates.of(Double.NaN, 1);
@@ -225,7 +225,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final PolarCoordinates a = PolarCoordinates.of(1, 2);
         final PolarCoordinates b = PolarCoordinates.of(10, 2);
@@ -244,7 +244,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testEquals_NaNInstancesEqual() {
+    void testEquals_NaNInstancesEqual() {
         // arrange
         final PolarCoordinates a = PolarCoordinates.of(1, Double.NaN);
         final PolarCoordinates b = PolarCoordinates.of(Double.NaN, 1);
@@ -254,7 +254,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testEqualsAndHashCode_signedZeroConsistency() {
+    void testEqualsAndHashCode_signedZeroConsistency() {
         // arrange
         final PolarCoordinates a = PolarCoordinates.of(0.0, -0.0);
         final PolarCoordinates b = PolarCoordinates.of(-0.0, 0.0);
@@ -272,7 +272,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testToCartesian() {
+    void testToCartesian() {
         // arrange
         final double sqrt2 = Math.sqrt(2);
 
@@ -292,7 +292,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testToCartesian_static() {
+    void testToCartesian_static() {
         // arrange
         final double sqrt2 = Math.sqrt(2);
 
@@ -312,7 +312,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testToCartesian_static_NaNAndInfinite() {
+    void testToCartesian_static_NaNAndInfinite() {
         // act/assert
         Assertions.assertTrue(PolarCoordinates.toCartesian(Double.NaN, 0).isNaN());
         Assertions.assertTrue(PolarCoordinates.toCartesian(0, Double.NaN).isNaN());
@@ -327,7 +327,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final PolarCoordinates polar = PolarCoordinates.of(1, 2);
         final Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
@@ -341,7 +341,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testParse() {
+    void testParse() {
         // act/assert
         checkPolar(PolarCoordinates.parse("(1, 2)"), 1, 2);
         checkPolar(PolarCoordinates.parse("( -1 , 0.5 )"), 1, 0.5 + Math.PI);
@@ -349,13 +349,13 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testParse_failure() {
+    void testParse_failure() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> PolarCoordinates.parse("abc"));
     }
 
     @Test
-    public void testNormalizeAzimuth() {
+    void testNormalizeAzimuth() {
         // act/assert
         Assertions.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(0), EPS);
 
@@ -371,7 +371,7 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testNormalizeAzimuth_NaNAndInfinite() {
+    void testNormalizeAzimuth_NaNAndInfinite() {
         // act/assert
         Assertions.assertEquals(Double.NaN, PolarCoordinates.normalizeAzimuth(Double.NaN), EPS);
         Assertions.assertEquals(Double.NEGATIVE_INFINITY, PolarCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), EPS);

@@ -39,7 +39,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SimpleTriangleMeshTest {
+class SimpleTriangleMeshTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -47,7 +47,7 @@ public class SimpleTriangleMeshTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFrom_verticesAndFaces() {
+    void testFrom_verticesAndFaces() {
         // arrange
         final Vector3D[] vertices = {
             Vector3D.ZERO,
@@ -102,7 +102,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testFrom_verticesAndFaces_empty() {
+    void testFrom_verticesAndFaces_empty() {
         // arrange
         final Vector3D[] vertices = {};
 
@@ -124,7 +124,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testFrom_boundarySource() {
+    void testFrom_boundarySource() {
         // arrange
         final BoundarySource3D src = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
@@ -167,7 +167,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testFrom_boundarySource_empty() {
+    void testFrom_boundarySource_empty() {
         // act
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(BoundarySource3D.of(Collections.emptyList()),
                 TEST_PRECISION);
@@ -185,7 +185,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testVertices_iterable() {
+    void testVertices_iterable() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
             Vector3D.ZERO,
@@ -206,7 +206,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testFaces_iterable() {
+    void testFaces_iterable() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
             Vector3D.ZERO,
@@ -249,7 +249,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testFaces_iterator() {
+    void testFaces_iterator() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
             Vector3D.ZERO,
@@ -273,7 +273,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testTriangleStream() {
+    void testTriangleStream() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
             Vector3D.ZERO,
@@ -307,7 +307,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testToTriangleMesh() {
+    void testToTriangleMesh() {
         // arrange
         final Precision.DoubleEquivalence precision1 = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final Precision.DoubleEquivalence precision2 = Precision.doubleEquivalenceOfEpsilon(1e-2);
@@ -329,7 +329,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testFace_doesNotDefineTriangle() {
+    void testFace_doesNotDefineTriangle() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final Vector3D[] vertices = {
@@ -357,7 +357,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testToTree_smallNumberOfFaces() {
+    void testToTree_smallNumberOfFaces() {
         // arrange
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(Parallelepiped.unitCube(TEST_PRECISION), TEST_PRECISION);
 
@@ -377,7 +377,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.from(Parallelepiped.unitCube(TEST_PRECISION), TEST_PRECISION);
 
@@ -402,7 +402,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testTransform_empty() {
+    void testTransform_empty() {
         // arrange
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION).build();
 
@@ -419,7 +419,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final Triangle3D tri = Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
                 TEST_PRECISION);
@@ -433,7 +433,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testFaceToString() {
+    void testFaceToString() {
         // arrange
         final Triangle3D tri = Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
                 TEST_PRECISION);
@@ -447,7 +447,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testBuilder_mixedBuildMethods() {
+    void testBuilder_mixedBuildMethods() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-1);
         final SimpleTriangleMesh.Builder builder = SimpleTriangleMesh.builder(precision);
@@ -477,7 +477,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testBuilder_addVerticesAndFaces() {
+    void testBuilder_addVerticesAndFaces() {
         // act
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION)
             .addVertices(new Vector3D[] {
@@ -498,7 +498,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testBuilder_invalidFaceIndices() {
+    void testBuilder_invalidFaceIndices() {
         // arrange
         final SimpleTriangleMesh.Builder builder = SimpleTriangleMesh.builder(TEST_PRECISION);
         builder.useVertex(Vector3D.ZERO);
@@ -546,7 +546,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testBuilder_invalidFaceIndexCount() {
+    void testBuilder_invalidFaceIndexCount() {
         // arrange
         final SimpleTriangleMesh.Builder builder = SimpleTriangleMesh.builder(TEST_PRECISION);
         builder.useVertex(Vector3D.ZERO);
@@ -591,7 +591,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testBuilder_cannotModifyOnceBuilt() {
+    void testBuilder_cannotModifyOnceBuilt() {
         // arrange
         final SimpleTriangleMesh.Builder builder = SimpleTriangleMesh.builder(TEST_PRECISION)
             .addVertices(new Vector3D[] {
@@ -641,7 +641,7 @@ public class SimpleTriangleMeshTest {
     }
 
     @Test
-    public void testBuilder_addFaceAndVertices_vs_addFaceUsingVertices() {
+    void testBuilder_addFaceAndVertices_vs_addFaceUsingVertices() {
         // arrange
         final SimpleTriangleMesh.Builder builder = SimpleTriangleMesh.builder(TEST_PRECISION);
         final Vector3D p1 = Vector3D.ZERO;

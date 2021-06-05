@@ -23,7 +23,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BoundaryList2DTest {
+class BoundaryList2DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -31,7 +31,7 @@ public class BoundaryList2DTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testCtor() {
+    void testCtor() {
         // arrange
         final List<LineConvexSubset> boundaries = Collections.singletonList(
                 Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
@@ -47,7 +47,7 @@ public class BoundaryList2DTest {
     }
 
     @Test
-    public void testToList() {
+    void testToList() {
         // arrange
         final BoundaryList2D list = new BoundaryList2D(Collections.emptyList());
 
@@ -56,7 +56,7 @@ public class BoundaryList2DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final BoundaryList2D list = new BoundaryList2D(Collections.emptyList());
 

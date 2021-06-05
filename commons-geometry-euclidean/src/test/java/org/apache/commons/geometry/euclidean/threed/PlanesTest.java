@@ -39,7 +39,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PlanesTest {
+class PlanesTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -47,7 +47,7 @@ public class PlanesTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testSubsetFromConvexArea() {
+    void testSubsetFromConvexArea() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -74,7 +74,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testConvexPolygonFromVertices() {
+    void testConvexPolygonFromVertices() {
         // arrange
         final Vector3D p0 = Vector3D.of(1, 0, 0);
         final Vector3D p1 = Vector3D.of(1, 1, 0);
@@ -120,7 +120,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testConvexPolygonFromVertices_duplicatePoints() {
+    void testConvexPolygonFromVertices_duplicatePoints() {
         // arrange
         final Vector3D p0 = Vector3D.of(1, 0, 0);
         final Vector3D p1 = Vector3D.of(1, 1, 0);
@@ -175,7 +175,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testConvexPolygonFromVertices_nonPlanar() {
+    void testConvexPolygonFromVertices_nonPlanar() {
         // arrange
         final Pattern nonPlanarPattern = Pattern.compile("Points do not define a plane.*");
 
@@ -208,7 +208,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testConvexPolygonFromVertices_nonConvex() {
+    void testConvexPolygonFromVertices_nonConvex() {
         // arrange
         final Pattern nonConvexPattern = Pattern.compile("Points do not define a convex region.*");
 
@@ -225,7 +225,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testTriangleFromVertices() {
+    void testTriangleFromVertices() {
         // act
         final Triangle3D tri = Planes.triangleFromVertices(
                 Vector3D.of(1, 1, 1),
@@ -239,7 +239,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testTriangleFromVertices_degenerateTriangles() {
+    void testTriangleFromVertices_degenerateTriangles() {
         // arrange
         final Pattern msg = Pattern.compile("^Points do not define a plane.*");
 
@@ -262,7 +262,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testIndexedTriangles_singleTriangle_noFaces() {
+    void testIndexedTriangles_singleTriangle_noFaces() {
         // act
         final List<Triangle3D> tris = Planes.indexedTriangles(new Vector3D[0], new int[0][], TEST_PRECISION);
 
@@ -271,7 +271,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testIndexedTriangles_singleTriangle() {
+    void testIndexedTriangles_singleTriangle() {
         // arrange
         final Vector3D[] vertices = {
             Vector3D.ZERO,
@@ -297,7 +297,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testIndexedTriangles_multipleTriangles() {
+    void testIndexedTriangles_multipleTriangles() {
         // arrange
         // define a square pyramind
         final Vector3D[] vertices = {
@@ -332,7 +332,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testIndexedTriangles_invalidArgs() {
+    void testIndexedTriangles_invalidArgs() {
         // arrange
         final Vector3D[] vertices = {
             Vector3D.ZERO,
@@ -371,7 +371,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testIndexedConvexPolygons_singleTriangle_noFaces() {
+    void testIndexedConvexPolygons_singleTriangle_noFaces() {
         // act
         final List<ConvexPolygon3D> polys = Planes.indexedConvexPolygons(new Vector3D[0], new int[0][], TEST_PRECISION);
 
@@ -380,7 +380,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testIndexedConvexPolygons_singleSquare() {
+    void testIndexedConvexPolygons_singleSquare() {
         // arrange
         final Vector3D[] vertices = {
             Vector3D.ZERO,
@@ -410,7 +410,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testIndexedConvexPolygons_mixedPolygons() {
+    void testIndexedConvexPolygons_mixedPolygons() {
         // arrange
         // define a square pyramind
         final Vector3D[] vertices = {
@@ -444,7 +444,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testIndexedConvexPolygons_cube() {
+    void testIndexedConvexPolygons_cube() {
         // arrange
         final Vector3D[] vertices = {
             Vector3D.of(-0.5, -0.5, -0.5),
@@ -483,7 +483,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testIndexedConvexPolygons_invalidArgs() {
+    void testIndexedConvexPolygons_invalidArgs() {
         // arrange
         final Vector3D[] vertices = {
             Vector3D.ZERO,
@@ -515,7 +515,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_threeVertices() {
+    void testConvexPolygonToTriangleFan_threeVertices() {
         // arrange
         final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final Vector3D p1 = Vector3D.ZERO;
@@ -534,7 +534,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_fourVertices() {
+    void testConvexPolygonToTriangleFan_fourVertices() {
         // arrange
         final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final Vector3D p1 = Vector3D.ZERO;
@@ -558,7 +558,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_sixVertices() {
+    void testConvexPolygonToTriangleFan_sixVertices() {
         // arrange
         final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         final Vector3D p1 = Vector3D.ZERO;
@@ -592,7 +592,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testConvexPolygonToTriangleFan_notEnoughVertices() {
+    void testConvexPolygonToTriangleFan_notEnoughVertices() {
         // arrange
         final String baseMsg = "Cannot create triangle fan: 3 or more vertices are required but found only ";
         final Plane plane = Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -612,7 +612,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrudeVertexLoop_convex() {
+    void testExtrudeVertexLoop_convex() {
         // arrange
         final List<Vector2D> vertices = Arrays.asList(
                 Vector2D.of(2, 1),
@@ -647,7 +647,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrudeVertexLoop_nonConvex() {
+    void testExtrudeVertexLoop_nonConvex() {
         // arrange
         final List<Vector2D> vertices = Arrays.asList(
                 Vector2D.of(1, 2),
@@ -690,7 +690,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrudeVertexLoop_noVertices() {
+    void testExtrudeVertexLoop_noVertices() {
         // arrange
         final List<Vector2D> vertices = new ArrayList<>();
 
@@ -706,7 +706,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrudeVertexLoop_twoVertices_producesInfiniteRegion() {
+    void testExtrudeVertexLoop_twoVertices_producesInfiniteRegion() {
         // arrange
         final List<Vector2D> vertices = Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 1));
 
@@ -751,7 +751,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrudeVertexLoop_invalidVertexList() {
+    void testExtrudeVertexLoop_invalidVertexList() {
         // arrange
         final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1),
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
@@ -764,7 +764,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrudeVertexLoop_regionsConsistentBetweenExtrusionPlanes() {
+    void testExtrudeVertexLoop_regionsConsistentBetweenExtrusionPlanes() {
         // arrange
         final List<Vector2D> vertices = Arrays.asList(
                 Vector2D.of(1, 2),
@@ -815,7 +815,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_vertexLoop_clockwiseWinding() {
+    void testExtrude_vertexLoop_clockwiseWinding() {
         // arrange
         final List<Vector2D> vertices = Arrays.asList(
             Vector2D.of(0, 1),
@@ -840,7 +840,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_linePath_emptyPath() {
+    void testExtrude_linePath_emptyPath() {
         // arrange
         final LinePath path = LinePath.empty();
 
@@ -856,7 +856,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_linePath_singleSegment_producesInfiniteRegion_extrudingOnMinus() {
+    void testExtrude_linePath_singleSegment_producesInfiniteRegion_extrudingOnMinus() {
         // arrange
         final LinePath path = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.ZERO)
@@ -904,7 +904,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_linePath_singleSegment_producesInfiniteRegion_extrudingOnPlus() {
+    void testExtrude_linePath_singleSegment_producesInfiniteRegion_extrudingOnPlus() {
         // arrange
         final LinePath path = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.ZERO)
@@ -952,7 +952,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_linePath_singleSpan_producesInfiniteRegion() {
+    void testExtrude_linePath_singleSpan_producesInfiniteRegion() {
         // arrange
         final LinePath path = LinePath.from(Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).span());
 
@@ -997,7 +997,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_linePath_intersectingInfiniteLines_extrudingOnPlus() {
+    void testExtrude_linePath_intersectingInfiniteLines_extrudingOnPlus() {
         // arrange
         final Vector2D intersectionPt = Vector2D.of(1, 0);
 
@@ -1034,7 +1034,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_linePath_intersectingInfiniteLines_extrudingOnMinus() {
+    void testExtrude_linePath_intersectingInfiniteLines_extrudingOnMinus() {
         // arrange
         final Vector2D intersectionPt = Vector2D.of(1, 0);
 
@@ -1071,7 +1071,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_linePath_infiniteNonConvex() {
+    void testExtrude_linePath_infiniteNonConvex() {
         // arrange
         final LinePath path = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.of(1, -5))
@@ -1109,7 +1109,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_linePath_clockwiseWinding() {
+    void testExtrude_linePath_clockwiseWinding() {
         // arrange
         final LinePath path = LinePath.builder(TEST_PRECISION)
                 .append(Vector2D.of(0, 1))
@@ -1135,7 +1135,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_region_empty() {
+    void testExtrude_region_empty() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
@@ -1151,7 +1151,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_region_full() {
+    void testExtrude_region_full() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
 
@@ -1183,7 +1183,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_region_disjointRegions() {
+    void testExtrude_region_disjointRegions() {
         // arrange
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
@@ -1220,7 +1220,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_region_starWithCutout() {
+    void testExtrude_region_starWithCutout() {
         // arrange
         // NOTE: this is pretty messed-up looking star :-)
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
@@ -1258,7 +1258,7 @@ public class PlanesTest {
     }
 
     @Test
-    public void testExtrude_invalidExtrusionVector() {
+    void testExtrude_invalidExtrusionVector() {
         // arrange
         final List<Vector2D> vertices = new ArrayList<>();
         final LinePath path = LinePath.empty();

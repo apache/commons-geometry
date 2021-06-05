@@ -26,7 +26,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ReverseRay3DTest {
+class ReverseRay3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -34,7 +34,7 @@ public class ReverseRay3DTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testFromPointAndDirection() {
+    void testFromPointAndDirection() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 1, 2);
 
@@ -60,7 +60,7 @@ public class ReverseRay3DTest {
     }
 
     @Test
-    public void testFromPointAndDirection_invalidArgs() {
+    void testFromPointAndDirection_invalidArgs() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 2, 4);
         final Vector3D dir = Vector3D.of(1e-11, 0, 0);
@@ -72,7 +72,7 @@ public class ReverseRay3DTest {
     }
 
     @Test
-    public void testFromPoint() {
+    void testFromPoint() {
         // arrange
         final Vector3D pt = Vector3D.of(-2, -1, 2);
 
@@ -98,7 +98,7 @@ public class ReverseRay3DTest {
     }
 
     @Test
-    public void testFromPoint_invalidArgs() {
+    void testFromPoint_invalidArgs() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
@@ -117,7 +117,7 @@ public class ReverseRay3DTest {
     }
 
     @Test
-    public void testFromLocation() {
+    void testFromLocation() {
         // arrange
         final Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
@@ -141,7 +141,7 @@ public class ReverseRay3DTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
@@ -160,7 +160,7 @@ public class ReverseRay3DTest {
     }
 
     @Test
-    public void testTransform_reflection() {
+    void testTransform_reflection() {
         // arrange
         final AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
                 .toMatrix()
@@ -180,7 +180,7 @@ public class ReverseRay3DTest {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         // arrange
         final Vector3D p0 = Vector3D.of(1, 1, 1);
 
@@ -200,7 +200,7 @@ public class ReverseRay3DTest {
     }
 
     @Test
-    public void testGetInterval() {
+    void testGetInterval() {
         // arrange
         final ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.of(2, -1, 3), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
@@ -215,7 +215,7 @@ public class ReverseRay3DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final ReverseRay3D revRay = Lines3D.reverseRayFromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 

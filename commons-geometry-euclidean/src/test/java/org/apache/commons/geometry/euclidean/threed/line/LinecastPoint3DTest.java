@@ -26,7 +26,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LinecastPoint3DTest {
+class LinecastPoint3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -39,7 +39,7 @@ public class LinecastPoint3DTest {
             TEST_PRECISION);
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // arrange
         final Vector3D pt = Vector3D.of(1, 1, 1);
         final Vector3D normal = Vector3D.Unit.MINUS_X;
@@ -54,7 +54,7 @@ public class LinecastPoint3DTest {
     }
 
     @Test
-    public void testCompareTo() {
+    void testCompareTo() {
         // arrange
         final LinecastPoint3D a = new LinecastPoint3D(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, X_AXIS);
 
@@ -71,7 +71,7 @@ public class LinecastPoint3DTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final LinecastPoint3D a = new LinecastPoint3D(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, X_AXIS);
         final LinecastPoint3D b = new LinecastPoint3D(Vector3D.of(2, 2, 2), Vector3D.Unit.PLUS_X, X_AXIS);
@@ -93,7 +93,7 @@ public class LinecastPoint3DTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final LinecastPoint3D a = new LinecastPoint3D(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, X_AXIS);
         final LinecastPoint3D b = new LinecastPoint3D(Vector3D.of(2, 2, 2), Vector3D.Unit.PLUS_X, X_AXIS);
@@ -113,7 +113,7 @@ public class LinecastPoint3DTest {
     }
 
     @Test
-    public void testEq() {
+    void testEq() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 
@@ -141,7 +141,7 @@ public class LinecastPoint3DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final LinecastPoint3D it = new LinecastPoint3D(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, X_AXIS);
 
@@ -153,7 +153,7 @@ public class LinecastPoint3DTest {
     }
 
     @Test
-    public void testSortAndFilter_empty() {
+    void testSortAndFilter_empty() {
         // arrange
         final List<LinecastPoint3D> pts = new ArrayList<>();
 
@@ -165,7 +165,7 @@ public class LinecastPoint3DTest {
     }
 
     @Test
-    public void testSortAndFilter() {
+    void testSortAndFilter() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
 

@@ -28,7 +28,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AffineTransformMatrix3DTest {
+class AffineTransformMatrix3DTest {
 
     private static final double EPS = 1e-12;
 
@@ -36,7 +36,7 @@ public class AffineTransformMatrix3DTest {
             Precision.doubleEquivalenceOfEpsilon(EPS);
 
     @Test
-    public void testOf() {
+    void testOf() {
         // arrange
         final double[] arr = {
             1, 2, 3, 4,
@@ -54,14 +54,14 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testOf_invalidDimensions() {
+    void testOf_invalidDimensions() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> AffineTransformMatrix3D.of(1, 2),
                 IllegalArgumentException.class, "Dimension mismatch: 2 != 12");
     }
 
     @Test
-    public void testFromColumnVectors_threeVectors() {
+    void testFromColumnVectors_threeVectors() {
         // arrange
         final Vector3D u = Vector3D.of(1, 2, 3);
         final Vector3D v = Vector3D.of(4, 5, 6);
@@ -79,7 +79,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testFromColumnVectors_fourVectors() {
+    void testFromColumnVectors_fourVectors() {
         // arrange
         final Vector3D u = Vector3D.of(1, 2, 3);
         final Vector3D v = Vector3D.of(4, 5, 6);
@@ -98,7 +98,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testFrom() {
+    void testFrom() {
         // act/assert
         Assertions.assertArrayEquals(new double[] {
             1, 0, 0, 0,
@@ -123,13 +123,13 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testFrom_invalidFunction() {
+    void testFrom_invalidFunction() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix3D.from(v -> v.multiply(0)));
     }
 
     @Test
-    public void testIdentity() {
+    void testIdentity() {
         // act
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity();
 
@@ -143,7 +143,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testCreateTranslation_xyz() {
+    void testCreateTranslation_xyz() {
         // act
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(2, 3, 4);
 
@@ -157,7 +157,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testCreateTranslation_vector() {
+    void testCreateTranslation_vector() {
         // act
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(Vector3D.of(5, 6, 7));
 
@@ -171,7 +171,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testCreateScale_xyz() {
+    void testCreateScale_xyz() {
         // act
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createScale(2, 3, 4);
 
@@ -185,7 +185,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testTranslate_xyz() {
+    void testTranslate_xyz() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     2, 0, 0, 10,
@@ -206,7 +206,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testTranslate_vector() {
+    void testTranslate_vector() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     2, 0, 0, 10,
@@ -227,7 +227,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testCreateScale_vector() {
+    void testCreateScale_vector() {
         // act
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createScale(Vector3D.of(4, 5, 6));
 
@@ -241,7 +241,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testCreateScale_singleValue() {
+    void testCreateScale_singleValue() {
         // act
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createScale(7);
 
@@ -255,7 +255,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testScale_xyz() {
+    void testScale_xyz() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     2, 0, 0, 10,
@@ -276,7 +276,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testScale_vector() {
+    void testScale_vector() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     2, 0, 0, 10,
@@ -297,7 +297,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testScale_singleValue() {
+    void testScale_singleValue() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     2, 0, 0, 10,
@@ -318,7 +318,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testCreateRotation() {
+    void testCreateRotation() {
         // arrange
         final Vector3D center = Vector3D.of(1, 2, 3);
         final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Angle.PI_OVER_TWO);
@@ -336,7 +336,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testRotate() {
+    void testRotate() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     1, 2, 3, 4,
@@ -359,7 +359,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testRotate_aroundCenter() {
+    void testRotate_aroundCenter() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     1, 2, 3, 4,
@@ -383,7 +383,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApply_identity() {
+    void testApply_identity() {
         // arrange
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity();
 
@@ -396,7 +396,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApply_translate() {
+    void testApply_translate() {
         // arrange
         final Vector3D translation = Vector3D.of(1.1, -Math.PI, 5.5);
 
@@ -414,7 +414,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApply_scale() {
+    void testApply_scale() {
         // arrange
         final Vector3D factors = Vector3D.of(2.0, -3.0, 4.0);
 
@@ -432,7 +432,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApply_translateThenScale() {
+    void testApply_translateThenScale() {
         // arrange
         final Vector3D translation = Vector3D.of(-2.0, -3.0, -4.0);
         final Vector3D scale = Vector3D.of(5.0, 6.0, 7.0);
@@ -458,7 +458,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApply_scaleThenTranslate() {
+    void testApply_scaleThenTranslate() {
         // arrange
         final Vector3D scale = Vector3D.of(5.0, 6.0, 7.0);
         final Vector3D translation = Vector3D.of(-2.0, -3.0, -4.0);
@@ -482,7 +482,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApply_rotate() {
+    void testApply_rotate() {
         // arrange
         final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.of(1, 1, 1), 2.0 * Math.PI / 3.0);
 
@@ -499,7 +499,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApply_rotate_aroundCenter() {
+    void testApply_rotate_aroundCenter() {
         // arrange
         final double scaleFactor = 2;
         final Vector3D center = Vector3D.of(3, -4, 5);
@@ -522,7 +522,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyXYZ() {
+    void testApplyXYZ() {
         // arrange
         final double scaleFactor = 2;
         final Vector3D center = Vector3D.of(3, -4, 5);
@@ -544,7 +544,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyVector_identity() {
+    void testApplyVector_identity() {
         // arrange
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity();
 
@@ -557,7 +557,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyVector_translate() {
+    void testApplyVector_translate() {
         // arrange
         final Vector3D translation = Vector3D.of(1.1, -Math.PI, 5.5);
 
@@ -573,7 +573,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyVector_scale() {
+    void testApplyVector_scale() {
         // arrange
         final Vector3D factors = Vector3D.of(2.0, -3.0, 4.0);
 
@@ -591,7 +591,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyVector_representsDisplacement() {
+    void testApplyVector_representsDisplacement() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 2, 3);
 
@@ -612,7 +612,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyVectorXYZ() {
+    void testApplyVectorXYZ() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 2, 3);
 
@@ -634,7 +634,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyDirection_identity() {
+    void testApplyDirection_identity() {
         // arrange
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity();
 
@@ -647,7 +647,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyDirection_translate() {
+    void testApplyDirection_translate() {
         // arrange
         final Vector3D translation = Vector3D.of(1.1, -Math.PI, 5.5);
 
@@ -663,7 +663,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyDirection_scale() {
+    void testApplyDirection_scale() {
         // arrange
         final Vector3D factors = Vector3D.of(2.0, -3.0, 4.0);
 
@@ -681,7 +681,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyDirection_representsNormalizedDisplacement() {
+    void testApplyDirection_representsNormalizedDisplacement() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 2, 3);
 
@@ -702,14 +702,14 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testApplyDirection_illegalNorm() {
+    void testApplyDirection_illegalNorm() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix3D.createScale(1, 0, 1).applyDirection(Vector3D.Unit.PLUS_Y));
         Assertions.assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix3D.createScale(2).applyDirection(Vector3D.ZERO));
     }
 
     @Test
-    public void testMultiply() {
+    void testMultiply() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     1, 2, 3, 4,
@@ -735,7 +735,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testDeterminant() {
+    void testDeterminant() {
         // act/assert
         Assertions.assertEquals(1.0, AffineTransformMatrix3D.identity().determinant(), EPS);
         Assertions.assertEquals(1.0, AffineTransformMatrix3D.of(
@@ -771,7 +771,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testPreservesOrientation() {
+    void testPreservesOrientation() {
         // act/assert
         Assertions.assertTrue(AffineTransformMatrix3D.identity().preservesOrientation());
         Assertions.assertTrue(AffineTransformMatrix3D.of(
@@ -810,7 +810,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testMultiply_combinesTransformOperations() {
+    void testMultiply_combinesTransformOperations() {
         // arrange
         final Vector3D translation1 = Vector3D.of(1, 2, 3);
         final double scale = 2.0;
@@ -838,7 +838,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testPremultiply() {
+    void testPremultiply() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     1, 2, 3, 4,
@@ -864,7 +864,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testPremultiply_combinesTransformOperations() {
+    void testPremultiply_combinesTransformOperations() {
         // arrange
         final Vector3D translation1 = Vector3D.of(1, 2, 3);
         final double scale = 2.0;
@@ -892,7 +892,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testInverse_identity() {
+    void testInverse_identity() {
         // act
         final AffineTransformMatrix3D inverse = AffineTransformMatrix3D.identity().inverse();
 
@@ -906,7 +906,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testInverse_multiplyByInverse_producesIdentity() {
+    void testInverse_multiplyByInverse_producesIdentity() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     1, 3, 7, 8,
@@ -929,7 +929,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testInverse_translate() {
+    void testInverse_translate() {
         // arrange
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(1, -2, 4);
 
@@ -946,7 +946,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testInverse_scale() {
+    void testInverse_scale() {
         // arrange
         final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createScale(10, -2, 4);
 
@@ -963,7 +963,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testInverse_rotate() {
+    void testInverse_rotate() {
         // arrange
         final Vector3D center = Vector3D.of(1, 2, 3);
         final QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Angle.PI_OVER_TWO);
@@ -983,7 +983,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testInverse_undoesOriginalTransform() {
+    void testInverse_undoesOriginalTransform() {
         // arrange
         final Vector3D v1 = Vector3D.ZERO;
         final Vector3D v2 = Vector3D.Unit.PLUS_X;
@@ -1011,7 +1011,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testInverse_nonInvertible() {
+    void testInverse_nonInvertible() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> AffineTransformMatrix3D.of(
                 0, 0, 0, 0,
@@ -1050,7 +1050,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testLinear() {
+    void testLinear() {
         // arrange
         final AffineTransformMatrix3D mat = AffineTransformMatrix3D.of(
                 2, 3, 4, 5,
@@ -1070,7 +1070,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testLinearTranspose() {
+    void testLinearTranspose() {
         // arrange
         final AffineTransformMatrix3D mat = AffineTransformMatrix3D.of(
                 2, 3, 4, 5,
@@ -1090,7 +1090,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testNormalTransform() {
+    void testNormalTransform() {
         // act/assert
         checkNormalTransform(AffineTransformMatrix3D.identity());
 
@@ -1144,13 +1144,13 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testNormalTransform_nonInvertible() {
+    void testNormalTransform_nonInvertible() {
         // act/assert
         Assertions.assertThrows(IllegalStateException.class, () -> AffineTransformMatrix3D.createScale(0).normalTransform());
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final double[] values = {
             1, 2, 3, 4,
@@ -1176,7 +1176,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final double[] values = {
             1, 2, 3, 4,
@@ -1201,7 +1201,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testEqualsAndHashCode_signedZeroConsistency() {
+    void testEqualsAndHashCode_signedZeroConsistency() {
         // arrange
         final double[] arrWithPosZero = {
             1.0, 0.0, 0.0, 0.0,
@@ -1230,7 +1230,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     1, 2, 3, 4,

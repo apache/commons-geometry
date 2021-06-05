@@ -26,10 +26,10 @@ import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
 import org.junit.jupiter.api.Test;
 
-public class AbstractRegionBSPTreeBooleanTest {
+class AbstractRegionBSPTreeBooleanTest {
 
     @Test
-    public void testUnion_singleNodeTrees() {
+    void testUnion_singleNodeTrees() {
         // act/assert
         unionChecker(AbstractRegionBSPTreeBooleanTest::emptyTree, AbstractRegionBSPTreeBooleanTest::emptyTree)
             .full(false)
@@ -57,7 +57,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testUnion_simpleCrossingCuts() {
+    void testUnion_simpleCrossingCuts() {
         // act/assert
         unionChecker(AbstractRegionBSPTreeBooleanTest::xAxisTree, AbstractRegionBSPTreeBooleanTest::emptyTree)
             .full(false)
@@ -99,7 +99,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testUnion_mixedCutRules() {
+    void testUnion_mixedCutRules() {
         // arrange
         final Supplier<TestRegionBSPTree> r1 = () -> {
             final TestRegionBSPTree tree = new TestRegionBSPTree(false);
@@ -135,7 +135,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testUnion_boxTreeWithSingleCutTree() {
+    void testUnion_boxTreeWithSingleCutTree() {
         // arrange
         final Supplier<TestRegionBSPTree> boxFactory = () -> {
             final TestRegionBSPTree box = fullTree();
@@ -160,7 +160,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testUnion_treeWithComplement() {
+    void testUnion_treeWithComplement() {
         // arrange
         final Supplier<TestRegionBSPTree> treeFactory = () -> {
             final TestRegionBSPTree t = fullTree();
@@ -184,7 +184,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testIntersection_singleNodeTrees() {
+    void testIntersection_singleNodeTrees() {
         // act/assert
         intersectionChecker(AbstractRegionBSPTreeBooleanTest::emptyTree, AbstractRegionBSPTreeBooleanTest::emptyTree)
             .full(false)
@@ -212,7 +212,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testIntersection_simpleCrossingCuts() {
+    void testIntersection_simpleCrossingCuts() {
         // act/assert
         intersectionChecker(AbstractRegionBSPTreeBooleanTest::xAxisTree, AbstractRegionBSPTreeBooleanTest::emptyTree)
             .full(false)
@@ -260,7 +260,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testIntersection_boxTreeWithSingleCutTree() {
+    void testIntersection_boxTreeWithSingleCutTree() {
         // arrange
         final Supplier<TestRegionBSPTree> boxFactory = () -> {
             final TestRegionBSPTree box = fullTree();
@@ -287,7 +287,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testIntersection_treeWithComplement() {
+    void testIntersection_treeWithComplement() {
         // arrange
         final Supplier<TestRegionBSPTree> treeFactory = () -> {
             final TestRegionBSPTree t = fullTree();
@@ -311,7 +311,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testDifference_singleNodeTrees() {
+    void testDifference_singleNodeTrees() {
         // act/assert
         differenceChecker(AbstractRegionBSPTreeBooleanTest::emptyTree, AbstractRegionBSPTreeBooleanTest::emptyTree)
             .full(false)
@@ -339,7 +339,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testDifference_simpleCrossingCuts() {
+    void testDifference_simpleCrossingCuts() {
         // act/assert
         differenceChecker(AbstractRegionBSPTreeBooleanTest::xAxisTree, AbstractRegionBSPTreeBooleanTest::emptyTree)
             .full(false)
@@ -387,7 +387,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testDifference_boxTreeWithSingleCutTree() {
+    void testDifference_boxTreeWithSingleCutTree() {
         // arrange
         final Supplier<TestRegionBSPTree> boxFactory = () -> {
             final TestRegionBSPTree box = fullTree();
@@ -416,7 +416,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testDifference_treeWithCopy() {
+    void testDifference_treeWithCopy() {
         // arrange
         final Supplier<TestRegionBSPTree> treeFactory = () -> {
             final TestRegionBSPTree t = fullTree();
@@ -434,7 +434,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testXor_singleNodeTrees() {
+    void testXor_singleNodeTrees() {
         // act/assert
         xorChecker(AbstractRegionBSPTreeBooleanTest::emptyTree, AbstractRegionBSPTreeBooleanTest::emptyTree)
             .full(false)
@@ -462,7 +462,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testXor_simpleCrossingCuts() {
+    void testXor_simpleCrossingCuts() {
         // act/assert
         xorChecker(AbstractRegionBSPTreeBooleanTest::xAxisTree, AbstractRegionBSPTreeBooleanTest::emptyTree)
             .full(false)
@@ -521,7 +521,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testXor_boxTreeWithSingleCutTree() {
+    void testXor_boxTreeWithSingleCutTree() {
         // arrange
         final Supplier<TestRegionBSPTree> boxFactory = () -> {
             final TestRegionBSPTree box = fullTree();
@@ -551,7 +551,7 @@ public class AbstractRegionBSPTreeBooleanTest {
     }
 
     @Test
-    public void testXor_treeWithComplement() {
+    void testXor_treeWithComplement() {
         // arrange
         final Supplier<TestRegionBSPTree> treeFactory = () -> {
             final TestRegionBSPTree t = fullTree();

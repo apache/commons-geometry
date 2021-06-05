@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-public class DocumentationExamplesTest {
+class DocumentationExamplesTest {
 
     private static final double TEST_EPS = 1e-12;
 
@@ -47,7 +47,7 @@ public class DocumentationExamplesTest {
     Path tempDir;
 
     @Test
-    public void testIndexPageExample() throws IOException {
+    void testIndexPageExample() throws IOException {
         // construct a precision instance to handle floating-point comparisons
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
@@ -77,7 +77,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testIO3DExample() throws Exception {
+    void testIO3DExample() throws Exception {
 
         final Path inputPath = Paths.get(EuclideanIOTestUtils.resource("/models/cube.obj").toURI());
         final Path outputPath = tempDir.resolve("scaled.csv");

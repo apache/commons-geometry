@@ -31,7 +31,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SimpleTriangle3DTest {
+class SimpleTriangle3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -42,7 +42,7 @@ public class SimpleTriangle3DTest {
             Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
-    public void testProperties() {
+    void testProperties() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 2, 1);
         final Vector3D p2 = Vector3D.of(2, 2, 1);
@@ -79,7 +79,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testVertices_listIsImmutable() {
+    void testVertices_listIsImmutable() {
         // arrange
         final SimpleTriangle3D tri = new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1));
@@ -89,7 +89,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testToTriangles() {
+    void testToTriangles() {
         // arrange
         final SimpleTriangle3D tri = new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1));
@@ -103,7 +103,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testGetSize() {
+    void testGetSize() {
         // arrange
         final QuaternionRotation rot = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.2);
 
@@ -124,7 +124,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testClassify() {
+    void testClassify() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 2, 1);
         final Vector3D p2 = Vector3D.of(3, 2, 1);
@@ -144,7 +144,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testClosest() {
+    void testClosest() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 2, 1);
         final Vector3D p2 = Vector3D.of(3, 2, 1);
@@ -176,7 +176,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 2, 1);
         final Vector3D p2 = Vector3D.of(3, 2, 1);
@@ -202,7 +202,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 2, 1);
         final Vector3D p2 = Vector3D.of(3, 2, 1);
@@ -233,7 +233,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testSplit_plus() {
+    void testSplit_plus() {
         // arrange
         final SimpleTriangle3D tri = new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1));
@@ -251,7 +251,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testSplit_minus() {
+    void testSplit_minus() {
         // arrange
         final SimpleTriangle3D tri = new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1));
@@ -269,7 +269,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testSplit_both() {
+    void testSplit_both() {
         // arrange
         final SimpleTriangle3D tri = new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1));
@@ -294,7 +294,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testSplit_neither() {
+    void testSplit_neither() {
         // arrange
         final SimpleTriangle3D tri = new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1));
@@ -312,7 +312,7 @@ public class SimpleTriangle3DTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final SimpleTriangle3D tri = new SimpleTriangle3D(XY_PLANE_Z1,
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1));

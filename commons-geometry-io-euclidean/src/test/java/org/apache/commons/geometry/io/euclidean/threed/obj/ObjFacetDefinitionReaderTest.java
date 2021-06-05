@@ -31,12 +31,12 @@ import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ObjFacetDefinitionReaderTest {
+class ObjFacetDefinitionReaderTest {
 
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    public void testDefaults() {
+    void testDefaults() {
         // arrange
         final ObjFacetDefinitionReader reader = reader("");
 
@@ -45,7 +45,7 @@ public class ObjFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testClose() throws IOException {
+    void testClose() throws IOException {
         // arrange
         final CloseCountReader closeReader = new CloseCountReader(new StringReader(""));
 
@@ -58,7 +58,7 @@ public class ObjFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_withNormal() throws IOException {
+    void testReadFacet_withNormal() throws IOException {
         // arrange
         final ObjFacetDefinitionReader reader = reader(
                 "o test\n\n" +
@@ -82,7 +82,7 @@ public class ObjFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_withoutNormal() throws IOException {
+    void testReadFacet_withoutNormal() throws IOException {
         // arrange
         final ObjFacetDefinitionReader reader = reader(
                 "o test\n\n" +
@@ -103,7 +103,7 @@ public class ObjFacetDefinitionReaderTest {
     }
 
     @Test
-    public void testReadFacet_failOnNonPolygon() throws IOException {
+    void testReadFacet_failOnNonPolygon() throws IOException {
         // arrange
         final ObjFacetDefinitionReader reader = reader(
                 "o test\n\n" +

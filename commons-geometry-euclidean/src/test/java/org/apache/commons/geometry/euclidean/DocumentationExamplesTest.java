@@ -57,12 +57,12 @@ import org.junit.jupiter.api.Test;
 /** This class contains code listed as examples in the user guide and other documentation.
  * If any portion of this code changes, the corresponding examples in the documentation <em>must</em> be updated.
  */
-public class DocumentationExamplesTest {
+class DocumentationExamplesTest {
 
     private static final double TEST_EPS = 1e-12;
 
     @Test
-    public void testPrecisionContextExample() {
+    void testPrecisionContextExample() {
         // create a precision instance with an epsilon (aka, tolerance) value of 1e-3
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-3);
 
@@ -83,7 +83,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testEqualsVsEqExample() {
+    void testEqualsVsEqExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         final Vector2D v1 = Vector2D.of(1, 1); // (1.0, 1.0)
@@ -104,7 +104,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testManualBSPTreeExample() {
+    void testManualBSPTreeExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a tree representing an empty space (nothing "inside")
@@ -147,7 +147,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testHyperplaneSubsetBSPTreeExample() {
+    void testHyperplaneSubsetBSPTreeExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a tree representing an empty space (nothing "inside")
@@ -175,7 +175,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testIntervalExample() {
+    void testIntervalExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a closed interval and a half-open interval with a min but no max
@@ -204,7 +204,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testRegionBSPTree1DExample() {
+    void testRegionBSPTree1DExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // build a bsp tree from the union of several intervals
@@ -226,7 +226,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testLineIntersectionExample() {
+    void testLineIntersectionExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create some lines
@@ -245,7 +245,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testLineSegmentIntersectionExample() {
+    void testLineSegmentIntersectionExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create some line segments
@@ -265,7 +265,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testRegionBSPTree2DExample() {
+    void testRegionBSPTree2DExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a connected sequence of line segments forming the unit square
@@ -304,7 +304,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testLinecast2DExample() {
+    void testLinecast2DExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         final Parallelogram box = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
@@ -321,7 +321,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testPlaneIntersectionExample() {
+    void testPlaneIntersectionExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create two planes
@@ -339,7 +339,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testTransform3DExample() {
+    void testTransform3DExample() {
         final List<Vector3D> inputPts = Arrays.asList(
                 Vector3D.ZERO,
                 Vector3D.Unit.PLUS_X,
@@ -375,7 +375,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testRegionBSPTree3DExample() {
+    void testRegionBSPTree3DExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create the faces of a pyramid with a square base and its apex pointing along the
@@ -417,7 +417,7 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testLinecast3DExample() {
+    void testLinecast3DExample() {
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
         // create a BSP tree representing an axis-aligned cube with corners at (0, 0, 0) and (1, 1, 1)

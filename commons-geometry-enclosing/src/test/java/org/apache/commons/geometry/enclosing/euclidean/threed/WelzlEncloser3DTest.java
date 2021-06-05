@@ -30,7 +30,7 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class WelzlEncloser3DTest {
+class WelzlEncloser3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -40,7 +40,7 @@ public class WelzlEncloser3DTest {
     private final WelzlEncloser3D encloser = new WelzlEncloser3D(TEST_PRECISION);
 
     @Test
-    public void testNoPoints() {
+    void testNoPoints() {
         // arrange
         final String msg = "Unable to generate enclosing ball: no points given";
 
@@ -55,7 +55,7 @@ public class WelzlEncloser3DTest {
     }
 
     @Test
-    public void testReducingBall() {
+    void testReducingBall() {
         // arrange
         final List<Vector3D> list =
                 Arrays.asList(Vector3D.of(-7.140397329568118, -16.571661242582177, 11.714458961735405),
@@ -78,7 +78,7 @@ public class WelzlEncloser3DTest {
     }
 
     @Test
-    public void testInfiniteLoop() {
+    void testInfiniteLoop() {
         // arrange
         // this test used to generate an infinite loop
         final List<Vector3D> list =
@@ -109,7 +109,7 @@ public class WelzlEncloser3DTest {
     }
 
     @Test
-    public void testLargeSamples() {
+    void testLargeSamples() {
         // arrange
         final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A,
                                                                  0x35ddecfc78131e1dL);

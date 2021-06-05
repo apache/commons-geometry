@@ -20,10 +20,10 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AxisAngleSequenceTest {
+class AxisAngleSequenceTest {
 
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         // act
         final AxisAngleSequence seq = new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3);
 
@@ -36,7 +36,7 @@ public class AxisAngleSequenceTest {
     }
 
     @Test
-    public void testGetAngles() {
+    void testGetAngles() {
         // arrange
         final AxisAngleSequence seq = new AxisAngleSequence(AxisReferenceFrame.RELATIVE, AxisSequence.XYZ, 1, 2, 3);
 
@@ -48,7 +48,7 @@ public class AxisAngleSequenceTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         // arrange
         final AxisAngleSequence seq = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3);
 
@@ -63,7 +63,7 @@ public class AxisAngleSequenceTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // arrange
         final AxisAngleSequence seq = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3);
 
@@ -80,7 +80,7 @@ public class AxisAngleSequenceTest {
     }
 
     @Test
-    public void testEqualsAndHashCode_signedZeroConsistency() {
+    void testEqualsAndHashCode_signedZeroConsistency() {
         // arrange
         final AxisAngleSequence a = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ,
                 0.0, -0.0, 0.0);
@@ -103,7 +103,7 @@ public class AxisAngleSequenceTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // arrange
         final AxisAngleSequence seq = new AxisAngleSequence(AxisReferenceFrame.ABSOLUTE, AxisSequence.XYZ, 1, 2, 3);
 
@@ -119,7 +119,7 @@ public class AxisAngleSequenceTest {
     }
 
     @Test
-    public void testCreateRelative() {
+    void testCreateRelative() {
         // act
         final AxisAngleSequence seq = AxisAngleSequence.createRelative(AxisSequence.XYZ, 1, 2, 3);
 
@@ -132,7 +132,7 @@ public class AxisAngleSequenceTest {
     }
 
     @Test
-    public void testCreateAbsolute() {
+    void testCreateAbsolute() {
         // act
         final AxisAngleSequence seq = AxisAngleSequence.createAbsolute(AxisSequence.XYZ, 1, 2, 3);
 

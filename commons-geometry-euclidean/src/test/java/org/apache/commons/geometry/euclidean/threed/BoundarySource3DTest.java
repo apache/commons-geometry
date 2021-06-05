@@ -25,7 +25,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BoundarySource3DTest {
+class BoundarySource3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -33,7 +33,7 @@ public class BoundarySource3DTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    public void testToList() {
+    void testToList() {
         // act
         final BoundarySource3D src = BoundarySource3D.of(
             Planes.convexPolygonFromVertices(
@@ -48,7 +48,7 @@ public class BoundarySource3DTest {
     }
 
     @Test
-    public void testToList_noBoundaries() {
+    void testToList_noBoundaries() {
         // act
         final BoundarySource3D src = BoundarySource3D.of();
 
@@ -60,7 +60,7 @@ public class BoundarySource3DTest {
     }
 
     @Test
-    public void testToTree() {
+    void testToTree() {
         // act
         final PlaneConvexSubset a = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
@@ -79,7 +79,7 @@ public class BoundarySource3DTest {
     }
 
     @Test
-    public void testToTree_noBoundaries() {
+    void testToTree_noBoundaries() {
         // act
         final BoundarySource3D src = BoundarySource3D.of();
 
@@ -93,7 +93,7 @@ public class BoundarySource3DTest {
     }
 
     @Test
-    public void testOf_varargs_empty() {
+    void testOf_varargs_empty() {
         // act
         final BoundarySource3D src = BoundarySource3D.of();
 
@@ -103,7 +103,7 @@ public class BoundarySource3DTest {
     }
 
     @Test
-    public void testOf_varargs() {
+    void testOf_varargs() {
         // act
         final PlaneConvexSubset a = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
@@ -121,7 +121,7 @@ public class BoundarySource3DTest {
     }
 
     @Test
-    public void testOf_list_empty() {
+    void testOf_list_empty() {
         // arrange
         final List<PlaneConvexSubset> input = new ArrayList<>();
 
@@ -134,7 +134,7 @@ public class BoundarySource3DTest {
     }
 
     @Test
-    public void testOf_list() {
+    void testOf_list() {
         // act
         final PlaneConvexSubset a = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
