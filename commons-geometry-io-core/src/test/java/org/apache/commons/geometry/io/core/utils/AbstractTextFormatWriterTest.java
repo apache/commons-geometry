@@ -19,6 +19,7 @@ package org.apache.commons.geometry.io.core.utils;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.function.DoubleFunction;
 
 import org.apache.commons.geometry.io.core.test.CloseCountWriter;
 import org.junit.jupiter.api.Assertions;
@@ -70,7 +71,7 @@ class AbstractTextFormatWriterTest {
 
             writer.setLineSeparator("\r\n");
 
-            final DoubleFormat df = DoubleFormats.createPlain(0, -2);
+            final DoubleFunction<String> df = DoubleFormats.createPlain(0, -2);
             writer.setDoubleFormat(df);
 
             // act

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+import java.util.function.DoubleFunction;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
@@ -28,7 +29,6 @@ import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.mesh.Mesh;
 import org.apache.commons.geometry.io.core.GeometryFormat;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
-import org.apache.commons.geometry.io.core.utils.DoubleFormat;
 import org.apache.commons.geometry.io.core.utils.DoubleFormats;
 import org.apache.commons.geometry.io.euclidean.threed.AbstractBoundaryWriteHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
@@ -51,8 +51,8 @@ public class ObjBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
     /** Line separator string. */
     private String lineSeparator = DEFAULT_LINE_SEPARATOR;
 
-    /** Double format instance. */
-    private DoubleFormat doubleFormat = DoubleFormats.DOUBLE_TO_STRING;
+    /** Double format function. */
+    private DoubleFunction<String> doubleFormat = DoubleFormats.DOUBLE_TO_STRING;
 
     /** Batch size used for mesh buffer creation. */
     private int meshBufferBatchSize = DEFAULT_MESH_BUFFER_BATCH_SIZE;
@@ -93,19 +93,18 @@ public class ObjBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
         this.lineSeparator = lineSeparator;
     }
 
-    /** Get the {@link DoubleFormat} instance used to convert double values
-     * to strings.
-     * @return {@code DoubleFormat} instance
+    /** Get the function used to convert double values to strings.
+     * @return double format function
      */
-    public DoubleFormat getDoubleFormat() {
+    public DoubleFunction<String> getDoubleFormat() {
         return doubleFormat;
     }
 
-    /** Set the {@link DoubleFormat} instance used to convert double values
-     * to strings.
-     * @param doubleFormat double format instance
+    /** Set the function used to convert double values to strings. The given function
+     * must be thread-safe if this handler is to be used in a multi-threaded context.
+     * @param doubleFormat double format function
      */
-    public void setDoubleFormat(final DoubleFormat doubleFormat) {
+    public void setDoubleFormat(final DoubleFunction<String> doubleFormat) {
         this.doubleFormat = doubleFormat;
     }
 

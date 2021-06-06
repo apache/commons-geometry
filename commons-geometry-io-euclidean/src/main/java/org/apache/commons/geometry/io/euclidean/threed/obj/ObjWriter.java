@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleFunction;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
@@ -32,7 +33,6 @@ import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.Mesh;
 import org.apache.commons.geometry.io.core.utils.AbstractTextFormatWriter;
-import org.apache.commons.geometry.io.core.utils.DoubleFormat;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 
 /** Class for writing OBJ files containing 3D polygon geometries.
@@ -295,14 +295,14 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      * @return string representation of the given vector
      */
     private String createVectorString(final Vector3D vec) {
-        final DoubleFormat fmt = getDoubleFormat();
+        final DoubleFunction<String> fmt = getDoubleFormat();
 
         final StringBuilder sb = new StringBuilder();
-        sb.append(fmt.format(vec.getX()))
+        sb.append(fmt.apply(vec.getX()))
             .append(SPACE)
-            .append(fmt.format(vec.getY()))
+            .append(fmt.apply(vec.getY()))
             .append(SPACE)
-            .append(fmt.format(vec.getZ()));
+            .append(fmt.apply(vec.getZ()));
 
         return sb.toString();
     }

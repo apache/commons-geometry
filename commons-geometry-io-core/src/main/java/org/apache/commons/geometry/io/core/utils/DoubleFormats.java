@@ -16,18 +16,22 @@
  */
 package org.apache.commons.geometry.io.core.utils;
 
-/** Class containing static utility methods and constants for {@link DoubleFormat} instances.
+import java.util.function.DoubleFunction;
+
+/** Class containing static utility methods and constants for formatting double values
+ * as strings. All instances returned by methods in this class are guaranteed to be
+ * thread-safe.
  */
 public final class DoubleFormats {
 
-    /** {@link DoubleFormat} instance that simply calls {@link Double#toString(double)}.
+    /** Double format function that simply calls {@link Double#toString(double)}.
      */
-    public static final DoubleFormat DOUBLE_TO_STRING = Double::toString;
+    public static final DoubleFunction<String> DOUBLE_TO_STRING = Double::toString;
 
-    /** {@link DoubleFormat} instance that converts the argument to a float and calls
+    /** Double format function that converts the argument to a float and calls
      * {@link Float#toString(float)}.
      */
-    public static final DoubleFormat FLOAT_TO_STRING = d -> Float.toString((float) d);
+    public static final DoubleFunction<String> FLOAT_TO_STRING = d -> Float.toString((float) d);
 
     /** Minimum possible decimal exponent for double values. */
     private static final int MIN_DOUBLE_EXPONENT = -325;
@@ -35,7 +39,7 @@ public final class DoubleFormats {
     /** Utility class; no instantiation. */
     private DoubleFormats() {}
 
-    /** Return a {@link DoubleFormat} instance that provides similar behavior to {@link Double#toString(double)}
+    /** Return a double format function that provides similar behavior to {@link Double#toString(double)}
      * but with a configurable max precision. For values with an absolute magnitude less than
      * 10<sup>7</sup> and greater than or equal to 10<sup>-3</sup> (after any necessary rounding), the returned
      * string is in plain, non-scientific format. All other values are in scientific format. Rounding is performed
@@ -52,14 +56,14 @@ public final class DoubleFormats {
      * @param maxPrecision Maximum number of significant decimal digits in strings produced by the returned formatter.
      *      Numbers are rounded as necessary so that the number of significant digits does not exceed this value. A
      *      value of {@code 0} indicates no maximum precision.
-     * @return {@link DoubleFormat} instance
+     * @return double format function
      * @throws IllegalArgumentException if {@code maxPrecision} is less than zero
      */
-    public static DoubleFormat createDefault(final int maxPrecision) {
+    public static DoubleFunction<String> createDefault(final int maxPrecision) {
         return createDefault(maxPrecision, MIN_DOUBLE_EXPONENT);
     }
 
-    /** Return a {@link DoubleFormat} instance that provides similar behavior to {@link Double#toString(double)}
+    /** Return a double format function that provides similar behavior to {@link Double#toString(double)}
      * but with a configurable max precision and min exponent. For values with an absolute magnitude less than
      * 10<sup>7</sup> and greater than or equal to 10<sup>-3</sup> (after any necessary rounding), the returned
      * string is in plain, non-scientific format. All other values are in scientific format. Rounding is performed
@@ -77,14 +81,14 @@ public final class DoubleFormats {
      *      Numbers are rounded as necessary so that the number of significant digits does not exceed this value. A
      *      value of {@code 0} indicates no maximum precision.
      * @param minExponent Minimum decimal exponent in strings produced by the returned formatter.
-     * @return {@link DoubleFormat} instance
+     * @return double format function
      * @throws IllegalArgumentException if {@code maxPrecision} is less than zero
      */
-    public static DoubleFormat createDefault(final int maxPrecision, final int minExponent) {
+    public static DoubleFunction<String> createDefault(final int maxPrecision, final int minExponent) {
         return new DefaultFormat(maxPrecision, minExponent);
     }
 
-    /** Return a {@link DoubleFormat} instance that produces strings in plain, non-scientific format.
+    /** Return a double format function that produces strings in plain, non-scientific format.
      * Rounding is performed using {@link java.math.RoundingMode#HALF_EVEN half even} rounding.
      * <table>
      *  <caption>Format Examples</caption>
@@ -98,13 +102,13 @@ public final class DoubleFormats {
      * @param maxPrecision Maximum number of significant decimal digits in strings produced by the returned formatter.
      *      Numbers are rounded as necessary so that the number of significant digits does not exceed this value. A
      *      value of {@code 0} indicates no maximum precision.
-     * @return {@link DoubleFormat} instance
+     * @return double format function
      */
-    public static DoubleFormat createPlain(final int maxPrecision) {
+    public static DoubleFunction<String> createPlain(final int maxPrecision) {
         return createPlain(maxPrecision, MIN_DOUBLE_EXPONENT);
     }
 
-    /** Return a {@link DoubleFormat} instance that produces strings in plain, non-scientific format.
+    /** Return a double format function that produces strings in plain, non-scientific format.
      * Rounding is performed using {@link java.math.RoundingMode#HALF_EVEN half even} rounding.
      * <table>
      *  <caption>Format Examples</caption>
@@ -119,13 +123,13 @@ public final class DoubleFormats {
      *      Numbers are rounded as necessary so that the number of significant digits does not exceed this value. A
      *      value of {@code 0} indicates no maximum precision.
      * @param minExponent Minimum decimal exponent in strings produced by the returned formatter.
-     * @return {@link DoubleFormat} instance
+     * @return double format function
      */
-    public static DoubleFormat createPlain(final int maxPrecision, final int minExponent) {
+    public static DoubleFunction<String> createPlain(final int maxPrecision, final int minExponent) {
         return new PlainFormat(maxPrecision, minExponent);
     }
 
-    /** Return a {@link DoubleFormat} instance that produces strings in scientific format. Exponents of
+    /** Return a double format function that produces strings in scientific format. Exponents of
      * zero are not included in formatted strings. Rounding is performed using
      * {@link java.math.RoundingMode#HALF_EVEN half even} rounding.
      * <table>
@@ -140,13 +144,13 @@ public final class DoubleFormats {
      * @param maxPrecision Maximum number of significant decimal digits in strings produced by the returned formatter.
      *      Numbers are rounded as necessary so that the number of significant digits does not exceed this value. A
      *      value of {@code 0} indicates no maximum precision.
-     * @return {@link DoubleFormat} instance
+     * @return double format function
      */
-    public static DoubleFormat createScientific(final int maxPrecision) {
+    public static DoubleFunction<String> createScientific(final int maxPrecision) {
         return createScientific(maxPrecision, MIN_DOUBLE_EXPONENT);
     }
 
-    /** Return a {@link DoubleFormat} instance that produces strings in scientific format. Exponents of
+    /** Return a double format function that produces strings in scientific format. Exponents of
      * zero are not included in formatted strings. Rounding is performed using
      * {@link java.math.RoundingMode#HALF_EVEN half even} rounding.
      * <table>
@@ -162,13 +166,13 @@ public final class DoubleFormats {
      *      Numbers are rounded as necessary so that the number of significant digits does not exceed this value. A
      *      value of {@code 0} indicates no maximum precision.
      * @param minExponent Minimum decimal exponent in strings produced by the returned formatter.
-     * @return {@link DoubleFormat} instance
+     * @return double format function
      */
-    public static DoubleFormat createScientific(final int maxPrecision, final int minExponent) {
+    public static DoubleFunction<String> createScientific(final int maxPrecision, final int minExponent) {
         return new ScientificFormat(maxPrecision, minExponent);
     }
 
-    /** Return a {@link DoubleFormat} instance that produces strings in
+    /** Return a double format function that produces strings in
      * <a href="https://en.wikipedia.org/wiki/Engineering_notation">engineering notation</a> where any exponents
      * are adjusted to be multiples of 3. Exponents of zero are not included in formatted strings. Rounding is
      * performed using {@link java.math.RoundingMode#HALF_EVEN half even} rounding.
@@ -184,13 +188,13 @@ public final class DoubleFormats {
      * @param maxPrecision Maximum number of significant decimal digits in strings produced by the returned formatter.
      *      Numbers are rounded as necessary so that the number of significant digits does not exceed this value. A
      *      value of {@code 0} indicates no maximum precision.
-     * @return {@link DoubleFormat} instance
+     * @return double format function
      */
-    public static DoubleFormat createEngineering(final int maxPrecision) {
+    public static DoubleFunction<String> createEngineering(final int maxPrecision) {
         return createEngineering(maxPrecision, MIN_DOUBLE_EXPONENT);
     }
 
-    /** Return a {@link DoubleFormat} instance that produces strings in
+    /** Return a double format function that produces strings in
      * <a href="https://en.wikipedia.org/wiki/Engineering_notation">engineering notation</a>, where exponents
      * are adjusted to be multiples of 3. Exponents of zero are not included in formatted strings. Rounding is
      * performed using {@link java.math.RoundingMode#HALF_EVEN half even} rounding.
@@ -207,15 +211,15 @@ public final class DoubleFormats {
      *      Numbers are rounded as necessary so that the number of significant digits does not exceed this value. A
      *      value of {@code 0} indicates no maximum precision.
      * @param minExponent Minimum decimal exponent in strings produced by the returned formatter.
-     * @return {@link DoubleFormat} instance
+     * @return double format function
      */
-    public static DoubleFormat createEngineering(final int maxPrecision, final int minExponent) {
+    public static DoubleFunction<String> createEngineering(final int maxPrecision, final int minExponent) {
         return new EngineeringFormat(maxPrecision, minExponent);
     }
 
-    /** Base class for standard {@link DoubleFormat} implementations.
+    /** Base class for standard double formatting classes.
      */
-    private abstract static class AbstractFormat implements DoubleFormat {
+    private abstract static class AbstractFormat implements DoubleFunction<String> {
 
         /** Maximum precision to use when formatting values. */
         private final int maxPrecision;
@@ -243,7 +247,7 @@ public final class DoubleFormats {
 
         /** {@inheritDoc} */
         @Override
-        public String format(final double d) {
+        public String apply(final double d) {
             if (Double.isFinite(d)) {
                 final ParsedDouble n = ParsedDouble.from(d);
 
@@ -267,7 +271,7 @@ public final class DoubleFormats {
         protected abstract String formatInternal(ParsedDouble val);
     }
 
-    /** {@link DoubleFormat} that produces plain decimal strings that do not use
+    /** Format class that produces plain decimal strings that do not use
      * scientific notation.
      */
     private static class PlainFormat extends AbstractFormat {
@@ -289,7 +293,7 @@ public final class DoubleFormats {
         }
     }
 
-    /** {@link DoubleFormat} similar to {@link Double#toString()} that uses
+    /** Format class producing results similar to {@link Double#toString()}, with
      * plain decimal notation for small numbers relatively close to zero and scientific
      * notation otherwise.
      */
@@ -321,7 +325,7 @@ public final class DoubleFormats {
         }
     }
 
-    /** {@link DoubleFormat} that uses scientific notation for all values.
+    /** Format class that uses scientific notation for all values.
      */
     private static class ScientificFormat extends AbstractFormat {
 
@@ -342,7 +346,7 @@ public final class DoubleFormats {
         }
     }
 
-    /** {@link DoubleFormat} that uses engineering notation for all values.
+    /** Format class that uses engineering notation for all values.
      */
     private static class EngineeringFormat extends AbstractFormat {
 

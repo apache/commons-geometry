@@ -22,11 +22,11 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.function.DoubleFunction;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
-import org.apache.commons.geometry.io.core.utils.DoubleFormat;
 import org.apache.commons.geometry.io.core.utils.DoubleFormats;
 import org.apache.commons.geometry.io.euclidean.threed.AbstractBoundaryWriteHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
@@ -46,8 +46,8 @@ public abstract class AbstractTextBoundaryWriteHandler3D extends AbstractBoundar
     /** Line separator string. */
     private String lineSeparator = DEFAULT_LINE_SEPARATOR;
 
-    /** Double format instance. */
-    private DoubleFormat doubleFormat = DoubleFormats.DOUBLE_TO_STRING;
+    /** Double format function. */
+    private DoubleFunction<String> doubleFormat = DoubleFormats.DOUBLE_TO_STRING;
 
     /** Get the text output default charset, used if the output does not
      * specify a charset.
@@ -79,19 +79,20 @@ public abstract class AbstractTextBoundaryWriteHandler3D extends AbstractBoundar
         this.lineSeparator = lineSeparator;
     }
 
-    /** Get the {@link DoubleFormat} instance used to convert double values
+    /** Get the double format function used to convert double values
      * to strings.
-     * @return {@code DoubleFormat} instance
+     * @return double format function
      */
-    public DoubleFormat getDoubleFormat() {
+    public DoubleFunction<String> getDoubleFormat() {
         return doubleFormat;
     }
 
-    /** Set the {@link DoubleFormat} instance used to convert double values
-     * to strings.
-     * @param doubleFormat double format instance
+    /** Set the double format function used to convert double values
+     * to strings. The given function must be thread-safe if this handler
+     * is to be used in a multi-threaded context.
+     * @param doubleFormat double format function
      */
-    public void setDoubleFormat(final DoubleFormat doubleFormat) {
+    public void setDoubleFormat(final DoubleFunction<String> doubleFormat) {
         this.doubleFormat = doubleFormat;
     }
 

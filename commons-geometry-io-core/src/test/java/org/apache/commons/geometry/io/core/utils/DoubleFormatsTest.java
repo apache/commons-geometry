@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.DoubleFunction;
 import java.util.function.IntFunction;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -39,7 +40,7 @@ class DoubleFormatsTest {
     @Test
     void testDoubleToString() {
         // arrange
-        final DoubleFormat fmt = DoubleFormats.DOUBLE_TO_STRING;
+        final DoubleFunction<String> fmt = DoubleFormats.DOUBLE_TO_STRING;
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -74,7 +75,7 @@ class DoubleFormatsTest {
     @Test
     void testFloatToString() {
         // arrange
-        final DoubleFormat fmt = DoubleFormats.FLOAT_TO_STRING;
+        final DoubleFunction<String> fmt = DoubleFormats.FLOAT_TO_STRING;
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -112,7 +113,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 0;
 
         // act
-        final DoubleFormat fmt = DoubleFormats.createDefault(maxPrecision);
+        final DoubleFunction<String> fmt = DoubleFormats.createDefault(maxPrecision);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -152,7 +153,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 0;
         final int minExponent = -3;
 
-        final DoubleFormat fmt = DoubleFormats.createDefault(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createDefault(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -192,7 +193,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 4;
         final int minExponent = Integer.MIN_VALUE;
 
-        final DoubleFormat fmt = DoubleFormats.createDefault(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createDefault(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -235,7 +236,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 3;
         final int minExponent = -3;
 
-        final DoubleFormat fmt = DoubleFormats.createDefault(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createDefault(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -274,7 +275,7 @@ class DoubleFormatsTest {
         // arrange
         final int maxPrecision = 0;
 
-        final DoubleFormat fmt = DoubleFormats.createPlain(maxPrecision);
+        final DoubleFunction<String> fmt = DoubleFormats.createPlain(maxPrecision);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -314,7 +315,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 0;
         final int minExponent = -2;
 
-        final DoubleFormat fmt = DoubleFormats.createPlain(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createPlain(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -354,7 +355,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 3;
         final int minExponent = Integer.MIN_VALUE;
 
-        final DoubleFormat fmt = DoubleFormats.createPlain(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createPlain(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -394,7 +395,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 4;
         final int minExponent = -2;
 
-        final DoubleFormat fmt = DoubleFormats.createPlain(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createPlain(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -434,7 +435,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 0;
 
         // act
-        final DoubleFormat fmt = DoubleFormats.createScientific(maxPrecision);
+        final DoubleFunction<String> fmt = DoubleFormats.createScientific(maxPrecision);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -474,7 +475,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 0;
         final int minExponent = -3;
 
-        final DoubleFormat fmt = DoubleFormats.createScientific(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createScientific(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -514,7 +515,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 3;
         final int minExponent = Integer.MIN_VALUE;
 
-        final DoubleFormat fmt = DoubleFormats.createScientific(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createScientific(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -557,7 +558,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 3;
         final int minExponent = -3;
 
-        final DoubleFormat fmt = DoubleFormats.createScientific(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createScientific(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -597,7 +598,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 0;
 
         // act
-        final DoubleFormat fmt = DoubleFormats.createEngineering(maxPrecision);
+        final DoubleFunction<String> fmt = DoubleFormats.createEngineering(maxPrecision);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -637,7 +638,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 0;
         final int minExponent = -3;
 
-        final DoubleFormat fmt = DoubleFormats.createEngineering(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createEngineering(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -677,7 +678,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 3;
         final int minExponent = Integer.MIN_VALUE;
 
-        final DoubleFormat fmt = DoubleFormats.createEngineering(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createEngineering(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -717,7 +718,7 @@ class DoubleFormatsTest {
         final int maxPrecision = 3;
         final int minExponent = -3;
 
-        final DoubleFormat fmt = DoubleFormats.createEngineering(maxPrecision, minExponent);
+        final DoubleFunction<String> fmt = DoubleFormats.createEngineering(maxPrecision, minExponent);
 
         // act/assert
         checkFormatSpecial(fmt);
@@ -754,7 +755,7 @@ class DoubleFormatsTest {
     @Test
     void testPrecisionValidation() {
         // arrange
-        final List<IntFunction<DoubleFormat>> fns = Arrays.asList(
+        final List<IntFunction<DoubleFunction<String>>> fns = Arrays.asList(
                     DoubleFormats::createDefault,
                     p -> DoubleFormats.createDefault(p, Integer.MIN_VALUE),
                     DoubleFormats::createPlain,
@@ -768,7 +769,7 @@ class DoubleFormatsTest {
         final String msg = "Max precision must be greater than or equal to zero; was -1";
 
         // act/assert
-        for (final IntFunction<DoubleFormat> fn : fns) {
+        for (final IntFunction<DoubleFunction<String>> fn : fns) {
             GeometryTestUtils.assertThrowsWithMessage(
                     () -> fn.apply(-1),
                     IllegalArgumentException.class, msg);
@@ -813,12 +814,12 @@ class DoubleFormatsTest {
         Files.write(output, lines);
     }
 
-    private static String generateOneArgExamplesTable(final IntFunction<DoubleFormat> fn) {
+    private static String generateOneArgExamplesTable(final IntFunction<DoubleFunction<String>> fn) {
         final int aMaxPrecision = 0;
         final int bMaxPrecision = 4;
 
-        final DoubleFormat aFmt = fn.apply(aMaxPrecision);
-        final DoubleFormat bFmt = fn.apply(bMaxPrecision);
+        final DoubleFunction<String> aFmt = fn.apply(aMaxPrecision);
+        final DoubleFunction<String> bFmt = fn.apply(bMaxPrecision);
 
         final String descTemplate = "(maxPrecision= %d)";
 
@@ -828,15 +829,15 @@ class DoubleFormatsTest {
                 );
     }
 
-    private static String generateTwoArgExamplesTable(final BiFunction<Integer, Integer, DoubleFormat> fn) {
+    private static String generateTwoArgExamplesTable(final BiFunction<Integer, Integer, DoubleFunction<String>> fn) {
         final int aMaxPrecision = 0;
         final int aMinExponent = -2;
 
         final int bMaxPrecision = 4;
         final int bMinExponent = -2;
 
-        final DoubleFormat aFmt = fn.apply(aMaxPrecision, aMinExponent);
-        final DoubleFormat bFmt = fn.apply(bMaxPrecision, bMinExponent);
+        final DoubleFunction<String> aFmt = fn.apply(aMaxPrecision, aMinExponent);
+        final DoubleFunction<String> bFmt = fn.apply(bMaxPrecision, bMinExponent);
 
         final String descTemplate = "(maxPrecision= %d, minExponent= %d)";
 
@@ -848,7 +849,7 @@ class DoubleFormatsTest {
                 );
     }
 
-    private static String generateExamplesTable(final List<DoubleFormat> fmts,
+    private static String generateExamplesTable(final List<DoubleFunction<String>> fmts,
             final List<String> fmtDescriptions) {
         final StringBuilder sb = new StringBuilder();
 
@@ -867,9 +868,9 @@ class DoubleFormatsTest {
                 .append(value)
                 .append("</td>");
 
-            for (DoubleFormat fmt : fmts) {
+            for (DoubleFunction<String> fmt : fmts) {
                 sb.append("<td>")
-                    .append(fmt.format(value))
+                    .append(fmt.apply(value))
                     .append("</td>");
             }
 
@@ -881,11 +882,11 @@ class DoubleFormatsTest {
         return sb.toString();
     }
 
-    private static void checkFormat(final DoubleFormat fmt, final double d, final String str) {
-        Assertions.assertEquals(str, fmt.format(d));
+    private static void checkFormat(final DoubleFunction<String> fmt, final double d, final String str) {
+        Assertions.assertEquals(str, fmt.apply(d));
     }
 
-    private static void checkFormatSpecial(final DoubleFormat fmt) {
+    private static void checkFormatSpecial(final DoubleFunction<String> fmt) {
         checkFormat(fmt, Double.NaN, "NaN");
         checkFormat(fmt, Double.POSITIVE_INFINITY, "Infinity");
         checkFormat(fmt, Double.NEGATIVE_INFINITY, "-Infinity");

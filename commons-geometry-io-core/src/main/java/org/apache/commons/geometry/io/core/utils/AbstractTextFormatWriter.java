@@ -19,6 +19,7 @@ package org.apache.commons.geometry.io.core.utils;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.function.DoubleFunction;
 
 /** Base type for classes that write text-based data formats. This class
  * provides a number of common configuration options and utility methods.
@@ -34,8 +35,8 @@ public abstract class AbstractTextFormatWriter implements Closeable {
     /** Line separator string. */
     private String lineSeparator = DEFAULT_LINE_SEPARATOR;
 
-    /** Double format instance. */
-    private DoubleFormat doubleFormat;
+    /** Double format function. */
+    private DoubleFunction<String> doubleFormat;
 
     /** Construct a new instance that writes content to the given writer.
      * @param writer writer instance
@@ -47,9 +48,9 @@ public abstract class AbstractTextFormatWriter implements Closeable {
     /** Construct a new instance that writes content to the given writer and uses the
      * decimal format instance for creating floating-point string representations.
      * @param writer writer instance
-     * @param doubleFormat double format instance
+     * @param doubleFormat double format function
      */
-    protected AbstractTextFormatWriter(final Writer writer, final DoubleFormat doubleFormat) {
+    protected AbstractTextFormatWriter(final Writer writer, final DoubleFunction<String> doubleFormat) {
         this.writer = writer;
         this.doubleFormat = doubleFormat;
     }
@@ -68,17 +69,17 @@ public abstract class AbstractTextFormatWriter implements Closeable {
         this.lineSeparator = lineSeparator;
     }
 
-    /** Get the {@link DoubleFormat} instance used to format floating point output.
-     * @return the double format instance
+    /** Get the function used to format floating point output.
+     * @return the double format function
      */
-    public DoubleFormat getDoubleFormat() {
+    public DoubleFunction<String> getDoubleFormat() {
         return doubleFormat;
     }
 
-    /** Set the {@link DoubleFormat} instance used to format floating point output.
-     * @param doubleFormat double format instance
+    /** Set the function used to format floating point output.
+     * @param doubleFormat double format function
      */
-    public void setDoubleFormat(final DoubleFormat doubleFormat) {
+    public void setDoubleFormat(final DoubleFunction<String> doubleFormat) {
         this.doubleFormat = doubleFormat;
     }
 
@@ -95,12 +96,12 @@ public abstract class AbstractTextFormatWriter implements Closeable {
         return writer;
     }
 
-    /** Write a double value formatted using the configured decimal format instance.
+    /** Write a double value formatted using the configured decimal format function.
      * @param d value to write
      * @throws IOException if an I/O error occurs
      */
     protected void write(final double d) throws IOException {
-        write(doubleFormat.format(d));
+        write(doubleFormat.apply(d));
     }
 
     /** Write an integer value.
