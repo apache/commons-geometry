@@ -25,7 +25,7 @@ import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
-import org.apache.commons.numbers.arrays.LinearCombination;
+import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
 /** This class represents vectors and points in three-dimensional Euclidean space.

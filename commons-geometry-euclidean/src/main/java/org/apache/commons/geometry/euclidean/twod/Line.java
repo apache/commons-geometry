@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.Angle;
-import org.apache.commons.numbers.arrays.LinearCombination;
+import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
 /** This class represents an oriented line in the 2D plane.

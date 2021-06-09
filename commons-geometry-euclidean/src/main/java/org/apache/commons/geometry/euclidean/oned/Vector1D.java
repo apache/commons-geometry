@@ -22,7 +22,7 @@ import java.util.function.UnaryOperator;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
-import org.apache.commons.numbers.arrays.LinearCombination;
+import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
 /** This class represents vectors and points in one-dimensional Euclidean space.

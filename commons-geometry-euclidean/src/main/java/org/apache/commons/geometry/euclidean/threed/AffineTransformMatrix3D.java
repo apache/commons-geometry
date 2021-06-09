@@ -23,7 +23,7 @@ import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.numbers.arrays.LinearCombination;
+import org.apache.commons.numbers.core.LinearCombination;
 
 /** Class using a matrix to represent affine transformations in 3 dimensional Euclidean space.
  *

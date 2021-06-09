@@ -24,7 +24,7 @@ import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.angle.Angle;
-import org.apache.commons.numbers.arrays.LinearCombination;
+import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.quaternion.Quaternion;
 import org.apache.commons.numbers.quaternion.Slerp;
 
