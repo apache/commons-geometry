@@ -22,22 +22,36 @@ import org.apache.commons.rng.UniformRandomProvider;
  */
 public final class BenchmarkUtils {
 
+    /** Default min exponent for random double values. */
+    public static final int DEFAULT_MIN_EXP = -64;
+
+    /** Default max exponent for random double values. */
+    public static final int DEFAULT_MAX_EXP = 64;
+
     /** Utility class; no instantiation. */
     private BenchmarkUtils() {}
 
-    /** Creates a random double number with a random sign and mantissa and a large range for
-     * the exponent. The numbers will not be uniform over the range.
+    /** Creates a random double number with a random sign and mantissa and a large, default
+     * range for the exponent. The numbers will not be uniform over the range.
      * @param rng random number generator
      * @return the random number
      */
     public static double randomDouble(final UniformRandomProvider rng) {
+        return randomDouble(DEFAULT_MIN_EXP, DEFAULT_MAX_EXP, rng);
+    }
+
+    /** Create a random double value with exponent in the range {@code [minExp, maxExp]}.
+     * @param minExp minimum exponent; must be less than {@code maxExp}
+     * @param maxExp maximum exponent; must be greater than {@code minExp}
+     * @param rng random number generator
+     * @return random double
+     */
+    public static double randomDouble(final int minExp, final int maxExp, final UniformRandomProvider rng) {
         // Create random doubles using random bits in the sign bit and the mantissa.
-        // Then create an exponent in the range -64 to 64. Thus the sum product
-        // of 4 max or min values will not over or underflow.
         final long mask = ((1L << 52) - 1) | 1L << 63;
         final long bits = rng.nextLong() & mask;
         // The exponent must be unsigned so + 1023 to the signed exponent
-        final long exp = rng.nextInt(129) - 64 + 1023;
+        final long exp = rng.nextInt(maxExp - minExp + 1) + minExp + 1023;
         return Double.longBitsToDouble(bits | (exp << 52));
     }
 
@@ -46,13 +60,24 @@ public final class BenchmarkUtils {
      * @param len array length
      * @return array containing {@code len} random doubles
      */
-    public static double[] randomDoubleArray(final UniformRandomProvider rng, final int len) {
+    public static double[] randomDoubleArray(final int len, final UniformRandomProvider rng) {
+        return randomDoubleArray(len, DEFAULT_MIN_EXP, DEFAULT_MAX_EXP, rng);
+    }
+
+    /** Create an array with the given length containing random doubles with exponents in the range
+     * {@code [minExp, maxExp]}.
+     * @param len array length
+     * @param minExp minimum exponent; must be less than {@code maxExp}
+     * @param maxExp maximum exponent; must be greater than {@code minExp}
+     * @param rng random number generator
+     * @return array of random doubles
+     */
+    public static double[] randomDoubleArray(final int len, final int minExp, final int maxExp,
+            final UniformRandomProvider rng) {
         final double[] arr = new double[len];
-
         for (int i = 0; i < arr.length; ++i) {
-            arr[i] = randomDouble(rng);
+            arr[i] = randomDouble(minExp, maxExp, rng);
         }
-
         return arr;
     }
 }

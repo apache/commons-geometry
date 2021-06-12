@@ -39,6 +39,9 @@ final class ParsedDouble {
     /** Minus sign character. */
     private static final char MINUS_CHAR = '-';
 
+    /** Plus sign character. */
+    private static final char PLUS_CHAR = '+';
+
     /** Decimal separator character. */
     private static final char DECIMAL_SEP_CHAR = '.';
 
@@ -53,6 +56,9 @@ final class ParsedDouble {
 
     /** String containing the decimal digits '0' - '9' in sequence. */
     private static final String DECIMAL_DIGITS = "0123456789";
+
+    /** Initial size to use for string builder instances. */
+    private static final int INITIAL_STR_BUILDER_SIZE = 32;
 
     /** Shared instance representing the positive zero double value. */
     private static final ParsedDouble POS_ZERO = new ParsedDouble(false, String.valueOf(ZERO_CHAR), 0);
@@ -172,11 +178,9 @@ final class ParsedDouble {
         final int currentPrecision = getPrecision();
         if (currentPrecision > precision) {
             // we need to round to reduce the number of digits
-            String resultDigits = digits.substring(0, precision);
-
-            if (shouldRoundUp(precision)) {
-                resultDigits = addOne(resultDigits);
-            }
+            String resultDigits = shouldRoundUp(precision) ?
+                    addOne(digits, precision) :
+                    digits.substring(0, precision);
 
             // compute the initial result exponent
             int resultExponent = exponent + (currentPrecision - precision);
@@ -209,7 +213,7 @@ final class ParsedDouble {
     public String toPlainString(final boolean includeDecimalPlaceholder) {
         final int precision = getPrecision();
 
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(INITIAL_STR_BUILDER_SIZE);
         if (negative) {
             sb.append(MINUS_CHAR);
         }
@@ -303,7 +307,7 @@ final class ParsedDouble {
     private String toScientificString(final int wholeDigits, final boolean includeDecimalPlaceholder) {
         final int precision = getPrecision();
 
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(INITIAL_STR_BUILDER_SIZE);
         if (negative) {
             sb.append(MINUS_CHAR);
         }
@@ -367,43 +371,54 @@ final class ParsedDouble {
         }
 
         final String str = Double.toString(d);
+        final char[] strChars = str.toCharArray();
 
         // extract the different portions of the string representation
         // (since double is finite, str is guaranteed to not be empty and to contain a
         // single decimal point according to the Double.toString() API)
-        final boolean negative = str.charAt(0) == MINUS_CHAR;
+        final boolean negative = strChars[0] == MINUS_CHAR;
         final int digitStartIdx = negative ? 1 : 0;
 
-        final StringBuilder digitStr = new StringBuilder(str.length());
+        final char[] digitChars = new char[strChars.length];
 
         int decimalSepIdx = -1;
         int exponentIdx = -1;
+        int digitCount = 0;
+        int firstNonZeroDigitIdx = -1;
+        int lastNonZeroDigitIdx = -1;
 
-        char ch;
-        for (int i = digitStartIdx; i < str.length(); ++i) {
-            ch = str.charAt(i);
+        for (int i = digitStartIdx; i < strChars.length; ++i) {
+            final char ch = strChars[i];
 
             if (ch == DECIMAL_SEP_CHAR) {
                 decimalSepIdx = i;
             } else if (ch == EXPONENT_CHAR) {
                 exponentIdx = i;
             } else if (exponentIdx < 0) {
-                digitStr.append(ch);
+                // this is a significand digit
+                if (ch != ZERO_CHAR) {
+                    if (firstNonZeroDigitIdx < 0) {
+                        firstNonZeroDigitIdx = digitCount;
+                    }
+                    lastNonZeroDigitIdx = digitCount;
+                }
+
+                digitChars[digitCount++] = ch;
             }
         }
 
-        final int firstNonZeroIdx = findFirstNonZero(digitStr);
-        if (firstNonZeroIdx > -1) {
-            final int lastNonZeroIdx = findLastNonZero(digitStr);
-
+        if (firstNonZeroDigitIdx > -1) {
             // determine the exponent
             final int explicitExponent = exponentIdx > -1 ?
-                    Integer.parseInt(str.substring(exponentIdx + 1)) :
+                    parseExponent(str, exponentIdx + 1) :
                     0;
-            final int exponent = explicitExponent + decimalSepIdx - digitStartIdx - lastNonZeroIdx - 1;
+            final int exponent = explicitExponent + decimalSepIdx - digitStartIdx - lastNonZeroDigitIdx - 1;
 
             // get the digit string without any leading or trailing zeros
-            final String digits = digitStr.substring(firstNonZeroIdx, lastNonZeroIdx + 1);
+            final String digits = String.valueOf(
+                    digitChars,
+                    firstNonZeroDigitIdx,
+                    lastNonZeroDigitIdx - firstNonZeroDigitIdx + 1);
 
             return new ParsedDouble(negative, digits, exponent);
         }
@@ -414,21 +429,27 @@ final class ParsedDouble {
                 POS_ZERO;
     }
 
-    /** Return the index of the first character in the argument not equal
-     * to {@code '0'} or {@code -1} if no such character can be found.
-     * @param seq sequence to search
-     * @return the index of the first non-zero character or {@code -1} if not found
+    /** Parse a double exponent value from {@code seq}, starting at the {@code start}
+     * index and continuing through the end of the sequence.
+     * @param seq sequence to part a double exponent value from
+     * @param start start index
+     * @return parsed exponent value
      */
-    private static int findFirstNonZero(final CharSequence seq) {
-        char ch;
-        for (int i = 0; i < seq.length(); ++i) {
-            ch = seq.charAt(i);
-            if (ch != ZERO_CHAR) {
-                return i;
+    private static int parseExponent(final CharSequence seq, final int start) {
+        int exp = 0;
+        boolean neg = false;
+
+        final int len = seq.length();
+        for (int i = start; i < len; ++i) {
+            final char ch = seq.charAt(i);
+            if (ch == MINUS_CHAR) {
+                neg = !neg;
+            } else if (ch != PLUS_CHAR) {
+                exp = (exp * 10) + digitValue(ch);
             }
         }
 
-        return -1;
+        return neg ? -exp : exp;
     }
 
     /** Return the index of the last character in the argument not equal
@@ -458,44 +479,36 @@ final class ParsedDouble {
         return ch - ZERO_CHAR;
     }
 
-    /** Add one to the value of the integer represented by the given string, returning
-     * the result as another string. The input is assumed to contain only digit characters
+    /** Add one to the value of the integer represented by the substring of length {@code len}
+     * starting at index {@code 0}, returning the result as another string. The input is assumed
+     * to contain only digit characters
      * (i.e. '0' - '9'). No validation is performed.
      * @param digitStr string containing a representation of an integer
+     * @param len number of characters to use from {@code str}
      * @return string representation of the result of adding 1 to the integer represented
-     *      by the input
+     *      by the input substring
      */
-    private static String addOne(final String digitStr) {
-        final char[] digitChars = digitStr.toCharArray();
-        if (addOne(digitChars)) {
-            return new StringBuilder()
-                    .append(ONE_CHAR)
-                    .append(digitChars)
-                    .toString();
-        }
+    private static String addOne(final String digitStr, final int len) {
+        final char[] resultChars = new char[len + 1];
 
-        return String.valueOf(digitChars);
-    }
+        boolean carrying = true;
+        for (int i = len - 1; i >= 0; --i) {
+            final char inChar = digitStr.charAt(i);
+            final char outChar = carrying ?
+                    DECIMAL_DIGITS.charAt((digitValue(inChar) + 1) % DECIMAL_DIGITS.length()) :
+                    inChar;
+            resultChars[i + 1] = outChar;
 
-    /** Add one to the integer value represented by the given sequence of digit
-     * characters (i.e. '0' - '9'). The characters are modified in place. True is
-     * returned if the operation resulted is a carry-out of 1. False is returned if
-     * the result is fully contained in the passed array.
-     * @param digitChars sequence of digit characters
-     * @return true if a 1 was carried out of the operation; otherwise false
-     */
-    private static boolean addOne(final char[] digitChars) {
-        int i;
-        char c;
-        for (i = digitChars.length - 1; i >= 0; --i) {
-            c = DECIMAL_DIGITS.charAt((digitValue(digitChars[i]) + 1) % DECIMAL_DIGITS.length());
-            digitChars[i] = c;
-
-            if (c != ZERO_CHAR) {
-                break; // no carry over; stop
+            if (carrying && outChar != ZERO_CHAR) {
+                carrying = false;
             }
         }
 
-        return i < 0;
+        if (carrying) {
+            resultChars[0] = ONE_CHAR;
+            return String.valueOf(resultChars);
+        }
+
+        return String.valueOf(resultChars, 1, len);
     }
 }

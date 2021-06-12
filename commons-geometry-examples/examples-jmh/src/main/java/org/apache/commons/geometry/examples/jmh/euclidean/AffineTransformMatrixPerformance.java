@@ -111,7 +111,7 @@ public class AffineTransformMatrixPerformance {
         public void setup() {
             final UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP);
 
-            transform = AffineTransformMatrix1D.of(BenchmarkUtils.randomDoubleArray(rand, 2));
+            transform = AffineTransformMatrix1D.of(BenchmarkUtils.randomDoubleArray(2, rand));
         }
     }
 
@@ -135,7 +135,7 @@ public class AffineTransformMatrixPerformance {
         public void setup() {
             final UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP);
 
-            transform = AffineTransformMatrix2D.of(BenchmarkUtils.randomDoubleArray(rand, 6));
+            transform = AffineTransformMatrix2D.of(BenchmarkUtils.randomDoubleArray(6, rand));
         }
     }
 
@@ -159,7 +159,7 @@ public class AffineTransformMatrixPerformance {
         public void setup() {
             final UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP);
 
-            transform = AffineTransformMatrix3D.of(BenchmarkUtils.randomDoubleArray(rand, 12));
+            transform = AffineTransformMatrix3D.of(BenchmarkUtils.randomDoubleArray(12, rand));
         }
     }
 
