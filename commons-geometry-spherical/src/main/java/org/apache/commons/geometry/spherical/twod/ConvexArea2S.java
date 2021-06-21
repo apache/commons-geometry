@@ -367,16 +367,13 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      * @see #computeTriangleFanWeightedCentroidVector(List)
      */
     private static Vector3D computeArcPoleWeightedCentroidVector(final List<GreatArc> arcs) {
-        Vector3D centroid = Vector3D.ZERO;
+        final Vector3D.Sum centroid = Vector3D.Sum.create();
 
-        Vector3D arcContribution;
         for (final GreatArc arc : arcs) {
-            arcContribution = arc.getCircle().getPole().withNorm(arc.getSize());
-
-            centroid = centroid.add(arcContribution);
+            centroid.addScaled(arc.getSize(), arc.getCircle().getPole());
         }
 
-        return centroid;
+        return centroid.get();
     }
 
     /** Compute the weighted centroid vector for the triangle or polygon formed by the given arcs
@@ -403,7 +400,7 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         final Point2S p0 = arcIt.next().getStartPoint();
         final Vector3D.Unit v0 = p0.getVector();
 
-        Vector3D areaCentroid = Vector3D.ZERO;
+        final Vector3D.Sum areaCentroid = Vector3D.Sum.create();
 
         GreatArc arc;
         Point2S p1;
@@ -422,17 +419,21 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
                 v1 = p1.getVector();
                 v2 = p2.getVector();
 
-                triangleCentroid = v0.add(v1).add(v2).normalize();
+                triangleCentroid = Vector3D.Sum.create()
+                        .add(v0)
+                        .add(v1)
+                        .add(v2)
+                        .get().normalize();
                 triangleCentroidLen =
                         computeArcCentroidContribution(v0, v1, triangleCentroid) +
                         computeArcCentroidContribution(v1, v2, triangleCentroid) +
                         computeArcCentroidContribution(v2, v0, triangleCentroid);
 
-                areaCentroid = areaCentroid.add(triangleCentroid.withNorm(triangleCentroidLen));
+                areaCentroid.addScaled(triangleCentroidLen, triangleCentroid);
             }
         }
 
-        return areaCentroid;
+        return areaCentroid.get();
     }
 
     /** Compute the contribution made by a single arc to a weighted centroid vector.

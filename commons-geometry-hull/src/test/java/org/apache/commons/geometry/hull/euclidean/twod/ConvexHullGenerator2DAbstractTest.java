@@ -25,8 +25,8 @@ import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.numbers.core.Sum;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
@@ -468,7 +468,9 @@ public abstract class ConvexHullGenerator2DAbstractTest {
             Assertions.assertTrue(d1.norm() > 1e-10);
             Assertions.assertTrue(d2.norm() > 1e-10);
 
-            final double cross = LinearCombination.value(d1.getX(), d2.getY(), -d1.getY(), d2.getX());
+            final double cross = Sum.create()
+                    .addProduct(d1.getX(), d2.getY())
+                    .addProduct(-d1.getY(), d2.getX()).getAsDouble();
             final int cmp = Precision.compareTo(cross, 0.0, TEST_EPS);
 
             if (sign != 0 && cmp != sign) {

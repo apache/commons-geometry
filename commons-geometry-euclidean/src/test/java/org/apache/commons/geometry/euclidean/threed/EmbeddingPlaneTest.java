@@ -280,17 +280,19 @@ class EmbeddingPlaneTest {
         EmbeddingPlane plane  = Planes.fromPoints(p1, p2, p3, TEST_PRECISION).getEmbedding();
 
         // act/assert
-        plane = plane.translate(Vector3D.linearCombination(2.0, plane.getU(), -1.5, plane.getV()));
+        plane = plane.translate(Vector3D.Sum.create()
+                .addScaled(2.0, plane.getU())
+                .addScaled(-1.5, plane.getV()).get());
         Assertions.assertTrue(plane.contains(p1));
         Assertions.assertTrue(plane.contains(p2));
         Assertions.assertTrue(plane.contains(p3));
 
-        plane = plane.translate(Vector3D.linearCombination(-1.2, plane.getNormal()));
+        plane = plane.translate(plane.getNormal().multiply(-1.2));
         Assertions.assertFalse(plane.contains(p1));
         Assertions.assertFalse(plane.contains(p2));
         Assertions.assertFalse(plane.contains(p3));
 
-        plane = plane.translate(Vector3D.linearCombination(+1.2, plane.getNormal()));
+        plane = plane.translate(plane.getNormal().multiply(+1.2));
         Assertions.assertTrue(plane.contains(p1));
         Assertions.assertTrue(plane.contains(p2));
         Assertions.assertTrue(plane.contains(p3));

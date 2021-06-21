@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -1118,54 +1119,47 @@ class Vector2DTest {
     }
 
     @Test
-    void testLinearCombination1() {
-        // arrange
-        final Vector2D p1 = Vector2D.of(1, 2);
-
+    void testSum_factoryMethods() {
         // act/assert
-        checkVector(Vector2D.linearCombination(0, p1), 0, 0);
-
-        checkVector(Vector2D.linearCombination(1, p1), 1, 2);
-        checkVector(Vector2D.linearCombination(-1, p1), -1, -2);
-
-        checkVector(Vector2D.linearCombination(0.5, p1), 0.5, 1);
-        checkVector(Vector2D.linearCombination(-0.5, p1), -0.5, -1);
+        checkVector(Vector2D.Sum.create().get(), 0, 0);
+        checkVector(Vector2D.Sum.of(Vector2D.of(1, 2)).get(), 1, 2);
+        checkVector(Vector2D.Sum.of(
+                Vector2D.of(1, 2),
+                Vector2D.Unit.PLUS_X,
+                Vector2D.Unit.PLUS_Y).get(), 2, 3);
     }
 
     @Test
-    void testLinearCombination2() {
+    void testSum_instanceMethods() {
         // arrange
         final Vector2D p1 = Vector2D.of(1, 2);
-        final Vector2D p2 = Vector2D.of(-3, -4);
+        final Vector2D p2 = Vector2D.of(4, 6);
 
         // act/assert
-        checkVector(Vector2D.linearCombination(2, p1, -3, p2), 11, 16);
-        checkVector(Vector2D.linearCombination(-3, p1, 2, p2), -9, -14);
+        checkVector(Vector2D.Sum.create()
+                .add(p1)
+                .addScaled(0.5, p2)
+                .get(), 3, 5);
     }
 
     @Test
-    void testLinearCombination3() {
+    void testSum_accept() {
         // arrange
         final Vector2D p1 = Vector2D.of(1, 2);
-        final Vector2D p2 = Vector2D.of(-3, -4);
-        final Vector2D p3 = Vector2D.of(5, 6);
+        final Vector2D p2 = Vector2D.of(3, -6);
+
+        final List<Vector2D.Unit> units = Arrays.asList(
+                Vector2D.Unit.PLUS_X,
+                Vector2D.Unit.PLUS_Y);
+
+        final Vector2D.Sum s = Vector2D.Sum.create();
 
         // act/assert
-        checkVector(Vector2D.linearCombination(2, p1, -3, p2, 4, p3), 31, 40);
-        checkVector(Vector2D.linearCombination(-3, p1, 2, p2, -4, p3), -29, -38);
-    }
+        Arrays.asList(p1, Vector2D.ZERO, p2).forEach(s);
+        units.forEach(s);
 
-    @Test
-    void testLinearCombination4() {
-        // arrange
-        final Vector2D p1 = Vector2D.of(1, 2);
-        final Vector2D p2 = Vector2D.of(-3, -4);
-        final Vector2D p3 = Vector2D.of(5, 6);
-        final Vector2D p4 = Vector2D.of(-7, -8);
-
-        // act/assert
-        checkVector(Vector2D.linearCombination(2, p1, -3, p2, 4, p3, -5, p4), 66, 80);
-        checkVector(Vector2D.linearCombination(-3, p1, 2, p2, -4, p3, 5, p4), -64, -78);
+        // assert
+        checkVector(s.get(), 5, -3);
     }
 
     @Test

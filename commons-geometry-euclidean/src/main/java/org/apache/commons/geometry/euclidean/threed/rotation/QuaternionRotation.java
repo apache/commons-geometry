@@ -24,7 +24,6 @@ import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.angle.Angle;
-import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.quaternion.Quaternion;
 import org.apache.commons.numbers.quaternion.Slerp;
 
@@ -698,17 +697,17 @@ public final class QuaternionRotation implements Rotation3D {
         // be the multiplication of the matrix composed of the column vectors d, e, f and the
         // inverse of the matrix composed of the column vectors a, b, c (which is simply the transpose since
         // it's orthogonal).
-        final double m00 = LinearCombination.value(d.getX(), a.getX(), e.getX(), b.getX(), f.getX(), c.getX());
-        final double m01 = LinearCombination.value(d.getX(), a.getY(), e.getX(), b.getY(), f.getX(), c.getY());
-        final double m02 = LinearCombination.value(d.getX(), a.getZ(), e.getX(), b.getZ(), f.getX(), c.getZ());
+        final double m00 = Vectors.linearCombination(d.getX(), a.getX(), e.getX(), b.getX(), f.getX(), c.getX());
+        final double m01 = Vectors.linearCombination(d.getX(), a.getY(), e.getX(), b.getY(), f.getX(), c.getY());
+        final double m02 = Vectors.linearCombination(d.getX(), a.getZ(), e.getX(), b.getZ(), f.getX(), c.getZ());
 
-        final double m10 = LinearCombination.value(d.getY(), a.getX(), e.getY(), b.getX(), f.getY(), c.getX());
-        final double m11 = LinearCombination.value(d.getY(), a.getY(), e.getY(), b.getY(), f.getY(), c.getY());
-        final double m12 = LinearCombination.value(d.getY(), a.getZ(), e.getY(), b.getZ(), f.getY(), c.getZ());
+        final double m10 = Vectors.linearCombination(d.getY(), a.getX(), e.getY(), b.getX(), f.getY(), c.getX());
+        final double m11 = Vectors.linearCombination(d.getY(), a.getY(), e.getY(), b.getY(), f.getY(), c.getY());
+        final double m12 = Vectors.linearCombination(d.getY(), a.getZ(), e.getY(), b.getZ(), f.getY(), c.getZ());
 
-        final double m20 = LinearCombination.value(d.getZ(), a.getX(), e.getZ(), b.getX(), f.getZ(), c.getX());
-        final double m21 = LinearCombination.value(d.getZ(), a.getY(), e.getZ(), b.getY(), f.getZ(), c.getY());
-        final double m22 = LinearCombination.value(d.getZ(), a.getZ(), e.getZ(), b.getZ(), f.getZ(), c.getZ());
+        final double m20 = Vectors.linearCombination(d.getZ(), a.getX(), e.getZ(), b.getX(), f.getZ(), c.getX());
+        final double m21 = Vectors.linearCombination(d.getZ(), a.getY(), e.getZ(), b.getY(), f.getZ(), c.getY());
+        final double m22 = Vectors.linearCombination(d.getZ(), a.getZ(), e.getZ(), b.getZ(), f.getZ(), c.getZ());
 
 
         return orthogonalRotationMatrixToQuaternion(

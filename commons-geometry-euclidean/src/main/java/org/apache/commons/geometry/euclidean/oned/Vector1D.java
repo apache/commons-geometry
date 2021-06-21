@@ -21,8 +21,8 @@ import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
+import org.apache.commons.geometry.euclidean.EuclideanVectorSum;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
-import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
 /** This class represents vectors and points in one-dimensional Euclidean space.
@@ -121,7 +121,9 @@ public class Vector1D extends EuclideanVector<Vector1D> {
     /** {@inheritDoc} */
     @Override
     public Vector1D lerp(final Vector1D p, final double t) {
-        return linearCombination(1.0 - t, this, t, p);
+        return Sum.create()
+                .addScaled(1.0 - t, this)
+                .addScaled(t, p).get();
     }
 
     /** {@inheritDoc} */
@@ -320,86 +322,6 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         return SimpleTupleFormat.getDefault().parse(str, Vector1D::new);
     }
 
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a scale factor for first vector
-     * @param c first vector
-     * @return vector calculated by {@code a * c}
-     */
-    public static Vector1D linearCombination(final double a, final Vector1D c) {
-        return new Vector1D(a * c.x);
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a1 scale factor for first vector
-     * @param v1 first vector
-     * @param a2 scale factor for second vector
-     * @param v2 second vector
-     * @return vector calculated by {@code (a1 * v1) + (a2 * v2)}
-     */
-    public static Vector1D linearCombination(final double a1, final Vector1D v1,
-            final double a2, final Vector1D v2) {
-
-        return new Vector1D(
-                LinearCombination.value(a1, v1.x, a2, v2.x));
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a1 scale factor for first vector
-     * @param v1 first vector
-     * @param a2 scale factor for second vector
-     * @param v2 second vector
-     * @param a3 scale factor for third vector
-     * @param v3 third vector
-     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
-     */
-    public static Vector1D linearCombination(final double a1, final Vector1D v1,
-            final double a2, final Vector1D v2,
-            final double a3, final Vector1D v3) {
-
-        return new Vector1D(
-                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x));
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a1 scale factor for first vector
-     * @param v1 first vector
-     * @param a2 scale factor for second vector
-     * @param v2 second vector
-     * @param a3 scale factor for third vector
-     * @param v3 third vector
-     * @param a4 scale factor for fourth vector
-     * @param v4 fourth vector
-     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
-     */
-    public static Vector1D linearCombination(final double a1, final Vector1D v1,
-            final double a2, final Vector1D v2,
-            final double a3, final Vector1D v3,
-            final double a4, final Vector1D v4) {
-
-        return new Vector1D(
-                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x));
-    }
-
     /**
      * Represent unit vectors.
      * This allows optimizations to be performed for certain operations.
@@ -492,6 +414,73 @@ public class Vector1D extends EuclideanVector<Vector1D> {
                 throw Vectors.illegalNorm(norm);
             }
             return null;
+        }
+    }
+
+    /** Class used to create high-accuracy sums of vectors. Each vector component is
+     * summed using an instance of {@link org.apache.commons.numbers.core.Sum}.
+    *
+    * <p>This class is mutable and not thread-safe.
+    * @see org.apache.commons.numbers.core.Sum
+    */
+    public static final class Sum extends EuclideanVectorSum<Vector1D> {
+
+        /** X component sum. */
+        private final org.apache.commons.numbers.core.Sum xsum;
+
+        /** Construct a new instance with the given initial value.
+         * @param initial initial value
+         */
+        Sum(final Vector1D initial) {
+            this.xsum = org.apache.commons.numbers.core.Sum.of(initial.x);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Sum add(final Vector1D vec) {
+            xsum.add(vec.x);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Sum addScaled(final double scale, final Vector1D vec) {
+            xsum.addProduct(scale, vec.x);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector1D get() {
+            return Vector1D.of(xsum.getAsDouble());
+        }
+
+        /** Create a new instance with an initial value set to the {@link Vector1D#ZERO zero vector}.
+         * @return new instance set to zero
+         */
+        public static Sum create() {
+            return new Sum(Vector1D.ZERO);
+        }
+
+        /** Construct a new instance with an initial value set to the argument.
+         * @param initial initial sum value
+         * @return new instance
+         */
+        public static Sum of(final Vector1D initial) {
+            return new Sum(initial);
+        }
+
+        /** Construct a new instance from multiple values.
+         * @param first first vector
+         * @param more additional vectors
+         * @return new instance
+         */
+        public static Sum of(final Vector1D first, final Vector1D... more) {
+            final Sum s = new Sum(first);
+            for (final Vector1D v : more) {
+                s.add(v);
+            }
+            return s;
         }
     }
 }

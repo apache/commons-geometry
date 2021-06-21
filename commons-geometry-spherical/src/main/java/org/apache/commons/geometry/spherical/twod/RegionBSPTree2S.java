@@ -28,6 +28,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.numbers.core.Sum;
 
 /** BSP tree representing regions in 2D spherical space.
  */
@@ -169,20 +170,22 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         final List<ConvexArea2S> areas = toConvex();
         final Precision.DoubleEquivalence precision = ((GreatArc) getRoot().getCut()).getPrecision();
 
-        double sizeSum = 0;
-        Vector3D centroidVectorSum = Vector3D.ZERO;
+        final Sum sizeSum = Sum.create();
+        final Vector3D.Sum centroidVectorSum = Vector3D.Sum.create();
 
-        Vector3D centroidVector;
         double maxCentroidVectorWeightSq = 0.0;
 
         for (final ConvexArea2S area : areas) {
-            sizeSum += area.getSize();
+            sizeSum.add(area.getSize());
 
-            centroidVector = area.getWeightedCentroidVector();
-            maxCentroidVectorWeightSq = Math.max(maxCentroidVectorWeightSq, centroidVector.normSq());
+            final Vector3D areaCentroidVector = area.getWeightedCentroidVector();
+            maxCentroidVectorWeightSq = Math.max(maxCentroidVectorWeightSq, areaCentroidVector.normSq());
 
-            centroidVectorSum = centroidVectorSum.add(centroidVector);
+            centroidVectorSum.add(areaCentroidVector);
         }
+
+        final double size = sizeSum.getAsDouble();
+        final Vector3D centroidVector = centroidVectorSum.get();
 
         // Convert the weighted centroid vector to a point on the sphere surface. If the centroid vector
         // length is less than the max length of the combined convex areas and the vector itself is
@@ -190,14 +193,14 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         // region, resulting in an indeterminate centroid. This would occur, for example, if there were
         // equal areas around each pole.
         final Point2S centroid;
-        if (centroidVectorSum.normSq() < maxCentroidVectorWeightSq &&
-                centroidVectorSum.eq(Vector3D.ZERO, precision)) {
+        if (centroidVector.normSq() < maxCentroidVectorWeightSq &&
+                centroidVector.eq(Vector3D.ZERO, precision)) {
             centroid = null;
         } else {
-            centroid = Point2S.from(centroidVectorSum);
+            centroid = Point2S.from(centroidVector);
         }
 
-        return new RegionSizeProperties<>(sizeSum, centroid);
+        return new RegionSizeProperties<>(size, centroid);
     }
 
     /** {@inheritDoc} */

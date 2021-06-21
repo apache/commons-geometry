@@ -232,12 +232,12 @@ class Line3DTest {
         final Vector3D p1 = Vector3D.of(0, 0, 1);
         final Line3D l = Lines3D.fromPoints(p1, Vector3D.of(0, 0, 2), TEST_PRECISION);
         Assertions.assertTrue(l.contains(p1));
-        Assertions.assertTrue(l.contains(Vector3D.linearCombination(1.0, p1, 0.3, l.getDirection())));
+        Assertions.assertTrue(l.contains(Vector3D.Sum.of(p1).addScaled(0.3, l.getDirection()).get()));
         final Vector3D u = l.getDirection().orthogonal();
         final Vector3D v = l.getDirection().cross(u);
         for (double alpha = 0; alpha < 2 * Math.PI; alpha += 0.3) {
-            Assertions.assertFalse(l.contains(p1.add(Vector3D.linearCombination(Math.cos(alpha), u,
-                    Math.sin(alpha), v))));
+            Assertions.assertFalse(l.contains(p1.add(Vector3D.Sum.create().addScaled(Math.cos(alpha), u).addScaled(
+                    Math.sin(alpha), v).get())));
         }
     }
 

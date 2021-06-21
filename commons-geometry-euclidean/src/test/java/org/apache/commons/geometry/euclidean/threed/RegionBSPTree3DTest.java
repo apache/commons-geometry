@@ -1246,10 +1246,10 @@ class RegionBSPTree3DTest {
         final double third = 1.0 / 3.0;
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
             vertex1, vertex2, vertex3, vertex4,
-            Vector3D.linearCombination(third, vertex1, third, vertex2, third, vertex3),
-            Vector3D.linearCombination(third, vertex2, third, vertex3, third, vertex4),
-            Vector3D.linearCombination(third, vertex3, third, vertex4, third, vertex1),
-            Vector3D.linearCombination(third, vertex4, third, vertex1, third, vertex2)
+            Vector3D.Sum.create().addScaled(third, vertex1).addScaled(third, vertex2).addScaled(third, vertex3).get(),
+            Vector3D.Sum.create().addScaled(third, vertex2).addScaled(third, vertex3).addScaled(third, vertex4).get(),
+            Vector3D.Sum.create().addScaled(third, vertex3).addScaled(third, vertex4).addScaled(third, vertex1).get(),
+            Vector3D.Sum.create().addScaled(third, vertex4).addScaled(third, vertex1).addScaled(third, vertex2).get()
         );
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
             Vector3D.of(1, 2, 4),

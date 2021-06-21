@@ -184,10 +184,10 @@ class SphereGeneratorTest {
         for (int i = 0; i < 100; ++i) {
             final double d = 25 * random.nextDouble();
             final double refRadius = 10 * random.nextDouble();
-            final Vector3D refCenter = Vector3D.linearCombination(d, Vector3D.of(sr.nextVector()));
+            final Vector3D refCenter = Vector3D.of(sr.nextVector()).multiply(d);
             final List<Vector3D> support = new ArrayList<>();
             for (int j = 0; j < 5; ++j) {
-                support.add(Vector3D.linearCombination(1.0, refCenter, refRadius, Vector3D.of(sr.nextVector())));
+                support.add(Vector3D.Sum.of(refCenter).addScaled(refRadius, Vector3D.of(sr.nextVector())).get());
             }
 
             // act

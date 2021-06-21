@@ -138,10 +138,10 @@ class DiskGeneratorTest {
         for (int i = 0; i < 500; ++i) {
             final double d = 25 * random.nextDouble();
             final double refRadius = 10 * random.nextDouble();
-            final Vector2D refCenter = Vector2D.linearCombination(d, Vector2D.of(sr.nextVector()));
+            final Vector2D refCenter = Vector2D.of(sr.nextVector()).multiply(d);
             final List<Vector2D> support = new ArrayList<>();
             for (int j = 0; j < 3; ++j) {
-                support.add(Vector2D.linearCombination(1.0, refCenter, refRadius, Vector2D.of(sr.nextVector())));
+                support.add(Vector2D.Sum.of(refCenter).addScaled(refRadius, Vector2D.of(sr.nextVector())).get());
             }
 
             // act

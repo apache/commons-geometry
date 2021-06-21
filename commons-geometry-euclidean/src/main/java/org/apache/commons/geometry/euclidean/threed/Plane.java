@@ -227,9 +227,9 @@ public class Plane extends AbstractHyperplane<Vector3D> {
         final Vector3D point = line.pointAt(0);
         final double k = -(originOffset + normal.dot(point)) / dot;
 
-        return Vector3D.linearCombination(
-                1.0, point,
-                k, direction);
+        return Vector3D.Sum.of(point)
+                .addScaled(k, direction)
+                .get();
     }
 
     /** Get the line formed by the intersection of this instance with the given plane.

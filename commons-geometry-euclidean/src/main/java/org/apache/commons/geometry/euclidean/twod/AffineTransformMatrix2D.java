@@ -23,7 +23,6 @@ import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
-import org.apache.commons.numbers.core.LinearCombination;
 
 /** Class using a matrix to represent affine transformations in 2 dimensional Euclidean space.
 *
@@ -185,7 +184,7 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * @see #applyVector(Vector2D)
      */
     public double applyVectorX(final double x, final double y) {
-        return LinearCombination.value(m00, x, m01, y);
+        return Vectors.linearCombination(m00, x, m01, y);
     }
 
     /** Apply this transform to the given vector coordinates, ignoring translations, and
@@ -197,7 +196,7 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * @see #applyVector(Vector2D)
      */
     public double applyVectorY(final double x, final double y) {
-        return LinearCombination.value(m10, x, m11, y);
+        return Vectors.linearCombination(m10, x, m11, y);
     }
 
     /** {@inheritDoc}
@@ -702,13 +701,13 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
     private static AffineTransformMatrix2D multiply(final AffineTransformMatrix2D a,
             final AffineTransformMatrix2D b) {
 
-        final double c00 = LinearCombination.value(a.m00, b.m00, a.m01, b.m10);
-        final double c01 = LinearCombination.value(a.m00, b.m01, a.m01, b.m11);
-        final double c02 = LinearCombination.value(a.m00, b.m02, a.m01, b.m12) + a.m02;
+        final double c00 = Vectors.linearCombination(a.m00, b.m00, a.m01, b.m10);
+        final double c01 = Vectors.linearCombination(a.m00, b.m01, a.m01, b.m11);
+        final double c02 = Vectors.linearCombination(a.m00, b.m02, a.m01, b.m12) + a.m02;
 
-        final double c10 = LinearCombination.value(a.m10, b.m00, a.m11, b.m10);
-        final double c11 = LinearCombination.value(a.m10, b.m01, a.m11, b.m11);
-        final double c12 = LinearCombination.value(a.m10, b.m02, a.m11, b.m12) + a.m12;
+        final double c10 = Vectors.linearCombination(a.m10, b.m00, a.m11, b.m10);
+        final double c11 = Vectors.linearCombination(a.m10, b.m01, a.m11, b.m11);
+        final double c12 = Vectors.linearCombination(a.m10, b.m02, a.m11, b.m12) + a.m12;
 
         return new AffineTransformMatrix2D(
                     c00, c01, c02,

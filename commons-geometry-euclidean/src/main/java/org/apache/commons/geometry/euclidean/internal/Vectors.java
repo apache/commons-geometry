@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.internal;
 
 import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.numbers.core.Norm;
+import org.apache.commons.numbers.core.Sum;
 
 /** This class consists exclusively of static vector utility methods.
  */
@@ -141,5 +142,39 @@ public final class Vectors {
      */
     public static double normSq(final double x1, final double x2, final double x3) {
         return (x1 * x1) + (x2 * x2) + (x3 * x3);
+    }
+
+    /** Compute the linear combination \(a_1 b_1 + a_2 b_2 \) with high accuracy.
+     * @param a1 first factor of the first term
+     * @param b1 second factor of the first term
+     * @param a2 first factor of the second term
+     * @param b2 second factor of the seconf term
+     * @return linear combination.
+     * @see Sum
+     */
+    public static double linearCombination(final double a1, final double b1,
+                                           final double a2, final double b2) {
+        return Sum.create()
+                .addProduct(a1, b1)
+                .addProduct(a2, b2).getAsDouble();
+    }
+
+    /** Compute the linear combination \(a_1 b_1 + a_2 b_2 + a_3 b_3 \) with high accuracy.
+     * @param a1 first factor of the first term
+     * @param b1 second factor of the first term
+     * @param a2 first factor of the second term
+     * @param b2 second factor of the seconf term
+     * @param a3 first factor of the third term
+     * @param b3 second factor of the third term
+     * @return linear combination.
+     * @see Sum
+     */
+    public static double linearCombination(final double a1, final double b1,
+                                           final double a2, final double b2,
+                                           final double a3, final double b3) {
+        return Sum.create()
+                .addProduct(a1, b1)
+                .addProduct(a2, b2)
+                .addProduct(a3, b3).getAsDouble();
     }
 }

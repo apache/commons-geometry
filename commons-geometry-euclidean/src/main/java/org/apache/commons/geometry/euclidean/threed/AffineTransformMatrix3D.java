@@ -23,7 +23,6 @@ import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.numbers.core.LinearCombination;
 
 /** Class using a matrix to represent affine transformations in 3 dimensional Euclidean space.
  *
@@ -235,7 +234,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @see #applyVector(Vector3D)
      */
     public double applyVectorX(final double x, final double y, final double z) {
-        return LinearCombination.value(m00, x, m01, y, m02, z);
+        return Vectors.linearCombination(m00, x, m01, y, m02, z);
     }
 
     /** Apply this transform to the given vector coordinates, ignoring translations, and
@@ -248,7 +247,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @see #applyVector(Vector3D)
      */
     public double applyVectorY(final double x, final double y, final double z) {
-        return LinearCombination.value(m10, x, m11, y, m12, z);
+        return Vectors.linearCombination(m10, x, m11, y, m12, z);
     }
 
     /** Apply this transform to the given vector coordinates, ignoring translations, and
@@ -261,7 +260,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @see #applyVector(Vector3D)
      */
     public double applyVectorZ(final double x, final double y, final double z) {
-        return LinearCombination.value(m20, x, m21, y, m22, z);
+        return Vectors.linearCombination(m20, x, m21, y, m22, z);
     }
 
     /** {@inheritDoc}
@@ -753,20 +752,20 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
             final AffineTransformMatrix3D b) {
 
         // calculate the matrix elements
-        final double c00 = LinearCombination.value(a.m00, b.m00, a.m01, b.m10, a.m02, b.m20);
-        final double c01 = LinearCombination.value(a.m00, b.m01, a.m01, b.m11, a.m02, b.m21);
-        final double c02 = LinearCombination.value(a.m00, b.m02, a.m01, b.m12, a.m02, b.m22);
-        final double c03 = LinearCombination.value(a.m00, b.m03, a.m01, b.m13, a.m02, b.m23) + a.m03;
+        final double c00 = Vectors.linearCombination(a.m00, b.m00, a.m01, b.m10, a.m02, b.m20);
+        final double c01 = Vectors.linearCombination(a.m00, b.m01, a.m01, b.m11, a.m02, b.m21);
+        final double c02 = Vectors.linearCombination(a.m00, b.m02, a.m01, b.m12, a.m02, b.m22);
+        final double c03 = Vectors.linearCombination(a.m00, b.m03, a.m01, b.m13, a.m02, b.m23) + a.m03;
 
-        final double c10 = LinearCombination.value(a.m10, b.m00, a.m11, b.m10, a.m12, b.m20);
-        final double c11 = LinearCombination.value(a.m10, b.m01, a.m11, b.m11, a.m12, b.m21);
-        final double c12 = LinearCombination.value(a.m10, b.m02, a.m11, b.m12, a.m12, b.m22);
-        final double c13 = LinearCombination.value(a.m10, b.m03, a.m11, b.m13, a.m12, b.m23) + a.m13;
+        final double c10 = Vectors.linearCombination(a.m10, b.m00, a.m11, b.m10, a.m12, b.m20);
+        final double c11 = Vectors.linearCombination(a.m10, b.m01, a.m11, b.m11, a.m12, b.m21);
+        final double c12 = Vectors.linearCombination(a.m10, b.m02, a.m11, b.m12, a.m12, b.m22);
+        final double c13 = Vectors.linearCombination(a.m10, b.m03, a.m11, b.m13, a.m12, b.m23) + a.m13;
 
-        final double c20 = LinearCombination.value(a.m20, b.m00, a.m21, b.m10, a.m22, b.m20);
-        final double c21 = LinearCombination.value(a.m20, b.m01, a.m21, b.m11, a.m22, b.m21);
-        final double c22 = LinearCombination.value(a.m20, b.m02, a.m21, b.m12, a.m22, b.m22);
-        final double c23 = LinearCombination.value(a.m20, b.m03, a.m21, b.m13, a.m22, b.m23) + a.m23;
+        final double c20 = Vectors.linearCombination(a.m20, b.m00, a.m21, b.m10, a.m22, b.m20);
+        final double c21 = Vectors.linearCombination(a.m20, b.m01, a.m21, b.m11, a.m22, b.m21);
+        final double c22 = Vectors.linearCombination(a.m20, b.m02, a.m21, b.m12, a.m22, b.m22);
+        final double c23 = Vectors.linearCombination(a.m20, b.m03, a.m21, b.m13, a.m22, b.m23) + a.m23;
 
         return new AffineTransformMatrix3D(
                     c00, c01, c02, c03,

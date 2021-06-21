@@ -23,9 +23,9 @@ import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.euclidean.EuclideanVectorSum;
 import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
-import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
 /** This class represents vectors and points in three-dimensional Euclidean space.
@@ -167,7 +167,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     /** {@inheritDoc} */
     @Override
     public Vector3D lerp(final Vector3D p, final double t) {
-        return linearCombination(1.0 - t, this, t, p);
+        return Sum.create()
+                .addScaled(1.0 - t, this)
+                .addScaled(t, p).get();
     }
 
     /** {@inheritDoc} */
@@ -284,11 +286,14 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * algorithms to preserve accuracy and reduce cancellation effects.
      * It should be very accurate even for nearly orthogonal vectors.
      * </p>
-     * @see LinearCombination#value(double, double, double, double, double, double)
+     * @see org.apache.commons.numbers.core.Sum
      */
     @Override
     public double dot(final Vector3D v) {
-        return LinearCombination.value(x, v.x, y, v.y, z, v.z);
+        return Vectors.linearCombination(
+                x, v.x,
+                y, v.y,
+                z, v.z);
     }
 
     /** {@inheritDoc}
@@ -372,9 +377,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @return the cross product this ^ v as a new Vector3D
      */
     public Vector3D cross(final Vector3D v) {
-        return new Vector3D(LinearCombination.value(y, v.z, -z, v.y),
-                            LinearCombination.value(z, v.x, -x, v.z),
-                            LinearCombination.value(x, v.y, -y, v.x));
+        return new Vector3D(Vectors.linearCombination(y, v.z, -z, v.y),
+                            Vectors.linearCombination(z, v.x, -x, v.z),
+                            Vectors.linearCombination(x, v.y, -y, v.x));
     }
 
     /** Convenience method to apply a function to this vector. This
@@ -643,109 +648,15 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @return the centroid of the point set
      */
     private static Vector3D computeCentroid(final Vector3D first, final Iterator<? extends Vector3D> more) {
-        double x = first.getX();
-        double y = first.getY();
-        double z = first.getZ();
-
+        final Sum sum = Sum.of(first);
         int count = 1;
 
-        Vector3D pt;
         while (more.hasNext()) {
-            pt = more.next();
-
-            x += pt.getX();
-            y += pt.getY();
-            z += pt.getZ();
-
+            sum.add(more.next());
             ++count;
         }
 
-        final double invCount = 1.0 / count;
-
-        return new Vector3D(invCount * x, invCount * y, invCount * z);
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a scale factor for first vector
-     * @param c first vector
-     * @return vector calculated by {@code a * c}
-     */
-    public static Vector3D linearCombination(final double a, final Vector3D c) {
-        return c.multiply(a);
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a1 scale factor for first vector
-     * @param v1 first vector
-     * @param a2 scale factor for second vector
-     * @param v2 second vector
-     * @return vector calculated by {@code (a1 * v1) + (a2 * v2)}
-     */
-    public static Vector3D linearCombination(final double a1, final Vector3D v1,
-            final double a2, final Vector3D v2) {
-        return new Vector3D(
-                LinearCombination.value(a1, v1.x, a2, v2.x),
-                LinearCombination.value(a1, v1.y, a2, v2.y),
-                LinearCombination.value(a1, v1.z, a2, v2.z));
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a1 scale factor for first vector
-     * @param v1 first vector
-     * @param a2 scale factor for second vector
-     * @param v2 second vector
-     * @param a3 scale factor for third vector
-     * @param v3 third vector
-     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
-     */
-    public static Vector3D linearCombination(final double a1, final Vector3D v1,
-            final double a2, final Vector3D v2,
-            final double a3, final Vector3D v3) {
-        return new Vector3D(
-                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x),
-                LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y),
-                LinearCombination.value(a1, v1.z, a2, v2.z, a3, v3.z));
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a1 scale factor for first vector
-     * @param v1 first vector
-     * @param a2 scale factor for second vector
-     * @param v2 second vector
-     * @param a3 scale factor for third vector
-     * @param v3 third vector
-     * @param a4 scale factor for fourth vector
-     * @param v4 fourth vector
-     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
-     */
-    public static Vector3D linearCombination(final double a1, final Vector3D v1,
-            final double a2, final Vector3D v2,
-            final double a3, final Vector3D v3,
-            final double a4, final Vector3D v4) {
-        return new Vector3D(
-                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x),
-                LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y, a4, v4.y),
-                LinearCombination.value(a1, v1.z, a2, v2.z, a3, v3.z, a4, v4.z));
+        return sum.get().multiply(1.0 / count);
     }
 
     /**
@@ -908,6 +819,85 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
                 throw Vectors.illegalNorm(norm);
             }
             return null;
+        }
+    }
+
+    /** Class used to create high-accuracy sums of vectors. Each vector component is
+     * summed using an instance of {@link org.apache.commons.numbers.core.Sum}.
+     *
+     * <p>This class is mutable and not thread-safe.
+     * @see org.apache.commons.numbers.core.Sum
+     */
+    public static final class Sum extends EuclideanVectorSum<Vector3D> {
+        /** X component sum. */
+        private final org.apache.commons.numbers.core.Sum xsum;
+        /** Y component sum. */
+        private final org.apache.commons.numbers.core.Sum ysum;
+        /** Z component sum. */
+        private final org.apache.commons.numbers.core.Sum zsum;
+
+        /** Construct a new instance with the given initial value.
+         * @param initial initial value
+         */
+        Sum(final Vector3D initial) {
+            this.xsum = org.apache.commons.numbers.core.Sum.of(initial.x);
+            this.ysum = org.apache.commons.numbers.core.Sum.of(initial.y);
+            this.zsum = org.apache.commons.numbers.core.Sum.of(initial.z);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Sum add(final Vector3D vec) {
+            xsum.add(vec.x);
+            ysum.add(vec.y);
+            zsum.add(vec.z);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Sum addScaled(final double scale, final Vector3D vec) {
+            xsum.addProduct(scale, vec.x);
+            ysum.addProduct(scale, vec.y);
+            zsum.addProduct(scale, vec.z);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3D get() {
+            return Vector3D.of(
+                    xsum.getAsDouble(),
+                    ysum.getAsDouble(),
+                    zsum.getAsDouble());
+        }
+
+        /** Create a new instance with an initial value set to the {@link Vector3D#ZERO zero vector}.
+         * @return new instance set to zero
+         */
+        public static Sum create() {
+            return new Sum(Vector3D.ZERO);
+        }
+
+        /** Construct a new instance with an initial value set to the argument.
+         * @param initial initial sum value
+         * @return new instance
+         */
+        public static Sum of(final Vector3D initial) {
+            return new Sum(initial);
+        }
+
+        /** Construct a new instance from multiple values.
+         * @param first first vector
+         * @param more additional vectors
+         * @return new instance
+         */
+        public static Sum of(final Vector3D first, final Vector3D... more) {
+            final Sum s = new Sum(first);
+            for (final Vector3D v : more) {
+                s.add(v);
+            }
+            return s;
         }
     }
 }

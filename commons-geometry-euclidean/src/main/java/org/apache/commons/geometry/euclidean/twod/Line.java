@@ -23,10 +23,10 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.Angle;
-import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
 /** This class represents an oriented line in the 2D plane.
@@ -298,8 +298,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
         // step below given that the origin location is equal to
         // (-direction.y * originOffset, direction.x * originOffset).
         return Vector2D.of(
-                    LinearCombination.value(abscissa, direction.getX(), -originOffset, direction.getY()),
-                    LinearCombination.value(abscissa, direction.getY(), originOffset, direction.getX())
+                    Vectors.linearCombination(abscissa, direction.getX(), -originOffset, direction.getY()),
+                    Vectors.linearCombination(abscissa, direction.getY(), originOffset, direction.getX())
                 );
     }
 
@@ -316,11 +316,11 @@ public final class Line extends AbstractHyperplane<Vector2D>
             return null;
         }
 
-        final double x = LinearCombination.value(
+        final double x = Vectors.linearCombination(
                 other.direction.getX(), originOffset,
                 -direction.getX(), other.originOffset) / area;
 
-        final double y = LinearCombination.value(
+        final double y = Vectors.linearCombination(
                 other.direction.getY(), originOffset,
                 -direction.getY(), other.originOffset) / area;
 
@@ -400,8 +400,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      */
     public Vector2D pointAt(final double abscissa, final double offset) {
         final double pointOffset = offset - originOffset;
-        return Vector2D.of(LinearCombination.value(abscissa, direction.getX(),  pointOffset, direction.getY()),
-                            LinearCombination.value(abscissa, direction.getY(), -pointOffset, direction.getX()));
+        return Vector2D.of(Vectors.linearCombination(abscissa, direction.getX(),  pointOffset, direction.getY()),
+                            Vectors.linearCombination(abscissa, direction.getY(), -pointOffset, direction.getX()));
     }
 
     /** Check if the line contains a point.

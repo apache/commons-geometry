@@ -23,9 +23,9 @@ import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.euclidean.EuclideanVectorSum;
 import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
-import org.apache.commons.numbers.core.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
 /** This class represents vectors and points in two-dimensional Euclidean space.
@@ -145,7 +145,9 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
     /** {@inheritDoc} */
     @Override
     public Vector2D lerp(final Vector2D p, final double t) {
-        return linearCombination(1.0 - t, this, t, p);
+        return Sum.create()
+                .addScaled(1.0 - t, this)
+                .addScaled(t, p).get();
     }
 
     /** {@inheritDoc} */
@@ -240,7 +242,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
     /** {@inheritDoc} */
     @Override
     public double dot(final Vector2D v) {
-        return LinearCombination.value(x, v.x, y, v.y);
+        return Vectors.linearCombination(x, v.x, y, v.y);
     }
 
     /** {@inheritDoc}
@@ -258,7 +260,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         final double threshold = normProduct * 0.9999;
         if ((dot < -threshold) || (dot > threshold)) {
             // the vectors are almost aligned, compute using the sine
-            final double n = Math.abs(LinearCombination.value(x, v.y, -y, v.x));
+            final double n = Math.abs(Vectors.linearCombination(x, v.y, -y, v.x));
             if (dot >= 0) {
                 return Math.asin(n / normProduct);
             }
@@ -315,7 +317,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @return the signed area of the parallelogram formed by this instance and the given vector
      */
     public double signedArea(final Vector2D v) {
-        return LinearCombination.value(
+        return Vectors.linearCombination(
                 x, v.y,
                 -y, v.x);
     }
@@ -578,104 +580,15 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @return the centroid of the point set
      */
     private static Vector2D computeCentroid(final Vector2D first, final Iterator<? extends Vector2D> more) {
-        double x = first.getX();
-        double y = first.getY();
-
+        final Sum sum = Sum.of(first);
         int count = 1;
 
-        Vector2D pt;
         while (more.hasNext()) {
-            pt = more.next();
-
-            x += pt.getX();
-            y += pt.getY();
-
+            sum.add(more.next());
             ++count;
         }
 
-        final double invCount = 1.0 / count;
-
-        return new Vector2D(invCount * x, invCount * y);
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a scale factor for first vector
-     * @param c first vector
-     * @return vector calculated by {@code a * c}
-     */
-    public static Vector2D linearCombination(final double a, final Vector2D c) {
-        return new Vector2D(a * c.x, a * c.y);
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a1 scale factor for first vector
-     * @param v1 first vector
-     * @param a2 scale factor for second vector
-     * @param v2 second vector
-     * @return vector calculated by {@code (a1 * v1) + (a2 * v2)}
-     */
-    public static Vector2D linearCombination(final double a1, final Vector2D v1,
-            final double a2, final Vector2D v2) {
-        return new Vector2D(
-                LinearCombination.value(a1, v1.x, a2, v2.x),
-                LinearCombination.value(a1, v1.y, a2, v2.y));
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a1 scale factor for first vector
-     * @param v1 first vector
-     * @param a2 scale factor for second vector
-     * @param v2 second vector
-     * @param a3 scale factor for third vector
-     * @param v3 third vector
-     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
-     */
-    public static Vector2D linearCombination(final double a1, final Vector2D v1,
-            final double a2, final Vector2D v2,
-            final double a3, final Vector2D v3) {
-        return new Vector2D(
-                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x),
-                LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y));
-    }
-
-    /** Returns a vector consisting of the linear combination of the inputs.
-     * <p>
-     * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors.
-     * </p>
-     *
-     * @param a1 scale factor for first vector
-     * @param v1 first vector
-     * @param a2 scale factor for second vector
-     * @param v2 second vector
-     * @param a3 scale factor for third vector
-     * @param v3 third vector
-     * @param a4 scale factor for fourth vector
-     * @param v4 fourth vector
-     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
-     */
-    public static Vector2D linearCombination(final double a1, final Vector2D v1,
-                                             final double a2, final Vector2D v2,
-                                             final double a3, final Vector2D v3,
-                                             final double a4, final Vector2D v4) {
-        return new Vector2D(
-                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x),
-                LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y, a4, v4.y));
+        return sum.get().multiply(1.0 / count);
     }
 
     /**
@@ -828,6 +741,79 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
                 throw Vectors.illegalNorm(norm);
             }
             return null;
+        }
+    }
+
+    /** Class used to create high-accuracy sums of vectors. Each vector component is
+     * summed using an instance of {@link org.apache.commons.numbers.core.Sum}.
+     *
+     * <p>This class is mutable and not thread-safe.
+     * @see org.apache.commons.numbers.core.Sum
+     */
+    public static final class Sum extends EuclideanVectorSum<Vector2D> {
+        /** X component sum. */
+        private final org.apache.commons.numbers.core.Sum xsum;
+        /** Y component sum. */
+        private final org.apache.commons.numbers.core.Sum ysum;
+
+        /** Construct a new instance with the given initial value.
+         * @param initial initial value
+         */
+        Sum(final Vector2D initial) {
+            this.xsum = org.apache.commons.numbers.core.Sum.of(initial.x);
+            this.ysum = org.apache.commons.numbers.core.Sum.of(initial.y);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Sum add(final Vector2D vec) {
+            xsum.add(vec.x);
+            ysum.add(vec.y);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Sum addScaled(final double scale, final Vector2D vec) {
+            xsum.addProduct(scale, vec.x);
+            ysum.addProduct(scale, vec.y);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector2D get() {
+            return Vector2D.of(
+                    xsum.getAsDouble(),
+                    ysum.getAsDouble());
+        }
+
+        /** Create a new instance with an initial value set to the {@link Vector2D#ZERO zero vector}.
+         * @return new instance set to zero
+         */
+        public static Sum create() {
+            return new Sum(Vector2D.ZERO);
+        }
+
+        /** Construct a new instance with an initial value set to the argument.
+         * @param initial initial sum value
+         * @return new instance
+         */
+        public static Sum of(final Vector2D initial) {
+            return new Sum(initial);
+        }
+
+        /** Construct a new instance from multiple values.
+         * @param first first vector
+         * @param more additional vectors
+         * @return new instance
+         */
+        public static Sum of(final Vector2D first, final Vector2D... more) {
+            final Sum s = new Sum(first);
+            for (final Vector2D v : more) {
+                s.add(v);
+            }
+            return s;
         }
     }
 }

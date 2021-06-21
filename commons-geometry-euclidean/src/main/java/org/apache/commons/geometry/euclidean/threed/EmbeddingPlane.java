@@ -127,10 +127,10 @@ public final class EmbeddingPlane extends Plane implements EmbeddingHyperplane<V
      */
     @Override
     public Vector3D toSpace(final Vector2D point) {
-        return Vector3D.linearCombination(
-                point.getX(), u,
-                point.getY(), v,
-                -getOriginOffset(), getNormal());
+        return Vector3D.Sum.create()
+                .addScaled(point.getX(), u)
+                .addScaled(point.getY(), v)
+                .addScaled(-getOriginOffset(), getNormal()).get();
     }
 
     /** Get one point from the 3D-space.
@@ -140,10 +140,10 @@ public final class EmbeddingPlane extends Plane implements EmbeddingHyperplane<V
      *         to the plane
      */
     public Vector3D pointAt(final Vector2D inPlane, final double offset) {
-        return Vector3D.linearCombination(
-                inPlane.getX(), u,
-                inPlane.getY(), v,
-                offset - getOriginOffset(), getNormal());
+        return Vector3D.Sum.create()
+                .addScaled(inPlane.getX(), u)
+                .addScaled(inPlane.getY(), v)
+                .addScaled(offset - getOriginOffset(), getNormal()).get();
     }
 
     /** Build a new reversed version of this plane, with opposite orientation.

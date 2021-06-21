@@ -169,7 +169,9 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @return the point on the great circle with the given phase angle
      */
     public Vector3D vectorAt(final double azimuth) {
-        return Vector3D.linearCombination(Math.cos(azimuth), u, Math.sin(azimuth), v);
+        return Vector3D.Sum.create()
+                .addScaled(Math.cos(azimuth), u)
+                .addScaled(Math.sin(azimuth), v).get();
     }
 
     /** {@inheritDoc} */

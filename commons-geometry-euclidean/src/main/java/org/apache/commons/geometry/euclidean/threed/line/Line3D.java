@@ -156,7 +156,9 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @return one point belonging to the line, at specified abscissa
      */
     public Vector3D pointAt(final double abscissa) {
-        return Vector3D.linearCombination(1.0, origin, abscissa, direction);
+        return Vector3D.Sum.of(origin)
+                .addScaled(abscissa, direction)
+                .get();
     }
 
     /** {@inheritDoc} */
@@ -251,7 +253,9 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
         final double a = delta.dot(direction);
         final double b = delta.dot(line.direction);
 
-        return Vector3D.linearCombination(1, origin, (a - (b * cos)) / n, direction);
+        return Vector3D.Sum.of(origin)
+                .addScaled((a - (b * cos)) / n, direction)
+                .get();
     }
 
     /** Get the intersection point of the instance and another line.

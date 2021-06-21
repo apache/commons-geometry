@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -670,8 +671,8 @@ class Vector3DTest {
         checkVector(v1.cross(v2), -1, 2, 1);
 
         final double scale    = Math.scalb(1.0, 100);
-        final Vector3D big1   = Vector3D.linearCombination(scale, v1);
-        final Vector3D small2 = Vector3D.linearCombination(1 / scale, v2);
+        final Vector3D big1   = v1.multiply(scale);
+        final Vector3D small2 = v2.multiply(1 / scale);
         checkVector(big1.cross(small2), -1, 2, 1);
     }
 
@@ -1315,54 +1316,49 @@ class Vector3DTest {
     }
 
     @Test
-    void testLinearCombination1() {
-        // arrange
-        final Vector3D p1 = Vector3D.of(1, 2, 3);
-
+    void testSum_factoryMethods() {
         // act/assert
-        checkVector(Vector3D.linearCombination(0, p1), 0, 0, 0);
-
-        checkVector(Vector3D.linearCombination(1, p1), 1, 2, 3);
-        checkVector(Vector3D.linearCombination(-1, p1), -1, -2, -3);
-
-        checkVector(Vector3D.linearCombination(0.5, p1), 0.5, 1, 1.5);
-        checkVector(Vector3D.linearCombination(-0.5, p1), -0.5, -1, -1.5);
+        checkVector(Vector3D.Sum.create().get(), 0, 0, 0);
+        checkVector(Vector3D.Sum.of(Vector3D.of(1, 2, 3)).get(), 1, 2, 3);
+        checkVector(Vector3D.Sum.of(
+                Vector3D.of(1, 2, 3),
+                Vector3D.Unit.PLUS_X,
+                Vector3D.Unit.PLUS_Y,
+                Vector3D.Unit.PLUS_Z).get(), 2, 3, 4);
     }
 
     @Test
-    void testLinearCombination2() {
+    void testSum_instanceMethods() {
         // arrange
         final Vector3D p1 = Vector3D.of(1, 2, 3);
-        final Vector3D p2 = Vector3D.of(-3, -4, -5);
+        final Vector3D p2 = Vector3D.of(4, 6, 8);
 
         // act/assert
-        checkVector(Vector3D.linearCombination(2, p1, -3, p2), 11, 16, 21);
-        checkVector(Vector3D.linearCombination(-3, p1, 2, p2), -9, -14, -19);
+        checkVector(Vector3D.Sum.create()
+                .add(p1)
+                .addScaled(0.5, p2)
+                .get(), 3, 5, 7);
     }
 
     @Test
-    void testLinearCombination3() {
+    void testSum_accept() {
         // arrange
-        final Vector3D p1 = Vector3D.of(1, 2, 3);
-        final Vector3D p2 = Vector3D.of(-3, -4, -5);
-        final Vector3D p3 = Vector3D.of(5, 6, 7);
+        final Vector3D p1 = Vector3D.of(1, 2, -3);
+        final Vector3D p2 = Vector3D.of(3, -6, 8);
+
+        final List<Vector3D.Unit> units = Arrays.asList(
+                Vector3D.Unit.PLUS_X,
+                Vector3D.Unit.PLUS_Y,
+                Vector3D.Unit.PLUS_Z);
+
+        final Vector3D.Sum s = Vector3D.Sum.create();
 
         // act/assert
-        checkVector(Vector3D.linearCombination(2, p1, -3, p2, 4, p3), 31, 40, 49);
-        checkVector(Vector3D.linearCombination(-3, p1, 2, p2, -4, p3), -29, -38, -47);
-    }
+        Arrays.asList(p1, Vector3D.ZERO, p2).forEach(s);
+        units.forEach(s);
 
-    @Test
-    void testLinearCombination4() {
-        // arrange
-        final Vector3D p1 = Vector3D.of(1, 2, 3);
-        final Vector3D p2 = Vector3D.of(-3, -4, -5);
-        final Vector3D p3 = Vector3D.of(5, 6, 7);
-        final Vector3D p4 = Vector3D.of(-7, -8, 9);
-
-        // act/assert
-        checkVector(Vector3D.linearCombination(2, p1, -3, p2, 4, p3, -5, p4), 66, 80, 4);
-        checkVector(Vector3D.linearCombination(-3, p1, 2, p2, -4, p3, 5, p4), -64, -78, -2);
+        // assert
+        checkVector(s.get(), 5, -3, 6);
     }
 
     @Test

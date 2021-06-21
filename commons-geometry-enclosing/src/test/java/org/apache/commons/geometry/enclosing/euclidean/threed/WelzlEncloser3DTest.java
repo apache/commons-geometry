@@ -119,14 +119,14 @@ class WelzlEncloser3DTest {
             // define the reference sphere we want to compute
             final double d = 25 * random.nextDouble();
             final double refRadius = 10 * random.nextDouble();
-            final Vector3D refCenter = Vector3D.linearCombination(d, Vector3D.of(sr.nextVector()));
+            final Vector3D refCenter = Vector3D.of(sr.nextVector()).multiply(d);
             // set up a large sample inside the reference sphere
             final int nbPoints = random.nextInt(1000);
 
             final List<Vector3D> points = new ArrayList<>();
             for (int i = 0; i < nbPoints; ++i) {
                 final double r = refRadius * random.nextDouble();
-                points.add(Vector3D.linearCombination(1.0, refCenter, r, Vector3D.of(sr.nextVector())));
+                points.add(Vector3D.Sum.of(refCenter).addScaled(r, Vector3D.of(sr.nextVector())).get());
             }
 
             // act/assert
