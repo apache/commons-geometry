@@ -22,10 +22,66 @@
   put here to instruct spotbugs it must ignore them.
 -->
 <FindBugsFilter
-    xmlns="https://github.com/spotbugs/filter/3.1.0"
+    xmlns="https://github.com/spotbugs/filter/3.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://github.com/spotbugs/filter/3.1.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+    xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
 
-  <Class name="~.*\.jmh_generated\..*" />
+  <Match>
+    <Class name="~.*\.jmh_generated\..*" />
+  </Match>
+
+  <!-- The following types are immutable (or effectively immutable) and are not a risk for
+  exposing implementation internals. -->
+  <Match>
+    <Or>
+      <Field type="java.lang.Class" />
+      <Field type="java.net.URL" />
+      <Field type="java.nio.charset.Charset" />
+
+      <Field type="org.apache.commons.geometry.euclidean.oned.Vector1D" />
+      <Field type="org.apache.commons.geometry.euclidean.oned.Vector1D$Unit" />
+
+      <Field type="org.apache.commons.geometry.euclidean.twod.Vector2D" />
+      <Field type="org.apache.commons.geometry.euclidean.twod.Vector2D$Unit" />
+
+      <Field type="org.apache.commons.geometry.euclidean.threed.Vector3D" />
+      <Field type="org.apache.commons.geometry.euclidean.threed.Vector3D$Unit" />
+    </Or>
+    <BugPattern name="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+  </Match>
+
+  <Match>
+    <Or>
+      <Class name="org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion"/>
+      <Class name="org.apache.commons.geometry.core.partitioning.BoundaryList"/>
+      <Class name="~.*\.geometry\.core\.partitioning\.bsp\.AbstractBSPTree.*"/>
+      <Class name="org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary"/>
+
+      <Class name="org.apache.commons.geometry.euclidean.internal.AbstractPathConnector$ConnectableElement"/>
+      <Class name="org.apache.commons.geometry.euclidean.threed.EmbeddedTreePlaneSubset"/>
+      <Class name="org.apache.commons.geometry.euclidean.threed.line.EmbeddedTreeLineSubset3D"/>
+      <Class name="org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh"/>
+      <Class name="org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D"/>
+      <Class name="org.apache.commons.geometry.euclidean.twod.path.LinePath"/>
+      <Class name="org.apache.commons.geometry.euclidean.twod.EmbeddedTreeLineSubset"/>
+
+      <Class name="org.apache.commons.geometry.enclosing.EnclosingBall"/>
+
+      <Class name="org.apache.commons.geometry.spherical.twod.EmbeddedTreeGreatCircleSubset"/>
+      <Class name="org.apache.commons.geometry.spherical.twod.RegionBSPTree2S"/>
+      <Class name="org.apache.commons.geometry.spherical.twod.GreatArcPath"/>
+
+      <Class name="org.apache.commons.geometry.hull.euclidean.twod.ConvexHull2D"/>
+
+      <Class name="org.apache.commons.geometry.io.core.internal.SimpleTextParser"/>
+      <Class name="org.apache.commons.geometry.io.core.output.StreamGeometryOutput"/>
+
+      <Class name="org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D"/>
+      <Class name="org.apache.commons.geometry.io.euclidean.threed.SimpleFacetDefinition"/>
+      <Class name="org.apache.commons.geometry.io.euclidean.threed.obj.PolygonObjParser$Face"/>
+      <Class name="org.apache.commons.geometry.io.euclidean.threed.stl.BinaryStlWriter"/>
+    </Or>
+    <BugPattern name="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+  </Match>
 
 </FindBugsFilter>
