@@ -19,7 +19,10 @@ package org.apache.commons.geometry.io.euclidean.threed.obj;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -27,7 +30,6 @@ import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
-import org.apache.commons.geometry.io.core.utils.DoubleFormats;
 import org.apache.commons.geometry.io.euclidean.threed.SimpleFacetDefinition;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
@@ -48,7 +50,7 @@ class ObjWriterTest {
         // act/assert
         try (ObjWriter objWriter = new ObjWriter(writer)) {
             Assertions.assertEquals("\n", objWriter.getLineSeparator());
-            Assertions.assertSame(DoubleFormats.DOUBLE_TO_STRING, objWriter.getDoubleFormat());
+            Assertions.assertNotNull(objWriter.getDoubleFormat());
             Assertions.assertEquals(0, objWriter.getVertexCount());
             Assertions.assertEquals(0, objWriter.getVertexNormalCount());
         }
@@ -92,10 +94,12 @@ class ObjWriterTest {
     void testSetDecimalFormat() throws IOException {
         // arrange
         final StringWriter writer = new StringWriter();
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
         // act
         try (ObjWriter objWriter = new ObjWriter(writer)) {
-            objWriter.setDoubleFormat(DoubleFormats.createDefault(0, -1));
+            objWriter.setDoubleFormat(fmt::format);
 
             objWriter.writeVertex(Vector3D.of(1.09, 2.05, 3.06));
         }
@@ -156,12 +160,16 @@ class ObjWriterTest {
         // arrange
         final StringWriter writer = new StringWriter();
 
+        // arrange
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
         // act
         final int index1;
         final int index2;
         final int count;
         try (ObjWriter objWriter = new ObjWriter(writer)) {
-            objWriter.setDoubleFormat(DoubleFormats.createDefault(0, -1));
+            objWriter.setDoubleFormat(fmt::format);
 
             index1 = objWriter.writeVertex(Vector3D.of(1.09, 2.1, 3.005));
             index2 = objWriter.writeVertex(Vector3D.of(0.06, 10, 12));
@@ -182,13 +190,15 @@ class ObjWriterTest {
     void testWriteNormal() throws IOException {
         // arrange
         final StringWriter writer = new StringWriter();
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
         // act
         final int index1;
         final int index2;
         final int count;
         try (ObjWriter objWriter = new ObjWriter(writer)) {
-            objWriter.setDoubleFormat(DoubleFormats.createDefault(0, -1));
+            objWriter.setDoubleFormat(fmt::format);
 
             index1 = objWriter.writeVertexNormal(Vector3D.of(1.09, 2.1, 3.005));
             index2 = objWriter.writeVertexNormal(Vector3D.of(0.06, 10, 12));

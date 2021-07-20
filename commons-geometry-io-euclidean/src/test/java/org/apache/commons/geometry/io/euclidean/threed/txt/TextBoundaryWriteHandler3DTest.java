@@ -19,15 +19,17 @@ package org.apache.commons.geometry.io.euclidean.threed.txt;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.io.core.output.StreamGeometryOutput;
 import org.apache.commons.geometry.io.core.test.CloseCountOutputStream;
-import org.apache.commons.geometry.io.core.utils.DoubleFormats;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D;
 import org.apache.commons.geometry.io.euclidean.threed.SimpleFacetDefinition;
@@ -66,7 +68,7 @@ class TextBoundaryWriteHandler3DTest {
         Assertions.assertEquals("\n", handler.getLineSeparator());
         Assertions.assertEquals(" ", handler.getVertexComponentSeparator());
         Assertions.assertEquals("; ", handler.getVertexSeparator());
-        Assertions.assertSame(DoubleFormats.DOUBLE_TO_STRING, handler.getDoubleFormat());
+        Assertions.assertNotNull(handler.getDoubleFormat());
         Assertions.assertEquals(-1, handler.getFacetVertexCount());
     }
 
@@ -103,10 +105,13 @@ class TextBoundaryWriteHandler3DTest {
     @Test
     void testWriteFacets_customConfiguration() throws IOException {
         // arrange
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         handler.setLineSeparator("\r\n");
-        handler.setDoubleFormat(DoubleFormats.createDefault(0, -1));
+        handler.setDoubleFormat(fmt::format);
         handler.setVertexComponentSeparator("|");
         handler.setVertexSeparator(" | ");
         handler.setFacetVertexCount(4);
@@ -140,10 +145,14 @@ class TextBoundaryWriteHandler3DTest {
     @Test
     void testWriteBoundarySource_customConfiguration() throws IOException {
         // arrange
+        // arrange
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         handler.setLineSeparator("\r\n");
-        handler.setDoubleFormat(DoubleFormats.createDefault(0, -1));
+        handler.setDoubleFormat(fmt::format);
         handler.setVertexComponentSeparator("|");
         handler.setVertexSeparator(" | ");
         handler.setFacetVertexCount(4);
