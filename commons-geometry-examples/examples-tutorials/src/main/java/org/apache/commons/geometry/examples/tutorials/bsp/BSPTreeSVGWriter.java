@@ -113,35 +113,38 @@ public class BSPTreeSVGWriter {
         ".tree-path { fill: none; stroke: gray; stroke-width: 1; } " +
         ".inside-node { font-weight: bold; }";
 
-    /** Geometry bounds; only geometry within these bounds is rendered. */
-    private final Bounds2D bounds;
-
     /** The width of the SVG. */
-    private final int width = 750;
+    private static final int WIDTH = 750;
 
     /** The height of the SVG. */
-    private final int height = 375;
+    private static final int HEIGHT = 375;
 
     /** The margin used in the SVG. */
-    private final int margin = 5;
+    private static final int MARGIN = 5;
 
     /** Amount of the overall width of the SVG to use for the geometry area. */
-    private final double geometryAreaWidthFactor = 0.5;
+    private static final double GEOMETRY_AREA_WIDTH_FACTOR = 0.5;
 
     /** Amount of the overall width of the SVG to use for the tree structure area. */
-    private final double treeAreaWidthFactor = 1.0 - geometryAreaWidthFactor;
+    private static final double TREE_AREA_WIDTH_FACTOR = 1.0 - GEOMETRY_AREA_WIDTH_FACTOR;
 
     /** Angle that arrow heads on lines make with the direction of the line. */
-    private final double arrowAngle = 0.8 * Math.PI;
+    private static final double ARROW_ANGLE = 0.8 * Math.PI;
 
     /** Length of arrow head lines. */
-    private final double arrowLength = 8;
+    private static final double ARROW_LENGTH = 8;
 
     /** Distance between levels of the tree in the tree structure display. */
-    private final double treeVerticalSpacing = 45;
+    private static final double TREE_VERTICAL_SPACING = 45;
 
     /** Line end margin used in the lines between nodes in the tree structure display. */
-    private final double treeLineMargin = 10;
+    private static final double TREE_LINE_MARGIN = 10;
+
+    /** Precision context used for floating point comparisons. */
+    private static final Precision.DoubleEquivalence PRECISION = Precision.doubleEquivalenceOfEpsilon(1e-6);
+
+    /** Geometry bounds; only geometry within these bounds is rendered. */
+    private final Bounds2D bounds;
 
     /** Factor determining how much of the available horizontal width for a node should be used to
      * offset it from its parent.
@@ -150,9 +153,6 @@ public class BSPTreeSVGWriter {
 
     /** Minimum horizontal offset for tree nodes from their parents. */
     private double treeParentXOffsetMin = 0;
-
-    /** Precision context used for floating point comparisons. */
-    private final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 
     /** Construct a new instance that will render regions within the given bounds.
      * @param bounds bounds used to determine what output
@@ -219,8 +219,8 @@ public class BSPTreeSVGWriter {
             doc.appendChild(root);
 
             root.setAttribute("version", SVG_VERSION);
-            root.setAttribute(WIDTH_ATTR, String.valueOf(width));
-            root.setAttribute(HEIGHT_ATTR, String.valueOf(height));
+            root.setAttribute(WIDTH_ATTR, String.valueOf(WIDTH));
+            root.setAttribute(HEIGHT_ATTR, String.valueOf(HEIGHT));
 
             // add a defs element for later use
             final Element defs = svgElement("defs", doc);
@@ -261,10 +261,10 @@ public class BSPTreeSVGWriter {
      */
     private void writeTreeGeometryArea(final RegionBSPTree2D tree, final Map<RegionNode2D, String> nodeNames,
             final Element root, final Element defs, final Document doc) {
-        final double geometrySvgX = margin;
-        final double geometrySvgY = margin;
-        final double geometrySvgWidth = (geometryAreaWidthFactor * width) - (2 * margin);
-        final double geometrySvgHeight = height - (2 * margin);
+        final double geometrySvgX = MARGIN;
+        final double geometrySvgY = MARGIN;
+        final double geometrySvgWidth = (GEOMETRY_AREA_WIDTH_FACTOR * WIDTH) - (2 * MARGIN);
+        final double geometrySvgHeight = HEIGHT - (2 * MARGIN);
 
         defineClipRect(GEOMETRY_AREA_CLIP_PATH_ID,
                 geometrySvgX, geometrySvgY,
@@ -308,11 +308,11 @@ public class BSPTreeSVGWriter {
         root.appendChild(treeGroup);
         treeGroup.setAttribute(CLASS_ATTR, "tree");
 
-        final double offsetX = ((1 - treeAreaWidthFactor) * width) + margin;
-        final double offsetY = margin;
+        final double offsetX = ((1 - TREE_AREA_WIDTH_FACTOR) * WIDTH) + MARGIN;
+        final double offsetY = MARGIN;
 
-        final double svgWidth = (treeAreaWidthFactor * width) - (2 * margin);
-        final double svgHeight = height - (2 * margin);
+        final double svgWidth = (TREE_AREA_WIDTH_FACTOR * WIDTH) - (2 * MARGIN);
+        final double svgHeight = HEIGHT - (2 * MARGIN);
 
         treeGroup.setAttribute("transform", "translate(" + offsetX + " " + offsetY + ")");
 
@@ -532,7 +532,7 @@ public class BSPTreeSVGWriter {
                 final Element parent, final Document doc) {
             super(nodeNames, parent, doc);
 
-            this.boundsRegion = bounds.toRegion(precision);
+            this.boundsRegion = bounds.toRegion(PRECISION);
 
             this.transform = transform;
 
@@ -648,15 +648,15 @@ public class BSPTreeSVGWriter {
          */
         private String createCutArrowPathString(final Vector2D svgStart, final Vector2D svgEnd) {
             final Vector2D dir = svgStart.vectorTo(svgEnd);
-            if (!dir.eq(Vector2D.ZERO, precision)) {
+            if (!dir.eq(Vector2D.ZERO, PRECISION)) {
 
                 final double az = Math.atan2(dir.getY(), dir.getX());
                 final Vector2D upperArrowPt = PolarCoordinates
-                        .toCartesian(arrowLength, az + arrowAngle)
+                        .toCartesian(ARROW_LENGTH, az + ARROW_ANGLE)
                         .add(svgEnd);
 
                 final Vector2D lowerArrowPt = PolarCoordinates
-                        .toCartesian(arrowLength, az - arrowAngle)
+                        .toCartesian(ARROW_LENGTH, az - ARROW_ANGLE)
                         .add(svgEnd);
 
                 final StringBuilder sb = new StringBuilder();
@@ -709,7 +709,7 @@ public class BSPTreeSVGWriter {
                 final Map<RegionNode2D, String> nodeNames, final Element parent, final Document doc) {
             super(nodeNames, parent, doc);
 
-            final double requiredSvgHeight = treeNodeHeight * treeVerticalSpacing;
+            final double requiredSvgHeight = treeNodeHeight * TREE_VERTICAL_SPACING;
             final double svgMid = 0.5 * svgHeight;
 
             this.svgTop = svgMid - (0.5 * requiredSvgHeight);
@@ -729,7 +729,7 @@ public class BSPTreeSVGWriter {
 
             final Vector2D parentLoc = nodeLocations.get(node.getParent());
             if (parentLoc != null) {
-                final Vector2D offset = loc.vectorTo(parentLoc).withNorm(treeLineMargin);
+                final Vector2D offset = loc.vectorTo(parentLoc).withNorm(TREE_LINE_MARGIN);
                 nodeGroup.appendChild(createPathElement("tree-path", loc.add(offset), parentLoc.subtract(offset)));
             }
         }
@@ -775,7 +775,7 @@ public class BSPTreeSVGWriter {
 
                 return Vector2D.of(
                             parentLoc.getX() + parentXOffset,
-                            parentLoc.getY() + treeVerticalSpacing
+                            parentLoc.getY() + TREE_VERTICAL_SPACING
                         );
             }
         }
