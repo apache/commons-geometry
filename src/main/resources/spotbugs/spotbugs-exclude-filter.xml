@@ -80,6 +80,8 @@
       <Class name="org.apache.commons.geometry.io.euclidean.threed.SimpleFacetDefinition"/>
       <Class name="org.apache.commons.geometry.io.euclidean.threed.obj.PolygonObjParser$Face"/>
       <Class name="org.apache.commons.geometry.io.euclidean.threed.stl.BinaryStlWriter"/>
+
+      <Class name="~.*\.geometry\.examples\.jmh\..*"/>
     </Or>
     <BugPattern name="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
   </Match>
