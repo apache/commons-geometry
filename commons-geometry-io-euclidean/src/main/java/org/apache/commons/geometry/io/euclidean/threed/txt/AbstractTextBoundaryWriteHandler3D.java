@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
-import org.apache.commons.geometry.io.core.utils.DoubleFormats;
 import org.apache.commons.geometry.io.euclidean.threed.AbstractBoundaryWriteHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 
@@ -47,7 +46,7 @@ public abstract class AbstractTextBoundaryWriteHandler3D extends AbstractBoundar
     private String lineSeparator = DEFAULT_LINE_SEPARATOR;
 
     /** Double format function. */
-    private DoubleFunction<String> doubleFormat = DoubleFormats.DOUBLE_TO_STRING;
+    private DoubleFunction<String> doubleFormat = Double::toString;
 
     /** Get the text output default charset, used if the output does not
      * specify a charset.

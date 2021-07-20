@@ -18,16 +18,18 @@ package org.apache.commons.geometry.io.euclidean.threed.stl;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.threed.ConvexPolygon3D;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.io.core.test.CloseCountWriter;
-import org.apache.commons.geometry.io.core.utils.DoubleFormats;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.apache.commons.geometry.io.euclidean.threed.SimpleFacetDefinition;
 import org.apache.commons.numbers.core.Precision;
@@ -47,7 +49,7 @@ class TextStlWriterTest {
     void testDefaultProperties() throws IOException {
         // act/assert
         try (TextStlWriter writer = new TextStlWriter(out)) {
-            Assertions.assertSame(DoubleFormats.DOUBLE_TO_STRING, writer.getDoubleFormat());
+            Assertions.assertNotNull(writer.getDoubleFormat());
             Assertions.assertEquals("\n", writer.getLineSeparator());
         }
     }
@@ -540,9 +542,12 @@ class TextStlWriterTest {
                 Vector3D.ZERO, Vector3D.of(1.0 / 3.0, 0, 0), Vector3D.of(0, 1.0 / 3.0, 0));
         final Vector3D normal = Vector3D.Unit.PLUS_Z;
 
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
         try (TextStlWriter writer = new TextStlWriter(out)) {
 
-            writer.setDoubleFormat(DoubleFormats.createDefault(0, -3));
+            writer.setDoubleFormat(fmt::format);
             writer.setLineSeparator("\r\n");
 
             // act

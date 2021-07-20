@@ -42,7 +42,7 @@ public abstract class AbstractTextFormatWriter implements Closeable {
      * @param writer writer instance
      */
     protected AbstractTextFormatWriter(final Writer writer) {
-        this(writer, DoubleFormats.DOUBLE_TO_STRING);
+        this(writer, Double::toString);
     }
 
     /** Construct a new instance that writes content to the given writer and uses the

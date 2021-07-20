@@ -19,15 +19,17 @@ package org.apache.commons.geometry.io.euclidean.threed.obj;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
 import org.apache.commons.geometry.io.core.output.StreamGeometryOutput;
-import org.apache.commons.geometry.io.core.utils.DoubleFormats;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinitions;
 import org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D;
@@ -57,14 +59,18 @@ class ObjBoundaryWriteHandler3DTest {
         Assertions.assertEquals(GeometryFormat3D.OBJ, handler.getFormat());
         Assertions.assertEquals(StandardCharsets.UTF_8, handler.getDefaultCharset());
         Assertions.assertEquals("\n", handler.getLineSeparator());
-        Assertions.assertSame(DoubleFormats.DOUBLE_TO_STRING, handler.getDoubleFormat());
+        Assertions.assertNotNull(handler.getDoubleFormat());
         Assertions.assertEquals(-1, handler.getMeshBufferBatchSize());
     }
 
     @Test
     void testWriteFacets() throws IOException {
+        // arrange
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0#####", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
         // act
-        handler.setDoubleFormat(DoubleFormats.createDefault(0, -6));
+        handler.setDoubleFormat(fmt::format);
         handler.writeFacets(FACETS, new StreamGeometryOutput(out));
 
         // assert
@@ -80,8 +86,12 @@ class ObjBoundaryWriteHandler3DTest {
 
     @Test
     void testWriteFacets_usesOutputCharset() throws IOException {
+        // arrange
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0#####", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
         // act
-        handler.setDoubleFormat(DoubleFormats.createDefault(0, -6));
+        handler.setDoubleFormat(fmt::format);
         handler.writeFacets(FACETS, new StreamGeometryOutput(out, null, StandardCharsets.UTF_16));
 
         // assert
@@ -98,9 +108,13 @@ class ObjBoundaryWriteHandler3DTest {
     @Test
     void testWriteFacets_customConfig() throws IOException {
         // arrange
+        // arrange
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         handler.setLineSeparator("\r\n");
-        handler.setDoubleFormat(DoubleFormats.createDefault(0, -1));
+        handler.setDoubleFormat(fmt::format);
         handler.setMeshBufferBatchSize(1);
 
         // act
@@ -147,9 +161,13 @@ class ObjBoundaryWriteHandler3DTest {
                 .map(f -> FacetDefinitions.toPolygon(f, TEST_PRECISION))
                 .collect(Collectors.toList()));
 
+        // arrange
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         handler.setLineSeparator("\r\n");
-        handler.setDoubleFormat(DoubleFormats.createDefault(0, -1));
+        handler.setDoubleFormat(fmt::format);
         handler.setMeshBufferBatchSize(1);
 
         // act

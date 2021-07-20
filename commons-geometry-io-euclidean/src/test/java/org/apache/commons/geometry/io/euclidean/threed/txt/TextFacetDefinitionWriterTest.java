@@ -18,9 +18,12 @@ package org.apache.commons.geometry.io.euclidean.threed.txt;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
@@ -28,7 +31,6 @@ import org.apache.commons.geometry.euclidean.threed.ConvexPolygon3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.io.core.utils.DoubleFormats;
 import org.apache.commons.geometry.io.euclidean.threed.SimpleFacetDefinition;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
@@ -56,7 +58,7 @@ class TextFacetDefinitionWriterTest {
     void testPropertyDefaults() {
         // act/assert
         Assertions.assertEquals("\n", fdWriter.getLineSeparator());
-        Assertions.assertSame(DoubleFormats.DOUBLE_TO_STRING, fdWriter.getDoubleFormat());
+        Assertions.assertNotNull(fdWriter.getDoubleFormat());
         Assertions.assertEquals(" ", fdWriter.getVertexComponentSeparator());
         Assertions.assertEquals("; ", fdWriter.getVertexSeparator());
         Assertions.assertEquals(-1, fdWriter.getFacetVertexCount());
@@ -188,12 +190,15 @@ class TextFacetDefinitionWriterTest {
     @Test
     void testWriteFacetDefinition() throws IOException {
         // arrange
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
         final SimpleFacetDefinition f1 = new SimpleFacetDefinition(Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(0.5, 0, 0), Vector3D.of(0, -0.5, 0)));
         final SimpleFacetDefinition f2 = new SimpleFacetDefinition(Arrays.asList(
                 Vector3D.of(0.5, 0.7, 1.2), Vector3D.of(10.01, -4, 2), Vector3D.of(-10.0 / 3.0, 0, 0), Vector3D.ZERO));
 
-        fdWriter.setDoubleFormat(DoubleFormats.createDefault(0, -3));
+        fdWriter.setDoubleFormat(fmt::format);
 
         // act
         fdWriter.write(f1);
@@ -299,6 +304,8 @@ class TextFacetDefinitionWriterTest {
     @Test
     void testWriteBoundarySource_alternativeFormatting() throws IOException {
         // arrange
+        final DecimalFormat fmt =
+                new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
         final ConvexPolygon3D poly1 = Planes.convexPolygonFromVertices(Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(0, 0, -0.5901), Vector3D.of(0, -0.501, 0)
             ), TEST_PRECISION);
@@ -306,7 +313,7 @@ class TextFacetDefinitionWriterTest {
                 Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 0), Vector3D.of(0, 1, 0)
             ), TEST_PRECISION);
 
-        fdWriter.setDoubleFormat(DoubleFormats.createDefault(0, -1));
+        fdWriter.setDoubleFormat(fmt::format);
 
         fdWriter.setFacetVertexCount(3);
         fdWriter.setLineSeparator("\r\n");

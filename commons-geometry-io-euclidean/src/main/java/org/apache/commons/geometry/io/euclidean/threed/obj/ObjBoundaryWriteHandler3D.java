@@ -29,7 +29,6 @@ import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.mesh.Mesh;
 import org.apache.commons.geometry.io.core.GeometryFormat;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
-import org.apache.commons.geometry.io.core.utils.DoubleFormats;
 import org.apache.commons.geometry.io.euclidean.threed.AbstractBoundaryWriteHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D;
@@ -52,7 +51,7 @@ public class ObjBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
     private String lineSeparator = DEFAULT_LINE_SEPARATOR;
 
     /** Double format function. */
-    private DoubleFunction<String> doubleFormat = DoubleFormats.DOUBLE_TO_STRING;
+    private DoubleFunction<String> doubleFormat = Double::toString;
 
     /** Batch size used for mesh buffer creation. */
     private int meshBufferBatchSize = DEFAULT_MESH_BUFFER_BATCH_SIZE;

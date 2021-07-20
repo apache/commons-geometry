@@ -19,6 +19,9 @@ package org.apache.commons.geometry.io.core.utils;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.function.DoubleFunction;
 
 import org.apache.commons.geometry.io.core.test.CloseCountWriter;
@@ -35,7 +38,7 @@ class AbstractTextFormatWriterTest {
         try (TestWriter writer = new TestWriter(out)) {
             // assert
             Assertions.assertEquals("\n", writer.getLineSeparator());
-            Assertions.assertSame(DoubleFormats.DOUBLE_TO_STRING, writer.getDoubleFormat());
+            Assertions.assertNotNull(writer.getDoubleFormat());
             Assertions.assertSame(out, writer.getWriter());
         }
     }
@@ -71,7 +74,9 @@ class AbstractTextFormatWriterTest {
 
             writer.setLineSeparator("\r\n");
 
-            final DoubleFunction<String> df = DoubleFormats.createPlain(0, -2);
+            final DecimalFormat fmt = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
+            final DoubleFunction<String> df = fmt::format;
             writer.setDoubleFormat(df);
 
             // act
