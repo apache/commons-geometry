@@ -387,7 +387,7 @@ class IntervalTest {
     }
 
     @Test
-    public void checkToTree_finite() {
+    void checkToTree_finite() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, 1, precision);
@@ -412,7 +412,7 @@ class IntervalTest {
     }
 
     @Test
-    public void checkToTree_singlePoint() {
+    void checkToTree_singlePoint() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(1, 1, precision);
@@ -433,7 +433,7 @@ class IntervalTest {
     }
 
     @Test
-    public void checkToTree_maxInfinite() {
+    void checkToTree_maxInfinite() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(-1, Double.POSITIVE_INFINITY, precision);
@@ -457,7 +457,7 @@ class IntervalTest {
     }
 
     @Test
-    public void checkToTree_minInfinite() {
+    void checkToTree_minInfinite() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, precision);
@@ -481,7 +481,7 @@ class IntervalTest {
     }
 
     @Test
-    public void checkToTree_minMaxInfinite() {
+    void checkToTree_minMaxInfinite() {
         // arrange
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-2);
         final Interval interval = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision);

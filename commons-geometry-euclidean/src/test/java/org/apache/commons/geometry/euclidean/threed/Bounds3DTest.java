@@ -363,7 +363,7 @@ class Bounds3DTest {
     }
 
     @Test
-    public void toRegion() {
+    void toRegion() {
         // arrange
         final Bounds3D b = Bounds3D.from(
                 Vector3D.of(0, 4, 8),
@@ -378,7 +378,7 @@ class Bounds3DTest {
     }
 
     @Test
-    public void toRegion_boundingBoxTooSmall() {
+    void toRegion_boundingBoxTooSmall() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Bounds3D.from(Vector3D.ZERO, Vector3D.of(1e-12, 1e-12, 1e-12))
                 .toRegion(TEST_PRECISION));

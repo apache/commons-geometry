@@ -33,18 +33,6 @@ public abstract class LineConvexSubset3D extends LineSubset3D {
         super(line);
     }
 
-    /** Return true if the line subset is infinite.
-     * @return true if the line subset is infinite.
-     */
-    @Override
-    public abstract boolean isInfinite();
-
-    /** Return true if the line subset is finite.
-     * @return true if the line subset is finite.
-     */
-    @Override
-    public abstract boolean isFinite();
-
     /** Get the start point for the line subset.
      * @return the start point for the line subset, or null if no start point exists
      */
@@ -68,12 +56,6 @@ public abstract class LineConvexSubset3D extends LineSubset3D {
      *      no end location exists
      */
     public abstract double getSubspaceEnd();
-
-    /** Get the size (length) of the line subset.
-     * @return the size of the line subset
-     */
-    @Override
-    public abstract double getSize();
 
     /** {@inheritDoc} */
     @Override

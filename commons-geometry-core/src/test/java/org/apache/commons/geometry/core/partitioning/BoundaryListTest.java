@@ -52,9 +52,11 @@ class BoundaryListTest {
         boundaries.add(new TestLineSegment(0, 0, 1, 1));
 
         final BoundaryList<TestPoint2D, TestLineSegment> list = new BoundaryList<>(boundaries);
+        final List<TestLineSegment> items = list.getBoundaries();
+        final TestLineSegment segment = new TestLineSegment(1, 1, 0, 2);
 
         // act/assert
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> list.getBoundaries().add(new TestLineSegment(1, 1, 0, 2)));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> items.add(segment));
     }
 
     @Test

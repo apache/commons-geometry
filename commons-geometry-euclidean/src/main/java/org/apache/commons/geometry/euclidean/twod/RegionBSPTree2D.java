@@ -72,7 +72,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** {@inheritDoc} */
     @Override
     public Iterable<LineConvexSubset> boundaries() {
-        return createBoundaryIterable(b -> (LineConvexSubset) b);
+        return createBoundaryIterable(LineConvexSubset.class::cast);
     }
 
     /** {@inheritDoc} */
@@ -84,7 +84,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** {@inheritDoc} */
     @Override
     public List<LineConvexSubset> getBoundaries() {
-        return createBoundaryList(b -> (LineConvexSubset) b);
+        return createBoundaryList(LineConvexSubset.class::cast);
     }
 
     /** Get the boundary of the region as a list of connected line subset paths.

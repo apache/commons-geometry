@@ -69,7 +69,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
     /** {@inheritDoc} */
     @Override
     public Iterable<PlaneConvexSubset> boundaries() {
-        return createBoundaryIterable(b -> (PlaneConvexSubset) b);
+        return createBoundaryIterable(PlaneConvexSubset.class::cast);
     }
 
     /** {@inheritDoc} */
@@ -81,7 +81,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
     /** {@inheritDoc} */
     @Override
     public List<PlaneConvexSubset> getBoundaries() {
-        return createBoundaryList(b -> (PlaneConvexSubset) b);
+        return createBoundaryList(PlaneConvexSubset.class::cast);
     }
 
     /** Return a list of {@link ConvexVolume}s representing the same region

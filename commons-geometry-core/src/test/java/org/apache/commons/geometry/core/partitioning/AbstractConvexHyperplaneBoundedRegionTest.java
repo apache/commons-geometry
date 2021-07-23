@@ -39,9 +39,12 @@ class AbstractConvexHyperplaneBoundedRegionTest {
     void testBoundaries_areUnmodifiable() {
         // arrange
         final StubRegion region = new StubRegion(new ArrayList<>());
+        final List<TestLineSegment> boundaries = region.getBoundaries();
+        final TestLineSegment span = TestLine.X_AXIS.span();
+
 
         // act/assert
-        Assertions.assertThrows(UnsupportedOperationException.class, () ->  region.getBoundaries().add(TestLine.X_AXIS.span()));
+        Assertions.assertThrows(UnsupportedOperationException.class, () ->  boundaries.add(span));
     }
 
     @Test
@@ -628,13 +631,17 @@ class AbstractConvexHyperplaneBoundedRegionTest {
 
     @Test
     void testConvexRegionBoundaryBuilder() {
-        // act/assert
-        Assertions.assertThrows(IllegalArgumentException.class, () -> StubRegion.fromBounds(Arrays.asList(TestLine.X_AXIS, TestLine.X_AXIS.reverse())));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> StubRegion.fromBounds(Arrays.asList(
+        // arrange
+        final List<TestLine> opposites = Arrays.asList(TestLine.X_AXIS, TestLine.X_AXIS.reverse());
+        final List<TestLine> nonConvex = Arrays.asList(
                 TestLine.X_AXIS,
                 TestLine.Y_AXIS,
                 new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -1)),
-                new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -2)))));
+                new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -2)));
+
+        // act/assert
+        Assertions.assertThrows(IllegalArgumentException.class, () -> StubRegion.fromBounds(opposites));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> StubRegion.fromBounds(nonConvex));
     }
 
     @Test

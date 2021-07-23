@@ -76,9 +76,10 @@ class EnclosingBallTest {
         final List<Vector2D> support = new ArrayList<>(Collections.singletonList(Vector2D.ZERO));
 
         final EnclosingBall<Vector2D> ball = new EnclosingBall<>(Vector2D.of(1, 1), 4, support);
+        final List<Vector2D> ballSupport = ball.getSupport();
 
         // act/assert
-        Assertions.assertThrows(UnsupportedOperationException.class, () ->  ball.getSupport().add(Vector2D.Unit.PLUS_X));
+        Assertions.assertThrows(UnsupportedOperationException.class, () ->  ballSupport.add(Vector2D.Unit.PLUS_X));
     }
 
     @Test

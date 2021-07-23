@@ -46,7 +46,7 @@ abstract class AbstractEmbeddedRegionPlaneSubset extends AbstractPlaneSubset imp
     /** {@inheritDoc} */
     @Override
     public EmbeddingPlane getHyperplane() {
-        return plane;
+        return getPlane();
     }
 
     /** {@inheritDoc} */

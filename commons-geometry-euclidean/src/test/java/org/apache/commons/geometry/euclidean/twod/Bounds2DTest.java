@@ -335,7 +335,7 @@ class Bounds2DTest {
     }
 
     @Test
-    public void toRegion() {
+    void toRegion() {
         // arrange
         final Bounds2D b = Bounds2D.from(
                 Vector2D.of(0, 4),
@@ -350,7 +350,7 @@ class Bounds2DTest {
     }
 
     @Test
-    public void toRegion_boundingBoxTooSmall() {
+    void toRegion_boundingBoxTooSmall() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> Bounds2D.from(Vector2D.ZERO, Vector2D.of(1e-12, 1e-12)).toRegion(TEST_PRECISION));
     }
