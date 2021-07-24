@@ -135,7 +135,7 @@ public final class AklToussaintHeuristic {
             v1 = v2;
             v2 = quadrilateralPoints.get((i + 1) == size ? 0 : i + 1);
 
-            if (point.equals(v1) || point.equals(v2)) {
+            if (point.equals(v2)) {
                 return true;
             }
 
