@@ -33,7 +33,7 @@
 
   <properties>
     <!-- OSGi -->
-    <commons.osgi.symbolicName>org.apache.commons.geometry.io.core.*</commons.osgi.symbolicName>
+    <commons.osgi.symbolicName>org.apache.commons.geometry.io.core</commons.osgi.symbolicName>
     <commons.osgi.export>org.apache.commons.geometry.io.core.*</commons.osgi.export>
     <!-- Java 9+ -->
     <commons.automatic.module.name>org.apache.commons.geometry.io.core</commons.automatic.module.name>
