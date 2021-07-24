@@ -74,7 +74,7 @@ class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    public void setInitialBufferSize_invalidArg() {
+    void setInitialBufferSize_invalidArg() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(
                 () -> handler.setInitialBufferSize(0),

@@ -466,13 +466,7 @@ public final class ObjWriter extends AbstractTextFormatWriter {
         private int addToMap(final Vector3D vec, final Map<String, Integer> map) {
             final String str = createVectorString(vec);
 
-            Integer idx = map.get(str);
-            if (idx == null) {
-                idx = map.size();
-                map.put(str, idx);
-            }
-
-            return idx;
+            return map.computeIfAbsent(str, k -> map.size());
         }
 
         /** Add a face to the buffer. If {@code batchSize} is greater than {@code -1} and the number
