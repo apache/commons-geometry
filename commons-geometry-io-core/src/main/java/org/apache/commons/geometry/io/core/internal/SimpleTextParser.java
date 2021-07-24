@@ -43,7 +43,7 @@ public class SimpleTextParser {
     private static final int DEFAULT_MAX_STRING_LENGTH = 1024;
 
     /** Error message used when a string exceeds the configured maximum length. */
-    private static final String STRING_LENGTH_ERR_MSG = "String length exceeds maximum value of ";
+    private static final String STRING_LENGTH_ERR_MSG = "string length exceeds maximum value of ";
 
     /** Initial token position number. */
     private static final int INITIAL_TOKEN_POS = -1;
@@ -336,9 +336,8 @@ public class SimpleTextParser {
      * @param pred predicate function passed characters read from the input; reading continues
      *      until the predicate returns false
      * @return this instance
-     * @throws IllegalStateException if the length of the produced string exceeds the configured
+     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
-     * @throws IOException if an I/O error occurs
      * @see #getCurrentToken()
      * @see #consume(IntPredicate, IntConsumer)
      */
@@ -348,14 +347,11 @@ public class SimpleTextParser {
 
         String token = null;
         if (hasMoreCharacters()) {
-            final StringBuilder sb = new StringBuilder();
+            final StringCollector collector = new StringCollector(line, col, pred);
 
-            consume(pred, ch -> {
-                sb.append((char) ch);
-                validateStringLength(sb.length());
-            });
+            consume(collector, collector);
 
-            token = sb.toString();
+            token = collector.getString();
         }
 
         setToken(line, col, token);
@@ -370,9 +366,8 @@ public class SimpleTextParser {
      * @param pred predicate function passed characters read from the input; reading continues
      *      until the predicate returns false
      * @return this instance
-     * @throws IllegalStateException if the length of the produced string exceeds the configured
+     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
-     * @throws IOException if an I/O error occurs
      * @see #getCurrentToken()
      * @see #consume(IntPredicate, IntConsumer)
      */
@@ -383,14 +378,11 @@ public class SimpleTextParser {
 
         String token = null;
         if (hasMoreCharacters()) {
-            final StringBuilder sb = new StringBuilder();
+            final StringCollector collector = new StringCollector(line, col, pred);
 
-            consumeWithLineContinuation(lineContinuationChar, pred, ch -> {
-                sb.append((char) ch);
-                validateStringLength(sb.length());
-            });
+            consumeWithLineContinuation(lineContinuationChar, collector, collector);
 
-            token = sb.toString();
+            token = collector.getString();
         }
 
         setToken(line, col, token);
@@ -403,9 +395,8 @@ public class SimpleTextParser {
      * ('\r', '\n', or '\r\n') at the end of the line is consumed but is not included in the token.
      * The token will be null if the end of the stream has been reached prior to the method call.
      * @return this instance
-     * @throws IllegalStateException if the length of the produced string exceeds the configured
+     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
-     * @throws IOException if an I/O error occurs
      * @see #getCurrentToken()
      */
     public SimpleTextParser nextLine() throws IOException {
@@ -421,9 +412,8 @@ public class SimpleTextParser {
      * character in the stream is not alphanumeric and will be null if the end of the stream has
      * been reached prior to the method call.
      * @return this instance
-     * @throws IllegalStateException if the length of the produced string exceeds the configured
+     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
-     * @throws IOException if an I/O error occurs
      * @see #getCurrentToken()
      */
     public SimpleTextParser nextAlphanumeric() throws IOException {
@@ -660,30 +650,25 @@ public class SimpleTextParser {
      *      until the predicate returns false
      * @return string containing characters matching {@code pred} or null if the parser has already
      *      reached the end of the stream
-     * @throws IllegalStateException if the length of the produced string exceeds the configured
+     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
-     * @throws IOException if an I/O error occurs
      * @see #getCurrentToken()
      */
     public String peek(final IntPredicate pred) throws IOException {
         String token = null;
 
         if (hasMoreCharacters()) {
-            final StringBuilder sb = new StringBuilder();
+            final StringCollector collector = new StringCollector(lineNumber, columnNumber, pred);
 
             int i = -1;
             int ch = buffer.charAt(++i);
-            while (ch != EOF && pred.test(ch)) {
-                sb.append((char) ch);
-
-                if (i > maxStringLength) {
-                    throw new IllegalStateException(STRING_LENGTH_ERR_MSG + maxStringLength);
-                }
+            while (ch != EOF && collector.test(ch)) {
+                collector.accept(ch);
 
                 ch = buffer.charAt(++i);
             }
 
-            token = sb.toString();
+            token = collector.getString();
         }
 
         return token;
@@ -1043,18 +1028,6 @@ public class SimpleTextParser {
         }
     }
 
-    /** Validate that the given string length is less than the maximum configured length,
-     * throwing an exception if not.
-     * @param len string length to check
-     * @throws IllegalStateException if {@code len} is greater than the maximum configured
-     *      string length
-     */
-    private void validateStringLength(final int len) {
-        if (len > maxStringLength) {
-            throw new IllegalStateException(STRING_LENGTH_ERR_MSG + maxStringLength);
-        }
-    }
-
     /** Ensure that a token read operation has been performed, throwing an exception if not.
      * @throws IllegalStateException if no token read operation has been performed
      */
@@ -1185,6 +1158,66 @@ public class SimpleTextParser {
         return caseSensitive ?
                 a.equals(b) :
                 a.equalsIgnoreCase(b);
+    }
+
+    /** Internal class used to collect strings from the character stream while ensuring that the
+     * collected strings do not exceed the maximum configured string length.
+     */
+    private final class StringCollector implements IntPredicate, IntConsumer {
+
+        /** String builder instance. */
+        private final StringBuilder sb = new StringBuilder();
+
+        /** Start position line. */
+        private final int line;
+
+        /** Start position column. */
+        private final int col;
+
+        /** Character predicate. */
+        private final IntPredicate pred;
+
+        /** Construct a new instance with the given start position and character predicate.
+         * @param line start position line
+         * @param col start position col
+         * @param pred character predicate
+         */
+        StringCollector(final int line, final int col, final IntPredicate pred) {
+            this.line = line;
+            this.col = col;
+            this.pred = pred;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean test(final int value) {
+            return pred.test(value) && !hasExceededMaxStringLength();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void accept(final int value) {
+            sb.append((char) value);
+        }
+
+        /** Get the string collected by this instance.
+         * @return the string collected by this instance
+         * @throws IOException if the string exceeds the maximum configured length
+         */
+        public String getString() throws IOException {
+            if (hasExceededMaxStringLength()) {
+                throw parseError(line, col, STRING_LENGTH_ERR_MSG + maxStringLength);
+            }
+
+            return sb.toString();
+        }
+
+        /** Return true if this collector has exceeded the maximum configured string length.
+         * @return true if this collector has exceeded the maximum string length
+         */
+        private boolean hasExceededMaxStringLength() {
+            return sb.length() > maxStringLength;
+        }
     }
 
     /** Exception used to indicate a parsing error. */

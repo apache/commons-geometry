@@ -441,7 +441,7 @@ class SimpleTextParserTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.next(c -> !Character.isWhitespace(c));
-        }, IllegalStateException.class, "String length exceeds maximum value of 4");
+        }, IOException.class, "Parsing failed at line 1, column 1: string length exceeds maximum value of 4");
     }
 
     @Test
@@ -839,13 +839,15 @@ class SimpleTextParserTest {
     @Test
     void testPeek_predicateArg_exceedsMaxStringLength() throws IOException {
         // arrange
-        final SimpleTextParser p = parser("abcdef");
+        final SimpleTextParser p = parser("\n  abcdefg");
         p.setMaxStringLength(4);
+        p.discardLine()
+            .discard(SimpleTextParser::isWhitespace);
 
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.peek(SimpleTextParser::isNotWhitespace);
-        }, IllegalStateException.class, "String length exceeds maximum value of 4");
+        }, IOException.class, "Parsing failed at line 2, column 3: string length exceeds maximum value of 4");
     }
 
     @Test
