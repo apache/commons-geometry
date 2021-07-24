@@ -69,7 +69,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
     /** {@inheritDoc} */
     @Override
     public Iterable<GreatArc> boundaries() {
-        return createBoundaryIterable(b -> (GreatArc) b);
+        return createBoundaryIterable(GreatArc.class::cast);
     }
 
     /** {@inheritDoc} */
@@ -81,7 +81,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
     /** {@inheritDoc} */
     @Override
     public List<GreatArc> getBoundaries() {
-        return createBoundaryList(b -> (GreatArc) b);
+        return createBoundaryList(GreatArc.class::cast);
     }
 
     /** Get the boundary of the region as a list of connected great arc paths. The
