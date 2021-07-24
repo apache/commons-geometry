@@ -58,9 +58,53 @@ Apache Commons Geometry 1.0 contains the following library modules:
   commons-geometry-core (requires Java 8+)
   commons-geometry-euclidean (requires Java 8+)
   commons-geometry-spherical (requires Java 8+)
-  commons-geometry-hull (requires Java 8+)
-  commons-geometry-enclosing (requires Java 8+)
+  commons-geometry-io-core (requires Java 8+)
+  commons-geometry-io-euclidean (requires Java 8+)
 ">
+      <action dev="mattjuntunen" type="update" issue="GEOMETRY-13">
+        Use Norms.EUCLIDEAN from Commons Numbers to compute 3D Euclidean norm values.
+      </action>
+      <action dev="mattjuntunen" type="update" issue="GEOMETRY-126">
+        Replace VectorXD.linearCombination methods with VectorXD.Sum classes. Use
+        Sum class from Commons Numbers for computing internal linear combinations.
+      </action>
+      <action dev="mattjuntunen" type="update" issue="GEOMETRY-124">
+        Replace DoublePrecisionContext with Precision.DoubleEquivalence from Commons Numbers.
+      </action>
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-118">
+        Add coordinate-specific transform methods to AffineTransformMatrixXD classes, e.g.
+        "applyX", "applyY", "applyZ".
+      </action>
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-95">
+        Add solid geometry tutorial.
+      </action>
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-120">
+        Add SimpleTriangleMeshBuilder.addFace(int[]) method as alternative to
+        addFace(int, int, int).
+      </action>
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-117" due-to="Christoph Läubrich">
+        Add shear methods to AffineTransformMatrix2D.
+      </action>
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-119">
+        Add VectorXD.normalizeOrNull() methods so that callers can detect normalization failures
+        without needing to catch an exception.
+      </action>
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-115">
+        Add modules for IO functionality: commons-geometry-io-core, commons-geometry-io-euclidean.
+      </action>
+      <action dev="mattjuntunen" type="fix" issue="GEOMETRY-116">
+        Fix incorrect OSGi headers. Reported by Christoph Läubrich.
+      </action>
+      <action dev="mattjuntunen" type="update" issue="GEOMETRY-109">
+        Rename the BoundarySourceXX.from() static factory methods to "of" to better match
+        the JDK's Stream.of() method.
+      </action>
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-108">
+        Add BoundaryList interface and implementation classes.
+      </action>
+      <action dev="mattjuntunen" type="update" issue="GEOMETRY-103" due-to="Arturo Bernal">
+        Migrate unit tests to JUnit 5.
+      </action>
     </release>
 
     <release version="1.0-beta1" date="2020-07-20" description="
