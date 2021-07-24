@@ -44,7 +44,8 @@ public interface BoundaryReadHandler<H extends HyperplaneConvexSubset<?>, B exte
     GeometryFormat getFormat();
 
     /** Return an object containing all boundaries read from {@code input} using the handler's
-     * supported data format.
+     * supported data format. Implementations may throw runtime exceptions if mathematically
+     * invalid boundaries are encountered.
      * @param input input to read form
      * @param precision precision context used for floating point comparisons
      * @return object containing all boundaries read from {@code input}
@@ -70,7 +71,8 @@ public interface BoundaryReadHandler<H extends HyperplaneConvexSubset<?>, B exte
      * </pre>
      *
      * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
+     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
      * @param in input to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the boundary information from the given input

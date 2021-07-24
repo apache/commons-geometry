@@ -187,6 +187,7 @@ public class BoundaryIOManager<
     }
 
     /** Return a {@link BoundarySource} containing all boundaries from the given input.
+     * A runtime exception may be thrown if mathematically invalid boundaries are encountered.
      * @param in input to read boundaries from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
@@ -210,7 +211,8 @@ public class BoundaryIOManager<
      *  }
      *  </pre>
      * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
+     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
      * @param in input to read boundaries from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}

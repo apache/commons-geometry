@@ -191,7 +191,8 @@ public final class IO3D {
      * </pre>
      *
      * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
+     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
      * @param path file path to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the boundaries in the specified file
@@ -219,7 +220,8 @@ public final class IO3D {
      * </pre>
      *
      * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
+     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
      * @param url URL to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the boundaries in the specified URL
@@ -242,7 +244,8 @@ public final class IO3D {
      *  }
      *  </pre>
      * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
+     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
      * @param in input to read boundaries from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
@@ -272,7 +275,8 @@ public final class IO3D {
      * </pre>
      *
      * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
+     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
      * @param path file path to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the triangles in the specified file
@@ -300,7 +304,8 @@ public final class IO3D {
      * </pre>
      *
      * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
+     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
      * @param url URL to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the triangles from the specified URL
@@ -323,7 +328,8 @@ public final class IO3D {
      *  }
      * </pre>
      * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
+     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
      * @param in input to read from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
@@ -340,7 +346,8 @@ public final class IO3D {
     }
 
     /** Return a {@link BoundarySource3D} containing all boundaries from the file at the
-     * given path. The data format is determined from the file extension.
+     * given path. The data format is determined from the file extension. A runtime exception may be
+     * thrown if mathematically invalid boundaries are encountered.
      * @param path file path to read from
      * @param precision precision context used for floating point comparisons
      * @return object containing all boundaries from the file at the given path
@@ -355,7 +362,8 @@ public final class IO3D {
     }
 
     /** Return a {@link BoundarySource3D} containing all boundaries from the given URL. The data
-     * format is determined from the file extension of the URL path.
+     * format is determined from the file extension of the URL path. A runtime exception may be
+     * thrown if mathematically invalid boundaries are encountered.
      * @param url URL to read from
      * @param precision precision context used for floating point comparisons
      * @return object containing all boundaries from the given URL
@@ -369,7 +377,8 @@ public final class IO3D {
         return read(new UrlGeometryInput(url), null, precision);
     }
 
-    /** Return a {@link BoundarySource3D} containing all boundaries from the given input.
+    /** Return a {@link BoundarySource3D} containing all boundaries from the given input. A runtime
+     * exception may be thrown if mathematically invalid boundaries are encountered.
      * @param in input to read boundaries from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
@@ -386,7 +395,8 @@ public final class IO3D {
     }
 
     /** Return a {@link TriangleMesh} containing all triangles from the given file path. The data
-     * format is determined from the file extension of the path.
+     * format is determined from the file extension of the path. A runtime exception may be
+     * thrown if mathematically invalid boundaries are encountered.
      * @param path file path to read from
      * @param precision precision context used for floating point comparisons
      * @return mesh containing all triangles from the given file path
@@ -401,7 +411,8 @@ public final class IO3D {
     }
 
     /** Return a {@link TriangleMesh} containing all triangles from the given URL. The data
-     * format is determined from the file extension of the URL path.
+     * format is determined from the file extension of the URL path. A runtime exception may be
+     * thrown if mathematically invalid boundaries are encountered.
      * @param url URL to read from
      * @param precision precision context used for floating point comparisons
      * @return mesh containing all triangles from the given URL
@@ -415,7 +426,8 @@ public final class IO3D {
         return readTriangleMesh(new UrlGeometryInput(url), null, precision);
     }
 
-    /** Return a {@link TriangleMesh} containing all triangles from the given input.
+    /** Return a {@link TriangleMesh} containing all triangles from the given input. A runtime exception
+     * may be thrown if mathematically invalid boundaries are encountered.
      * @param in input to read from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}

@@ -68,7 +68,8 @@ public interface BoundaryReadHandler3D extends BoundaryReadHandler<PlaneConvexSu
      */
     Stream<FacetDefinition> facets(GeometryInput in) throws IOException;
 
-    /** Read a triangle mesh from the given input.
+    /** Read a triangle mesh from the given input. Implementations may throw runtime
+     * exceptions if mathematically invalid boundaries are encountered.
      * @param in input stream to read from
      * @param precision precision context used for floating point comparisons
      * @return triangle mesh containing the data from the given input stream
