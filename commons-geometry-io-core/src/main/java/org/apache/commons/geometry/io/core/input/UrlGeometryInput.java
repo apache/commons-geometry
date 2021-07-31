@@ -21,11 +21,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 
+import org.apache.commons.geometry.io.core.AbstractGeometryIOMetadata;
 import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 
 /** {@link GeometryInput} implementation for reading content from a URL.
  */
-public class UrlGeometryInput extends AbstractGeometryInput {
+public class UrlGeometryInput extends AbstractGeometryIOMetadata
+    implements GeometryInput {
 
     /** Input URL. */
     private final URL url;

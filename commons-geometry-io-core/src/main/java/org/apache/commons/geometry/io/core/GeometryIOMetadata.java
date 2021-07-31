@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.io.core.output;
+package org.apache.commons.geometry.io.core;
 
-import java.io.OutputStream;
+import java.nio.charset.Charset;
 
-import org.apache.commons.geometry.io.core.GeometryIOMetadata;
-
-/** Interface representing the output of a geometric IO operation.
+/** Interface containing basic metadata fields for use in I/O operations.
  */
-public interface GeometryOutput extends GeometryIOMetadata {
+public interface GeometryIOMetadata {
 
-    /** Get the output stream for writing to the output.
-     * @return output stream for writing to the output
-     * @throws java.io.UncheckedIOException if an I/O error occurs
+    /** Get the file name associated with the operation, if any.
+     * @return file name associated with the operation or null
+     *      if unknown or not applicable
      */
-    OutputStream getOutputStream();
+    String getFileName();
+
+    /** Get the charset for the operation, if any.
+     * @return charset for the operation or null if unknown or
+     *      not applicable
+     */
+    Charset getCharset();
 }

@@ -22,11 +22,13 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.commons.geometry.io.core.AbstractGeometryIOMetadata;
 import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 
 /** {@link GeometryOutput} implementation for writing content to a file.
  */
-public class FileGeometryOutput extends AbstractGeometryOutput {
+public class FileGeometryOutput extends AbstractGeometryIOMetadata
+    implements GeometryOutput {
 
     /** File to write to. */
     private final Path file;

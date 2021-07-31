@@ -19,9 +19,12 @@ package org.apache.commons.geometry.io.core.input;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import org.apache.commons.geometry.io.core.AbstractGeometryIOMetadata;
+
 /** {@link GeometryInput} implementation that wraps an {@link InputStream}.
  */
-public class StreamGeometryInput extends AbstractGeometryInput {
+public class StreamGeometryInput extends AbstractGeometryIOMetadata
+    implements GeometryInput {
 
     /** Input stream. */
     private final InputStream in;

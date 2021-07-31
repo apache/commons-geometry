@@ -17,23 +17,12 @@
 package org.apache.commons.geometry.io.core.input;
 
 import java.io.InputStream;
-import java.nio.charset.Charset;
 
-/** Interface representing input to a geometric IO operation.
+import org.apache.commons.geometry.io.core.GeometryIOMetadata;
+
+/** Interface representing input to a geometric I/O operation.
  */
-public interface GeometryInput {
-
-    /** Get the file name of the input.
-     * @return file name of the input
-     */
-    String getFileName();
-
-    /** Get the charset of the input or null if the charset
-     * is unknown or not applicable.
-     * @return charset of the input or null if unknown or
-     *      not applicable
-     */
-    Charset getCharset();
+public interface GeometryInput extends GeometryIOMetadata {
 
     /** Get the input stream for reading from the input.
      * @return input stream for reading from the input

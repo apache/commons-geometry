@@ -19,9 +19,12 @@ package org.apache.commons.geometry.io.core.output;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import org.apache.commons.geometry.io.core.AbstractGeometryIOMetadata;
+
 /** {@link GeometryOutput} implementation that wraps an {@link OutputStream}.
  */
-public class StreamGeometryOutput extends AbstractGeometryOutput {
+public class StreamGeometryOutput extends AbstractGeometryIOMetadata
+    implements GeometryOutput {
 
     /** Output stream. */
     private final OutputStream out;

@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.io.core.output;
+package org.apache.commons.geometry.io.core;
 
 import java.nio.charset.Charset;
 
-/** Abstract base class for {@link GeometryOutput} implementations.
+/** Abstract base class for {@link GeometryIOMetadata} implementations.
  */
-abstract class AbstractGeometryOutput implements GeometryOutput {
+public class AbstractGeometryIOMetadata implements GeometryIOMetadata {
 
-    /** Output file name. */
+    /** File name; may be null. */
     private final String fileName;
 
-    /** Output charset; may be null. */
+    /** Charset; may be null. */
     private final Charset charset;
 
     /** Construct a new instance with the given file name and charset.
-     * @param fileName file name
-     * @param charset charset to use when writing output; may be null
+     * @param fileName file name; may be null
+     * @param charset charset; may be null
      */
-    protected AbstractGeometryOutput(final String fileName, final Charset charset) {
+    protected AbstractGeometryIOMetadata(final String fileName, final Charset charset) {
         this.fileName = fileName;
         this.charset = charset;
     }

@@ -22,11 +22,13 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.commons.geometry.io.core.AbstractGeometryIOMetadata;
 import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 
 /** {@link GeometryInput} implementation for reading content from a file.
  */
-public class FileGeometryInput extends AbstractGeometryInput {
+public class FileGeometryInput extends AbstractGeometryIOMetadata
+    implements GeometryInput {
 
     /** Input file. */
     private final Path file;
