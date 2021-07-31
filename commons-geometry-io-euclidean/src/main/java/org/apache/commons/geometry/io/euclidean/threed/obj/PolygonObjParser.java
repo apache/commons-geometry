@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,8 +104,8 @@ public class PolygonObjParser extends AbstractObjParser {
         return textureCoordinateCount;
     }
 
-    /** Return true if the instance is configured to throw an {@link IOException} when OBJ keywords not commonly
-     * used with files containing only polygon data are encountered. The default value is {@code false},
+    /** Return true if the instance is configured to throw an {@link IllegalStateException} when OBJ keywords
+     * not commonly used with files containing only polygon data are encountered. The default value is {@code false},
      * meaning that no keyword validation is performed. When set to true, only the following keywords are
      * accepted:
      * <ul>
@@ -126,9 +125,9 @@ public class PolygonObjParser extends AbstractObjParser {
         return failOnNonPolygonKeywords;
     }
 
-    /** Set the flag determining if the instance should throw an {@link IOException} when encountering keywords
-     * not commonly used with OBJ files containing only polygon data. If true, only the following keywords are
-     * accepted:
+    /** Set the flag determining if the instance should throw an {@link IllegalStateException} when encountering
+     * keywords not commonly used with OBJ files containing only polygon data. If true, only the following keywords
+     * are accepted:
      * <ul>
      *  <li>{@code v}</li>
      *  <li>{@code vn}</li>
@@ -149,7 +148,7 @@ public class PolygonObjParser extends AbstractObjParser {
 
     /** {@inheritDoc} */
     @Override
-    protected void handleKeyword(final String keywordValue) throws IOException {
+    protected void handleKeyword(final String keywordValue) {
         if (failOnNonPolygonKeywords && !STANDARD_POLYGON_KEYWORDS.contains(keywordValue)) {
             final String allowedKeywords = STANDARD_POLYGON_KEYWORDS.stream()
                     .sorted()
@@ -177,10 +176,10 @@ public class PolygonObjParser extends AbstractObjParser {
 
     /** Read an OBJ face definition from the current line.
      * @return OBJ face definition read from the current line
-     * @throws IOException if an I/O error occurs
      * @throws IllegalStateException if a face definition is not able to be parsed
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public Face readFace() throws IOException {
+    public Face readFace() {
         final List<VertexAttributes> vertices = new ArrayList<>();
 
         while (nextDataLineContent()) {
@@ -199,10 +198,10 @@ public class PolygonObjParser extends AbstractObjParser {
 
     /** Read an OBJ face vertex definition from the current parser position.
      * @return OBJ face vertex definition
-     * @throws IOException if an I/O error occurs
      * @throws IllegalStateException if a vertex definition is not able to be parsed
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private VertexAttributes readFaceVertex() throws IOException {
+    private VertexAttributes readFaceVertex() {
         final SimpleTextParser parser = getTextParser();
 
         discardDataLineWhitespace();
@@ -236,11 +235,11 @@ public class PolygonObjParser extends AbstractObjParser {
      * @param available number of available values of the given type parsed from the content
      *      so far
      * @return 0-based positive attribute index
-     * @throws IOException if an I/O error occurs
      * @throws IllegalStateException if the integer index cannot be parsed or the index is
      *      out of range for the number of parsed elements of the given type
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private int readNormalizedVertexAttributeIndex(final String type, final int available) throws IOException {
+    private int readNormalizedVertexAttributeIndex(final String type, final int available) {
         final SimpleTextParser parser = getTextParser();
 
         final int objIndex = parser

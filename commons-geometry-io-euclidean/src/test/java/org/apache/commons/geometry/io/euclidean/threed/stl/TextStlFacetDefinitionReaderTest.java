@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.stl;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +34,7 @@ class TextStlFacetDefinitionReaderTest {
     private static final double TEST_EPS = 1e-10;
 
     @Test
-    void testGetSolidName() throws IOException {
+    void testGetSolidName() {
         // act/assert
         Assertions.assertEquals("Test Name", facetReader("solid    Test Name  \r\n").getSolidName());
         Assertions.assertEquals("Test", facetReader("solid    Test  ").getSolidName());
@@ -44,7 +43,7 @@ class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    void testClose() throws IOException {
+    void testClose() {
         // arrange
         final CloseCountReader countReader = new CloseCountReader(new StringReader(""));
         final TextStlFacetDefinitionReader reader = new TextStlFacetDefinitionReader(countReader);
@@ -57,7 +56,7 @@ class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    void testEmpty() throws IOException {
+    void testEmpty() {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid \n" +
@@ -74,7 +73,7 @@ class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    void testSingleFacet() throws IOException {
+    void testSingleFacet() {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid test\n" +
@@ -104,7 +103,7 @@ class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    void testMultipleFacets() throws IOException {
+    void testMultipleFacets() {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid test solid\r\n\n" +
@@ -158,7 +157,7 @@ class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    void testNoName() throws IOException {
+    void testNoName() {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid\n" +
@@ -188,7 +187,7 @@ class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    void testContentEndsEarly() throws IOException {
+    void testContentEndsEarly() {
         // arrange
         final TextStlFacetDefinitionReader reader = facetReader(
                 "solid test\n" +
@@ -217,7 +216,7 @@ class TextStlFacetDefinitionReaderTest {
     }
 
     @Test
-    void testParseErrors() throws IOException {
+    void testParseErrors() {
         // act/assert
         assertParseError(
                 "soli test\n" +
@@ -248,7 +247,7 @@ class TextStlFacetDefinitionReaderTest {
     private static void assertParseError(final String content) {
         GeometryTestUtils.assertThrowsWithMessage(
                 () -> EuclideanIOTestUtils.readAll(facetReader(content)),
-                IOException.class,
+                IllegalStateException.class,
                 Pattern.compile("^Parsing failed.*"));
     }
 }

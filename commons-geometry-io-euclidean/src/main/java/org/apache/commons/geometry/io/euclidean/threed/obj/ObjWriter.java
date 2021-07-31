@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,9 +70,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
 
     /** Write an OBJ comment with the given value.
      * @param comment comment to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeComment(final String comment) throws IOException {
+    public void writeComment(final String comment) {
         for (final String line : comment.split("\\R")) {
             write(ObjConstants.COMMENT_CHAR);
             write(SPACE);
@@ -86,9 +85,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      * does not affect the geometry, although it may affect how the file content
      * is read by other programs.
      * @param objectName the name to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeObjectName(final String objectName) throws IOException {
+    public void writeObjectName(final String objectName) {
         writeKeywordLine(ObjConstants.OBJECT_KEYWORD, objectName);
     }
 
@@ -96,27 +95,27 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      * does not affect the geometry, although it may affect how the file content
      * is read by other programs.
      * @param groupName the name to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeGroupName(final String groupName) throws IOException {
+    public void writeGroupName(final String groupName) {
         writeKeywordLine(ObjConstants.GROUP_KEYWORD, groupName);
     }
 
     /** Write a vertex and return the 0-based index of the vertex in the output.
      * @param vertex vertex to write
-     * @throws IOException if an I/O error occurs
      * @return 0-based index of the written vertex
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public int writeVertex(final Vector3D vertex) throws IOException {
+    public int writeVertex(final Vector3D vertex) {
         return writeVertexLine(createVectorString(vertex));
     }
 
     /** Write a vertex normal and return the 0-based index of the normal in the output.
      * @param normal normal to write
-     * @throws IOException if an I/O error occurs
      * @return 0-based index of the written normal
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public int writeVertexNormal(final Vector3D normal) throws IOException {
+    public int writeVertexNormal(final Vector3D normal) {
         return writeVertexNormalLine(createVectorString(normal));
     }
 
@@ -125,9 +124,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      * @throws IllegalArgumentException if fewer than 3 vertex indices are given
      * @throws IndexOutOfBoundsException if any vertex index is computed to be outside of
      *      the bounds of the elements written so far
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeFace(final int... vertexIndices) throws IOException {
+    public void writeFace(final int... vertexIndices) {
         writeFaceWithOffsets(0, vertexIndices, 0, null);
     }
 
@@ -137,9 +136,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      * @param normalIndex 0-based normal index
      * @throws IndexOutOfBoundsException if any vertex or normal index is computed to be outside of
      *      the bounds of the elements written so far
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeFace(final int[] vertexIndices, final int normalIndex) throws IOException {
+    public void writeFace(final int[] vertexIndices, final int normalIndex) {
         final int[] normalIndices = new int[vertexIndices.length];
         Arrays.fill(normalIndices, normalIndex);
 
@@ -156,9 +155,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      *      is not null but has a different length than {@code vertexIndices}
      * @throws IndexOutOfBoundsException if any vertex or normal index is computed to be outside of
      *      the bounds of the elements written so far
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeFace(final int[] vertexIndices, final int[] normalIndices) throws IOException {
+    public void writeFace(final int[] vertexIndices, final int[] normalIndices) {
         writeFaceWithOffsets(0, vertexIndices, 0, normalIndices);
     }
 
@@ -166,11 +165,11 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      * with an unlimited size.
      * @param src boundary source containing the boundaries to write to the output
      * @throws IllegalArgumentException if any boundary in the argument is infinite
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #meshBuffer(int)
      * @see #writeMesh(Mesh)
      */
-    public void writeBoundaries(final BoundarySource3D src) throws IOException {
+    public void writeBoundaries(final BoundarySource3D src) {
         writeBoundaries(src, -1);
     }
 
@@ -180,12 +179,11 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      * @param batchSize batch size to use for the mesh buffer; pass {@code -1} to use a buffer
      *      of unlimited size
      * @throws IllegalArgumentException if any boundary in the argument is infinite
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #meshBuffer(int)
      * @see #writeMesh(Mesh)
      */
-    public void writeBoundaries(final BoundarySource3D src, final int batchSize)
-            throws IOException {
+    public void writeBoundaries(final BoundarySource3D src, final int batchSize) {
         final MeshBuffer buffer = meshBuffer(batchSize);
 
         try (Stream<PlaneConvexSubset> stream = src.boundaryStream()) {
@@ -201,9 +199,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
     /** Write a mesh to the output. All vertices and faces are written exactly as found. For example,
      * if a vertex is duplicated in the argument, it will also be duplicated in the output.
      * @param mesh the mesh to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeMesh(final Mesh<?> mesh) throws IOException {
+    public void writeMesh(final Mesh<?> mesh) {
         final int vertexOffset = vertexCount;
 
         for (final Vector3D vertex : mesh.vertices()) {
@@ -249,10 +247,10 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      *      is not null but has a different length than {@code vertexIndices}
      * @throws IndexOutOfBoundsException if any vertex or normal index is computed to be outside of
      *      the bounds of the elements written so far
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     private void writeFaceWithOffsets(final int vertexOffset, final int[] vertexIndices,
-            final int normalOffset, final int[] normalIndices) throws IOException {
+            final int normalOffset, final int[] normalIndices) {
         if (vertexIndices.length < 3) {
             throw new IllegalArgumentException("Face must have more than 3 vertices; found " + vertexIndices.length);
         } else if (normalIndices != null && normalIndices.length != vertexIndices.length) {
@@ -310,9 +308,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
     /** Write a vertex line containing the given string content.
      * @param content vertex string content
      * @return the 0-based index of the added vertex
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private int writeVertexLine(final String content) throws IOException {
+    private int writeVertexLine(final String content) {
         writeKeywordLine(ObjConstants.VERTEX_KEYWORD, content);
         return vertexCount++;
     }
@@ -320,9 +318,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
     /** Write a vertex normal line containing the given string content.
      * @param content vertex normal string content
      * @return the 0-based index of the added vertex normal
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private int writeVertexNormalLine(final String content) throws IOException {
+    private int writeVertexNormalLine(final String content) {
         writeKeywordLine(ObjConstants.VERTEX_NORMAL_KEYWORD, content);
         return normalCount++;
     }
@@ -330,9 +328,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
     /** Write a line of content prefixed with the given OBJ keyword.
      * @param keyword OBJ keyword
      * @param content line content
-     * @throws IOException if and I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void writeKeywordLine(final String keyword, final String content) throws IOException {
+    private void writeKeywordLine(final String keyword, final String content) {
         write(keyword);
         write(SPACE);
         write(content);
@@ -382,9 +380,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
          * of currently stored faces is greater than or equal to {@code batchSize}, then the buffer
          * content is written to the output and the buffer state is reset.
          * @param facet facet to add
-         * @throws IOException if an I/O error occurs
+         * @throws java.io.UncheckedIOException if an I/O error occurs
          */
-        public void add(final FacetDefinition facet) throws IOException {
+        public void add(final FacetDefinition facet) {
             addFace(facet.getVertices(), facet.getNormal());
         }
 
@@ -393,9 +391,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
          * content is written to the output and the buffer state is reset.
          * @param boundary boundary to add
          * @throws IllegalArgumentException if the boundary is infinite
-         * @throws IOException if an I/O error occurs
+         * @throws java.io.UncheckedIOException if an I/O error occurs
          */
-        public void add(final PlaneConvexSubset boundary) throws IOException {
+        public void add(final PlaneConvexSubset boundary) {
             if (boundary.isInfinite()) {
                 throw new IllegalArgumentException("OBJ input geometry cannot be infinite: " + boundary);
             } else if (!boundary.isEmpty()) {
@@ -420,9 +418,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
         }
 
         /** Flush the buffer content to the output and reset its state.
-         * @throws IOException if an I/O error occurs
+         * @throws java.io.UncheckedIOException if an I/O error occurs
          */
-        public void flush() throws IOException {
+        public void flush() {
             final int vertexOffset = vertexCount;
             final int normalOffset = normalCount;
 
@@ -474,9 +472,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
          * content is written to the output and the buffer state is reset.
          * @param vertices face vertices
          * @param normal face normal; may be null
-         * @throws IOException if an I/O error occurs
+         * @throws java.io.UncheckedIOException if an I/O error occurs
          */
-        private void addFace(final List<Vector3D> vertices, final Vector3D normal) throws IOException {
+        private void addFace(final List<Vector3D> vertices, final Vector3D normal) {
             final int faceIndex = faceVertices.size();
 
             final int[] vertexIndices = new int[vertices.size()];

@@ -16,9 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.txt;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
@@ -26,6 +23,7 @@ import java.util.function.DoubleFunction;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
 import org.apache.commons.geometry.io.euclidean.threed.AbstractBoundaryWriteHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
@@ -97,8 +95,7 @@ public abstract class AbstractTextBoundaryWriteHandler3D extends AbstractBoundar
 
     /** {@inheritDoc} */
     @Override
-    public void write(final Stream<? extends PlaneConvexSubset> boundaries, final GeometryOutput out)
-            throws IOException {
+    public void write(final Stream<? extends PlaneConvexSubset> boundaries, final GeometryOutput out) {
         try (TextFacetDefinitionWriter writer = getFacetDefinitionWriter(out)) {
             final Iterator<? extends PlaneConvexSubset> it = boundaries.iterator();
             while (it.hasNext()) {
@@ -109,8 +106,7 @@ public abstract class AbstractTextBoundaryWriteHandler3D extends AbstractBoundar
 
     /** {@inheritDoc} */
     @Override
-    public void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out)
-            throws IOException {
+    public void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out) {
         try (TextFacetDefinitionWriter writer = getFacetDefinitionWriter(out)) {
             final Iterator<? extends FacetDefinition> it = facets.iterator();
             while (it.hasNext()) {
@@ -122,15 +118,11 @@ public abstract class AbstractTextBoundaryWriteHandler3D extends AbstractBoundar
     /** Get a configured {@link TextFacetDefinitionWriter} for writing output.
      * @param out output stream to write to
      * @return a new, configured text format writer
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected TextFacetDefinitionWriter getFacetDefinitionWriter(final GeometryOutput out) throws IOException {
-        final Charset charset = out.getCharset() != null ?
-                out.getCharset() :
-                defaultCharset;
-
-        final TextFacetDefinitionWriter facetWriter = new TextFacetDefinitionWriter(
-                new BufferedWriter(new OutputStreamWriter(out.getOutputStream(), charset)));
+    protected TextFacetDefinitionWriter getFacetDefinitionWriter(final GeometryOutput out) {
+        final TextFacetDefinitionWriter facetWriter =
+                new TextFacetDefinitionWriter(GeometryIOUtils.createBufferedWriter(out, defaultCharset));
 
         facetWriter.setLineSeparator(lineSeparator);
         facetWriter.setDoubleFormat(doubleFormat);

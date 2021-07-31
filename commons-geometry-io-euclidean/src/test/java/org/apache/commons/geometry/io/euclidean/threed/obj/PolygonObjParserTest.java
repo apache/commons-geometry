@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +47,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testNextKeyword() throws IOException {
+    void testNextKeyword() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "#comment",
@@ -81,7 +80,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testNextKeyword_polygonKeywordsOnly_valid() throws IOException {
+    void testNextKeyword_polygonKeywordsOnly_valid() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v",
@@ -111,7 +110,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testNextKeyword_polygonKeywordsOnly_invalid() throws IOException {
+    void testNextKeyword_polygonKeywordsOnly_invalid() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "",
@@ -122,13 +121,13 @@ class PolygonObjParserTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.nextKeyword();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 1: expected keyword to be one of " +
                 "[f, g, mtllib, o, s, usemtl, v, vn, vt] but was [curv2]");
     }
 
     @Test
-    void testNextKeyword_emptyContent() throws IOException {
+    void testNextKeyword_emptyContent() {
         // arrange
         final PolygonObjParser p = parser("");
 
@@ -137,7 +136,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testNextKeyword_unexpectedContent() throws IOException {
+    void testNextKeyword_unexpectedContent() {
         // arrange
         final PolygonObjParser p = parser(lines(
                     " f",
@@ -147,17 +146,17 @@ class PolygonObjParserTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.nextKeyword();
-        }, IOException.class, "Parsing failed at line 1, column 2: " +
+        }, IllegalStateException.class, "Parsing failed at line 1, column 2: " +
             "non-blank lines must begin with an OBJ keyword or comment character");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.nextKeyword();
-        }, IOException.class, "Parsing failed at line 2, column 1: " +
+        }, IllegalStateException.class, "Parsing failed at line 2, column 1: " +
             "expected OBJ keyword but found empty token followed by [-]");
     }
 
     @Test
-    void testReadDataLine() throws IOException {
+    void testReadDataLine() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "  line\t",
@@ -177,7 +176,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testDiscardDataLine() throws IOException {
+    void testDiscardDataLine() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "  line\t",
@@ -208,7 +207,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testReadVector() throws IOException {
+    void testReadVector() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "1.01 3e-02 123.999 extra"
@@ -219,7 +218,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testReadVector_parseFailures() throws IOException {
+    void testReadVector_parseFailures() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "0.1 0.2 a",
@@ -230,17 +229,17 @@ class PolygonObjParserTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readVector();
-        }, IOException.class, "Parsing failed at line 1, column 9: expected double but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 9: expected double but found [a]");
 
         p.readDataLine();
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readVector();
-        }, IOException.class, "Parsing failed at line 2, column 2: expected double but found end of line");
+        }, IllegalStateException.class, "Parsing failed at line 2, column 2: expected double but found end of line");
     }
 
     @Test
-    void testReadDoubles() throws IOException {
+    void testReadDoubles() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "0.1 0.2 3e2 4e2 500.01",
@@ -269,7 +268,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testReadDoubles_parseFailures() throws IOException {
+    void testReadDoubles_parseFailures() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "0.1 0.2 a",
@@ -279,17 +278,17 @@ class PolygonObjParserTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readDoubles();
-        }, IOException.class, "Parsing failed at line 1, column 9: expected double but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 9: expected double but found [a]");
 
         p.readDataLine();
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readDoubles();
-        }, IOException.class, "Parsing failed at line 2, column 1: expected double but found [b]");
+        }, IllegalStateException.class, "Parsing failed at line 2, column 1: expected double but found [b]");
     }
 
     @Test
-    void testReadFace() throws IOException {
+    void testReadFace() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -394,7 +393,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testReadFace_notEnoughVertices() throws IOException {
+    void testReadFace_notEnoughVertices() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -408,12 +407,12 @@ class PolygonObjParserTest {
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 5, column 6: " +
+        }, IllegalStateException.class, "Parsing failed at line 5, column 6: " +
             "face must contain at least 3 vertices but found only 2");
     }
 
     @Test
-    void testReadFace_invalidVertexIndex() throws IOException {
+    void testReadFace_invalidVertexIndex() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -430,30 +429,30 @@ class PolygonObjParserTest {
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 2, column 3: " +
+        }, IllegalStateException.class, "Parsing failed at line 2, column 3: " +
             "vertex index cannot be used because no values of that type have been defined");
 
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 6, column 7: " +
+        }, IllegalStateException.class, "Parsing failed at line 6, column 7: " +
             "vertex index must evaluate to be within the range [1, 3] but was -4");
 
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 7, column 5: " +
+        }, IllegalStateException.class, "Parsing failed at line 7, column 5: " +
             "vertex index must evaluate to be within the range [1, 3] but was 0");
 
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 8, column 3: " +
+        }, IllegalStateException.class, "Parsing failed at line 8, column 3: " +
             "vertex index must evaluate to be within the range [1, 3] but was 4");
     }
 
     @Test
-    void testReadFace_invalidTextureIndex() throws IOException {
+    void testReadFace_invalidTextureIndex() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -473,30 +472,30 @@ class PolygonObjParserTest {
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 5, column 5: " +
+        }, IllegalStateException.class, "Parsing failed at line 5, column 5: " +
             "texture index cannot be used because no values of that type have been defined");
 
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 9, column 13: " +
+        }, IllegalStateException.class, "Parsing failed at line 9, column 13: " +
             "texture index must evaluate to be within the range [1, 3] but was -4");
 
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 10, column 9: " +
+        }, IllegalStateException.class, "Parsing failed at line 10, column 9: " +
             "texture index must evaluate to be within the range [1, 3] but was 0");
 
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 11, column 5: " +
+        }, IllegalStateException.class, "Parsing failed at line 11, column 5: " +
             "texture index must evaluate to be within the range [1, 3] but was 4");
     }
 
     @Test
-    void testReadFace_invalidNormalIndex() throws IOException {
+    void testReadFace_invalidNormalIndex() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -516,30 +515,30 @@ class PolygonObjParserTest {
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 5, column 6: " +
+        }, IllegalStateException.class, "Parsing failed at line 5, column 6: " +
             "normal index cannot be used because no values of that type have been defined");
 
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 9, column 16: " +
+        }, IllegalStateException.class, "Parsing failed at line 9, column 16: " +
             "normal index must evaluate to be within the range [1, 3] but was -4");
 
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 10, column 11: " +
+        }, IllegalStateException.class, "Parsing failed at line 10, column 11: " +
             "normal index must evaluate to be within the range [1, 3] but was 0");
 
         nextFace(p);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.readFace();
-        }, IOException.class, "Parsing failed at line 11, column 6: " +
+        }, IllegalStateException.class, "Parsing failed at line 11, column 6: " +
             "normal index must evaluate to be within the range [1, 3] but was 4");
     }
 
     @Test
-    void testParse() throws IOException {
+    void testParse() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "# test content",
@@ -627,7 +626,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testFace_getDefinedCompositeNormal() throws IOException {
+    void testFace_getDefinedCompositeNormal() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",
@@ -675,7 +674,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testFace_computeNormalFromVertices() throws IOException {
+    void testFace_computeNormalFromVertices() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",
@@ -706,7 +705,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testFace_getVertexAttributesCounterClockwise() throws IOException {
+    void testFace_getVertexAttributesCounterClockwise() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",
@@ -742,7 +741,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testFace_getVertices() throws IOException {
+    void testFace_getVertices() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",
@@ -770,7 +769,7 @@ class PolygonObjParserTest {
     }
 
     @Test
-    void testFace_getVerticesCounterClockwise() throws IOException {
+    void testFace_getVerticesCounterClockwise() {
         // arrange
         final PolygonObjParser p = parser(lines(
                 "v 0 0 0",
@@ -821,11 +820,11 @@ class PolygonObjParserTest {
         return sb.toString();
     }
 
-    private static void nextFace(final PolygonObjParser parser) throws IOException {
+    private static void nextFace(final PolygonObjParser parser) {
         nextMatchingKeyword(ObjConstants.FACE_KEYWORD, parser);
     }
 
-    private static void nextMatchingKeyword(final String keyword, final PolygonObjParser parser) throws IOException {
+    private static void nextMatchingKeyword(final String keyword, final PolygonObjParser parser) {
         while (parser.nextKeyword()) {
             if (keyword.equals(parser.getCurrentKeyword())) {
                 return;
@@ -833,7 +832,7 @@ class PolygonObjParserTest {
         }
     }
 
-    private static void assertNextKeyword(final String expected, final PolygonObjParser parser) throws IOException {
+    private static void assertNextKeyword(final String expected, final PolygonObjParser parser) {
         Assertions.assertEquals(expected != null, parser.nextKeyword());
         Assertions.assertEquals(expected, parser.getCurrentKeyword());
     }

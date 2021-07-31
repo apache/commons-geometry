@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed;
 
-import java.io.IOException;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
@@ -44,9 +43,10 @@ public interface BoundaryReadHandler3D extends BoundaryReadHandler<PlaneConvexSu
      * input stream.
      * @param in input stream to read from
      * @return facet definition reader instance
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    FacetDefinitionReader facetDefinitionReader(GeometryInput in) throws IOException;
+    FacetDefinitionReader facetDefinitionReader(GeometryInput in);
 
     /** Return a {@link Stream} that can be used to access all facet information from the given input stream.
      * The input stream is expected to contain data in the format supported by this handler.
@@ -60,20 +60,25 @@ public interface BoundaryReadHandler3D extends BoundaryReadHandler<PlaneConvexSu
      *  }
      * </pre>
      *
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * <p>The following exceptions may be thrown during stream iteration:</p>
+     * <ul>
+     *  <li>{@link IllegalArgumentException} if mathematically invalid data is encountered</li>
+     *  <li>{@link IllegalStateException} if a parsing or syntax error occurs</li>
+     *  <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     * </ul>
      * @param in input stream to read from; this is <em>not</em> closed when the returned stream is closed
      * @return stream providing access to the facet information from the given input stream
-     * @throws IOException if an I/O or data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      */
-    Stream<FacetDefinition> facets(GeometryInput in) throws IOException;
+    Stream<FacetDefinition> facets(GeometryInput in);
 
     /** Read a triangle mesh from the given input. Implementations may throw runtime
      * exceptions if mathematically invalid boundaries are encountered.
      * @param in input stream to read from
      * @param precision precision context used for floating point comparisons
      * @return triangle mesh containing the data from the given input stream
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalStateException if a parsing or syntax error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    TriangleMesh readTriangleMesh(GeometryInput in, Precision.DoubleEquivalence precision) throws IOException;
+    TriangleMesh readTriangleMesh(GeometryInput in, Precision.DoubleEquivalence precision);
 }

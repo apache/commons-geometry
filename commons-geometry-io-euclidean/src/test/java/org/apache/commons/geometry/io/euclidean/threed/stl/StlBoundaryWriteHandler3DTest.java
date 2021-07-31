@@ -19,21 +19,26 @@ package org.apache.commons.geometry.io.euclidean.threed.stl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.BoundaryList3D;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
+import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.geometry.io.core.input.GeometryInput;
 import org.apache.commons.geometry.io.core.input.StreamGeometryInput;
+import org.apache.commons.geometry.io.core.output.GeometryOutput;
 import org.apache.commons.geometry.io.core.output.StreamGeometryOutput;
 import org.apache.commons.geometry.io.euclidean.EuclideanIOTestUtils;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
@@ -82,7 +87,7 @@ class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWrite_boundarySource_empty() throws IOException {
+    void testWrite_boundarySource_empty() {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of();
 
@@ -94,7 +99,7 @@ class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWrite_boundaryList() throws IOException {
+    void testWrite_boundaryList() {
         // arrange
         final BoundarySource3D src = EuclideanIOTestUtils.cubeMinusSphere(TEST_PRECISION);
 
@@ -106,7 +111,7 @@ class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWrite_triangleMesh() throws IOException {
+    void testWrite_triangleMesh() {
         // arrange
         final TriangleMesh mesh = EuclideanIOTestUtils.cubeMinusSphere(TEST_PRECISION)
                 .toTriangleMesh(TEST_PRECISION);
@@ -119,7 +124,7 @@ class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWrite_triangleMesh_empty() throws IOException {
+    void testWrite_triangleMesh_empty() {
         // arrange
         final TriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION)
                 .build();
@@ -132,7 +137,31 @@ class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteFacets_list() throws IOException {
+    void testWriteStream_ioException() {
+        // arrange
+        final Stream<PlaneConvexSubset> stream = EuclideanIOTestUtils.cubeMinusSphere(TEST_PRECISION).boundaryStream();
+        final OutputStream failOut = new OutputStream() {
+            @Override
+            public void write(final int b) throws IOException {
+                // do nothing
+            }
+
+            @Override
+            public void close() throws IOException {
+                throw new IOException("close");
+            }
+        };
+        final GeometryOutput output = new StreamGeometryOutput(failOut);
+
+        // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(
+                () -> handler.write(stream, output),
+                UncheckedIOException.class,
+                "IOException: close");
+    }
+
+    @Test
+    void testWriteFacets_list() {
         // arrange
         final List<FacetDefinition> facets = cubeFacets();
 
@@ -144,7 +173,7 @@ class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteFacets_list_empty() throws IOException {
+    void testWriteFacets_list_empty() {
         // act
         handler.writeFacets(Collections.emptyList(), new StreamGeometryOutput(out));
 
@@ -153,7 +182,7 @@ class StlBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteFacets_includesStlFacetAttribute() throws IOException {
+    void testWriteFacets_includesStlFacetAttribute() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));
         final Vector3D normal = Vector3D.Unit.PLUS_Z;
@@ -174,7 +203,7 @@ class StlBoundaryWriteHandler3DTest {
         Assertions.assertEquals(attr, result.getAttributeValue());
     }
 
-    private BoundaryList3D readOutput() throws IOException {
+    private BoundaryList3D readOutput() {
         final GeometryInput input = new StreamGeometryInput(new ByteArrayInputStream(out.toByteArray()));
 
         final StlBoundaryReadHandler3D readHandler = new StlBoundaryReadHandler3D();

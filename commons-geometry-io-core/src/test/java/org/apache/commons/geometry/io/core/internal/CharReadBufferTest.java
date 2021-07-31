@@ -19,6 +19,7 @@ package org.apache.commons.geometry.io.core.internal;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.util.Random;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -44,7 +45,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testHasMoreCharacters() throws IOException {
+    void testHasMoreCharacters() {
         // act/assert
         for (int s = 1; s < 10; s += 2) {
             Assertions.assertFalse(new CharReadBuffer(reader("")).hasMoreCharacters());
@@ -65,7 +66,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testPeekRead() throws IOException {
+    void testPeekRead() {
         // arrange
         final String str = "abcdefg";
         final CharReadBuffer buf = new CharReadBuffer(reader(str), 1);
@@ -88,7 +89,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testCharAt() throws IOException {
+    void testCharAt() {
         // arrange
         final String str = "abcdefgh";
         final CharReadBuffer buf = new CharReadBuffer(reader(str), 3);
@@ -109,7 +110,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testCharAt_invalidArg() throws IOException {
+    void testCharAt_invalidArg() {
         // arrange
         final String str = "abcdefgh";
         final CharReadBuffer buf = new CharReadBuffer(reader(str), 3);
@@ -121,7 +122,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testReadPeek_string() throws IOException {
+    void testReadPeek_string() {
         // arrange
         final String str = "abcdefgh";
         final CharReadBuffer buf = new CharReadBuffer(reader(str), 50);
@@ -141,7 +142,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testReadPeek_tring_zeroLen() throws IOException {
+    void testReadPeek_tring_zeroLen() {
         // act/assert
         Assertions.assertNull(new CharReadBuffer(reader("")).peekString(0));
         Assertions.assertNull(new CharReadBuffer(reader("")).readString(0));
@@ -151,7 +152,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testReadPeek_string_invalidArg() throws IOException {
+    void testReadPeek_string_invalidArg() {
         // arrange
         final CharReadBuffer buf = new CharReadBuffer(reader("a"));
         final String msg = "Requested string length cannot be negative; was -1";
@@ -167,7 +168,23 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testSkip() throws IOException {
+    void testReadPeek_failure() {
+        // arrange
+        final CharReadBuffer buf = new CharReadBuffer(failReader());
+        final String msg = "IOException: read";
+
+        // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            buf.peekString(3);
+        }, UncheckedIOException.class, msg);
+
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            buf.readString(3);
+        }, UncheckedIOException.class, msg);
+    }
+
+    @Test
+    void testSkip() {
         // arrange
         final CharReadBuffer buf = new CharReadBuffer(reader("abcdefg"), 3);
         buf.peekString(2);
@@ -193,7 +210,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testSkip_invalidArg() throws IOException {
+    void testSkip_invalidArg() {
         // arrange
         final CharReadBuffer buf = new CharReadBuffer(reader("a"));
 
@@ -204,7 +221,18 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testPushString_emptyReader() throws IOException {
+    void testSkip_failure() {
+        // arrange
+        final CharReadBuffer buf = new CharReadBuffer(failReader());
+
+        // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            buf.skip(10);
+        }, UncheckedIOException.class, "IOException: skip");
+    }
+
+    @Test
+    void testPushString_emptyReader() {
         // arrange
         final String a = "abcd";
         final String b = "efgh";
@@ -220,7 +248,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testPushString_nonEmptyReader() throws IOException {
+    void testPushString_nonEmptyReader() {
         // arrange
         final String a = "abcd";
         final String b = "efgh";
@@ -236,7 +264,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testPush_emptyReader() throws IOException {
+    void testPush_emptyReader() {
         // arrange
         final CharReadBuffer buf = new CharReadBuffer(reader("ABCD"), 1);
 
@@ -252,7 +280,7 @@ class CharReadBufferTest {
     }
 
     @Test
-    void testAlternatingPushAndRead() throws IOException {
+    void testAlternatingPushAndRead() {
         // arrange
         final String str = repeat("abcdefghijlmnopqrstuvwxyz", 10);
 
@@ -279,6 +307,25 @@ class CharReadBufferTest {
 
     private static Reader reader(final String content) {
         return new StringReader(content);
+    }
+
+    private static Reader failReader() {
+        return new Reader() {
+
+            @Override
+            public int read(char[] cbuf, int off, int len) throws IOException {
+                throw new IOException("read");
+            }
+
+            @Override
+            public long skip(final long skip) throws IOException {
+                throw new IOException("skip");
+            }
+
+            @Override
+            public void close() {
+            }
+        };
     }
 
     private static String repeat(final String str, final int count) {

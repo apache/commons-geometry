@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.stream.Stream;
 
@@ -30,8 +29,7 @@ public abstract class AbstractBoundaryWriteHandler3D implements BoundaryWriteHan
 
     /** {@inheritDoc} */
     @Override
-    public void write(final BoundarySource3D src, final GeometryOutput out)
-            throws IOException {
+    public void write(final BoundarySource3D src, final GeometryOutput out) {
         try (Stream<PlaneConvexSubset> stream = src.boundaryStream()) {
             write(stream, out);
         }
@@ -39,8 +37,7 @@ public abstract class AbstractBoundaryWriteHandler3D implements BoundaryWriteHan
 
     /** {@inheritDoc} */
     @Override
-    public void writeFacets(final Collection<? extends FacetDefinition> facets, final GeometryOutput out)
-            throws IOException {
+    public void writeFacets(final Collection<? extends FacetDefinition> facets, final GeometryOutput out) {
         writeFacets(facets.stream(), out);
     }
 }

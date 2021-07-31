@@ -69,7 +69,7 @@ class IO3DTest {
     public Path tempDir;
 
     @Test
-    void testStreamExample() throws IOException {
+    void testStreamExample() {
         final Path origFile = tempDir.resolve("orig.obj");
         final Path scaledFile = tempDir.resolve("scaled.csv");
 
@@ -296,21 +296,24 @@ class IO3DTest {
         final Path tmp = Files.createTempFile("tmp", "." + fmt.getDefaultFileExtension());
 
         final BoundarySource3D orig;
-        try (CloseCountInputStream in = new CloseCountInputStream(new BufferedInputStream(Files.newInputStream(path)))) {
+        try (CloseCountInputStream in =
+                new CloseCountInputStream(new BufferedInputStream(Files.newInputStream(path)))) {
             orig = readFn.read(fmt, new StreamGeometryInput(in));
 
             Assertions.assertEquals(1, in.getCloseCount());
         }
         assertRegion(expected, orig);
 
-        try (CloseCountOutputStream out = new CloseCountOutputStream(new BufferedOutputStream(Files.newOutputStream(tmp)))) {
+        try (CloseCountOutputStream out =
+                new CloseCountOutputStream(new BufferedOutputStream(Files.newOutputStream(tmp)))) {
             writeFn.write(orig, fmt, new StreamGeometryOutput(out));
 
             Assertions.assertEquals(1, out.getCloseCount());
         }
 
         final BoundarySource3D result;
-        try (CloseCountInputStream in = new CloseCountInputStream(new BufferedInputStream(Files.newInputStream(tmp)))) {
+        try (CloseCountInputStream in =
+                new CloseCountInputStream(new BufferedInputStream(Files.newInputStream(tmp)))) {
             result = readFn.read(fmt, new StreamGeometryInput(in));
         }
         assertRegion(expected, result);
@@ -348,7 +351,7 @@ class IO3DTest {
         return inputs;
     }
 
-    private static BoundaryList3D readerToBoundaryList(final FacetDefinitionReader reader) throws IOException {
+    private static BoundaryList3D readerToBoundaryList(final FacetDefinitionReader reader) {
         try (FacetDefinitionReader toClose = reader) {
             final List<PlaneConvexSubset> list = new ArrayList<>();
             FacetDefinition f;
@@ -360,7 +363,7 @@ class IO3DTest {
         }
     }
 
-    private static BoundaryList3D facetsToBoundaryList(final Stream<FacetDefinition> stream) throws IOException {
+    private static BoundaryList3D facetsToBoundaryList(final Stream<FacetDefinition> stream) {
         try (Stream<FacetDefinition> facetStream = stream) {
             final List<PlaneConvexSubset> list = facetStream
                     .map(f -> FacetDefinitions.toPolygon(f, MODEL_PRECISION))
@@ -370,8 +373,7 @@ class IO3DTest {
         }
     }
 
-    private static <T extends PlaneConvexSubset> BoundaryList3D boundariesToBoundaryList(final Stream<T> stream)
-            throws IOException {
+    private static <T extends PlaneConvexSubset> BoundaryList3D boundariesToBoundaryList(final Stream<T> stream) {
         try (Stream<T> boundaryStream = stream) {
             final List<PlaneConvexSubset> list = boundaryStream.collect(Collectors.toList());
 

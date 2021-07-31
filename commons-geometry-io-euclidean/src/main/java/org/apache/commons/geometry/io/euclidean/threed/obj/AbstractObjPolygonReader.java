@@ -17,10 +17,10 @@
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 
 /** Abstract base class for types that read OBJ polygon content using
  * {@link PolygonObjParser}.
@@ -41,10 +41,10 @@ public abstract class AbstractObjPolygonReader implements Closeable {
         this.parser = new PolygonObjParser(reader);
     }
 
-    /** Get the flag indicating whether or not an {@link IOException} will be thrown
+    /** Get the flag indicating whether or not an {@link IllegalStateException} will be thrown
      * if the OBJ content contains any keywords defining non-polygon geometric content
      * (ex: {@code curv}). If false, non-polygon data is ignored.
-     * @return flag indicating whether or not an {@link IOException} will be thrown
+     * @return flag indicating whether or not an {@link IllegalStateException} will be thrown
      *      if non-polygon content is encountered
      * @see PolygonObjParser#getFailOnNonPolygonKeywords()
      */
@@ -52,10 +52,10 @@ public abstract class AbstractObjPolygonReader implements Closeable {
         return parser.getFailOnNonPolygonKeywords();
     }
 
-    /** Set the flag indicating whether or not an {@link IOException} will be thrown
+    /** Set the flag indicating whether or not an {@link IllegalStateException} will be thrown
      * if the OBJ content contains any keywords defining non-polygon geometric content
      * (ex: {@code curv}). If set to false, non-polygon data is ignored.
-     * @param fail flag indicating whether or not an {@link IOException} will be thrown
+     * @param fail flag indicating whether or not an {@link IllegalStateException} will be thrown
      *      if non-polygon content is encountered
      */
     public void setFailOnNonPolygonKeywords(final boolean fail) {
@@ -64,15 +64,16 @@ public abstract class AbstractObjPolygonReader implements Closeable {
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws IOException {
-        reader.close();
+    public void close() {
+        GeometryIOUtils.closeUnchecked(reader);
     }
 
     /** Return the next face from the OBJ content or null if no face is found.
      * @return the next face from the OBJ content or null if no face is found
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalStateException if a parsing error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected PolygonObjParser.Face readFace() throws IOException {
+    protected PolygonObjParser.Face readFace() {
         while (parser.nextKeyword()) {
             switch (parser.getCurrentKeyword()) {
             case ObjConstants.VERTEX_KEYWORD:

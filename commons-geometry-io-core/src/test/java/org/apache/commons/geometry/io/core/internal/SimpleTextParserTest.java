@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.core.internal;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.function.IntPredicate;
@@ -41,7 +40,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testMaxStringLength_illegalArg() throws IOException {
+    void testMaxStringLength_illegalArg() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -52,14 +51,14 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testCharacterSequence() throws IOException {
+    void testCharacterSequence() {
         // act/assert
         assertCharacterSequence(parser(""), "");
         assertCharacterSequence(parser("abc def"), "abc def");
     }
 
     @Test
-    void testCharacterPosition() throws IOException {
+    void testCharacterPosition() {
         // arrange
         final SimpleTextParser p = parser(
                 "a b\n" +
@@ -103,7 +102,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testCharacterPosition_givenPosition() throws IOException {
+    void testCharacterPosition_givenPosition() {
         // arrange
         final SimpleTextParser p = parser("abc\rdef");
 
@@ -125,7 +124,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testHasMoreCharacters() throws IOException {
+    void testHasMoreCharacters() {
         // arrange
         final SimpleTextParser empty = parser("");
         final SimpleTextParser nonEmpty = parser("a");
@@ -139,7 +138,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testHasMoreCharactersOnLine() throws IOException {
+    void testHasMoreCharactersOnLine() {
         // arrange
         final SimpleTextParser empty = parser("");
         final SimpleTextParser singleLine = parser("a");
@@ -181,7 +180,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testBasicTokenMethods() throws IOException {
+    void testBasicTokenMethods() {
         // arrange
         final SimpleTextParser p = parser("abcdef\r\n\r ghi");
 
@@ -212,7 +211,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testGetCurrentTokenAsDouble() throws IOException {
+    void testGetCurrentTokenAsDouble() {
         // arrange
         final SimpleTextParser p = parser("1e-4\n+5\n-4.001");
 
@@ -228,7 +227,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testGetCurrentTokenAsDouble_failures() throws IOException {
+    void testGetCurrentTokenAsDouble_failures() {
         // arrange
         final SimpleTextParser p = parser("abc\n1.1.1a");
 
@@ -240,54 +239,54 @@ class SimpleTextParserTest {
         p.next(SimpleTextParser::isNotNewLinePart);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsDouble();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 1, column 1: expected double but found [abc]");
 
         p.nextAlphanumeric();
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsDouble();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 1, column 4: expected double but found end of line");
 
         p.discardLine()
             .next(c -> c != 'a');
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsDouble();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 1: expected double but found [1.1.1]");
 
         p.next(Character::isDigit);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsDouble();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 6: expected double but found empty token followed by [a]");
 
         p.nextLine();
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsDouble();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 6: expected double but found [a]");
 
         p.nextLine();
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsDouble();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 7: expected double but found end of content");
     }
 
     @Test
-    void testGetCurrentTokenAsDouble_includedNumberFormatExceptionOnFailure() throws IOException {
+    void testGetCurrentTokenAsDouble_includedNumberFormatExceptionOnFailure() {
         // arrange
         final SimpleTextParser p = parser("abc");
         p.nextLine();
 
         // act/assert
-        final Throwable exc = Assertions.assertThrows(IOException.class, () -> p.getCurrentTokenAsDouble());
+        final Throwable exc = Assertions.assertThrows(IllegalStateException.class, () -> p.getCurrentTokenAsDouble());
         Assertions.assertEquals(NumberFormatException.class, exc.getCause().getClass());
     }
 
     @Test
-    void testGetCurrentTokenAsInt() throws IOException {
+    void testGetCurrentTokenAsInt() {
         // arrange
         final SimpleTextParser p = parser("0\n+5\n-401");
 
@@ -303,7 +302,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testGetCurrentTokenAsInt_failures() throws IOException {
+    void testGetCurrentTokenAsInt_failures() {
         // arrange
         final SimpleTextParser p = parser("abc\n1.1.1a");
 
@@ -315,54 +314,54 @@ class SimpleTextParserTest {
         p.next(SimpleTextParser::isNotNewLinePart);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsInt();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 1, column 1: expected integer but found [abc]");
 
         p.nextAlphanumeric();
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsInt();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 1, column 4: expected integer but found end of line");
 
         p.discardLine()
             .next(c -> c != 'a');
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsInt();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 1: expected integer but found [1.1.1]");
 
         p.next(Character::isDigit);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsInt();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 6: expected integer but found empty token followed by [a]");
 
         p.nextLine();
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsInt();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 6: expected integer but found [a]");
 
         p.nextLine();
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.getCurrentTokenAsInt();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 7: expected integer but found end of content");
     }
 
     @Test
-    void testGetCurrentTokenAsInt_includedNumberFormatExceptionOnFailure() throws IOException {
+    void testGetCurrentTokenAsInt_includedNumberFormatExceptionOnFailure() {
         // arrange
         final SimpleTextParser p = parser("abc");
         p.nextLine();
 
         // act/assert
-        final Throwable exc = Assertions.assertThrows(IOException.class, () -> p.getCurrentTokenAsInt());
+        final Throwable exc = Assertions.assertThrows(IllegalStateException.class, () -> p.getCurrentTokenAsInt());
         Assertions.assertEquals(NumberFormatException.class, exc.getCause().getClass());
     }
 
     @Test
-    void testNext_lenArg() throws IOException {
+    void testNext_lenArg() {
         // arrange
         final SimpleTextParser p = parser("abcdef\r\n\r ghi");
 
@@ -377,7 +376,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testNextWithLineContinuation_lenArg() throws IOException {
+    void testNextWithLineContinuation_lenArg() {
         // arrange
         final char cont = '\\';
         final SimpleTextParser p = parser("a\\bcdef\\\r\n\r ghi\\\n\\\n\\\rj");
@@ -393,7 +392,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testNext_lenArg_invalidArg() throws IOException {
+    void testNext_lenArg_invalidArg() {
         // arrange
         final SimpleTextParser p = parser("abc");
         p.setMaxStringLength(2);
@@ -409,7 +408,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testNext_predicateArg() throws IOException {
+    void testNext_predicateArg() {
         // arrange
         final SimpleTextParser p = parser("a\n 012\r\ndef");
 
@@ -433,7 +432,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testNext_predicateArg_exceedsMaxStringLength() throws IOException {
+    void testNext_predicateArg_exceedsMaxStringLength() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
         p.setMaxStringLength(4);
@@ -441,11 +440,11 @@ class SimpleTextParserTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.next(c -> !Character.isWhitespace(c));
-        }, IOException.class, "Parsing failed at line 1, column 1: string length exceeds maximum value of 4");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: string length exceeds maximum value of 4");
     }
 
     @Test
-    void testNextWithLineContinuation_predicateArg() throws IOException {
+    void testNextWithLineContinuation_predicateArg() {
         // arrange
         final char cont = '|';
         final SimpleTextParser p = parser("|\na\n 0|\r\n|\r12\r\nd|ef");
@@ -470,7 +469,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testNextLine() throws IOException {
+    void testNextLine() {
         // arrange
         final SimpleTextParser p = parser("a\n 012\r\ndef\n\nx");
 
@@ -489,7 +488,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testNextAlphanumeric() throws IOException {
+    void testNextAlphanumeric() {
         // arrange
         final SimpleTextParser p = parser("a10Fd;X23456789-0\ny");
 
@@ -511,7 +510,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testDiscard_lenArg() throws IOException {
+    void testDiscard_lenArg() {
         // arrange
         final SimpleTextParser p = parser("\na,b c\r\n12.3\rdef\n");
 
@@ -542,7 +541,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testDiscardWithLineContinuation_lenArg() throws IOException {
+    void testDiscardWithLineContinuation_lenArg() {
         // arrange
         final char cont = '|';
         final SimpleTextParser p = parser("\n|a|\r\n,b|\n|\r c\r\n12.3\rdef\n");
@@ -574,7 +573,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testDiscard_predicateArg() throws IOException {
+    void testDiscard_predicateArg() {
         // arrange
         final SimpleTextParser p = parser("\na,b c\r\n12.3\rdef\n");
 
@@ -609,7 +608,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testDiscardWithLineContinuation_predicateArg() throws IOException {
+    void testDiscardWithLineContinuation_predicateArg() {
         // arrange
         final char cont = '|';
         final SimpleTextParser p = parser("\na,|\r\nb |c\r\n1|\r|\n2.3\rdef\n");
@@ -645,7 +644,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testDiscardWhitespace() throws IOException {
+    void testDiscardWhitespace() {
         // arrange
         final SimpleTextParser p = parser("a\t\n\r\n   b c");
 
@@ -668,7 +667,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testDiscardLineWhitespace() throws IOException {
+    void testDiscardLineWhitespace() {
         // arrange
         final SimpleTextParser p = parser("a\t\n\r\n   b c");
 
@@ -707,7 +706,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testDiscardNewLineSequence() throws IOException {
+    void testDiscardNewLineSequence() {
         // arrange
         final SimpleTextParser p = parser("a\t\n\r\n   b\rc");
 
@@ -742,7 +741,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testDiscardLine() throws IOException {
+    void testDiscardLine() {
         // arrange
         final SimpleTextParser p = parser("a\t\n\r\n   b c");
 
@@ -765,7 +764,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testPeek_lenArg() throws IOException {
+    void testPeek_lenArg() {
         // arrange
         final SimpleTextParser p = parser("abcdef\r\n\r ghi");
 
@@ -796,7 +795,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testPeek_lenArg_invalidArg() throws IOException {
+    void testPeek_lenArg_invalidArg() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
         p.setMaxStringLength(4);
@@ -812,7 +811,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testPeek_predicateArg() throws IOException {
+    void testPeek_predicateArg() {
         // arrange
         final SimpleTextParser p = parser("abcdef\r\n\r ghi");
 
@@ -837,7 +836,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testPeek_predicateArg_exceedsMaxStringLength() throws IOException {
+    void testPeek_predicateArg_exceedsMaxStringLength() {
         // arrange
         final SimpleTextParser p = parser("\n  abcdefg");
         p.setMaxStringLength(4);
@@ -847,11 +846,11 @@ class SimpleTextParserTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.peek(SimpleTextParser::isNotWhitespace);
-        }, IOException.class, "Parsing failed at line 2, column 3: string length exceeds maximum value of 4");
+        }, IllegalStateException.class, "Parsing failed at line 2, column 3: string length exceeds maximum value of 4");
     }
 
     @Test
-    void testMatch() throws IOException {
+    void testMatch() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -865,7 +864,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testMatch_failure() throws IOException {
+    void testMatch_failure() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -877,19 +876,19 @@ class SimpleTextParserTest {
         p.next(1);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.match("b");
-        }, IOException.class, "Parsing failed at line 1, column 1: expected [b] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected [b] but found [a]");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.match("A");
-        }, IOException.class, "Parsing failed at line 1, column 1: expected [A] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected [A] but found [a]");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.match(null);
-        }, IOException.class, "Parsing failed at line 1, column 1: expected [null] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected [null] but found [a]");
     }
 
     @Test
-    void testMatch_ignoreCase() throws IOException {
+    void testMatch_ignoreCase() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -903,7 +902,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testMatchIgnoreCase_failure() throws IOException {
+    void testMatchIgnoreCase_failure() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -915,15 +914,15 @@ class SimpleTextParserTest {
         p.next(1);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.matchIgnoreCase("b");
-        }, IOException.class, "Parsing failed at line 1, column 1: expected [b] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected [b] but found [a]");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.match(null);
-        }, IOException.class, "Parsing failed at line 1, column 1: expected [null] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected [null] but found [a]");
     }
 
     @Test
-    void testTryMatch() throws IOException {
+    void testTryMatch() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -944,7 +943,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testTryMatch_noToken() throws IOException {
+    void testTryMatch_noToken() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -955,7 +954,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testTryMatchIgnoreCase() throws IOException {
+    void testTryMatchIgnoreCase() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -975,7 +974,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testTryMatchIgnoreCase_noToken() throws IOException {
+    void testTryMatchIgnoreCase_noToken() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -986,7 +985,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testChoose() throws IOException {
+    void testChoose() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1007,7 +1006,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testChoose_failure() throws IOException {
+    void testChoose_failure() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1019,23 +1018,23 @@ class SimpleTextParserTest {
         p.next(1);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.choose("X");
-        }, IOException.class, "Parsing failed at line 1, column 1: expected one of [X] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [X] but found [a]");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.choose("X", "Y", "Z");
-        }, IOException.class, "Parsing failed at line 1, column 1: expected one of [X, Y, Z] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [X, Y, Z] but found [a]");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.choose("A");
-        }, IOException.class, "Parsing failed at line 1, column 1: expected one of [A] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [A] but found [a]");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.choose();
-        }, IOException.class, "Parsing failed at line 1, column 1: expected one of [] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [] but found [a]");
     }
 
     @Test
-    void testChooseIgnoreCase() throws IOException {
+    void testChooseIgnoreCase() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1056,7 +1055,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testChooseIgnoreCase_failure() throws IOException {
+    void testChooseIgnoreCase_failure() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1068,19 +1067,19 @@ class SimpleTextParserTest {
         p.next(1);
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.chooseIgnoreCase("X");
-        }, IOException.class, "Parsing failed at line 1, column 1: expected one of [X] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [X] but found [a]");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.chooseIgnoreCase("X", "Y", "Z");
-        }, IOException.class, "Parsing failed at line 1, column 1: expected one of [X, Y, Z] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [X, Y, Z] but found [a]");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             p.chooseIgnoreCase();
-        }, IOException.class, "Parsing failed at line 1, column 1: expected one of [] but found [a]");
+        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [] but found [a]");
     }
 
     @Test
-    void testTryChoose() throws IOException {
+    void testTryChoose() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1105,7 +1104,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testTryChoose_noToken() throws IOException {
+    void testTryChoose_noToken() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -1116,7 +1115,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testTryChooseIgnoreCase() throws IOException {
+    void testTryChooseIgnoreCase() {
         // arrange
         final SimpleTextParser p = parser("abc");
 
@@ -1141,7 +1140,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testTryChooseIgnoreCase_noToken() throws IOException {
+    void testTryChooseIgnoreCase_noToken() {
         // arrange
         final SimpleTextParser p = parser("abcdef");
 
@@ -1152,7 +1151,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testUnexpectedToken() throws IOException {
+    void testUnexpectedToken() {
         // arrange
         final SimpleTextParser p = parser("abc\ndef");
 
@@ -1180,7 +1179,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testUnexpectedToken_causeArg() throws IOException {
+    void testUnexpectedToken_causeArg() {
         // arrange
         final SimpleTextParser p = parser("abc");
         final Exception cause = new Exception("test");
@@ -1188,14 +1187,14 @@ class SimpleTextParserTest {
         // act/assert
         p.nextLine();
 
-        IOException exc = p.unexpectedToken("test", cause);
+        final IllegalStateException exc = p.unexpectedToken("test", cause);
         Assertions.assertEquals("Parsing failed at line 1, column 1: expected test but found [abc]",
                 exc.getMessage());
         Assertions.assertSame(cause, exc.getCause());
     }
 
     @Test
-    void testUnexpectedToken_ioError() throws IOException {
+    void testUnexpectedToken_ioError() {
         // arrange
         final FailBuffer b = new FailBuffer(new StringReader("abc"));
         final SimpleTextParser p = new SimpleTextParser(b);
@@ -1221,7 +1220,7 @@ class SimpleTextParserTest {
     }
 
     @Test
-    void testTokenError() throws IOException {
+    void testTokenError() {
         // arrange
         final SimpleTextParser p = parser("a\nbc");
         p.nextLine();
@@ -1229,27 +1228,27 @@ class SimpleTextParserTest {
         p.readChar();
 
         // act/assert
-        final IOException exc = p.tokenError("test message");
+        final IllegalStateException exc = p.tokenError("test message");
 
         Assertions.assertEquals("Parsing failed at line 2, column 1: test message", exc.getMessage());
         Assertions.assertNull(exc.getCause());
     }
 
     @Test
-    void testTokenError_noTokenSet() throws IOException {
+    void testTokenError_noTokenSet() {
         // arrange
         final SimpleTextParser p = parser("ab\nc");
         p.readChar();
 
         // act/assert
-        final IOException exc = p.tokenError("test message");
+        final IllegalStateException exc = p.tokenError("test message");
 
         Assertions.assertEquals("Parsing failed at line 1, column 2: test message", exc.getMessage());
         Assertions.assertNull(exc.getCause());
     }
 
     @Test
-    void testTokenError_withCause() throws IOException {
+    void testTokenError_withCause() {
         // arrange
         SimpleTextParser p = parser("a\nbc");
         p.nextLine();
@@ -1259,34 +1258,34 @@ class SimpleTextParserTest {
         final Exception cause = new Exception("test");
 
         // act/assert
-        final IOException exc = p.tokenError("test message", cause);
+        final IllegalStateException exc = p.tokenError("test message", cause);
 
         Assertions.assertEquals("Parsing failed at line 2, column 1: test message", exc.getMessage());
         Assertions.assertSame(cause, exc.getCause());
     }
 
     @Test
-    void testParseError_currentLineCol() throws IOException {
+    void testParseError_currentLineCol() {
         // arrange
         final SimpleTextParser p = parser("a\nbc");
         p.discard(ch -> ch != 'b');
 
         // act
-        final IOException exc = p.parseError("test message");
+        final IllegalStateException exc = p.parseError("test message");
 
         Assertions.assertEquals("Parsing failed at line 2, column 1: test message", exc.getMessage());
         Assertions.assertNull(exc.getCause());
     }
 
     @Test
-    void testParseError_currentLineCol_withCause() throws IOException {
+    void testParseError_currentLineCol_withCause() {
         // arrange
         final SimpleTextParser p = parser("abc");
         p.readChar();
         final Exception cause = new Exception("test");
 
         // act
-        final IOException exc = p.parseError("test message", cause);
+        final IllegalStateException exc = p.parseError("test message", cause);
 
         Assertions.assertEquals("Parsing failed at line 1, column 2: test message", exc.getMessage());
         Assertions.assertSame(cause, exc.getCause());
@@ -1298,7 +1297,7 @@ class SimpleTextParserTest {
         final SimpleTextParser p = parser("abc");
 
         // act
-        final IOException exc = p.parseError(5, 6, "test message");
+        final IllegalStateException exc = p.parseError(5, 6, "test message");
 
         Assertions.assertEquals("Parsing failed at line 5, column 6: test message", exc.getMessage());
         Assertions.assertNull(exc.getCause());
@@ -1311,7 +1310,7 @@ class SimpleTextParserTest {
         final Exception cause = new Exception("test");
 
         // act
-        final IOException exc = p.parseError(5, 6, "test message", cause);
+        final IllegalStateException exc = p.parseError(5, 6, "test message", cause);
 
         Assertions.assertEquals("Parsing failed at line 5, column 6: test message", exc.getMessage());
         Assertions.assertSame(cause, exc.getCause());
@@ -1354,8 +1353,7 @@ class SimpleTextParserTest {
         return new SimpleTextParser(reader);
     }
 
-    private static void assertCharacterSequence(final SimpleTextParser parser, final String expected)
-            throws IOException {
+    private static void assertCharacterSequence(final SimpleTextParser parser, final String expected) {
         char expectedChar;
         String msg;
         for (int i = 0; i < expected.length(); ++i) {
@@ -1436,14 +1434,14 @@ class SimpleTextParserTest {
         }
 
         @Override
-        public boolean hasMoreCharacters() throws IOException {
+        public boolean hasMoreCharacters() {
             checkFail();
             return super.hasMoreCharacters();
         }
 
-        private void checkFail() throws IOException {
+        private void checkFail() {
             if (fail) {
-                throw new IOException("test failure");
+                throw new IllegalStateException("test failure");
             }
         }
     }

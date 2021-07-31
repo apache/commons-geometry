@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.io.core.input;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -62,8 +61,8 @@ public class FileGeometryInput extends AbstractGeometryInput {
      * <p>The returned input stream is buffered.</p>
      */
     @Override
-    public InputStream getInputStream() throws IOException {
-        return new BufferedInputStream(Files.newInputStream(file));
+    public InputStream getInputStream() {
+        return GeometryIOUtils.getUnchecked(() -> new BufferedInputStream(Files.newInputStream(file)));
     }
 
     /** {@inheritDoc} */

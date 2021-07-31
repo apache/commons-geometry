@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.io.euclidean.threed.stl;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
@@ -25,6 +24,7 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinitionReader;
 
 /** Utility class with factory methods for constructing {@link FacetDefinitionReader}
@@ -42,10 +42,10 @@ public final class StlFacetDefinitionReaders {
      * @param charset charset to use when checking the input for text content;
      *      if null, the input is assumed to use the UTF-8 charset
      * @return facet definition reader
-     * @throws IOException if an I/O error occurs
+     * @throws IllegalStateException if a parsing error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public static FacetDefinitionReader create(final InputStream in, final Charset charset)
-            throws IOException {
+    public static FacetDefinitionReader create(final InputStream in, final Charset charset) {
         final Charset inputCharset = charset != null ?
                 charset :
                 StlConstants.DEFAULT_CHARSET;
@@ -53,9 +53,9 @@ public final class StlFacetDefinitionReaders {
         final byte[] testBytes = StlConstants.SOLID_START_KEYWORD.getBytes(inputCharset);
         final byte[] actualBytes = new byte[testBytes.length];
 
-        final int read = in.read(actualBytes);
+        final int read = GeometryIOUtils.applyAsIntUnchecked(in::read, actualBytes);
         if (read < actualBytes.length) {
-            throw new IOException(MessageFormat.format(
+            throw GeometryIOUtils.parseError(MessageFormat.format(
                     "Cannot determine STL format: attempted to read {0} bytes but found only {1} available",
                     actualBytes.length, read));
         }
@@ -63,7 +63,7 @@ public final class StlFacetDefinitionReaders {
         // "unread" the test bytes so that the created readers can start from the
         // beginning of the content
         final PushbackInputStream pushbackInput = new PushbackInputStream(in, actualBytes.length);
-        pushbackInput.unread(actualBytes);
+        GeometryIOUtils.acceptUnchecked(pushbackInput::unread, actualBytes);
 
         if (Arrays.equals(testBytes, actualBytes)) {
             // this is a text file

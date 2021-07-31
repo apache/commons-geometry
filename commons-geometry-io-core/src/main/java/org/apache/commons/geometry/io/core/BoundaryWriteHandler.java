@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.io.core;
 
-import java.io.IOException;
-
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
@@ -45,7 +43,7 @@ public interface BoundaryWriteHandler<H extends HyperplaneConvexSubset<?>, B ext
      * the instance.
      * @param src boundary source
      * @param out output to write to
-     * @throws IOException if an IO error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    void write(B src, GeometryOutput out) throws IOException;
+    void write(B src, GeometryOutput out);
 }

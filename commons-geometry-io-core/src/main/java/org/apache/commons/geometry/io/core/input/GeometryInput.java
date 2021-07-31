@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.core.input;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
@@ -38,7 +37,7 @@ public interface GeometryInput {
 
     /** Get the input stream for reading from the input.
      * @return input stream for reading from the input
-     * @throws IOException if an IO error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    InputStream getInputStream() throws IOException;
+    InputStream getInputStream();
 }

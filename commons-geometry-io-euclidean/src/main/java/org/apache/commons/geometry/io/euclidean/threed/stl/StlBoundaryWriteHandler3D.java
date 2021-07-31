@@ -30,6 +30,7 @@ import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.geometry.io.core.GeometryFormat;
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
 import org.apache.commons.geometry.io.euclidean.threed.AbstractBoundaryWriteHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
@@ -85,8 +86,7 @@ public class StlBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
 
     /** {@inheritDoc} */
     @Override
-    public void write(final BoundarySource3D src, final GeometryOutput out)
-            throws IOException {
+    public void write(final BoundarySource3D src, final GeometryOutput out) {
         // handle cases where we know the number of triangles to be written up front
         // and do not need to buffer the content
         if (src instanceof TriangleMesh) {
@@ -99,8 +99,7 @@ public class StlBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
 
     /** {@inheritDoc} */
     @Override
-    public void write(final Stream<? extends PlaneConvexSubset> boundaries, GeometryOutput out)
-            throws IOException {
+    public void write(final Stream<? extends PlaneConvexSubset> boundaries, final GeometryOutput out) {
 
         // write the triangle data to a buffer and track how many we write
         int triangleCount = 0;
@@ -124,16 +123,12 @@ public class StlBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
         }
 
         // write the header and copy the data
-        try (OutputStream os = out.getOutputStream()) {
-            BinaryStlWriter.writeHeader(null, triangleCount, os);
-            triangleBuffer.writeTo(os);
-        }
+        writeWithHeader(triangleBuffer, triangleCount, out);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out)
-            throws IOException {
+    public void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out) {
 
         // write the triangle data to a buffer and track how many we write
         int triangleCount = 0;
@@ -165,9 +160,23 @@ public class StlBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
         }
 
         // write the header and copy the data
+        writeWithHeader(triangleBuffer, triangleCount, out);
+    }
+
+    /** Write the given triangle data prefixed with an STL header to the output stream from {@code out}.
+     * @param triangleBuffer buffer containing STL triangle data
+     * @param count number of triangles in {@code triangleBuffer}
+     * @param out output to write to
+     * @throws java.io.UncheckedIOException if an I/O error occurs
+     */
+    private void writeWithHeader(final ByteArrayOutputStream triangleBuffer, final int count,
+            final GeometryOutput out) {
+        // write the header and copy the data
         try (OutputStream os = out.getOutputStream()) {
-            BinaryStlWriter.writeHeader(null, triangleCount, os);
+            BinaryStlWriter.writeHeader(null, count, os);
             triangleBuffer.writeTo(os);
+        } catch (IOException exc) {
+            throw GeometryIOUtils.createUnchecked(exc);
         }
     }
 
@@ -175,10 +184,9 @@ public class StlBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
      * format.
      * @param mesh mesh to write
      * @param output output to write to
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void writeTriangleMesh(final TriangleMesh mesh, final GeometryOutput output)
-            throws IOException {
+    private void writeTriangleMesh(final TriangleMesh mesh, final GeometryOutput output) {
         try (BinaryStlWriter stlWriter = new BinaryStlWriter(output.getOutputStream())) {
             // write the header
             stlWriter.writeHeader(null, mesh.getFaceCount());

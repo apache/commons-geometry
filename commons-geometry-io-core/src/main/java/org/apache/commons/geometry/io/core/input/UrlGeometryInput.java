@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.io.core.input;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -61,8 +60,8 @@ public class UrlGeometryInput extends AbstractGeometryInput {
      * <p>The returned input stream is buffered.</p>
      */
     @Override
-    public InputStream getInputStream() throws IOException {
-        return new BufferedInputStream(url.openStream());
+    public InputStream getInputStream() {
+        return GeometryIOUtils.getUnchecked(() -> new BufferedInputStream(url.openStream()));
     }
 
     /** {@inheritDoc} */

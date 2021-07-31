@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -54,7 +53,7 @@ class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader() throws IOException {
+    void testFacetDefinitionReader() {
         // arrange
         final InputStream in = input(
                 "v 0 0 0\n" +
@@ -74,7 +73,7 @@ class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader_usesInputCharset() throws IOException {
+    void testFacetDefinitionReader_usesInputCharset() {
         // arrange
         final InputStream in = input(
                 "v 0 0 0\n" +
@@ -95,7 +94,7 @@ class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader_setDefaultCharset() throws IOException {
+    void testFacetDefinitionReader_setDefaultCharset() {
         // arrange
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         final InputStream in = input(
@@ -116,7 +115,7 @@ class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader_close() throws IOException {
+    void testFacetDefinitionReader_close() {
         // arrange
         final CloseCountInputStream in = input("", StandardCharsets.UTF_8);
 
@@ -129,7 +128,7 @@ class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testReadTriangleMesh() throws IOException {
+    void testReadTriangleMesh() {
         // arrange
         final CloseCountInputStream in = input(
                 "v 0 0 0\n" +
@@ -152,7 +151,7 @@ class ObjBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testReadTriangleMesh_nonDefaultCharset() throws IOException {
+    void testReadTriangleMesh_nonDefaultCharset() {
         // arrange
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         final CloseCountInputStream in = input(

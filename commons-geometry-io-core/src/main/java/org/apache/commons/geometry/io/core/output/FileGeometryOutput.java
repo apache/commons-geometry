@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.io.core.output;
 
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -61,8 +60,8 @@ public class FileGeometryOutput extends AbstractGeometryOutput {
      * <p>The returned output stream is buffered.</p>
      */
     @Override
-    public OutputStream getOutputStream() throws IOException {
-        return new BufferedOutputStream(Files.newOutputStream(file));
+    public OutputStream getOutputStream() {
+        return GeometryIOUtils.getUnchecked(() -> new BufferedOutputStream(Files.newOutputStream(file)));
     }
 
     /** {@inheritDoc} */

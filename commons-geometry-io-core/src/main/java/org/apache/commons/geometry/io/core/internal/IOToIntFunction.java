@@ -14,25 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.io.euclidean.threed;
+package org.apache.commons.geometry.io.core.internal;
 
-/** Interface for reading {@link FacetDefinition facet definitions} from an input source.
- * @see FacetDefinition
+import java.io.IOException;
+
+/** Functional interface similar to {@link java.util.function.ToIntFunction} but allowing an
+ * {@code IOException} to be thrown.
+ * @param <T> Input type
  */
-public interface FacetDefinitionReader extends AutoCloseable {
+@FunctionalInterface
+public interface IOToIntFunction<T> {
 
-    /** Return the next facet definition from the input source or null if no more
-     * facets are available.
-     * @return the next facet definition or null if no more facets
-     *      are available
-     * @throws IllegalStateException if a data format error occurs
-     * @throws java.io.UncheckedIOException if an I/O error occurs
+    /** Apply this function to the argument.
+     * @param value argument
+     * @return int value
+     * @throws IOException if an I/O error occurs
      */
-    FacetDefinition readFacet();
-
-    /** Close this instance and release all associated resources.
-     * @throws java.io.UncheckedIOException if an I/O error occurs
-     */
-    @Override
-    void close();
+    int applyAsInt(T value) throws IOException;
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.stream.Stream;
 
@@ -41,8 +40,8 @@ import org.apache.commons.numbers.core.Precision;
 /** Class managing IO operations for geometric data formats containing 3D region boundaries.
  * IO operation are performed by read and write handlers registered for specific data formats.
  *
- * <p>Instances of this class are thread-safe as long as the registered handler instances are
- * thread-safe.</p>
+ * <p><strong>Implementation note:</strong>Instances of this class are thread-safe as long as the
+ * registered handler instances are thread-safe.</p>
  * @see BoundaryReadHandler3D
  * @see BoundaryWriteHandler3D
  * @see <a href="https://en.wikipedia.org/wiki/Boundary_representations">Boundary representations</a>
@@ -59,10 +58,10 @@ public class BoundaryIOManager3D extends BoundaryIOManager<
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @return facet definition reader
      * @throws IllegalArgumentException if no read handler can be found for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public FacetDefinitionReader facetDefinitionReader(final GeometryInput in, final GeometryFormat fmt)
-            throws IOException {
+    public FacetDefinitionReader facetDefinitionReader(final GeometryInput in, final GeometryFormat fmt) {
         return requireReadHandler(in, fmt).facetDefinitionReader(in);
     }
 
@@ -74,16 +73,20 @@ public class BoundaryIOManager3D extends BoundaryIOManager<
      *      // access stream content
      *  }
      * </pre>
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * <p>The following exceptions may be thrown during stream iteration:</p>
+     * <ul>
+     *  <li>{@link IllegalStateException} if a data format error occurs</li>
+     *  <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     * </ul>
      * @param in input to read from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @return stream providing access to the facets in the input
      * @throws IllegalArgumentException if no read handler can be found for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      */
-    public Stream<FacetDefinition> facets(final GeometryInput in, final GeometryFormat fmt) throws IOException {
+    public Stream<FacetDefinition> facets(final GeometryInput in, final GeometryFormat fmt) {
         return requireReadHandler(in, fmt).facets(in);
     }
 
@@ -95,35 +98,40 @@ public class BoundaryIOManager3D extends BoundaryIOManager<
      *      // access stream content
      *  }
      * </pre>
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
-     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
+     * <p>The following exceptions may be thrown during stream iteration:</p>
+     * <ul>
+     *  <li>{@link IllegalArgumentException} if mathematically invalid data is encountered</li>
+     *  <li>{@link IllegalStateException} if a data format error occurs</li>
+     *  <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     * </ul>
      * @param in input to read from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the triangles in the input
      * @throws IllegalArgumentException if no read handler can be found for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      */
     public Stream<Triangle3D> triangles(final GeometryInput in, final GeometryFormat fmt,
-            final Precision.DoubleEquivalence precision) throws IOException {
+            final Precision.DoubleEquivalence precision) {
         return boundaries(in, fmt, precision)
                 .flatMap(p -> p.toTriangles().stream());
     }
 
     /** Return a {@link TriangleMesh} containing all triangles from the given input.
-     * A runtime exception may be thrown if mathematically invalid boundaries are encountered.
      * @param in input to read from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return mesh containing all triangles from the input
-     * @throws IllegalArgumentException if no read handler can be found for the input format
-     * @throws IOException if an I/O error occurs
+     * @throws IllegalArgumentException if mathematically invalid data is encountered or no read
+     *      handler can be found for the input format
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public TriangleMesh readTriangleMesh(final GeometryInput in, final GeometryFormat fmt,
-            final Precision.DoubleEquivalence precision) throws IOException {
+            final Precision.DoubleEquivalence precision) {
         return requireReadHandler(in, fmt).readTriangleMesh(in, precision);
     }
 
@@ -137,10 +145,10 @@ public class BoundaryIOManager3D extends BoundaryIOManager<
      * @param fmt format of the output; if null, the format is determined implicitly from the
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler can be found for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public void write(final Stream<? extends PlaneConvexSubset> boundaries, final GeometryOutput out,
-            final GeometryFormat fmt) throws IOException {
+            final GeometryFormat fmt) {
         requireWriteHandler(out, fmt).write(boundaries, out);
     }
 
@@ -154,10 +162,10 @@ public class BoundaryIOManager3D extends BoundaryIOManager<
      * @param fmt format of the output; if null, the format is determined implicitly from the
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler can be found for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out,
-            final GeometryFormat fmt) throws IOException {
+            final GeometryFormat fmt) {
         requireWriteHandler(out, fmt).writeFacets(facets, out);
     }
 
@@ -167,10 +175,10 @@ public class BoundaryIOManager3D extends BoundaryIOManager<
      * @param fmt format of the output; if null, the format is determined implicitly from the
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler can be found for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public void writeFacets(final Collection<? extends FacetDefinition> facets, final GeometryOutput out,
-            final GeometryFormat fmt) throws IOException {
+            final GeometryFormat fmt) {
         requireWriteHandler(out, fmt).writeFacets(facets, out);
     }
 

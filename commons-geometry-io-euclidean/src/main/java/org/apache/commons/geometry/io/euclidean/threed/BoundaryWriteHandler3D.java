@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.stream.Stream;
 
@@ -43,17 +42,17 @@ public interface BoundaryWriteHandler3D extends BoundaryWriteHandler<PlaneConvex
      * for closing the stream if necessary (for example, if the stream fetches data from the file system).
      * @param boundaries stream containing boundaries to write
      * @param out output to write to
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    void write(Stream<? extends PlaneConvexSubset> boundaries, GeometryOutput out) throws IOException;
+    void write(Stream<? extends PlaneConvexSubset> boundaries, GeometryOutput out);
 
     /** Write all {@link FacetDefinition facets} in the collection to the output using the data format
      * supported by this instance.
      * @param facets facets to write
      * @param out output to write to
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    void writeFacets(Collection<? extends FacetDefinition> facets, GeometryOutput out) throws IOException;
+    void writeFacets(Collection<? extends FacetDefinition> facets, GeometryOutput out);
 
     /** Write all {@link FacetDefinition facets} in the stream to the output using the data format
      * supported by this instance. The stream passed as an argument is <em>not</em> closed, meaning
@@ -61,7 +60,7 @@ public interface BoundaryWriteHandler3D extends BoundaryWriteHandler<PlaneConvex
      * fetches data from the file system).
      * @param facets stream containing facets to write
      * @param out output to write to
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    void writeFacets(Stream<? extends FacetDefinition> facets, GeometryOutput out) throws IOException;
+    void writeFacets(Stream<? extends FacetDefinition> facets, GeometryOutput out);
 }

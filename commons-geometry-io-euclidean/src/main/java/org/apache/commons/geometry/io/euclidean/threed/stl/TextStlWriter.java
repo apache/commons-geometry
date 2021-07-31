@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.stl;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
@@ -50,19 +49,19 @@ public class TextStlWriter extends AbstractTextFormatWriter {
 
     /** Write the start of an unnamed STL solid definition. This method is equivalent to calling
      * {@code stlWriter.startSolid(null);}
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void startSolid() throws IOException {
+    public void startSolid() {
         startSolid(null);
     }
 
     /** Write the start of an STL solid definition with the given name.
      * @param solidName the name of the solid; may be null
-     * @throws IllegalStateException if a solid definition has already been started
      * @throws IllegalArgumentException if {@code solidName} contains new line characters
-     * @throws IOException if an I/O error occurs
+     * @throws IllegalStateException if a solid definition has already been started
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void startSolid(final String solidName) throws IOException {
+    public void startSolid(final String solidName) {
         if (started) {
             throw new IllegalStateException("Cannot start solid definition: a solid is already being written");
         }
@@ -79,9 +78,9 @@ public class TextStlWriter extends AbstractTextFormatWriter {
     /** Write the end of the current STL solid definition. This method is called automatically on
      * {@link #close()} if needed.
      * @throws IllegalStateException if no solid definition has been started
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void endSolid() throws IOException {
+    public void endSolid() {
         if (!started) {
             throw new IllegalStateException("Cannot end solid definition: no solid has been started");
         }
@@ -94,10 +93,10 @@ public class TextStlWriter extends AbstractTextFormatWriter {
     /** Write the given boundary to the output as triangles.
      * @param boundary boundary to write
      * @throws IllegalStateException if no solid has been started yet
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see PlaneConvexSubset#toTriangles()
      */
-    public void writeTriangles(final PlaneConvexSubset boundary) throws IOException {
+    public void writeTriangles(final PlaneConvexSubset boundary) {
         for (final Triangle3D tri : boundary.toTriangles()) {
             writeTriangles(tri.getVertices(), tri.getPlane().getNormal());
         }
@@ -106,10 +105,10 @@ public class TextStlWriter extends AbstractTextFormatWriter {
     /** Write the given facet definition to the output as triangles.
      * @param facet facet definition to write
      * @throws IllegalStateException if no solid has been started yet
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #writeTriangle(Vector3D, Vector3D, Vector3D, Vector3D)
      */
-    public void writeTriangles(final FacetDefinition facet) throws IOException {
+    public void writeTriangles(final FacetDefinition facet) {
         writeTriangles(facet.getVertices(), facet.getNormal());
     }
 
@@ -128,9 +127,9 @@ public class TextStlWriter extends AbstractTextFormatWriter {
      * @param normal facet normal; may be null
      * @throws IllegalStateException if no solid has been started yet or fewer than 3 vertices
      *      are given
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeTriangles(final List<Vector3D> vertices, final Vector3D normal) throws IOException {
+    public void writeTriangles(final List<Vector3D> vertices, final Vector3D normal) {
         for (final List<Vector3D> triangle : EuclideanUtils.convexPolygonToTriangleFan(vertices, t -> t)) {
             writeTriangle(
                     triangle.get(0),
@@ -153,10 +152,9 @@ public class TextStlWriter extends AbstractTextFormatWriter {
      * @param p3 third point
      * @param normal facet normal; may be null
      * @throws IllegalStateException if no solid has been started yet
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeTriangle(final Vector3D p1, final Vector3D p2, final Vector3D p3, final Vector3D normal)
-            throws IOException {
+    public void writeTriangle(final Vector3D p1, final Vector3D p2, final Vector3D p3, final Vector3D normal) {
         if (!started) {
             throw new IllegalStateException("Cannot write triangle: no solid has been started");
         }
@@ -190,7 +188,7 @@ public class TextStlWriter extends AbstractTextFormatWriter {
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (started) {
             endSolid();
         }
@@ -200,9 +198,9 @@ public class TextStlWriter extends AbstractTextFormatWriter {
 
     /** Write a triangle vertex to the output.
      * @param vertex triangle vertex
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void writeTriangleVertex(final Vector3D vertex) throws IOException {
+    private void writeTriangleVertex(final Vector3D vertex) {
         write(StlConstants.VERTEX_KEYWORD);
         write(SPACE);
         writeVector(vertex);
@@ -211,9 +209,9 @@ public class TextStlWriter extends AbstractTextFormatWriter {
 
     /** Write a vector to the output.
      * @param vec vector to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void writeVector(final Vector3D vec) throws IOException {
+    private void writeVector(final Vector3D vec) {
         write(vec.getX());
         write(SPACE);
         write(vec.getY());
@@ -223,9 +221,9 @@ public class TextStlWriter extends AbstractTextFormatWriter {
 
     /** Write the beginning or ending line of the solid definition.
      * @param keyword keyword at the start of the line
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void writeBeginOrEndLine(final String keyword) throws IOException {
+    private void writeBeginOrEndLine(final String keyword) {
         write(keyword);
         write(SPACE);
 

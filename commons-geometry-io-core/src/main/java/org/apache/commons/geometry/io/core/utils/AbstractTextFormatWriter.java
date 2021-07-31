@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.function.DoubleFunction;
 
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
+
 /** Base type for classes that write text-based data formats. This class
  * provides a number of common configuration options and utility methods.
  */
@@ -85,8 +87,8 @@ public abstract class AbstractTextFormatWriter implements Closeable {
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws IOException {
-        writer.close();
+    public void close() {
+        GeometryIOUtils.closeUnchecked(writer);
     }
 
     /** Get the underlying writer instance.
@@ -98,40 +100,48 @@ public abstract class AbstractTextFormatWriter implements Closeable {
 
     /** Write a double value formatted using the configured decimal format function.
      * @param d value to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected void write(final double d) throws IOException {
+    protected void write(final double d) {
         write(doubleFormat.apply(d));
     }
 
     /** Write an integer value.
      * @param n value to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected void write(final int n) throws IOException {
+    protected void write(final int n) {
         write(String.valueOf(n));
     }
 
     /** Write a char value.
      * @param c character to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected void write(final char c) throws IOException {
-        writer.write(c);
+    protected void write(final char c) {
+        try {
+            writer.write(c);
+        } catch (IOException exc) {
+            throw GeometryIOUtils.createUnchecked(exc);
+        }
     }
 
     /** Write a string.
      * @param str string to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected void write(final String str) throws IOException {
-        writer.write(str);
+    protected void write(final String str) {
+        try {
+            writer.write(str);
+        } catch (IOException exc) {
+            throw GeometryIOUtils.createUnchecked(exc);
+        }
     }
 
     /** Write the configured line separator to the output.
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected void writeNewLine() throws IOException {
+    protected void writeNewLine() {
         write(lineSeparator);
     }
 }

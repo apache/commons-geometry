@@ -17,8 +17,6 @@
 package org.apache.commons.geometry.io.euclidean.threed;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -56,7 +54,7 @@ class AbstractBoundaryReadHandler3DTest {
             Vector3D.ZERO, Vector3D.of(0, 1, 0), Vector3D.of(-1, 1, 0), Vector3D.of(-1, 0, 0)));
 
     @Test
-    void testRead() throws IOException {
+    void testRead() {
         // arrange
         final List<FacetDefinition> facets = Arrays.asList(FACET_1, FACET_2);
         final TestReadHandler3D handler = new TestReadHandler3D(facets);
@@ -74,7 +72,7 @@ class AbstractBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testReadTriangleMesh() throws IOException {
+    void testReadTriangleMesh() {
         // arrange
         final List<FacetDefinition> facets = Arrays.asList(FACET_1, FACET_2);
         final TestReadHandler3D handler = new TestReadHandler3D(facets);
@@ -93,7 +91,7 @@ class AbstractBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testBoundaries() throws IOException {
+    void testBoundaries() {
         // arrange
         final List<FacetDefinition> facets = Arrays.asList(FACET_1, FACET_2);
         final TestReadHandler3D handler = new TestReadHandler3D(facets);
@@ -117,7 +115,7 @@ class AbstractBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testFacets() throws IOException {
+    void testFacets() {
         // arrange
         final List<FacetDefinition> facets = Arrays.asList(FACET_1, FACET_2);
         final TestReadHandler3D handler = new TestReadHandler3D(facets);
@@ -166,7 +164,7 @@ class AbstractBoundaryReadHandler3DTest {
         final FacetDefinitionReaderIterator it = new FacetDefinitionReaderIterator(reader);
 
         // act/assert
-        GeometryTestUtils.assertThrowsWithMessage(it::next, UncheckedIOException.class, "IOException: Read failure");
+        GeometryTestUtils.assertThrowsWithMessage(it::next, IllegalStateException.class, "Read failure");
     }
 
     private static final class TestReadHandler3D extends AbstractBoundaryReadHandler3D {
@@ -187,7 +185,7 @@ class AbstractBoundaryReadHandler3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public FacetDefinitionReader facetDefinitionReader(final GeometryInput in) throws IOException {
+        public FacetDefinitionReader facetDefinitionReader(final GeometryInput in) {
             this.inArg = in;
 
             return new StubFacetDefinitionReader(facets);
@@ -206,9 +204,9 @@ class AbstractBoundaryReadHandler3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public FacetDefinition readFacet() throws IOException {
+        public FacetDefinition readFacet() {
             if (fail) {
-                throw new IOException("Read failure");
+                throw new IllegalStateException("Read failure");
             }
 
             return iterator.hasNext() ?
@@ -218,7 +216,7 @@ class AbstractBoundaryReadHandler3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public void close() throws IOException {
+        public void close() {
             // do nothing
         }
     }

@@ -16,13 +16,13 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.stl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinitionReader;
 
 /** Class used to read the binary form of the STL file format.
@@ -58,9 +58,9 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
     /** Get a read-only buffer containing the 80 bytes of the STL header. The header does not
      * include the 4-byte value indicating the total number of triangles in the STL file.
      * @return the STL header content
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public ByteBuffer getHeader() throws IOException {
+    public ByteBuffer getHeader() {
         beginRead();
         return ByteBuffer.wrap(header.array().clone());
     }
@@ -68,9 +68,9 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
     /** Return the header content as a string decoded using the UTF-8 charset. Control
      * characters (such as '\0') are not included in the result.
      * @return the header content decoded as a UTF-8 string
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public String getHeaderAsString() throws IOException {
+    public String getHeaderAsString() {
         return getHeaderAsString(StlConstants.DEFAULT_CHARSET);
     }
 
@@ -78,9 +78,9 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
      * characters (such as '\0') are not included in the result.
      * @param charset charset to decode the header with
      * @return the header content decoded as a string
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public String getHeaderAsString(final Charset charset) throws IOException {
+    public String getHeaderAsString(final Charset charset) {
         // decode the entire header as characters in the given charset
         final String raw = charset.decode(getHeader()).toString();
 
@@ -97,16 +97,16 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
 
     /** Get the total number of triangles (i.e. facets) declared to be present in the input.
      * @return total number of triangle in the input
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public long getNumTriangles() throws IOException {
+    public long getNumTriangles() {
         beginRead();
         return triangleTotal;
     }
 
     /** {@inheritDoc} */
     @Override
-    public BinaryStlFacetDefinition readFacet() throws IOException {
+    public BinaryStlFacetDefinition readFacet() {
         beginRead();
 
         BinaryStlFacetDefinition facet = null;
@@ -122,19 +122,18 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws IOException {
-        in.close();
+    public void close() {
+        GeometryIOUtils.closeUnchecked(in);
     }
 
     /** Read the file header content and triangle count.
-     * @throws IOException if an I/O error occurs
+     * @throws IllegalStateException is a parse error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void beginRead() throws IOException {
+    private void beginRead() {
         if (!hasReadHeader) {
             // read header content
-            final int headerBytesRead =
-                    in.read(header.array(), 0, StlConstants.BINARY_HEADER_BYTES);
-
+            final int headerBytesRead = GeometryIOUtils.applyAsIntUnchecked(in::read, header.array());
             if (headerBytesRead < StlConstants.BINARY_HEADER_BYTES) {
                 throw dataNotAvailable("header");
             }
@@ -157,7 +156,7 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
     /** Internal method to read a single facet from the input.
      * @return facet read from the input
      */
-    private BinaryStlFacetDefinition readFacetInternal() throws IOException {
+    private BinaryStlFacetDefinition readFacetInternal() {
         if (fill(triangleBuffer) < triangleBuffer.capacity()) {
             throw dataNotAvailable("triangle at index " + trianglesRead);
         }
@@ -176,10 +175,10 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
      * made ready for reading.
      * @param buf buffer to fill
      * @return number of bytes read
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private int fill(final ByteBuffer buf) throws IOException {
-        int read = in.read(buf.array());
+    private int fill(final ByteBuffer buf) {
+        int read = GeometryIOUtils.applyAsIntUnchecked(in::read, buf.array());
         buf.rewind();
 
         return read;
@@ -198,12 +197,12 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
         return Vector3D.of(x, y, z);
     }
 
-    /** Return an IOException stating that data is not available for the file
+    /** Return an exception stating that data is not available for the file
      * component with the given name.
      * @param name name of the file component missing data
      * @return exception instance
      */
-    private static IOException dataNotAvailable(final String name) {
-        return new IOException("Failed to read STL " + name + ": data not available");
+    private static IllegalStateException dataNotAvailable(final String name) {
+        return GeometryIOUtils.parseError("Failed to read STL " + name + ": data not available");
     }
 }

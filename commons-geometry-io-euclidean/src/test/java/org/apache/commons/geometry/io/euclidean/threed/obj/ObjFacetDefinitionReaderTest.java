@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +44,7 @@ class ObjFacetDefinitionReaderTest {
     }
 
     @Test
-    void testClose() throws IOException {
+    void testClose() {
         // arrange
         final CloseCountReader closeReader = new CloseCountReader(new StringReader(""));
 
@@ -58,7 +57,7 @@ class ObjFacetDefinitionReaderTest {
     }
 
     @Test
-    void testReadFacet_withNormal() throws IOException {
+    void testReadFacet_withNormal() {
         // arrange
         final ObjFacetDefinitionReader reader = reader(
                 "o test\n\n" +
@@ -82,7 +81,7 @@ class ObjFacetDefinitionReaderTest {
     }
 
     @Test
-    void testReadFacet_withoutNormal() throws IOException {
+    void testReadFacet_withoutNormal() {
         // arrange
         final ObjFacetDefinitionReader reader = reader(
                 "o test\n\n" +
@@ -103,7 +102,7 @@ class ObjFacetDefinitionReaderTest {
     }
 
     @Test
-    void testReadFacet_failOnNonPolygon() throws IOException {
+    void testReadFacet_failOnNonPolygon() {
         // arrange
         final ObjFacetDefinitionReader reader = reader(
                 "o test\n\n" +
@@ -120,7 +119,7 @@ class ObjFacetDefinitionReaderTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(
                 () -> EuclideanIOTestUtils.readAll(reader),
-                IOException.class, Pattern.compile("^Parsing failed.*"));
+                IllegalStateException.class, Pattern.compile("^Parsing failed.*"));
     }
 
     private static ObjFacetDefinitionReader reader(final String str) {

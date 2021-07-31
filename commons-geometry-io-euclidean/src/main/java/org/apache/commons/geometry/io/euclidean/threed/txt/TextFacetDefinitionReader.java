@@ -16,13 +16,13 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.txt;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 import org.apache.commons.geometry.io.core.internal.SimpleTextParser;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinitionReader;
@@ -136,7 +136,7 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
 
     /** {@inheritDoc} */
     @Override
-    public FacetDefinition readFacet() throws IOException {
+    public FacetDefinition readFacet() {
         discardNonDataLines();
         if (parser.hasMoreCharacters()) {
             try {
@@ -152,16 +152,17 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws IOException {
-        reader.close();
+    public void close() {
+        GeometryIOUtils.closeUnchecked(reader);
     }
 
     /** Internal method to read a facet definition starting from the current parser
      * position. Empty lines (including lines containing only comments) are discarded.
      * @return facet definition or null if the end of input is reached
-     * @throws IOException if an I/O or parsing error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private FacetDefinition readFacetInternal() throws IOException {
+    private FacetDefinition readFacetInternal() {
         final Vector3D p1 = readVector();
         discardNonData();
         final Vector3D p2 = readVector();
@@ -190,9 +191,10 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
 
     /** Read a vector starting from the current parser position.
      * @return vector read from the parser
-     * @throws IOException if an I/O or parsing error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private Vector3D readVector() throws IOException {
+    private Vector3D readVector() {
         final double x = readDouble();
         discardNonData();
         final double y = readDouble();
@@ -204,9 +206,10 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
 
     /** Read a double starting from the current parser position.
      * @return double value read from the parser
-     * @throws IOException if an I/O or parsing error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private double readDouble() throws IOException {
+    private double readDouble() {
         return parser
                 .next(TextFacetDefinitionReader::isDataTokenPart)
                 .getCurrentTokenAsDouble();
@@ -214,9 +217,10 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
 
     /** Discard lines that do not contain any data. This includes empty lines
      * and lines that only contain comments.
-     * @throws IOException if an I/O or parsing error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void discardNonDataLines() throws IOException {
+    private void discardNonDataLines() {
         parser.discardLineWhitespace();
         while (parser.hasMoreCharacters() &&
                 (!parser.hasMoreCharactersOnLine() ||
@@ -230,9 +234,10 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
 
     /** Discard a sequence of non-data characters on the current line starting
      * from the current parser position.
-     * @throws IOException if an I/O or parsing error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void discardNonData() throws IOException {
+    private void discardNonData() {
         parser.discard(c ->
             !SimpleTextParser.isNewLinePart(c) &&
             !isDataTokenPart(c) &&
@@ -247,9 +252,10 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
 
     /** Return true if the parser is positioned at the start of the comment token.
      * @return true if the parser is positioned at the start of the comment token.
-     * @throws IOException if an I/O or parsing error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private boolean foundComment() throws IOException {
+    private boolean foundComment() {
         return hasCommentToken &&
                 commentToken.equals(parser.peek(commentToken.length()));
     }

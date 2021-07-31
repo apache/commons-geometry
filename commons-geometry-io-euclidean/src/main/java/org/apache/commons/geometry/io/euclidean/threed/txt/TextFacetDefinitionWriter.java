@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.txt;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
@@ -192,9 +191,9 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
     /** Write a comment to the output.
      * @param comment comment string to write
      * @throws IllegalStateException if the configured {@link #getCommentToken() comment token} is null
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeComment(final String comment) throws IOException {
+    public void writeComment(final String comment) {
         if (commentToken == null) {
             throw new IllegalStateException("Cannot write comment: no comment token configured");
         }
@@ -208,9 +207,9 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
     }
 
     /** Write a blank line to the output.
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeBlankLine() throws IOException {
+    public void writeBlankLine() {
         writeNewLine();
     }
 
@@ -222,9 +221,9 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
      * @throws IllegalArgumentException if any boundary has infinite size or a
      *      {@link #getFacetVertexCount() facet vertex count} has been configured and a boundary
      *      cannot be represented using the required number of vertices
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void write(final BoundarySource3D src) throws IOException {
+    public void write(final BoundarySource3D src) {
         try (Stream<PlaneConvexSubset> stream = src.boundaryStream()) {
             final Iterator<PlaneConvexSubset> it = stream.iterator();
             while (it.hasNext()) {
@@ -241,9 +240,9 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
      * @throws IllegalArgumentException if the argument has infinite size or a
      *      {@link #getFacetVertexCount() facet vertex count} has been configured and the number of required
      *      vertices does not match the number present in the argument
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void write(final PlaneConvexSubset convexSubset) throws IOException {
+    public void write(final PlaneConvexSubset convexSubset) {
         if (convexSubset.isInfinite()) {
             throw new IllegalArgumentException("Cannot write infinite convex subset");
         }
@@ -265,9 +264,9 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
      * @throws IllegalArgumentException if a {@link #getFacetVertexCount() facet vertex count}
      *      has been configured and the number of required vertices does not match the number
      *      present in the argument
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void write(final FacetDefinition facet) throws IOException {
+    public void write(final FacetDefinition facet) {
         write(facet.getVertices());
     }
 
@@ -279,12 +278,12 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
      * @throws IllegalArgumentException if the vertex list contains less than 3 vertices or a
      *      {@link #getFacetVertexCount() facet vertex count} has been configured and the number of required
      *      vertices does not match the number given
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #getVertexComponentSeparator()
      * @see #getVertexSeparator()
      * @see #getFacetVertexCount()
      */
-    public void write(final List<Vector3D> vertices) throws IOException {
+    public void write(final List<Vector3D> vertices) {
         final int size = vertices.size();
         if (size < 3) {
             throw new IllegalArgumentException("At least 3 vertices are required per facet; found " + size);
@@ -306,9 +305,9 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
 
     /** Write a single vertex to the output.
      * @param vertex vertex to write
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void write(final Vector3D vertex) throws IOException {
+    private void write(final Vector3D vertex) {
         write(vertex.getX());
         write(vertexComponentSeparator);
         write(vertex.getY());

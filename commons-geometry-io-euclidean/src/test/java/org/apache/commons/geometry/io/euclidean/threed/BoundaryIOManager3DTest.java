@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed;
 
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,12 +52,12 @@ class BoundaryIOManager3DTest {
     private static final FacetDefinitionReader FACET_DEF_READER = new FacetDefinitionReader() {
 
         @Override
-        public FacetDefinition readFacet() throws IOException {
+        public FacetDefinition readFacet() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             // do nothing
         }
     };
@@ -92,7 +91,7 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader_formatGiven() throws IOException {
+    void testFacetDefinitionReader_formatGiven() {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -108,7 +107,7 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader_nullFormat() throws IOException {
+    void testFacetDefinitionReader_nullFormat() {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -124,13 +123,13 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader_unknownHandler() throws IOException {
+    void testFacetDefinitionReader_unknownHandler() {
         // act/assert
         checkUnknownReadHandler(manager::facetDefinitionReader);
     }
 
     @Test
-    void testFacets_formatGiven() throws IOException {
+    void testFacets_formatGiven() {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -146,7 +145,7 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testFacets_nullFormat() throws IOException {
+    void testFacets_nullFormat() {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -162,13 +161,13 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testFacets_unknownHandler() throws IOException {
+    void testFacets_unknownHandler() {
         // act/assert
         checkUnknownReadHandler(manager::facets);
     }
 
     @Test
-    void testTriangles_formatGiven() throws IOException {
+    void testTriangles_formatGiven() {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -185,7 +184,7 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testTriangles_nullFormat() throws IOException {
+    void testTriangles_nullFormat() {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -202,13 +201,13 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testTriangles_unknownHandler() throws IOException {
+    void testTriangles_unknownHandler() {
         // act/assert
         checkUnknownReadHandler((in, fmt) -> manager.triangles(in, fmt, TEST_PRECISION));
     }
 
     @Test
-    void testReadTriangleMesh_formatGiven() throws IOException {
+    void testReadTriangleMesh_formatGiven() {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -225,7 +224,7 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testReadTriangleMesh_nullFormat() throws IOException {
+    void testReadTriangleMesh_nullFormat() {
         // arrange
         final StubReadHandler3D readHandler = new StubReadHandler3D();
         manager.registerReadHandler(readHandler);
@@ -242,13 +241,13 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testReadTriangleMesh_unknownHandler() throws IOException {
+    void testReadTriangleMesh_unknownHandler() {
         // act/assert
         checkUnknownReadHandler((in, fmt) -> manager.readTriangleMesh(in, fmt, TEST_PRECISION));
     }
 
     @Test
-    void testWrite_stream_formatGiven() throws IOException {
+    void testWrite_stream_formatGiven() {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -264,7 +263,7 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testWrite_stream_nullFormat() throws IOException {
+    void testWrite_stream_nullFormat() {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -280,13 +279,13 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testWrite_stream_unknownHandler() throws IOException {
+    void testWrite_stream_unknownHandler() {
         // act/assert
         checkUnknownWriteHandler((out, fmt) -> manager.write(Stream.of(TRI), out, fmt));
     }
 
     @Test
-    void testWriteFacets_stream_formatGiven() throws IOException {
+    void testWriteFacets_stream_formatGiven() {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -302,7 +301,7 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testWriteFacets_stream_nullFormat() throws IOException {
+    void testWriteFacets_stream_nullFormat() {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -318,13 +317,13 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testWriteFacets_stream_unknownHandler() throws IOException {
+    void testWriteFacets_stream_unknownHandler() {
         // act/assert
         checkUnknownWriteHandler((out, fmt) -> manager.writeFacets(Stream.of(FACET), out, fmt));
     }
 
     @Test
-    void testWriteFacets_collection_formatGiven() throws IOException {
+    void testWriteFacets_collection_formatGiven() {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -340,7 +339,7 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testWriteFacets_collection_nullFormat() throws IOException {
+    void testWriteFacets_collection_nullFormat() {
         // arrange
         final StubWriteHandler3D writeHandler = new StubWriteHandler3D();
         manager.registerWriteHandler(writeHandler);
@@ -356,7 +355,7 @@ class BoundaryIOManager3DTest {
     }
 
     @Test
-    void testWriteFacets_collection_unknownHandler() throws IOException {
+    void testWriteFacets_collection_unknownHandler() {
         // act/assert
         checkUnknownWriteHandler((out, fmt) -> manager.writeFacets(Collections.singletonList(FACET), out, fmt));
     }
@@ -418,15 +417,14 @@ class BoundaryIOManager3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public BoundarySource3D read(final GeometryInput in, final Precision.DoubleEquivalence precision)
-                throws IOException {
+        public BoundarySource3D read(final GeometryInput in, final Precision.DoubleEquivalence precision) {
             throw new UnsupportedOperationException();
         }
 
         /** {@inheritDoc} */
         @Override
         public Stream<PlaneConvexSubset> boundaries(final GeometryInput in,
-                final Precision.DoubleEquivalence precision) throws IOException {
+                final Precision.DoubleEquivalence precision) {
             this.inArg = in;
             this.precisionArg = precision;
 
@@ -435,7 +433,7 @@ class BoundaryIOManager3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public FacetDefinitionReader facetDefinitionReader(final GeometryInput in) throws IOException {
+        public FacetDefinitionReader facetDefinitionReader(final GeometryInput in) {
             this.inArg = in;
 
             return FACET_DEF_READER;
@@ -443,7 +441,7 @@ class BoundaryIOManager3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public Stream<FacetDefinition> facets(final GeometryInput in) throws IOException {
+        public Stream<FacetDefinition> facets(final GeometryInput in) {
             this.inArg = in;
 
             return Stream.of(FACET);
@@ -451,8 +449,7 @@ class BoundaryIOManager3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public TriangleMesh readTriangleMesh(final GeometryInput in, final Precision.DoubleEquivalence precision)
-                throws IOException {
+        public TriangleMesh readTriangleMesh(final GeometryInput in, final Precision.DoubleEquivalence precision) {
             this.inArg = in;
             this.precisionArg = precision;
 
@@ -476,30 +473,27 @@ class BoundaryIOManager3DTest {
 
         /** {@inheritDoc} */
         @Override
-        public void write(final Stream<? extends PlaneConvexSubset> boundaries, final GeometryOutput out)
-                throws IOException {
+        public void write(final Stream<? extends PlaneConvexSubset> boundaries, final GeometryOutput out) {
             this.boundariesArg = boundaries.collect(Collectors.toList());
             this.outArg = out;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void write(final BoundarySource3D src, final GeometryOutput out) throws IOException {
+        public void write(final BoundarySource3D src, final GeometryOutput out) {
             throw new UnsupportedOperationException();
         }
 
         /** {@inheritDoc} */
         @Override
-        public void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out)
-                throws IOException {
+        public void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out) {
             this.facetsArg = facets.collect(Collectors.toList());
             this.outArg = out;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void writeFacets(final Collection<? extends FacetDefinition> facets, final GeometryOutput out)
-                throws IOException {
+        public void writeFacets(final Collection<? extends FacetDefinition> facets, final GeometryOutput out) {
             this.facetsArg = facets;
             this.outArg = out;
         }

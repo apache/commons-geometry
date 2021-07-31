@@ -22,7 +22,7 @@ import java.util.Objects;
 
 /** Class used to buffer characters read from an underlying {@link Reader}.
  * Characters can be consumed from the buffer, examined without being consumed,
- * and pushed back onto the buffer. The internal buffer is resized as needed.
+ * and pushed back onto the buffer. The internal bufer is resized as needed.
  */
 public class CharReadBuffer {
 
@@ -101,9 +101,9 @@ public class CharReadBuffer {
 
     /** Return true if more characters are available from the read buffer.
      * @return true if more characters are available from the read buffer
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public boolean hasMoreCharacters() throws IOException {
+    public boolean hasMoreCharacters() {
         return makeAvailable(1) > 0;
     }
 
@@ -112,9 +112,9 @@ public class CharReadBuffer {
      * is returned.
      * @param n number of characters requested to be available
      * @return number of characters available for immediate use in the buffer
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public int makeAvailable(final int n) throws IOException {
+    public int makeAvailable(final int n) {
         final int diff = n - count;
         if (diff > 0) {
             readChars(diff);
@@ -125,10 +125,10 @@ public class CharReadBuffer {
     /** Remove and return the next character in the buffer.
      * @return the next character in the buffer or {@value #EOF}
      *      if the end of the content has been reached
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #peek()
      */
-    public int read() throws IOException {
+    public int read() {
         final int result = peek();
         charsRemoved(1);
 
@@ -141,10 +141,10 @@ public class CharReadBuffer {
      * @param len requested length of the string
      * @return a string from the read buffer or null if no more characters are available
      * @throws IllegalArgumentException if {@code len} is less than 0
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #peekString(int)
      */
-    public String readString(final int len) throws IOException {
+    public String readString(final int len) {
         final String result = peekString(len);
         if (result != null) {
             charsRemoved(result.length());
@@ -156,10 +156,10 @@ public class CharReadBuffer {
     /** Return the next character in the buffer without removing it.
      * @return the next character in the buffer or {@value #EOF}
      *      if the end of the content has been reached
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #read()
      */
-    public int peek() throws IOException {
+    public int peek() {
         if (makeAvailable(1) < 1) {
             return EOF;
         }
@@ -172,10 +172,10 @@ public class CharReadBuffer {
      * @param len requested length of the string
      * @return a string from the read buffer or null if no more characters are available
      * @throws IllegalArgumentException if {@code len} is less than 0
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #readString(int)
      */
-    public String peekString(final int len) throws IOException {
+    public String peekString(final int len) {
         if (len < 0) {
             throw new IllegalArgumentException("Requested string length cannot be negative; was " + len);
         } else if (len == 0) {
@@ -206,9 +206,9 @@ public class CharReadBuffer {
      * @param index index of the character to receive relative to the buffer start
      * @return the character at the given index of {@code -1} if the character is
      *      past the end of the stream content
-     * @throws IOException if an I/O exception occurs
+     * @throws java.io.UncheckedIOException if an I/O exception occurs
      */
-    public int charAt(final int index) throws IOException {
+    public int charAt(final int index) {
         if (index < 0) {
             throw new IllegalArgumentException("Character index cannot be negative; was " + index);
         }
@@ -224,10 +224,10 @@ public class CharReadBuffer {
      * and then from the underlying reader using {@link Reader#skip(long)} if needed.
      * @param n number of character to skip
      * @return the number of characters skipped
-     * @throws IOException if an I/O error occurs
      * @throws IllegalArgumentException if {@code n} is negative
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public int skip(final int n) throws IOException {
+    public int skip(final int n) {
         if (n < 0) {
             throw new IllegalArgumentException("Character skip count cannot be negative; was " + n);
         }
@@ -239,7 +239,11 @@ public class CharReadBuffer {
         // skip from the reader if required
         final int remaining = n - skipped;
         if (remaining > 0) {
-            skipped += reader.skip(remaining);
+            try {
+                skipped += reader.skip(remaining);
+            } catch (IOException exc) {
+                throw GeometryIOUtils.createUnchecked(exc);
+            }
         }
 
         return skipped;
@@ -281,29 +285,33 @@ public class CharReadBuffer {
      * the internal buffer.
      * @param n minimum number of characters requested to be placed
      *      in the buffer
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private void readChars(final int n) throws IOException {
+    private void readChars(final int n) {
         if (!reachedEof) {
             int remaining = Math.max(n, minRead);
 
             ensureCapacity(count + remaining);
 
-            int tail;
-            int len;
-            int read;
-            while (remaining > 0) {
-                tail = (head + count) % buffer.length;
-                len = Math.min(buffer.length - tail, remaining);
+            try {
+                int tail;
+                int len;
+                int read;
+                while (remaining > 0) {
+                    tail = (head + count) % buffer.length;
+                    len = Math.min(buffer.length - tail, remaining);
 
-                read = reader.read(buffer, tail, len);
-                if (read == EOF) {
-                    reachedEof = true;
-                    break;
+                    read = reader.read(buffer, tail, len);
+                    if (read == EOF) {
+                        reachedEof = true;
+                        break;
+                    }
+
+                    charsAppended(read);
+                    remaining -= read;
                 }
-
-                charsAppended(read);
-                remaining -= read;
+            } catch (IOException exc) {
+                throw GeometryIOUtils.createUnchecked(exc);
             }
         }
     }

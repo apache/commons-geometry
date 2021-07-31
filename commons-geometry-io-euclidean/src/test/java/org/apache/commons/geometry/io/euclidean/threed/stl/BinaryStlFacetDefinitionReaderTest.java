@@ -19,6 +19,8 @@ package org.apache.commons.geometry.io.euclidean.threed.stl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -120,7 +122,7 @@ class BinaryStlFacetDefinitionReaderTest {
             // act/assert
             GeometryTestUtils.assertThrowsWithMessage(
                     () -> reader.getHeader(),
-                    IOException.class, "Failed to read STL header: data not available");
+                    IllegalStateException.class, "Failed to read STL header: data not available");
         }
     }
 
@@ -133,7 +135,25 @@ class BinaryStlFacetDefinitionReaderTest {
             // act/assert
             GeometryTestUtils.assertThrowsWithMessage(
                     () -> reader.getHeader(),
-                    IOException.class, "Failed to read STL triangle count: data not available");
+                    IllegalStateException.class, "Failed to read STL triangle count: data not available");
+        }
+    }
+
+    @Test
+    void testGetHeader_ioException() throws IOException {
+        // arrange
+        final InputStream failIn = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("read");
+            }
+        };
+
+        try (BinaryStlFacetDefinitionReader reader = new BinaryStlFacetDefinitionReader(failIn)) {
+            // act/assert
+            GeometryTestUtils.assertThrowsWithMessage(
+                    () -> reader.getHeader(),
+                    UncheckedIOException.class, "IOException: read");
         }
     }
 
@@ -147,7 +167,7 @@ class BinaryStlFacetDefinitionReaderTest {
             // act/assert
             GeometryTestUtils.assertThrowsWithMessage(
                     () -> reader.readFacet(),
-                    IOException.class, "Failed to read STL triangle at index 0: data not available");
+                    IllegalStateException.class, "Failed to read STL triangle at index 0: data not available");
         }
     }
 
@@ -249,7 +269,7 @@ class BinaryStlFacetDefinitionReaderTest {
         return result;
     }
 
-    private static byte[] getBytes(final Vector3D vec) throws IOException {
+    private static byte[] getBytes(final Vector3D vec) {
         final byte[] result = new byte[Float.BYTES * 3];
         int offset = 0;
 

@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.txt;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -110,7 +109,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteComment() throws IOException {
+    void testWriteComment() {
         // arrange
         fdWriter.setCommentToken("-- ");
         fdWriter.setLineSeparator("\r\n");
@@ -129,7 +128,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteComment_noCommentToken() throws IOException {
+    void testWriteComment_noCommentToken() {
         // arrange
         fdWriter.setCommentToken(null);
 
@@ -140,7 +139,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteBlankLine() throws IOException {
+    void testWriteBlankLine() {
         // act
         fdWriter.writeBlankLine();
         fdWriter.setLineSeparator("\r");
@@ -151,7 +150,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteVertices() throws IOException {
+    void testWriteVertices() {
         // arrange
         final List<Vector3D> vertices1 = Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(0.5, 0, 0), Vector3D.of(0, -0.5, 0));
@@ -169,7 +168,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteVertices_invalidCount() throws IOException {
+    void testWriteVertices_invalidCount() {
         // arrange
         fdWriter.setFacetVertexCount(4);
         final List<Vector3D> notEnough = Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X);
@@ -188,7 +187,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteFacetDefinition() throws IOException {
+    void testWriteFacetDefinition() {
         // arrange
         final DecimalFormat fmt =
                 new DecimalFormat("0.0##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
@@ -211,7 +210,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteFacetDefinition_invalidCount() throws IOException {
+    void testWriteFacetDefinition_invalidCount() {
         // arrange
         fdWriter.setFacetVertexCount(4);
         final SimpleFacetDefinition tooMany = new SimpleFacetDefinition(Arrays.asList(
@@ -225,7 +224,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWritePlaneConvexSubset() throws IOException {
+    void testWritePlaneConvexSubset() {
         // arrange
         final ConvexPolygon3D poly1 = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.ZERO, Vector3D.of(0, 0, -0.5), Vector3D.of(0, -0.5, 0)
@@ -245,7 +244,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWritePlaneConvexSubset_convertsToTriangles() throws IOException {
+    void testWritePlaneConvexSubset_convertsToTriangles() {
         // arrange
         final ConvexPolygon3D poly = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.ZERO, Vector3D.of(0, 1, 0), Vector3D.of(0, 1, 1), Vector3D.of(0, 0, 1)
@@ -263,7 +262,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWritePlaneConvexSubset_infinite() throws IOException {
+    void testWritePlaneConvexSubset_infinite() {
         // arrange
         final PlaneConvexSubset inf = Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
 
@@ -274,7 +273,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteBoundarySource() throws IOException {
+    void testWriteBoundarySource() {
         // arrange
         final ConvexPolygon3D poly1 = Planes.convexPolygonFromVertices(Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(0, 0, -0.5), Vector3D.of(0, -0.5, 0)
@@ -293,7 +292,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteBoundarySource_empty() throws IOException {
+    void testWriteBoundarySource_empty() {
         // act
         fdWriter.write(BoundarySource3D.of(Collections.emptyList()));
 
@@ -302,7 +301,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testWriteBoundarySource_alternativeFormatting() throws IOException {
+    void testWriteBoundarySource_alternativeFormatting() {
         // arrange
         final DecimalFormat fmt =
                 new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
@@ -335,7 +334,7 @@ class TextFacetDefinitionWriterTest {
     }
 
     @Test
-    void testCsvFormat() throws IOException {
+    void testCsvFormat() {
         // arrange
         final ConvexPolygon3D poly1 = Planes.convexPolygonFromVertices(Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(0, 0, -0.5901), Vector3D.of(0, -0.501, 0)

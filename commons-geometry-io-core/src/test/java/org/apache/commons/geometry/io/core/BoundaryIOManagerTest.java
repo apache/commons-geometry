@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.core;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -484,7 +483,7 @@ class BoundaryIOManagerTest {
     }
 
     @Test
-    void testRead_formatGiven() throws IOException {
+    void testRead_formatGiven() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -502,7 +501,7 @@ class BoundaryIOManagerTest {
     }
 
     @Test
-    void testRead_noFormatGiven() throws IOException {
+    void testRead_noFormatGiven() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -520,7 +519,7 @@ class BoundaryIOManagerTest {
     }
 
     @Test
-    void testRead_handlerNotFound() throws IOException {
+    void testRead_handlerNotFound() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -541,7 +540,7 @@ class BoundaryIOManagerTest {
     }
 
     @Test
-    void testBoundaries_formatGiven() throws IOException {
+    void testBoundaries_formatGiven() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -559,7 +558,7 @@ class BoundaryIOManagerTest {
     }
 
     @Test
-    void testBoundaries_noFormatGiven() throws IOException {
+    void testBoundaries_noFormatGiven() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -577,7 +576,7 @@ class BoundaryIOManagerTest {
     }
 
     @Test
-    void testBoundaries_handlerNotFound() throws IOException {
+    void testBoundaries_handlerNotFound() {
         // arrange
         final StubReadHandler r1 = new StubReadHandler(FMT_A);
         manager.registerReadHandler(r1);
@@ -598,7 +597,7 @@ class BoundaryIOManagerTest {
     }
 
     @Test
-    void testWrite_formatGiven() throws IOException {
+    void testWrite_formatGiven() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         manager.registerWriteHandler(w1);
@@ -615,7 +614,7 @@ class BoundaryIOManagerTest {
     }
 
     @Test
-    void testWrite_noFormatGiven() throws IOException {
+    void testWrite_noFormatGiven() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         manager.registerWriteHandler(w1);
@@ -632,7 +631,7 @@ class BoundaryIOManagerTest {
     }
 
     @Test
-    void testWrite_handlerNotFound() throws IOException {
+    void testWrite_handlerNotFound() {
         // arrange
         final StubWriteHandler w1 = new StubWriteHandler(FMT_A);
         manager.registerWriteHandler(w1);
@@ -685,7 +684,7 @@ class BoundaryIOManagerTest {
 
         /** {@inheritDoc} */
         @Override
-        public InputStream getInputStream() throws IOException {
+        public InputStream getInputStream() {
             throw new UnsupportedOperationException();
         }
 
@@ -713,7 +712,7 @@ class BoundaryIOManagerTest {
 
         /** {@inheritDoc} */
         @Override
-        public OutputStream getOutputStream() throws IOException {
+        public OutputStream getOutputStream() {
             throw new UnsupportedOperationException();
         }
     }
@@ -738,8 +737,7 @@ class BoundaryIOManagerTest {
 
         /** {@inheritDoc} */
         @Override
-        public TestBoundaryList read(final GeometryInput in, final Precision.DoubleEquivalence precision)
-                throws IOException {
+        public TestBoundaryList read(final GeometryInput in, final Precision.DoubleEquivalence precision) {
             this.inArg = in;
             this.precisionArg = precision;
 
@@ -749,7 +747,7 @@ class BoundaryIOManagerTest {
         /** {@inheritDoc} */
         @Override
         public Stream<TestLineSegment> boundaries(final GeometryInput in,
-                final Precision.DoubleEquivalence precision) throws IOException {
+                final Precision.DoubleEquivalence precision) {
             this.inArg = in;
             this.precisionArg = precision;
 
@@ -777,7 +775,7 @@ class BoundaryIOManagerTest {
 
         /** {@inheritDoc} */
         @Override
-        public void write(final TestBoundaryList boundarySource, final GeometryOutput out) throws IOException {
+        public void write(final TestBoundaryList boundarySource, final GeometryOutput out) {
             this.list = boundarySource;
             this.outArg = out;
         }

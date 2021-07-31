@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.core.output;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
@@ -38,7 +37,7 @@ public interface GeometryOutput {
 
     /** Get the output stream for writing to the output.
      * @return output stream for writing to the output
-     * @throws IOException if an IO error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    OutputStream getOutputStream() throws IOException;
+    OutputStream getOutputStream();
 }

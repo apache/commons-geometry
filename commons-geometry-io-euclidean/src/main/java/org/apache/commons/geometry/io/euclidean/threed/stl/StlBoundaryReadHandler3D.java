@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.stl;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 
 import org.apache.commons.geometry.io.core.GeometryFormat;
@@ -58,7 +57,7 @@ public class StlBoundaryReadHandler3D extends AbstractBoundaryReadHandler3D {
 
     /** {@inheritDoc} */
     @Override
-    public FacetDefinitionReader facetDefinitionReader(final GeometryInput in) throws IOException {
+    public FacetDefinitionReader facetDefinitionReader(final GeometryInput in) {
         final Charset inputCharset = in.getCharset() != null ?
                 in.getCharset() :
                 defaultCharset;

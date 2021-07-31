@@ -16,9 +16,7 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UncheckedIOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
@@ -43,7 +41,7 @@ class ObjWriterTest {
             Precision.doubleEquivalenceOfEpsilon(TEST_EPS);
 
     @Test
-    void testPropertyDefaults() throws IOException {
+    void testPropertyDefaults() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -57,7 +55,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testClose_calledMultipleTimes() throws IOException {
+    void testClose_calledMultipleTimes() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -70,7 +68,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testSetLineSeparator() throws IOException {
+    void testSetLineSeparator() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -91,7 +89,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testSetDecimalFormat() throws IOException {
+    void testSetDecimalFormat() {
         // arrange
         final StringWriter writer = new StringWriter();
         final DecimalFormat fmt =
@@ -109,7 +107,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteComment() throws IOException {
+    void testWriteComment() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -128,7 +126,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteObjectName() throws IOException {
+    void testWriteObjectName() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -142,7 +140,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteGroupName() throws IOException {
+    void testWriteGroupName() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -156,7 +154,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteVertex() throws IOException {
+    void testWriteVertex() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -187,7 +185,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteNormal() throws IOException {
+    void testWriteNormal() {
         // arrange
         final StringWriter writer = new StringWriter();
         final DecimalFormat fmt =
@@ -216,7 +214,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteFace() throws IOException {
+    void testWriteFace() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -242,7 +240,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteFace_withNormals() throws IOException {
+    void testWriteFace_withNormals() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -273,7 +271,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteFace_invalidVertexNumber() throws IOException {
+    void testWriteFace_invalidVertexNumber() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -286,7 +284,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteFace_vertexIndexOutOfBounds() throws IOException {
+    void testWriteFace_vertexIndexOutOfBounds() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -311,7 +309,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteFace_normalIndexOutOfBounds() throws IOException {
+    void testWriteFace_normalIndexOutOfBounds() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -342,7 +340,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteFace_invalidVertexAndNormalCountMismatch() throws IOException {
+    void testWriteFace_invalidVertexAndNormalCountMismatch() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -355,7 +353,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteMesh() throws IOException {
+    void testWriteMesh() {
         // arrange
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION)
                 .addFaceUsingVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0))
@@ -380,7 +378,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testMeshBuffer() throws IOException {
+    void testMeshBuffer() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -413,7 +411,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testMeshBuffer_givenBatchSize() throws IOException {
+    void testMeshBuffer_givenBatchSize() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -448,7 +446,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testMeshBuffer_mixedWithDirectlyAddedFace() throws IOException {
+    void testMeshBuffer_mixedWithDirectlyAddedFace() {
         // arrange
         final StringWriter writer = new StringWriter();
 
@@ -497,7 +495,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteBoundaries_meshArgument() throws IOException {
+    void testWriteBoundaries_meshArgument() {
         // arrange
         final SimpleTriangleMesh mesh = SimpleTriangleMesh.builder(TEST_PRECISION)
                 .addFaceUsingVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0))
@@ -522,7 +520,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteBoundaries_nonMeshArgument() throws IOException {
+    void testWriteBoundaries_nonMeshArgument() {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(
                     Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION),
@@ -547,7 +545,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteBoundaries_nonMeshArgument_smallBatchSize() throws IOException {
+    void testWriteBoundaries_nonMeshArgument_smallBatchSize() {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(
                     Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION),
@@ -574,7 +572,7 @@ class ObjWriterTest {
     }
 
     @Test
-    void testWriteBoundaries_infiniteBoundary() throws IOException {
+    void testWriteBoundaries_infiniteBoundary() {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(
                     Planes.triangleFromVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), TEST_PRECISION),
@@ -587,8 +585,6 @@ class ObjWriterTest {
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             try (ObjWriter objWriter = new ObjWriter(writer)) {
                 objWriter.writeBoundaries(src);
-            } catch (final IOException exc) {
-                throw new UncheckedIOException(exc);
             }
         }, IllegalArgumentException.class, Pattern.compile("^OBJ input geometry cannot be infinite: .*"));
     }

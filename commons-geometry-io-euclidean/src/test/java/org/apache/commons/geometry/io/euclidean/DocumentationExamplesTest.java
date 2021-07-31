@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
@@ -47,7 +46,7 @@ class DocumentationExamplesTest {
     Path tempDir;
 
     @Test
-    void testIndexPageExample() throws IOException {
+    void testIndexPageExample() {
         // construct a precision instance to handle floating-point comparisons
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
 

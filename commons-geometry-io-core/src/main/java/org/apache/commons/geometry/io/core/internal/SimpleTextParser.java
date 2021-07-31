@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.core.internal;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
@@ -185,10 +184,10 @@ public class SimpleTextParser {
 
     /** Get the current token parsed as an integer.
      * @return the current token parsed as an integer
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if the current token cannot be parsed as an integer
+     * @throws IllegalStateException if no token has been read or the
+     *      current token cannot be parsed as an integer
      */
-    public int getCurrentTokenAsInt() throws IOException {
+    public int getCurrentTokenAsInt() {
         ensureHasSetToken();
 
         Throwable cause = null;
@@ -206,10 +205,10 @@ public class SimpleTextParser {
 
     /** Get the current token parsed as a double.
      * @return the current token parsed as a double
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if the current token cannot be parsed as a double
+     * @throws IllegalStateException if no token has been read or the
+     *      current token cannot be parsed as a double
      */
-    public double getCurrentTokenAsDouble() throws IOException {
+    public double getCurrentTokenAsDouble() {
         ensureHasSetToken();
 
         Throwable cause = null;
@@ -227,17 +226,17 @@ public class SimpleTextParser {
 
     /** Return true if there are more characters to read from this instance.
      * @return true if there are more characters to read from this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public boolean hasMoreCharacters() throws IOException {
+    public boolean hasMoreCharacters() {
         return buffer.hasMoreCharacters();
     }
 
     /** Return true if there are more characters to read on the current line.
      * @return true if there are more characters to read on the current line
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public boolean hasMoreCharactersOnLine() throws IOException {
+    public boolean hasMoreCharactersOnLine() {
         return hasMoreCharacters() && isNotNewLinePart(peekChar());
     }
 
@@ -246,10 +245,10 @@ public class SimpleTextParser {
      * set the {@link #getCurrentToken() current token}.
      * @return the next character in the stream or -1 if the end of the stream has been
      *      reached
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #peekChar()
      */
-    public int readChar() throws IOException {
+    public int readChar() {
         final int value = buffer.read();
         if (value == LF ||
                 (value == CR && peekChar() != LF)) {
@@ -271,11 +270,11 @@ public class SimpleTextParser {
      * @return this instance
      * @throws IllegalArgumentException if {@code len} is less than 0 or greater than the
      *      configured {@link #getMaxStringLength() maximum string length}
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #getCurrentToken()
      * @see #consume(int, IntConsumer)
      */
-    public SimpleTextParser next(final int len) throws IOException {
+    public SimpleTextParser next(final int len) {
         validateRequestedStringLength(len);
 
         final int line = getLineNumber();
@@ -303,12 +302,11 @@ public class SimpleTextParser {
      * @return this instance
      * @throws IllegalArgumentException if {@code len} is less than 0 or greater than the
      *      configured {@link #getMaxStringLength() maximum string length}
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #getCurrentToken()
      * @see #consumeWithLineContinuation(char, int, IntConsumer)
      */
-    public SimpleTextParser nextWithLineContinuation(final char lineContinuationChar, final int len)
-            throws IOException {
+    public SimpleTextParser nextWithLineContinuation(final char lineContinuationChar, final int len) {
         validateRequestedStringLength(len);
 
         final int line = getLineNumber();
@@ -336,12 +334,13 @@ public class SimpleTextParser {
      * @param pred predicate function passed characters read from the input; reading continues
      *      until the predicate returns false
      * @return this instance
-     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
+     * @throws IllegalStateException if the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #getCurrentToken()
      * @see #consume(IntPredicate, IntConsumer)
      */
-    public SimpleTextParser next(final IntPredicate pred) throws IOException {
+    public SimpleTextParser next(final IntPredicate pred) {
         final int line = getLineNumber();
         final int col = getColumnNumber();
 
@@ -366,13 +365,13 @@ public class SimpleTextParser {
      * @param pred predicate function passed characters read from the input; reading continues
      *      until the predicate returns false
      * @return this instance
-     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
+     * @throws IllegalStateException if the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #getCurrentToken()
      * @see #consume(IntPredicate, IntConsumer)
      */
-    public SimpleTextParser nextWithLineContinuation(final char lineContinuationChar, final IntPredicate pred)
-            throws IOException {
+    public SimpleTextParser nextWithLineContinuation(final char lineContinuationChar, final IntPredicate pred) {
         final int line = getLineNumber();
         final int col = getColumnNumber();
 
@@ -395,11 +394,12 @@ public class SimpleTextParser {
      * ('\r', '\n', or '\r\n') at the end of the line is consumed but is not included in the token.
      * The token will be null if the end of the stream has been reached prior to the method call.
      * @return this instance
-     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
+     * @throws IllegalStateException if the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #getCurrentToken()
      */
-    public SimpleTextParser nextLine() throws IOException {
+    public SimpleTextParser nextLine() {
         next(SimpleTextParser::isNotNewLinePart);
 
         discardNewLineSequence();
@@ -412,11 +412,12 @@ public class SimpleTextParser {
      * character in the stream is not alphanumeric and will be null if the end of the stream has
      * been reached prior to the method call.
      * @return this instance
-     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
+     * @throws IllegalStateException if the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #getCurrentToken()
      */
-    public SimpleTextParser nextAlphanumeric() throws IOException {
+    public SimpleTextParser nextAlphanumeric() {
         return next(SimpleTextParser::isAlphanumeric);
     }
 
@@ -424,9 +425,9 @@ public class SimpleTextParser {
      * parser position is updated but the current token is not changed.
      * @param len number of characters to discard
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public SimpleTextParser discard(final int len) throws IOException {
+    public SimpleTextParser discard(final int len) {
         return consume(len, NOOP_CONSUMER);
     }
 
@@ -436,10 +437,10 @@ public class SimpleTextParser {
      * @param lineContinuationChar character used to indicate skipped new line sequences
      * @param len number of characters to discard
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public SimpleTextParser discardWithLineContinuation(final char lineContinuationChar,
-            final int len) throws IOException {
+            final int len) {
         return consumeWithLineContinuation(lineContinuationChar, len, NOOP_CONSUMER);
     }
 
@@ -449,9 +450,9 @@ public class SimpleTextParser {
      * token is not changed.
      * @param pred predicate test for characters to discard
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public SimpleTextParser discard(final IntPredicate pred) throws IOException {
+    public SimpleTextParser discard(final IntPredicate pred) {
         return consume(pred, NOOP_CONSUMER);
     }
 
@@ -462,10 +463,10 @@ public class SimpleTextParser {
      * @param lineContinuationChar character used to indicate skipped new line sequences
      * @param pred predicate test for characters to discard
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public SimpleTextParser discardWithLineContinuation(final char lineContinuationChar,
-            final IntPredicate pred) throws IOException {
+            final IntPredicate pred) {
         return consumeWithLineContinuation(lineContinuationChar, pred, NOOP_CONSUMER);
     }
 
@@ -474,9 +475,9 @@ public class SimpleTextParser {
      * character or -1 if the end of the stream has been reached. The parser position is updated
      * but the current token is not changed.
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public SimpleTextParser discardWhitespace() throws IOException {
+    public SimpleTextParser discardWhitespace() {
         return discard(SimpleTextParser::isWhitespace);
     }
 
@@ -485,9 +486,9 @@ public class SimpleTextParser {
      * the newline character sequence (indicating the end of the line), or -1 (indicating the
      * end of the stream). The parser position is updated but the current token is not changed.
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public SimpleTextParser discardLineWhitespace() throws IOException {
+    public SimpleTextParser discardLineWhitespace() {
         return discard(SimpleTextParser::isLineWhitespace);
     }
 
@@ -495,9 +496,9 @@ public class SimpleTextParser {
      * is defined as one of "\r", "\n", or "\r\n". Does nothing if the reader is not positioned
      * at a newline sequence. The parser position is updated but the current token is not changed.
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public SimpleTextParser discardNewLineSequence() throws IOException {
+    public SimpleTextParser discardNewLineSequence() {
         final int value = peekChar();
         if (value == LF) {
             readChar();
@@ -517,9 +518,9 @@ public class SimpleTextParser {
      * first character on the next line or -1 if the end of the stream has been reached.
      * The parser position is updated but the current token is not changed.
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public SimpleTextParser discardLine() throws IOException {
+    public SimpleTextParser discardLine() {
         discard(SimpleTextParser::isNotNewLinePart);
 
         discardNewLineSequence();
@@ -533,9 +534,9 @@ public class SimpleTextParser {
      * @param pred predicate test for characters to consume
      * @param consumer object to be passed each consumed character
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public SimpleTextParser consume(final IntPredicate pred, final IntConsumer consumer) throws IOException {
+    public SimpleTextParser consume(final IntPredicate pred, final IntConsumer consumer) {
         int ch;
         while ((ch = peekChar()) != EOF && pred.test(ch)) {
             consumer.accept(readChar());
@@ -551,10 +552,10 @@ public class SimpleTextParser {
      * @param len number of characters to consume
      * @param consumer function to be passed each consumed character
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public SimpleTextParser consumeWithLineContinuation(final char lineContinuationChar,
-            final int len, final IntConsumer consumer) throws IOException {
+            final int len, final IntConsumer consumer) {
         int i = -1;
         int ch;
         while (++i < len && (ch = readChar()) != EOF) {
@@ -575,9 +576,9 @@ public class SimpleTextParser {
      * @param len number of characters to consume
      * @param consumer object to be passed each consumed character
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public SimpleTextParser consume(final int len, final IntConsumer consumer) throws IOException {
+    public SimpleTextParser consume(final int len, final IntConsumer consumer) {
         int ch;
         for (int i = 0; i < len; ++i) {
             ch = readChar();
@@ -598,10 +599,10 @@ public class SimpleTextParser {
      * @param pred predicate test for characters to consume
      * @param consumer object to be passed each consumed character
      * @return this instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public SimpleTextParser consumeWithLineContinuation(final char lineContinuationChar,
-            final IntPredicate pred, final IntConsumer consumer) throws IOException {
+            final IntPredicate pred, final IntConsumer consumer) {
         int ch;
         while ((ch = peekChar()) != EOF) {
             if (ch == lineContinuationChar && isNewLinePart(buffer.charAt(1))) {
@@ -620,10 +621,10 @@ public class SimpleTextParser {
     /** Return the next character in the stream but do not advance the parser position.
      * @return the next character in the stream or -1 if the end of the stream has been
      *      reached
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #readChar()
      */
-    public int peekChar() throws IOException {
+    public int peekChar() {
         return buffer.peek();
     }
 
@@ -635,10 +636,10 @@ public class SimpleTextParser {
      *      or null if the parser has already reached the end of the stream
      * @throws IllegalArgumentException if {@code len} is less than 0 or greater than the
      *      configured {@link #getMaxStringLength() maximum string length}
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #next(int)
      */
-    public String peek(final int len) throws IOException {
+    public String peek(final int len) {
         validateRequestedStringLength(len);
 
         return buffer.peekString(len);
@@ -650,11 +651,12 @@ public class SimpleTextParser {
      *      until the predicate returns false
      * @return string containing characters matching {@code pred} or null if the parser has already
      *      reached the end of the stream
-     * @throws IOException if an I/O error occurs or the length of the produced string exceeds the configured
+     * @throws IllegalStateException if the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #getCurrentToken()
      */
-    public String peek(final IntPredicate pred) throws IOException {
+    public String peek(final IntPredicate pred) {
         String token = null;
 
         if (hasMoreCharacters()) {
@@ -678,10 +680,10 @@ public class SimpleTextParser {
      * exception if they are not equal. The comparison is case-sensitive.
      * @param expected expected token
      * @return this instance
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if {@code expected} does not exactly equal the current token
+     * @throws IllegalStateException if no token has been read or {@code expected} does not exactly
+     *      equal the current token
      */
-    public SimpleTextParser match(final String expected) throws IOException {
+    public SimpleTextParser match(final String expected) {
         matchInternal(expected, true, true);
         return this;
     }
@@ -690,10 +692,10 @@ public class SimpleTextParser {
      * exception if they are not equal. The comparison is <em>not</em> case-sensitive.
      * @param expected expected token
      * @return this instance
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if {@code expected} does not equal the current token (ignoring case)
+     * @throws IllegalStateException if no token has been read or {@code expected} does not equal
+     *      the current token (ignoring case)
      */
-    public SimpleTextParser matchIgnoreCase(final String expected) throws IOException {
+    public SimpleTextParser matchIgnoreCase(final String expected) {
         matchInternal(expected, false, true);
         return this;
     }
@@ -703,9 +705,9 @@ public class SimpleTextParser {
      * @param expected expected token
      * @return true if the argument exactly equals the current token
      * @throws IllegalStateException if no token has been read
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public boolean tryMatch(final String expected) throws IOException {
+    public boolean tryMatch(final String expected) {
         return matchInternal(expected, true, false);
     }
 
@@ -714,9 +716,8 @@ public class SimpleTextParser {
      * @param expected expected token
      * @return true if the argument equals the current token (ignoring case)
      * @throws IllegalStateException if no token has been read
-     * @throws IOException if an I/O error occurs
      */
-    public boolean tryMatchIgnoreCase(final String expected) throws IOException {
+    public boolean tryMatchIgnoreCase(final String expected) {
         return matchInternal(expected, false, false);
     }
 
@@ -726,12 +727,11 @@ public class SimpleTextParser {
      * @param throwOnFailure if an exception should be thrown if the argument is not
      *      equal to the current token
      * @return true if the argument is equal to the current token
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if {@code expected} does not match the current token and
-     *      {@code throwOnFailure} is true
+     * @throws IllegalStateException if no token has been read or {@code expected} does not match the
+     *      current token and {@code throwOnFailure} is true
      */
     private boolean matchInternal(final String expected, final boolean caseSensitive,
-            final boolean throwOnFailure) throws IOException {
+            final boolean throwOnFailure) {
         ensureHasSetToken();
 
         if (!stringsEqual(expected, currentToken, caseSensitive)) {
@@ -749,10 +749,9 @@ public class SimpleTextParser {
      * An exception is thrown if no match is found. String comparisons are case-sensitive.
      * @param expected strings to compare with the current token
      * @return index of the argument that exactly matches the current token
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if no match is found among the arguments
+     * @throws IllegalStateException if no token has been read or no match is found among the arguments
      */
-    public int choose(final String... expected) throws IOException {
+    public int choose(final String... expected) {
         return choose(Arrays.asList(expected));
     }
 
@@ -760,10 +759,9 @@ public class SimpleTextParser {
      * An exception is thrown if no match is found. String comparisons are case-sensitive.
      * @param expected strings to compare with the current token
      * @return index of the argument that exactly matches the current token
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if no match is found among the arguments
+     * @throws IllegalStateException if no token has been read or no match is found among the arguments
      */
-    public int choose(final List<String> expected) throws IOException {
+    public int choose(final List<String> expected) {
         return chooseInternal(expected, true, true);
     }
 
@@ -772,10 +770,9 @@ public class SimpleTextParser {
      * case-sensitive.
      * @param expected strings to compare with the current token
      * @return index of the argument that matches the current token (ignoring case)
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if no match is found among the arguments
+     * @throws IllegalStateException if no token has been read or no match is found among the arguments
      */
-    public int chooseIgnoreCase(final String... expected) throws IOException {
+    public int chooseIgnoreCase(final String... expected) {
         return chooseIgnoreCase(Arrays.asList(expected));
     }
 
@@ -784,10 +781,9 @@ public class SimpleTextParser {
      * case-sensitive.
      * @param expected strings to compare with the current token
      * @return index of the argument that matches the current token (ignoring case)
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if no match is found among the arguments
+     * @throws IllegalStateException if no token has been read or no match is found among the arguments
      */
-    public int chooseIgnoreCase(final List<String> expected) throws IOException {
+    public int chooseIgnoreCase(final List<String> expected) {
         return chooseInternal(expected, false, true);
     }
 
@@ -797,9 +793,8 @@ public class SimpleTextParser {
      * @return index of the argument that exactly matches the current token or -1 if
      *      no match is found
      * @throws IllegalStateException if no token has been read
-     * @throws IOException if an I/O error occurs
      */
-    public int tryChoose(final String... expected) throws IOException {
+    public int tryChoose(final String... expected) {
         return tryChoose(Arrays.asList(expected));
     }
 
@@ -809,9 +804,8 @@ public class SimpleTextParser {
      * @return index of the argument that exactly matches the current token or -1 if
      *      no match is found
      * @throws IllegalStateException if no token has been read
-     * @throws IOException if an I/O error occurs
      */
-    public int tryChoose(final List<String> expected) throws IOException {
+    public int tryChoose(final List<String> expected) {
         return chooseInternal(expected, true, false);
     }
 
@@ -821,9 +815,8 @@ public class SimpleTextParser {
      * @return index of the argument that matches the current token (ignoring case) or -1 if
      *      no match is found
      * @throws IllegalStateException if no token has been read
-     * @throws IOException if an I/O error occurs
      */
-    public int tryChooseIgnoreCase(final String... expected) throws IOException {
+    public int tryChooseIgnoreCase(final String... expected) {
         return tryChooseIgnoreCase(Arrays.asList(expected));
     }
 
@@ -833,9 +826,8 @@ public class SimpleTextParser {
      * @return index of the argument that matches the current token (ignoring case) or -1 if
      *      no match is found
      * @throws IllegalStateException if no token has been read
-     * @throws IOException is an I/O error occurs
      */
-    public int tryChooseIgnoreCase(final List<String> expected) throws IOException {
+    public int tryChooseIgnoreCase(final List<String> expected) {
         return chooseInternal(expected, false, false);
     }
 
@@ -845,11 +837,11 @@ public class SimpleTextParser {
      * @param caseSensitive if the comparisons should be case-sensitive
      * @param throwOnFailure if an exception should be thrown if no match is found
      * @return the index of the matching argument or -1 if no match is found
-     * @throws IllegalStateException if no token has been read
-     * @throws IOException if no match is found and {@code throwOnFailure} is true
+     * @throws IllegalStateException if no token has been read or no match is found and
+     *      {@code throwOnFailure} is true
      */
     private int chooseInternal(final List<String> expected, final boolean caseSensitive,
-            final boolean throwOnFailure) throws IOException {
+            final boolean throwOnFailure) {
         ensureHasSetToken();
 
         int i = 0;
@@ -874,7 +866,7 @@ public class SimpleTextParser {
      * @param expected string describing what was expected
      * @return exception indicating that the current token was unexpected
      */
-    public IOException unexpectedToken(final String expected) {
+    public IllegalStateException unexpectedToken(final String expected) {
         return unexpectedToken(expected, null);
     }
 
@@ -885,7 +877,7 @@ public class SimpleTextParser {
      * @param cause cause of the error
      * @return exception indicating that the current token was unexpected
      */
-    public IOException unexpectedToken(final String expected, final Throwable cause) {
+    public IllegalStateException unexpectedToken(final String expected, final Throwable cause) {
 
         StringBuilder msg = new StringBuilder();
         msg.append("expected ")
@@ -903,7 +895,7 @@ public class SimpleTextParser {
      * @param msg error message
      * @return an exception indicating an error during parsing at the current token position
      */
-    public IOException tokenError(final String msg) {
+    public IllegalStateException tokenError(final String msg) {
         return tokenError(msg, null);
     }
 
@@ -912,7 +904,7 @@ public class SimpleTextParser {
      * @param cause the cause of the error; may be null
      * @return an exception indicating an error during parsing at the current token position
      */
-    public IOException tokenError(final String msg, final Throwable cause) {
+    public IllegalStateException tokenError(final String msg, final Throwable cause) {
         final int line = hasSetToken ? currentTokenLineNumber : lineNumber;
         final int col = hasSetToken ? currentTokenColumnNumber : columnNumber;
 
@@ -923,7 +915,7 @@ public class SimpleTextParser {
      * @param msg error message
      * @return an exception indicating an error during parsing
      */
-    public IOException parseError(final String msg) {
+    public IllegalStateException parseError(final String msg) {
         return parseError(msg, null);
     }
 
@@ -932,7 +924,7 @@ public class SimpleTextParser {
      * @param cause the cause of the error; may be null
      * @return an exception indicating an error during parsing
      */
-    public IOException parseError(final String msg, final Throwable cause) {
+    public IllegalStateException parseError(final String msg, final Throwable cause) {
         return parseError(lineNumber, columnNumber, msg, cause);
     }
 
@@ -942,7 +934,7 @@ public class SimpleTextParser {
      * @param msg error message
      * @return an exception indicating an error during parsing
      */
-    public IOException parseError(final int line, final int col, final String msg) {
+    public IllegalStateException parseError(final int line, final int col, final String msg) {
         return parseError(line, col, msg, null);
     }
 
@@ -953,21 +945,11 @@ public class SimpleTextParser {
      * @param cause the cause of the error
      * @return an exception indicating an error during parsing
      */
-    public IOException parseError(final int line, final int col, final String msg,
+    public IllegalStateException parseError(final int line, final int col, final String msg,
             final Throwable cause) {
         final String fullMsg = String.format("Parsing failed at line %d, column %d: %s",
                 line, col, msg);
-        return createParseError(fullMsg, cause);
-    }
-
-    /** Construct a new parse exception instance with the given message and cause. Subclasses
-     *  may override this method to provide their own exception types.
-     * @param msg error message
-     * @param cause error cause
-     * @return a new parse exception instance
-     */
-    protected IOException createParseError(final String msg, final Throwable cause) {
-        return new ParseException(msg, cause);
+        return GeometryIOUtils.parseError(fullMsg, cause);
     }
 
     /** Set the current token string and position.
@@ -1001,7 +983,7 @@ public class SimpleTextParser {
                         return "empty token followed by [" + peek(1) + "]";
                     }
                 }
-            } catch (IOException exc) {
+            } catch (IllegalStateException exc) {
                 // ignore
             }
         }
@@ -1202,9 +1184,9 @@ public class SimpleTextParser {
 
         /** Get the string collected by this instance.
          * @return the string collected by this instance
-         * @throws IOException if the string exceeds the maximum configured length
+         * @throws IllegalStateException if the string exceeds the maximum configured length
          */
-        public String getString() throws IOException {
+        public String getString() {
             if (hasExceededMaxStringLength()) {
                 throw parseError(line, col, STRING_LENGTH_ERR_MSG + maxStringLength);
             }
@@ -1217,21 +1199,6 @@ public class SimpleTextParser {
          */
         private boolean hasExceededMaxStringLength() {
             return sb.length() > maxStringLength;
-        }
-    }
-
-    /** Exception used to indicate a parsing error. */
-    private static final class ParseException extends IOException {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20210113L;
-
-        /** Construct a new instance with the given message and cause.
-         * @param msg exception message
-         * @param cause exception cause; may be null
-         */
-        ParseException(final String msg, final Throwable cause) {
-            super(msg, cause);
         }
     }
 }

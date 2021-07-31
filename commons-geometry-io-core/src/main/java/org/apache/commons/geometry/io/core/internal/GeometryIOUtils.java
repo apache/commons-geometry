@@ -16,15 +16,23 @@
  */
 package org.apache.commons.geometry.io.core.internal;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
-/** Class containing utility methods for IO operations.
+import org.apache.commons.geometry.io.core.input.GeometryInput;
+import org.apache.commons.geometry.io.core.output.GeometryOutput;
+
+/** Internal class containing utility methods for IO operations.
  */
 public final class GeometryIOUtils {
 
@@ -103,6 +111,94 @@ public final class GeometryIOUtils {
         return null;
     }
 
+    /** Create a {@link BufferedReader} for reading from the given input. The charset used is the charset
+     * defined in {@code input} or {@code defaultCharset} if null.
+     * @param input input to read from
+     * @param defaultCharset charset to use if no charset is defined in the input
+     * @return new reader instance
+     * @throws UncheckedIOException if an I/O error occurs
+     */
+    public static BufferedReader createBufferedReader(final GeometryInput input, final Charset defaultCharset) {
+        final Charset charset = input.getCharset() != null ?
+                input.getCharset() :
+                defaultCharset;
+
+        return new BufferedReader(new InputStreamReader(input.getInputStream(), charset));
+    }
+
+    /** Create a {@link BufferedWriter} for writing to the given output. The charset used is the charset
+     * defined in {@code output} or {@code defaultCharset} if null.
+     * @param output output to write to
+     * @param defaultCharset charset to use if no charset is defined in the output
+     * @return new writer instance
+     * @throws UncheckedIOException if an I/O error occurs
+     */
+    public static BufferedWriter createBufferedWriter(final GeometryOutput output, final Charset defaultCharset) {
+        final Charset charset = output.getCharset() != null ?
+                output.getCharset() :
+                defaultCharset;
+
+        return new BufferedWriter(new OutputStreamWriter(output.getOutputStream(), charset));
+    }
+
+    /** Get a value from {@code supplier}, wrapping any {@link IOException} with
+     * {@link UncheckedIOException}.
+     * @param <T> returned type
+     * @param supplier object supplying the return value
+     * @return supplied value
+     * @throws UncheckedIOException if an I/O error occurs
+     */
+    public static <T> T getUnchecked(final IOSupplier<T> supplier) {
+        try {
+            return supplier.get();
+        } catch (IOException exc) {
+            throw createUnchecked(exc);
+        }
+    }
+
+    /** Pass the given argument to the consumer, wrapping any {@link IOException} with
+     * {@link UncheckedIOException}.
+     * @param <T> argument type
+     * @param consumer function to call
+     * @param arg function argument
+     * @throws UncheckedIOException if an I/O error occurs
+     */
+    public static <T> void acceptUnchecked(final IOConsumer<T> consumer, final T arg) {
+        try {
+            consumer.accept(arg);
+        } catch (IOException exc) {
+            throw createUnchecked(exc);
+        }
+    }
+
+    /** Call the given function with the argument and return the {@code int} result, wrapping any
+     * {@link IOException} with {@link UncheckedIOException}.
+     * @param <T> argument type
+     * @param fn function to call
+     * @param arg function argument
+     * @return int value
+     * @throws UncheckedIOException if an I/O error occurs
+     */
+    public static <T> int applyAsIntUnchecked(final IOToIntFunction<T> fn, final T arg) {
+        try {
+            return fn.applyAsInt(arg);
+        } catch (IOException exc) {
+            throw createUnchecked(exc);
+        }
+    }
+
+    /** Close the argument, wrapping any IO exceptions with {@link UncheckedIOException}.
+     * @param closeable argument to close
+     * @throws UncheckedIOException if an I/O error occurs
+     */
+    public static void closeUnchecked(final Closeable closeable) {
+        try {
+            closeable.close();
+        } catch (IOException exc) {
+            throw createUnchecked(exc);
+        }
+    }
+
     /** Create an unchecked exception from the given checked exception. The message of the
      * returned exception contains the original exception's type and message.
      * @param exc exception to wrap in an unchecked exception
@@ -113,6 +209,23 @@ public final class GeometryIOUtils {
         return new UncheckedIOException(msg, exc);
     }
 
+    /** Create an exception indicating a parsing or syntax error.
+     * @param msg exception message
+     * @return an exception indicating a parsing or syntax error
+     */
+    public static IllegalStateException parseError(final String msg) {
+        return parseError(msg, null);
+    }
+
+    /** Create an exception indicating a parsing or syntax error.
+     * @param msg exception message
+     * @param cause exception cause
+     * @return an exception indicating a parsing or syntax error
+     */
+    public static IllegalStateException parseError(final String msg, final Throwable cause) {
+        return new IllegalStateException(msg, cause);
+    }
+
     /** Pass a supplied {@link Closeable} instance to {@code function} and return the result.
      * The {@code Closeable} instance returned by the supplier is closed if function execution
      * fails, otherwise the instance is <em>not</em> closed.
@@ -121,25 +234,30 @@ public final class GeometryIOUtils {
      * @param function function called with the supplied Closeable instance
      * @param closeableSupplier supplier used to obtain a Closeable instance
      * @return result of calling {@code function} with a supplied Closeable instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public static <T, C extends Closeable> T tryApplyCloseable(final IOFunction<C, T> function,
-            final IOSupplier<? extends C> closeableSupplier) throws IOException {
+            final IOSupplier<? extends C> closeableSupplier) {
         C closeable = null;
+        RuntimeException exc;
         try {
             closeable = closeableSupplier.get();
             return function.apply(closeable);
-        } catch (IOException | RuntimeException exc) {
-            if (closeable != null) {
-                try {
-                    closeable.close();
-                } catch (IOException suppressed) {
-                    exc.addSuppressed(suppressed);
-                }
-            }
-
-            throw exc;
+        } catch (RuntimeException e) {
+            exc = e;
+        } catch (IOException e) {
+            exc = createUnchecked(e);
         }
+
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException suppressed) {
+                exc.addSuppressed(suppressed);
+            }
+        }
+
+        throw exc;
     }
 
     /** Create a stream associated with an input stream. The input stream is closed when the
@@ -150,11 +268,10 @@ public final class GeometryIOUtils {
      * @param streamFunction function accepting an input stream and returning a stream
      * @param inputStreamSupplier supplier used to obtain the input stream
      * @return stream associated with the input stream return by the supplier
-     * @throws IOException if an I/O error occurs during input stream and stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during input stream and stream creation
      */
     public static <T, I extends InputStream> Stream<T> createCloseableStream(
-            final IOFunction<I, Stream<T>> streamFunction, final IOSupplier<? extends I> inputStreamSupplier)
-                throws IOException {
+            final IOFunction<I, Stream<T>> streamFunction, final IOSupplier<? extends I> inputStreamSupplier) {
         return tryApplyCloseable(
                 in -> streamFunction.apply(in).onClose(closeAsUncheckedRunnable(in)),
                 inputStreamSupplier);
@@ -166,12 +283,6 @@ public final class GeometryIOUtils {
      * @return runnable that calls {@code close()) on the argument
      */
     private static Runnable closeAsUncheckedRunnable(final Closeable closeable) {
-        return () -> {
-            try {
-                closeable.close();
-            } catch (IOException exc) {
-                throw createUnchecked(exc);
-            }
-        };
+        return () -> closeUnchecked(closeable);
     }
 }

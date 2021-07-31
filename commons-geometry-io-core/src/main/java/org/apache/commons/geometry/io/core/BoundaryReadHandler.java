@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.core;
 
-import java.io.IOException;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
@@ -44,14 +43,15 @@ public interface BoundaryReadHandler<H extends HyperplaneConvexSubset<?>, B exte
     GeometryFormat getFormat();
 
     /** Return an object containing all boundaries read from {@code input} using the handler's
-     * supported data format. Implementations may throw runtime exceptions if mathematically
-     * invalid boundaries are encountered.
-     * @param input input to read form
+     * supported data format.
+     * @param input input to read from
      * @param precision precision context used for floating point comparisons
      * @return object containing all boundaries read from {@code input}
-     * @throws IOException if an IO error occurs
+     * @throws IllegalArgumentException if mathematically invalid data is encountered
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    B read(GeometryInput input, Precision.DoubleEquivalence precision) throws IOException;
+    B read(GeometryInput input, Precision.DoubleEquivalence precision);
 
     /** Return a {@link Stream} that can be used to access all boundary information from the given input,
      * which is expected to contain data in the format supported by this handler. Unlike the
@@ -70,13 +70,17 @@ public interface BoundaryReadHandler<H extends HyperplaneConvexSubset<?>, B exte
      *  }
      * </pre>
      *
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
-     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalArgumentException} if mathematically invalid data is encountered</li>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param in input to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the boundary information from the given input
-     * @throws IOException if an I/O error occurs during stream creation
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      */
-    Stream<H> boundaries(GeometryInput in, Precision.DoubleEquivalence precision) throws IOException;
+    Stream<H> boundaries(GeometryInput in, Precision.DoubleEquivalence precision);
 }

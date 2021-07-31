@@ -50,7 +50,7 @@ class UrlGeometryInputTest {
     }
 
     @Test
-    void testCtor_fileAndCharset() throws IOException {
+    void testCtor_fileAndCharset() {
         // arrange
         final URL url = getClass().getResource("/java/lang/String.class");
         final Charset charset = StandardCharsets.UTF_8;

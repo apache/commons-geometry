@@ -16,9 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.function.DoubleFunction;
@@ -28,6 +25,7 @@ import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.mesh.Mesh;
 import org.apache.commons.geometry.io.core.GeometryFormat;
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
 import org.apache.commons.geometry.io.euclidean.threed.AbstractBoundaryWriteHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinition;
@@ -129,8 +127,7 @@ public class ObjBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
 
     /** {@inheritDoc} */
     @Override
-    public void write(final BoundarySource3D src, final GeometryOutput out)
-            throws IOException {
+    public void write(final BoundarySource3D src, final GeometryOutput out) {
         // write meshes directly instead of iterating through boundaries
         if (src instanceof Mesh) {
             try (ObjWriter writer = createWriter(out)) {
@@ -143,8 +140,7 @@ public class ObjBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
 
     /** {@inheritDoc} */
     @Override
-    public void write(final Stream<? extends PlaneConvexSubset> boundaries, final GeometryOutput out)
-            throws IOException {
+    public void write(final Stream<? extends PlaneConvexSubset> boundaries, final GeometryOutput out) {
         try (ObjWriter writer = createWriter(out)) {
             final ObjWriter.MeshBuffer meshBuffer = writer.meshBuffer(meshBufferBatchSize);
 
@@ -159,8 +155,7 @@ public class ObjBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
 
     /** {@inheritDoc} */
     @Override
-    public void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out)
-            throws IOException {
+    public void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out) {
         try (ObjWriter writer = createWriter(out)) {
             final ObjWriter.MeshBuffer meshBuffer = writer.meshBuffer(meshBufferBatchSize);
 
@@ -177,14 +172,10 @@ public class ObjBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
      * output stream.
      * @param out output stream to write to
      * @return new {@code OBJWriter} for writing content to the given output stream
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private ObjWriter createWriter(final GeometryOutput out) throws IOException {
-        final Charset charset = out.getCharset() != null ?
-                out.getCharset() :
-                defaultCharset;
-
-        final ObjWriter writer =
-                new ObjWriter(new BufferedWriter(new OutputStreamWriter(out.getOutputStream(), charset)));
+    private ObjWriter createWriter(final GeometryOutput out) {
+        final ObjWriter writer = new ObjWriter(GeometryIOUtils.createBufferedWriter(out, defaultCharset));
         writer.setLineSeparator(lineSeparator);
         writer.setDoubleFormat(doubleFormat);
 

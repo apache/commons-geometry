@@ -17,11 +17,11 @@
 package org.apache.commons.geometry.io.euclidean.threed.stl;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 
 /** Low-level class for writing binary STL content.
  */
@@ -45,9 +45,9 @@ public class BinaryStlWriter implements Closeable {
      * are written to the header, with any remaining bytes of the header filled with zeros.
      * @param headerContent bytes to include in the header; may be null
      * @param triangleCount number of triangles to be included in the content
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void writeHeader(final byte[] headerContent, final int triangleCount) throws IOException {
+    public void writeHeader(final byte[] headerContent, final int triangleCount) {
         writeHeader(headerContent, triangleCount, out);
     }
 
@@ -63,10 +63,10 @@ public class BinaryStlWriter implements Closeable {
      * @param p2 second point
      * @param p3 third point
      * @param normal triangle normal; may be null
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public void writeTriangle(final Vector3D p1, final Vector3D p2, final Vector3D p3,
-            final Vector3D normal) throws IOException {
+            final Vector3D normal) {
         writeTriangle(p1, p2, p3, normal, 0);
     }
 
@@ -84,10 +84,10 @@ public class BinaryStlWriter implements Closeable {
      * @param p3 third point
      * @param normal triangle normal; may be null
      * @param attributeValue 2-byte STL triangle attribute value
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public void writeTriangle(final Vector3D p1, final Vector3D p2, final Vector3D p3,
-            final Vector3D normal, final int attributeValue) throws IOException {
+            final Vector3D normal, final int attributeValue) {
         triangleBuffer.rewind();
 
         putVector(StlUtils.determineNormal(p1, p2, p3, normal));
@@ -103,13 +103,13 @@ public class BinaryStlWriter implements Closeable {
 
         triangleBuffer.putShort((short) attributeValue);
 
-        out.write(triangleBuffer.array());
+        GeometryIOUtils.acceptUnchecked(out::write, triangleBuffer.array());
     }
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws IOException {
-        out.close();
+    public void close() {
+        GeometryIOUtils.closeUnchecked(out);
     }
 
     /** Put all double components of {@code vec} into the internal buffer.
@@ -128,10 +128,9 @@ public class BinaryStlWriter implements Closeable {
      * @param headerContent
      * @param triangleCount
      * @param out
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    static void writeHeader(final byte[] headerContent, final int triangleCount, final OutputStream out)
-            throws IOException {
-
+    static void writeHeader(final byte[] headerContent, final int triangleCount, final OutputStream out) {
         // write the header
         final byte[] bytes = new byte[StlConstants.BINARY_HEADER_BYTES];
         if (headerContent != null) {
@@ -141,13 +140,13 @@ public class BinaryStlWriter implements Closeable {
                     Math.min(headerContent.length, StlConstants.BINARY_HEADER_BYTES));
         }
 
-        out.write(bytes);
+        GeometryIOUtils.acceptUnchecked(out::write, bytes);
 
         // write the triangle count number
         ByteBuffer countBuffer = StlUtils.byteBuffer(Integer.BYTES);
         countBuffer.putInt(triangleCount);
         countBuffer.flip();
 
-        out.write(countBuffer.array());
+        GeometryIOUtils.acceptUnchecked(out::write, countBuffer.array());
     }
 }

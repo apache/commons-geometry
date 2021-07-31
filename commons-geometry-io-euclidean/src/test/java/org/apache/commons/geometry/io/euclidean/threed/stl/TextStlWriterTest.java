@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.stl;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -46,7 +45,7 @@ class TextStlWriterTest {
     private final StringWriter out = new StringWriter();
 
     @Test
-    void testDefaultProperties() throws IOException {
+    void testDefaultProperties() {
         // act/assert
         try (TextStlWriter writer = new TextStlWriter(out)) {
             Assertions.assertNotNull(writer.getDoubleFormat());
@@ -55,7 +54,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testNoContent() throws IOException {
+    void testNoContent() {
         // arrange
         final CloseCountWriter countWriter = new CloseCountWriter(out);
 
@@ -70,7 +69,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testStartSolid_alreadyStarted() throws IOException {
+    void testStartSolid_alreadyStarted() {
         // arrange
         try (TextStlWriter writer = new TextStlWriter(out)) {
             writer.startSolid();
@@ -83,7 +82,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testEndSolid_notStarted() throws IOException {
+    void testEndSolid_notStarted() {
         // arrange
         try (TextStlWriter writer = new TextStlWriter(out)) {
             // act/assert
@@ -94,7 +93,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testEmpty_noName() throws IOException {
+    void testEmpty_noName() {
         // arrange
         final CloseCountWriter countWriter = new CloseCountWriter(out);
 
@@ -114,7 +113,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testEmpty_withName() throws IOException {
+    void testEmpty_withName() {
         // arrange
         final CloseCountWriter countWriter = new CloseCountWriter(out);
 
@@ -134,7 +133,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testClose_endsSolid() throws IOException {
+    void testClose_endsSolid() {
         // arrange
         final CloseCountWriter countWriter = new CloseCountWriter(out);
 
@@ -153,7 +152,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testStartSolid_containsNewLine() throws IOException {
+    void testStartSolid_containsNewLine() {
         // arrange
         try (TextStlWriter writer = new TextStlWriter(out)) {
             final String err = "Solid name cannot contain new line characters";
@@ -172,7 +171,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWriteTriangle_noNormal_computesNormal() throws IOException {
+    void testWriteTriangle_noNormal_computesNormal() {
         // arrange
         final Vector3D p1 = Vector3D.of(0, 4, 0);
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -198,7 +197,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWriteTriangle_zeroNormal_computesNormal() throws IOException {
+    void testWriteTriangle_zeroNormal_computesNormal() {
         // arrange
         final Vector3D p1 = Vector3D.of(0, 4, 0);
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -224,7 +223,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWriteTriangle_noNormal_cannotComputeNormal() throws IOException {
+    void testWriteTriangle_noNormal_cannotComputeNormal() {
         // arrange
         final Vector3D p1 = Vector3D.ZERO;
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -250,7 +249,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWriteTriangle_withNormal_correctOrientation() throws IOException {
+    void testWriteTriangle_withNormal_correctOrientation() {
         // arrange
         final Vector3D p1 = Vector3D.of(0, 4, 0);
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -278,7 +277,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWriteTriangle_withNormal_reversedOrientation() throws IOException {
+    void testWriteTriangle_withNormal_reversedOrientation() {
         // arrange
         final Vector3D p1 = Vector3D.of(0, 4, 0);
         final Vector3D p2 = Vector3D.of(1.0 / 3.0, 0, 0);
@@ -306,7 +305,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_verticesAndNormal() throws IOException {
+    void testWrite_verticesAndNormal() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));
@@ -350,7 +349,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_verticesAndNormal_moreThanThreeVertices() throws IOException {
+    void testWrite_verticesAndNormal_moreThanThreeVertices() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 0), Vector3D.of(0, 1, 0));
@@ -384,7 +383,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_verticesAndNormal_fewerThanThreeVertices() throws IOException {
+    void testWrite_verticesAndNormal_fewerThanThreeVertices() {
         // arrange
         try (TextStlWriter writer = new TextStlWriter(out)) {
             writer.startSolid();
@@ -404,7 +403,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_boundary() throws IOException {
+    void testWrite_boundary() {
         // arrange
         final ConvexPolygon3D boundary = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 0, 1), Vector3D.of(0, 0, 1)),
@@ -438,7 +437,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_facetDefinition_noNormal() throws IOException {
+    void testWrite_facetDefinition_noNormal() {
         // arrange
         final FacetDefinition facet = new SimpleFacetDefinition(Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 0), Vector3D.of(0, 1, 0)));
@@ -471,7 +470,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_facetDefinition_withNormal() throws IOException {
+    void testWrite_facetDefinition_withNormal() {
         // arrange
         final Vector3D normal = Vector3D.Unit.PLUS_Z;
         final FacetDefinition facet = new SimpleFacetDefinition(Arrays.asList(
@@ -506,7 +505,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_noSolidStarted() throws IOException {
+    void testWrite_noSolidStarted() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));
@@ -536,7 +535,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_customFormat() throws IOException {
+    void testWrite_customFormat() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.of(1.0 / 3.0, 0, 0), Vector3D.of(0, 1.0 / 3.0, 0));
@@ -569,7 +568,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_badFacet_withNormal() throws IOException {
+    void testWrite_badFacet_withNormal() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.ZERO, Vector3D.ZERO);
@@ -595,7 +594,7 @@ class TextStlWriterTest {
     }
 
     @Test
-    void testWrite_badFacet_noNormal() throws IOException {
+    void testWrite_badFacet_noNormal() {
         // arrange
         final List<Vector3D> vertices = Arrays.asList(
                 Vector3D.ZERO, Vector3D.ZERO, Vector3D.ZERO);

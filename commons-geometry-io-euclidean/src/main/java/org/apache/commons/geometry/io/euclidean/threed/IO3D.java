@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -66,10 +65,11 @@ public final class IO3D {
      * @return facet definition reader
      * @throws IllegalArgumentException if no handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#facetDefinitionReader(GeometryInput, GeometryFormat)
      */
-    public static FacetDefinitionReader facetDefinitionReader(final Path path) throws IOException {
+    public static FacetDefinitionReader facetDefinitionReader(final Path path) {
         return facetDefinitionReader(new FileGeometryInput(path), null);
     }
 
@@ -79,10 +79,11 @@ public final class IO3D {
      * @return facet definition reader
      * @throws IllegalArgumentException if no handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#facetDefinitionReader(GeometryInput, GeometryFormat)
      */
-    public static FacetDefinitionReader facetDefinitionReader(final URL url) throws IOException {
+    public static FacetDefinitionReader facetDefinitionReader(final URL url) {
         return facetDefinitionReader(new UrlGeometryInput(url), null);
     }
 
@@ -93,11 +94,11 @@ public final class IO3D {
      * @return facet definition reader
      * @throws IllegalArgumentException if no handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#facetDefinitionReader(GeometryInput, GeometryFormat)
      */
-    public static FacetDefinitionReader facetDefinitionReader(final GeometryInput in, final GeometryFormat fmt)
-            throws IOException {
+    public static FacetDefinitionReader facetDefinitionReader(final GeometryInput in, final GeometryFormat fmt) {
         return getDefaultManager().facetDefinitionReader(in, fmt);
     }
 
@@ -113,17 +114,20 @@ public final class IO3D {
      *      // access stream content
      *  }
      * </pre>
-     *
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param path file path to read from
      * @return stream providing access to the facets in the specified file
      * @throws IllegalArgumentException if no handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      * @see BoundaryIOManager3D#facets(GeometryInput, GeometryFormat)
      */
-    public static Stream<FacetDefinition> facets(final Path path) throws IOException {
+    public static Stream<FacetDefinition> facets(final Path path) {
         return facets(new FileGeometryInput(path), null);
     }
 
@@ -139,17 +143,20 @@ public final class IO3D {
      *      // access stream content
      *  }
      * </pre>
-     *
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param url URL to read from
      * @return stream providing access to the facets from the specified URL
      * @throws IllegalArgumentException if no handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      * @see BoundaryIOManager3D#facets(GeometryInput, GeometryFormat)
      */
-    public static Stream<FacetDefinition> facets(final URL url) throws IOException {
+    public static Stream<FacetDefinition> facets(final URL url) {
         return facets(new UrlGeometryInput(url), null);
     }
 
@@ -161,19 +168,22 @@ public final class IO3D {
      *      // access stream content
      *  }
      * </pre>
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param in input to read from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @return stream providing access to the facets in the input
      * @throws IllegalArgumentException if no read handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      * @see BoundaryIOManager3D#facets(GeometryInput, GeometryFormat)
      */
-    public static Stream<FacetDefinition> facets(final GeometryInput in, final GeometryFormat fmt)
-            throws IOException {
+    public static Stream<FacetDefinition> facets(final GeometryInput in, final GeometryFormat fmt) {
         return getDefaultManager().facets(in, fmt);
     }
 
@@ -189,20 +199,22 @@ public final class IO3D {
      *      // access stream content
      *  }
      * </pre>
-     *
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
-     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalArgumentException} if mathematically invalid data is encountered</li>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param path file path to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the boundaries in the specified file
      * @throws IllegalArgumentException if no read handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      * @see BoundaryIOManager3D#boundaries(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static Stream<PlaneConvexSubset> boundaries(final Path path, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public static Stream<PlaneConvexSubset> boundaries(final Path path, final Precision.DoubleEquivalence precision) {
         return boundaries(new FileGeometryInput(path), null, precision);
     }
 
@@ -218,20 +230,22 @@ public final class IO3D {
      *      // access stream content
      *  }
      * </pre>
-     *
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
-     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalArgumentException} if mathematically invalid data is encountered</li>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param url URL to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the boundaries in the specified URL
      * @throws IllegalArgumentException if no read handler has been registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      * @see BoundaryIOManager3D#boundaries(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static Stream<PlaneConvexSubset> boundaries(final URL url, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public static Stream<PlaneConvexSubset> boundaries(final URL url, final Precision.DoubleEquivalence precision) {
         return boundaries(new UrlGeometryInput(url), null, precision);
     }
 
@@ -243,9 +257,12 @@ public final class IO3D {
      *      // access stream content
      *  }
      *  </pre>
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
-     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalArgumentException} if mathematically invalid data is encountered</li>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param in input to read boundaries from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
@@ -253,11 +270,12 @@ public final class IO3D {
      * @return stream providing access to the boundaries in the input
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      * @see BoundaryIOManager3D#boundaries(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
     public static Stream<PlaneConvexSubset> boundaries(final GeometryInput in, final GeometryFormat fmt,
-            final Precision.DoubleEquivalence precision) throws IOException {
+            final Precision.DoubleEquivalence precision) {
         return getDefaultManager().boundaries(in, fmt, precision);
     }
 
@@ -273,20 +291,22 @@ public final class IO3D {
      *      // access stream content
      *  }
      * </pre>
-     *
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
-     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalArgumentException} if mathematically invalid data is encountered</li>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param path file path to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the triangles in the specified file
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      * @see BoundaryIOManager3D#triangles(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static Stream<Triangle3D> triangles(final Path path, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public static Stream<Triangle3D> triangles(final Path path, final Precision.DoubleEquivalence precision) {
         return triangles(new FileGeometryInput(path), null, precision);
     }
 
@@ -302,20 +322,22 @@ public final class IO3D {
      *      // access stream content
      *  }
      * </pre>
-     *
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
-     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalArgumentException} if mathematically invalid data is encountered</li>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param url URL to read from
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the triangles from the specified URL
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      * @see BoundaryIOManager3D#triangles(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static Stream<Triangle3D> triangles(final URL url, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public static Stream<Triangle3D> triangles(final URL url, final Precision.DoubleEquivalence precision) {
         return triangles(new UrlGeometryInput(url), null, precision);
     }
 
@@ -327,9 +349,12 @@ public final class IO3D {
      *      // access stream content
      *  }
      * </pre>
-     * <p>An {@link IOException} is thrown immediately by this method if stream creation fails. Any IO errors
-     * occurring during stream iteration are wrapped with {@link java.io.UncheckedIOException}. Other runtime
-     * exceptions may be thrown during stream iteration if mathematically invalid boundaries are encountered.</p>
+     * <p>The following exceptions may be thrown during stream iteration:
+     *  <ul>
+     *      <li>{@link IllegalArgumentException} if mathematically invalid data is encountered</li>
+     *      <li>{@link IllegalStateException} if a data format error occurs</li>
+     *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
+     *  </ul>
      * @param in input to read from
      * @param fmt format of the input; if null, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
@@ -337,11 +362,12 @@ public final class IO3D {
      * @return stream providing access to the triangles in the input
      * @throws IllegalArgumentException if no read handler is registered with the
      *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if stream creation fails
+     * @throws IllegalStateException if a data format error occurs during stream creation
+     * @throws java.io.UncheckedIOException if an I/O error occurs during stream creation
      * @see BoundaryIOManager3D#triangles(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
     public static Stream<Triangle3D> triangles(final GeometryInput in, final GeometryFormat fmt,
-            final Precision.DoubleEquivalence precision) throws IOException {
+            final Precision.DoubleEquivalence precision) {
         return getDefaultManager().triangles(in, fmt, precision);
     }
 
@@ -351,13 +377,13 @@ public final class IO3D {
      * @param path file path to read from
      * @param precision precision context used for floating point comparisons
      * @return object containing all boundaries from the file at the given path
-     * @throws IllegalArgumentException if no read handler is registered with the
-     *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalArgumentException if mathematically invalid data is encountered or no read handler
+     *      is registered with the {@link #getDefaultManager() default manager} for the input format
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#read(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static BoundarySource3D read(final Path path, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public static BoundarySource3D read(final Path path, final Precision.DoubleEquivalence precision) {
         return read(new FileGeometryInput(path), null, precision);
     }
 
@@ -367,13 +393,13 @@ public final class IO3D {
      * @param url URL to read from
      * @param precision precision context used for floating point comparisons
      * @return object containing all boundaries from the given URL
-     * @throws IllegalArgumentException if no read handler is registered with the
-     *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalArgumentException if mathematically invalid data is encountered or no read handler
+     *      is registered with the {@link #getDefaultManager() default manager} for the input format
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#read(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static BoundarySource3D read(final URL url, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public static BoundarySource3D read(final URL url, final Precision.DoubleEquivalence precision) {
         return read(new UrlGeometryInput(url), null, precision);
     }
 
@@ -384,13 +410,14 @@ public final class IO3D {
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return object containing all boundaries from the input
-     * @throws IllegalArgumentException if no read handler is registered with the
-     *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalArgumentException if mathematically invalid data is encountered or no read handler
+     *      is registered with the {@link #getDefaultManager() default manager} for the input format
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#read(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
     public static BoundarySource3D read(final GeometryInput in, final GeometryFormat fmt,
-            final Precision.DoubleEquivalence precision) throws IOException {
+            final Precision.DoubleEquivalence precision) {
         return getDefaultManager().read(in, fmt, precision);
     }
 
@@ -400,13 +427,13 @@ public final class IO3D {
      * @param path file path to read from
      * @param precision precision context used for floating point comparisons
      * @return mesh containing all triangles from the given file path
-     * @throws IllegalArgumentException if no read handler is registered with the
-     *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalArgumentException if mathematically invalid data is encountered or no read handler
+     *      is registered with the {@link #getDefaultManager() default manager} for the input format
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#readTriangleMesh(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static TriangleMesh readTriangleMesh(final Path path, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public static TriangleMesh readTriangleMesh(final Path path, final Precision.DoubleEquivalence precision) {
         return readTriangleMesh(new FileGeometryInput(path), null, precision);
     }
 
@@ -416,13 +443,13 @@ public final class IO3D {
      * @param url URL to read from
      * @param precision precision context used for floating point comparisons
      * @return mesh containing all triangles from the given URL
-     * @throws IllegalArgumentException if no read handler is registered with the
-     *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalArgumentException if mathematically invalid data is encountered or no read handler
+     *      is registered with the {@link #getDefaultManager() default manager} for the input format
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#readTriangleMesh(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
-    public static TriangleMesh readTriangleMesh(final URL url, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public static TriangleMesh readTriangleMesh(final URL url, final Precision.DoubleEquivalence precision) {
         return readTriangleMesh(new UrlGeometryInput(url), null, precision);
     }
 
@@ -433,13 +460,14 @@ public final class IO3D {
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return a mesh containing all triangles from the input
-     * @throws IllegalArgumentException if no read handler is registered with the
-     *      {@link #getDefaultManager() default manager} for the input format
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalArgumentException if mathematically invalid data is encountered or no read handler
+     *      is registered with the {@link #getDefaultManager() default manager} for the input format
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#readTriangleMesh(GeometryInput, GeometryFormat, Precision.DoubleEquivalence)
      */
     public static TriangleMesh readTriangleMesh(final GeometryInput in, final GeometryFormat fmt,
-            final Precision.DoubleEquivalence precision) throws IOException {
+            final Precision.DoubleEquivalence precision) {
         return getDefaultManager().readTriangleMesh(in, fmt, precision);
     }
 
@@ -452,10 +480,10 @@ public final class IO3D {
      * @param path file path to write to
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#write(Stream, GeometryOutput, GeometryFormat)
      */
-    public static void write(final Stream<? extends PlaneConvexSubset> boundaries, final Path path) throws IOException {
+    public static void write(final Stream<? extends PlaneConvexSubset> boundaries, final Path path) {
         write(boundaries, new FileGeometryOutput(path), null);
     }
 
@@ -469,11 +497,11 @@ public final class IO3D {
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#write(Stream, GeometryOutput, GeometryFormat)
      */
     public static void write(final Stream<? extends PlaneConvexSubset> boundaries, final GeometryOutput out,
-            final GeometryFormat fmt) throws IOException {
+            final GeometryFormat fmt) {
         getDefaultManager().write(boundaries, out, fmt);
     }
 
@@ -484,12 +512,11 @@ public final class IO3D {
      * @param path file path to write to
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see org.apache.commons.geometry.io.core.BoundaryIOManager#write(
      *      org.apache.commons.geometry.core.partitioning.BoundarySource, GeometryOutput, GeometryFormat)
      */
-    public static void write(final BoundarySource3D src, final Path path)
-            throws IOException {
+    public static void write(final BoundarySource3D src, final Path path) {
         write(src, new FileGeometryOutput(path), null);
     }
 
@@ -500,12 +527,11 @@ public final class IO3D {
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see org.apache.commons.geometry.io.core.BoundaryIOManager#write(
      *      org.apache.commons.geometry.core.partitioning.BoundarySource, GeometryOutput, GeometryFormat)
      */
-    public static void write(final BoundarySource3D src, final GeometryOutput out, final GeometryFormat fmt)
-            throws IOException {
+    public static void write(final BoundarySource3D src, final GeometryOutput out, final GeometryFormat fmt) {
         getDefaultManager().write(src, out, fmt);
     }
 
@@ -515,11 +541,10 @@ public final class IO3D {
      * @param path path to write to
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#writeFacets(Collection, GeometryOutput, GeometryFormat)
      */
-    public static void writeFacets(final Collection<? extends FacetDefinition> facets, final Path path)
-            throws IOException {
+    public static void writeFacets(final Collection<? extends FacetDefinition> facets, final Path path) {
         writeFacets(facets, new FileGeometryOutput(path), null);
     }
 
@@ -530,11 +555,11 @@ public final class IO3D {
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#writeFacets(Collection, GeometryOutput, GeometryFormat)
      */
     public static void writeFacets(final Collection<? extends FacetDefinition> facets, final GeometryOutput out,
-            final GeometryFormat fmt) throws IOException {
+            final GeometryFormat fmt) {
         getDefaultManager().writeFacets(facets, out, fmt);
     }
 
@@ -547,10 +572,10 @@ public final class IO3D {
      * @param path path to write to
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#writeFacets(Stream, GeometryOutput, GeometryFormat)
      */
-    public static void writeFacets(final Stream<? extends FacetDefinition> facets, final Path path) throws IOException {
+    public static void writeFacets(final Stream<? extends FacetDefinition> facets, final Path path) {
         writeFacets(facets, new FileGeometryOutput(path), null);
     }
 
@@ -564,11 +589,11 @@ public final class IO3D {
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see BoundaryIOManager3D#writeFacets(Stream, GeometryOutput, GeometryFormat)
      */
     public static void writeFacets(final Stream<? extends FacetDefinition> facets, final GeometryOutput out,
-            final GeometryFormat fmt) throws IOException {
+            final GeometryFormat fmt) {
         getDefaultManager().writeFacets(facets, out, fmt);
     }
 

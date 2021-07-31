@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,9 +51,10 @@ public class ObjTriangleMeshReader extends AbstractObjPolygonReader {
      * triangle fan. All vertices present in the OBJ content are also present in the returned mesh,
      * regardless of whether or not they are used in a face.
      * @return triangle mesh containing all data from the OBJ content
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalStateException if data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public TriangleMesh readTriangleMesh() throws IOException {
+    public TriangleMesh readTriangleMesh() {
         PolygonObjParser.Face face;
         Vector3D definedNormal;
         Iterator<PolygonObjParser.VertexAttributes> attrs;

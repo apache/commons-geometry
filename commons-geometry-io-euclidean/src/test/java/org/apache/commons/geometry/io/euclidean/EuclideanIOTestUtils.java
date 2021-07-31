@@ -128,9 +128,10 @@ public final class EuclideanIOTestUtils {
     /** Read all facets available from the given facet reader.
      * @param reader instance to read facets from
      * @return list containing all facets available from the given facet reader
-     * @throws IOException if an I/O or data format error occurs
+     * @throws IllegalStateException if a data format error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public static List<FacetDefinition> readAll(final FacetDefinitionReader reader) throws IOException {
+    public static List<FacetDefinition> readAll(final FacetDefinitionReader reader) {
         final List<FacetDefinition> facets = new ArrayList<>();
 
         FacetDefinition f;

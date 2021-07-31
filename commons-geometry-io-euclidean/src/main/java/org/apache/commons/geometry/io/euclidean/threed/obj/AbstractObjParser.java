@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,10 +52,10 @@ public abstract class AbstractObjParser {
      * and false if the end of the content has been reached. Keywords consist of alphanumeric
      * strings placed at the beginning of lines. Comments and blank lines are ignored.
      * @return true if a keyword has been found and false if the end of content has been reached
-     * @throws IOException if an I/O error occurs
      * @throws IllegalStateException if invalid content is found
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public boolean nextKeyword() throws IOException {
+    public boolean nextKeyword() {
         currentKeyword = null;
 
         // advance to the next line if not at the start of a line
@@ -95,9 +94,9 @@ public abstract class AbstractObjParser {
      * account.
      * @return remaining content on the current data line or null if the end of the content has
      *      been reached
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public String readDataLine() throws IOException {
+    public String readDataLine() {
         parser.nextWithLineContinuation(
                 ObjConstants.LINE_CONTINUATION_CHAR,
                 SimpleTextParser::isNotNewLinePart)
@@ -108,9 +107,9 @@ public abstract class AbstractObjParser {
 
     /** Discard remaining content on the current data line, taking line continuation characters into
      * account.
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public void discardDataLine() throws IOException {
+    public void discardDataLine() {
         parser.discardWithLineContinuation(
                 ObjConstants.LINE_CONTINUATION_CHAR,
                 SimpleTextParser::isNotNewLinePart)
@@ -119,9 +118,10 @@ public abstract class AbstractObjParser {
 
     /** Read a whitespace-delimited 3D vector from the current data line.
      * @return vector vector read from the current line
-     * @throws IOException if an I/O error occurs
+     * @throws IllegalStateException if parsing fails
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public Vector3D readVector() throws IOException {
+    public Vector3D readVector() {
         discardDataLineWhitespace();
         final double x = nextDouble();
 
@@ -136,10 +136,10 @@ public abstract class AbstractObjParser {
 
     /** Read whitespace-delimited double values from the current data line.
      * @return double values read from the current line
-     * @throws IOException if an I/O error occurs
      * @throws IllegalStateException if double values are not able to be parsed
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    public double[] readDoubles() throws IOException {
+    public double[] readDoubles() {
         final List<Double> list = new ArrayList<>();
 
         while (nextDataLineContent()) {
@@ -165,16 +165,16 @@ public abstract class AbstractObjParser {
     /** Method called when a keyword is encountered in the parsed OBJ content. Subclasses should use
      * this method to validate the keyword and/or update any internal state.
      * @param keyword keyword encountered in the OBJ content
-     * @throws IOException if an I/O error occurs
      * @throws IllegalStateException if the given keyword is invalid
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected abstract void handleKeyword(String keyword) throws IOException;
+    protected abstract void handleKeyword(String keyword);
 
     /** Discard whitespace on the current data line, taking line continuation characters into account.
      * @return text parser instance
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected SimpleTextParser discardDataLineWhitespace() throws IOException {
+    protected SimpleTextParser discardDataLineWhitespace() {
         return parser.discardWithLineContinuation(
                 ObjConstants.LINE_CONTINUATION_CHAR,
                 SimpleTextParser::isLineWhitespace);
@@ -183,18 +183,18 @@ public abstract class AbstractObjParser {
     /** Discard whitespace on the current data line and return true if any more characters
      * remain on the line.
      * @return true if more non-whitespace characters remain on the current data line
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected boolean nextDataLineContent() throws IOException {
+    protected boolean nextDataLineContent() {
         return discardDataLineWhitespace().hasMoreCharactersOnLine();
     }
 
     /** Get the next whitespace-delimited double on the current data line.
      * @return the next whitespace-delimited double on the current line
-     * @throws IOException if an I/O error occurs
      * @throws IllegalStateException if a double value is not able to be parsed
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    protected double nextDouble() throws IOException {
+    protected double nextDouble() {
         return parser.nextWithLineContinuation(ObjConstants.LINE_CONTINUATION_CHAR,
                 SimpleTextParser::isNotWhitespace)
             .getCurrentTokenAsDouble();
@@ -203,9 +203,9 @@ public abstract class AbstractObjParser {
     /** Read a keyword consisting of alphanumeric characters from the current parser position and set it
      * as the current token. Returns true if a non-empty keyword was found.
      * @return true if a non-empty keyword was found.
-     * @throws IOException if an I/O error occurs
+     * @throws java.io.UncheckedIOException if an I/O error occurs
      */
-    private boolean readKeyword() throws IOException {
+    private boolean readKeyword() {
         return parser
                 .nextWithLineContinuation(ObjConstants.LINE_CONTINUATION_CHAR, SimpleTextParser::isAlphanumeric)
                 .hasNonEmptyToken();

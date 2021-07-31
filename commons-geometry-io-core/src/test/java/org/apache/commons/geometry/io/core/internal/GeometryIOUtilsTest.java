@@ -16,12 +16,16 @@
  */
 package org.apache.commons.geometry.io.core.internal;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -29,6 +33,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.io.core.input.GeometryInput;
+import org.apache.commons.geometry.io.core.input.StreamGeometryInput;
+import org.apache.commons.geometry.io.core.output.GeometryOutput;
+import org.apache.commons.geometry.io.core.output.StreamGeometryOutput;
 import org.apache.commons.geometry.io.core.test.CloseCountInputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -83,6 +91,143 @@ class GeometryIOUtilsTest {
     }
 
     @Test
+    void testCreateBufferedWriter_givenCharset() throws IOException {
+        // arrange
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        final GeometryOutput output = new StreamGeometryOutput(bytes, null, StandardCharsets.UTF_8);
+
+        // act
+        final BufferedWriter writer = GeometryIOUtils.createBufferedWriter(output, StandardCharsets.ISO_8859_1);
+        writer.append('\u00fc');
+        writer.flush();
+
+        // assert
+        Assertions.assertEquals("\u00fc", new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void testCreateBufferedWriter_defaultCharset() throws IOException {
+        // arrange
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        final GeometryOutput output = new StreamGeometryOutput(bytes);
+
+        // act
+        final BufferedWriter writer = GeometryIOUtils.createBufferedWriter(output, StandardCharsets.ISO_8859_1);
+        writer.append('\u00fc');
+        writer.flush();
+
+        // assert
+        Assertions.assertEquals("\u00fc", new String(bytes.toByteArray(), StandardCharsets.ISO_8859_1));
+    }
+
+    @Test
+    void testCreateBufferedReader_givenCharset() throws IOException {
+        // arrange
+        final byte[] bytes = "\u00fc".getBytes(StandardCharsets.UTF_8);
+        final GeometryInput input = new StreamGeometryInput(
+                new ByteArrayInputStream(bytes), null, StandardCharsets.UTF_8);
+
+        // act
+        final BufferedReader reader = GeometryIOUtils.createBufferedReader(input, StandardCharsets.ISO_8859_1);
+
+        // assert
+        Assertions.assertEquals("\u00fc", reader.readLine());
+    }
+
+    @Test
+    void testCreateBufferedReader_defaultCharset() throws IOException {
+        // arrange
+        final byte[] bytes = "\u00fc".getBytes(StandardCharsets.UTF_8);
+        final GeometryInput input = new StreamGeometryInput(new ByteArrayInputStream(bytes));
+
+        // act
+        final BufferedReader reader = GeometryIOUtils.createBufferedReader(input, StandardCharsets.UTF_8);
+
+        // assert
+        Assertions.assertEquals("\u00fc", reader.readLine());
+    }
+
+    @Test
+    void testGetUnchecked() {
+        // act
+        final Object result = GeometryIOUtils.getUnchecked(() -> "abc");
+
+        // assert
+        Assertions.assertSame("abc", result);
+    }
+
+    @Test
+    void testGetUnchecked_failure() {
+        // arrange
+        final IOSupplier<String> supplier = () -> {
+            throw new IOException("test");
+        };
+
+        // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(
+                () -> GeometryIOUtils.getUnchecked(supplier),
+                UncheckedIOException.class,
+                "IOException: test");
+    }
+
+    @Test
+    void testAcceptUnchecked() {
+        // arrange
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final byte[] bytes = new byte[] {0, 1};
+
+        // act
+        GeometryIOUtils.acceptUnchecked(out::write, bytes);
+
+        // assert
+        Assertions.assertArrayEquals(bytes, out.toByteArray());
+    }
+
+    @Test
+    void testAcceptUnchecked_failure() {
+        // arrange
+        final IOConsumer<String> consumer = str -> {
+            throw new IOException(str);
+        };
+
+        // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(
+                () -> GeometryIOUtils.acceptUnchecked(consumer, "arg"),
+                UncheckedIOException.class,
+                "IOException: arg");
+    }
+
+    @Test
+    void testApplyAsIntUnchecked() {
+        // arrange
+        final ByteArrayInputStream in = new ByteArrayInputStream(new byte[] {0, 1, 2});
+        final byte[] bytes = new byte[10];
+
+        // act
+        int result = GeometryIOUtils.applyAsIntUnchecked(in::read, bytes);
+
+        // assert
+        Assertions.assertEquals(3, result);
+        Assertions.assertEquals((byte) 0, bytes[0]);
+        Assertions.assertEquals((byte) 1, bytes[1]);
+        Assertions.assertEquals((byte) 2, bytes[2]);
+    }
+
+    @Test
+    void testApplyAsIntUnchecked_failure() {
+        // arrange
+        final IOToIntFunction<String> consumer = str -> {
+            throw new IOException(str);
+        };
+
+        // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(
+                () -> GeometryIOUtils.applyAsIntUnchecked(consumer, "arg"),
+                UncheckedIOException.class,
+                "IOException: arg");
+    }
+
+    @Test
     void testCreateUnchecked() {
         // arrange
         final FileNotFoundException exc = new FileNotFoundException("test");
@@ -96,7 +241,30 @@ class GeometryIOUtilsTest {
     }
 
     @Test
-    void testTryApplyCloseable() throws IOException {
+    void testParseError_noCause() {
+        // act
+        final IllegalStateException exc = GeometryIOUtils.parseError("test");
+
+        // assert
+        Assertions.assertEquals("test", exc.getMessage());
+        Assertions.assertNull(exc.getCause());
+    }
+
+    @Test
+    void testParseError_withCause() {
+        // arrange
+        final Throwable cause = new Throwable("cause");
+
+        // act
+        final IllegalStateException exc = GeometryIOUtils.parseError("test", cause);
+
+        // assert
+        Assertions.assertEquals("test", exc.getMessage());
+        Assertions.assertSame(cause, exc.getCause());
+    }
+
+    @Test
+    void testTryApplyCloseable() {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new ByteArrayInputStream(new byte[] {1}));
 
@@ -109,7 +277,7 @@ class GeometryIOUtilsTest {
     }
 
     @Test
-    void testTryApplyCloseable_supplierThrows() throws IOException {
+    void testTryApplyCloseable_supplierThrows_ioException() {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             GeometryIOUtils.tryApplyCloseable(i -> {
@@ -117,11 +285,24 @@ class GeometryIOUtilsTest {
             }, () -> {
                 throw new IOException("supplier");
             });
-        }, IOException.class, "supplier");
+        }, UncheckedIOException.class, "IOException: supplier");
     }
 
     @Test
-    void testTryApplyCloseable_functionThrows() throws IOException {
+    void testTryApplyCloseable_supplierThrows_runtimeException() {
+        // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            GeometryIOUtils.tryApplyCloseable(i -> {
+                throw new IOException("fn");
+            }, () -> {
+                throw new RuntimeException("supplier");
+            });
+        }, RuntimeException.class, "supplier");
+    }
+
+
+    @Test
+    void testTryApplyCloseable_functionThrows() {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new ByteArrayInputStream(new byte[0]));
 
@@ -130,31 +311,31 @@ class GeometryIOUtilsTest {
             GeometryIOUtils.tryApplyCloseable(i -> {
                 throw new IOException("fn");
             }, () -> in);
-        }, IOException.class, "fn");
+        }, UncheckedIOException.class, "IOException: fn");
 
         Assertions.assertEquals(1, in.getCloseCount());
     }
 
     @Test
-    void testTryApplyCloseable_functionThrows_inputCloseThrows() throws IOException {
+    void testTryApplyCloseable_functionThrows_inputCloseThrows() {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new CloseFailByteArrayInputStream(new byte[0]));
 
         // act/assert
-        final Throwable thr = Assertions.assertThrows(IOException.class, () -> {
+        final Throwable thr = Assertions.assertThrows(UncheckedIOException.class, () -> {
             GeometryIOUtils.tryApplyCloseable(i -> {
                 throw new IOException("fn");
             }, () -> in);
         });
 
-        Assertions.assertEquals(IOException.class, thr.getClass());
+        Assertions.assertEquals(UncheckedIOException.class, thr.getClass());
         Assertions.assertEquals("close", thr.getSuppressed()[0].getMessage());
 
         Assertions.assertEquals(1, in.getCloseCount());
     }
 
     @Test
-    void testCreateCloseableStream() throws IOException {
+    void testCreateCloseableStream() {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new ByteArrayInputStream(new byte[0]));
 
@@ -168,7 +349,7 @@ class GeometryIOUtilsTest {
     }
 
     @Test
-    void testCreateCloseableStream_closeThrows() throws IOException {
+    void testCreateCloseableStream_closeThrows() {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(new CloseFailByteArrayInputStream(new byte[0]));
 

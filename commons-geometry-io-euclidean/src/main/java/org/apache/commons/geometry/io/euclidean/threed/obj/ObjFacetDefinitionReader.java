@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +45,7 @@ public class ObjFacetDefinitionReader extends AbstractObjPolygonReader
 
     /** {@inheritDoc} */
     @Override
-    public FacetDefinition readFacet() throws IOException {
+    public FacetDefinition readFacet() {
         final PolygonObjParser.Face face = readFace();
         if (face != null) {
             final List<Vector3D> faceVertices = face.getVertices(vertices::get);

@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.txt;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +58,7 @@ class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    void testReadFacet_empty() throws IOException {
+    void testReadFacet_empty() {
         // arrange
         TextFacetDefinitionReader reader = facetReader("");
 
@@ -71,7 +70,7 @@ class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    void testReadFacet_singleFacet() throws IOException {
+    void testReadFacet_singleFacet() {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "1.0 2.0 3.0 40 50 60 7.0e-2 8e-2 9E-02 1.01e+1 -11.02 +12");
@@ -90,7 +89,7 @@ class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    void testReadFacet_multipleFacets() throws IOException {
+    void testReadFacet_multipleFacets() {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "1,2,3    4,5,6 7,8,9    10,11,12\r" +
@@ -123,7 +122,7 @@ class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    void testReadFacet_blankLinesAndComments() throws IOException {
+    void testReadFacet_blankLinesAndComments() {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "# some ignored numbers: 1 2 3 4 5 6\n" +
@@ -158,7 +157,7 @@ class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    void testReadFacet_nonDefaultCommentToken() throws IOException {
+    void testReadFacet_nonDefaultCommentToken() {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "5$ some ignored numbers: 1 2 3 4 5 6\n" +
@@ -195,7 +194,7 @@ class TextFacetDefinitionReaderTest {
     }
 
     @Test
-    void testReadFacet_longCommentToken() throws IOException {
+    void testReadFacet_longCommentToken() {
         // arrange
         TextFacetDefinitionReader reader = facetReader(
                 "this_is-a-comment some ignored numbers: 1 2 3 4 5 6\n" +
@@ -240,7 +239,7 @@ class TextFacetDefinitionReaderTest {
         // act
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             reader.readFacet();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 1, column 1: expected double but found empty token followed by [#]");
     }
 
@@ -253,7 +252,7 @@ class TextFacetDefinitionReaderTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             reader.readFacet();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 1, column 1: expected double but found empty token followed by [#]");
     }
 
@@ -265,7 +264,7 @@ class TextFacetDefinitionReaderTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             reader.readFacet();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 1, column 3: expected double but found [abc]");
     }
 
@@ -281,27 +280,27 @@ class TextFacetDefinitionReaderTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             reader.readFacet();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 1, column 2: expected double but found end of line");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             reader.readFacet();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 2, column 4: expected double but found end of line");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             reader.readFacet();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 3, column 6: expected double but found end of line");
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             reader.readFacet();
-        }, IOException.class,
+        }, IllegalStateException.class,
                 "Parsing failed at line 4, column 15: expected double but found end of line");
     }
 
     @Test
-    void testClose() throws IOException {
+    void testClose() {
         // arrange
         final CloseCountReader countReader = new CloseCountReader(new StringReader(""));
         final TextFacetDefinitionReader reader = new TextFacetDefinitionReader(countReader);

@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.io.euclidean.threed.txt;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +47,7 @@ class TextBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader() throws IOException {
+    void testFacetDefinitionReader() {
         // arrange
         final InputStream in = input("0 0 0; 1 1 0; 0 1 0", StandardCharsets.UTF_8);
 
@@ -64,7 +63,7 @@ class TextBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader_usesInputCharset() throws IOException {
+    void testFacetDefinitionReader_usesInputCharset() {
         // arrange
         final InputStream in = input("0 0 0; 1 1 0; 0 1 0", StandardCharsets.UTF_16);
 
@@ -80,7 +79,7 @@ class TextBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader_setDefaultCharset() throws IOException {
+    void testFacetDefinitionReader_setDefaultCharset() {
         // arrange
         handler.setDefaultCharset(StandardCharsets.UTF_16);
         final InputStream in = input("0 0 0; 1 1 0; 0 1 0", StandardCharsets.UTF_16);
@@ -97,7 +96,7 @@ class TextBoundaryReadHandler3DTest {
     }
 
     @Test
-    void testFacetDefinitionReader_close() throws IOException {
+    void testFacetDefinitionReader_close() {
         // arrange
         final CloseCountInputStream in = new CloseCountInputStream(input("", StandardCharsets.UTF_8));
 

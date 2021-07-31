@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.txt;
 
-import java.io.IOException;
-
 import org.apache.commons.geometry.io.core.GeometryFormat;
 import org.apache.commons.geometry.io.core.output.GeometryOutput;
 import org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D;
@@ -99,7 +97,7 @@ public class TextBoundaryWriteHandler3D extends AbstractTextBoundaryWriteHandler
 
     /** {@inheritDoc} */
     @Override
-    protected TextFacetDefinitionWriter getFacetDefinitionWriter(final GeometryOutput out) throws IOException {
+    protected TextFacetDefinitionWriter getFacetDefinitionWriter(final GeometryOutput out) {
         final TextFacetDefinitionWriter facetWriter = super.getFacetDefinitionWriter(out);
 
         facetWriter.setVertexComponentSeparator(vertexComponentSeparator);

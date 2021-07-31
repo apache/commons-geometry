@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,8 +41,7 @@ public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandl
 
     /** {@inheritDoc} */
     @Override
-    public BoundarySource3D read(final GeometryInput in, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public BoundarySource3D read(final GeometryInput in, final Precision.DoubleEquivalence precision) {
         // read the input as a simple list of boundaries
         final List<PlaneConvexSubset> list = new ArrayList<>();
 
@@ -59,8 +57,7 @@ public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandl
 
     /** {@inheritDoc} */
     @Override
-    public TriangleMesh readTriangleMesh(final GeometryInput in, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public TriangleMesh readTriangleMesh(final GeometryInput in, final Precision.DoubleEquivalence precision) {
         final SimpleTriangleMesh.Builder meshBuilder = SimpleTriangleMesh.builder(precision);
 
         try (FacetDefinitionReader reader = facetDefinitionReader(in)) {
@@ -81,15 +78,14 @@ public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandl
 
     /** {@inheritDoc} */
     @Override
-    public Stream<PlaneConvexSubset> boundaries(final GeometryInput in, final Precision.DoubleEquivalence precision)
-            throws IOException {
+    public Stream<PlaneConvexSubset> boundaries(final GeometryInput in, final Precision.DoubleEquivalence precision) {
         return facets(in)
                 .map(f -> FacetDefinitions.toPolygon(f, precision));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Stream<FacetDefinition> facets(final GeometryInput in) throws IOException {
+    public Stream<FacetDefinition> facets(final GeometryInput in) {
         return GeometryIOUtils.createCloseableStream(inputStream -> {
             final FacetDefinitionReader fdReader = facetDefinitionReader(in);
             final FacetDefinitionReaderIterator it = new FacetDefinitionReaderIterator(fdReader);
@@ -98,8 +94,7 @@ public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandl
         }, in::getInputStream);
     }
 
-    /** Class exposing a {@link FacetDefinitionReader} as an iterator. {@link IOException}s are wrapped
-     * with {@link java.io.UncheckedIOException}.
+    /** Class exposing a {@link FacetDefinitionReader} as an iterator.
      */
     static final class FacetDefinitionReaderIterator implements Iterator<FacetDefinition> {
 
@@ -149,16 +144,11 @@ public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandl
             }
         }
 
-        /** Load the next facet from the underlying reader. Any {@link IOException}s
-         * are wrapped with {@link java.io.UncheckedIOException}.
+        /** Load the next facet from the underlying reader.
          */
         private void loadNext() {
             ++loadCount;
-            try {
-                next = reader.readFacet();
-            } catch (final IOException exc) {
-                throw GeometryIOUtils.createUnchecked(exc);
-            }
+            next = reader.readFacet();
         }
     }
 }

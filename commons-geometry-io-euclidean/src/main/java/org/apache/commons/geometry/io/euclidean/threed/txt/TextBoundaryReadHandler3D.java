@@ -16,15 +16,12 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.txt;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.geometry.io.core.GeometryFormat;
 import org.apache.commons.geometry.io.core.input.GeometryInput;
+import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 import org.apache.commons.geometry.io.euclidean.threed.AbstractBoundaryReadHandler3D;
 import org.apache.commons.geometry.io.euclidean.threed.FacetDefinitionReader;
 import org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D;
@@ -62,15 +59,7 @@ public class TextBoundaryReadHandler3D extends AbstractBoundaryReadHandler3D {
 
     /** {@inheritDoc} */
     @Override
-    public FacetDefinitionReader facetDefinitionReader(final GeometryInput in) throws IOException {
-        return new TextFacetDefinitionReader(createReader(in));
-    }
-
-    private Reader createReader(final GeometryInput in) throws IOException {
-        final Charset charset = in.getCharset() != null ?
-                in.getCharset() :
-                defaultCharset;
-
-        return new BufferedReader(new InputStreamReader(in.getInputStream(), charset));
+    public FacetDefinitionReader facetDefinitionReader(final GeometryInput in) {
+        return new TextFacetDefinitionReader(GeometryIOUtils.createBufferedReader(in, defaultCharset));
     }
 }

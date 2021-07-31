@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -64,7 +63,7 @@ class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteFacets() throws IOException {
+    void testWriteFacets() {
         // arrange
         final DecimalFormat fmt =
                 new DecimalFormat("0.0#####", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
@@ -85,7 +84,7 @@ class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteFacets_usesOutputCharset() throws IOException {
+    void testWriteFacets_usesOutputCharset() {
         // arrange
         final DecimalFormat fmt =
                 new DecimalFormat("0.0#####", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
@@ -106,7 +105,7 @@ class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteFacets_customConfig() throws IOException {
+    void testWriteFacets_customConfig() {
         // arrange
         // arrange
         final DecimalFormat fmt =
@@ -134,7 +133,7 @@ class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWrite() throws IOException {
+    void testWrite() {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(FACETS.stream()
                 .map(f -> FacetDefinitions.toPolygon(f, TEST_PRECISION))
@@ -155,7 +154,7 @@ class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWrite_customConfig() throws IOException {
+    void testWrite_customConfig() {
         // arrange
         final BoundarySource3D src = BoundarySource3D.of(FACETS.stream()
                 .map(f -> FacetDefinitions.toPolygon(f, TEST_PRECISION))
@@ -187,7 +186,7 @@ class ObjBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWrite_mesh() throws IOException {
+    void testWrite_mesh() {
         // arrange
         final SimpleTriangleMesh.Builder builder = SimpleTriangleMesh.builder(TEST_PRECISION);
         builder.addFaceAndVertices(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));

@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.io.euclidean.threed.txt;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -73,7 +72,7 @@ class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteFacets() throws IOException {
+    void testWriteFacets() {
         // arrange
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         final CloseCountOutputStream closeOut = new CloseCountOutputStream(out);
@@ -88,7 +87,7 @@ class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteFacets_usesOutputCharset() throws IOException {
+    void testWriteFacets_usesOutputCharset() {
         // arrange
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         final CloseCountOutputStream closeOut = new CloseCountOutputStream(out);
@@ -103,7 +102,7 @@ class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteFacets_customConfiguration() throws IOException {
+    void testWriteFacets_customConfiguration() {
         // arrange
         final DecimalFormat fmt =
                 new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
@@ -128,7 +127,7 @@ class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteBoundarySource() throws IOException {
+    void testWriteBoundarySource() {
         // arrange
         final TextBoundaryWriteHandler3D handler = new TextBoundaryWriteHandler3D();
         final CloseCountOutputStream closeOut = new CloseCountOutputStream(out);
@@ -143,7 +142,7 @@ class TextBoundaryWriteHandler3DTest {
     }
 
     @Test
-    void testWriteBoundarySource_customConfiguration() throws IOException {
+    void testWriteBoundarySource_customConfiguration() {
         // arrange
         // arrange
         final DecimalFormat fmt =

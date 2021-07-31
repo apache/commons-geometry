@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.io.euclidean.threed.obj;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -47,7 +46,7 @@ class ObjTriangleMeshReaderTest {
     }
 
     @Test
-    void testClose() throws IOException {
+    void testClose() {
         // arrange
         final CloseCountReader closeReader = new CloseCountReader(new StringReader(""));
 
@@ -60,7 +59,7 @@ class ObjTriangleMeshReaderTest {
     }
 
     @Test
-    void testReadTriangleMesh_withNormal() throws IOException {
+    void testReadTriangleMesh_withNormal() {
         // arrange
         final ObjTriangleMeshReader reader = reader(
                 "o test\n\n" +
@@ -99,7 +98,7 @@ class ObjTriangleMeshReaderTest {
     }
 
     @Test
-    void testReadTriangleMesh_withoutNormal() throws IOException {
+    void testReadTriangleMesh_withoutNormal() {
         // arrange
         final ObjTriangleMeshReader reader = reader(
                 "o test\n\n" +
@@ -128,7 +127,7 @@ class ObjTriangleMeshReaderTest {
     }
 
     @Test
-    void testReadTriangleMesh_failOnNonPolygon() throws IOException {
+    void testReadTriangleMesh_failOnNonPolygon() {
         // arrange
         final ObjTriangleMeshReader reader = reader(
                 "o test\n\n" +
@@ -145,7 +144,7 @@ class ObjTriangleMeshReaderTest {
         // act/assert
         GeometryTestUtils.assertThrowsWithMessage(
                 () -> reader.readTriangleMesh(),
-                IOException.class, Pattern.compile("^Parsing failed.*"));
+                IllegalStateException.class, Pattern.compile("^Parsing failed.*"));
     }
 
     private static ObjTriangleMeshReader reader(final String str) {
