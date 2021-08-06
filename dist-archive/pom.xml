@@ -155,59 +155,40 @@ under the License.
           <classifier>javadoc</classifier>
         </dependency>
 
-        <!-- Module: Examples - JMH -->
+        <!-- Module: IO Core -->
         <dependency>
           <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-examples-jmh</artifactId>
+          <artifactId>commons-geometry-io-core</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-examples-jmh</artifactId>
+          <artifactId>commons-geometry-io-core</artifactId>
           <version>${project.version}</version>
           <classifier>sources</classifier>
         </dependency>
         <dependency>
           <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-examples-jmh</artifactId>
+          <artifactId>commons-geometry-io-core</artifactId>
           <version>${project.version}</version>
           <classifier>javadoc</classifier>
         </dependency>
 
-        <!-- Module: Examples - IO -->
+        <!-- Module: IO Euclidean -->
         <dependency>
           <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-examples-io</artifactId>
+          <artifactId>commons-geometry-io-euclidean</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-examples-io</artifactId>
-          <version>${project.version}</version>
-          <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-examples-io</artifactId>
-          <version>${project.version}</version>
-          <classifier>javadoc</classifier>
-        </dependency>
-
-        <!-- Module: Examples - Tutorials -->
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-examples-tutorials</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-examples-tutorials</artifactId>
+          <artifactId>commons-geometry-io-euclidean</artifactId>
           <version>${project.version}</version>
           <classifier>sources</classifier>
         </dependency>
         <dependency>
           <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-examples-tutorials</artifactId>
+          <artifactId>commons-geometry-io-euclidean</artifactId>
           <version>${project.version}</version>
           <classifier>javadoc</classifier>
         </dependency>
