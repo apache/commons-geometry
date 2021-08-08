@@ -29,8 +29,9 @@
       <item name="Latest API docs (development)"
             href="apidocs/index.html"/>
       <item name="Javadoc (1.0 release)"
-            href="https://commons.apache.org/geometry/commons-geometry-core/javadocs/api-1.0/index.html"/>
+            href="https://commons.apache.org/geometry/commons-geometry-io-core/javadocs/api-1.0/index.html"/>
     </menu>
+
 
     <head>
       <![CDATA[<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
