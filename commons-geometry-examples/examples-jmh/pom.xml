@@ -31,6 +31,9 @@
   Code in this module is not part of the public API.</description>
 
   <properties>
+    <!-- Example module artifacts are not deployed. -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+
     <!-- OSGi -->
     <commons.osgi.symbolicName>org.apache.commons.geometry.examples.jmh</commons.osgi.symbolicName>
     <commons.osgi.export>org.apache.commons.geometry.examples.jmh.*</commons.osgi.export>

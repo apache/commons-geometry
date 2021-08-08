@@ -38,6 +38,9 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
+    <!-- Example module artifacts are not deployed. -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+
     <!-- Version of commons-geometry to test. -->
     <geometry.version>${project.version}</geometry.version>
 
