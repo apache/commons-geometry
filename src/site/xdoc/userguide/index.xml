@@ -76,17 +76,6 @@
             </li>
           </ul>
         </li>
-        <li>
-          <a href="#hull">Convex Hull</a>
-          <ul>
-            <li>
-              <a href="#hull_euclidean_2d">Euclidean 2D</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a href="#enclosing">Enclosing</a>
-        </li>
       </ul>
     </section>
 
@@ -122,14 +111,6 @@
         <li>
           <a class="code" href="../commons-geometry-io-euclidean/index.html">commons-geometry-io-euclidean</a> - Provides
           classes for IO operations on Euclidean data formats, such STL and OBJ.
-        </li>
-        <li>
-          <a class="code" href="../commons-geometry-hull/index.html">commons-geometry-hull</a> - Provides implementations
-          of convex hull algorithms.
-        </li>
-        <li>
-          <a class="code" href="../commons-geometry-enclosing/index.html">commons-geometry-enclosing</a> - Provides implementations
-          of enclosing ball algorithms.
         </li>
       </ul>
     </section>
@@ -1099,127 +1080,6 @@ List&lt;GreatArcPath&gt; minusPaths = minus.getBoundaryPaths(); // size = 1
       </subsection>
 
     </section>
-
-    <section name="Convex Hull" id="hull">
-      <p>
-        A <a href="http://en.wikipedia.org/wiki/Convex_hull">convex hull</a> of a region or shape in the smallest convex
-        set of points that completely contains the shape. For example, if a set of points in Euclidean 2D space are
-        represented by nails in a flat piece of wood, then the convex hull of that shape would be the path made by a
-        rubber band wrapped around all of the nails. Similarly, in Euclidean 3D space, the convex hull of a shape can be
-        visualized as the result of "shrink-wrapping" the shape with a very tight, non-flexible material.
-      </p>
-      <p>
-        A number of convex hull algorithms exist, for various spaces and dimensions, and it is the goal of the
-        <span class="code">commons-geometry-hull</span> module to provide implementations of these algorithms.
-      </p>
-
-      <subsection name="Convex Hull - Euclidean 2D" id="hull_euclidean_2d">
-        <h4>Primary Classes</h4>
-        <ul>
-          <li>
-            <a class="code" href="../commons-geometry-hull/apidocs/org/apache/commons/geometry/hull/euclidean/twod/ConvexHullGenerator2D.html">ConvexHullGenerator2D</a> -
-            Interface for classes that implement convex hull algorithms in Euclidean 2D space.
-          </li>
-          <li>
-            <a class="code" href="../commons-geometry-hull/apidocs/org/apache/commons/geometry/hull/euclidean/twod/ConvexHull2D.html">ConvexHull2D</a> -
-            Class representing output from convex hull operations.
-          </li>
-          <li>
-            <a class="code" href="../commons-geometry-hull/apidocs/org/apache/commons/geometry/hull/euclidean/twod/MonotoneChain.html">MonotoneChain</a> -
-            Class implementing
-            <a href="http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain">Andrew's monotone chain algorithm</a>
-            for computing convex hulls.
-          </li>
-        </ul>
-
-        <h4>Examples</h4>
-
-        <h5>Monotone Chain</h5>
-        <source>
-Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
-
-// create a list of input points for the algorithm
-List&lt;Vector2D&gt; pts = Arrays.asList(
-            Vector2D.ZERO,
-            Vector2D.of(0.5, 0.5),
-            Vector2D.of(0, 0.5),
-            Vector2D.of(0, 1),
-            Vector2D.of(0.25, 0.1),
-            Vector2D.of(1, 0),
-            Vector2D.of(1, 1),
-            Vector2D.of(0.75, 0.9)
-        );
-
-// create an instance of the monotone chain convex hull generator
-MonotoneChain mc = new MonotoneChain(precision);
-
-// compute the convex hull
-ConvexHull2D hull = mc.generate(pts);
-
-// list the vertices from the input that were used in the hull
-List&lt;Vector2D&gt; vertices = hull.getVertices(); // [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
-
-// get the hull as a region
-ConvexArea region = hull.getRegion();
-boolean containsAll = pts.stream().allMatch(region::contains); // true - region contains all input points
-        </source>
-      </subsection>
-    </section>
-
-    <section name="Enclosing" id="enclosing">
-      <p>
-      The <a href="https://en.wikipedia.org/wiki/Bounding_sphere">smallest enclosing ball problem</a> is the
-      mathematical problem of locating the n-sphere with the smallest radius that encloses a given set of points.
-      This module contains implementations of algorithms for solving this problem.
-      </p>
-
-      <h4>Primary Classes</h4>
-      <ul>
-        <li>
-          <a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/Encloser.html">Encloser</a> -
-          Interface for classes that solve the smallest enclosing ball problem.
-        </li>
-        <li>
-          <a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/EnclosingBall.html">EnclosingBall</a> -
-          Class containing the result of smallest enclosing ball computation.
-        </li>
-        <li>
-          <a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/WelzlEncloser.html">WelzlEncloser</a> -
-          Class implementing a space-independent version of
-          <a href="http://www.inf.ethz.ch/personal/emo/PublFiles/SmallEnclDisk_LNCS555_91.pdf">Emo Welzl's algorithm</a>
-          for computing the smallest enclosing ball of a set of points. Specialized classes exist for Euclidean 2D space
-          (<a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/euclidean/twod/WelzlEncloser2D.html">WelzlEncloser2D</a>)
-          and Euclidean 3D space
-          (<a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/euclidean/threed/WelzlEncloser3D.html">WelzlEncloser3D</a>).
-        </li>
-      </ul>
-
-      <h4>Examples</h4>
-
-      <h5>WelzlEncloser3D</h5>
-      <source>
-Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
-
-List&lt;Vector3D&gt; points = Arrays.asList(
-            Vector3D.of(0, 0, 1),
-            Vector3D.of(0.75, 0, 1),
-            Vector3D.of(2, 0, 1),
-            Vector3D.of(1, 0, 2)
-        );
-
-// compute the enclosing ball
-WelzlEncloser3D encloser = new WelzlEncloser3D(precision);
-
-EnclosingBall&lt;Vector3D&gt; sphere = encloser.enclose(points);
-
-// check the generated ball
-Vector3D center = sphere.getCenter(); // (1, 0, 1)
-double radius = sphere.getRadius(); // 1.0
-boolean containsCenter = sphere.contains(center); // true
-boolean containsOrigin = sphere.contains(Vector3D.ZERO); // false
-      </source>
-    </section>
-
   </body>
 
 </document>

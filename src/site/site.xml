@@ -75,8 +75,6 @@
       <item name="Core Interfaces" href="/userguide/index.html#interfaces"/>
       <item name="Euclidean Space" href="/userguide/index.html#euclidean"/>
       <item name="Spherical Space" href="/userguide/index.html#spherical"/>
-      <item name="Convex Hull" href="/userguide/index.html#hull"/>
-      <item name="Enclosing" href="/userguide/index.html#enclosing"/>
     </menu>
     <menu name="Tutorials">
       <item name="BSP Trees" href="/tutorials/bsp-tree.html" />

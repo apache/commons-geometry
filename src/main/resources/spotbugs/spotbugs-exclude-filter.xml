@@ -65,13 +65,9 @@
       <Class name="org.apache.commons.geometry.euclidean.twod.path.LinePath"/>
       <Class name="org.apache.commons.geometry.euclidean.twod.EmbeddedTreeLineSubset"/>
 
-      <Class name="org.apache.commons.geometry.enclosing.EnclosingBall"/>
-
       <Class name="org.apache.commons.geometry.spherical.twod.EmbeddedTreeGreatCircleSubset"/>
       <Class name="org.apache.commons.geometry.spherical.twod.RegionBSPTree2S"/>
       <Class name="org.apache.commons.geometry.spherical.twod.GreatArcPath"/>
-
-      <Class name="org.apache.commons.geometry.hull.euclidean.twod.ConvexHull2D"/>
 
       <Class name="org.apache.commons.geometry.io.core.internal.SimpleTextParser"/>
       <Class name="org.apache.commons.geometry.io.core.output.StreamGeometryOutput"/>

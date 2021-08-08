@@ -117,44 +117,6 @@ under the License.
           <classifier>javadoc</classifier>
         </dependency>
 
-        <!-- Module: Enclosing -->
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-enclosing</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-enclosing</artifactId>
-          <version>${project.version}</version>
-          <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-enclosing</artifactId>
-          <version>${project.version}</version>
-          <classifier>javadoc</classifier>
-        </dependency>
-
-        <!-- Module: Hull -->
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-hull</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-hull</artifactId>
-          <version>${project.version}</version>
-          <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-geometry-hull</artifactId>
-          <version>${project.version}</version>
-          <classifier>javadoc</classifier>
-        </dependency>
-
         <!-- Module: IO Core -->
         <dependency>
           <groupId>org.apache.commons</groupId>

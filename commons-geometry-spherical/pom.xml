@@ -52,11 +52,6 @@
       <artifactId>commons-geometry-euclidean</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-geometry-enclosing</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
