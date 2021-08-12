@@ -32,6 +32,9 @@
           <a href="#overview">Overview</a>
         </li>
         <li>
+          <a href="#example-modules">Example Modules</a>
+        </li>
+        <li>
           <a href="#concepts">Concepts</a>
           <ul>
             <li>
@@ -132,6 +135,17 @@
           of enclosing ball algorithms.
         </li>
       </ul>
+    </section>
+
+    <section name="Example Modules" id="example-modules">
+      <p>
+        In addition to the modules above, the <em>Commons Geometry</em>
+        <a href="https://commons.apache.org/geometry/download_geometry.cgi">source distribution</a> contains example
+        code demonstrating library functionality and/or providing useful development utilities. These modules are not
+        part of the public API of the library and no guarantees are made concerning backwards compatibility. The
+        <a href="../commons-geometry-examples/modules.html">example module parent page</a> contains a listing of the
+        available modules.
+      </p>
     </section>
 
     <section name="Concepts" id="concepts">

@@ -71,6 +71,7 @@
     <menu name="User Guide">
       <item name="Contents" href="/userguide/index.html#toc"/>
       <item name="Overview" href="/userguide/index.html#overview"/>
+      <item name="Example Modules" href="/userguide/index.html#example-modules"/>
       <item name="Concepts" href="/userguide/index.html#concepts"/>
       <item name="Core Interfaces" href="/userguide/index.html#interfaces"/>
       <item name="Euclidean Space" href="/userguide/index.html#euclidean"/>
