@@ -50,9 +50,10 @@
       <p>
         This tutorial gives a brief introduction to the
         <a target="_blank" href="https://en.wikipedia.org/wiki/Binary_space_partitioning">BSP tree</a> data structure and its use in
-        <em>Commons Geometry.</em> All sample code in this tutorial can be found in the
-        <a class="code" href="../commons-geometry-examples/commons-geometry-examples-tutorials/apidocs/org/apache/commons/geometry/examples/tutorials/bsp/package-summary.html"
-        >org.apache.commons.geometry.examples.tutorials.bsp</a> package.
+        <em>Commons Geometry.</em> All code in this tutorial can be found in the
+        <a class="code" href="../commons-geometry-examples/commons-geometry-examples-tutorials/xref/org/apache/commons/geometry/examples/tutorials/bsp/package-summary.html"
+        >org.apache.commons.geometry.examples.tutorials.bsp</a> package, which is included in the library
+        <a href="https://commons.apache.org/geometry/download_geometry.cgi">source distribution</a>.
       </p>
     </section>
 

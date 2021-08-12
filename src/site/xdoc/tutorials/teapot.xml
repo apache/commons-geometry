@@ -59,8 +59,9 @@
       These geometric figures can be combined in various ways to produce new figures. In this tutorial,
       we will explore these features by constructing a 3D model of a teapot from scratch. The image
       below shows the result of our efforts. The final code for this tutorial can be found in the
-      <a class="code" href="../commons-geometry-examples/commons-geometry-examples-tutorials/apidocs/org/apache/commons/geometry/examples/tutorials/teapot/TeapotBuilder.html">
-      TeapotBuilder</a> class.
+      <a class="code" href="../commons-geometry-examples/commons-geometry-examples-tutorials/xref/org/apache/commons/geometry/examples/tutorials/teapot/TeapotBuilder.html">
+      TeapotBuilder</a> class, which is included in the library
+      <a href="https://commons.apache.org/geometry/download_geometry.cgi">source distribution</a>.
       </p>
 
       <p>
