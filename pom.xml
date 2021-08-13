@@ -87,6 +87,10 @@
     -->
     <clirr.skip>true</clirr.skip>
 
+    <!-- Workaround to avoid the SVN site checkout in all modules.
+         This flag should be deactivated by child modules. -->
+    <perform.site.checkout>true</perform.site.checkout>
+
     <!--
         Override so that "mvn commons:download-page" will generates a web page
         referring to the files created by the "dist-archive" module.
