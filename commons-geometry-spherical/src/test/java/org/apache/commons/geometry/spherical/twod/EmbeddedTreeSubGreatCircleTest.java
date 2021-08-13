@@ -26,14 +26,14 @@ import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
+import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
-class    EmbeddedTreeSubGreatCircleTest {
+class EmbeddedTreeSubGreatCircleTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -49,6 +49,8 @@ class    EmbeddedTreeSubGreatCircleTest {
         final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(XY_CIRCLE);
 
         // assert
+        Assertions.assertSame(XY_CIRCLE, sub.getHyperplane());
+        Assertions.assertSame(TEST_PRECISION, sub.getPrecision());
         Assertions.assertFalse(sub.isFull());
         Assertions.assertTrue(sub.isEmpty());
         Assertions.assertTrue(sub.isFinite());
@@ -134,6 +136,53 @@ class    EmbeddedTreeSubGreatCircleTest {
         checkClassify(sub, RegionLocation.OUTSIDE,
                 Point2S.of(0.5, Angle.PI_OVER_TWO), Point2S.of(2.5, Angle.PI_OVER_TWO),
                 Point2S.of(1.5, 1), Point2S.of(1.5, Math.PI - 1));
+    }
+
+    @Test
+    void testToSubspace() {
+        // arrange
+        final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(XY_CIRCLE);
+
+        // act/assert
+        SphericalTestUtils.assertPointsEqual(Point1S.of(1), sub.toSubspace(Point2S.of(1, 0.5)), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point1S.of(1), sub.toSubspace(Point2S.of(1, 0.75)), TEST_EPS);
+    }
+
+    @Test
+    void testToSpace() {
+        // arrange
+        final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(XY_CIRCLE);
+
+        // act/assert
+        SphericalTestUtils.assertPointsEqual(Point2S.of(0, 0.5 * Math.PI), sub.toSpace(Point1S.of(0)), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point2S.of(1, 0.5 * Math.PI), sub.toSpace(Point1S.of(1)), TEST_EPS);
+    }
+
+    @Test
+    void testClosest() {
+        // arrange
+        final RegionBSPTree1S tree = RegionBSPTree1S.fromInterval(AngularInterval.of(1, 2, TEST_PRECISION));
+        final EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(XY_CIRCLE, tree);
+
+        final double halfPi = 0.5 * Math.PI;
+        final double above = halfPi - 0.1;
+        final double below = halfPi + 0.1;
+
+        // act/assert
+        SphericalTestUtils.assertPointsEq(Point2S.of(1, halfPi), sub.closest(Point2S.of(0, above)), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(1, halfPi), sub.closest(Point2S.of(0, below)), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(Point2S.of(1, halfPi), sub.closest(Point2S.of(1, above)), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(1, halfPi), sub.closest(Point2S.of(1, below)), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(Point2S.of(1.5, halfPi), sub.closest(Point2S.of(1.5, above)), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(1.5, halfPi), sub.closest(Point2S.of(1.5, below)), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(Point2S.of(2, halfPi), sub.closest(Point2S.of(2, above)), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(2, halfPi), sub.closest(Point2S.of(2, below)), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(Point2S.of(2, halfPi), sub.closest(Point2S.of(3, above)), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(2, halfPi), sub.closest(Point2S.of(3, below)), TEST_EPS);
     }
 
     @Test

@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -506,6 +507,68 @@ class EmbeddedTreeLineSubsetTest {
         final List<LineConvexSubset> transformedSegments = transformed.toConvex();
         Assertions.assertEquals(1, transformedSegments.size());
         checkFiniteSegment(transformedSegments.get(0), Vector2D.of(0, 2), Vector2D.of(-1, 2));
+    }
+
+    @Test
+    void testClosest() {
+        // arrange
+        final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0, 2, TEST_PRECISION));
+        subRegion.add(Interval.of(3, 4, TEST_PRECISION));
+
+        final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 2), 0.0, TEST_PRECISION);
+        final EmbeddedTreeLineSubset subset = new EmbeddedTreeLineSubset(line, subRegion);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 2), subset.closest(Vector2D.of(0, 1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 2), subset.closest(Vector2D.of(0, 3)), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), subset.closest(Vector2D.of(1, 1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), subset.closest(Vector2D.of(1, 3)), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), subset.closest(Vector2D.of(2, 1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), subset.closest(Vector2D.of(2, 3)), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), subset.closest(Vector2D.of(2.4, 1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), subset.closest(Vector2D.of(2.4, 3)), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 2), subset.closest(Vector2D.of(2.6, 1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 2), subset.closest(Vector2D.of(2.6, 3)), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4, 2), subset.closest(Vector2D.of(5, 1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4, 2), subset.closest(Vector2D.of(5, 3)), TEST_EPS);
+    }
+
+    @Test
+    void testClosest_empty() {
+        // arrange
+        final Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        final EmbeddedTreeLineSubset subset = new EmbeddedTreeLineSubset(line, RegionBSPTree1D.empty());
+
+        // act/assert
+        Assertions.assertNull(subset.closest(Vector2D.ZERO));
+    }
+
+    @Test
+    void testClassify() {
+        // arrange
+        final RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0, 2, TEST_PRECISION));
+        subRegion.add(Interval.of(3, 4, TEST_PRECISION));
+
+        final Line line = Lines.fromPointAndAngle(Vector2D.of(0, 2), 0.0, TEST_PRECISION);
+        final EmbeddedTreeLineSubset subset = new EmbeddedTreeLineSubset(line, subRegion);
+
+        // act/assert
+        EuclideanTestUtils.assertRegionLocation(subset, RegionLocation.INSIDE,
+                Vector2D.of(1, 2), Vector2D.of(3.5, 2));
+
+        EuclideanTestUtils.assertRegionLocation(subset, RegionLocation.BOUNDARY,
+                Vector2D.of(0, 2), Vector2D.of(2, 2), Vector2D.of(3, 2), Vector2D.of(4, 2));
+
+        EuclideanTestUtils.assertRegionLocation(subset, RegionLocation.OUTSIDE,
+                Vector2D.of(-1, 2), Vector2D.of(2.5, 2), Vector2D.of(5, 2),
+                Vector2D.of(1, 3), Vector2D.of(3.5, 1));
     }
 
     @Test
