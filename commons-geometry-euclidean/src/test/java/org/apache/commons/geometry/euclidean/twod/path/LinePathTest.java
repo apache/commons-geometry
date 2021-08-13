@@ -1097,7 +1097,7 @@ class LinePathTest {
 
         // act/assert
         Assertions.assertThrows(IllegalStateException.class, () -> builder.prepend(p));
-        Assertions.assertThrows(IllegalStateException.class, () -> builder.prepend(p));
+        Assertions.assertThrows(IllegalStateException.class, () -> builder.append(p));
     }
 
     @Test

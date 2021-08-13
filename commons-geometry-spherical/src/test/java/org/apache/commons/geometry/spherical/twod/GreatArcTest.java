@@ -172,6 +172,28 @@ class GreatArcTest {
     }
 
     @Test
+    void testGetMidPoint() {
+        // arrange
+        final GreatArc arc = GreatCircles.arcFromInterval(
+                GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION),
+                AngularInterval.Convex.of(0.8 * Math.PI, 0.9 * Math.PI, TEST_PRECISION));
+
+        // act/assert
+        SphericalTestUtils.assertPointsEqual(Point2S.of(0.85 * Math.PI, 0.5 * Math.PI), arc.getMidPoint(), TEST_EPS);
+    }
+
+    @Test
+    void testGetMidPoint_full() {
+        // arrange
+        final GreatArc arc = GreatCircles.arcFromInterval(
+                GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION),
+                AngularInterval.full());
+
+        // act/assert
+        Assertions.assertNull(arc.getMidPoint());
+    }
+
+    @Test
     void testReverse_full() {
         // arrange
         final GreatArc arc = GreatCircles.arcFromInterval(
