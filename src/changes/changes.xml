@@ -53,7 +53,7 @@ If the output is not quite correct, check for invisible trailing spaces!
   </properties>
   <body>
 
-        <release version="1.0" date="TBD" description="
+        <release version="1.0" date="2021-08-21" description="
 This is the first major release of Apache Commons Geometry.
 
 Apache Commons Geometry 1.0 contains the following library modules:
