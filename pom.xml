@@ -513,7 +513,7 @@
       <id>is-child-module</id>
       <activation>
         <file>
-          <missing>${basedir}/CONTRIBUTING.md</missing>
+          <missing>${basedir}/RELEASE-NOTES.txt</missing>
         </file>
       </activation>
       <properties>
