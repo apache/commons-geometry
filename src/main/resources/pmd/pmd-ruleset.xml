@@ -40,6 +40,7 @@
     <exclude name="OnlyOneReturn" />
     <exclude name="UseUnderscoresInNumericLiterals" />
     <exclude name="GenericsNaming" />
+    <exclude name="ConfusingTernary" />
   </rule>
   <rule ref="category/java/design.xml">
     <exclude name="TooManyMethods" />
