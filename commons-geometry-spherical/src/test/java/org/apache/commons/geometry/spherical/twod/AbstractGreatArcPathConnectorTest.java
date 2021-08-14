@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
+import org.apache.commons.geometry.spherical.twod.AbstractGreatArcConnector.ConnectableGreatArc;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
@@ -257,6 +258,46 @@ class AbstractGreatArcPathConnectorTest {
         final GreatArcPath b = paths.get(1);
         Assertions.assertEquals(1, b.getArcs().size());
         assertPathPoints(b, Point2S.PLUS_J, Point2S.PLUS_K);
+    }
+
+    @Test
+    void testConnectableSegment_hashCode() {
+        // arrange
+        final GreatArc arcA = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        final GreatArc arcB = GreatCircles.arcFromPoints(Point2S.PLUS_J, Point2S.MINUS_I, TEST_PRECISION);
+
+        final ConnectableGreatArc a = new ConnectableGreatArc(arcA);
+
+        // act
+        final int hash = a.hashCode();
+
+        // assert
+        Assertions.assertEquals(hash, a.hashCode());
+
+        Assertions.assertNotEquals(hash, new ConnectableGreatArc(arcB).hashCode());
+        Assertions.assertNotEquals(hash, new ConnectableGreatArc(Point2S.MINUS_I).hashCode());
+
+        Assertions.assertEquals(hash, new ConnectableGreatArc(arcA).hashCode());
+    }
+
+    @Test
+    void testConnectableSegment_equals() {
+        // arrange
+        final GreatArc arcA = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        final GreatArc arcB = GreatCircles.arcFromPoints(Point2S.PLUS_J, Point2S.MINUS_I, TEST_PRECISION);
+
+        final ConnectableGreatArc a = new ConnectableGreatArc(arcA);
+
+        // act/assert
+        Assertions.assertEquals(a, a);
+
+        Assertions.assertFalse(a.equals(null));
+        Assertions.assertFalse(a.equals(new Object()));
+
+        Assertions.assertNotEquals(a, new ConnectableGreatArc(arcB));
+        Assertions.assertNotEquals(a, new ConnectableGreatArc(Point2S.MINUS_I));
+
+        Assertions.assertEquals(a, new ConnectableGreatArc(arcA));
     }
 
     @Test
