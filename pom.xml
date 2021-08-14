@@ -329,6 +329,7 @@
                  some default development tools files (see RAT-126) -->
             <exclude>.ekstazi/**</exclude>
             <exclude>**/site-content/**</exclude>
+            <exclude>**/site-content.README</exclude>
             <exclude>**/.classpath</exclude>
             <exclude>**/.project</exclude>
             <exclude>**/.settings/**</exclude>
@@ -372,6 +373,7 @@
                  some default development tools files (see RAT-126) -->
             <exclude>.ekstazi/**</exclude>
             <exclude>**/site-content/**</exclude>
+            <exclude>**/site-content.README</exclude>
             <exclude>**/.classpath</exclude>
             <exclude>**/.project</exclude>
             <exclude>**/.settings/**</exclude>
