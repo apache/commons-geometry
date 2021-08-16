@@ -979,9 +979,8 @@ public class SimpleTextParser {
                 } else if (currentToken != null) {
                     if (!hasMoreCharactersOnLine()) {
                         return "end of line";
-                    } else if (currentToken != null) {
-                        return "empty token followed by [" + peek(1) + "]";
                     }
+                    return "empty token followed by [" + peek(1) + "]";
                 }
             } catch (IllegalStateException exc) {
                 // ignore

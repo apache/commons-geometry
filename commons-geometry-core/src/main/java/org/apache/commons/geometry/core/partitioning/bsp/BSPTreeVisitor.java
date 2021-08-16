@@ -142,7 +142,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
         /** {@inheritDoc} */
         @Override
         public Order visitOrder(final N node) {
-            if (node.getCutHyperplane().offset(getTarget()) > 0.0) {
+            if (node.getCutHyperplane().offset(getTarget()) > 0) {
                 return Order.PLUS_NODE_MINUS;
             }
             return Order.MINUS_NODE_PLUS;
@@ -169,7 +169,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
         /** {@inheritDoc} */
         @Override
         public Order visitOrder(final N node) {
-            if (node.getCutHyperplane().offset(getTarget()) < 0.0) {
+            if (node.getCutHyperplane().offset(getTarget()) < 0) {
                 return Order.PLUS_NODE_MINUS;
             }
             return Order.MINUS_NODE_PLUS;

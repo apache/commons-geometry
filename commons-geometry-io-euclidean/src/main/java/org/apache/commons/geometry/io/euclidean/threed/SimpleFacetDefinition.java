@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Simple {@link FacetDefinition} implementation that stores a list of vertices and
@@ -48,9 +49,9 @@ public class SimpleFacetDefinition implements FacetDefinition {
      */
     public SimpleFacetDefinition(final List<Vector3D> vertices, final Vector3D normal) {
         Objects.requireNonNull(vertices, "Facet vertex list cannot be null");
-        if (vertices.size() < 3) {
-            throw new IllegalArgumentException("Facet vertex list must contain at least 3 points; found " +
-                    vertices.size());
+        if (vertices.size() < EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
+            throw new IllegalArgumentException("Facet vertex list must contain at least " +
+                    EuclideanUtils.TRIANGLE_VERTEX_COUNT + " points; found " + vertices.size());
         }
 
         this.vertices = Collections.unmodifiableList(vertices);

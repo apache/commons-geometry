@@ -41,12 +41,14 @@
     <exclude name="UseUnderscoresInNumericLiterals" />
     <exclude name="GenericsNaming" />
     <exclude name="ConfusingTernary" />
+    <exclude name="FieldDeclarationsShouldBeAtStartOfClass" />
   </rule>
   <rule ref="category/java/design.xml">
     <exclude name="TooManyMethods" />
     <exclude name="LawOfDemeter" />
     <exclude name="NcssCount" />
-     <exclude name="LoosePackageCoupling" />
+    <exclude name="LoosePackageCoupling" />
+    <exclude name="GodClass" />
   </rule>
   <rule ref="category/java/documentation.xml">
     <exclude name="CommentSize" />

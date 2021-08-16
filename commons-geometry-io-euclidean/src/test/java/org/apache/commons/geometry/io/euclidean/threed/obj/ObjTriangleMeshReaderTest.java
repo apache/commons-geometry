@@ -42,7 +42,7 @@ class ObjTriangleMeshReaderTest {
         final ObjTriangleMeshReader reader = reader("");
 
         // act/assert
-        Assertions.assertFalse(reader.getFailOnNonPolygonKeywords());
+        Assertions.assertFalse(reader.isFailOnNonPolygonKeywords());
     }
 
     @Test

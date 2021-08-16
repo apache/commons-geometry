@@ -240,7 +240,7 @@ public class CharReadBuffer {
         final int remaining = n - skipped;
         if (remaining > 0) {
             try {
-                skipped += reader.skip(remaining);
+                skipped += (int) reader.skip(remaining);
             } catch (IOException exc) {
                 throw GeometryIOUtils.createUnchecked(exc);
             }

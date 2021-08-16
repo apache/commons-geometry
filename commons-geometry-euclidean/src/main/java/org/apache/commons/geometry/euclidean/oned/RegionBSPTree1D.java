@@ -538,7 +538,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
             Vector1D centroid = null;
 
             if (count > 0 && Double.isFinite(size)) {
-                if (size > 0.0) {
+                if (size > 0) {
                     // use the scaled sum if we have a non-zero size
                     centroid = Vector1D.of(scaledCentroidSum / size);
                 } else {

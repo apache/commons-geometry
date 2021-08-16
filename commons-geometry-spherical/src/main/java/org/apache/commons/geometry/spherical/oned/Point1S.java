@@ -45,10 +45,8 @@ public final class Point1S implements Point<Point1S> {
     /** A point with coordinates set to {@code pi}. */
     public static final Point1S PI = Point1S.of(Math.PI);
 
-    // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
     public static final Point1S NaN = Point1S.of(Double.NaN);
-    // CHECKSTYLE: resume ConstantName
 
     /** Comparator that sorts points by normalized azimuth in ascending order.
      * Points are only considered equal if their normalized azimuths match exactly.

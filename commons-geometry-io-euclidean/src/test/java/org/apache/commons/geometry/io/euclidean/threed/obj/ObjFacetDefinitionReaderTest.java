@@ -40,7 +40,7 @@ class ObjFacetDefinitionReaderTest {
         final ObjFacetDefinitionReader reader = reader("");
 
         // act/assert
-        Assertions.assertFalse(reader.getFailOnNonPolygonKeywords());
+        Assertions.assertFalse(reader.isFailOnNonPolygonKeywords());
     }
 
     @Test

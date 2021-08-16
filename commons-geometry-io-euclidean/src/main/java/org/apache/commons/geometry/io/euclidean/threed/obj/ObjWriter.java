@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.function.DoubleFunction;
 import java.util.stream.Stream;
 
+import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -251,8 +252,9 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      */
     private void writeFaceWithOffsets(final int vertexOffset, final int[] vertexIndices,
             final int normalOffset, final int[] normalIndices) {
-        if (vertexIndices.length < 3) {
-            throw new IllegalArgumentException("Face must have more than 3 vertices; found " + vertexIndices.length);
+        if (vertexIndices.length < EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
+            throw new IllegalArgumentException("Face must have more than " + EuclideanUtils.TRIANGLE_VERTEX_COUNT +
+                    " vertices; found " + vertexIndices.length);
         } else if (normalIndices != null && normalIndices.length != vertexIndices.length) {
             throw new IllegalArgumentException("Face normal index count must equal vertex index count; expected " +
                     vertexIndices.length + " but was " + normalIndices.length);

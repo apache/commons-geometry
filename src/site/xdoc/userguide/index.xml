@@ -256,7 +256,7 @@ v1.eq(v3, precision); // true - approximately equal according to the given preci
           hyperplane have an offset of zero.
         </p>
         <p>
-          Hyperplanes place a key role in <em>Commons Geometry</em> not only because of their importance geometrically but also
+          Hyperplanes play a key role in <em>Commons Geometry</em> not only because of their importance geometrically but also
           because they form the basis for the region classes and algorithms, such as <a href="#bsp_trees">BSP trees</a>.
           Hyperplanes are represented in code with the
           <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/Hyperplane.html">Hyperplane</a>
@@ -1063,7 +1063,7 @@ GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precisio
 GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, precision);
 
 // find the two intersection points of the great circles
-Point2S ptA = a.intersection(b); //(pi, pi/2)
+Point2S ptA = a.intersection(b); // (pi, pi/2)
 Point2S ptB = ptA.antipodal(); // (0, pi/2)
         </source>
 

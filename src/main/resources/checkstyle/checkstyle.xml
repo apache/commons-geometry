@@ -96,7 +96,10 @@
 
     <!-- Checks for Naming Conventions. -->
     <!-- See http://checkstyle.sourceforge.net/config_naming.html -->
-    <module name="ConstantName" />
+    <module name="ConstantName">
+      <!-- Allow "NaN" constant names. -->
+      <property name="format" value="^NaN$|^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+    </module>
     <module name="LocalFinalVariableName" />
     <module name="LocalVariableName" />
     <module name="MemberName" />
@@ -206,9 +209,6 @@
 
     <!-- Switch statements should have independent cases -->
     <module name="FallThrough" />
-
-    <!-- Constant names should obey the traditional all uppercase naming convention -->
-    <module name="ConstantName" />
 
     <!-- No System.out.println() statements -->
     <module name="Regexp">

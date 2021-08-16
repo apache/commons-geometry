@@ -132,7 +132,7 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
             prevVec = curVec;
         }
 
-        if (areaSum > 0.0) {
+        if (areaSum > 0) {
             final double scale = 1 / areaSum;
             return Vector3D.of(
                         scale * scaledCentroidSumX,

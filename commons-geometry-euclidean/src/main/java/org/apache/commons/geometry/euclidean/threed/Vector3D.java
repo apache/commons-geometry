@@ -36,10 +36,8 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     /** Zero (null) vector (coordinates: 0, 0, 0). */
     public static final Vector3D ZERO = new Vector3D(0, 0, 0);
 
-    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Vector3D NaN = new Vector3D(Double.NaN, Double.NaN, Double.NaN);
-    // CHECKSTYLE: resume ConstantName
 
     /** A vector with all coordinates set to positive infinity. */
     public static final Vector3D POSITIVE_INFINITY =
