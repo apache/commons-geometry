@@ -48,10 +48,8 @@ public final class Point2S implements Point<Point2S> {
     /** -K (coordinates: ( azimuth = any angle, polar = pi )). */
     public static final Point2S MINUS_K = new Point2S(0, Math.PI, Vector3D.Unit.MINUS_Z);
 
-    // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
     public static final Point2S NaN = new Point2S(Double.NaN, Double.NaN, null);
-    // CHECKSTYLE: resume ConstantName
 
     /** Comparator that sorts points in component-wise ascending order, first sorting
      * by polar value and then by azimuth value. Points are only considered equal if

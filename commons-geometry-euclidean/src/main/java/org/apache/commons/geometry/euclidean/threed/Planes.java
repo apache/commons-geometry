@@ -162,7 +162,7 @@ public final class Planes {
             vertices.remove(vertices.size() - 1);
         }
 
-        if (vertices.size() == 3) {
+        if (vertices.size() == EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
             return new SimpleTriangle3D(plane, vertices.get(0), vertices.get(1), vertices.get(2));
         }
         return new VertexListConvexPolygon3D(plane, vertices);
@@ -243,10 +243,10 @@ public final class Planes {
         int[] face;
         for (int i = 0; i < numFaces; ++i) {
             face = faceIndices[i];
-            if (face.length != 3) {
+            if (face.length != EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid number of vertex indices for face at index {0}: expected 3 but found {1}",
-                        i, face.length));
+                        "Invalid number of vertex indices for face at index {0}: expected {1} but found {2}",
+                        i, EuclideanUtils.TRIANGLE_VERTEX_COUNT, face.length));
             }
 
             triangles.add(triangleFromVertices(
@@ -322,10 +322,10 @@ public final class Planes {
         int[] face;
         for (int i = 0; i < numFaces; ++i) {
             face = faceIndices[i];
-            if (face.length < 3) {
+            if (face.length < EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid number of vertex indices for face at index {0}: required at least 3 but found {1}",
-                        i, face.length));
+                        "Invalid number of vertex indices for face at index {0}: required at least {1} but found {2}",
+                        i, EuclideanUtils.TRIANGLE_VERTEX_COUNT, face.length));
             }
 
             for (final int vertexIndex : face) {
@@ -514,7 +514,7 @@ public final class Planes {
     static ConvexPolygon3D fromConvexPlanarVertices(final Plane plane, final List<Vector3D> vertices) {
         final int size = vertices.size();
 
-        if (size == 3) {
+        if (size == EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
             return new SimpleTriangle3D(plane, vertices.get(0), vertices.get(1), vertices.get(2));
         }
 
@@ -585,7 +585,7 @@ public final class Planes {
          * @throws IllegalArgumentException if the points do not define a plane
          */
         Plane build() {
-            if (pts.size() < 3) {
+            if (pts.size() < EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
                 throw nonPlanar();
             }
 

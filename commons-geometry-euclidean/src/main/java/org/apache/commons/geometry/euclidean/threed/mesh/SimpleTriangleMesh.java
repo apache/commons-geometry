@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
@@ -563,8 +564,9 @@ public final class SimpleTriangleMesh implements TriangleMesh {
          *      or if any of the vertex indices is not a valid index into the current vertex list
          */
         public Builder addFace(final int[] face) {
-            if (face.length != 3) {
-                throw new IllegalArgumentException("Face must contain 3 vertex indices; found " + face.length);
+            if (face.length != EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
+                throw new IllegalArgumentException("Face must contain " + EuclideanUtils.TRIANGLE_VERTEX_COUNT +
+                        " vertex indices; found " + face.length);
             }
 
             addFace(face[0], face[1], face[2]);

@@ -27,6 +27,7 @@ import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
+import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.io.core.internal.SimpleTextParser;
 
@@ -121,7 +122,7 @@ public class PolygonObjParser extends AbstractObjParser {
      * </ul>
      * @return true if the instance is configured to fail when a non-polygon keyword is encountered
      */
-    public boolean getFailOnNonPolygonKeywords() {
+    public boolean isFailOnNonPolygonKeywords() {
         return failOnNonPolygonKeywords;
     }
 
@@ -186,9 +187,10 @@ public class PolygonObjParser extends AbstractObjParser {
             vertices.add(readFaceVertex());
         }
 
-        if (vertices.size() < 3) {
+        if (vertices.size() < EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
             throw getTextParser().parseError(
-                    "face must contain at least 3 vertices but found only " + vertices.size());
+                    "face must contain at least " + EuclideanUtils.TRIANGLE_VERTEX_COUNT +
+                    " vertices but found only " + vertices.size());
         }
 
         discardDataLine();

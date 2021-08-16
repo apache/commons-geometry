@@ -246,10 +246,10 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         // The area is finite only if the computed quadrilateral area is finite and non-negative.
         // Negative areas indicate that the region is inside-out, with a finite outside surrounded
         // by an infinite inside.
-        if (quadrilateralAreaSum >= 0.0 && Double.isFinite(quadrilateralAreaSum)) {
+        if (quadrilateralAreaSum >= 0 && Double.isFinite(quadrilateralAreaSum)) {
             size = 0.5 * quadrilateralAreaSum;
 
-            if (quadrilateralAreaSum > 0.0) {
+            if (quadrilateralAreaSum > 0) {
                 centroid = Vector2D.of(scaledSumX, scaledSumY).multiply(1.0 / (3.0 * quadrilateralAreaSum));
             }
         }

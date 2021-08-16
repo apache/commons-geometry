@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 
 /** Internal {@link ConvexPolygon3D} implementation class that uses a list of vertices
  * to represent the plane subset.
@@ -42,8 +43,9 @@ final class VertexListConvexPolygon3D extends AbstractConvexPolygon3D {
         super(plane);
 
         // sanity check
-        if (vertices.size() < 3) {
-            throw new IllegalArgumentException("Convex polygon requires at least 3 points; found " + vertices.size());
+        if (vertices.size() < EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
+            throw new IllegalArgumentException("Convex polygon requires at least " +
+                    EuclideanUtils.TRIANGLE_VERTEX_COUNT + " points; found " + vertices.size());
         }
 
         this.vertices = Collections.unmodifiableList(vertices);

@@ -36,10 +36,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
     /** Zero vector (coordinates: 0, 0). */
     public static final Vector2D ZERO = new Vector2D(0, 0);
 
-    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Vector2D NaN = new Vector2D(Double.NaN, Double.NaN);
-    // CHECKSTYLE: resume ConstantName
 
     /** A vector with all coordinates set to positive infinity. */
     public static final Vector2D POSITIVE_INFINITY =

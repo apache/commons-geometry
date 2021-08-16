@@ -30,6 +30,9 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  */
 public final class EuclideanUtils {
 
+    /** Number of vertices in a triangle, i.e. {@code 3}. */
+    public static final int TRIANGLE_VERTEX_COUNT = 3;
+
     /** Utility class; no instantiation. */
     private EuclideanUtils() { }
 
@@ -49,10 +52,10 @@ public final class EuclideanUtils {
     public static <T> List<T> convexPolygonToTriangleFan(final List<Vector3D> vertices,
            final Function<List<Vector3D>, T> fn) {
         final int size = vertices.size();
-        if (size < 3) {
-            throw new IllegalArgumentException("Cannot create triangle fan: 3 or more vertices are required " +
-                    "but found only " + vertices.size());
-        } else if (size == 3) {
+        if (size < TRIANGLE_VERTEX_COUNT) {
+            throw new IllegalArgumentException("Cannot create triangle fan: " + TRIANGLE_VERTEX_COUNT +
+                    " or more vertices are required but found only " + vertices.size());
+        } else if (size == TRIANGLE_VERTEX_COUNT) {
             return Collections.singletonList(fn.apply(vertices));
         }
 

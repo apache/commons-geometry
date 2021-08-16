@@ -104,7 +104,7 @@ public final class GreatCircles {
      * @return an arc representing the shortest path between the given points
      * @throws IllegalArgumentException if either of the given points is NaN or infinite, or if the given
      *      points are equal or antipodal as evaluated by the given precision context
-     * @see GreatCircles#fromPoints(Point2S, Point2S, org.apache.commons.geometry.core.precision.Precision.DoubleEquivalence)
+     * @see GreatCircles#fromPoints(Point2S, Point2S, org.apache.commons.numbers.core.Precision.DoubleEquivalence)
      */
     public static GreatArc arcFromPoints(final Point2S start, final Point2S end,
             final Precision.DoubleEquivalence precision) {

@@ -349,6 +349,10 @@
         <configuration>
           <!-- Enable MathJax -->
           <additionalOptions>${doclint.javadoc.qualifier} --allow-script-in-comments -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalOptions>
+          <links>
+            <link>https://commons.apache.org/proper/commons-numbers/commons-numbers-core/javadocs/api-1.0/</link>
+            <link>https://commons.apache.org/proper/commons-numbers/commons-numbers-quaternion/javadocs/api-1.0/</link>
+          </links>
         </configuration>
       </plugin>
       <plugin>
@@ -475,6 +479,10 @@
         <configuration>
           <!-- Enable MathJax -->
           <additionalOptions>${doclint.javadoc.qualifier} --allow-script-in-comments -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalOptions>
+          <links>
+            <link>https://commons.apache.org/proper/commons-numbers/commons-numbers-core/javadocs/api-1.0/</link>
+            <link>https://commons.apache.org/proper/commons-numbers/commons-numbers-quaternion/javadocs/api-1.0/</link>
+          </links>
         </configuration>
       </plugin>
 

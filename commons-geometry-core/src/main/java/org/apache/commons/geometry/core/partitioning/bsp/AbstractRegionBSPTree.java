@@ -128,7 +128,7 @@ public abstract class AbstractRegionBSPTree<
     /** {@inheritDoc} */
     @Override
     public double getBoundarySize() {
-        if (boundarySize < 0.0) {
+        if (boundarySize < 0) {
             double sum = 0.0;
 
             RegionCutBoundary<P> boundary;

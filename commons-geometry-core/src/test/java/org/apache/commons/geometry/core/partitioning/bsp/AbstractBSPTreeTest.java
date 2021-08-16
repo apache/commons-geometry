@@ -856,6 +856,26 @@ class AbstractBSPTreeTest {
     }
 
     @Test
+    void testDepth_detachedNodes() {
+        // arrange
+        final TestBSPTree tree = new TestBSPTree();
+
+        final TestNode detached = new TestNode(tree);
+        detached.cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        // act/assert
+        Assertions.assertEquals(-1, detached.depth());
+
+        Assertions.assertEquals(-1, detached.getPlus().depth());
+
+        Assertions.assertEquals(-1, detached.getMinus().depth());
+        Assertions.assertEquals(-1, detached.getMinus().getPlus().depth());
+        Assertions.assertEquals(-1, detached.getMinus().getMinus().depth());
+    }
+
+    @Test
     void testVisit_defaultOrder() {
         // arrange
         final TestBSPTree tree = new TestBSPTree();

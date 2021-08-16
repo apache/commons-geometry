@@ -778,7 +778,7 @@ public final class QuaternionRotation implements Rotation3D {
         final double y;
         final double z;
 
-        if (trace > 0.0) {
+        if (trace > 0) {
             // let s = 4*w
             final double s = 2.0 * Math.sqrt(1.0 + trace);
             final double sinv = 1.0 / s;

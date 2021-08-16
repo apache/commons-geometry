@@ -43,7 +43,7 @@ class PolygonObjParserTest {
         Assertions.assertEquals(0, p.getVertexCount());
         Assertions.assertEquals(0, p.getVertexNormalCount());
         Assertions.assertEquals(0, p.getTextureCoordinateCount());
-        Assertions.assertFalse(p.getFailOnNonPolygonKeywords());
+        Assertions.assertFalse(p.isFailOnNonPolygonKeywords());
     }
 
     @Test

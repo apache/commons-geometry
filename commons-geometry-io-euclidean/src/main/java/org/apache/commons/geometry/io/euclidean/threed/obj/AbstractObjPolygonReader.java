@@ -46,10 +46,10 @@ public abstract class AbstractObjPolygonReader implements Closeable {
      * (ex: {@code curv}). If false, non-polygon data is ignored.
      * @return flag indicating whether or not an {@link IllegalStateException} will be thrown
      *      if non-polygon content is encountered
-     * @see PolygonObjParser#getFailOnNonPolygonKeywords()
+     * @see PolygonObjParser#isFailOnNonPolygonKeywords()
      */
-    public boolean getFailOnNonPolygonKeywords() {
-        return parser.getFailOnNonPolygonKeywords();
+    public boolean isFailOnNonPolygonKeywords() {
+        return parser.isFailOnNonPolygonKeywords();
     }
 
     /** Set the flag indicating whether or not an {@link IllegalStateException} will be thrown

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
@@ -247,7 +248,7 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
             throw new IllegalArgumentException("Cannot write infinite convex subset");
         }
 
-        if (facetVertexCount == 3) {
+        if (facetVertexCount == EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
             // force conversion to triangles
             for (final Triangle3D tri : convexSubset.toTriangles()) {
                 write(tri.getVertices());
@@ -285,8 +286,9 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
      */
     public void write(final List<Vector3D> vertices) {
         final int size = vertices.size();
-        if (size < 3) {
-            throw new IllegalArgumentException("At least 3 vertices are required per facet; found " + size);
+        if (size < EuclideanUtils.TRIANGLE_VERTEX_COUNT) {
+            throw new IllegalArgumentException("At least " + EuclideanUtils.TRIANGLE_VERTEX_COUNT +
+                    " vertices are required per facet; found " + size);
         } else if (facetVertexCount > -1 && size != facetVertexCount) {
             throw new IllegalArgumentException("Writer requires " + facetVertexCount +
                     " vertices per facet; found " + size);

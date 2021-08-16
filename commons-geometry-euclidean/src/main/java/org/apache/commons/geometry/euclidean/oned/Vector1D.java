@@ -33,10 +33,8 @@ public class Vector1D extends EuclideanVector<Vector1D> {
     /** Zero vector (coordinates: 0). */
     public static final Vector1D ZERO = new Vector1D(0.0);
 
-    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Vector1D NaN = new Vector1D(Double.NaN);
-    // CHECKSTYLE: resume ConstantName
 
     /** A vector with all coordinates set to positive infinity. */
     public static final Vector1D POSITIVE_INFINITY =
