@@ -62,16 +62,6 @@ Where can I get the latest release?
 -----------------------------------
 You can download source and binaries from our [download page](https://commons.apache.org/proper/commons-geometry/download_geometry.cgi).
 
-Alternatively you can pull it from the central Maven repositories:
-
-```xml
-<dependency>
-  <groupId>org.apache.commons</groupId>
-  <artifactId>commons-geometry-examples-jmh</artifactId>
-  <version>1.0-beta1</version>
-</dependency>
-```
-
 Contributing
 ------------
 
