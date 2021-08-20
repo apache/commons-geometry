@@ -90,12 +90,12 @@ public final class GeometryTestUtils {
         // Use the JUnit boolean assertions here to ensure that the equals methods are actually
         // invoked and no assertion shortcuts are taken
 
-        Assertions.assertFalse(obj.equals(null), "Object should not equal null");
+        Assertions.assertNotEquals(null, obj, "Object should not equal null");
 
         if (obj.getClass().getSuperclass() != null) {
-            Assertions.assertFalse(obj.equals(new Object()), "Object should not equal an instance of different type");
+            Assertions.assertNotEquals(obj, new Object(), "Object should not equal an instance of different type");
         }
 
-        Assertions.assertTrue(obj.equals(obj), "Object should equal itself");
+        Assertions.assertEquals(obj, obj, "Object should equal itself");
     }
 }

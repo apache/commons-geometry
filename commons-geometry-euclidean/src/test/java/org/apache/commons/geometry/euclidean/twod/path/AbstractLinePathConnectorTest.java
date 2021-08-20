@@ -519,8 +519,8 @@ public class AbstractLinePathConnectorTest {
         // act/assert
         Assertions.assertEquals(a, a);
 
-        Assertions.assertFalse(a.equals(null));
-        Assertions.assertFalse(a.equals(new Object()));
+        Assertions.assertNotEquals(null, a);
+        Assertions.assertNotEquals(a, new Object());
 
         Assertions.assertNotEquals(a, new ConnectableLineSubset(segB));
         Assertions.assertNotEquals(a, new ConnectableLineSubset(Vector2D.Unit.PLUS_X));
