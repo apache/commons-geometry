@@ -82,12 +82,6 @@
     <geometry.jgit.buildnumber.version>1.2.10</geometry.jgit.buildnumber.version>
     <implementation.build>${git.revision}; ${maven.build.timestamp}</implementation.build>
 
-    <!--
-      Temporarily disable Clirr during beta version development since backwards compatibility is not
-      guaranteed for these versions. This check must be re-enabled once the full 1.0 release is made.
-    -->
-    <clirr.skip>true</clirr.skip>
-
     <!-- Workaround to avoid the SVN site checkout in all modules.
          This flag should be deactivated by child modules. -->
     <perform.site.checkout>true</perform.site.checkout>
@@ -190,7 +184,7 @@
   </dependencyManagement>
 
   <build>
-    <defaultGoal>clean verify apache-rat:check clirr:check checkstyle:check pmd:check spotbugs:check javadoc:javadoc</defaultGoal>
+    <defaultGoal>clean verify apache-rat:check japicmp:cmp checkstyle:check pmd:check spotbugs:check javadoc:javadoc</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
