@@ -100,7 +100,7 @@ class WelzlEncloser2DTest {
     @Test
     void testLargeSamples() {
         // arrange
-        final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 0xa2a63cad12c01fb2L);
+        final UniformRandomProvider random = RandomSource.WELL_1024_A.create(0xa2a63cad12c01fb2L);
         for (int k = 0; k < 100; ++k) {
             final int nbPoints = random.nextInt(10000);
             final List<Vector2D> points = new ArrayList<>();

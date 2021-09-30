@@ -111,22 +111,21 @@ class WelzlEncloser3DTest {
     @Test
     void testLargeSamples() {
         // arrange
-        final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A,
-                                                                 0x35ddecfc78131e1dL);
-        final UnitSphereSampler sr = new UnitSphereSampler(3, random);
+        final UniformRandomProvider random = RandomSource.WELL_1024_A.create(0x35ddecfc78131e1dL);
+        final UnitSphereSampler sr = UnitSphereSampler.of(random, 3);
         for (int k = 0; k < 50; ++k) {
 
             // define the reference sphere we want to compute
             final double d = 25 * random.nextDouble();
             final double refRadius = 10 * random.nextDouble();
-            final Vector3D refCenter = Vector3D.of(sr.nextVector()).multiply(d);
+            final Vector3D refCenter = Vector3D.of(sr.sample()).multiply(d);
             // set up a large sample inside the reference sphere
             final int nbPoints = random.nextInt(1000);
 
             final List<Vector3D> points = new ArrayList<>();
             for (int i = 0; i < nbPoints; ++i) {
                 final double r = refRadius * random.nextDouble();
-                points.add(Vector3D.Sum.of(refCenter).addScaled(r, Vector3D.of(sr.nextVector())).get());
+                points.add(Vector3D.Sum.of(refCenter).addScaled(r, Vector3D.of(sr.sample())).get());
             }
 
             // act/assert

@@ -66,7 +66,7 @@ public class SpherePerformance {
         /** Set up the instance for the benchmark. */
         @Setup(Level.Iteration)
         public void setup() {
-            sphere = randomSphere(RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP));
+            sphere = randomSphere(RandomSource.XO_RO_SHI_RO_128_PP.create());
         }
 
         /** Get the input sphere.
@@ -105,7 +105,7 @@ public class SpherePerformance {
         /** Set up the instance for the benchmark. */
         @Setup(Level.Iteration)
         public void setup() {
-            final Sphere sphere = randomSphere(RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP));
+            final Sphere sphere = randomSphere(RandomSource.XO_RO_SHI_RO_128_PP.create());
 
             tree = sphere.toTree(getSubdivisions());
         }

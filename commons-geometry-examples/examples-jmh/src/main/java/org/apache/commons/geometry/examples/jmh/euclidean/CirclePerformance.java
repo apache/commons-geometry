@@ -66,7 +66,7 @@ public class CirclePerformance {
         /** Set up the instance for the benchmark. */
         @Setup(Level.Iteration)
         public void setup() {
-            circle = randomCircle(RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP));
+            circle = randomCircle(RandomSource.XO_RO_SHI_RO_128_PP.create());
         }
 
         /** Get the input circle.
@@ -105,7 +105,7 @@ public class CirclePerformance {
         /** Set up the instance for the benchmark. */
         @Setup(Level.Iteration)
         public void setup() {
-            final Circle circle = randomCircle(RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP));
+            final Circle circle = randomCircle(RandomSource.XO_RO_SHI_RO_128_PP.create());
 
             tree = circle.toTree(getSegments());
         }

@@ -178,16 +178,15 @@ class SphereGeneratorTest {
     @Test
     void testRandom() {
         // arrange
-        final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A,
-                                                                 0xd015982e9f31ee04L);
-        final UnitSphereSampler sr = new UnitSphereSampler(3, random);
+        final UniformRandomProvider random = RandomSource.WELL_1024_A.create(0xd015982e9f31ee04L);
+        final UnitSphereSampler sr = UnitSphereSampler.of(random, 3);
         for (int i = 0; i < 100; ++i) {
             final double d = 25 * random.nextDouble();
             final double refRadius = 10 * random.nextDouble();
-            final Vector3D refCenter = Vector3D.of(sr.nextVector()).multiply(d);
+            final Vector3D refCenter = Vector3D.of(sr.sample()).multiply(d);
             final List<Vector3D> support = new ArrayList<>();
             for (int j = 0; j < 5; ++j) {
-                support.add(Vector3D.Sum.of(refCenter).addScaled(refRadius, Vector3D.of(sr.nextVector())).get());
+                support.add(Vector3D.Sum.of(refCenter).addScaled(refRadius, Vector3D.of(sr.sample())).get());
             }
 
             // act

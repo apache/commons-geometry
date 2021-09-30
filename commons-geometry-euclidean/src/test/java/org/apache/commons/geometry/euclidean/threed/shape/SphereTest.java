@@ -362,7 +362,7 @@ class SphereTest {
     @Test
     void testToTree_randomSpheres() {
         // arrange
-        final UniformRandomProvider rand = RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP, 1L);
+        final UniformRandomProvider rand = RandomSource.XO_RO_SHI_RO_128_PP.create(1L);
         final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
         final double min = 1e-1;
         final double max = 1e2;

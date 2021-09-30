@@ -114,7 +114,7 @@ public class VectorPerformance {
 
             final double[] values = new double[dimension];
             final DoubleSupplier doubleSupplier = createDoubleSupplier(getType(),
-                    RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP));
+                    RandomSource.XO_RO_SHI_RO_128_PP.create());
 
             for (int i = 0; i < size; ++i) {
                 for (int j = 0; j < dimension; ++j) {

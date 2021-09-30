@@ -132,16 +132,15 @@ class DiskGeneratorTest {
     @Test
     void testRandom() {
         // arrange
-        final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A,
-                                                                 0x12faa818373ffe90L);
-        final UnitSphereSampler sr = new UnitSphereSampler(2, random);
+        final UniformRandomProvider random = RandomSource.WELL_1024_A.create(0x12faa818373ffe90L);
+        final UnitSphereSampler sr = UnitSphereSampler.of(random, 2);
         for (int i = 0; i < 500; ++i) {
             final double d = 25 * random.nextDouble();
             final double refRadius = 10 * random.nextDouble();
-            final Vector2D refCenter = Vector2D.of(sr.nextVector()).multiply(d);
+            final Vector2D refCenter = Vector2D.of(sr.sample()).multiply(d);
             final List<Vector2D> support = new ArrayList<>();
             for (int j = 0; j < 3; ++j) {
-                support.add(Vector2D.Sum.of(refCenter).addScaled(refRadius, Vector2D.of(sr.nextVector())).get());
+                support.add(Vector2D.Sum.of(refCenter).addScaled(refRadius, Vector2D.of(sr.sample())).get());
             }
 
             // act
