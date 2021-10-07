@@ -73,6 +73,8 @@
 
     <commons.jacoco.haltOnFailure>false</commons.jacoco.haltOnFailure>
 
+    <commons.japicmp.version>0.15.4</commons.japicmp.version>
+
     <commons.site.path>geometry</commons.site.path>
     <commons.scmPubUrl>https://svn.apache.org/repos/infra/websites/production/commons/content/proper/commons-geometry</commons.scmPubUrl>
     <commons.scmPubCheckoutDirectory>site-content</commons.scmPubCheckoutDirectory>
