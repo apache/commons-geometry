@@ -719,6 +719,9 @@ This is avoided by creating an empty directory when svn is not available.
   </developers>
 
   <contributors>
+    <contributor>
+      <name>Arturo Bernal</name>
+    </contributor>
   </contributors>
 
 </project>
