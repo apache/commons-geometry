@@ -36,6 +36,8 @@
   <suppress checks="DesignForExtension" files=".*[/\\]threed[/\\]PlaneSubset" />
   <!-- allow catch and rethrow of RuntimeExceptions to ensure resource closure when execution exits the method -->
   <suppress checks="IllegalCatch" files=".*[/\\]io[/\\]core[/\\]internal[/\\]GeometryIOUtils" />
+  <!-- allows parentheses that make complex expressions easier to read -->
+  <suppress checks="UnnecessaryParentheses" message="Unnecessary parentheses around expression." />
 
   <!-- Be more lenient on tests. -->
   <suppress checks="Javadoc" files=".*[/\\]test[/\\].*" />

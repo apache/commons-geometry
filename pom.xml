@@ -54,9 +54,9 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <geometry.pmd.version>3.14.0</geometry.pmd.version>
-    <geometry.pmd.dep.version>6.36.0</geometry.pmd.dep.version>
+    <geometry.pmd.dep.version>6.40.0</geometry.pmd.dep.version>
     <geometry.checkstyle.version>3.1.2</geometry.checkstyle.version>
-    <geometry.checkstyle.dep.version>8.41.1</geometry.checkstyle.dep.version>
+    <geometry.checkstyle.dep.version>9.1</geometry.checkstyle.dep.version>
     <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
     <geometry.antrun.version>1.8</geometry.antrun.version>
     <!-- Workaround to avoid duplicating config files. -->
