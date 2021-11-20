@@ -25,6 +25,7 @@ import java.util.function.Function;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 
 /** Base class for convex hyperplane-bounded regions. This class provides generic implementations of many
  * algorithms related to convex regions.
@@ -457,7 +458,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
                 splitter = boundsIt.next();
                 ++splitterIdx;
 
-                if (currentBound == splitter) {
+                if (GeometryInternalUtils.sameInstance(currentBound, splitter)) {
                     // do not split the bound with itself
 
                     if (currentBoundIdx > splitterIdx) {

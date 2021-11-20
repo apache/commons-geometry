@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
+import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
+
 /** Abstract base class for joining unconnected path elements into connected, directional
  * paths. The connection algorithm is exposed as a set of protected methods, allowing subclasses
  * to define their own public API. Implementations must supply their own subclass of {@link ConnectableElement}
@@ -191,7 +193,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
      * @return true if the candidate is a possible connection
      */
     private boolean addPossibleConnection(final E element, final E candidate) {
-        if (element != candidate &&
+        if (!GeometryInternalUtils.sameInstance(element, candidate) &&
                 !candidate.hasPrevious() &&
                 candidate.hasStart() &&
                 element.canConnectTo(candidate)) {

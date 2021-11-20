@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.geometry.euclidean.internal.AbstractPathConnector;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -123,7 +124,7 @@ public abstract class AbstractLinePathConnector
 
         ConnectableLineSubset current = root.getNext();
 
-        while (current != null && current != root) {
+        while (current != null && !GeometryInternalUtils.sameInstance(current, root)) {
             builder.append(current.getLineSubset());
             current = current.getNext();
         }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.geometry.euclidean.internal.AbstractPathConnector;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
@@ -121,7 +122,7 @@ public abstract class AbstractGreatArcConnector
 
         ConnectableGreatArc current = root.getNext();
 
-        while (current != null && current != root) {
+        while (current != null && !GeometryInternalUtils.sameInstance(current, root)) {
             builder.append(current.getArc());
             current = current.getNext();
         }

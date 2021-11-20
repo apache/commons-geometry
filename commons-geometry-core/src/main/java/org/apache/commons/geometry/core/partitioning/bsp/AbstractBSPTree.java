@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
@@ -243,7 +244,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      */
     protected N copySubtree(final N src, final N dst) {
         // only copy if we're actually switching nodes
-        if (src != dst) {
+        if (!GeometryInternalUtils.sameInstance(src, dst)) {
             // copy non-structural properties
             copyNodeProperties(src, dst);
 
@@ -279,7 +280,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      */
     protected N importSubtree(final N src) {
         // create a copy of the node if it's not already in this tree
-        if (src.getTree() != this) {
+        if (!GeometryInternalUtils.sameInstance(src.getTree(), this)) {
             return copySubtree(src, createNode());
         }
 
@@ -949,13 +950,13 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public boolean isPlus() {
-            return parent != null && parent.getPlus() == this;
+            return parent != null && GeometryInternalUtils.sameInstance(parent.getPlus(), this);
         }
 
         /** {@inheritDoc} */
         @Override
         public boolean isMinus() {
-            return parent != null && parent.getMinus() == this;
+            return parent != null && GeometryInternalUtils.sameInstance(parent.getMinus(), this);
         }
 
         /** {@inheritDoc} */
