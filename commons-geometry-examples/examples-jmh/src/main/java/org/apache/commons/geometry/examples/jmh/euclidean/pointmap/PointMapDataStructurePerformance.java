@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.examples.jmh.euclidean;
+package org.apache.commons.geometry.examples.jmh.euclidean.pointmap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,6 +80,7 @@ public class PointMapDataStructurePerformance {
                     }
                 }
             }
+            System.out.println(pointList.size());
         }
 
         /** Get the points for the input.
@@ -117,8 +118,9 @@ public class PointMapDataStructurePerformance {
         return map;
     }
 
-
-    /** Construct a map to use as a baseline for comparisons.
+    /** Construct a map to use as a baseline for comparisons. The returned tree map does not
+     * meet the requirements of a point map but serves as a good performance baseline for tree
+     * data structures.
      * @return a new baseline map instance
      */
     private static Map<Vector3D, Integer> baselineMap() {

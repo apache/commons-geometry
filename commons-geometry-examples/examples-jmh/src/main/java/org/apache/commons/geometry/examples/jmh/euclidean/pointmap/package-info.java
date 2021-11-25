@@ -14,12 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.examples.jmh.euclidean;
-
-/** Class containing point map data structure implementations.
+/**
+ * Benchmarks for candidate point map data structures and algorithms. The
+ * classes in this package are not complete implementations. Rather, they
+ * include just enough code to evaluate the algorithms in question.
  */
-public final class PointMapDataStructures {
-
-    /** No instantiation. */
-    private PointMapDataStructures() {}
-}
+package org.apache.commons.geometry.examples.jmh.euclidean.pointmap;

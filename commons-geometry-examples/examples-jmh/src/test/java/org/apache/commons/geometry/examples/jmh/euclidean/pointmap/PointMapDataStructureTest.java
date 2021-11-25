@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.examples.jmh.euclidean;
+package org.apache.commons.geometry.examples.jmh.euclidean.pointmap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,9 +25,14 @@ import java.util.Random;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.numbers.core.Precision.DoubleEquivalence;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/** Base class for potential point map data structures. These tests are not
+ * meant to be complete. The are only intended to perform enough assertions
+ * to ensure that a potential algorithm is not missing any critical functionality.
+ */
 abstract class PointMapDataStructureTest {
 
     private static final Precision.DoubleEquivalence PRECISION =
@@ -75,15 +80,18 @@ abstract class PointMapDataStructureTest {
         });
 
         // check that we don't have anything left
+        Assertions.assertEquals(0, map.size());
         Assertions.assertNull(map.get(v));
     }
 
-//    static class StandardMapTest extends PointMapDataStructureTest {
-//
-//        /** {@inheritDoc} */
-//        @Override
-//        Map<Vector3D, Integer> getMap(final DoubleEquivalence precision) {
-//            return new TreeMap<>(Vector3D.COORDINATE_ASCENDING_ORDER);
-//        }
-//    }
+    /** Unit test for the {@link BvhPointMap3D} data structure.
+     */
+    static class VariableSplitOctreeTest extends PointMapDataStructureTest {
+
+        /** {@inheritDoc} */
+        @Override
+        Map<Vector3D, Integer> getMap(final DoubleEquivalence precision) {
+            return new VariableSplitOctree<>(PRECISION);
+        }
+    }
 }
