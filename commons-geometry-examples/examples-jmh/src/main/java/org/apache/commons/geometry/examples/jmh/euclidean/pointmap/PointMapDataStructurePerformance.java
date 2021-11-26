@@ -24,7 +24,9 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -38,6 +40,7 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.infra.Blackhole;
 
 /** Benchmarks for the testing implementations of point map
  * data structures.
@@ -53,118 +56,212 @@ public class PointMapDataStructurePerformance {
     private static final Precision.DoubleEquivalence PRECISION =
             Precision.doubleEquivalenceOfEpsilon(1e-6);
 
-    /** Input class containing a list of equally-spaced points.
-     */
+    /** Value inserted into maps during runs. */
+    private static final Integer VAL = Integer.valueOf(1);
+
+    /** Base input class for point map benchmarks. */
     @State(Scope.Thread)
-    public static class EquallySpacedPointInput {
-        /** Number of points in the input. */
-        @Param({"125", "1000", "1000000"})
-        private int points;
+    public static class PointMapInput {
 
-        /** Max coordinate value. */
-        @Param({"100"})
-        private double max;
+        /** Data structure implementation. */
+        @Param({"treemap", "varoctree"})
+        private String impl;
 
-        /** Min coordinate value. */
-        @Param({"-100"})
-        private double min;
+        /** Point distribution. */
+        @Param({"block", "sphere"})
+        private String pointDist;
 
-        /** List of points. */
-        private List<Vector3D> pointList;
+        /** Whether or not to randomize the order of the points. */
+        @Param({"true", "false"})
+        private boolean randomized;
+
+        /** Seed value for randomization. */
+        @Param({"1"})
+        private int randomSeed;
+
+        /** Map instance for the run. */
+        private Map<Vector3D, Integer> map;
+
+        /** List of points for the run. */
+        private List<Vector3D> points;
 
         /** Set up the instance for the benchmark. */
         @Setup(Level.Iteration)
         public void setup() {
-            pointList = new ArrayList<>(points);
+            map = createMap();
+            points = createPoints();
 
-            final double step = Math.abs(max - min) / Math.floor(Math.cbrt(points));
-            for (double x = min; x <= max; x += step) {
-                for (double y = min; y <= max; y += step) {
-                    for (double z = min; z <= max; z += step) {
-                        pointList.add(Vector3D.of(x, y, z));
+            if (randomized) {
+                Collections.shuffle(points, new Random(randomSeed));
+            }
+        }
+
+        /** Get the map instance under test.
+         * @return map instance
+         */
+        public Map<Vector3D, Integer> getMap() {
+            return map;
+        }
+
+        /** Get the points for the run.
+         * @return list of points
+         */
+        public List<Vector3D> getPoints() {
+            return points;
+        }
+
+        /** Create the map implementation for the run.
+         * @return map instance
+         */
+        private Map<Vector3D, Integer> createMap() {
+            switch (impl.toLowerCase()) {
+            case "treemap":
+                return new TreeMap<>((a, b) -> {
+                    int cmp = PRECISION.compare(a.getX(), b.getX());
+                    if (cmp == 0) {
+                        cmp = PRECISION.compare(a.getY(), b.getY());
+                        if (cmp == 0) {
+                            cmp = PRECISION.compare(a.getZ(), b.getZ());
+                        }
                     }
+                    return cmp;
+                });
+            case "varoctree":
+                return new VariableSplitOctree<>(PRECISION);
+            default:
+                throw new IllegalArgumentException("Unknown map implementation: " + impl);
+            }
+        }
+
+        /** Create the list of points for the run.
+         * @return list of points
+         */
+        private List<Vector3D> createPoints() {
+            switch (pointDist.toLowerCase()) {
+            case "block":
+                return createPointBlock(20, 1);
+            case "sphere":
+                return createPointSphere(5, 5, 10);
+            default:
+                throw new IllegalArgumentException("Unknown point distribution " + impl);
+            }
+        }
+    }
+
+    /** Input class containing pre-inserted points. */
+    @State(Scope.Thread)
+    public static class PreInsertedPointMapInput extends PointMapInput {
+
+        /** {@inheritDoc} */
+        @Override
+        @Setup(Level.Iteration)
+        public void setup() {
+            super.setup();
+
+            final Map<Vector3D, Integer> map = getMap();
+            for (final Vector3D pt : getPoints()) {
+                map.put(pt, VAL);
+            }
+        }
+    }
+
+    /** Create a solid block of points.
+     * @param pointsPerSide number of points along each side
+     * @param spacing spacing between each point
+     * @return list of points in a block
+     */
+    private static List<Vector3D> createPointBlock(final int pointsPerSide, final double spacing) {
+        final List<Vector3D> points = new ArrayList<>(pointsPerSide * pointsPerSide * pointsPerSide);
+
+        for (int x = 0; x < pointsPerSide; ++x) {
+            for (int y = 0; y < pointsPerSide; ++y) {
+                for (int z = 0; z < pointsPerSide; ++z) {
+                    points.add(Vector3D.of(x, y, z).multiply(spacing));
                 }
             }
         }
 
-        /** Get the points for the input.
-         * @return points for the input
-         */
-        public List<Vector3D> getPoints() {
-            return pointList;
+        return points;
+    }
+
+    /** Create a hollow sphere of points.
+     * @param slices number of sections in the x-y plane, not counting the poles
+     * @param segments number of section perpendicular to the x-y plane for each slice
+     * @param radius sphere radius
+     * @return list of points in a hollow sphere
+     */
+    private static List<Vector3D> createPointSphere(final int slices, final int segments, final double radius) {
+        final List<Vector3D> points = new ArrayList<>();
+
+        final double polarDelta = Math.PI / (slices + 1);
+        final double azDelta = Angle.TWO_PI / segments;
+
+        // add the top pole
+        points.add(Vector3D.of(0, 0, radius));
+
+        // add the lines of latitude
+        for (int i = 1; i <= slices; ++i) {
+            for (int j = 0; j < segments; ++j) {
+                final SphericalCoordinates coords = SphericalCoordinates.of(
+                        radius,
+                        j * azDelta,
+                        i * polarDelta);
+
+                points.add(coords.toVector());
+            }
         }
+
+        // add the bottom pole
+        points.add(Vector3D.of(0, 0, -radius));
+
+        return points;
     }
 
-    /** Input class containing a list of randomly shuffled equally-spaced points.
+    /** Benchmark that inserts each point in the input into the target map.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
      */
-    @State(Scope.Thread)
-    public static class ShuffledEquallySpacedPointInput extends EquallySpacedPointInput {
+    @Benchmark
+    public PointMapInput put(final PointMapInput input, final Blackhole bh) {
+        final Map<Vector3D, Integer> map = input.getMap();
 
-        /** {@inheritDoc} */
-        @Setup(Level.Iteration)
-        @Override
-        public void setup() {
-            super.setup();
-            Collections.shuffle(getPoints(), new Random(1L));
+        for (final Vector3D p : input.getPoints()) {
+            bh.consume(map.put(p, VAL));
         }
+
+        return input;
     }
 
-    /** Insert each point into the {@code map}. The same value is inserted for each point.
-     * @param map to insert into
-     * @param points points to insert
-     * @return the input map
+    /** Benchmark that retrieves each point in the input from the target map.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
      */
-    private static Map<Vector3D, Integer> insert(final Map<Vector3D, Integer> map, final List<Vector3D> points) {
-        final Integer val = Integer.valueOf(1);
-        for (Vector3D p : points) {
-            map.put(p, val);
+    @Benchmark
+    public PointMapInput get(final PreInsertedPointMapInput input, final Blackhole bh) {
+        final Map<Vector3D, Integer> map = input.getMap();
+
+        for (final Vector3D p : input.getPoints()) {
+            bh.consume(map.get(p));
         }
-        return map;
+
+        return input;
     }
 
-    /** Construct a map to use as a baseline for comparisons. The returned tree map does not
-     * meet the requirements of a point map but serves as a good performance baseline for tree
-     * data structures.
-     * @return a new baseline map instance
-     */
-    private static Map<Vector3D, Integer> baselineMap() {
-        return new TreeMap<>(Vector3D.COORDINATE_ASCENDING_ORDER);
-    }
-
-    /** Baseline benchmark for inserting equally spaced points.
-     * @param input input points
-     * @return map under test
+    /** Benchmark that remove each point in the input from the target map.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
      */
     @Benchmark
-    public Map<Vector3D, Integer> baselineEquallySpacedInsert(final EquallySpacedPointInput input) {
-        return insert(baselineMap(), input.getPoints());
-    }
+    public PointMapInput remove(final PreInsertedPointMapInput input, final Blackhole bh) {
+        final Map<Vector3D, Integer> map = input.getMap();
 
-    /** Baseline benchmark for inserting randomly shuffled, equally spaced points.
-     * @param input input points
-     * @return map under test
-     */
-    @Benchmark
-    public Map<Vector3D, Integer> baselineShuffledEquallySpacedInsert(final ShuffledEquallySpacedPointInput input) {
-        return insert(baselineMap(), input.getPoints());
-    }
+        for (final Vector3D p : input.getPoints()) {
+            bh.consume(map.remove(p));
+        }
 
-    /** Variable split octree benchmark for inserting equally spaced points.
-     * @param input input points
-     * @return map under test
-     */
-    @Benchmark
-    public Map<Vector3D, Integer> variableSplitOctreeEquallySpacedInsert(final EquallySpacedPointInput input) {
-        return insert(new VariableSplitOctree<>(PRECISION), input.getPoints());
-    }
-
-    /** Variable split octree benchmark for inserting randomly shuffled, equally spaced points.
-     * @param input input points
-     * @return map under test
-     */
-    @Benchmark
-    public Map<Vector3D, Integer> variableSplitOctreeShuffledEquallySpacedInsert(
-            final ShuffledEquallySpacedPointInput input) {
-        return insert(new VariableSplitOctree<>(PRECISION), input.getPoints());
+        return input;
     }
 }
