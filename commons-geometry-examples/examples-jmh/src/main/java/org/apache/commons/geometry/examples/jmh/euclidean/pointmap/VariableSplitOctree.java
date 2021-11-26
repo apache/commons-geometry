@@ -59,7 +59,19 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
        if (!key.isFinite()) {
            throw new IllegalArgumentException("Keys must be finite");
        }
-       return root.put(key, value);
+
+       final Vector3DEntry<V> entry = root.getEntry(key);
+       if (entry == null) {
+           root.insertEntry(key, value);
+           entryAdded();
+
+           return null;
+       }
+
+       final V prev = entry.getValue();
+       entry.setValue(value);
+
+       return prev;
    }
 
    /** {@inheritDoc} */
@@ -74,7 +86,12 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
    /** {@inheritDoc} */
    @Override
    public V remove(final Object key) {
-       return root.remove((Vector3D) key);
+       final Vector3DEntry<V> entry = root.removeEntry((Vector3D) key);
+       if (entry != null) {
+           entryRemoved();
+           return entry.getValue();
+       }
+       return null;
    }
 
    /** {@inheritDoc} */
@@ -83,21 +100,55 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
        throw new UnsupportedOperationException();
    }
 
-   /** Method called by nodes when a new entry is added to the tree.
+   /** Get a string representation of the tree for debugging purposes.
+    * @return a string representation of the tree
     */
-   void entryAdded() {
+   public String treeString() {
+       final StringBuilder sb = new StringBuilder();
+       root.writeTree(sb, 0);
+
+       return sb.toString();
+   }
+
+   /** Method called when a new entry is added to the tree.
+    */
+   private void entryAdded() {
        ++entryCount;
    }
 
-   /** Method called by nodes when an entry is removed from the tree.
+   /** Method called when an entry is removed from the tree.
     */
-   void entryRemoved() {
+   private void entryRemoved() {
        --entryCount;
    }
 
    /** Octree node class.
     */
    private static final class VariableSplitOctreeNode<V> {
+
+       private static final int XNEG = 1 << 5;
+
+       private static final int XPOS = 1 << 4;
+
+       private static final int YNEG = 1 << 3;
+
+       private static final int YPOS = 1 << 2;
+
+       private static final int ZNEG = 1 << 1;
+
+       private static final int ZPOS = 1;
+
+       private static final int[] CHILD_LOCATIONS = {
+           XNEG | YNEG | ZNEG,
+           XNEG | YNEG | ZPOS,
+           XNEG | YPOS | ZNEG,
+           XNEG | YPOS | ZPOS,
+
+           XPOS | YNEG | ZNEG,
+           XPOS | YNEG | ZPOS,
+           XPOS | YPOS | ZNEG,
+           XPOS | YPOS | ZPOS
+       };
 
        private static final int MAX_ENTRIES = 10;
 
@@ -107,10 +158,10 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
        private final VariableSplitOctree<V> map;
 
        /** Child nodes. */
-       private List<VariableSplitOctreeNode<V>> children = new ArrayList<>(NUM_CHILDREN);
+       private List<VariableSplitOctreeNode<V>> children;
 
        /** Points stored in the node; this will only be populated for leaf nodes. */
-       private final List<Vector3DEntry<V>> entries = new ArrayList<>(MAX_ENTRIES);
+       private List<Vector3DEntry<V>> entries = new ArrayList<>(MAX_ENTRIES);
 
        /** The split point of the node; will be null for leaf nodes. */
        private Vector3D splitPoint;
@@ -126,14 +177,44 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
            return splitPoint == null;
        }
 
+       /** Insert a new entry containing the given key and value. No check
+        * is made as to whether or not an entry already exists for the key.
+        * @param key key to insert
+        * @param value value to insert
+        */
+       public void insertEntry(final Vector3D key, final V value) {
+           if (isLeaf()) {
+               if (entries.size() < MAX_ENTRIES) {
+                   // we have an open spot here so just add the entry
+                   entries.add(new Vector3DEntry<>(key, value));
+                   return;
+               }
+
+               // no available entries; split the node and add to a child
+               splitNode();
+           }
+
+           // non-leaf node
+           // determine the relative location of the key
+           final int loc = getLocation(key);
+
+           // insert into the first child that can contain the key
+           for (int i = 0; i < NUM_CHILDREN; ++i) {
+               if (testChildLocation(i, loc)) {
+                   children.get(i).insertEntry(key, value);
+                   break;
+               }
+           }
+       }
+
        /** Get the entry matching the given key or null if not found.
         * @param key key to search for
         * @return the entry matching the given key or null if not found
         */
        public Vector3DEntry<V> getEntry(final Vector3D key) {
            if (isLeaf()) {
-               // check the existing entries for a match
-               for (Vector3DEntry<V> entry : entries) {
+               // check the list of entries for a match
+               for (final Vector3DEntry<V> entry : entries) {
                    if (key.eq(entry.getKey(), map.precision)) {
                        return entry;
                    }
@@ -142,41 +223,29 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
                return null;
            }
 
-           // delegate to the child
-           return getChildForPoint(key).getEntry(key);
-       }
-
-       public V put(final Vector3D key, final V value) {
-           if (isLeaf()) {
-               // check the existing entries for a match
-               for (Vector3DEntry<V> entry : entries) {
-                   if (key.eq(entry.getKey(), map.precision)) {
-                       // found one; set the value and return the previous value
-                       final V prev = entry.getValue();
-                       entry.setValue(value);
-
-                       return prev;
+           // delegate to each child that could possibly contain the
+           // point or an equivalent point
+           final int loc = getLocation(key);
+           for (int i = 0; i < NUM_CHILDREN; ++i) {
+               if (testChildLocation(i, loc)) {
+                   final Vector3DEntry<V> entry = children.get(i)
+                           .getEntry(key);
+                   if (entry != null) {
+                       return entry;
                    }
                }
-               // no existing entry, we'll need to create a new one
-               if (entries.size() < MAX_ENTRIES) {
-                   // we have an open spot here so just add the entry
-                   entries.add(new Vector3DEntry<>(key, value));
-
-                   map.entryAdded();
-
-                   return null;
-               }
-
-               // no available entries; split the node and add to a child
-               splitNode();
            }
 
-           // non-leaf node
-           return getChildForPoint(key).put(key, value);
+           // not found
+           return null;
        }
 
-       public V remove(final Vector3D key) {
+       /** Remove the given key, returning the previously mapped entry.
+        * @param key key to remove
+        * @return the value previously mapped to the key or null if no
+        *       value was mapped
+        */
+       public Vector3DEntry<V> removeEntry(final Vector3D key) {
            if (isLeaf()) {
                // check the existing entries for a match
                Vector3DEntry<V> existing = null;
@@ -186,40 +255,111 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
                        break;
                    }
                }
+
                if (existing != null) {
                    entries.remove(existing);
-                   return existing.getValue();
+
+                   return existing;
                }
 
                // not found
                return null;
            }
 
-           return getChildForPoint(key).remove(key);
+           // look through children
+           final int loc = getLocation(key);
+           for (int i = 0; i < NUM_CHILDREN; ++i) {
+               if (testChildLocation(i, loc)) {
+                   final Vector3DEntry<V> entry = children.get(i).removeEntry(key);
+                   if (entry != null) {
+                       return entry;
+                   }
+               }
+           }
+
+           // not found
+           return null;
        }
 
+       /** Split the node and place all entries into the new child nodes.
+        * This node becomes an internal node.
+        */
        private void splitNode() {
            splitPoint = computeCentroid();
 
+           children = new ArrayList<>(NUM_CHILDREN);
            for (int i = 0; i < NUM_CHILDREN; ++i) {
                children.add(new VariableSplitOctreeNode<>(map));
            }
 
-           for (Vector3DEntry<V> entry : entries) {
-               getChildForPoint(entry.getKey()).entries.add(entry);
+           for (final Vector3DEntry<V> entry : entries) {
+               moveToChild(entry);
            }
 
-           entries.clear();
+           entries = null;
        }
 
-       private VariableSplitOctreeNode<V> getChildForPoint(final Vector3D pt) {
-           final int xbit = map.precision.lte(pt.getX(), splitPoint.getX()) ? 0x1 : 0;
-           final int ybit = map.precision.lte(pt.getY(), splitPoint.getY()) ? 0x2 : 0;
-           final int zbit = map.precision.lte(pt.getZ(), splitPoint.getZ()) ? 0x4 : 0;
+       /** Move the previously created entry to a child node.
+        * @param entry
+        */
+       private void moveToChild(final Vector3DEntry<V> entry) {
+           final int loc = getLocation(entry.getKey());
 
-           int idx = xbit | ybit | zbit;
+           for (int i = 0; i < NUM_CHILDREN; ++i) {
+               // place the entry in the first child that contains it
+               if (testChildLocation(i, loc)) {
+                   children.get(i).entries.add(entry);
+                   break;
+               }
+           }
+       }
 
-           return children.get(idx);
+       /** Get an int encoding the location of {@code pt} relative to the
+        * node split point.
+        * @param pt
+        * @return
+        */
+       private int getLocation(final Vector3D pt) {
+           int loc = getLocationValue(
+                   map.precision.compare(pt.getX(), splitPoint.getX()),
+                   XNEG,
+                   XPOS);
+           loc |= getLocationValue(
+                   map.precision.compare(pt.getY(), splitPoint.getY()),
+                   YNEG,
+                   YPOS);
+           loc |= getLocationValue(
+                   map.precision.compare(pt.getZ(), splitPoint.getZ()),
+                   ZNEG,
+                   ZPOS);
+
+           return loc;
+       }
+
+       /** Get the location value for the given comparison value.
+        * @param cmp
+        * @param neg
+        * @param pos
+        * @return
+        */
+       private int getLocationValue(final int cmp, final int neg, final int pos) {
+           if (cmp < 0) {
+               return neg;
+           } else if (cmp > 0) {
+               return pos;
+           }
+           return neg | pos;
+       }
+
+       /** Return true if the child node at {@code childIdx} matches the given
+        * encoded point location.
+        * @param childIdx child index to test
+        * @param loc encoded relative point location
+        * @return
+        */
+       private boolean testChildLocation(final int childIdx, final int loc) {
+           final int childLoc = CHILD_LOCATIONS[childIdx];
+           return (childLoc & loc) == childLoc;
        }
 
        /** Compute the centroid of all points currently in the node.
@@ -232,6 +372,43 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
            }
 
            return sum.get().multiply(1.0 / entries.size());
+       }
+
+       /** Write a representation of the tree to the given string builder.
+        * @param sb string builder to write to
+        * @param depth current node depth
+        */
+       void writeTree(final StringBuilder sb, final int depth) {
+           for (int i = 0; i < depth; ++i) {
+               sb.append("    ");
+           }
+
+           if (isLeaf()) {
+               sb.append("+ [");
+
+               int cnt = 0;
+               for (final Vector3DEntry<V> entry : entries) {
+                   if (++cnt > 1) {
+                       sb.append(", ");
+                   }
+                   sb.append("{key= ")
+                       .append(entry.getKey())
+                       .append(", value= ")
+                       .append(entry.getValue())
+                       .append('}');
+               }
+
+               sb.append("]\n");
+           } else {
+               sb.append("> splitPoint= ")
+                   .append(splitPoint)
+                   .append("\n");
+
+               final int childDepth = depth + 1;
+               for (final VariableSplitOctreeNode<V> child : children) {
+                   child.writeTree(sb, childDepth);
+               }
+           }
        }
    }
 }

@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.core.Precision;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -47,6 +48,9 @@ import org.openjdk.jmh.annotations.Warmup;
 @Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @Fork(value = 1, jvmArgs = {"-server", "-Xms512M", "-Xmx512M"})
 public class PointMapDataStructurePerformance {
+
+    private static final Precision.DoubleEquivalence PRECISION =
+            Precision.doubleEquivalenceOfEpsilon(1e-6);
 
     /** Input class containing a list of equally-spaced points.
      */
@@ -80,7 +84,6 @@ public class PointMapDataStructurePerformance {
                     }
                 }
             }
-            System.out.println(pointList.size());
         }
 
         /** Get the points for the input.
@@ -143,5 +146,24 @@ public class PointMapDataStructurePerformance {
     @Benchmark
     public Map<Vector3D, Integer> baselineShuffledEquallySpacedInsert(final ShuffledEquallySpacedPointInput input) {
         return insert(baselineMap(), input.getPoints());
+    }
+
+    /** Variable split octree benchmark for inserting equally spaced points.
+     * @param input input points
+     * @return map under test
+     */
+    @Benchmark
+    public Map<Vector3D, Integer> variableSplitOctreeEquallySpacedInsert(final EquallySpacedPointInput input) {
+        return insert(new VariableSplitOctree<>(PRECISION), input.getPoints());
+    }
+
+    /** Variable split octree benchmark for inserting randomly shuffled, equally spaced points.
+     * @param input input points
+     * @return map under test
+     */
+    @Benchmark
+    public Map<Vector3D, Integer> variableSplitOctreeShuffledEquallySpacedInsert(
+            final ShuffledEquallySpacedPointInput input) {
+        return insert(new VariableSplitOctree<>(PRECISION), input.getPoints());
     }
 }
