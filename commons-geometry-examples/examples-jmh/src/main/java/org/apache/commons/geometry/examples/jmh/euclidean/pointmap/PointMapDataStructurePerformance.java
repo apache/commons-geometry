@@ -49,6 +49,7 @@ import org.openjdk.jmh.annotations.Warmup;
 @Fork(value = 1, jvmArgs = {"-server", "-Xms512M", "-Xmx512M"})
 public class PointMapDataStructurePerformance {
 
+    /** Precision context. */
     private static final Precision.DoubleEquivalence PRECISION =
             Precision.doubleEquivalenceOfEpsilon(1e-6);
 

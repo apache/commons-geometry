@@ -32,383 +32,346 @@ import org.apache.commons.numbers.core.Precision;
 */
 public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
 
-   /** Precision context. */
-   private final Precision.DoubleEquivalence precision;
+    /** Precision context. */
+    private final Precision.DoubleEquivalence precision;
 
-   /** Root of the tree. */
-   private VariableSplitOctreeNode<V> root;
+    /** Root of the tree. */
+    private VariableSplitOctreeNode<V> root;
 
-   /** Size of the tree. */
-   private int entryCount;
+    /** Size of the tree. */
+    private int entryCount;
 
-   public VariableSplitOctree(final Precision.DoubleEquivalence precision) {
-       this.precision = precision;
-       this.root = new VariableSplitOctreeNode<>(this);
-   }
+    public VariableSplitOctree(final Precision.DoubleEquivalence precision) {
+        this.precision = precision;
+        this.root = new VariableSplitOctreeNode<>(this);
+    }
 
-   /** {@inheritDoc} */
-   @Override
-   public int size() {
-       return entryCount;
-   }
+    /** {@inheritDoc} */
+    @Override
+    public int size() {
+        return entryCount;
+    }
 
-   /** {@inheritDoc} */
-   @Override
-   public V put(final Vector3D key, final V value) {
-       Objects.requireNonNull(key);
-       if (!key.isFinite()) {
-           throw new IllegalArgumentException("Keys must be finite");
-       }
+    /** {@inheritDoc} */
+    @Override
+    public V put(final Vector3D key, final V value) {
+        Objects.requireNonNull(key);
+        if (!key.isFinite()) {
+            throw new IllegalArgumentException("Keys must be finite");
+        }
 
-       final Vector3DEntry<V> entry = root.getEntry(key);
-       if (entry == null) {
-           root.insertEntry(key, value);
-           entryAdded();
+        final Vector3DEntry<V> entry = root.getEntry(key);
+        if (entry == null) {
+            root.insertEntry(key, value);
+            entryAdded();
 
-           return null;
-       }
+            return null;
+        }
 
-       final V prev = entry.getValue();
-       entry.setValue(value);
+        final V prev = entry.getValue();
+        entry.setValue(value);
 
-       return prev;
-   }
+        return prev;
+    }
 
-   /** {@inheritDoc} */
-   @Override
-   public V get(final Object key) {
-       final Vector3DEntry<V> entry = root.getEntry((Vector3D) key);
-       return entry != null ?
-               entry.getValue() :
-               null;
-   }
+    /** {@inheritDoc} */
+    @Override
+    public V get(final Object key) {
+        final Vector3DEntry<V> entry = root.getEntry((Vector3D) key);
+        return entry != null ?
+                entry.getValue() :
+                null;
+    }
 
-   /** {@inheritDoc} */
-   @Override
-   public V remove(final Object key) {
-       final Vector3DEntry<V> entry = root.removeEntry((Vector3D) key);
-       if (entry != null) {
-           entryRemoved();
-           return entry.getValue();
-       }
-       return null;
-   }
+    /** {@inheritDoc} */
+    @Override
+    public V remove(final Object key) {
+        final Vector3DEntry<V> entry = root.removeEntry((Vector3D) key);
+        if (entry != null) {
+            entryRemoved();
+            return entry.getValue();
+        }
+        return null;
+    }
 
-   /** {@inheritDoc} */
-   @Override
-   public Set<Entry<Vector3D, V>> entrySet() {
-       throw new UnsupportedOperationException();
-   }
+    /** {@inheritDoc} */
+    @Override
+    public Set<Entry<Vector3D, V>> entrySet() {
+        throw new UnsupportedOperationException();
+    }
 
-   /** Get a string representation of the tree for debugging purposes.
-    * @return a string representation of the tree
-    */
-   public String treeString() {
-       final StringBuilder sb = new StringBuilder();
-       root.writeTree(sb, 0);
+    /** Method called when a new entry is added to the tree.
+     */
+    private void entryAdded() {
+        ++entryCount;
+    }
 
-       return sb.toString();
-   }
+    /** Method called when an entry is removed from the tree.
+     */
+    private void entryRemoved() {
+        --entryCount;
+    }
 
-   /** Method called when a new entry is added to the tree.
-    */
-   private void entryAdded() {
-       ++entryCount;
-   }
+    /** Octree node class.
+     * @param <V> Value type
+     */
+    private static final class VariableSplitOctreeNode<V> {
 
-   /** Method called when an entry is removed from the tree.
-    */
-   private void entryRemoved() {
-       --entryCount;
-   }
+        /** X negative octant flag. */
+        private static final int XNEG = 1 << 5;
 
-   /** Octree node class.
-    */
-   private static final class VariableSplitOctreeNode<V> {
+        /** X postive octant flag. */
+        private static final int XPOS = 1 << 4;
 
-       private static final int XNEG = 1 << 5;
+        /** Y negative octant flag. */
+        private static final int YNEG = 1 << 3;
 
-       private static final int XPOS = 1 << 4;
+        /** Y positive octant flag. */
+        private static final int YPOS = 1 << 2;
 
-       private static final int YNEG = 1 << 3;
+        /** Z negative octant flag. */
+        private static final int ZNEG = 1 << 1;
 
-       private static final int YPOS = 1 << 2;
+        /** Z positive octant flag. */
+        private static final int ZPOS = 1;
 
-       private static final int ZNEG = 1 << 1;
+        /** Octant location flags for child nodes. */
+        private static final int[] CHILD_LOCATIONS = {
+            XNEG | YNEG | ZNEG,
+            XNEG | YNEG | ZPOS,
+            XNEG | YPOS | ZNEG,
+            XNEG | YPOS | ZPOS,
 
-       private static final int ZPOS = 1;
+            XPOS | YNEG | ZNEG,
+            XPOS | YNEG | ZPOS,
+            XPOS | YPOS | ZNEG,
+            XPOS | YPOS | ZPOS
+        };
 
-       private static final int[] CHILD_LOCATIONS = {
-           XNEG | YNEG | ZNEG,
-           XNEG | YNEG | ZPOS,
-           XNEG | YPOS | ZNEG,
-           XNEG | YPOS | ZPOS,
+        /** Max entries per node. */
+        private static final int MAX_ENTRIES = 10;
 
-           XPOS | YNEG | ZNEG,
-           XPOS | YNEG | ZPOS,
-           XPOS | YPOS | ZNEG,
-           XPOS | YPOS | ZPOS
-       };
+        /** Number of children for internal nodes. */
+        private static final int NUM_CHILDREN = 8;
 
-       private static final int MAX_ENTRIES = 10;
+        /** Owning map. */
+        private final VariableSplitOctree<V> map;
 
-       private static final int NUM_CHILDREN = 8;
+        /** Child nodes. */
+        private List<VariableSplitOctreeNode<V>> children;
 
-       /** Owning map. */
-       private final VariableSplitOctree<V> map;
+        /** Points stored in the node; this will only be populated for leaf nodes. */
+        private List<Vector3DEntry<V>> entries = new ArrayList<>(MAX_ENTRIES);
 
-       /** Child nodes. */
-       private List<VariableSplitOctreeNode<V>> children;
+        /** The split point of the node; will be null for leaf nodes. */
+        private Vector3D splitPoint;
 
-       /** Points stored in the node; this will only be populated for leaf nodes. */
-       private List<Vector3DEntry<V>> entries = new ArrayList<>(MAX_ENTRIES);
+        VariableSplitOctreeNode(final VariableSplitOctree<V> map) {
+            this.map = map;
+        }
 
-       /** The split point of the node; will be null for leaf nodes. */
-       private Vector3D splitPoint;
+        /** Return true if the node is a leaf.
+         * @return true if the node is a leaf
+         */
+        public boolean isLeaf() {
+            return splitPoint == null;
+        }
 
-       VariableSplitOctreeNode(final VariableSplitOctree<V> map) {
-           this.map = map;
-       }
+        /** Insert a new entry containing the given key and value. No check
+         * is made as to whether or not an entry already exists for the key.
+         * @param key key to insert
+         * @param value value to insert
+         */
+        public void insertEntry(final Vector3D key, final V value) {
+            if (isLeaf()) {
+                if (entries.size() < MAX_ENTRIES) {
+                    // we have an open spot here so just add the entry
+                    entries.add(new Vector3DEntry<>(key, value));
+                    return;
+                }
 
-       /** Return true if the node is a leaf.
-        * @return true if the node is a leaf
-        */
-       public boolean isLeaf() {
-           return splitPoint == null;
-       }
+                // no available entries; split the node and add to a child
+                splitNode();
+            }
 
-       /** Insert a new entry containing the given key and value. No check
-        * is made as to whether or not an entry already exists for the key.
-        * @param key key to insert
-        * @param value value to insert
-        */
-       public void insertEntry(final Vector3D key, final V value) {
-           if (isLeaf()) {
-               if (entries.size() < MAX_ENTRIES) {
-                   // we have an open spot here so just add the entry
-                   entries.add(new Vector3DEntry<>(key, value));
-                   return;
-               }
+            // non-leaf node
+            // determine the relative location of the key
+            final int loc = getLocation(key);
 
-               // no available entries; split the node and add to a child
-               splitNode();
-           }
+            // insert into the first child that can contain the key
+            for (int i = 0; i < NUM_CHILDREN; ++i) {
+                if (testChildLocation(i, loc)) {
+                    children.get(i).insertEntry(key, value);
+                    break;
+                }
+            }
+        }
 
-           // non-leaf node
-           // determine the relative location of the key
-           final int loc = getLocation(key);
+        /** Get the entry matching the given key or null if not found.
+         * @param key key to search for
+         * @return the entry matching the given key or null if not found
+         */
+        public Vector3DEntry<V> getEntry(final Vector3D key) {
+            if (isLeaf()) {
+                // check the list of entries for a match
+                for (final Vector3DEntry<V> entry : entries) {
+                    if (key.eq(entry.getKey(), map.precision)) {
+                        return entry;
+                    }
+                }
+                // not found
+                return null;
+            }
 
-           // insert into the first child that can contain the key
-           for (int i = 0; i < NUM_CHILDREN; ++i) {
-               if (testChildLocation(i, loc)) {
-                   children.get(i).insertEntry(key, value);
-                   break;
-               }
-           }
-       }
+            // delegate to each child that could possibly contain the
+            // point or an equivalent point
+            final int loc = getLocation(key);
+            for (int i = 0; i < NUM_CHILDREN; ++i) {
+                if (testChildLocation(i, loc)) {
+                    final Vector3DEntry<V> entry = children.get(i)
+                            .getEntry(key);
+                    if (entry != null) {
+                        return entry;
+                    }
+                }
+            }
 
-       /** Get the entry matching the given key or null if not found.
-        * @param key key to search for
-        * @return the entry matching the given key or null if not found
-        */
-       public Vector3DEntry<V> getEntry(final Vector3D key) {
-           if (isLeaf()) {
-               // check the list of entries for a match
-               for (final Vector3DEntry<V> entry : entries) {
-                   if (key.eq(entry.getKey(), map.precision)) {
-                       return entry;
-                   }
-               }
-               // not found
-               return null;
-           }
+            // not found
+            return null;
+        }
 
-           // delegate to each child that could possibly contain the
-           // point or an equivalent point
-           final int loc = getLocation(key);
-           for (int i = 0; i < NUM_CHILDREN; ++i) {
-               if (testChildLocation(i, loc)) {
-                   final Vector3DEntry<V> entry = children.get(i)
-                           .getEntry(key);
-                   if (entry != null) {
-                       return entry;
-                   }
-               }
-           }
+        /** Remove the given key, returning the previously mapped entry.
+         * @param key key to remove
+         * @return the value previously mapped to the key or null if no
+         *       value was mapped
+         */
+        public Vector3DEntry<V> removeEntry(final Vector3D key) {
+            if (isLeaf()) {
+                // check the existing entries for a match
+                Vector3DEntry<V> existing = null;
+                for (Vector3DEntry<V> entry : entries) {
+                    if (key.eq(entry.getKey(), map.precision)) {
+                        existing = entry;
+                        break;
+                    }
+                }
 
-           // not found
-           return null;
-       }
+                if (existing != null) {
+                    entries.remove(existing);
 
-       /** Remove the given key, returning the previously mapped entry.
-        * @param key key to remove
-        * @return the value previously mapped to the key or null if no
-        *       value was mapped
-        */
-       public Vector3DEntry<V> removeEntry(final Vector3D key) {
-           if (isLeaf()) {
-               // check the existing entries for a match
-               Vector3DEntry<V> existing = null;
-               for (Vector3DEntry<V> entry : entries) {
-                   if (key.eq(entry.getKey(), map.precision)) {
-                       existing = entry;
-                       break;
-                   }
-               }
+                    return existing;
+                }
 
-               if (existing != null) {
-                   entries.remove(existing);
+                // not found
+                return null;
+            }
 
-                   return existing;
-               }
+            // look through children
+            final int loc = getLocation(key);
+            for (int i = 0; i < NUM_CHILDREN; ++i) {
+                if (testChildLocation(i, loc)) {
+                    final Vector3DEntry<V> entry = children.get(i).removeEntry(key);
+                    if (entry != null) {
+                        return entry;
+                    }
+                }
+            }
 
-               // not found
-               return null;
-           }
+            // not found
+            return null;
+        }
 
-           // look through children
-           final int loc = getLocation(key);
-           for (int i = 0; i < NUM_CHILDREN; ++i) {
-               if (testChildLocation(i, loc)) {
-                   final Vector3DEntry<V> entry = children.get(i).removeEntry(key);
-                   if (entry != null) {
-                       return entry;
-                   }
-               }
-           }
+        /** Split the node and place all entries into the new child nodes.
+         * This node becomes an internal node.
+         */
+        private void splitNode() {
+            splitPoint = computeCentroid();
 
-           // not found
-           return null;
-       }
+            children = new ArrayList<>(NUM_CHILDREN);
+            for (int i = 0; i < NUM_CHILDREN; ++i) {
+                children.add(new VariableSplitOctreeNode<>(map));
+            }
 
-       /** Split the node and place all entries into the new child nodes.
-        * This node becomes an internal node.
-        */
-       private void splitNode() {
-           splitPoint = computeCentroid();
+            for (final Vector3DEntry<V> entry : entries) {
+                moveToChild(entry);
+            }
 
-           children = new ArrayList<>(NUM_CHILDREN);
-           for (int i = 0; i < NUM_CHILDREN; ++i) {
-               children.add(new VariableSplitOctreeNode<>(map));
-           }
+            entries = null;
+        }
 
-           for (final Vector3DEntry<V> entry : entries) {
-               moveToChild(entry);
-           }
+        /** Move the previously created entry to a child node.
+         * @param entry entry to mode
+         */
+        private void moveToChild(final Vector3DEntry<V> entry) {
+            final int loc = getLocation(entry.getKey());
 
-           entries = null;
-       }
+            for (int i = 0; i < NUM_CHILDREN; ++i) {
+                // place the entry in the first child that contains it
+                if (testChildLocation(i, loc)) {
+                    children.get(i).entries.add(entry);
+                    break;
+                }
+            }
+        }
 
-       /** Move the previously created entry to a child node.
-        * @param entry
-        */
-       private void moveToChild(final Vector3DEntry<V> entry) {
-           final int loc = getLocation(entry.getKey());
+        /** Get an int encoding the location of {@code pt} relative to the
+         * node split point.
+         * @param pt point to determine the relative location of
+         * @return encoded point location
+         */
+        private int getLocation(final Vector3D pt) {
+            int loc = getLocationValue(
+                    map.precision.compare(pt.getX(), splitPoint.getX()),
+                    XNEG,
+                    XPOS);
+            loc |= getLocationValue(
+                    map.precision.compare(pt.getY(), splitPoint.getY()),
+                    YNEG,
+                    YPOS);
+            loc |= getLocationValue(
+                    map.precision.compare(pt.getZ(), splitPoint.getZ()),
+                    ZNEG,
+                    ZPOS);
 
-           for (int i = 0; i < NUM_CHILDREN; ++i) {
-               // place the entry in the first child that contains it
-               if (testChildLocation(i, loc)) {
-                   children.get(i).entries.add(entry);
-                   break;
-               }
-           }
-       }
+            return loc;
+        }
 
-       /** Get an int encoding the location of {@code pt} relative to the
-        * node split point.
-        * @param pt
-        * @return
-        */
-       private int getLocation(final Vector3D pt) {
-           int loc = getLocationValue(
-                   map.precision.compare(pt.getX(), splitPoint.getX()),
-                   XNEG,
-                   XPOS);
-           loc |= getLocationValue(
-                   map.precision.compare(pt.getY(), splitPoint.getY()),
-                   YNEG,
-                   YPOS);
-           loc |= getLocationValue(
-                   map.precision.compare(pt.getZ(), splitPoint.getZ()),
-                   ZNEG,
-                   ZPOS);
+        /** Get the encoded location value for the given comparison value.
+         * @param cmp comparison result
+         * @param neg negative flag
+         * @param pos positive flag
+         * @return encoded location value
+         */
+        private int getLocationValue(final int cmp, final int neg, final int pos) {
+            if (cmp < 0) {
+                return neg;
+            } else if (cmp > 0) {
+                return pos;
+            }
+            return neg | pos;
+        }
 
-           return loc;
-       }
+        /** Return true if the child node at {@code childIdx} matches the given
+         * encoded point location.
+         * @param childIdx child index to test
+         * @param loc encoded relative point location
+         * @return true if the child node a {@code childIdx} matches the location
+         */
+        private boolean testChildLocation(final int childIdx, final int loc) {
+            final int childLoc = CHILD_LOCATIONS[childIdx];
+            return (childLoc & loc) == childLoc;
+        }
 
-       /** Get the location value for the given comparison value.
-        * @param cmp
-        * @param neg
-        * @param pos
-        * @return
-        */
-       private int getLocationValue(final int cmp, final int neg, final int pos) {
-           if (cmp < 0) {
-               return neg;
-           } else if (cmp > 0) {
-               return pos;
-           }
-           return neg | pos;
-       }
+        /** Compute the centroid of all points currently in the node.
+         * @return centroid of the node points
+         */
+        private Vector3D computeCentroid() {
+            Vector3D.Sum sum = Vector3D.Sum.create();
+            for (Vector3DEntry<V> entry : entries) {
+                sum.add(entry.getKey());
+            }
 
-       /** Return true if the child node at {@code childIdx} matches the given
-        * encoded point location.
-        * @param childIdx child index to test
-        * @param loc encoded relative point location
-        * @return
-        */
-       private boolean testChildLocation(final int childIdx, final int loc) {
-           final int childLoc = CHILD_LOCATIONS[childIdx];
-           return (childLoc & loc) == childLoc;
-       }
-
-       /** Compute the centroid of all points currently in the node.
-        * @return centroid of the node points
-        */
-       private Vector3D computeCentroid() {
-           Vector3D.Sum sum = Vector3D.Sum.create();
-           for (Vector3DEntry<V> entry : entries) {
-               sum.add(entry.getKey());
-           }
-
-           return sum.get().multiply(1.0 / entries.size());
-       }
-
-       /** Write a representation of the tree to the given string builder.
-        * @param sb string builder to write to
-        * @param depth current node depth
-        */
-       void writeTree(final StringBuilder sb, final int depth) {
-           for (int i = 0; i < depth; ++i) {
-               sb.append("    ");
-           }
-
-           if (isLeaf()) {
-               sb.append("+ [");
-
-               int cnt = 0;
-               for (final Vector3DEntry<V> entry : entries) {
-                   if (++cnt > 1) {
-                       sb.append(", ");
-                   }
-                   sb.append("{key= ")
-                       .append(entry.getKey())
-                       .append(", value= ")
-                       .append(entry.getValue())
-                       .append('}');
-               }
-
-               sb.append("]\n");
-           } else {
-               sb.append("> splitPoint= ")
-                   .append(splitPoint)
-                   .append("\n");
-
-               final int childDepth = depth + 1;
-               for (final VariableSplitOctreeNode<V> child : children) {
-                   child.writeTree(sb, childDepth);
-               }
-           }
-       }
-   }
+            return sum.get().multiply(1.0 / entries.size());
+        }
+    }
 }
