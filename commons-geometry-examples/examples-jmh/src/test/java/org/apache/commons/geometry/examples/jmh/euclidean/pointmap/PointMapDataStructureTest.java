@@ -191,13 +191,23 @@ abstract class PointMapDataStructureTest {
         Assertions.assertNull(map.get(v));
     }
 
-    /** Unit test for the {@link BvhPointMap3D} data structure.
+    /** Unit test for the {@link VariableSplitOctree} data structure.
      */
     static class VariableSplitOctreeTest extends PointMapDataStructureTest {
         /** {@inheritDoc} */
         @Override
         Map<Vector3D, Integer> getMap(final DoubleEquivalence precision) {
             return new VariableSplitOctree<>(PRECISION);
+        }
+    }
+
+    /** Unit test for the {@link StandardKDTree} data structure.
+     */
+    static class KDTreeTest extends PointMapDataStructureTest {
+        /** {@inheritDoc} */
+        @Override
+        Map<Vector3D, Integer> getMap(final DoubleEquivalence precision) {
+            return new KDTree<>(PRECISION);
         }
     }
 }
