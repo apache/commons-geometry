@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.ToDoubleFunction;
 
+import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
 
@@ -75,11 +76,11 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
         if (root == null) {
             // first node; enter as the root
-            root = createNode(key, 0);
+            root = createNode(null, key, 0);
             node = root;
         } else {
             // not the first node; enter into the tree
-            node = getOrInsertNodeRecursive(root, key, 0);
+            node = findOrInsertNodeRecursive(root, key, 0);
         }
 
         return node.setValue(value);
@@ -88,13 +89,94 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
     /** {@inheritDoc} */
     @Override
     public V get(final Object key) {
-        final KDTreeNode<V> node = getNodeRecursive(root, (Vector3D) key);
+        final KDTreeNode<V> node = findNodeRecursive(root, (Vector3D) key);
         return node != null ?
                 node.value :
                 null;
     }
 
-    private KDTreeNode<V> getOrInsertNodeRecursive(final KDTreeNode<V> node, final Vector3D key, final int depth) {
+
+
+    /** {@inheritDoc} */
+    @Override
+    public V remove(final Object key) {
+        final KDTreeNode<V> node = findNodeRecursive(root, (Vector3D) key);
+        if (node != null) {
+            final V prevValue = node.value;
+
+            removeKey(node);
+            --nodeCount;
+
+            return prevValue;
+        }
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<Entry<Vector3D, V>> entrySet() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String treeString() {
+        final StringBuilder sb = new StringBuilder();
+
+        treeStringRecursive(root, 0, sb);
+
+        return sb.toString();
+    }
+
+    private void treeStringRecursive(final KDTreeNode<V> node, final int depth, final StringBuilder sb) {
+        if (node != null) {
+            for (int i = 0; i < depth; ++i) {
+                sb.append("    ");
+            }
+
+            String label = node.parent == null ?
+                    "*" :
+                    node.isLeftChild() ? "L" : "R";
+
+            sb.append("[")
+                .append(label)
+                .append(" | ")
+                .append(node.cutDimension)
+                .append("] ")
+                .append(node.key)
+                .append(" => ")
+                .append(node.value)
+                .append("\n");
+
+            treeStringRecursive(node.left, depth + 1, sb);
+            treeStringRecursive(node.right, depth + 1, sb);
+        }
+    }
+
+    private void validateKey(final Vector3D key) {
+        Objects.requireNonNull(key);
+        if (!key.isFinite()) {
+            throw new IllegalArgumentException("Map key must be finite; was " + key);
+        }
+    }
+
+    /** Create a new {@link KDTreeNode} for entry into the tree and increment the internal
+     * node count.
+     * @param parent
+     * @param key
+     * @param depth
+     * @return
+     */
+    private KDTreeNode<V> createNode(final KDTreeNode<V> parent, final Vector3D key, final int depth) {
+        final KDTreeNode<V> node = new KDTreeNode<>(
+                parent,
+                key,
+                getCutDimensionForDepth(depth));
+
+        ++nodeCount;
+
+        return node;
+    }
+
+    private KDTreeNode<V> findOrInsertNodeRecursive(final KDTreeNode<V> node, final Vector3D key, final int depth) {
         // pull the coordinates for the node cut dimension
         final double nodeCoord = node.cutDimension.getCoordinate(node.key);
         final double keyCoord = node.cutDimension.getCoordinate(key);
@@ -107,18 +189,18 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         if (eqCmp < 0) {
             // we definitely belong in the left subtree
             if (node.left == null) {
-                node.left = createNode(key, childDepth);
+                node.left = createNode(node, key, childDepth);
                 return node.left;
             } else {
-                return getOrInsertNodeRecursive(node.left, key, childDepth);
+                return findOrInsertNodeRecursive(node.left, key, childDepth);
             }
         } else if (eqCmp > 0 ){
             // we definitely belong in the right subtree
             if (node.right == null) {
-                node.right = createNode(key, childDepth);
+                node.right = createNode(node, key, childDepth);
                 return node.right;
             } else {
-                return getOrInsertNodeRecursive(node.right, key, childDepth);
+                return findOrInsertNodeRecursive(node.right, key, childDepth);
             }
         } else {
             // check if we are equivalent to the point for this node
@@ -136,36 +218,36 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
             if (strictCmp < 0) {
                 // insertion, if needed, would be performed in the left subtree, so
                 // check the right subtree first
-                final KDTreeNode<V> rightExistingNode = getNodeRecursive(node.right, key);
+                final KDTreeNode<V> rightExistingNode = findNodeRecursive(node.right, key);
                 if (rightExistingNode != null) {
                     return rightExistingNode;
                 }
 
                 if (node.left == null) {
-                    node.left = createNode(key, childDepth);
+                    node.left = createNode(node, key, childDepth);
                     return node.left;
                 }
 
-                return getOrInsertNodeRecursive(node.left, key, childDepth);
+                return findOrInsertNodeRecursive(node.left, key, childDepth);
             } else {
                 // insertion, if needed, would be performed in the right subtree, so
                 // check the left subtree first
-                final KDTreeNode<V> leftExistingNode = getNodeRecursive(node.left, key);
+                final KDTreeNode<V> leftExistingNode = findNodeRecursive(node.left, key);
                 if (leftExistingNode != null) {
                     return leftExistingNode;
                 }
 
                 if (node.right == null) {
-                    node.right = createNode(key, childDepth);
+                    node.right = createNode(node, key, childDepth);
                     return node.right;
                 }
 
-                return getOrInsertNodeRecursive(node.right, key, childDepth);
+                return findOrInsertNodeRecursive(node.right, key, childDepth);
             }
         }
     }
 
-    private KDTreeNode<V> getNodeRecursive(final KDTreeNode<V> node, final Vector3D key) {
+    private KDTreeNode<V> findNodeRecursive(final KDTreeNode<V> node, final Vector3D key) {
         if (node != null) {
             // pull the coordinates for the node cut dimension
             final double nodeCoord = node.cutDimension.getCoordinate(node.key);
@@ -175,55 +257,126 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
             final int eqcmp = precision.compare(keyCoord, nodeCoord);
 
             if (eqcmp < 0) {
-                return getNodeRecursive(node.left, key);
+                return findNodeRecursive(node.left, key);
             } else if (eqcmp > 0 ){
-                return getNodeRecursive(node.right, key);
+                return findNodeRecursive(node.right, key);
             } else {
                 // check if we are equivalent to the point for this node
                 if (key.eq(node.key, precision)) {
                     return node;
                 }
 
-                // Not equivalent; we'll the matching node (if any) could be on either
+                // Not equivalent; the matching node (if any) could be on either
                 // side of the cut so we'll need to search both subtrees.
-                final KDTreeNode<V> leftSearchResult = getNodeRecursive(node.left, key);
+                final KDTreeNode<V> leftSearchResult = findNodeRecursive(node.left, key);
                 if (leftSearchResult != null) {
                     return leftSearchResult;
                 }
 
-                return getNodeRecursive(node.right, key);
+                return findNodeRecursive(node.right, key);
             }
         }
         return null;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Set<Entry<Vector3D, V>> entrySet() {
-        throw new UnsupportedOperationException();
-    }
+    /** Remove the given node from the tree.
+     * @param node
+     */
+    private void removeKey(final KDTreeNode<V> node) {
+        // find a child node to replace this one
+        KDTreeNode<V> replacement = null;
+        if (node.right != null) {
+            replacement = findMin(node.right, node.cutDimension);
+        } else if (node.left != null) {
+            replacement = findMin(node.left, node.cutDimension);
 
-    private void validateKey(final Vector3D key) {
-        Objects.requireNonNull(key);
-        if (!key.isFinite()) {
-            throw new IllegalArgumentException("Map key must be finite; was " + key);
+            // swap left and right subtrees; the replacement will
+            // contain the minimum of the entire subtree
+            node.right = node.left;
+            node.left = null;
+        }
+
+        // perform the replacement
+        if (replacement != null) {
+            node.key = replacement.key;
+            node.value = replacement.value;
+
+            removeKey(replacement);
+        } else {
+            // leaf node; disconnect from the subtree
+            if (GeometryInternalUtils.sameInstance(root, node)) {
+                this.root = null;
+            }
+
+            if (node.parent != null) {
+                if (node.isLeftChild()) {
+                    node.parent.left = null;
+                } else {
+                    node.parent.right = null;
+                }
+            }
         }
     }
 
-    /** Create a new {@link KDTreeNode} for entry into the tree and increment the internal
-     * node count.
-     * @param key
-     * @param depth
+    private KDTreeNode<V> findMin(final KDTreeNode<V> node, final CutDimension cutDimension) {
+        if (node != null) {
+            if (node.isLeaf()) {
+                // leaf node; automatically the min
+                return node;
+            } else if (node.cutDimension.equals(cutDimension)) {
+                // this node splits on the dimensions we're searching for, so we
+                // only need to search the left subtree
+                if (node.left == null) {
+                    return node;
+                }
+                return findMin(node.left, cutDimension);
+            } else {
+                // this node doesn't split on our target dimension, so search both subtrees
+                // and the current node
+                return cutDimensionMin(
+                            findMin(node.left, cutDimension),
+                            node,
+                            findMin(node.right, cutDimension),
+                            cutDimension);
+            }
+        }
+        return null;
+    }
+
+    /** Return the node containing the minimum value along the given cut dimension. Null
+     * nodes are ignored.
+     * @param a
+     * @param b
+     * @param c
+     * @param cutDimension
      * @return
      */
-    private KDTreeNode<V> createNode(final Vector3D key, final int depth) {
-        final KDTreeNode<V> node = new KDTreeNode<>(
-                getCutDimensionForDepth(depth),
-                key);
+    public KDTreeNode<V> cutDimensionMin(final KDTreeNode<V> a, final KDTreeNode<V> b, final KDTreeNode<V> c,
+            final CutDimension cutDimension)
+    {
+        final KDTreeNode<V> tempMin = cutDimensionMin(a, b, cutDimension);
+        return cutDimensionMin(tempMin, c, cutDimension);
+    }
 
-        ++nodeCount;
+    /** Return the node containing the minimum value along the given cut dimension. If one
+     * argument is null, the other argument is returned.
+     * @param a
+     * @param b
+     * @param cutDimension
+     * @return
+     */
+    private KDTreeNode<V> cutDimensionMin(final KDTreeNode<V> a, final KDTreeNode<V> b,
+            final CutDimension cutDimension) {
+        if (a == null) {
+            return b;
+        } else if (b == null) {
+            return a;
+        }
 
-        return node;
+        final double aCoord = cutDimension.getCoordinate(a.key);
+        final double bCoord = cutDimension.getCoordinate(b.key);
+
+        return aCoord < bCoord ? a : b;
     }
 
     private CutDimension getCutDimensionForDepth(final int depth) {
@@ -236,9 +389,9 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
     private static final class KDTreeNode<V> implements Map.Entry<Vector3D, V> {
 
-        final CutDimension cutDimension;
+        KDTreeNode<V> parent;
 
-        final Vector3D key;
+        Vector3D key;
 
         V value;
 
@@ -246,7 +399,11 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
         KDTreeNode<V> right;
 
-        KDTreeNode(final CutDimension cutDimension, final Vector3D key) {
+        CutDimension cutDimension;
+
+        KDTreeNode(final KDTreeNode<V> parent, final Vector3D key,
+                final CutDimension cutDimension) {
+            this.parent = parent;
             this.cutDimension = cutDimension;
             this.key = key;
         }
@@ -269,6 +426,14 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
             V old = this.value;
             this.value = value;
             return old;
+        }
+
+        public boolean isLeaf() {
+            return left == null && right == null;
+        }
+
+        public boolean isLeftChild() {
+            return parent != null && GeometryInternalUtils.sameInstance(parent.left, this);
         }
     }
 }
