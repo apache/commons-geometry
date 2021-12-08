@@ -128,6 +128,8 @@ public class PointMapDataStructurePerformance {
                 });
             case "varoctree":
                 return new VariableSplitOctree<>(PRECISION);
+            case "kdtree":
+                return new KDTree<>(PRECISION);
             default:
                 throw new IllegalArgumentException("Unknown map implementation: " + impl);
             }

@@ -13,7 +13,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */package org.apache.commons.geometry.examples.jmh.euclidean.pointmap;
+ */
+package org.apache.commons.geometry.examples.jmh.euclidean.pointmap;
 
 import java.util.AbstractMap;
 import java.util.Map;
@@ -31,32 +32,50 @@ import org.apache.commons.numbers.core.Precision;
  */
 public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
+    /** Enum containing possible node cut dimensions. */
     private enum CutDimension {
+
+        /** X dimension. */
         X(Vector3D::getX),
+
+        /** Y dimension. */
         Y(Vector3D::getY),
+
+        /** Z dimension. */
         Z(Vector3D::getZ);
 
+        /** Coordinate extraction function. */
         private final ToDoubleFunction<Vector3D> coordinateFn;
 
         CutDimension(final ToDoubleFunction<Vector3D> coordinateFn) {
             this.coordinateFn = coordinateFn;
         }
 
-        public double getCoordinate(final Vector3D v) {
-            return coordinateFn.applyAsDouble(v);
+        /** Get the coordinate for this dimension.
+         * @param pt point
+         * @return dimension coordinate
+         */
+        public double getCoordinate(final Vector3D pt) {
+            return coordinateFn.applyAsDouble(pt);
         }
     }
 
     /** Precision context. */
     private final Precision.DoubleEquivalence precision;
 
+    /** Root node; may be null. */
     private KDTreeNode<V> root;
 
+    /** Tree node count. */
     private int nodeCount;
 
     /** Array of cut dimensions; pull these eagerly to avoid having to call values() constantly. */
     private CutDimension[] cutDimensions = CutDimension.values();
 
+    /** Construct a new instance with the given precision.
+     * @param precision object used to determine floating point equality between dimension
+     *      coordinates
+     */
     public KDTree(final Precision.DoubleEquivalence precision) {
         this.precision = precision;
     }
@@ -95,8 +114,6 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
                 null;
     }
 
-
-
     /** {@inheritDoc} */
     @Override
     public V remove(final Object key) {
@@ -118,39 +135,9 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         throw new UnsupportedOperationException();
     }
 
-    public String treeString() {
-        final StringBuilder sb = new StringBuilder();
-
-        treeStringRecursive(root, 0, sb);
-
-        return sb.toString();
-    }
-
-    private void treeStringRecursive(final KDTreeNode<V> node, final int depth, final StringBuilder sb) {
-        if (node != null) {
-            for (int i = 0; i < depth; ++i) {
-                sb.append("    ");
-            }
-
-            String label = node.parent == null ?
-                    "*" :
-                    node.isLeftChild() ? "L" : "R";
-
-            sb.append("[")
-                .append(label)
-                .append(" | ")
-                .append(node.cutDimension)
-                .append("] ")
-                .append(node.key)
-                .append(" => ")
-                .append(node.value)
-                .append("\n");
-
-            treeStringRecursive(node.left, depth + 1, sb);
-            treeStringRecursive(node.right, depth + 1, sb);
-        }
-    }
-
+    /** Throw an exception if {@code key} is invalid.
+     * @param key map key
+     */
     private void validateKey(final Vector3D key) {
         Objects.requireNonNull(key);
         if (!key.isFinite()) {
@@ -160,10 +147,10 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
     /** Create a new {@link KDTreeNode} for entry into the tree and increment the internal
      * node count.
-     * @param parent
-     * @param key
-     * @param depth
-     * @return
+     * @param parent parent node
+     * @param key map key
+     * @param depth node depth
+     * @return the newly created node
      */
     private KDTreeNode<V> createNode(final KDTreeNode<V> parent, final Vector3D key, final int depth) {
         final KDTreeNode<V> node = new KDTreeNode<>(
@@ -176,6 +163,12 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         return node;
     }
 
+    /** Find the node in the subtree rooted at {@code node} matching {@code key} or create it if not found.
+     * @param node subtree root
+     * @param key map key
+     * @param depth current node depth
+     * @return the existing or newly created node
+     */
     private KDTreeNode<V> findOrInsertNodeRecursive(final KDTreeNode<V> node, final Vector3D key, final int depth) {
         // pull the coordinates for the node cut dimension
         final double nodeCoord = node.cutDimension.getCoordinate(node.key);
@@ -194,7 +187,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
             } else {
                 return findOrInsertNodeRecursive(node.left, key, childDepth);
             }
-        } else if (eqCmp > 0 ){
+        } else if (eqCmp > 0) {
             // we definitely belong in the right subtree
             if (node.right == null) {
                 node.right = createNode(node, key, childDepth);
@@ -214,7 +207,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
             // node would be inserted if we were inserting. Then check, search the
             // opposite subtree for an existing node and if not found, go ahead and
             // try inserting into the target subtree.
-            final int strictCmp = compareStrict(keyCoord, nodeCoord);
+            final int strictCmp = Double.compare(keyCoord, nodeCoord);
             if (strictCmp < 0) {
                 // insertion, if needed, would be performed in the left subtree, so
                 // check the right subtree first
@@ -247,6 +240,11 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         }
     }
 
+    /** Find the node with the given {@code key} or null if not found.
+     * @param node subtree root
+     * @param key map key
+     * @return the node matching the given {@code key} or null if not found
+     */
     private KDTreeNode<V> findNodeRecursive(final KDTreeNode<V> node, final Vector3D key) {
         if (node != null) {
             // pull the coordinates for the node cut dimension
@@ -258,7 +256,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
             if (eqcmp < 0) {
                 return findNodeRecursive(node.left, key);
-            } else if (eqcmp > 0 ){
+            } else if (eqcmp > 0) {
                 return findNodeRecursive(node.right, key);
             } else {
                 // check if we are equivalent to the point for this node
@@ -280,7 +278,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
     }
 
     /** Remove the given node from the tree.
-     * @param node
+     * @param node node to remove
      */
     private void removeKey(final KDTreeNode<V> node) {
         // find a child node to replace this one
@@ -318,6 +316,12 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         }
     }
 
+    /** Find the node with the minimum value along the given cut dimension.
+     * @param node subtree root
+     * @param cutDimension cut dimension to search along
+     * @return node with the minimum value along the cut dimension or null if {@code node}
+     *      is null
+     */
     private KDTreeNode<V> findMin(final KDTreeNode<V> node, final CutDimension cutDimension) {
         if (node != null) {
             if (node.isLeaf()) {
@@ -345,11 +349,11 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
     /** Return the node containing the minimum value along the given cut dimension. Null
      * nodes are ignored.
-     * @param a
-     * @param b
-     * @param c
-     * @param cutDimension
-     * @return
+     * @param a first node
+     * @param b second node
+     * @param c third node
+     * @param cutDimension search dimension
+     * @return minimum node
      */
     public KDTreeNode<V> cutDimensionMin(final KDTreeNode<V> a, final KDTreeNode<V> b, final KDTreeNode<V> c,
             final CutDimension cutDimension)
@@ -360,10 +364,10 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
     /** Return the node containing the minimum value along the given cut dimension. If one
      * argument is null, the other argument is returned.
-     * @param a
-     * @param b
-     * @param cutDimension
-     * @return
+     * @param a first node
+     * @param b second node
+     * @param cutDimension search dimension
+     * @return minimum node
      */
     private KDTreeNode<V> cutDimensionMin(final KDTreeNode<V> a, final KDTreeNode<V> b,
             final CutDimension cutDimension) {
@@ -379,28 +383,42 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         return aCoord < bCoord ? a : b;
     }
 
+    /** Get the cut dimension for the given node depth.
+     * @param depth node depth
+     * @return cut dimension instance
+     */
     private CutDimension getCutDimensionForDepth(final int depth) {
         return cutDimensions[depth % cutDimensions.length];
     }
 
-    private int compareStrict(final double a, final double b) {
-        return Double.compare(a, b);
-    }
-
+    /** Class representing a node in a KD tree.
+     * @param <V> Value type
+     */
     private static final class KDTreeNode<V> implements Map.Entry<Vector3D, V> {
 
+        /** Parent node; may be null. */
         KDTreeNode<V> parent;
 
+        /** Map entry key. */
         Vector3D key;
 
+        /** Map entry value. */
         V value;
 
+        /** Left child; may be null. */
         KDTreeNode<V> left;
 
+        /** Right child; may be null. */
         KDTreeNode<V> right;
 
+        /** Node cut dimension. */
         CutDimension cutDimension;
 
+        /** Construct a new instance.
+         * @param parent parent node; may be null
+         * @param key map key
+         * @param cutDimension cut dimension
+         */
         KDTreeNode(final KDTreeNode<V> parent, final Vector3D key,
                 final CutDimension cutDimension) {
             this.parent = parent;
@@ -428,10 +446,17 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
             return old;
         }
 
+        /** Return true if this node is a leaf node.
+         * @return true if this node is a leaf node
+         */
         public boolean isLeaf() {
             return left == null && right == null;
         }
 
+        /** Return true if this node is the left child of its parent.
+         * @return true if this node is the left child of its
+         *      parent
+         */
         public boolean isLeftChild() {
             return parent != null && GeometryInternalUtils.sameInstance(parent.left, this);
         }
