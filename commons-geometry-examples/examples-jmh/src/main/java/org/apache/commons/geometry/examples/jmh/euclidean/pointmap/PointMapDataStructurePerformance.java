@@ -64,7 +64,7 @@ public class PointMapDataStructurePerformance {
     public static class PointMapInput {
 
         /** Data structure implementation. */
-        @Param({"treemap", "varoctree"})
+        @Param({"treemap", "varoctree", "kdtree"})
         private String impl;
 
         /** Point distribution. */

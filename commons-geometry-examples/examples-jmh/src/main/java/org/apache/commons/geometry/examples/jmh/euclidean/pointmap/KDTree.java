@@ -356,8 +356,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
      * @return minimum node
      */
     public KDTreeNode<V> cutDimensionMin(final KDTreeNode<V> a, final KDTreeNode<V> b, final KDTreeNode<V> c,
-            final CutDimension cutDimension)
-    {
+            final CutDimension cutDimension) {
         final KDTreeNode<V> tempMin = cutDimensionMin(a, b, cutDimension);
         return cutDimensionMin(tempMin, c, cutDimension);
     }
@@ -397,22 +396,22 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
     private static final class KDTreeNode<V> implements Map.Entry<Vector3D, V> {
 
         /** Parent node; may be null. */
-        KDTreeNode<V> parent;
+        private KDTreeNode<V> parent;
 
         /** Map entry key. */
-        Vector3D key;
+        private Vector3D key;
 
         /** Map entry value. */
-        V value;
+        private V value;
 
         /** Left child; may be null. */
-        KDTreeNode<V> left;
+        private KDTreeNode<V> left;
 
         /** Right child; may be null. */
-        KDTreeNode<V> right;
+        private KDTreeNode<V> right;
 
         /** Node cut dimension. */
-        CutDimension cutDimension;
+        private CutDimension cutDimension;
 
         /** Construct a new instance.
          * @param parent parent node; may be null
@@ -440,10 +439,10 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
         /** {@inheritDoc} */
         @Override
-        public V setValue(final V value) {
-            V old = this.value;
-            this.value = value;
-            return old;
+        public V setValue(final V newValue) {
+            final V oldValue = this.value;
+            this.value = newValue;
+            return oldValue;
         }
 
         /** Return true if this node is a leaf node.
