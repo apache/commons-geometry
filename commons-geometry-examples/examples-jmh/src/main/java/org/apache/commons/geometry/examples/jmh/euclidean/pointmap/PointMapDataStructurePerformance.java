@@ -64,7 +64,7 @@ public class PointMapDataStructurePerformance {
     public static class PointMapInput {
 
         /** Data structure implementation. */
-        @Param({"treemap", "varoctree", "kdtree"})
+        @Param({"treemap", "varoctree", "kdtree", "rebuilding-kdtree"})
         private String impl;
 
         /** Point distribution. */
@@ -130,6 +130,8 @@ public class PointMapDataStructurePerformance {
                 return new VariableSplitOctree<>(PRECISION);
             case "kdtree":
                 return new KDTree<>(PRECISION);
+            case "rebuilding-kdtree":
+                return new RebuildingKDTree<>(PRECISION);
             default:
                 throw new IllegalArgumentException("Unknown map implementation: " + impl);
             }

@@ -33,7 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
     /** Enum containing possible node cut dimensions. */
-    private enum CutDimension {
+    enum CutDimension {
 
         /** X dimension. */
         X(Vector3D::getX),
@@ -133,6 +133,61 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
     @Override
     public Set<Entry<Vector3D, V>> entrySet() {
         throw new UnsupportedOperationException();
+    }
+
+    /** Return a string representation of this tree for debugging purposes.
+     * @return a string representation of this tree
+     */
+    public String treeString() {
+        final StringBuilder sb = new StringBuilder();
+
+        treeStringRecursive(root, 0, sb);
+
+        return sb.toString();
+    }
+
+    /** Recursively build a string representation of a subtree.
+     * @param node subtree root
+     * @param depth node depth
+     * @param sb string output
+     */
+    private void treeStringRecursive(final KDTreeNode<V> node, final int depth, final StringBuilder sb) {
+        if (node != null) {
+            for (int i = 0; i < depth; ++i) {
+                sb.append("    ");
+            }
+
+            String label = node.parent == null ?
+                    "*" :
+                    node.isLeftChild() ? "L" : "R";
+
+            sb.append("[")
+                .append(label)
+                .append(" | ")
+                .append(node.cutDimension)
+                .append("] ")
+                .append(node.key)
+                .append(" => ")
+                .append(node.value)
+                .append("\n");
+
+            treeStringRecursive(node.left, depth + 1, sb);
+            treeStringRecursive(node.right, depth + 1, sb);
+        }
+    }
+
+    /** Get the tree root node.
+     * @return tree root node
+     */
+    protected KDTreeNode<V> getRoot() {
+        return root;
+    }
+
+    /** Set the tree root.
+     * @param root tree root
+     */
+    protected void setRoot(final KDTreeNode<V> root) {
+        this.root = root;
     }
 
     /** Throw an exception if {@code key} is invalid.
@@ -355,7 +410,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
      * @param cutDimension search dimension
      * @return minimum node
      */
-    public KDTreeNode<V> cutDimensionMin(final KDTreeNode<V> a, final KDTreeNode<V> b, final KDTreeNode<V> c,
+    private KDTreeNode<V> cutDimensionMin(final KDTreeNode<V> a, final KDTreeNode<V> b, final KDTreeNode<V> c,
             final CutDimension cutDimension) {
         final KDTreeNode<V> tempMin = cutDimensionMin(a, b, cutDimension);
         return cutDimensionMin(tempMin, c, cutDimension);
@@ -386,39 +441,39 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
      * @param depth node depth
      * @return cut dimension instance
      */
-    private CutDimension getCutDimensionForDepth(final int depth) {
+    protected CutDimension getCutDimensionForDepth(final int depth) {
         return cutDimensions[depth % cutDimensions.length];
     }
 
     /** Class representing a node in a KD tree.
      * @param <V> Value type
      */
-    private static final class KDTreeNode<V> implements Map.Entry<Vector3D, V> {
+    static final class KDTreeNode<V> implements Map.Entry<Vector3D, V> {
 
         /** Parent node; may be null. */
-        private KDTreeNode<V> parent;
+        KDTreeNode<V> parent;
 
-        /** Map entry key. */
-        private Vector3D key;
+        /** Map key value. */
+        Vector3D key;
 
         /** Map entry value. */
-        private V value;
+        V value;
 
         /** Left child; may be null. */
-        private KDTreeNode<V> left;
+        KDTreeNode<V> left;
 
         /** Right child; may be null. */
-        private KDTreeNode<V> right;
+        KDTreeNode<V> right;
 
         /** Node cut dimension. */
-        private CutDimension cutDimension;
+        CutDimension cutDimension;
 
         /** Construct a new instance.
          * @param parent parent node; may be null
          * @param key map key
          * @param cutDimension cut dimension
          */
-        KDTreeNode(final KDTreeNode<V> parent, final Vector3D key,
+        private KDTreeNode(final KDTreeNode<V> parent, final Vector3D key,
                 final CutDimension cutDimension) {
             this.parent = parent;
             this.cutDimension = cutDimension;

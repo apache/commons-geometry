@@ -170,6 +170,8 @@ abstract class PointMapDataStructureTest {
         points.forEach(p -> map.put(p, -1));
         map.put(v, 1);
 
+        Assertions.assertEquals(1, map.get(v));
+
         // assert that each entry has a value
         EuclideanTestUtils.permute(start, stop, step, (x, y, z) -> {
             final Vector3D k = Vector3D.of(x, y, z);
@@ -201,13 +203,23 @@ abstract class PointMapDataStructureTest {
         }
     }
 
-    /** Unit test for the {@link StandardKDTree} data structure.
+    /** Unit test for the {@link KDTreeTest} data structure.
      */
     static class KDTreeTest extends PointMapDataStructureTest {
         /** {@inheritDoc} */
         @Override
         Map<Vector3D, Integer> getMap(final DoubleEquivalence precision) {
             return new KDTree<>(PRECISION);
+        }
+    }
+
+    /** Unit test for the {@link RebuildingKDTreeTest} data structure.
+     */
+    static class RebuildingKDTreeTest extends PointMapDataStructureTest {
+        /** {@inheritDoc} */
+        @Override
+        Map<Vector3D, Integer> getMap(final DoubleEquivalence precision) {
+            return new RebuildingKDTree<>(PRECISION);
         }
     }
 }
