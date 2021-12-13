@@ -105,13 +105,13 @@ public class RebuildingKDTree<V> extends KDTree<V> {
      */
     protected void collectNodesRecursive(final KDTreeNode<V> curr, final List<KDTreeNode<V>> nodes) {
         if (curr != null) {
-            collectNodesRecursive(curr.left, nodes);
+            collectNodesRecursive(curr.getLeft(), nodes);
             nodes.add(curr);
-            collectNodesRecursive(curr.right, nodes);
+            collectNodesRecursive(curr.getRight(), nodes);
 
-            curr.parent = null;
-            curr.left = null;
-            curr.right = null;
+            curr.setParent(null);
+            curr.setLeft(null);
+            curr.setRight(null);
         }
     }
 
@@ -136,17 +136,17 @@ public class RebuildingKDTree<V> extends KDTree<V> {
             node = nodes.get(splitIdx);
 
             if (startIdx < splitIdx) {
-                node.left = rebuildRecursive(nodes, startIdx, splitIdx, depth + 1);
-                node.left.parent = node;
+                node.setLeft(rebuildRecursive(nodes, startIdx, splitIdx, depth + 1));
+                node.getLeft().setParent(node);
             }
 
             if (splitIdx < endIdx - 1) {
-                node.right = rebuildRecursive(nodes, splitIdx + 1, endIdx, depth + 1);
-                node.right.parent = node;
+                node.setRight(rebuildRecursive(nodes, splitIdx + 1, endIdx, depth + 1));
+                node.getRight().setParent(node);
             }
         }
 
-        node.cutDimension = cutDimension;
+        node.setCutDimension(cutDimension);
 
         return node;
     }
@@ -167,8 +167,8 @@ public class RebuildingKDTree<V> extends KDTree<V> {
         } else if (n == 2) {
             final int bIdx = endIdx - 1;
 
-            final double a = cutDimension.getCoordinate(nodes.get(startIdx).key);
-            final double b = cutDimension.getCoordinate(nodes.get(bIdx).key);
+            final double a = cutDimension.getCoordinate(nodes.get(startIdx).getKey());
+            final double b = cutDimension.getCoordinate(nodes.get(bIdx).getKey());
             if (a <= b) {
                 return startIdx;
             } else {
@@ -198,14 +198,14 @@ public class RebuildingKDTree<V> extends KDTree<V> {
         int highTemp;
         double x;
         while (low < high) {
-            x = cutDimension.getCoordinate(nodes.get(k).key);
+            x = cutDimension.getCoordinate(nodes.get(k).getKey());
             lowTemp = low;
             highTemp = high;
             do {
-                while (cutDimension.getCoordinate(nodes.get(lowTemp).key) < x) {
+                while (cutDimension.getCoordinate(nodes.get(lowTemp).getKey()) < x) {
                     ++lowTemp;
                 }
-                while (cutDimension.getCoordinate(nodes.get(highTemp).key) > x) {
+                while (cutDimension.getCoordinate(nodes.get(highTemp).getKey()) > x) {
                     --highTemp;
                 }
 
@@ -228,9 +228,9 @@ public class RebuildingKDTree<V> extends KDTree<V> {
         }
 
         // back up to the start of the median value
-        x = cutDimension.getCoordinate(nodes.get(k).key);
+        x = cutDimension.getCoordinate(nodes.get(k).getKey());
         while (k > startIdx &&
-                cutDimension.getCoordinate(nodes.get(k - 1).key) == x) {
+                cutDimension.getCoordinate(nodes.get(k - 1).getKey()) == x) {
             --k;
         }
 
@@ -242,7 +242,7 @@ public class RebuildingKDTree<V> extends KDTree<V> {
      * @return comparator along the cut dimension
      */
     protected Comparator<KDTreeNode<V>> comparator(final CutDimension cutDimension) {
-        return (a, b) -> Double.compare(cutDimension.getCoordinate(a.key), cutDimension.getCoordinate(b.key));
+        return (a, b) -> Double.compare(cutDimension.getCoordinate(a.getKey()), cutDimension.getCoordinate(b.getKey()));
     }
 
     /** Swap two elements in {@code list}.

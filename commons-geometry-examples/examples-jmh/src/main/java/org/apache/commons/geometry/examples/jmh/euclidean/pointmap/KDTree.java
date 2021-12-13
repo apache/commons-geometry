@@ -453,22 +453,22 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
     static final class KDTreeNode<V> implements Map.Entry<Vector3D, V> {
 
         /** Parent node; may be null. */
-        KDTreeNode<V> parent;
+        private KDTreeNode<V> parent;
 
         /** Map key value. */
-        Vector3D key;
+        private Vector3D key;
 
         /** Map entry value. */
-        V value;
+        private V value;
 
         /** Left child; may be null. */
-        KDTreeNode<V> left;
+        private KDTreeNode<V> left;
 
         /** Right child; may be null. */
-        KDTreeNode<V> right;
+        private KDTreeNode<V> right;
 
         /** Node cut dimension. */
-        CutDimension cutDimension;
+        private CutDimension cutDimension;
 
         /** Construct a new instance.
          * @param parent parent node; may be null
@@ -500,6 +500,62 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
             final V oldValue = this.value;
             this.value = newValue;
             return oldValue;
+        }
+
+        /** Get the cut dimension for this node.
+         * @return cut dimension
+         */
+        public CutDimension getCutDimension() {
+            return cutDimension;
+        }
+
+        /** Set the cut dimension for this node.
+         * @param cutDimension cut dimension
+         */
+        public void setCutDimension(final CutDimension cutDimension) {
+            this.cutDimension = cutDimension;
+        }
+
+        /** Get the parent node.
+         * @return parent node; may be null
+         */
+        public KDTreeNode<V> getParent() {
+            return parent;
+        }
+
+        /** Set the parent node.
+         * @param parent parent node
+         */
+        public void setParent(final KDTreeNode<V> parent) {
+            this.parent = parent;
+        }
+
+        /** Get the left child node.
+         * @return left child node; may be null
+         */
+        public KDTreeNode<V> getLeft() {
+            return left;
+        }
+
+        /** Set the left child node.
+         * @param left left child node
+         */
+        public void setLeft(final KDTreeNode<V> left) {
+            this.left = left;
+        }
+
+        /** Get the right child node.
+         * @return right child node; may be null
+         */
+        public KDTreeNode<V> getRight() {
+            return right;
+        }
+
+        /** Set the right child node.
+         * @param right right child node
+         */
+        public void setRight(final KDTreeNode<V> right) {
+            this.right = right;
         }
 
         /** Return true if this node is a leaf node.
