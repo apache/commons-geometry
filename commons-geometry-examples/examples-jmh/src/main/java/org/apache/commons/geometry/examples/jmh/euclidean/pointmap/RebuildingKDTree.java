@@ -161,27 +161,80 @@ public class RebuildingKDTree<V> extends KDTree<V> {
      */
     protected int partition(final List<KDTreeNode<V>> nodes, final int startIdx, final int endIdx,
             final CutDimension cutDimension) {
-        if (startIdx < endIdx - 1) {
-            final List<KDTreeNode<V>> sublist = nodes.subList(startIdx, endIdx);
-            final Comparator<KDTreeNode<V>> comp = comparator(cutDimension);
+        int n = endIdx - startIdx;
+        if (n < 2) {
+            return startIdx;
+        } else if (n == 2) {
+            final int bIdx = endIdx - 1;
 
-            sublist.sort(comp);
-
-            int medianIdx = startIdx + ((endIdx - startIdx) / 2);
-
-            final double medianValue = cutDimension.getCoordinate(nodes.get(medianIdx).key);
-
-            // make sure that the median index is the first entry in the list with the
-            // median value
-            while (medianIdx > startIdx &&
-                    cutDimension.getCoordinate(nodes.get(medianIdx - 1).key) >= medianValue) {
-                --medianIdx;
+            final double a = cutDimension.getCoordinate(nodes.get(startIdx).key);
+            final double b = cutDimension.getCoordinate(nodes.get(bIdx).key);
+            if (a <= b) {
+                return startIdx;
+            } else {
+                swap(nodes, startIdx, bIdx);
+                return bIdx;
             }
+        } else {
+            return findMedianStart(nodes, startIdx, endIdx, cutDimension);
+        }
+    }
 
-            return medianIdx;
+    /** Find the starting index of the node median value in the given list. The list is
+     * partially sorted and value less than the median come before the returned index while
+     * values greater than or equal come after.
+     * @param nodes list of node
+     * @param startIdx sublist start index (inclusive)
+     * @param endIdx sublist end index (exclusive)
+     * @param cutDimension cut dimension
+     * @return index of the median in the specific sublist of {@code nodes} along the cut dimension
+     */
+    protected int findMedianStart(final List<KDTreeNode<V>> nodes, final int startIdx, final int endIdx,
+            final CutDimension cutDimension) {
+        int k = startIdx + ((endIdx - startIdx) / 2);
+        int low = startIdx;
+        int high = endIdx - 1;
+        int lowTemp;
+        int highTemp;
+        double x;
+        while (low < high) {
+            x = cutDimension.getCoordinate(nodes.get(k).key);
+            lowTemp = low;
+            highTemp = high;
+            do {
+                while (cutDimension.getCoordinate(nodes.get(lowTemp).key) < x) {
+                    ++lowTemp;
+                }
+                while (cutDimension.getCoordinate(nodes.get(highTemp).key) > x) {
+                    --highTemp;
+                }
+
+                if (lowTemp <= highTemp) {
+                    swap(nodes, lowTemp, highTemp);
+
+                    ++lowTemp;
+                    --highTemp;
+                }
+            } while (lowTemp <= highTemp);
+
+            if (k < lowTemp) {
+                // search low part
+                high = highTemp;
+            }
+            if (k > highTemp) {
+                // search high part
+                low = lowTemp;
+            }
         }
 
-        return startIdx;
+        // back up to the start of the median value
+        x = cutDimension.getCoordinate(nodes.get(k).key);
+        while (k > startIdx &&
+                cutDimension.getCoordinate(nodes.get(k - 1).key) == x) {
+            --k;
+        }
+
+        return k;
     }
 
     /** Construct a comparator the sorts by the given cut dimension.
@@ -190,5 +243,17 @@ public class RebuildingKDTree<V> extends KDTree<V> {
      */
     protected Comparator<KDTreeNode<V>> comparator(final CutDimension cutDimension) {
         return (a, b) -> Double.compare(cutDimension.getCoordinate(a.key), cutDimension.getCoordinate(b.key));
+    }
+
+    /** Swap two elements in {@code list}.
+     * @param <T> List element type
+     * @param list input list
+     * @param aIdx index of the first element
+     * @param bIdx index of the second element
+     */
+    private static <T> void swap(final List<T> list, final int aIdx, final int bIdx) {
+        final T temp = list.get(aIdx);
+        list.set(aIdx, list.get(bIdx));
+        list.set(bIdx, temp);
     }
 }

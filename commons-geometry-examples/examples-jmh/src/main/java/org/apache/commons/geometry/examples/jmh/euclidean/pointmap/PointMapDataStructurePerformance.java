@@ -24,6 +24,7 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.angle.Angle;
@@ -85,14 +86,19 @@ public class PointMapDataStructurePerformance {
         /** List of points for the run. */
         private List<Vector3D> points;
 
+        /** Random instance. */
+        private Random random;
+
         /** Set up the instance for the benchmark. */
         @Setup(Level.Iteration)
         public void setup() {
+            random = new Random(randomSeed);
+
             map = createMap();
             points = createPoints();
 
             if (randomized) {
-                Collections.shuffle(points, new Random(randomSeed));
+                Collections.shuffle(points, random);
             }
         }
 
@@ -108,6 +114,13 @@ public class PointMapDataStructurePerformance {
          */
         public List<Vector3D> getPoints() {
             return points;
+        }
+
+        /** Get the random number generator for the instance.
+         * @return random number generate
+         */
+        public Random getRandom() {
+            return random;
         }
 
         /** Create the map implementation for the run.
@@ -156,16 +169,47 @@ public class PointMapDataStructurePerformance {
     @State(Scope.Thread)
     public static class PreInsertedPointMapInput extends PointMapInput {
 
+        /** List of test points. */
+        private List<Vector3D> testPoints;
+
         /** {@inheritDoc} */
         @Override
         @Setup(Level.Iteration)
         public void setup() {
             super.setup();
 
+            final List<Vector3D> pts = getPoints();
+
+            // add the points to the map
             final Map<Vector3D, Integer> map = getMap();
-            for (final Vector3D pt : getPoints()) {
+            for (final Vector3D pt : pts) {
                 map.put(pt, VAL);
             }
+
+            // compute test points
+            testPoints = new ArrayList<>(pts.size() * 2);
+            testPoints.addAll(pts);
+
+            final Random rnd = getRandom();
+            final Bounds3D bounds = Bounds3D.from(pts);
+            final Vector3D diag = bounds.getDiagonal();
+            for (int i = 0; i < pts.size(); ++i) {
+                testPoints.add(Vector3D.of(
+                        bounds.getMin().getX() + (rnd.nextDouble() * diag.getX()),
+                        bounds.getMin().getY() + (rnd.nextDouble() * diag.getY()),
+                        bounds.getMin().getZ() + (rnd.nextDouble() * diag.getZ())));
+            }
+
+            Collections.shuffle(testPoints, rnd);
+        }
+
+        /** Get a list of test points to look for in the map. The
+         * returned list contains 2x the number of points in the map,
+         * with half equal to map entries and half random.
+         * @return list of test points
+         */
+        public List<Vector3D> getTestPoints() {
+            return testPoints;
         }
     }
 
@@ -246,7 +290,7 @@ public class PointMapDataStructurePerformance {
     public PointMapInput get(final PreInsertedPointMapInput input, final Blackhole bh) {
         final Map<Vector3D, Integer> map = input.getMap();
 
-        for (final Vector3D p : input.getPoints()) {
+        for (final Vector3D p : input.getTestPoints()) {
             bh.consume(map.get(p));
         }
 

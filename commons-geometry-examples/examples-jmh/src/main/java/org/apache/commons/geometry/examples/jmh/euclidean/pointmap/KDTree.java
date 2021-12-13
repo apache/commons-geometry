@@ -60,6 +60,9 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         }
     }
 
+    /** Array of cut dimensions; pull these eagerly to avoid having to call values() constantly. */
+    private static final CutDimension[] CUT_DIMENSIONS = CutDimension.values();
+
     /** Precision context. */
     private final Precision.DoubleEquivalence precision;
 
@@ -68,9 +71,6 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
 
     /** Tree node count. */
     private int nodeCount;
-
-    /** Array of cut dimensions; pull these eagerly to avoid having to call values() constantly. */
-    private CutDimension[] cutDimensions = CutDimension.values();
 
     /** Construct a new instance with the given precision.
      * @param precision object used to determine floating point equality between dimension
@@ -320,13 +320,15 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
                 }
 
                 // Not equivalent; the matching node (if any) could be on either
-                // side of the cut so we'll need to search both subtrees.
-                final KDTreeNode<V> leftSearchResult = findNodeRecursive(node.left, key);
-                if (leftSearchResult != null) {
-                    return leftSearchResult;
+                // side of the cut so we'll need to search both subtrees. Since points with
+                // cut dimension coordinates are always inserted into the right subtree,
+                // search that subtree first.
+                final KDTreeNode<V> righttSearchResult = findNodeRecursive(node.right, key);
+                if (righttSearchResult != null) {
+                    return righttSearchResult;
                 }
 
-                return findNodeRecursive(node.right, key);
+                return findNodeRecursive(node.left, key);
             }
         }
         return null;
@@ -442,7 +444,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
      * @return cut dimension instance
      */
     protected CutDimension getCutDimensionForDepth(final int depth) {
-        return cutDimensions[depth % cutDimensions.length];
+        return CUT_DIMENSIONS[depth % CUT_DIMENSIONS.length];
     }
 
     /** Class representing a node in a KD tree.
