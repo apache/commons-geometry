@@ -18,19 +18,14 @@ package org.apache.commons.geometry.examples.jmh.euclidean.pointmap;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.ToDoubleFunction;
 
-import javax.script.AbstractScriptEngine;
-
 import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.examples.jmh.euclidean.pointmap.KDTree.KDTreeNode;
 import org.apache.commons.numbers.core.Precision;
 
 /**
@@ -70,11 +65,8 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
         }
     }
 
-    /** Array of cut dimensions; pull these eagerly to avoid having to call values() constantly. */
-    private static final CutDimension[] CUT_DIMENSIONS = CutDimension.values();
-
     /** Number of map entries stored in leaf nodes before splitting. */
-    private static final int ENTRY_BUFFER_SIZE = 10;
+    private static final int ENTRY_BUFFER_SIZE = 20;
 
     /** Precision context. */
     private final Precision.DoubleEquivalence precision;
