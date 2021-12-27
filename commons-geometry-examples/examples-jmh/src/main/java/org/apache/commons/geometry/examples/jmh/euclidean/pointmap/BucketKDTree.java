@@ -18,10 +18,12 @@ package org.apache.commons.geometry.examples.jmh.euclidean.pointmap;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
@@ -31,14 +33,105 @@ import org.apache.commons.numbers.core.Precision;
 /**
  * KD-tree implementation that buffers vector entries at leaf nodes
  * and then splits on the median of the buffer contents when enough
- * nodes are collected. This guarantees that the has at least some
+ * nodes are collected. This guarantees that the tree has at least some
  * branching.
  * @param <V> Value type
  */
 public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
 
+    /** Number of map entries stored in leaf nodes before splitting. */
+    private static final int ENTRY_BUFFER_SIZE = 2;
+
+    /** Precision context. */
+    private final Precision.DoubleEquivalence precision;
+
+    /** Root node; not null. */
+    private Node<V> root;
+
+    /** Tree node count. */
+    private int nodeCount;
+
+    /** Construct a new instance with the given precision.
+     * @param precision object used to determine floating point equality between dimension
+     *      coordinates
+     */
+    public BucketKDTree(final Precision.DoubleEquivalence precision) {
+        this.precision = precision;
+        this.root = new BucketNode<>(this, null);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int size() {
+        return nodeCount;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public V put(final Vector3D key, final V value) {
+        validateKey(key);
+
+        final FindOrInsertResult<V> result = root.findOrInsert(key);
+        if (result.isNewEntry()) {
+            ++nodeCount;
+        }
+
+        final Vector3DEntry<V> entry = result.getEntry();
+        final V prevValue = entry.getValue();
+        entry.setValue(value);
+
+        return prevValue;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public V get(final Object key) {
+        final Vector3DEntry<V> entry = root.find((Vector3D) key);
+        return entry != null ?
+                entry.getValue() :
+                null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public V remove(final Object key) {
+        final Vector3DEntry<V> entry = root.remove((Vector3D) key);
+        if (entry != null) {
+            --nodeCount;
+            return entry.getValue();
+        }
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<Entry<Vector3D, V>> entrySet() {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Return a string representation of this tree for debugging purposes.
+     * @return a string representation of this tree
+     */
+    public String treeString() {
+        final StringBuilder sb = new StringBuilder();
+
+        root.treeString(0, sb);
+
+        return sb.toString();
+    }
+
+    /** Throw an exception if {@code key} is invalid.
+     * @param key map key
+     */
+    private void validateKey(final Vector3D key) {
+        Objects.requireNonNull(key);
+        if (!key.isFinite()) {
+            throw new IllegalArgumentException("Map key must be finite; was " + key);
+        }
+    }
+
     /** Enum containing possible node cut dimensions. */
-    enum CutDimension {
+    private enum CutDimension {
 
         /** X dimension. */
         X(Vector3D::getX),
@@ -65,104 +158,177 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
         }
     }
 
-    /** Number of map entries stored in leaf nodes before splitting. */
-    private static final int ENTRY_BUFFER_SIZE = 20;
-
-    /** Precision context. */
-    private final Precision.DoubleEquivalence precision;
-
-    /** Root node; not null. */
-    private AbstractNode<V> root;
-
-    /** Tree node count. */
-    private int nodeCount;
-
-    /** Construct a new instance with the given precision.
-     * @param precision object used to determine floating point equality between dimension
-     *      coordinates
+    /** Interface representing a reference to single entry in the tree.
+     * @param <V> Value type
      */
-    public BucketKDTree(final Precision.DoubleEquivalence precision) {
-        this.precision = precision;
-        this.root = new BucketNode<>(this, null);
+    private interface EntryReference<V> {
+
+        /** Get the entry.
+         * @return the entry
+         */
+        Vector3DEntry<V> getEntry();
+
+        /** Remove the referenced entry from the tree.
+         * @return the removed entry
+         */
+        Vector3DEntry<V> remove();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public int size() {
-        return nodeCount;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public V put(final Vector3D key, final V value) {
-        validateKey(key);
-
-        final Vector3DEntry<V> entry = root.findOrInsert(key);
-        final V prevValue = entry.getValue();
-        entry.setValue(value);
-
-        return prevValue;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public V get(final Object key) {
-        final Vector3DEntry<V> entry = root.find((Vector3D) key);
-        return entry != null ?
-                entry.getValue() :
-                null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public V remove(final Object key) {
-        // TODO
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<Entry<Vector3D, V>> entrySet() {
-        throw new UnsupportedOperationException();
-    }
-
-    /** Throw an exception if {@code key} is invalid.
-     * @param key map key
+    /** Class encapsulating the result of a find-or-insert operation.
+     * @param <V> Value type
      */
-    private void validateKey(final Vector3D key) {
-        Objects.requireNonNull(key);
-        if (!key.isFinite()) {
-            throw new IllegalArgumentException("Map key must be finite; was " + key);
+    private static final class FindOrInsertResult<V> {
+        /** Map entry. */
+        private final Vector3DEntry<V> entry;
+
+        /** Flag indicating if the entry is new. */
+        private final boolean newEntry;
+
+        FindOrInsertResult(final Vector3DEntry<V> entry, final boolean newEntry) {
+            this.entry = entry;
+            this.newEntry = newEntry;
+        }
+
+        /** Return the map entry.
+         * @return map entry
+         */
+        public Vector3DEntry<V> getEntry() {
+            return entry;
+        }
+
+        /** Return true if the map entry is new.
+         * @return true if the map entry is new
+         */
+        public boolean isNewEntry() {
+            return newEntry;
+        }
+
+        /** Construct a new result instance representing an existing map entry.
+         * @param <V> Value type
+         * @param entry existing entry
+         * @return instance representing an existing map entry
+         */
+        public static <V> FindOrInsertResult<V> existingEntry(final Vector3DEntry<V> entry) {
+            return new FindOrInsertResult<>(entry, false);
+        }
+
+        /** Construct a new result instance representing a new map entry.
+         * @param <V> Value type
+         * @param entry new map entry
+         * @return instance representing a new map entry
+         */
+        public static <V> FindOrInsertResult<V> newEntry(final Vector3DEntry<V> entry) {
+            return new FindOrInsertResult<>(entry, true);
         }
     }
 
-    static abstract class AbstractNode<V> {
+    /** Abstract base class for bucket kd-tree nodes.
+     * @param <V> Value type
+     */
+    private static abstract class Node<V> {
 
-        final BucketKDTree<V> tree;
+        /** Owning tree. */
+        protected final BucketKDTree<V> tree;
 
-        private EntryNode<V> parent;
+        /** Parent node; null for root node. */
+        protected CutNode<V> parent;
 
-        AbstractNode(final BucketKDTree<V> tree, final EntryNode<V> parent) {
+        Node(final BucketKDTree<V> tree, final CutNode<V> parent) {
             this.tree = tree;
             this.parent = parent;
         }
 
+        /** Return the map entry equivalent to the given key or null if not
+         * found.
+         * @param key key to search for
+         * @return entry equivalent to {@code key} or null if not found
+         */
+        public abstract Vector3DEntry<V> find(Vector3D key);
+
+        /** Return the map entry equivalent to the given key. An entry is created
+         * if one does not exist.
+         * @param key map key
+         * @return result of the operation
+         */
+        public abstract FindOrInsertResult<V> findOrInsert(Vector3D key);
+
+        /** Find the entry in the subtree rooted at this node containing the minimum value measured
+         * along the cut dimension.
+         * @param dim dimension to measure along
+         * @return the entry containing the minimum value measured along the cut dimension
+         */
+        public abstract EntryReference<V> findMin(CutDimension dim);
+
+        /** Insert an entry from another portion of the tree into the subtree
+         * rooted at this node.
+         * @param entry entry to insert
+         */
+        public abstract void insertExisting(Vector3DEntry<V> entry);
+
+        /** Remove the map entry equivalent to the given key or null if one
+         * was not found.
+         * @param key map key
+         * @return the removed entry or null if not found
+         */
+        public abstract Vector3DEntry<V> remove(Vector3D key);
+
+        /** Condense the subtree rooted at this node if possible.
+         */
+        public abstract void condense();
+
+        /** Return a string representation of the subtree rooted at this node.
+         * @param depth depth of this node
+         * @param sb string builder to append content to
+         */
+        public void treeString(final int depth, final StringBuilder sb) {
+            for (int i = 0; i < depth; ++i) {
+                sb.append("    ");
+            }
+
+            String label = parent == null ?
+                    "*" :
+                    isLeftChild() ? "L" : "R";
+
+            sb.append("[")
+                .append(label);
+        }
+
+        /** Return true if the entry and key are equivalent according to the map
+         * precision context.
+         * @param entry map entry
+         * @param key key value
+         * @return true if the entry and key are equivalent
+         */
         protected boolean eq(final Vector3DEntry<V> entry, final Vector3D key) {
             return entry.getKey().eq(key, tree.precision);
         }
 
+        /** Compare the given values using the precision context of the map.
+         * @param a first value
+         * @param b second value
+         * @return comparison result
+         */
         protected int eqCompare(final double a, final double b) {
             return tree.precision.compare(a, b);
         }
 
-        protected void replaceSelf(final AbstractNode<V> node) {
+        /** Replace this node with the given node.
+         * @param node replacement node; may be null
+         */
+        protected void replaceSelf(final Node<V> node) {
             if (parent == null) {
                 // this is the root
-                node.parent = null;
+                if (node != null) {
+                    node.parent = null;
+                }
+
                 tree.root = node;
             } else {
-                node.parent = parent;
-                if (GeometryInternalUtils.sameInstance(parent.left, this)) {
+                if (node != null) {
+                    node.parent = parent;
+                }
+
+                if (isLeftChild()) {
                     parent.left = node;
                 } else {
                     parent.right = node;
@@ -170,31 +336,32 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
             }
         }
 
-        abstract Vector3DEntry<V> find(Vector3D key);
-
-        abstract Vector3DEntry<V> findOrInsert(Vector3D key);
-
-        abstract Vector3DEntry<V> remove(Vector3D key);
-
-        abstract Vector3DEntry<V> findMin(CutDimension dim);
-
-        abstract void insert(Vector3DEntry<V> entry);
+        /** Return true if this node is the left child of its parent.
+         * @return true if this node is the left child of its parent
+         */
+        protected boolean isLeftChild() {
+            return parent != null && GeometryInternalUtils.sameInstance(parent.left, this);
+        }
     }
 
-    static final class EntryNode<V> extends AbstractNode<V> {
+    /** Internal tree node containing a single entry and a cut dimension.
+     * @param <V> Value type
+     */
+    private static final class CutNode<V> extends Node<V> {
 
+        /** Map entry. */
         private Vector3DEntry<V> entry;
 
-        /** Left child node; not null. */
-        private AbstractNode<V> left;
+        /** Left child node; may be null. */
+        private Node<V> left;
 
-        /** Right child node; not null. */
-        private AbstractNode<V> right;
+        /** Right child node; may be null. */
+        private Node<V> right;
 
         /** Cut dimension; not null. */
         private CutDimension cutDimension;
 
-        EntryNode(final BucketKDTree<V> tree, final EntryNode<V> parent, final Vector3DEntry<V> entry,
+        CutNode(final BucketKDTree<V> tree, final CutNode<V> parent, final Vector3DEntry<V> entry,
                 final CutDimension cutDimension) {
             super(tree, parent);
 
@@ -204,7 +371,7 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
 
         /** {@inheritDoc} */
         @Override
-        Vector3DEntry<V> find(final Vector3D key) {
+        public Vector3DEntry<V> find(final Vector3D key) {
             // pull the coordinates for the node cut dimension
             final double nodeCoord = cutDimension.getCoordinate(entry.getKey());
             final double keyCoord = cutDimension.getCoordinate(key);
@@ -220,12 +387,10 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                 return right != null ?
                         right.find(key) :
                         null;
+            } else if (eq(entry, key)) {
+                // our entry key is equivalent to the search key
+                return entry;
             } else {
-                // check if we are equivalent to the point for this node
-                if (eq(entry, key)) {
-                    return entry;
-                }
-
                 // Not equivalent; the matching node (if any) could be on either
                 // side of the cut so we'll need to search both subtrees. Since points with
                 // cut dimension coordinates are always inserted into the right subtree,
@@ -245,7 +410,7 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
 
         /** {@inheritDoc} */
         @Override
-        Vector3DEntry<V> findOrInsert(final Vector3D key) {
+        public FindOrInsertResult<V> findOrInsert(final Vector3D key) {
             // pull the coordinates for the node cut dimension
             final double nodeCoord = cutDimension.getCoordinate(entry.getKey());
             final double keyCoord = cutDimension.getCoordinate(key);
@@ -259,18 +424,16 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
             } else if (eqCmp > 0) {
                 // we definitely belong in the right subtree
                 return getOrCreateRight().findOrInsert(key);
+            } else if (eq(entry, key)) {
+                // our entry key is equivalent to the search key
+                return FindOrInsertResult.existingEntry(entry);
             } else {
-                // check if we are equivalent to the point for this node
-                if (eq(entry, key)) {
-                    return entry;
-                }
-
                 // We are not equivalent and we straddle the cut line for this node,
                 // meaning that an existing node equivalent to the key could be on either
                 // side of the cut. Perform a strict comparison to determine where the
-                // node would be inserted if we were inserting. Then check, search the
-                // opposite subtree for an existing node and if not found, go ahead and
-                // try inserting into the target subtree.
+                // node would be inserted if we were inserting. Then check the opposite
+                // subtree for an existing node and if not found, go ahead and try inserting
+                // into the target subtree.
                 final int strictCmp = Double.compare(keyCoord, nodeCoord);
                 if (strictCmp < 0) {
                     // insertion, if needed, would be performed in the left subtree, so
@@ -279,7 +442,7 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                             right.find(key) :
                             null;
                     if (rightExisting != null) {
-                        return rightExisting;
+                        return FindOrInsertResult.existingEntry(rightExisting);
                     }
 
                     return getOrCreateLeft().findOrInsert(key);
@@ -290,30 +453,142 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                             left.find(key) :
                             null;
                     if (leftExisting != null) {
-                        return leftExisting;
+                        return FindOrInsertResult.existingEntry(leftExisting);
                     }
 
                     return getOrCreateRight().findOrInsert(key);
                 }
             }
         }
-
         /** {@inheritDoc} */
         @Override
-        Vector3DEntry<V> remove(final Vector3D key) {
-            // TODO Auto-generated method stub
-            return null;
+        public Vector3DEntry<V> remove(final Vector3D key) {
+            final Vector3DEntry<V> entry = removeInternal(key);
+            condense();
+
+            return entry;
+        }
+
+        /** Internal entry removal method.
+         * @param key key to remove the entry for
+         * @return removed entry or null if not found
+         */
+        private Vector3DEntry<V> removeInternal(final Vector3D key) {
+            // pull the coordinates for the node cut dimension
+            final double nodeCoord = cutDimension.getCoordinate(entry.getKey());
+            final double keyCoord = cutDimension.getCoordinate(key);
+
+            // perform an equivalence comparison
+            final int eqcmp = eqCompare(keyCoord, nodeCoord);
+
+            if (eqcmp < 0) {
+                return left != null ?
+                        left.remove(key) :
+                        null;
+            } else if (eqcmp > 0) {
+                return right != null ?
+                        right.remove(key) :
+                        null;
+            } else if (eq(entry, key)) {
+                return removeOwnEntry();
+            } else {
+                // Not equivalent; the matching node (if any) could be on either
+                // side of the cut so we'll need to search both subtrees. Use the side
+                // closest to the key as the first to search.
+                final Node<V> first;
+                final Node<V> second;
+                if (Double.compare(keyCoord, nodeCoord) < 0) {
+                    first = left;
+                    second = right;
+                } else {
+                    first = right;
+                    second = left;
+                }
+
+                final Vector3DEntry<V> firstRemoveResult = first != null ?
+                        first.remove(key) :
+                        null;
+                if (firstRemoveResult != null) {
+                    return firstRemoveResult;
+                }
+
+                return second != null ?
+                        second.remove(key) :
+                        null;
+            }
+        }
+
+        /** Remove the entry for this cut node and replace it with an appropriate
+         * value from a child node.
+         * @return the entry removed from this node.
+         */
+        private Vector3DEntry<V> removeOwnEntry() {
+            final Vector3DEntry<V> result = entry;
+            entry = null;
+
+            if (right != null) {
+                entry = right.findMin(cutDimension).remove();
+            } else if (left != null) {
+                // swap left and right subtrees; the replacement entry will
+                // contain the minimum of the entire subtree
+                entry = left.findMin(cutDimension).remove();
+
+                right = left;
+                left = null;
+            }
+
+            condense();
+
+            return result;
         }
 
         /** {@inheritDoc} */
         @Override
-        Vector3DEntry<V> findMin(final CutDimension dim) {
-            // TODO Auto-generated method stub
-            return null;
+        public EntryReference<V> findMin(final CutDimension dim) {
+            if (cutDimension.equals(dim)) {
+                // this node splits on the dimensions we're searching for, so we
+                // only need to search the left subtree
+                if (left == null) {
+                    return new CutNodeEntryReference<>(this);
+                }
+                return left.findMin(cutDimension);
+            } else {
+                // search both subtrees for the minimum value
+                final EntryReference<V> leftMin = left != null ?
+                        left.findMin(dim) :
+                        null;
+                final EntryReference<V> rightMin = right != null ?
+                        right.findMin(dim) :
+                        null;
+
+                return minResult(
+                        leftMin,
+                        new CutNodeEntryReference<>(this),
+                        rightMin,
+                        dim);
+            }
         }
 
+        /** {@inheritDoc} */
         @Override
-        void insert(final Vector3DEntry<V> newEntry) {
+        public void condense() {
+            if (right == null && left == null) {
+                if (entry == null) {
+                    // no entries in this subtree; remove completely
+                    replaceSelf(null);
+                } else {
+                    // no more children; convert to a bucket node
+                    final BucketNode<V> bucket = new BucketNode<>(tree, null);
+                    bucket.entries.add(entry);
+
+                    replaceSelf(bucket);
+                }
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void insertExisting(final Vector3DEntry<V> newEntry) {
             // pull the coordinates for the node cut dimension
             final double nodeCoord = cutDimension.getCoordinate(entry.getKey());
             final double newCoord = cutDimension.getCoordinate(newEntry.getKey());
@@ -323,10 +598,10 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
 
             if (eqCmp < 0) {
                 // we definitely belong in the left subtree
-                getOrCreateLeft().insert(newEntry);
+                getOrCreateLeft().insertExisting(newEntry);
             } else if (eqCmp > 0) {
                 // we definitely belong in the right subtree
-                getOrCreateRight().insert(newEntry);
+                getOrCreateRight().insertExisting(newEntry);
             } else {
                 // We are not equivalent and we straddle the cut line for this node,
                 // meaning that an existing node equivalent to the key could be on either
@@ -336,39 +611,98 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                 // try inserting into the target subtree.
                 final int strictCmp = Double.compare(newCoord, nodeCoord);
                 if (strictCmp < 0) {
-                    getOrCreateLeft().insert(newEntry);
+                    getOrCreateLeft().insertExisting(newEntry);
                 } else {
-                    getOrCreateRight().insert(newEntry);
+                    getOrCreateRight().insertExisting(newEntry);
                 }
             }
         }
 
-        AbstractNode<V> getOrCreateLeft() {
+        /** Get or create the left child node.
+         * @return left child node
+         */
+        private Node<V> getOrCreateLeft() {
             if (left == null) {
                 left = new BucketNode<>(tree, this);
             }
             return left;
         }
 
-        AbstractNode<V> getOrCreateRight() {
+        /** Get or create the right child node.
+         * @return right child node
+         */
+        private Node<V> getOrCreateRight() {
             if (right == null) {
                 right = new BucketNode<>(tree, this);
             }
             return right;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public void treeString(final int depth, final StringBuilder sb) {
+            super.treeString(depth, sb);
+
+            sb.append(" | ")
+                .append(cutDimension)
+                .append("] ")
+                .append(entry.getKey())
+                .append(" => ")
+                .append(entry.getValue())
+                .append("\n");
+
+            if (left != null) {
+                left.treeString(depth + 1, sb);
+            }
+            if (right != null) {
+                right.treeString(depth + 1, sb);
+            }
+        }
     }
 
-    static final class BucketNode<V> extends AbstractNode<V> {
+    /** {@link EntryReference} implementation representing the entry from a {@link CutNode}.
+     * @param <V> Value type
+     */
+    private static final class CutNodeEntryReference<V> implements EntryReference<V> {
 
+        /** Cut node instance. */
+        private final CutNode<V> node;
+
+        CutNodeEntryReference(final CutNode<V> node) {
+            this.node = node;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3DEntry<V> getEntry() {
+            return node.entry;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3DEntry<V> remove() {
+            final Vector3DEntry<V> result = node.entry;
+            node.removeOwnEntry();
+
+            return result;
+        }
+    }
+
+    /** Leaf node class containing multiple entries.
+     * @param <V> Value type
+     */
+    private static final class BucketNode<V> extends Node<V> {
+
+        /** List of entries. */
         private List<Vector3DEntry<V>> entries = new ArrayList<>(ENTRY_BUFFER_SIZE);
 
-        BucketNode(final BucketKDTree<V> tree, final EntryNode<V> parent) {
+        BucketNode(final BucketKDTree<V> tree, final CutNode<V> parent) {
             super(tree, parent);
         }
 
         /** {@inheritDoc} */
         @Override
-        Vector3DEntry<V> find(final Vector3D key) {
+        public Vector3DEntry<V> find(final Vector3D key) {
             for (Vector3DEntry<V> entry : entries) {
                 if (eq(entry, key)) {
                     return entry;
@@ -379,9 +713,11 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
 
         /** {@inheritDoc} */
         @Override
-        Vector3DEntry<V> findOrInsert(final Vector3D key) {
+        public FindOrInsertResult<V> findOrInsert(final Vector3D key) {
             Vector3DEntry<V> entry = find(key);
-            if (entry == null) {
+            if (entry != null) {
+                return FindOrInsertResult.existingEntry(entry);
+            } else {
                 // we need to create the entry
                 entry = new Vector3DEntry<>(key, null);
 
@@ -389,51 +725,121 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                     entries.add(entry);
                 } else {
                     // we need to split
-                    final EntryNode<V> splitNode = split();
+                    final CutNode<V> splitNode = split();
 
                     replaceSelf(splitNode);
 
-                    splitNode.insert(entry);
+                    splitNode.insertExisting(entry);
+                }
+
+                return FindOrInsertResult.newEntry(entry);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3DEntry<V> remove(final Vector3D key) {
+            final Iterator<Vector3DEntry<V>> it = entries.iterator();
+            while (it.hasNext()) {
+                final Vector3DEntry<V> entry = it.next();
+                if (eq(entry, key)) {
+                    it.remove();
+
+                    condense();
+
+                    return entry;
                 }
             }
 
-            return entry;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        Vector3DEntry<V> remove(final Vector3D key) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         @Override
-        Vector3DEntry<V> findMin(final CutDimension dim) {
-            // TODO Auto-generated method stub
-            return null;
+        public EntryReference<V> findMin(final CutDimension dim) {
+            int idx = 0;
+            int minIdx = -1;
+            double minCoord = Double.POSITIVE_INFINITY;
+
+            for (final Vector3DEntry<V> entry : entries) {
+                final double coord = dim.getCoordinate(entry.getKey());
+                if (minIdx < 0 || coord < minCoord) {
+                    minIdx = idx;
+                    minCoord = coord;
+                }
+
+                ++idx;
+            }
+
+            return new BucketNodeEntryReference<>(this, minIdx);
         }
 
         /** {@inheritDoc} */
         @Override
-        void insert(final Vector3DEntry<V> entry) {
+        public void condense() {
+            if (entries.isEmpty() && parent != null) {
+                final CutNode<V> formerParent = parent;
+
+                // empty and not the root; remove from the tree
+                replaceSelf(null);
+
+                // notify the former parent that they may need to update
+                // their state
+                formerParent.condense();
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void insertExisting(final Vector3DEntry<V> entry) {
             entries.add(entry);
         }
 
-        private EntryNode<V> split() {
-            final CutDimension dim = determineCutDimension();
+        /** {@inheritDoc} */
+        @Override
+        public void treeString(final int depth, final StringBuilder sb) {
+            super.treeString(depth, sb);
 
-            entries.sort((a, b) ->
-                Double.compare(dim.getCoordinate(a.getKey()), dim.getCoordinate(b.getKey())));
-            final Vector3DEntry<V> median = entries.get(entries.size() / 2);
+            String entryStr = entries.stream()
+                    .map(e -> e.getKey() + " => " + e.getValue())
+                    .collect(Collectors.joining(", "));
 
-            final EntryNode<V> node = new EntryNode<>(tree, null, median, dim);
-
-            entries.clear();
-
-            return node;
+            sb.append("] [")
+                .append(entryStr)
+                .append("]\n");
         }
 
+        /** Split this instance into a {@link CutNode} and child nodes.
+         * @return the new cut node that should replace this instance
+         */
+        private CutNode<V> split() {
+            final CutDimension dim = determineCutDimension();
+
+            // find the median
+            entries.sort((a, b) ->
+                Double.compare(dim.getCoordinate(a.getKey()), dim.getCoordinate(b.getKey())));
+            final int medianIdx = entries.size() / 2;
+            final Vector3DEntry<V> median = entries.get(medianIdx);
+
+            // create the subtree root node on the median
+            final CutNode<V> subtree = new CutNode<>(tree, null, median, dim);
+
+            // insert the other entries
+            for (int i = 0; i < entries.size(); ++i) {
+                if (i != medianIdx) {
+                    subtree.insertExisting(entries.get(i));
+                }
+            }
+
+            // clean up
+            entries.clear();
+
+            return subtree;
+        }
+
+        /** Determine the best cutting dimension to use for the current set of entries.
+         * @return split cutting dimension
+         */
         private CutDimension determineCutDimension() {
             final Bounds3D.Builder boundsBuilder = Bounds3D.builder();
             for (Vector3DEntry<V> entry : entries) {
@@ -446,8 +852,6 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
             if (diff.getX() > diff.getY()) {
                 if (diff.getX() > diff.getZ()) {
                     return CutDimension.X;
-                } else if (diff.getY() > diff.getZ()) {
-                    return CutDimension.Y;
                 } else {
                     return CutDimension.Z;
                 }
@@ -457,5 +861,73 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                 return CutDimension.Z;
             }
         }
+    }
+
+    /** {@link EntryReference} implementation representing the entry from a {@link BucketNode}.
+     * @param <V> Value type
+     */
+    private static final class BucketNodeEntryReference<V> implements EntryReference<V> {
+
+        /** Bucket node reference. */
+        private final BucketNode<V> node;
+
+        /** Entry index. */
+        private final int idx;
+
+        BucketNodeEntryReference(final BucketNode<V> node, final int idx) {
+            this.node = node;
+            this.idx = idx;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3DEntry<V> getEntry() {
+            return node.entries.get(idx);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3DEntry<V> remove() {
+            final Vector3DEntry<V> result = node.entries.remove(idx);
+            node.condense();
+
+            return result;
+        }
+    }
+
+    /** Return the node containing the minimum value along the given cut dimension.
+     * @param <V> Value type
+     * @param a first node
+     * @param b second node
+     * @param c third node
+     * @param cutDimension search dimension
+     * @return minimum node
+     */
+    private static <V> EntryReference<V> minResult(final EntryReference<V> a, final EntryReference<V> b,
+            final EntryReference<V> c,
+            final CutDimension cutDimension) {
+        final EntryReference<V> tempMin = minResult(a, b, cutDimension);
+        return minResult(tempMin, c, cutDimension);
+    }
+
+    /** Return the node containing the minimum value along the given cut dimension. If one
+     * argument is null, the other argument is returned.
+     * @param a first node
+     * @param b second node
+     * @param cutDimension search dimension
+     * @return minimum node
+     */
+    private static <V> EntryReference<V> minResult(final EntryReference<V> a, final EntryReference<V> b,
+            final CutDimension cutDimension) {
+        if (a == null) {
+            return b;
+        } else if (b == null) {
+            return a;
+        }
+
+        final double aCoord = cutDimension.getCoordinate(a.getEntry().getKey());
+        final double bCoord = cutDimension.getCoordinate(b.getEntry().getKey());
+
+        return aCoord < bCoord ? a : b;
     }
 }
