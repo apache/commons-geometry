@@ -39,8 +39,11 @@ import org.apache.commons.numbers.core.Precision;
  */
 public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
 
+    /** Token used in debug tree strings. */
+    private static final String TREE_STRING_EQ_TOKEN = " => ";
+
     /** Number of map entries stored in leaf nodes before splitting. */
-    private static final int ENTRY_BUFFER_SIZE = 2;
+    private static final int ENTRY_BUFFER_SIZE = 10;
 
     /** Precision context. */
     private final Precision.DoubleEquivalence precision;
@@ -71,16 +74,20 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
     public V put(final Vector3D key, final V value) {
         validateKey(key);
 
-        final FindOrInsertResult<V> result = root.findOrInsert(key);
-        if (result.isNewEntry()) {
-            ++nodeCount;
+        try {
+            final FindOrInsertResult<V> result = root.findOrInsert(key);
+            if (result.isNewEntry()) {
+                ++nodeCount;
+            }
+
+            final Vector3DEntry<V> entry = result.getEntry();
+            final V prevValue = entry.getValue();
+            entry.setValue(value);
+
+            return prevValue;
+        } finally {
+            root.validate();
         }
-
-        final Vector3DEntry<V> entry = result.getEntry();
-        final V prevValue = entry.getValue();
-        entry.setValue(value);
-
-        return prevValue;
     }
 
     /** {@inheritDoc} */
@@ -95,12 +102,19 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
     /** {@inheritDoc} */
     @Override
     public V remove(final Object key) {
-        final Vector3DEntry<V> entry = root.remove((Vector3D) key);
-        if (entry != null) {
-            --nodeCount;
-            return entry.getValue();
+        try {
+            final Vector3DEntry<V> entry = root.remove((Vector3D) key);
+            if (entry != null) {
+                --nodeCount;
+
+                root.condense();
+
+                return entry.getValue();
+            }
+            return null;
+        } finally {
+            root.validate();
         }
-        return null;
     }
 
     /** {@inheritDoc} */
@@ -225,13 +239,16 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
     /** Abstract base class for bucket kd-tree nodes.
      * @param <V> Value type
      */
-    private static abstract class Node<V> {
+    private abstract static class Node<V> {
 
         /** Owning tree. */
         protected final BucketKDTree<V> tree;
 
         /** Parent node; null for root node. */
         protected CutNode<V> parent;
+
+        /** True if the node needs to be condensed. */
+        protected boolean requiresCondense;
 
         Node(final BucketKDTree<V> tree, final CutNode<V> parent) {
             this.tree = tree;
@@ -272,6 +289,16 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
          */
         public abstract Vector3DEntry<V> remove(Vector3D key);
 
+        /** Mark this node and its ancestors as requiring condensing.
+         */
+        public void markRequiresCondense() {
+            Node<V> node = this;
+            while (node != null && !node.requiresCondense) {
+                node.requiresCondense = true;
+                node = node.parent;
+            }
+        }
+
         /** Condense the subtree rooted at this node if possible.
          */
         public abstract void condense();
@@ -292,6 +319,10 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
             sb.append("[")
                 .append(label);
         }
+
+        /** Validate the state of the tree.
+         */
+        public abstract void validate();
 
         /** Return true if the entry and key are equivalent according to the map
          * precision context.
@@ -463,17 +494,6 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
         /** {@inheritDoc} */
         @Override
         public Vector3DEntry<V> remove(final Vector3D key) {
-            final Vector3DEntry<V> entry = removeInternal(key);
-            condense();
-
-            return entry;
-        }
-
-        /** Internal entry removal method.
-         * @param key key to remove the entry for
-         * @return removed entry or null if not found
-         */
-        private Vector3DEntry<V> removeInternal(final Vector3D key) {
             // pull the coordinates for the node cut dimension
             final double nodeCoord = cutDimension.getCoordinate(entry.getKey());
             final double keyCoord = cutDimension.getCoordinate(key);
@@ -537,8 +557,6 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                 left = null;
             }
 
-            condense();
-
             return result;
         }
 
@@ -572,11 +590,19 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
         /** {@inheritDoc} */
         @Override
         public void condense() {
-            if (right == null && left == null) {
+            if (requiresCondense) {
+                // condense children
+                if (left != null) {
+                    left.condense();
+                }
+                if (right != null) {
+                    right.condense();
+                }
+
                 if (entry == null) {
                     // no entries in this subtree; remove completely
                     replaceSelf(null);
-                } else {
+                } else if (right == null && left == null) {
                     // no more children; convert to a bucket node
                     final BucketNode<V> bucket = new BucketNode<>(tree, null);
                     bucket.entries.add(entry);
@@ -584,6 +610,8 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                     replaceSelf(bucket);
                 }
             }
+
+            requiresCondense = false;
         }
 
         /** {@inheritDoc} */
@@ -647,7 +675,7 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                 .append(cutDimension)
                 .append("] ")
                 .append(entry.getKey())
-                .append(" => ")
+                .append(TREE_STRING_EQ_TOKEN)
                 .append(entry.getValue())
                 .append("\n");
 
@@ -656,6 +684,25 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
             }
             if (right != null) {
                 right.treeString(depth + 1, sb);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void validate() {
+            if (entry == null) {
+                throw new IllegalArgumentException("Cut node entry cannot be null");
+            }
+            if (left == null && right == null) {
+                throw new IllegalArgumentException("Cut node cannot be leaf: " + entry.getKey());
+            }
+
+            if (left != null) {
+                left.validate();
+            }
+
+            if (right != null) {
+                right.validate();
             }
         }
     }
@@ -745,7 +792,7 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
                 if (eq(entry, key)) {
                     it.remove();
 
-                    condense();
+                    checkCondense();
 
                     return entry;
                 }
@@ -774,19 +821,22 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
             return new BucketNodeEntryReference<>(this, minIdx);
         }
 
+        /** Check if this node requires condensing and mark it if so.
+         */
+        private void checkCondense() {
+            if (entries.isEmpty() && parent != null) {
+                markRequiresCondense();
+            }
+        }
+
         /** {@inheritDoc} */
         @Override
         public void condense() {
-            if (entries.isEmpty() && parent != null) {
-                final CutNode<V> formerParent = parent;
-
-                // empty and not the root; remove from the tree
+            if (requiresCondense) {
                 replaceSelf(null);
-
-                // notify the former parent that they may need to update
-                // their state
-                formerParent.condense();
             }
+
+            requiresCondense = false;
         }
 
         /** {@inheritDoc} */
@@ -801,12 +851,20 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
             super.treeString(depth, sb);
 
             String entryStr = entries.stream()
-                    .map(e -> e.getKey() + " => " + e.getValue())
+                    .map(e -> e.getKey() + TREE_STRING_EQ_TOKEN + e.getValue())
                     .collect(Collectors.joining(", "));
 
             sb.append("] [")
                 .append(entryStr)
                 .append("]\n");
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void validate() {
+            if (entries.isEmpty() && parent != null) {
+                throw new IllegalArgumentException("Non-root bucket node entry list is empty");
+            }
         }
 
         /** Split this instance into a {@link CutNode} and child nodes.
@@ -889,7 +947,7 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
         @Override
         public Vector3DEntry<V> remove() {
             final Vector3DEntry<V> result = node.entries.remove(idx);
-            node.condense();
+            node.checkCondense();
 
             return result;
         }
@@ -912,6 +970,7 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
 
     /** Return the node containing the minimum value along the given cut dimension. If one
      * argument is null, the other argument is returned.
+     * @param <V> Value type
      * @param a first node
      * @param b second node
      * @param cutDimension search dimension

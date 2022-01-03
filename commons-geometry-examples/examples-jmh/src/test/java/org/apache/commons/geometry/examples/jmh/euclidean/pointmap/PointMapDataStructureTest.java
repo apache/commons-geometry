@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.examples.jmh.euclidean.pointmap;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -86,16 +85,9 @@ abstract class PointMapDataStructureTest {
         Assertions.assertEquals(-3, map.get(c));
         Assertions.assertEquals(-3, map.get(cAlt));
 
-        System.out.println(((BucketKDTree<?>) map).treeString());
-
         Assertions.assertEquals(-1, map.remove(aAlt));
-        System.out.println(((BucketKDTree<?>) map).treeString());
-
         Assertions.assertEquals(-2, map.remove(bAlt));
-        System.out.println(((BucketKDTree<?>) map).treeString());
-
         Assertions.assertEquals(-3, map.remove(cAlt));
-        System.out.println(((BucketKDTree<?>) map).treeString());
 
         Assertions.assertEquals(0, map.size());
 
@@ -196,8 +188,6 @@ abstract class PointMapDataStructureTest {
         });
         map.remove(v);
 
-//        System.out.println(((BucketKDTree<Integer>) map).treeString());
-
         // check that we don't have anything left
         Assertions.assertEquals(0, map.size());
         Assertions.assertNull(map.get(v));
@@ -240,35 +230,6 @@ abstract class PointMapDataStructureTest {
         @Override
         Map<Vector3D, Integer> getMap(final DoubleEquivalence precision) {
             return new BucketKDTree<>(PRECISION);
-        }
-
-        @Test
-        void scratch() {
-            BucketKDTree<Integer> map = new BucketKDTree<>(PRECISION);
-
-            List<Vector3D> keys = Arrays.asList(
-                    Vector3D.ZERO,
-                    Vector3D.Unit.PLUS_X,
-                    Vector3D.Unit.PLUS_Y,
-                    Vector3D.Unit.PLUS_Z,
-                    Vector3D.Unit.MINUS_X,
-                    Vector3D.Unit.MINUS_Y,
-                    Vector3D.Unit.MINUS_Z);
-
-            for (Vector3D key : keys) {
-                map.put(key, 1);
-            }
-
-            System.out.println(map.treeString());
-
-            for (Vector3D key : keys) {
-                final Integer result = map.remove(key);
-
-                System.out.println("Removed " + key + ": " +  (result != null));
-                System.out.println(map.treeString());
-            }
-
-            Assertions.assertEquals(0, map.size());
         }
     }
 }
