@@ -74,20 +74,16 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
     public V put(final Vector3D key, final V value) {
         validateKey(key);
 
-        try {
-            final FindOrInsertResult<V> result = root.findOrInsert(key);
-            if (result.isNewEntry()) {
-                ++nodeCount;
-            }
-
-            final Vector3DEntry<V> entry = result.getEntry();
-            final V prevValue = entry.getValue();
-            entry.setValue(value);
-
-            return prevValue;
-        } finally {
-            root.validate();
+        final FindOrInsertResult<V> result = root.findOrInsert(key);
+        if (result.isNewEntry()) {
+            ++nodeCount;
         }
+
+        final Vector3DEntry<V> entry = result.getEntry();
+        final V prevValue = entry.getValue();
+        entry.setValue(value);
+
+        return prevValue;
     }
 
     /** {@inheritDoc} */
@@ -102,19 +98,15 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
     /** {@inheritDoc} */
     @Override
     public V remove(final Object key) {
-        try {
-            final Vector3DEntry<V> entry = root.remove((Vector3D) key);
-            if (entry != null) {
-                --nodeCount;
+        final Vector3DEntry<V> entry = root.remove((Vector3D) key);
+        if (entry != null) {
+            --nodeCount;
 
-                root.condense();
+            root.condense();
 
-                return entry.getValue();
-            }
-            return null;
-        } finally {
-            root.validate();
+            return entry.getValue();
         }
+        return null;
     }
 
     /** {@inheritDoc} */

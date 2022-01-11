@@ -232,4 +232,14 @@ abstract class PointMapDataStructureTest {
             return new BucketKDTree<>(PRECISION);
         }
     }
+
+    /** Unit test for the {@link BucketKDLeafTree} data structure.
+     */
+    static class BucketLeafKDTreeTest extends PointMapDataStructureTest {
+        /** {@inheritDoc} */
+        @Override
+        Map<Vector3D, Integer> getMap(final DoubleEquivalence precision) {
+            return new BucketLeafKDTree<>(PRECISION);
+        }
+    }
 }

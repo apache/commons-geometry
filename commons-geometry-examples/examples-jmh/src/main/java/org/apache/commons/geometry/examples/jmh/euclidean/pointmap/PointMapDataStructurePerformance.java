@@ -16,6 +16,11 @@
  */
 package org.apache.commons.geometry.examples.jmh.euclidean.pointmap;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,16 +70,16 @@ public class PointMapDataStructurePerformance {
     public static class PointMapInput {
 
         /** Data structure implementation. */
-        @Param({"treemap", "varoctree", "kdtree", "rebuilding-kdtree", "bucket-kdtree"})
+        @Param({"treemap", "varoctree", "kdtree", "rebuilding-kdtree", "bucket-kdtree", "bucket-leaf-kdtree"})
         private String impl;
 
-        /** Point distribution. */
-        @Param({"block", "sphere"})
-        private String pointDist;
+        /** Point list shape. */
+        @Param({"block", "sphere", "teapot"})
+        private String shape;
 
-        /** Whether or not to randomize the order of the points. */
-        @Param({"true", "false"})
-        private boolean randomized;
+        /** Point distribution. */
+        @Param({"none", "random", "ordered"})
+        private String dist;
 
         /** Seed value for randomization. */
         @Param({"1"})
@@ -97,8 +102,17 @@ public class PointMapDataStructurePerformance {
             map = createMap();
             points = createPoints();
 
-            if (randomized) {
+            switch (dist) {
+            case "none":
+                break;
+            case "random":
                 Collections.shuffle(points, random);
+                break;
+            case "ordered":
+                Collections.sort(points, Vector3D.COORDINATE_ASCENDING_ORDER);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown distribution: " + dist);
             }
         }
 
@@ -147,6 +161,8 @@ public class PointMapDataStructurePerformance {
                 return new RebuildingKDTree<>(PRECISION);
             case "bucket-kdtree":
                 return new BucketKDTree<>(PRECISION);
+            case "bucket-leaf-kdtree":
+                return new BucketLeafKDTree<>(PRECISION);
             default:
                 throw new IllegalArgumentException("Unknown map implementation: " + impl);
             }
@@ -156,11 +172,13 @@ public class PointMapDataStructurePerformance {
          * @return list of points
          */
         private List<Vector3D> createPoints() {
-            switch (pointDist.toLowerCase()) {
+            switch (shape.toLowerCase()) {
             case "block":
                 return createPointBlock(20, 1);
             case "sphere":
                 return createPointSphere(5, 5, 10);
+            case "teapot":
+                return loadTeapotPoints();
             default:
                 throw new IllegalArgumentException("Unknown point distribution " + impl);
             }
@@ -265,6 +283,30 @@ public class PointMapDataStructurePerformance {
         points.add(Vector3D.of(0, 0, -radius));
 
         return points;
+    }
+
+    /** Load the list of points from the teapot tutorial model.
+     * @return list of points from the teapot tutorial model
+     */
+    private static List<Vector3D> loadTeapotPoints() {
+        final List<Vector3D> pts = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                PointMapDataStructurePerformance.class.getResourceAsStream("/jmh-data/teapot-points.txt"),
+                StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                final String[] parts = line.split("\\s+");
+                pts.add(Vector3D.of(
+                    Double.parseDouble(parts[0]),
+                    Double.parseDouble(parts[1]),
+                    Double.parseDouble(parts[2])));
+            }
+        } catch (IOException exc) {
+            throw new UncheckedIOException(exc);
+        }
+
+        return pts;
     }
 
     /** Benchmark that inserts each point in the input into the target map.
