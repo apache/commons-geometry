@@ -392,7 +392,7 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      * </ol>
      * @param arcs boundary arcs for the area; must contain at least 3 arcs
      * @return the weighted centroid vector for the area
-     * @see ##computeArcPoleWeightedCentroidVector(List)
+     * @see #computeArcPoleWeightedCentroidVector(List)
      */
     private static Vector3D computeTriangleFanWeightedCentroidVector(final List<GreatArc> arcs) {
         final Iterator<GreatArc> arcIt = arcs.iterator();

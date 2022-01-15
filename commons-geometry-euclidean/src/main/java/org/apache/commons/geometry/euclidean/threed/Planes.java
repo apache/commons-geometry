@@ -609,7 +609,7 @@ public final class Planes {
         }
 
         /** Process a point from the point sequence.
-         * @param pt
+         * @param pt the {@link Vector3D} process point.
          * @throws IllegalArgumentException if the points do not define a plane or the {@code requireConvex}
          *      flag is true and the points do not define a convex area
          */
