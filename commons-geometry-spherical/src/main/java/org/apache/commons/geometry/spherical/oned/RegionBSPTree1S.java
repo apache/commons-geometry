@@ -244,7 +244,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             }
         }
 
-        if (start != null && end != null) {
+        if (start != null) {
             intervals.add(createInterval(start, end));
         }
 
