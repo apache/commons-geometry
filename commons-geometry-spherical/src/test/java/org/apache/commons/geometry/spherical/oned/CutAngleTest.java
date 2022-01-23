@@ -168,6 +168,29 @@ class CutAngleTest {
     }
 
     @Test
+    void testClassify_azimuthsCloseToZero() {
+        // arrange
+        final CutAngle belowZeroPos = CutAngles.createPositiveFacing(-5e-11, TEST_PRECISION);
+        final CutAngle belowZeroNeg = CutAngles.createNegativeFacing(-5e-11, TEST_PRECISION);
+
+        final CutAngle aboveZeroPos = CutAngles.createPositiveFacing(5e-11, TEST_PRECISION);
+        final CutAngle aboveZeroNeg = CutAngles.createNegativeFacing(5e-11, TEST_PRECISION);
+
+        // act/assert
+        checkClassify(belowZeroPos, HyperplaneLocation.PLUS, -1.6e-10, 1.2e-10, 1.6e-10);
+        checkClassify(belowZeroPos, HyperplaneLocation.ON, -1.2e-10, -8e-11, -4e-11, 0, 4e-11, 8e-11);
+
+        checkClassify(belowZeroNeg, HyperplaneLocation.MINUS, -1.6e-10, 1.2e-10, 1.6e-10);
+        checkClassify(belowZeroNeg, HyperplaneLocation.ON, -1.2e-10, -8e-11, -4e-11, 0, 4e-11, 8e-11);
+
+        checkClassify(aboveZeroPos, HyperplaneLocation.PLUS, -1.6e-10, -1.2e-10, 1.6e-10);
+        checkClassify(aboveZeroPos, HyperplaneLocation.ON, -8e-11, -4e-11, 0, 4e-11, 8e-11, 1.2e-10);
+
+        checkClassify(aboveZeroNeg, HyperplaneLocation.MINUS, -1.6e-10, -1.2e-10, 1.6e-10);
+        checkClassify(aboveZeroNeg, HyperplaneLocation.ON, -8e-11, -4e-11, 0, 4e-11, 8e-11, 1.2e-10);
+    }
+
+    @Test
     void testContains() {
         // arrange
         final CutAngle pt = CutAngles.createNegativeFacing(Angle.PI_OVER_TWO, TEST_PRECISION);

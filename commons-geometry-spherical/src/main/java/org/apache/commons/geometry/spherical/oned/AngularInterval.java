@@ -47,6 +47,9 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
     /** Point halfway between the min and max boundaries. */
     private final Point1S midpoint;
 
+    /** Flag set to true if the interval wraps around the {@code 0/2pi} point. */
+    private final boolean wraps;
+
     /** Construct a new instance representing the angular region between the given
      * min and max azimuth boundaries. The arguments must be either all finite or all
      * null (to indicate the full space). If the boundaries are finite, then the min
@@ -59,9 +62,22 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
 
         this.minBoundary = minBoundary;
         this.maxBoundary = maxBoundary;
-        this.midpoint = (minBoundary != null && maxBoundary != null) ?
-                Point1S.of(0.5 * (minBoundary.getAzimuth() + maxBoundary.getAzimuth())) :
-                null;
+
+        Point1S midpointVal = null;
+        boolean wrapsVal = false;
+
+        if (minBoundary != null && maxBoundary != null) {
+            midpointVal = Point1S.of(0.5 * (minBoundary.getAzimuth() + maxBoundary.getAzimuth()));
+
+            // The interval wraps zero if the max boundary lies on the other side of zero than
+            // the min. This is a more reliable way to compute the wrapping flag than direct
+            // comparison of the normalized azimuths since this approach takes into account
+            // azimuths that are equivalent to zero.
+            wrapsVal = minBoundary.classify(maxBoundary.getPoint()) == HyperplaneLocation.PLUS;
+        }
+
+        this.midpoint =  midpointVal;
+        this.wraps = wrapsVal;
     }
 
     /** Get the minimum azimuth angle for the interval, or {@code 0}
@@ -163,13 +179,11 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
             final HyperplaneLocation minLoc = minBoundary.classify(pt);
             final HyperplaneLocation maxLoc = maxBoundary.classify(pt);
 
-            final boolean wraps = wrapsZero();
-
-            if ((!wraps && (minLoc == HyperplaneLocation.PLUS || maxLoc == HyperplaneLocation.PLUS)) ||
+            if (minLoc == HyperplaneLocation.ON || maxLoc == HyperplaneLocation.ON) {
+                return RegionLocation.BOUNDARY;
+            } else if ((!wraps && (minLoc == HyperplaneLocation.PLUS || maxLoc == HyperplaneLocation.PLUS)) ||
                     (wraps && minLoc == HyperplaneLocation.PLUS && maxLoc == HyperplaneLocation.PLUS)) {
                 return RegionLocation.OUTSIDE;
-            } else if (minLoc == HyperplaneLocation.ON || maxLoc == HyperplaneLocation.ON) {
-                return RegionLocation.BOUNDARY;
             }
         }
         return RegionLocation.INSIDE;
@@ -195,13 +209,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * @return true if the interval wraps around the zero/{@code 2pi} point
      */
     public boolean wrapsZero() {
-        if (!isFull()) {
-            final double minNormAz = minBoundary.getPoint().getNormalizedAzimuth();
-            final double maxNormAz = maxBoundary.getPoint().getNormalizedAzimuth();
-
-            return maxNormAz < minNormAz;
-        }
-        return false;
+        return wraps;
     }
 
     /** Return a new instance transformed by the argument. If the transformed size

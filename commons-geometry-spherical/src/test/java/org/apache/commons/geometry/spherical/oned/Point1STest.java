@@ -267,6 +267,51 @@ class Point1STest {
     }
 
     @Test
+    void testEqZero() {
+        // arrange
+        final double eps = 1e-8;
+        final double delta = 1e-3 * eps;
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(eps);
+
+        // act/assert
+        checkEqZero(0, precision);
+        checkEqZero(Angle.TWO_PI, precision);
+        checkEqZero(-Angle.TWO_PI, precision);
+
+        checkNotEqZero(Math.PI, precision);
+        checkNotEqZero(-Math.PI, precision);
+
+        checkNotEqZero(Angle.PI_OVER_TWO, precision);
+        checkNotEqZero(-Angle.PI_OVER_TWO, precision);
+
+        checkNotEqZero(-eps - delta, precision);
+        checkNotEqZero(-eps - delta - Angle.TWO_PI, precision);
+
+        for (double a = -eps + delta; a < eps; a += delta) {
+            checkEqZero(a, precision);
+            checkEqZero(a - Angle.TWO_PI, precision);
+            checkEqZero(a + Angle.TWO_PI, precision);
+        }
+
+        checkNotEqZero(eps + delta, precision);
+        checkNotEqZero(eps + delta + Angle.TWO_PI, precision);
+    }
+
+    private void checkEqZero(final double az, final Precision.DoubleEquivalence precision) {
+        final Point1S pt = Point1S.of(az);
+
+        Assertions.assertTrue(pt.eqZero(precision));
+        Assertions.assertTrue(Point1S.ZERO.eq(pt, precision));
+    }
+
+    private void checkNotEqZero(final double az, final Precision.DoubleEquivalence precision) {
+        final Point1S pt = Point1S.of(az);
+
+        Assertions.assertFalse(pt.eqZero(precision));
+        Assertions.assertFalse(Point1S.ZERO.eq(pt, precision));
+    }
+
+    @Test
     void testDistance() {
         // arrange
         final Point1S a = Point1S.of(0.0);

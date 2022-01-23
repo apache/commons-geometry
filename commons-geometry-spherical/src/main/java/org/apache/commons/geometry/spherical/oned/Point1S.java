@@ -210,6 +210,22 @@ public final class Point1S implements Point<Point1S> {
         return precision.eqZero(dist);
     }
 
+    /** Return true if this instance is equivalent to the {@link Point1S#ZERO zero point},
+     * meaning that the shortest angular distance of this point from the zero point is equal
+     * to zero as evaluated by the given precision context. This method is functionally equivalent
+     * to {@code pt.eq(Point1S.ZERO, precision)} but with simplified logic due to the comparison
+     * point being zero.
+     * @param precision precision context used for floating point comparisons
+     * @return true if this instance is equivalent to the zero point
+     * @see #eq(Point1S, org.apache.commons.numbers.core.Precision.DoubleEquivalence)
+     */
+    public boolean eqZero(final Precision.DoubleEquivalence precision) {
+        final double closest = normalizedAzimuth > Math.PI ?
+                Angle.TWO_PI :
+                0d;
+        return precision.eq(normalizedAzimuth, closest);
+    }
+
     /**
      * Get a hashCode for the point. Points normally must have exactly the
      * same azimuth angles in order to have the same hash code. Points
