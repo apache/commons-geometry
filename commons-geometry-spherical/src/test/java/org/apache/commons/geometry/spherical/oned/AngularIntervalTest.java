@@ -49,6 +49,35 @@ class AngularIntervalTest {
     }
 
     @Test
+    void testOf_endPointsCloseToZero() {
+        // arrange
+        final double pi = Math.PI;
+
+        final double belowZero = -5e-11;
+        final double aboveZero = 5e-11;
+
+        final double belowTwoPi = Angle.TWO_PI - 5e-11;
+        final double aboveTwoPi = Angle.TWO_PI + 5e-11;
+
+        // act/assert
+        checkInterval(AngularInterval.of(belowZero, pi, TEST_PRECISION), belowZero, pi);
+        checkInterval(AngularInterval.of(aboveZero, pi, TEST_PRECISION), aboveZero, pi);
+
+        checkInterval(AngularInterval.of(belowTwoPi, pi, TEST_PRECISION), belowTwoPi, pi + Angle.TWO_PI);
+        checkInterval(AngularInterval.of(aboveTwoPi, pi, TEST_PRECISION), aboveTwoPi, pi + Angle.TWO_PI);
+
+        checkInterval(AngularInterval.of(pi, belowZero, TEST_PRECISION), pi, belowZero + Angle.TWO_PI);
+        checkInterval(AngularInterval.of(pi, aboveZero, TEST_PRECISION), pi, aboveZero + Angle.TWO_PI);
+
+        checkInterval(AngularInterval.of(pi, belowTwoPi, TEST_PRECISION), pi, belowTwoPi);
+        checkInterval(AngularInterval.of(pi, aboveTwoPi, TEST_PRECISION), pi, aboveTwoPi);
+
+        // from GEOMETRY-143
+        checkInterval(AngularInterval.of(6, Double.parseDouble("0x1.921fb54442c8ep2"), TEST_PRECISION),
+                6, Double.parseDouble("0x1.921fb54442c8ep2"));
+    }
+
+    @Test
     void testOf_doubles_invalidArgs() {
         // act/assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> AngularInterval.of(Double.NEGATIVE_INFINITY, 0, TEST_PRECISION));
@@ -801,6 +830,8 @@ class AngularIntervalTest {
 
         Assertions.assertEquals(0, interval.getBoundarySize(), TEST_EPS);
         Assertions.assertEquals(max - min, interval.getSize(), TEST_EPS);
+
+        checkClassify(interval, RegionLocation.BOUNDARY, interval.getMinBoundary().getPoint());
 
         checkClassify(interval, RegionLocation.INSIDE, interval.getMidPoint());
         checkClassify(interval, RegionLocation.BOUNDARY,
