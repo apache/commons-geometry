@@ -335,6 +335,7 @@
             <exclude>src/site/resources/release-notes/RELEASE-NOTES-*.txt</exclude>
             <exclude>src/site/resources/txt/userguide/stress/**</exclude>
             <exclude>dist-archive/**</exclude>
+            <exclude>commons-geometry-examples/examples-jmh/src/main/resources/jmh-data/teapot-points.txt</exclude>
           </excludes>
         </configuration>
       </plugin>
