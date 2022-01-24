@@ -22,5 +22,5 @@ import org.apache.commons.geometry.core.Point;
 
 public interface PointSet<P extends Point<P>> extends Set<P> {
 
-    P getStored(P pt);
+    P resolve(P pt);
 }

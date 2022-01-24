@@ -42,7 +42,7 @@ public class PointMapAsSetAdapter<P extends Point<P>, M extends PointMap<P, Obje
 
     /** {@inheritDoc} */
     @Override
-    public P getStored(final P pt) {
+    public P resolve(final P pt) {
         return map.resolveKey(pt);
     }
 
