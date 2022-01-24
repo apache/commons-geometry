@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.internal;
+package org.apache.commons.geometry.euclidean;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -24,10 +24,9 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.geometry.core.collection.PointMap;
-import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.numbers.core.Precision;
 
-public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimensionalEuclideanVector<P>, V>
+abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
     extends AbstractMap<P, V>
     implements PointMap<P, V> {
 
@@ -38,18 +37,19 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
     final Precision.DoubleEquivalence precision;
 
     /** Root of the tree. */
-    private PointMapNode<P, V> root;
+    private Node<P, V> root;
 
     /** Size of the tree. */
     private int entryCount;
 
-    protected MultiDimensionalEuclideanPointMap(final Precision.DoubleEquivalence precision) {
+    protected AbstractMultiDimensionalPointMap(final Precision.DoubleEquivalence precision) {
         this.precision = precision;
+        this.root = new Node<>(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public P getStoredKey(final P pt) {
+    public P resolveKey(final P pt) {
         final Entry<P, V> entry = root.getEntry(pt);
         return entry != null ?
                 entry.getKey() :
@@ -112,6 +112,40 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
         throw new UnsupportedOperationException();
     }
 
+    /** Get the precision context for the instance.
+     * @return precision context for the instance
+     */
+    protected Precision.DoubleEquivalence getPrecision() {
+        return precision;
+    }
+
+    /** Get the number of children required for each node. This will vary by dimension.
+     * @return number of required children for each node
+     */
+    protected abstract int getNodeChildCount();
+
+    /** Compute the node split point based on the given entry list.
+     * @param entries entries contained in the node being split
+     * @return the computed split point
+     */
+    protected abstract P computeSplitPoint(final List<Entry<P, V>> entries);
+
+    /** Get an int encoding the location of {@code pt} relative to the
+     * node split point.
+     * @param pt point to determine the relative location of
+     * @param split node split point
+     * @return encoded point location
+     */
+    protected abstract int getLocation(final P pt, final P split);
+
+    /** Return true if the child node at {@code childIdx} matches the given
+     * encoded point location.
+     * @param childIdx child index to test
+     * @param loc encoded relative point location
+     * @return true if the child node a {@code childIdx} matches the location
+     */
+    protected abstract boolean testChildLocation(final int childIdx, final int loc);
+
     /** Method called when a new entry is added to the tree.
      */
     void entryAdded() {
@@ -124,18 +158,28 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
         --entryCount;
     }
 
-    /** Construct a new node for this map.
-     * @return a new map node
+    /** Get the encoded location value for the given comparison value.
+     * @param cmp comparison result
+     * @param neg negative flag
+     * @param pos positive flag
+     * @return encoded location value
      */
-    protected abstract PointMapNode<P, V> createNode();
+    static int getLocationValue(final int cmp, final int neg, final int pos) {
+        if (cmp < 0) {
+            return neg;
+        } else if (cmp > 0) {
+            return pos;
+        }
+        return neg | pos;
+    }
 
-    public abstract static class PointMapNode<P extends MultiDimensionalEuclideanVector<P>, V> {
+    private static final class Node<P extends EuclideanVector<P>, V> {
 
         /** Owning map. */
-        private final MultiDimensionalEuclideanPointMap<P, V> map;
+        private final AbstractMultiDimensionalPointMap<P, V> map;
 
         /** Child nodes. */
-        private List<PointMapNode<P, V>> children;
+        private List<Node<P, V>> children;
 
         /** Points stored in the node; this will only be populated for leaf nodes. */
         private List<Entry<P, V>> entries = new ArrayList<>(MAX_ENTRIES_PER_NODE);
@@ -143,7 +187,7 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
         /** The split point of the node; will be null for leaf nodes. */
         private P splitPoint;
 
-        PointMapNode(final MultiDimensionalEuclideanPointMap<P, V> map) {
+        Node(final AbstractMultiDimensionalPointMap<P, V> map) {
             this.map = map;
         }
 
@@ -180,11 +224,11 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
 
             // non-leaf node
             // determine the relative location of the key
-            final int loc = getLocation(key, splitPoint);
+            final int loc = map.getLocation(key, splitPoint);
 
             // insert into the first child that can contain the key
             for (int i = 0; i < children.size(); ++i) {
-                if (testChildLocation(i, loc)) {
+                if (map.testChildLocation(i, loc)) {
                     getOrCreateChild(i).insertEntry(key, value);
                     break;
                 }
@@ -209,9 +253,9 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
 
             // delegate to each child that could possibly contain the
             // point or an equivalent point
-            final int loc = getLocation(key, splitPoint);
+            final int loc = map.getLocation(key, splitPoint);
             for (int i = 0; i < children.size(); ++i) {
-                if (testChildLocation(i, loc)) {
+                if (map.testChildLocation(i, loc)) {
                     final Entry<P, V> entry = getEntryInChild(i, key);
                     if (entry != null) {
                         return entry;
@@ -245,9 +289,9 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
             }
 
             // look through children
-            final int loc = getLocation(key, splitPoint);
+            final int loc = map.getLocation(key, splitPoint);
             for (int i = 0; i < children.size(); ++i) {
-                if (testChildLocation(i, loc)) {
+                if (map.testChildLocation(i, loc)) {
                     final Entry<P, V> entry = removeFromChild(i, key);
                     if (entry != null) {
 
@@ -268,7 +312,7 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
          * @return entry matching {@code key} in child or null if not found
          */
         private Entry<P, V> getEntryInChild(final int idx, final P key) {
-            final PointMapNode<P, V> child = children.get(idx);
+            final Node<P, V> child = children.get(idx);
             if (child != null) {
                 return child.getEntry(key);
             }
@@ -281,7 +325,7 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
          * @return entry removed from the child or null if not found
          */
         private Entry<P, V> removeFromChild(final int idx, final P key) {
-            final PointMapNode<P, V> child = children.get(idx);
+            final Node<P, V> child = children.get(idx);
             if (child != null) {
                 final Entry<P, V> entry = child.removeEntry(key);
                 if (entry != null) {
@@ -297,14 +341,14 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
          * This node becomes an internal node.
          */
         private void splitNode() {
-            splitPoint = computeSplitPoint(entries);
+            splitPoint = map.computeSplitPoint(entries);
 
-            final int numChildren = getNumChildren();
+            final int childCount = map.getNodeChildCount();
 
-            children = new ArrayList<>(numChildren);
+            children = new ArrayList<>(childCount);
             // add null placeholders entries for children; these will be replaced
             // with actual nodes as needed
-            for (int i = 0; i < numChildren; ++i) {
+            for (int i = 0; i < childCount; ++i) {
                 children.add(null);
             }
 
@@ -315,46 +359,12 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
             entries.clear();
         }
 
-        /** Get the precision context for the node.
-         * @return precision context for the node
-         */
-        protected Precision.DoubleEquivalence getPrecision() {
-            return map.precision;
-        }
-
-        /** Get the number of children required for each node. This will vary by dimension.
-         * @return number of required children for each node
-         */
-        protected abstract int getNumChildren();
-
-        /** Compute the node split point based on the given entry list.
-         * @param entries entries contained in the node being split
-         * @return the computed split point
-         */
-        protected abstract P computeSplitPoint(final List<Entry<P, V>> entries);
-
-        /** Get an int encoding the location of {@code pt} relative to the
-         * node split point.
-         * @param pt point to determine the relative location of
-         * @param split node split point
-         * @return encoded point location
-         */
-        protected abstract int getLocation(final P pt, final P split);
-
-        /** Return true if the child node at {@code childIdx} matches the given
-         * encoded point location.
-         * @param childIdx child index to test
-         * @param loc encoded relative point location
-         * @return true if the child node a {@code childIdx} matches the location
-         */
-        protected abstract boolean testChildLocation(final int childIdx, final int loc);
-
         /** Attempt to condense the subtree rooted at this internal node by converting
          * it to a leaf if no children contain entries.
          */
         private void checkMakeLeaf() {
             boolean empty = true;
-            for (final PointMapNode<P, V> child : children) {
+            for (final Node<P, V> child : children) {
                 if (child != null && !child.isEmpty()) {
                     empty = false;
                     break;
@@ -377,12 +387,12 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
          * @param entry entry to mode
          */
         private void moveToChild(final Entry<P, V> entry) {
-            final int loc = getLocation(entry.getKey(), splitPoint);
+            final int loc = map.getLocation(entry.getKey(), splitPoint);
 
             final int numChildren = children.size();
             for (int i = 0; i < numChildren; ++i) {
                 // place the entry in the first child that contains it
-                if (testChildLocation(i, loc)) {
+                if (map.testChildLocation(i, loc)) {
                     getOrCreateChild(i).entries.add(entry);
                     break;
                 }
@@ -393,29 +403,13 @@ public abstract class MultiDimensionalEuclideanPointMap<P extends MultiDimension
          * @param idx index of the child node
          * @return child node at the given index
          */
-        private PointMapNode<P, V> getOrCreateChild(final int idx) {
-            PointMapNode<P, V> child = children.get(idx);
+        private Node<P, V> getOrCreateChild(final int idx) {
+            Node<P, V> child = children.get(idx);
             if (child == null) {
-                child = map.createNode();
+                child = new Node<>(map);
                 children.set(idx, child);
             }
             return child;
-        }
-
-
-        /** Get the encoded location value for the given comparison value.
-         * @param cmp comparison result
-         * @param neg negative flag
-         * @param pos positive flag
-         * @return encoded location value
-         */
-        static int getLocationValue(final int cmp, final int neg, final int pos) {
-            if (cmp < 0) {
-                return neg;
-            } else if (cmp > 0) {
-                return pos;
-            }
-            return neg | pos;
         }
     }
 }

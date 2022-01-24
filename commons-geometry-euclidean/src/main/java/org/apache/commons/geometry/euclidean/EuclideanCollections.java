@@ -16,8 +16,10 @@
  */
 package org.apache.commons.geometry.euclidean;
 
+import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointSet;
+import org.apache.commons.geometry.core.internal.PointMapAsSetAdapter;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -29,32 +31,30 @@ public final class EuclideanCollections {
     private EuclideanCollections() { }
 
     public static <T> PointMap<Vector1D, T> pointMap1D(final Precision.DoubleEquivalence precision) {
-        // TODO
-        return null;
+        return new PointMap1D<>(precision);
     }
 
     public static <T> PointSet<Vector1D> pointSet1D(final Precision.DoubleEquivalence precision) {
-        // TODO
-        return null;
+        return asSet(pointMap1D(precision));
     }
 
     public static <T> PointMap<Vector2D, T> pointMap2D(final Precision.DoubleEquivalence precision) {
-        // TODO
-        return null;
+        return new PointMap2D<>(precision);
     }
 
     public static <T> PointSet<Vector2D> pointSet2D(final Precision.DoubleEquivalence precision) {
-        // TODO
-        return null;
+        return asSet(pointMap2D(precision));
     }
 
     public static <T> PointMap<Vector3D, T> pointMap3D(final Precision.DoubleEquivalence precision) {
-        // TODO
-        return null;
+        return new PointMap3D<>(precision);
     }
 
     public static <T> PointSet<Vector3D> pointSet3D(final Precision.DoubleEquivalence precision) {
-        // TODO
-        return null;
+        return asSet(pointMap3D(precision));
+    }
+
+    private static <P extends Point<P>, V> PointSet<P> asSet(final PointMap<P, Object> map) {
+        return new PointMapAsSetAdapter<>(map);
     }
 }

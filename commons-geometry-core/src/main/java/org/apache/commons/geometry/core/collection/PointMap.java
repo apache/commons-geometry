@@ -22,5 +22,5 @@ import org.apache.commons.geometry.core.Point;
 
 public interface PointMap<P extends Point<P>, V> extends Map<P, V> {
 
-    P getStoredKey(P pt);
+    P resolveKey(P pt);
 }
