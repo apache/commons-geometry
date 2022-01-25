@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean;
+package org.apache.commons.geometry.euclidean.internal;
 
 import java.util.AbstractMap;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.commons.geometry.core.collection.PointMap;
+import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.core.Precision;
 
-abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
+public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
     extends AbstractMap<P, V>
     implements PointMap<P, V> {
 
@@ -36,15 +40,21 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
     /** Precision context. */
     final Precision.DoubleEquivalence precision;
 
+    /** Function used to construct new node instances. */
+    final Function<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>> nodeFactory;
+
     /** Root of the tree. */
     private Node<P, V> root;
 
     /** Size of the tree. */
     private int entryCount;
 
-    protected AbstractMultiDimensionalPointMap(final Precision.DoubleEquivalence precision) {
+    protected AbstractMultiDimensionalPointMap(
+            final Function<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>> nodeFactory,
+            final Precision.DoubleEquivalence precision) {
         this.precision = precision;
-        this.root = new Node<>(this);
+        this.nodeFactory = nodeFactory;
+        this.root = nodeFactory.apply(this);
     }
 
     /** {@inheritDoc} */
@@ -112,39 +122,12 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
         throw new UnsupportedOperationException();
     }
 
-    /** Get the precision context for the instance.
-     * @return precision context for the instance
+    /** Construct a new node instance.
+     * @return the new node instance
      */
-    protected Precision.DoubleEquivalence getPrecision() {
-        return precision;
+    Node<P, V> createNode() {
+        return nodeFactory.apply(this);
     }
-
-    /** Get the number of children required for each node. This will vary by dimension.
-     * @return number of required children for each node
-     */
-    protected abstract int getNodeChildCount();
-
-    /** Compute the node split point based on the given entry list.
-     * @param entries entries contained in the node being split
-     * @return the computed split point
-     */
-    protected abstract P computeSplitPoint(final List<Entry<P, V>> entries);
-
-    /** Get an int encoding the location of {@code pt} relative to the
-     * node split point.
-     * @param pt point to determine the relative location of
-     * @param split node split point
-     * @return encoded point location
-     */
-    protected abstract int getLocation(final P pt, final P split);
-
-    /** Return true if the child node at {@code childIdx} matches the given
-     * encoded point location.
-     * @param childIdx child index to test
-     * @param loc encoded relative point location
-     * @return true if the child node a {@code childIdx} matches the location
-     */
-    protected abstract boolean testChildLocation(final int childIdx, final int loc);
 
     /** Method called when a new entry is added to the tree.
      */
@@ -158,22 +141,7 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
         --entryCount;
     }
 
-    /** Get the encoded location value for the given comparison value.
-     * @param cmp comparison result
-     * @param neg negative flag
-     * @param pos positive flag
-     * @return encoded location value
-     */
-    static int getLocationValue(final int cmp, final int neg, final int pos) {
-        if (cmp < 0) {
-            return neg;
-        } else if (cmp > 0) {
-            return pos;
-        }
-        return neg | pos;
-    }
-
-    private static final class Node<P extends EuclideanVector<P>, V> {
+    public static abstract class Node<P extends EuclideanVector<P>, V> {
 
         /** Owning map. */
         private final AbstractMultiDimensionalPointMap<P, V> map;
@@ -187,7 +155,7 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
         /** The split point of the node; will be null for leaf nodes. */
         private P splitPoint;
 
-        Node(final AbstractMultiDimensionalPointMap<P, V> map) {
+        protected Node(final AbstractMultiDimensionalPointMap<P, V> map) {
             this.map = map;
         }
 
@@ -224,11 +192,11 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
 
             // non-leaf node
             // determine the relative location of the key
-            final int loc = map.getLocation(key, splitPoint);
+            final int loc = getLocation(key, splitPoint);
 
             // insert into the first child that can contain the key
             for (int i = 0; i < children.size(); ++i) {
-                if (map.testChildLocation(i, loc)) {
+                if (testChildLocation(i, loc)) {
                     getOrCreateChild(i).insertEntry(key, value);
                     break;
                 }
@@ -253,9 +221,9 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
 
             // delegate to each child that could possibly contain the
             // point or an equivalent point
-            final int loc = map.getLocation(key, splitPoint);
+            final int loc = getLocation(key, splitPoint);
             for (int i = 0; i < children.size(); ++i) {
-                if (map.testChildLocation(i, loc)) {
+                if (testChildLocation(i, loc)) {
                     final Entry<P, V> entry = getEntryInChild(i, key);
                     if (entry != null) {
                         return entry;
@@ -289,9 +257,9 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
             }
 
             // look through children
-            final int loc = map.getLocation(key, splitPoint);
+            final int loc = getLocation(key, splitPoint);
             for (int i = 0; i < children.size(); ++i) {
-                if (map.testChildLocation(i, loc)) {
+                if (testChildLocation(i, loc)) {
                     final Entry<P, V> entry = removeFromChild(i, key);
                     if (entry != null) {
 
@@ -305,6 +273,40 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
             // not found
             return null;
         }
+
+        /** Get the precision context for the instance.
+         * @return precision context for the instance
+         */
+        protected Precision.DoubleEquivalence getPrecision() {
+            return map.precision;
+        }
+
+        /** Get the number of children required for each node. This will vary by dimension.
+         * @return number of required children for each node
+         */
+        protected abstract int getNodeChildCount();
+
+        /** Compute the node split point based on the given entry list.
+         * @param entries entries contained in the node being split
+         * @return the computed split point
+         */
+        protected abstract P computeSplitPoint(final List<Entry<P, V>> entries);
+
+        /** Get an int encoding the location of {@code pt} relative to the
+         * node split point.
+         * @param pt point to determine the relative location of
+         * @param split node split point
+         * @return encoded point location
+         */
+        protected abstract int getLocation(final P pt, final P split);
+
+        /** Return true if the child node at {@code childIdx} matches the given
+         * encoded point location.
+         * @param childIdx child index to test
+         * @param loc encoded relative point location
+         * @return true if the child node a {@code childIdx} matches the location
+         */
+        protected abstract boolean testChildLocation(final int childIdx, final int loc);
 
         /** Get the given entry in the child at {@code idx} or null if not found.
          * @param idx child index
@@ -341,9 +343,9 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
          * This node becomes an internal node.
          */
         private void splitNode() {
-            splitPoint = map.computeSplitPoint(entries);
+            splitPoint = computeSplitPoint(entries);
 
-            final int childCount = map.getNodeChildCount();
+            final int childCount = getNodeChildCount();
 
             children = new ArrayList<>(childCount);
             // add null placeholders entries for children; these will be replaced
@@ -387,12 +389,12 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
          * @param entry entry to mode
          */
         private void moveToChild(final Entry<P, V> entry) {
-            final int loc = map.getLocation(entry.getKey(), splitPoint);
+            final int loc = getLocation(entry.getKey(), splitPoint);
 
             final int numChildren = children.size();
             for (int i = 0; i < numChildren; ++i) {
                 // place the entry in the first child that contains it
-                if (map.testChildLocation(i, loc)) {
+                if (testChildLocation(i, loc)) {
                     getOrCreateChild(i).entries.add(entry);
                     break;
                 }
@@ -406,10 +408,49 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
         private Node<P, V> getOrCreateChild(final int idx) {
             Node<P, V> child = children.get(idx);
             if (child == null) {
-                child = new Node<>(map);
+                child = map.nodeFactory.apply(map);
                 children.set(idx, child);
             }
             return child;
+        }
+
+        /** Get the encoded location value for the given comparison value.
+         * @param cmp comparison result
+         * @param neg negative flag
+         * @param pos positive flag
+         * @return encoded location value
+         */
+        public static int getLocationValue(final int cmp, final int neg, final int pos) {
+            if (cmp < 0) {
+                return neg;
+            } else if (cmp > 0) {
+                return pos;
+            }
+            return neg | pos;
+        }
+    }
+
+    private static final class EntrySet<P extends EuclideanVector<P>, V>
+        extends AbstractSet<Map.Entry<P, V>> {
+
+        /** Owning map. */
+        private final AbstractMultiDimensionalPointMap<P, V> map;
+
+        EntrySet(final AbstractMultiDimensionalPointMap<P, V> map) {
+            this.map = map;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Iterator<Entry<P, V>> iterator() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int size() {
+            return map.size();
         }
     }
 }

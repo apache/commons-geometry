@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean;
+package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.collection.PointMap;
-import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.PointMapTestBase;
 import org.apache.commons.numbers.core.Precision;
 
 class PointMap3DTest extends PointMapTestBase<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    <V> PointMap<Vector3D, V> getMap(final Precision.DoubleEquivalence precision) {
-        return new PointMap3D<>(precision);
+    public <V> PointMap<Vector3D, V> getMap(final Precision.DoubleEquivalence precision) {
+        return PointMap3D.of(precision);
     }
 
     /** {@inheritDoc} */
     @Override
-    List<Vector3D> getTestPoints(final int cnt, final double eps) {
+    public List<Vector3D> getTestPoints(final int cnt, final double eps) {
         final List<Vector3D> pts = new ArrayList<>(cnt);
 
         final double delta = 10 * eps;

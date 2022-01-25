@@ -14,24 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean;
+package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.geometry.core.collection.PointMap;
-import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.core.Precision;
 
-final class PointMap1D<V>
-    implements PointMap<Vector1D, V> {
+final class PointMap1DImpl<V>
+    implements PointMap1D<V> {
 
     /** Underlying tree map. */
     private final TreeMap<Vector1D, V> map;
 
-    protected PointMap1D(final Precision.DoubleEquivalence precision) {
+    protected PointMap1DImpl(final Precision.DoubleEquivalence precision) {
         this.map = new TreeMap<>((a, b) -> precision.compare(a.getX(), b.getX()));
     }
 

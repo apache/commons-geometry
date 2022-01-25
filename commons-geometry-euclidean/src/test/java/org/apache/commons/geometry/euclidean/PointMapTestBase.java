@@ -17,10 +17,8 @@
 package org.apache.commons.geometry.euclidean;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.geometry.core.collection.PointMap;
-import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,7 +26,7 @@ import org.junit.jupiter.api.Test;
 /** Base test class for Euclidean {@link PointMap} implementations.
  * @param <P> Point type
  */
-abstract class PointMapTestBase<P extends EuclideanVector<P>> {
+public abstract class PointMapTestBase<P extends EuclideanVector<P>> {
 
     private static final double EPS = 1e-10;
 
@@ -40,7 +38,7 @@ abstract class PointMapTestBase<P extends EuclideanVector<P>> {
      * @param precision precision context to determine floating point equality
      * @return a new map instance for testing.
      */
-    abstract <V> PointMap<P, V> getMap(Precision.DoubleEquivalence precision);
+    public abstract <V> PointMap<P, V> getMap(Precision.DoubleEquivalence precision);
 
     /** Get {@code cnt} number of unique test points that differ from each other in
      * each dimension by at least {@code eps}.
@@ -49,7 +47,7 @@ abstract class PointMapTestBase<P extends EuclideanVector<P>> {
      *      each dimension
      * @return list of test points
      */
-    abstract List<P> getTestPoints(int cnt, double eps);
+    public abstract List<P> getTestPoints(int cnt, double eps);
 
     @Test
     void testEmpty() {
