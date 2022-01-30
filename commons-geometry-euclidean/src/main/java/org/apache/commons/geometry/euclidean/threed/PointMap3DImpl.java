@@ -65,8 +65,8 @@ final class PointMap3DImpl<V>
 
     private static final class Node3D<V> extends Node<Vector3D, V> {
 
-        Node3D(final AbstractMultiDimensionalPointMap<Vector3D, V> map) {
-            super(map);
+        Node3D(final AbstractMultiDimensionalPointMap<Vector3D, V> map, final Node<Vector3D, V> parent) {
+            super(map, parent);
         }
 
         /** {@inheritDoc} */

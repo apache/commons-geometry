@@ -54,8 +54,8 @@ final class PointMap2DImpl<V>
 
     private static final class Node2D<V> extends Node<Vector2D, V> {
 
-        Node2D(final AbstractMultiDimensionalPointMap<Vector2D, V> map) {
-            super(map);
+        Node2D(final AbstractMultiDimensionalPointMap<Vector2D, V> map, final Node<Vector2D, V> parent) {
+            super(map, parent);
         }
 
         /** {@inheritDoc} */

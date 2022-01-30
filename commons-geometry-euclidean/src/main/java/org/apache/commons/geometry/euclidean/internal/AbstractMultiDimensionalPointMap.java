@@ -19,12 +19,16 @@ package org.apache.commons.geometry.euclidean.internal;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
@@ -41,7 +45,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
     final Precision.DoubleEquivalence precision;
 
     /** Function used to construct new node instances. */
-    final Function<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>> nodeFactory;
+    final BiFunction<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>, Node<P, V>> nodeFactory;
 
     /** Root of the tree. */
     private Node<P, V> root;
@@ -49,12 +53,15 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
     /** Size of the tree. */
     private int entryCount;
 
+    /** Version counter, used to track tree modifications. */
+    private int version;
+
     protected AbstractMultiDimensionalPointMap(
-            final Function<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>> nodeFactory,
+            final BiFunction<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>, Node<P, V>> nodeFactory,
             final Precision.DoubleEquivalence precision) {
         this.precision = precision;
         this.nodeFactory = nodeFactory;
-        this.root = nodeFactory.apply(this);
+        this.root = nodeFactory.apply(this, null);
     }
 
     /** {@inheritDoc} */
@@ -119,32 +126,38 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
     /** {@inheritDoc} */
     @Override
     public Set<Entry<P, V>> entrySet() {
-        throw new UnsupportedOperationException();
+        return new EntrySet<>(this);
     }
 
     /** Construct a new node instance.
+     * @param parent parent node; will be null or the tree root
      * @return the new node instance
      */
-    Node<P, V> createNode() {
-        return nodeFactory.apply(this);
+    Node<P, V> createNode(final Node<P, V> parent) {
+        return nodeFactory.apply(this, parent);
     }
 
     /** Method called when a new entry is added to the tree.
      */
-    void entryAdded() {
+    private void entryAdded() {
         ++entryCount;
+        ++version;
     }
 
     /** Method called when an entry is removed from the tree.
      */
-    void entryRemoved() {
+    private void entryRemoved() {
         --entryCount;
+        ++version;
     }
 
     public static abstract class Node<P extends EuclideanVector<P>, V> {
 
         /** Owning map. */
         private final AbstractMultiDimensionalPointMap<P, V> map;
+
+        /** Parent node. */
+        private final Node<P, V> parent;
 
         /** Child nodes. */
         private List<Node<P, V>> children;
@@ -155,8 +168,9 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         /** The split point of the node; will be null for leaf nodes. */
         private P splitPoint;
 
-        protected Node(final AbstractMultiDimensionalPointMap<P, V> map) {
+        protected Node(final AbstractMultiDimensionalPointMap<P, V> map, final Node<P, V> parent) {
             this.map = map;
+            this.parent = parent;
         }
 
         /** Return true if the node is a leaf.
@@ -272,6 +286,48 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
 
             // not found
             return null;
+        }
+
+        public Iterator<Map.Entry<P, V>> iterator() {
+            final Iterator<Map.Entry<P, V>> it = entries.iterator();
+
+            return new Iterator<Map.Entry<P, V>>() {
+
+                @Override
+                public boolean hasNext() {
+                    return it.hasNext();
+                }
+
+                @Override
+                public Entry<P, V> next() {
+                    return it.next();
+                }
+
+                @Override
+                public void remove() {
+                    it.remove();
+
+                    onEntryRemovedDirect();
+                }
+            };
+        }
+
+        /**
+         * Method called when an entry is directly removed from node without first
+         * being located by traversing the tree.
+         */
+        private void onEntryRemovedDirect() {
+            // notify the owning map
+            map.entryRemoved();
+
+            // navigate up the tree and see if any subtrees need
+            // to be pruned
+            Node<P, V> current = parent;
+            while (current != null) {
+                current.checkMakeLeaf();
+
+                current = current.parent;
+            }
         }
 
         /** Get the precision context for the instance.
@@ -408,7 +464,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         private Node<P, V> getOrCreateChild(final int idx) {
             Node<P, V> child = children.get(idx);
             if (child == null) {
-                child = map.nodeFactory.apply(map);
+                child = map.nodeFactory.apply(map, this);
                 children.set(idx, child);
             }
             return child;
@@ -443,14 +499,119 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         /** {@inheritDoc} */
         @Override
         public Iterator<Entry<P, V>> iterator() {
-            // TODO Auto-generated method stub
-            return null;
+            return new EntryIterator<>(map);
         }
 
         /** {@inheritDoc} */
         @Override
         public int size() {
             return map.size();
+        }
+    }
+
+    private static final class EntryIterator<P extends EuclideanVector<P>, V>
+        implements Iterator<Map.Entry<P, V>> {
+
+        /** Owning map. */
+        private final AbstractMultiDimensionalPointMap<P, V> map;
+
+        /** Queue of nodes waiting to be visited. */
+        private final Deque<Node<P, V>> nodeQueue = new LinkedList<>();
+
+        /** Iterator that returned the previous entry. */
+        private Iterator<Map.Entry<P, V>> prevEntryIterator;
+
+        /** The next entry to be returned by the iterator. */
+        private Map.Entry<P, V> nextEntry;
+
+        /** Iterator that produces the next entry to be returned. */
+        private Iterator<Map.Entry<P, V>> nextEntryIterator;
+
+        private int expectedVersion;
+
+        EntryIterator(final AbstractMultiDimensionalPointMap<P, V> map) {
+            this.map = map;
+            this.nodeQueue.add(map.root);
+
+            queueNextEntry();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean hasNext() {
+            return nextEntry != null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Entry<P, V> next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            checkVersion();
+
+            final Map.Entry<P, V> result = nextEntry;
+
+            prevEntryIterator = nextEntryIterator;
+
+            queueNextEntry();
+
+            return result;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void remove() {
+            if (prevEntryIterator != null) {
+                prevEntryIterator.remove();
+            }
+        }
+
+        /** Prepare the next entry to be returned by the iterator.
+         */
+        private void queueNextEntry() {
+            if (nextEntryIterator != null && nextEntryIterator.hasNext()) {
+                nextEntry = nextEntryIterator.next();
+            } else {
+                final Node<P, V> node = findNonEmptyLeafNode();
+                if (node != null) {
+                    nextEntryIterator = node.iterator();
+                    nextEntry = nextEntryIterator.next();
+                } else {
+                    nextEntryIterator = null;
+                    nextEntry = null;
+                }
+            }
+        }
+
+        /** Find and return the next non-empty leaf node in the map.
+         * @return the next non-empty leaf node or null if one cannot
+         *      be found
+         */
+        private Node<P, V> findNonEmptyLeafNode() {
+            while (!nodeQueue.isEmpty()) {
+                final Node<P, V> node = nodeQueue.removeFirst();
+
+                if (!node.isLeaf()) {
+                    // internal node; add children to the queue
+                    nodeQueue.addAll(node.children);
+                } else if (!node.isEmpty()) {
+                    // return the non-empty iterator
+                    return node;
+                }
+            }
+
+            return null;
+        }
+
+        /** Throw a {@link ConcurrentModificationException} if the map version does
+         * not match the expected version.
+         */
+        private void checkVersion() {
+            if (map.version != expectedVersion) {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 }
