@@ -18,9 +18,11 @@ package org.apache.commons.geometry.core.collection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.geometry.core.Point;
@@ -53,6 +55,21 @@ public abstract class PointMapTestBase<P extends Point<P>> {
      * @return list of test points
      */
     protected abstract List<P> getTestPoints(int cnt, double eps);
+
+    /** Get {@code cnt} number of unique test points that differ from each other in
+     * each dimension by <em>at least</em> {@code eps}. The returned list is shuffled
+     * using {@code rnd}.
+     * @param cnt
+     * @param eps
+     * @param rnd
+     * @return
+     */
+    protected List<P> getTestPoints(final int cnt, final double eps, final Random rnd) {
+        final List<P> pts = new ArrayList<>(getTestPoints(cnt, eps));
+        Collections.shuffle(pts, rnd);
+
+        return pts;
+    }
 
     /** Return true if the given points are equivalent as evaluated by the
      * precision instance.
@@ -105,7 +122,7 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         final PointMapChecker<P, Integer> checker = checkerFor(map);
 
         final int putCnt = 1000;
-        final List<P> pts = getTestPoints(putCnt * 2, EPS);
+        final List<P> pts = getTestPoints(putCnt * 2, EPS, new Random(1L));
 
         // act
         for (int i = 0; i < putCnt; ++i) {
@@ -118,6 +135,123 @@ public abstract class PointMapTestBase<P extends Point<P>> {
 
         // assert
         checker.doesNotContainKeys(pts.subList(putCnt, pts.size()))
+            .check();
+    }
+
+    @Test
+    void testPut_replaceValue() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(3, EPS);
+        final P a = pts.get(0);
+
+        // act
+        Assertions.assertNull(map.put(a, 1));
+        Assertions.assertEquals(1, map.put(a, 2));
+        Assertions.assertEquals(2, map.put(a, 3));
+
+        // assert
+        checkerFor(map)
+            .expectEntry(a, 3)
+            .doesNotContainKeys(pts.subList(1, pts.size()))
+            .check();
+    }
+
+    @Test
+    void testRemove() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(4, EPS);
+        final P a = pts.get(0);
+        final P b = pts.get(1);
+        final P c = pts.get(2);
+        final P d = pts.get(3);
+
+        map.put(a, 1);
+        map.put(b, 2);
+        map.put(c, 3);
+
+        // act/assert
+        Assertions.assertNull(map.remove(d));
+        Assertions.assertEquals(1, map.remove(a));
+        Assertions.assertEquals(2, map.remove(b));
+        Assertions.assertEquals(3, map.remove(c));
+
+        Assertions.assertNull(map.remove(a));
+        Assertions.assertNull(map.remove(b));
+        Assertions.assertNull(map.remove(c));
+        Assertions.assertNull(map.remove(d));
+
+        checkerFor(map)
+            .doesNotContainKeys(pts)
+            .check();
+    }
+
+    @Test
+    void testPutRemove_largeEntryCount() {
+        // -- arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final Random rnd = new Random(2L);
+
+        final int cnt = 10_000;
+        final List<P> pts = getTestPoints(cnt * 2, EPS, rnd);
+
+        final List<P> testPts = new ArrayList<>(pts.subList(0, cnt));
+        final List<P> otherPts = new ArrayList<>(pts.subList(cnt, pts.size()));
+
+        // -- act/assert
+        // insert the test points
+        final PointMapChecker<P, Integer> allChecker = checkerFor(map);
+        final PointMapChecker<P, Integer> oddChecker = checkerFor(map);
+
+        final List<P> evenKeys = new ArrayList<>();
+        final List<P> oddKeys = new ArrayList<>();
+
+        for (int i = 0; i < cnt; ++i) {
+            final P key = testPts.get(i);
+
+            Assertions.assertNull(map.put(key, i));
+
+            allChecker.expectEntry(key, i);
+
+            if (i % 2 == 0) {
+                evenKeys.add(key);
+            } else {
+                oddKeys.add(key);
+                oddChecker.expectEntry(key, i);
+            }
+        }
+
+        // check map state after insertion of all test points
+        allChecker
+            .doesNotContainKeys(otherPts)
+            .check();
+
+        // remove points inserted on even indices; remove the keys in
+        // a different order than insertion
+        Collections.shuffle(evenKeys);
+        for (final P key : evenKeys) {
+            Assertions.assertNotNull(map.remove(key));
+        }
+
+        // check map state after partial removal
+        oddChecker
+            .doesNotContainKeys(otherPts)
+            .doesNotContainKeys(evenKeys)
+            .check();
+
+        // remove remaining points
+        Collections.shuffle(oddKeys);
+        for (final P key : oddKeys) {
+            Assertions.assertNotNull(map.remove(key));
+        }
+
+        // ensure that nothing is left
+        checkerFor(map)
+            .doesNotContainKeys(pts)
             .check();
     }
 

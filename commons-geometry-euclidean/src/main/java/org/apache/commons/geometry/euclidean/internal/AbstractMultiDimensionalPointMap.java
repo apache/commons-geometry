@@ -104,8 +104,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
     /** {@inheritDoc} */
     @Override
     public V get(final Object key) {
-        @SuppressWarnings("unchecked")
-        final Entry<P, V> entry = root.getEntry((P) key);
+        final Entry<P, V> entry = getEntry(key);
         return entry != null ?
                 entry.getValue() :
                 null;
@@ -125,6 +124,12 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
 
     /** {@inheritDoc} */
     @Override
+    public boolean containsKey(final Object key) {
+        return getEntry(key) != null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Set<Entry<P, V>> entrySet() {
         return new EntrySet<>(this);
     }
@@ -139,16 +144,25 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
 
     /** Method called when a new entry is added to the tree.
      */
-    private void entryAdded() {
+    void entryAdded() {
         ++entryCount;
         ++version;
     }
 
     /** Method called when an entry is removed from the tree.
      */
-    private void entryRemoved() {
+    void entryRemoved() {
         --entryCount;
         ++version;
+    }
+
+    /** Get the entry for the given key or null if not found.
+     * @param key key to search for
+     * @return entry for the given key or null if not found
+     */
+    @SuppressWarnings("unchecked")
+    private Entry<P, V> getEntry(final Object key) {
+        return root.getEntry((P) key);
     }
 
     /** Spatial paritioning node type.
