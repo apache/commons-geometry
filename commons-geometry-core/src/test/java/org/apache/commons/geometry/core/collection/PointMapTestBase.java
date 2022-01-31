@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -134,7 +135,8 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         }
 
         // assert
-        checker.doesNotContainKeys(pts.subList(putCnt, pts.size()))
+        checker
+            .doesNotContainKeys(pts.subList(putCnt, pts.size()))
             .check();
     }
 
@@ -190,7 +192,7 @@ public abstract class PointMapTestBase<P extends Point<P>> {
     }
 
     @Test
-    void testPutRemove_largeEntryCount() {
+    void testRemove_largeEntryCount() {
         // -- arrange
         final PointMap<P, Integer> map = getMap(PRECISION);
 
@@ -255,12 +257,114 @@ public abstract class PointMapTestBase<P extends Point<P>> {
             .check();
     }
 
+    @Test
+    void testRepeatedUse() {
+        // -- arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final Random rnd = new Random(3L);
+
+        final int cnt = 10_000;
+        final List<P> pts = getTestPoints(cnt, EPS, rnd);
+
+        // -- act
+        final int iterations = 10;
+        final int subListSize = cnt / iterations;
+        for (int i = 0; i < iterations; ++i) {
+            final int subListStart = i * subListSize;
+            final List<P> subList = pts.subList(subListStart, subListStart + subListSize);
+
+            // add sublist
+            insertPoints(subList, map);
+
+            // remove sublist in different order
+            final List<P> shuffledSubList = new ArrayList<>(subList);
+            Collections.shuffle(shuffledSubList, rnd);
+
+            removePoints(shuffledSubList, map);
+
+            // add sublist again
+            insertPoints(subList, map);
+        }
+
+        // -- assert
+        PointMapChecker<P, Integer> checker = checkerFor(map);
+
+        for (int i = 0; i < iterations * subListSize; ++i) {
+            checker.expectEntry(pts.get(i), i % subListSize);
+        }
+
+        checker.check();
+    }
+
+    @Test
+    void testEntrySetIterator_remove() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(1_000, EPS, new Random(10L));
+
+        insertPoints(pts, map);
+
+        // act
+        // remove the entries in two passes: one to remove the entries with even
+        // values and the second to remove the remaining
+        Iterator<Map.Entry<P, Integer>> firstPass = map.entrySet().iterator();
+        while (firstPass.hasNext()) {
+            Map.Entry<P, Integer> entry = firstPass.next();
+            if (entry.getValue() % 2 == 0) {
+                firstPass.remove();
+            }
+        }
+
+        Iterator<Map.Entry<P, Integer>> secondPass = map.entrySet().iterator();
+        while (secondPass.hasNext()) {
+            secondPass.next();
+            secondPass.remove();
+        }
+
+        // assert
+        assertEmpty(map);
+    }
+
+    /** Insert the given list of points into {@code map}. The value of each key is the index of the key
+     * in {@code pts}.
+     * @param <P> Point type
+     * @param pts list of points
+     * @param map map to insert into
+     */
+    public static <P extends Point<P>> void insertPoints(final List<P> pts, final PointMap<P, Integer> map) {
+        int i = -1;
+        for (final P pt : pts) {
+            map.put(pt, ++i);
+        }
+    }
+
+    /** Remove each point in {@code pts} from {@code map}.
+     * @param <P> Point type
+     * @param pts points to remove
+     * @param map map to remove from
+     */
+    public static <P extends Point<P>> void removePoints(final List<P> pts, final PointMap<P, Integer> map) {
+        for (final P pt : pts) {
+            map.remove(pt);
+        }
+    }
+
     /** Return a new {@link PointMapChecker} for asserting the contents
      * of the given map.
      * @return a new checker instance
      */
-    public <V> PointMapChecker<P, V> checkerFor(final PointMap<P, V> map) {
+    public static <P extends Point<P>, V> PointMapChecker<P, V> checkerFor(final PointMap<P, V> map) {
         return new PointMapChecker<>(map);
+    }
+
+    /** Assert that the given map is empty.
+     * @param map map to assert empty
+     */
+    public static void assertEmpty(final PointMap<?, ?> map) {
+        checkerFor(map)
+            .check();
     }
 
     /** Class designed to assist with performing assertions on the state

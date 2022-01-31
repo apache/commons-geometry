@@ -563,8 +563,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
             this.map = map;
             this.nodeQueue.add(map.root);
 
-            this.expectedVersion = map.version;
-
+            updateExpectedVersion();
             queueNextEntry();
         }
 
@@ -600,6 +599,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
             }
 
             prevEntryIterator.remove();
+            updateExpectedVersion();
         }
 
         /** Prepare the next entry to be returned by the iterator.
@@ -650,6 +650,13 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
             if (map.version != expectedVersion) {
                 throw new ConcurrentModificationException();
             }
+        }
+
+        /** Update the expected modification version of the map. This must be called
+         * whenever the map is changed through this instance.
+         */
+        private void updateExpectedVersion() {
+            expectedVersion = map.version;
         }
     }
 }
