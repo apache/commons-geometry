@@ -151,6 +151,10 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         ++version;
     }
 
+    /** Spatial paritioning node type.
+     * @param <P> Point type
+     * @param <V> Value type
+     */
     public static abstract class Node<P extends EuclideanVector<P>, V> {
 
         /** Owning map. */
@@ -486,6 +490,10 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         }
     }
 
+    /** Set view of the map.
+     * @param <P> Point type
+     * @param <V> Value type
+     */
     private static final class EntrySet<P extends EuclideanVector<P>, V>
         extends AbstractSet<Map.Entry<P, V>> {
 
@@ -509,6 +517,10 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         }
     }
 
+    /** Iterator for iterating through each entry in the map.
+     * @param <P> Point type
+     * @param <V> Value type
+     */
     private static final class EntryIterator<P extends EuclideanVector<P>, V>
         implements Iterator<Map.Entry<P, V>> {
 
@@ -527,11 +539,17 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         /** Iterator that produces the next entry to be returned. */
         private Iterator<Map.Entry<P, V>> nextEntryIterator;
 
+        /** Expected map modification version. */
         private int expectedVersion;
 
+        /** Construct a new instance for the given map.
+         * @param map map instance
+         */
         EntryIterator(final AbstractMultiDimensionalPointMap<P, V> map) {
             this.map = map;
             this.nodeQueue.add(map.root);
+
+            this.expectedVersion = map.version;
 
             queueNextEntry();
         }
@@ -563,9 +581,11 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         /** {@inheritDoc} */
         @Override
         public void remove() {
-            if (prevEntryIterator != null) {
-                prevEntryIterator.remove();
+            if (prevEntryIterator == null) {
+                throw new IllegalStateException("Cannot remove: no entry has yet been returned");
             }
+
+            prevEntryIterator.remove();
         }
 
         /** Prepare the next entry to be returned by the iterator.

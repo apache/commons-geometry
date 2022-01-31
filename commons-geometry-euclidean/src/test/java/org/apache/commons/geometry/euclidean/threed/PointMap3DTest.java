@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.collection.PointMap;
-import org.apache.commons.geometry.euclidean.PointMapTestBase;
+import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.numbers.core.Precision;
 
 class PointMap3DTest extends PointMapTestBase<Vector3D> {
@@ -56,5 +56,11 @@ class PointMap3DTest extends PointMapTestBase<Vector3D> {
         }
 
         return pts;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean eq(final Vector3D a, final Vector3D b, final Precision.DoubleEquivalence precision) {
+        return a.eq(b, precision);
     }
 }
