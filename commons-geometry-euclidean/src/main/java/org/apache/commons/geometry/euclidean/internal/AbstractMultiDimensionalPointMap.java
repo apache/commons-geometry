@@ -615,7 +615,11 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
 
                 if (!node.isLeaf()) {
                     // internal node; add children to the queue
-                    nodeQueue.addAll(node.children);
+                    for (final Node<P, V> child : node.children) {
+                        if (child != null) {
+                            nodeQueue.add(child);
+                        }
+                    }
                 } else if (!node.isEmpty()) {
                     // return the non-empty iterator
                     return node;

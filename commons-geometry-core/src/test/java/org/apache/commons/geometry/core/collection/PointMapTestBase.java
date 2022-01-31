@@ -91,10 +91,33 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         map.put(a, 1);
 
         // assert
-        checker(map)
+        checkerFor(map)
             .expectEntry(a, 1)
-            .doesNotContainKey(pts.get(1))
-            .doesNotContainKey(pts.get(2))
+            .doesNotContainKeys(pts.subList(1, pts.size()))
+            .check();
+    }
+
+    @Test
+    void testMultipleEntries() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final PointMapChecker<P, Integer> checker = checkerFor(map);
+
+        final int putCnt = 1000;
+        final List<P> pts = getTestPoints(putCnt * 2, EPS);
+
+        // act
+        for (int i = 0; i < putCnt; ++i) {
+            final P key = pts.get(i);
+
+            map.put(key, i);
+
+            checker.expectEntry(key, i);
+        }
+
+        // assert
+        checker.doesNotContainKeys(pts.subList(putCnt, pts.size()))
             .check();
     }
 
@@ -102,7 +125,7 @@ public abstract class PointMapTestBase<P extends Point<P>> {
      * of the given map.
      * @return a new checker instance
      */
-    public <V> PointMapChecker<P, V> checker(final PointMap<P, V> map) {
+    public <V> PointMapChecker<P, V> checkerFor(final PointMap<P, V> map) {
         return new PointMapChecker<>(map);
     }
 
@@ -129,6 +152,14 @@ public abstract class PointMapTestBase<P extends Point<P>> {
 
         public PointMapChecker<P, V> doesNotContainKey(final P key) {
             unexpectedKeys.add(key);
+
+            return this;
+        }
+
+        public PointMapChecker<P, V> doesNotContainKeys(final Iterable<? extends P> keys) {
+            for (final P key : keys) {
+                doesNotContainKey(key);
+            }
 
             return this;
         }
