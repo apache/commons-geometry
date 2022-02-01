@@ -18,11 +18,11 @@ package org.apache.commons.geometry.euclidean.internal;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -67,7 +67,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
     /** {@inheritDoc} */
     @Override
     public P resolveKey(final P pt) {
-        final Entry<P, V> entry = root.getEntry(pt);
+        final Entry<P, V> entry = root.findEntry(pt);
         return entry != null ?
                 entry.getKey() :
                 null;
@@ -87,7 +87,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
             throw new IllegalArgumentException("Keys must be finite");
         }
 
-        final Entry<P, V> entry = root.getEntry(key);
+        final Entry<P, V> entry = root.findEntry(key);
         if (entry == null) {
             root.insertEntry(key, value);
             entryAdded();
@@ -130,6 +130,12 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
 
     /** {@inheritDoc} */
     @Override
+    public boolean containsValue(final Object value) {
+        return root.findEntryByValue(value) != null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Set<Entry<P, V>> entrySet() {
         return new EntrySet<>(this);
     }
@@ -162,7 +168,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
      */
     @SuppressWarnings("unchecked")
     private Entry<P, V> getEntry(final Object key) {
-        return root.getEntry((P) key);
+        return root.findEntry((P) key);
     }
 
     /** Spatial paritioning node type.
@@ -235,11 +241,11 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
             }
         }
 
-        /** Get the entry matching the given key or null if not found.
+        /** Find the entry matching the given key or null if not found.
          * @param key key to search for
          * @return the entry matching the given key or null if not found
          */
-        public Entry<P, V> getEntry(final P key) {
+        public Entry<P, V> findEntry(final P key) {
             if (isLeaf()) {
                 // check the list of entries for a match
                 for (final Entry<P, V> entry : entries) {
@@ -259,6 +265,36 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
                     final Entry<P, V> entry = getEntryInChild(i, key);
                     if (entry != null) {
                         return entry;
+                    }
+                }
+            }
+
+            // not found
+            return null;
+        }
+
+        /** Find the first entry in the tree with the given value or null if not found.
+         * @param value value to search for
+         * @return the first entry in the tree with the given value or null if not found
+         */
+        public Entry<P, V> findEntryByValue(final Object value) {
+            if (isLeaf()) {
+                // check the list of entries for a match
+                for (final Entry<P, V> entry : entries) {
+                    if (Objects.equals(entry.getValue(), value)) {
+                        return entry;
+                    }
+                }
+                // not found
+                return null;
+            }
+
+            // delegate to each child
+            for (final Node<P, V> child : children) {
+                if (child != null) {
+                    final Entry<P, V> childResult = child.findEntryByValue(value);
+                    if (childResult != null) {
+                        return childResult;
                     }
                 }
             }
@@ -306,6 +342,10 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
             return null;
         }
 
+        /** Return an iterator for accessing the node entries. The {@code remove()}
+         * method of the returned iterator correctly updates the tree state.
+         * @return iterator for accessing the node entries
+         */
         public Iterator<Map.Entry<P, V>> iterator() {
             final Iterator<Map.Entry<P, V>> it = entries.iterator();
 
@@ -340,11 +380,13 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
 
             // navigate up the tree and see if any subtrees need
             // to be pruned
-            Node<P, V> current = parent;
-            while (current != null) {
-                current.checkMakeLeaf();
+            if (entries.isEmpty()) {
+                Node<P, V> current = parent;
+                while (current != null) {
+                    current.checkMakeLeaf();
 
-                current = current.parent;
+                    current = current.parent;
+                }
             }
         }
 
@@ -390,7 +432,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         private Entry<P, V> getEntryInChild(final int idx, final P key) {
             final Node<P, V> child = children.get(idx);
             if (child != null) {
-                return child.getEntry(key);
+                return child.findEntry(key);
             }
             return null;
         }
@@ -520,6 +562,12 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
 
         /** {@inheritDoc} */
         @Override
+        public boolean contains(final Object key) {
+            return map.containsKey(key);
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Iterator<Entry<P, V>> iterator() {
             return new EntryIterator<>(map);
         }
@@ -542,13 +590,10 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         private final AbstractMultiDimensionalPointMap<P, V> map;
 
         /** Queue of nodes waiting to be visited. */
-        private final Deque<Node<P, V>> nodeQueue = new LinkedList<>();
+        private final Deque<Node<P, V>> nodeQueue = new ArrayDeque<>();
 
         /** Iterator that returned the previous entry. */
         private Iterator<Map.Entry<P, V>> prevEntryIterator;
-
-        /** The next entry to be returned by the iterator. */
-        private Map.Entry<P, V> nextEntry;
 
         /** Iterator that produces the next entry to be returned. */
         private Iterator<Map.Entry<P, V>> nextEntryIterator;
@@ -570,7 +615,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         /** {@inheritDoc} */
         @Override
         public boolean hasNext() {
-            return nextEntry != null;
+            return nextEntryIterator != null;
         }
 
         /** {@inheritDoc} */
@@ -582,7 +627,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
 
             checkVersion();
 
-            final Map.Entry<P, V> result = nextEntry;
+            final Map.Entry<P, V> result = nextEntryIterator.next();
 
             prevEntryIterator = nextEntryIterator;
 
@@ -605,16 +650,12 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         /** Prepare the next entry to be returned by the iterator.
          */
         private void queueNextEntry() {
-            if (nextEntryIterator != null && nextEntryIterator.hasNext()) {
-                nextEntry = nextEntryIterator.next();
-            } else {
+            if (nextEntryIterator == null || !nextEntryIterator.hasNext()) {
                 final Node<P, V> node = findNonEmptyLeafNode();
                 if (node != null) {
                     nextEntryIterator = node.iterator();
-                    nextEntry = nextEntryIterator.next();
                 } else {
                     nextEntryIterator = null;
-                    nextEntry = null;
                 }
             }
         }
@@ -628,7 +669,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
                 final Node<P, V> node = nodeQueue.removeFirst();
 
                 if (!node.isLeaf()) {
-                    // internal node; add children to the queue
+                    // internal node; add non-null children to the queue
                     for (final Node<P, V> child : node.children) {
                         if (child != null) {
                             nodeQueue.add(child);

@@ -19,13 +19,16 @@ package org.apache.commons.geometry.core.collection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
@@ -298,6 +301,22 @@ public abstract class PointMapTestBase<P extends Point<P>> {
     }
 
     @Test
+    void testEntrySetIterator() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+        insertPoints(getTestPoints(1, EPS), map);
+
+        // act/assert
+        final Iterator<Map.Entry<P, Integer>> it = map.entrySet().iterator();
+
+        Assertions.assertTrue(it.hasNext());
+        Assertions.assertNotNull(it.next());
+
+        Assertions.assertFalse(it.hasNext());
+        Assertions.assertThrows(NoSuchElementException.class, () -> it.next());
+    }
+
+    @Test
     void testEntrySetIterator_remove() {
         // arrange
         final PointMap<P, Integer> map = getMap(PRECISION);
@@ -325,6 +344,54 @@ public abstract class PointMapTestBase<P extends Point<P>> {
 
         // assert
         assertEmpty(map);
+    }
+
+    @Test
+    void testEntrySetIterator_remove_noElementReturned() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final Iterator<Map.Entry<P, Integer>> it = map.entrySet().iterator();
+
+        // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(() -> it.remove(), IllegalStateException.class,
+                "Cannot remove: no entry has yet been returned");
+    }
+
+    @Test
+    void testEntrySetIterator_remove_multipleCalls() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+        insertPoints(getTestPoints(1, EPS), map);
+
+        final Iterator<Map.Entry<P, Integer>> it = map.entrySet().iterator();
+
+        // act/assert
+        Assertions.assertNotNull(it.next());
+        it.remove();
+
+        Assertions.assertThrows(IllegalStateException.class, () -> it.remove());
+
+        Assertions.assertEquals(0, map.size());
+    }
+
+    @Test
+    void testEntrySetIterator_concurrentModification() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+        final List<P> pts = getTestPoints(3, EPS);
+
+        insertPoints(pts.subList(0, 2), map);
+
+        final Iterator<Map.Entry<P, Integer>> it = map.entrySet().iterator();
+
+        // act
+        it.next();
+        map.put(pts.get(2), 3);
+
+        // assert
+        Assertions.assertTrue(it.hasNext());
+        Assertions.assertThrows(ConcurrentModificationException.class, () -> it.next());
     }
 
     /** Insert the given list of points into {@code map}. The value of each key is the index of the key

@@ -27,13 +27,13 @@ class PointMap3DTest extends PointMapTestBase<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public <V> PointMap<Vector3D, V> getMap(final Precision.DoubleEquivalence precision) {
+    protected <V> PointMap<Vector3D, V> getMap(final Precision.DoubleEquivalence precision) {
         return PointMap3D.of(precision);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<Vector3D> getTestPoints(final int cnt, final double eps) {
+    protected List<Vector3D> getTestPoints(final int cnt, final double eps) {
         final List<Vector3D> pts = new ArrayList<>(cnt);
 
         final double delta = 10 * eps;
@@ -60,7 +60,7 @@ class PointMap3DTest extends PointMapTestBase<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean eq(final Vector3D a, final Vector3D b, final Precision.DoubleEquivalence precision) {
+    protected boolean eq(final Vector3D a, final Vector3D b, final Precision.DoubleEquivalence precision) {
         return a.eq(b, precision);
     }
 }
