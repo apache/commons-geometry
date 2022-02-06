@@ -563,6 +563,12 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         /** {@inheritDoc} */
         @Override
         public boolean contains(final Object key) {
+            if (!(key instanceof Map.Entry)) {
+                return false;
+            }
+
+            // TODO
+
             return map.containsKey(key);
         }
 

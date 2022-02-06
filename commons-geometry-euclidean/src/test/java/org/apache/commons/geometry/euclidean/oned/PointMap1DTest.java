@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.threed;
+package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,36 +23,26 @@ import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.numbers.core.Precision;
 
-class PointMap3DTest extends PointMapTestBase<Vector3D> {
+class PointMap1DTest extends PointMapTestBase<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    protected <V> PointMap<Vector3D, V> getMap(final Precision.DoubleEquivalence precision) {
-        return PointMap3D.of(precision);
+    protected <V> PointMap<Vector1D, V> getMap(final Precision.DoubleEquivalence precision) {
+        return PointMap1D.of(precision);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected List<Vector3D> getTestPoints(final int cnt, final double eps) {
-        final List<Vector3D> pts = new ArrayList<>(cnt);
+    protected List<Vector1D> getTestPoints(final int cnt, final double eps) {
+        final List<Vector1D> pts = new ArrayList<>(cnt);
 
         final double delta = 10 * eps;
 
         double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
         for (int i = 0; i < cnt; ++i) {
+            pts.add(Vector1D.of(x));
 
-            pts.add(Vector3D.of(x, y, z));
-
-            final int m = i % 3;
-            if (m == 0) {
-                x += delta;
-            } else if (m == 1) {
-                y += delta;
-            } else {
-                z += delta;
-            }
+            x += delta;
         }
 
         return pts;
