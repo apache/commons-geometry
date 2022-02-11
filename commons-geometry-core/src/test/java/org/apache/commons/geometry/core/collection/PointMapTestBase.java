@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
@@ -384,6 +385,22 @@ public abstract class PointMapTestBase<P extends Point<P>> {
     }
 
     @Test
+    void testToString() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+        final List<P> pts = getTestPoints(1, EPS);
+        insertPoints(pts, map);
+
+        // act
+        final String str = map.toString();
+
+        // assert
+        GeometryTestUtils.assertContains(pts.get(0).toString(), str);
+    }
+
+    // EntrySet -----------------------------------
+
+    @Test
     void testEntrySet_add_unsupported() {
         // arrange
         final PointMap<P, Integer> map = getMap(PRECISION);
@@ -593,6 +610,21 @@ public abstract class PointMapTestBase<P extends Point<P>> {
     }
 
     @Test
+    void testEntrySet_toString() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+        final List<P> pts = getTestPoints(20, EPS);
+        insertPoints(pts, map);
+
+        // act
+        final String str = map.entrySet().toString();
+
+        // assert
+        GeometryTestUtils.assertContains(pts.get(17).toString(), str);
+        GeometryTestUtils.assertContains(Integer.toString(17), str);
+    }
+
+    @Test
     void testEntrySetIterator() {
         // act/assert
         assertCollectionIterator(PointMap::entrySet);
@@ -601,6 +633,8 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         assertCollectionIteratorRemoveMultipleCalls(PointMap::entrySet);
         assertCollectionIteratorConcurrentModification(PointMap::entrySet);
     }
+
+    // KeySet -----------------------------------
 
     @Test
     void testKeySet_add_unsupported() {
@@ -630,9 +664,6 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         final Set<P> keySet = map.keySet();
 
         // act/assert
-        Assertions.assertFalse(keySet.contains(null));
-        Assertions.assertFalse(keySet.contains(new Object()));
-
         Assertions.assertTrue(keySet.contains(pts.get(0)));
         Assertions.assertFalse(keySet.contains(pts.get(1)));
     }
@@ -654,8 +685,6 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         final P d = pts.get(3);
 
         // act/assert
-        Assertions.assertFalse(keySet.containsAll(Arrays.asList(new Object(), new Object())));
-
         Assertions.assertTrue(keySet.containsAll(new ArrayList<>()));
 
         Assertions.assertTrue(keySet.containsAll(Arrays.asList(a)));
@@ -670,40 +699,23 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         // arrange
         final PointMap<P, Integer> map = getMap(PRECISION);
 
-        final List<P> pts = getTestPoints(3, EPS);
-        insertPoints(pts, map);
+        final List<P> pts = getTestPoints(4, EPS);
+        insertPoints(pts.subList(0, 3), map);
 
         final Set<P> keySet = map.keySet();
 
         final P a = pts.get(0);
         final P b = pts.get(1);
-
         final P c = pts.get(2);
+        final P d = pts.get(3);
 
         // act/assert
-        Assertions.assertFalse(keySet.remove(null));
-        Assertions.assertFalse(keySet.remove(new Object()));
-
-        Assertions.assertFalse(keySet.remove(pts.get(0)));
-        Assertions.assertFalse(keySet.remove(pts.get(1)));
-
-        checkerFor(map)
-            .expectEntry(a, 0)
-            .expectEntry(b, 1)
-            .expectEntry(c, 3)
-            .check();
-
         Assertions.assertTrue(keySet.remove(a));
-
-        checkerFor(map)
-            .expectEntry(b, 1)
-            .expectEntry(c, 3)
-            .check();
-
         Assertions.assertTrue(keySet.remove(b));
+        Assertions.assertFalse(keySet.remove(d));
 
         checkerFor(map)
-            .expectEntry(c, 3)
+            .expectEntry(c, 2)
             .check();
 
         Assertions.assertTrue(keySet.remove(c));
@@ -714,6 +726,7 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         Assertions.assertFalse(keySet.remove(a));
         Assertions.assertFalse(keySet.remove(b));
         Assertions.assertFalse(keySet.remove(c));
+        Assertions.assertFalse(keySet.remove(d));
     }
 
     @Test
@@ -733,8 +746,6 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         final P d = pts.get(3);
 
         // act/assert
-        Assertions.assertFalse(keySet.removeAll(Arrays.asList(new Object(), new Object())));
-
         Assertions.assertFalse(keySet.removeAll(new ArrayList<>()));
         Assertions.assertFalse(keySet.removeAll(Arrays.asList(d)));
 
@@ -797,11 +808,10 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         assertEmpty(map);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testKeySet_toArray() {
         // act/assert
-        assertCollectionToArray(PointMap::keySet, (P[]) new Object[0]);
+        assertCollectionToArray(PointMap::keySet, new Point[0]);
     }
 
     @Test
@@ -809,6 +819,20 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         // act/assert
         assertCollectionEquals(PointMap::keySet);
         assertCollectionHashCode(PointMap::keySet);
+    }
+
+    @Test
+    void testKeySet_toString() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+        final List<P> pts = getTestPoints(1, EPS);
+        insertPoints(pts, map);
+
+        // act
+        final String str = map.keySet().toString();
+
+        // assert
+        GeometryTestUtils.assertContains(pts.get(0).toString(), str);
     }
 
     @Test
@@ -820,6 +844,202 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         assertCollectionIteratorRemoveMultipleCalls(PointMap::keySet);
         assertCollectionIteratorConcurrentModification(PointMap::keySet);
     }
+
+    // Values -----------------------------------
+
+    @Test
+    void testValues_add_unsupported() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        // act/assert
+        assertCollectionAddUnsupported(map.values(), 2);
+    }
+
+    @Test
+    void testValues_clear() {
+        // act/assert
+        assertCollectionClear(PointMap::values);
+    }
+
+    @Test
+    void testValues_contains() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(3, EPS);
+        insertPoints(pts.subList(0, 1),  map);
+
+        final Collection<Integer> values = map.values();
+
+        // act/assert
+        Assertions.assertTrue(values.contains(0));
+        Assertions.assertFalse(values.contains(1));
+    }
+
+    @Test
+    void testValues_containsAll() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(4, EPS);
+        insertPoints(pts.subList(0, 2),  map);
+
+        final Collection<Integer> values = map.values();
+
+        // act/assert
+        Assertions.assertFalse(values.containsAll(Arrays.asList(new Object())));
+
+        Assertions.assertTrue(values.containsAll(new ArrayList<>()));
+
+        Assertions.assertTrue(values.containsAll(Arrays.asList(0)));
+        Assertions.assertTrue(values.containsAll(Arrays.asList(1, 0)));
+
+        Assertions.assertFalse(values.containsAll(Arrays.asList(0, 1, 2)));
+        Assertions.assertFalse(values.containsAll(Arrays.asList(2, 3)));
+    }
+
+    @Test
+    void testValues_remove() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(5, EPS);
+        insertPoints(pts.subList(0, 3), map);
+
+        map.put(pts.get(4), 0);
+
+        final Collection<Integer> values = map.values();
+
+        // act/assert
+        Assertions.assertTrue(values.remove(0));
+        Assertions.assertTrue(values.remove(0));
+        Assertions.assertTrue(values.remove(1));
+        Assertions.assertFalse(values.remove(3));
+
+        checkerFor(map)
+            .expectEntry(pts.get(2), 2)
+            .check();
+
+        Assertions.assertTrue(values.remove(2));
+
+        Assertions.assertEquals(0, values.size());
+        assertEmpty(map);
+
+        Assertions.assertFalse(values.remove(0));
+        Assertions.assertFalse(values.remove(1));
+        Assertions.assertFalse(values.remove(2));
+        Assertions.assertFalse(values.remove(3));
+    }
+
+    @Test
+    void testValues_removeAll() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(4, EPS);
+        insertPoints(pts.subList(0, 3), map);
+
+        final Collection<Integer> values = map.values();
+
+        final P a = pts.get(0);
+        final P b = pts.get(1);
+
+        final P c = pts.get(2);
+
+        // act/assert
+        Assertions.assertFalse(values.removeAll(new ArrayList<>()));
+        Assertions.assertFalse(values.removeAll(Arrays.asList(4)));
+
+        checkerFor(map)
+            .expectEntry(a, 0)
+            .expectEntry(b, 1)
+            .expectEntry(c, 2)
+            .check();
+
+        Assertions.assertTrue(values.removeAll(Arrays.asList(0, 1)));
+
+        checkerFor(map)
+            .expectEntry(c, 2)
+            .check();
+
+        Assertions.assertTrue(values.removeAll(Arrays.asList(2, 3)));
+
+        Assertions.assertEquals(0, values.size());
+        assertEmpty(map);
+
+        Assertions.assertFalse(values.removeAll(Arrays.asList(0, 1)));
+        Assertions.assertFalse(values.removeAll(Arrays.asList(2, 3)));
+    }
+
+    @Test
+    void testValues_retainAll() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(4, EPS);
+        insertPoints(pts.subList(0, 3), map);
+
+        final Collection<Integer> values = map.values();
+
+        final P a = pts.get(0);
+        final P b = pts.get(1);
+
+        final P c = pts.get(2);
+
+        // act/assert
+        Assertions.assertFalse(values.retainAll(Arrays.asList(0, 1, 2)));
+
+        checkerFor(map)
+            .expectEntry(a, 0)
+            .expectEntry(b, 1)
+            .expectEntry(c, 2)
+            .check();
+
+        Assertions.assertTrue(values.retainAll(Arrays.asList(0, 1, 3)));
+
+        checkerFor(map)
+            .expectEntry(a, 0)
+            .expectEntry(b, 1)
+            .check();
+
+        Assertions.assertTrue(values.retainAll(Arrays.asList(new Object(), new Object())));
+
+        Assertions.assertEquals(0, values.size());
+        assertEmpty(map);
+    }
+
+    @Test
+    void testValues_toArray() {
+        // act/assert
+        assertCollectionToArray(PointMap::values, new Integer[0]);
+    }
+
+    @Test
+    void testValues_toString() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+        final List<P> pts = getTestPoints(20, EPS);
+        insertPoints(pts, map);
+
+        // act
+        final String str = map.values().toString();
+
+        // assert
+        GeometryTestUtils.assertContains(Integer.toString(17), str);
+    }
+
+    @Test
+    void testValuesIterator() {
+        // act/assert
+        assertCollectionIterator(PointMap::values);
+        assertCollectionIteratorRemove(PointMap::values);
+        assertCollectionIteratorRemoveWithoutNext(PointMap::values);
+        assertCollectionIteratorRemoveMultipleCalls(PointMap::values);
+        assertCollectionIteratorConcurrentModification(PointMap::values);
+    }
+
+    // Helpers -----------------------------------
 
     private <V> void assertCollectionAddUnsupported(final Collection<V> coll, final V value) {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> coll.add(value));
@@ -880,7 +1100,6 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         final PointMap<P, Integer> mapB = getMap(PRECISION);
         final PointMap<P, Integer> mapC = getMap(PRECISION);
         final PointMap<P, Integer> mapD = getMap(PRECISION);
-        final PointMap<P, Integer> mapE = getMap(PRECISION);
 
         final List<P> pts = getTestPoints(3, EPS);
 
@@ -888,15 +1107,11 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         insertPoints(pts.subList(0, 2), mapB);
 
         insertPoints(pts, mapD);
-        mapD.put(pts.get(0), -1);
-
-        insertPoints(pts, mapE);
 
         final Collection<?> a = collectionFactory.apply(mapA);
         final Collection<?> b = collectionFactory.apply(mapB);
         final Collection<?> c = collectionFactory.apply(mapC);
         final Collection<?> d = collectionFactory.apply(mapD);
-        final Collection<?> e = collectionFactory.apply(mapE);
 
         // act/assert
         Assertions.assertFalse(a.equals(null));
@@ -906,9 +1121,8 @@ public abstract class PointMapTestBase<P extends Point<P>> {
 
         Assertions.assertFalse(a.equals(b));
         Assertions.assertFalse(a.equals(c));
-        Assertions.assertFalse(a.equals(d));
 
-        Assertions.assertTrue(a.equals(e));
+        Assertions.assertTrue(a.equals(d));
     }
 
     private void assertCollectionHashCode(final Function<PointMap<P, ?>, Collection<?>> collectionFactory) {
@@ -917,7 +1131,6 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         final PointMap<P, Integer> mapB = getMap(PRECISION);
         final PointMap<P, Integer> mapC = getMap(PRECISION);
         final PointMap<P, Integer> mapD = getMap(PRECISION);
-        final PointMap<P, Integer> mapE = getMap(PRECISION);
 
         final List<P> pts = getTestPoints(3, EPS);
 
@@ -925,15 +1138,11 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         insertPoints(pts.subList(0, 2), mapB);
 
         insertPoints(pts, mapD);
-        mapD.put(pts.get(0), -1);
-
-        insertPoints(pts, mapE);
 
         final Collection<?> a = collectionFactory.apply(mapA);
         final Collection<?> b = collectionFactory.apply(mapB);
         final Collection<?> c = collectionFactory.apply(mapC);
         final Collection<?> d = collectionFactory.apply(mapD);
-        final Collection<?> e = collectionFactory.apply(mapE);
 
         // act
         final int hash = a.hashCode();
@@ -943,9 +1152,8 @@ public abstract class PointMapTestBase<P extends Point<P>> {
 
         Assertions.assertNotEquals(hash, b.hashCode());
         Assertions.assertNotEquals(hash, c.hashCode());
-        Assertions.assertNotEquals(hash, d.hashCode());
 
-        Assertions.assertEquals(hash, e.hashCode());
+        Assertions.assertEquals(hash, d.hashCode());
     }
 
     private void assertCollectionIterator(final Function<PointMap<P, ?>, Collection<?>> collectionFactory) {
