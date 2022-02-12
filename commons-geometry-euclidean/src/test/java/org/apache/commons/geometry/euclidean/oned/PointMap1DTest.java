@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.collection.PointMap;
@@ -29,6 +30,26 @@ class PointMap1DTest extends PointMapTestBase<Vector1D> {
     @Override
     protected <V> PointMap<Vector1D, V> getMap(final Precision.DoubleEquivalence precision) {
         return PointMap1D.of(precision);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Vector1D[] createPointArray() {
+        return new Vector1D[0];
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected List<Vector1D> getNaNPoints() {
+        return Arrays.asList(Vector1D.NaN);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected List<Vector1D> getInfPoints() {
+        return Arrays.asList(
+                Vector1D.NEGATIVE_INFINITY,
+                Vector1D.POSITIVE_INFINITY);
     }
 
     /** {@inheritDoc} */
@@ -46,5 +67,13 @@ class PointMap1DTest extends PointMapTestBase<Vector1D> {
         }
 
         return pts;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected List<Vector1D> getTestPointsAtDistance(final Vector1D pt, final double dist) {
+        return Arrays.asList(
+                Vector1D.of(pt.getX() - dist),
+                Vector1D.of(pt.getX() + dist));
     }
 }

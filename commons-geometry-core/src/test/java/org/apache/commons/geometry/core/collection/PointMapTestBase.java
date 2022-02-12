@@ -54,6 +54,21 @@ public abstract class PointMapTestBase<P extends Point<P>> {
      */
     protected abstract <V> PointMap<P, V> getMap(Precision.DoubleEquivalence precision);
 
+    /** Create an empty array of the target point type.
+     * @return empty array of the target pont type
+     */
+    protected abstract P[] createPointArray();
+
+    /** Get a list of points with {@code NaN} coordinates.
+     * @return list of points with {@code NaN} coordinates
+     */
+    protected abstract List<P> getNaNPoints();
+
+    /** Get a list of points with infinite coordinates.
+     * @return list of points with infinite coordinates
+     */
+    protected abstract List<P> getInfPoints();
+
     /** Get {@code cnt} number of unique test points that differ from each other in
      * each dimension by <em>at least</em> {@code eps}.
      * @param cnt number of points to return
@@ -62,6 +77,13 @@ public abstract class PointMapTestBase<P extends Point<P>> {
      * @return list of test points
      */
     protected abstract List<P> getTestPoints(int cnt, double eps);
+
+    /** Get a list of points that lie {@code dist} distance from {@code pt}.
+     * @param pt input point
+     * @param dist distance from {@code pt}
+     * @return list of points that lie {@code dist} distance from {@code pt}
+     */
+    protected abstract List<P> getTestPointsAtDistance(P pt, double dist);
 
     /** Get {@code cnt} number of unique test points that differ from each other in
      * each dimension by <em>at least</em> {@code eps}. The returned list is shuffled
@@ -152,6 +174,77 @@ public abstract class PointMapTestBase<P extends Point<P>> {
     }
 
     @Test
+    void testGet_equivalentPoints_singleEntry() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(1, EPS);
+        insertPoints(pts, map);
+
+        final P pt = pts.get(0);
+
+        // act/assert
+        Assertions.assertEquals(0, map.get(pt));
+        Assertions.assertTrue(map.containsKey(pt));
+        Assertions.assertEquals(pt, map.resolveKey(pt));
+
+        for (final P closePt : getTestPointsAtDistance(pt, EPS * 0.75)) {
+            Assertions.assertEquals(0, map.get(closePt));
+            Assertions.assertTrue(map.containsKey(closePt));
+            Assertions.assertEquals(pt, map.resolveKey(closePt));
+
+            Assertions.assertTrue(map.entrySet().contains(new SimpleEntry<>(closePt, 0)));
+            Assertions.assertTrue(map.keySet().contains(closePt));
+        }
+
+        for (final P farPt : getTestPointsAtDistance(pt, EPS * 1.25)) {
+            Assertions.assertNull(map.get(farPt));
+            Assertions.assertFalse(map.containsKey(farPt));
+            Assertions.assertNull(map.resolveKey(farPt));
+
+            Assertions.assertFalse(map.entrySet().contains(new SimpleEntry<>(farPt, 0)));
+            Assertions.assertFalse(map.keySet().contains(farPt));
+        }
+    }
+
+    @Test
+    void testGet_equivalentPoints_multipleEntries() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(1_000, 3 * EPS);
+        insertPoints(pts, map);
+
+        // act/assert
+        int i = -1;
+        for (final P pt : pts) {
+            final int value = ++i;
+
+            Assertions.assertEquals(value, map.get(pt));
+            Assertions.assertTrue(map.containsKey(pt));
+            Assertions.assertEquals(pt, map.resolveKey(pt));
+
+            for (final P closePt : getTestPointsAtDistance(pt, EPS * 0.75)) {
+                Assertions.assertEquals(value, map.get(closePt));
+                Assertions.assertTrue(map.containsKey(closePt));
+                Assertions.assertEquals(pt, map.resolveKey(closePt));
+
+                Assertions.assertTrue(map.entrySet().contains(new SimpleEntry<>(closePt, value)));
+                Assertions.assertTrue(map.keySet().contains(closePt));
+            }
+
+            for (final P farPt : getTestPointsAtDistance(pt, EPS * 1.25)) {
+                Assertions.assertNull(map.get(farPt));
+                Assertions.assertFalse(map.containsKey(farPt));
+                Assertions.assertNull(map.resolveKey(farPt));
+
+                Assertions.assertFalse(map.entrySet().contains(new SimpleEntry<>(farPt, 0)));
+                Assertions.assertFalse(map.keySet().contains(farPt));
+            }
+        }
+    }
+
+    @Test
     void testGet_invalidArgs() {
         // arrange
         final PointMap<P, Integer> map = getMap(PRECISION);
@@ -161,6 +254,23 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         // act/assert
         Assertions.assertThrows(NullPointerException.class, () -> map.get(null));
         Assertions.assertThrows(ClassCastException.class, () -> map.get(new Object()));
+    }
+
+    @Test
+    void testGet_nanAndInf() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        insertPoints(getTestPoints(100, EPS), map);
+
+        // act/assert
+        for (final P pt : getNaNPoints()) {
+            Assertions.assertNull(map.get(pt));
+        }
+
+        for (final P pt : getInfPoints()) {
+            Assertions.assertNull(map.get(pt));
+        }
     }
 
     @Test
@@ -181,6 +291,109 @@ public abstract class PointMapTestBase<P extends Point<P>> {
             .expectEntry(a, 3)
             .doesNotContainKeys(pts.subList(1, pts.size()))
             .check();
+    }
+
+    @Test
+    void testPut_nullKey() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        // act/assert
+        Assertions.assertThrows(NullPointerException.class, () -> map.put(null, 0));
+    }
+
+    @Test
+    void testPut_nanAndInf() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        // act/assert
+        for (final P nanPt : getNaNPoints()) {
+            Assertions.assertThrows(IllegalArgumentException.class, () -> map.put(nanPt, 0));
+        }
+
+        for (final P infPt : getInfPoints()) {
+            Assertions.assertThrows(IllegalArgumentException.class, () -> map.put(infPt, 0));
+        }
+    }
+
+    @Test
+    void testPutAll_nonPointMap() {
+        // arrange
+        final Map<P, Integer> a = new HashMap<>();
+        final Map<P, Integer> b = new HashMap<>();
+
+        final PointMap<P, Integer> c = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(5, EPS);
+
+        a.put(pts.get(0), 0);
+        a.put(pts.get(1), 1);
+        a.put(pts.get(2), 2);
+
+        b.put(pts.get(2), 0);
+        b.put(pts.get(3), 1);
+        b.put(pts.get(4), 2);
+
+        // act
+        c.putAll(a);
+        c.putAll(b);
+
+        // assert
+        checkerFor(c)
+            .expectEntry(pts.get(0), 0)
+            .expectEntry(pts.get(1), 1)
+            .expectEntry(pts.get(2), 0)
+            .expectEntry(pts.get(3), 1)
+            .expectEntry(pts.get(4), 2)
+            .check();
+    }
+
+    @Test
+    void testPutAll_otherPointMap() {
+        // arrange
+        final PointMap<P, Integer> a = getMap(PRECISION);
+        final PointMap<P, Integer> b = getMap(PRECISION);
+        final PointMap<P, Integer> c = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(5, EPS);
+
+        insertPoints(pts.subList(0, 3), a);
+        insertPoints(pts.subList(2, 5), b);
+
+        // act
+        c.putAll(a);
+        c.putAll(b);
+
+        // assert
+        checkerFor(c)
+            .expectEntry(pts.get(0), 0)
+            .expectEntry(pts.get(1), 1)
+            .expectEntry(pts.get(2), 0)
+            .expectEntry(pts.get(3), 1)
+            .expectEntry(pts.get(4), 2)
+            .check();
+    }
+
+    @Test
+    void testPutAll_nanAndInf() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        // act/assert
+        for (final P nanPt : getNaNPoints()) {
+            final Map<P, Integer> nanMap = new HashMap<>();
+            nanMap.put(nanPt, 0);
+
+            Assertions.assertThrows(IllegalArgumentException.class, () -> map.putAll(nanMap));
+        }
+
+        for (final P infPt : getInfPoints()) {
+            final Map<P, Integer> infMap = new HashMap<>();
+            infMap.put(infPt, 0);
+
+            Assertions.assertThrows(IllegalArgumentException.class, () -> map.putAll(infMap));
+        }
     }
 
     @Test
@@ -278,6 +491,31 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         checkerFor(map)
             .doesNotContainKeys(pts)
             .check();
+    }
+
+    @Test
+    void testClear_empty() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        // act
+        map.clear();
+
+        // assert
+        assertEmpty(map);
+    }
+
+    @Test
+    void testClear_populated() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+        insertPoints(getTestPoints(1_000, EPS, new Random(6L)), map);
+
+        // act
+        map.clear();
+
+        // assert
+        assertEmpty(map);
     }
 
     @Test
@@ -811,7 +1049,7 @@ public abstract class PointMapTestBase<P extends Point<P>> {
     @Test
     void testKeySet_toArray() {
         // act/assert
-        assertCollectionToArray(PointMap::keySet, new Point[0]);
+        assertCollectionToArray(PointMap::keySet, createPointArray());
     }
 
     @Test

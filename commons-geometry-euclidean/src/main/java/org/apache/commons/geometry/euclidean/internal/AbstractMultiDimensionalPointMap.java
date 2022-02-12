@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 import org.apache.commons.geometry.core.collection.PointMap;
+import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.core.Precision;
 
@@ -42,10 +43,10 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
     private static final int MAX_ENTRIES_PER_NODE = 16;
 
     /** Precision context. */
-    final Precision.DoubleEquivalence precision;
+    private final Precision.DoubleEquivalence precision;
 
     /** Function used to construct new node instances. */
-    final BiFunction<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>, Node<P, V>> nodeFactory;
+    private final BiFunction<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>, Node<P, V>> nodeFactory;
 
     /** Root of the tree. */
     private Node<P, V> root;
@@ -82,10 +83,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
     /** {@inheritDoc} */
     @Override
     public V put(final P key, final V value) {
-        Objects.requireNonNull(key);
-        if (!key.isFinite()) {
-            throw new IllegalArgumentException("Keys must be finite");
-        }
+        GeometryInternalUtils.validatePointMapKey(key);
 
         final Entry<P, V> entry = root.findEntry(key);
         if (entry == null) {
@@ -175,7 +173,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
      * @param <P> Point type
      * @param <V> Value type
      */
-    public static abstract class Node<P extends EuclideanVector<P>, V> {
+    public abstract static class Node<P extends EuclideanVector<P>, V> {
 
         /** Owning map. */
         private final AbstractMultiDimensionalPointMap<P, V> map;
@@ -403,10 +401,10 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         protected abstract int getNodeChildCount();
 
         /** Compute the node split point based on the given entry list.
-         * @param entries entries contained in the node being split
+         * @param nodeEntries entries contained in the node being split
          * @return the computed split point
          */
-        protected abstract P computeSplitPoint(final List<Entry<P, V>> entries);
+        protected abstract P computeSplitPoint(List<Entry<P, V>> nodeEntries);
 
         /** Get an int encoding the location of {@code pt} relative to the
          * node split point.
@@ -414,7 +412,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
          * @param split node split point
          * @return encoded point location
          */
-        protected abstract int getLocation(final P pt, final P split);
+        protected abstract int getLocation(P pt, P split);
 
         /** Return true if the child node at {@code childIdx} matches the given
          * encoded point location.
@@ -422,7 +420,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
          * @param loc encoded relative point location
          * @return true if the child node a {@code childIdx} matches the location
          */
-        protected abstract boolean testChildLocation(final int childIdx, final int loc);
+        protected abstract boolean testChildLocation(int childIdx, int loc);
 
         /** Get the given entry in the child at {@code idx} or null if not found.
          * @param idx child index
@@ -445,12 +443,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         private Entry<P, V> removeFromChild(final int idx, final P key) {
             final Node<P, V> child = children.get(idx);
             if (child != null) {
-                final Entry<P, V> entry = child.removeEntry(key);
-                if (entry != null) {
-
-                }
-
-                return entry;
+                return child.removeEntry(key);
             }
             return null;
         }
@@ -524,7 +517,7 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         private Node<P, V> getOrCreateChild(final int idx) {
             Node<P, V> child = children.get(idx);
             if (child == null) {
-                child = map.nodeFactory.apply(map, this);
+                child = map.createNode(this);
                 children.set(idx, child);
             }
             return child;
@@ -561,15 +554,20 @@ public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("unchecked")
         @Override
-        public boolean contains(final Object key) {
-            if (!(key instanceof Map.Entry)) {
-                return false;
+        public boolean contains(final Object obj) {
+            if (obj instanceof Map.Entry) {
+                final Map.Entry<?, ?> search = (Map.Entry<?, ?>) obj;
+                final Object key = search.getKey();
+
+                final Map.Entry<P, V> actual = map.getEntry(key);
+                if (actual != null) {
+                    return actual.getKey().eq((P) search.getKey(), map.precision) &&
+                            Objects.equals(actual.getValue(), search.getValue());
+                }
             }
-
-            // TODO
-
-            return map.containsKey(key);
+            return false;
         }
 
         /** {@inheritDoc} */

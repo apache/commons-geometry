@@ -19,8 +19,17 @@ package org.apache.commons.geometry.euclidean.threed;
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.numbers.core.Precision;
 
+/** {@link PointMap} type for Euclidean 3D space.
+ * @param <V> Map value type
+ */
 public interface PointMap3D<V> extends PointMap<Vector3D, V> {
 
+    /** Construct a new map instance using the given precision context to determine
+     * equality between points.
+     * @param <V> Map value type
+     * @param precision precision context used to determine point equality
+     * @return new point map instance
+     */
     static <V> PointMap3D<V> of(final Precision.DoubleEquivalence precision) {
         return new PointMap3DImpl<>(precision);
     }

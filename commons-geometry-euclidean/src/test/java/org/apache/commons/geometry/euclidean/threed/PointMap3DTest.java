@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.collection.PointMap;
@@ -29,6 +30,38 @@ class PointMap3DTest extends PointMapTestBase<Vector3D> {
     @Override
     protected <V> PointMap<Vector3D, V> getMap(final Precision.DoubleEquivalence precision) {
         return PointMap3D.of(precision);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Vector3D[] createPointArray() {
+        return new Vector3D[0];
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected List<Vector3D> getNaNPoints() {
+        return Arrays.asList(
+                Vector3D.NaN,
+                Vector3D.of(Double.NaN, 0, 0),
+                Vector3D.of(0, Double.NaN, 0),
+                Vector3D.of(0, 0, Double.NaN));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected List<Vector3D> getInfPoints() {
+        return Arrays.asList(
+                Vector3D.NEGATIVE_INFINITY,
+                Vector3D.POSITIVE_INFINITY,
+
+                Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0),
+                Vector3D.of(0, Double.NEGATIVE_INFINITY, 0),
+                Vector3D.of(0, 0, Double.NEGATIVE_INFINITY),
+
+                Vector3D.of(Double.POSITIVE_INFINITY, 0, 0),
+                Vector3D.of(0, Double.POSITIVE_INFINITY, 0),
+                Vector3D.of(0, 0, Double.POSITIVE_INFINITY));
     }
 
     /** {@inheritDoc} */
@@ -56,5 +89,23 @@ class PointMap3DTest extends PointMapTestBase<Vector3D> {
         }
 
         return pts;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected List<Vector3D> getTestPointsAtDistance(final Vector3D pt, final double dist) {
+        final double x = pt.getX();
+        final double y = pt.getY();
+        final double z = pt.getZ();
+
+        return Arrays.asList(
+                Vector3D.of(x - dist, y, z),
+                Vector3D.of(x + dist, y, z),
+
+                Vector3D.of(x, y - dist, z),
+                Vector3D.of(x, y + dist, z),
+
+                Vector3D.of(x, y, z - dist),
+                Vector3D.of(x, y, z + dist));
     }
 }

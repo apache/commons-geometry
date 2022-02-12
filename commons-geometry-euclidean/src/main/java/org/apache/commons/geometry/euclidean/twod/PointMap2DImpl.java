@@ -21,6 +21,9 @@ import java.util.List;
 import org.apache.commons.geometry.euclidean.internal.AbstractMultiDimensionalPointMap;
 import org.apache.commons.numbers.core.Precision;
 
+/** Internal {@link PointMap2D} implementation.
+ * @param <V> Map value type
+ */
 final class PointMap2DImpl<V>
     extends AbstractMultiDimensionalPointMap<Vector2D, V>
     implements PointMap2D<V> {
@@ -43,18 +46,30 @@ final class PointMap2DImpl<V>
     /** Octant location flags for child nodes. */
     private static final int[] CHILD_LOCATIONS = {
         XNEG | YNEG,
-        XNEG | YNEG,
         XNEG | YPOS,
-        XNEG | YPOS
+        XPOS | YNEG,
+        XPOS | YPOS
     };
 
+    /** Construct a new instance using the given precision context to determine
+     * floating point equality.
+     * @param precision precision context
+     */
     PointMap2DImpl(final Precision.DoubleEquivalence precision) {
         super(Node2D::new, precision);
     }
 
+    /** Tree node class for {@link PointMap2DImpl}.
+     * @param <V> Map value type
+     */
     private static final class Node2D<V> extends Node<Vector2D, V> {
 
-        Node2D(final AbstractMultiDimensionalPointMap<Vector2D, V> map, final Node<Vector2D, V> parent) {
+        /** Construct a new instance.
+         * @param map owning map
+         * @param parent parent node; set to null for the root node
+         */
+        Node2D(final AbstractMultiDimensionalPointMap<Vector2D, V> map,
+                final Node<Vector2D, V> parent) {
             super(map, parent);
         }
 

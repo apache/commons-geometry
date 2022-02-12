@@ -21,6 +21,9 @@ import java.util.List;
 import org.apache.commons.geometry.euclidean.internal.AbstractMultiDimensionalPointMap;
 import org.apache.commons.numbers.core.Precision;
 
+/** Internal {@link PointMap3D} implementation.
+ * @param <V> Map value type
+ */
 final class PointMap3DImpl<V>
     extends AbstractMultiDimensionalPointMap<Vector3D, V>
     implements PointMap3D<V> {
@@ -59,12 +62,23 @@ final class PointMap3DImpl<V>
         XPOS | YPOS | ZPOS
     };
 
+    /** Construct a new instance using the given precision context to determine
+     * floating point equality.
+     * @param precision precision context
+     */
     PointMap3DImpl(final Precision.DoubleEquivalence precision) {
         super(Node3D::new, precision);
     }
 
+    /** Tree node class for {@link PointMap3DImpl}.
+     * @param <V> Map value type
+     */
     private static final class Node3D<V> extends Node<Vector3D, V> {
 
+        /** Construct a new instance.
+         * @param map owning map
+         * @param parent parent node; set to null for the root node
+         */
         Node3D(final AbstractMultiDimensionalPointMap<Vector3D, V> map, final Node<Vector3D, V> parent) {
             super(map, parent);
         }

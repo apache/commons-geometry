@@ -25,6 +25,7 @@ import org.apache.commons.geometry.core.collection.PointSet;
 
 /** Class that exposes a {@link PointMap} as a {@link PointSet}.
  * @param <P> Point type
+ * @param <M> Map type
  */
 public class PointMapAsSetAdapter<P extends Point<P>, M extends PointMap<P, Object>>
     extends AbstractSet<P>
@@ -36,6 +37,9 @@ public class PointMapAsSetAdapter<P extends Point<P>, M extends PointMap<P, Obje
     /** Backing map. */
     private final M map;
 
+    /** Construct a new instance that use the argument as its backing map.
+     * @param backingMap backing map
+     */
     public PointMapAsSetAdapter(final M backingMap) {
         this.map = backingMap;
     }

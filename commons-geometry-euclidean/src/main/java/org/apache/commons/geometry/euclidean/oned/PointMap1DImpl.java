@@ -21,15 +21,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.numbers.core.Precision;
 
+/** Internal implementation of {@link PointMap1D}. This implementation delegates
+ * the actual map storage to a {@link TreeMap}.
+ * @param <V> Map value type
+ */
 final class PointMap1DImpl<V>
     implements PointMap1D<V> {
 
     /** Underlying tree map. */
     private final TreeMap<Vector1D, V> map;
 
-    protected PointMap1DImpl(final Precision.DoubleEquivalence precision) {
+    /** Construct a new instance using the given precision context to determine
+     * floating point equality.
+     * @param precision precision context
+     */
+    PointMap1DImpl(final Precision.DoubleEquivalence precision) {
         this.map = new TreeMap<>((a, b) -> precision.compare(a.getX(), b.getX()));
     }
 
@@ -66,6 +75,7 @@ final class PointMap1DImpl<V>
     /** {@inheritDoc} */
     @Override
     public V put(final Vector1D key, final V value) {
+        GeometryInternalUtils.validatePointMapKey(key);
         return map.put(key, value);
     }
 
@@ -78,7 +88,16 @@ final class PointMap1DImpl<V>
     /** {@inheritDoc} */
     @Override
     public void putAll(final Map<? extends Vector1D, ? extends V> m) {
-        map.putAll(m);
+        // if the input is another point map, then we know that the keys
+        // are valid and we can insert them using the standard treemap
+        // insertion; otherwise, we need to insert one key at a time
+        if (m instanceof PointMap1D) {
+            map.putAll(m);
+        } else {
+            for (final Map.Entry<? extends Vector1D, ? extends V> entry : m.entrySet()) {
+                put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     /** {@inheritDoc} */
