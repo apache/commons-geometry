@@ -20,7 +20,16 @@ import java.util.Set;
 
 import org.apache.commons.geometry.core.Point;
 
+/** {@link Set} containing {@link Point} values.
+ * @param <P> Point type
+ */
 public interface PointSet<P extends Point<P>> extends Set<P> {
 
+    /** Get the set entry equivalent to {@code pt} or null if no
+     * such entry exists.
+     * @param pt point to find an equivalent for
+     * @return set entry equivalent to {@code pt} or null if
+     *      no such entry exists
+     */
     P resolve(P pt);
 }

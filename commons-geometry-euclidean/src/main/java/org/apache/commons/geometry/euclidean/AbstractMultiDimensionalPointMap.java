@@ -79,6 +79,16 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
 
     /** {@inheritDoc} */
     @Override
+    public Map.Entry<P, V> resolveEntry(final P pt) {
+        final Map.Entry<P, V> entry = root.findEntry(pt);
+        // return an immutable view if found
+        return entry != null ?
+                new AbstractMap.SimpleImmutableEntry<>(entry) :
+                null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public int size() {
         return entryCount;
     }

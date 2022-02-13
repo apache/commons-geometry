@@ -20,7 +20,24 @@ import java.util.Map;
 
 import org.apache.commons.geometry.core.Point;
 
+/** {@link Map} type that uses points as keys.
+ * @param <P> Point type
+ * @param <V> Value type
+ */
 public interface PointMap<P extends Point<P>, V> extends Map<P, V> {
 
+    /** Get the map key equivalent to {@code pt} or null if no such key exists.
+     * @param pt point to fetch the corresponding key for
+     * @return map key equivalent to {@code pt} or null if no such key
+     *      exists
+     */
     P resolveKey(P pt);
+
+    /** Get the map entry with a key equivalent to {@code pt} or null
+     * if no such entry exists.
+     * @param pt point to fetch the map entry for
+     * @return map entry for the given point or null if no such entry
+     *      exists
+     */
+    Map.Entry<P, V> resolveEntry(P pt);
 }

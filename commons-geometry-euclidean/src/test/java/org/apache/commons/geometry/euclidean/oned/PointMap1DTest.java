@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.collection.PointMap;
@@ -42,7 +43,7 @@ class PointMap1DTest extends PointMapTestBase<Vector1D> {
     /** {@inheritDoc} */
     @Override
     protected List<Vector1D> getNaNPoints() {
-        return Arrays.asList(Vector1D.NaN);
+        return Collections.singletonList(Vector1D.NaN);
     }
 
     /** {@inheritDoc} */

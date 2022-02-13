@@ -187,11 +187,13 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         Assertions.assertEquals(0, map.get(pt));
         Assertions.assertTrue(map.containsKey(pt));
         Assertions.assertEquals(pt, map.resolveKey(pt));
+        Assertions.assertEquals(new SimpleEntry<>(pt, 0), map.resolveEntry(pt));
 
         for (final P closePt : getTestPointsAtDistance(pt, EPS * 0.75)) {
             Assertions.assertEquals(0, map.get(closePt));
             Assertions.assertTrue(map.containsKey(closePt));
             Assertions.assertEquals(pt, map.resolveKey(closePt));
+            Assertions.assertEquals(new SimpleEntry<>(pt, 0), map.resolveEntry(closePt));
 
             Assertions.assertTrue(map.entrySet().contains(new SimpleEntry<>(closePt, 0)));
             Assertions.assertTrue(map.keySet().contains(closePt));
@@ -201,6 +203,7 @@ public abstract class PointMapTestBase<P extends Point<P>> {
             Assertions.assertNull(map.get(farPt));
             Assertions.assertFalse(map.containsKey(farPt));
             Assertions.assertNull(map.resolveKey(farPt));
+            Assertions.assertNull(map.resolveEntry(farPt));
 
             Assertions.assertFalse(map.entrySet().contains(new SimpleEntry<>(farPt, 0)));
             Assertions.assertFalse(map.keySet().contains(farPt));
@@ -223,11 +226,13 @@ public abstract class PointMapTestBase<P extends Point<P>> {
             Assertions.assertEquals(value, map.get(pt));
             Assertions.assertTrue(map.containsKey(pt));
             Assertions.assertEquals(pt, map.resolveKey(pt));
+            Assertions.assertEquals(new SimpleEntry<>(pt, value), map.resolveEntry(pt));
 
             for (final P closePt : getTestPointsAtDistance(pt, EPS * 0.75)) {
                 Assertions.assertEquals(value, map.get(closePt));
                 Assertions.assertTrue(map.containsKey(closePt));
                 Assertions.assertEquals(pt, map.resolveKey(closePt));
+                Assertions.assertEquals(new SimpleEntry<>(pt, value), map.resolveEntry(closePt));
 
                 Assertions.assertTrue(map.entrySet().contains(new SimpleEntry<>(closePt, value)));
                 Assertions.assertTrue(map.keySet().contains(closePt));
@@ -237,6 +242,7 @@ public abstract class PointMapTestBase<P extends Point<P>> {
                 Assertions.assertNull(map.get(farPt));
                 Assertions.assertFalse(map.containsKey(farPt));
                 Assertions.assertNull(map.resolveKey(farPt));
+                Assertions.assertNull(map.resolveEntry(farPt));
 
                 Assertions.assertFalse(map.entrySet().contains(new SimpleEntry<>(farPt, 0)));
                 Assertions.assertFalse(map.keySet().contains(farPt));
@@ -271,6 +277,20 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         for (final P pt : getInfPoints()) {
             Assertions.assertNull(map.get(pt));
         }
+    }
+
+    @Test
+    void testResolveEntry_cannotSetValue() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(3, EPS);
+        insertPoints(pts, map);
+
+        final Map.Entry<P, Integer> entry = map.resolveEntry(pts.get(1));
+
+        // act/assert
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> entry.setValue(100));
     }
 
     @Test
@@ -1600,6 +1620,8 @@ public abstract class PointMapTestBase<P extends Point<P>> {
 
                 Assertions.assertEquals(expectedKey, map.resolveKey(expectedKey),
                         () -> "Failed to resolve key " + expectedKey);
+                Assertions.assertEquals(new SimpleEntry<>(expectedKey, expectedValue), map.resolveEntry(expectedKey),
+                        () -> "Failed to resolve entry for key " + expectedKey);
                 Assertions.assertEquals(expectedValue, map.get(expectedKey),
                         () -> "Unexpected value for key " + expectedKey);
 
