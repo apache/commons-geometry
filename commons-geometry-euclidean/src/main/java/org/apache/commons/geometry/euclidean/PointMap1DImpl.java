@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.oned;
+package org.apache.commons.geometry.euclidean;
 
 import java.util.Collection;
 import java.util.Map;
@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
+import org.apache.commons.geometry.euclidean.oned.PointMap1D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.core.Precision;
 
 /** Internal implementation of {@link PointMap1D}. This implementation delegates

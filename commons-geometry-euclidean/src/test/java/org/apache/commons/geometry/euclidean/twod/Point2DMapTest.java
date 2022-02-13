@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
+import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.numbers.core.Precision.DoubleEquivalence;
 
 class Point2DMapTest extends PointMapTestBase<Vector2D> {
@@ -29,7 +30,7 @@ class Point2DMapTest extends PointMapTestBase<Vector2D> {
     /** {@inheritDoc} */
     @Override
     protected <V> PointMap<Vector2D, V> getMap(final DoubleEquivalence precision) {
-        return PointMap2D.of(precision);
+        return EuclideanCollections.pointMap2D(precision);
     }
 
     /** {@inheritDoc} */

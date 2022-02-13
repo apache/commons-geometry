@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
+import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.numbers.core.Precision;
 
 class PointMap1DTest extends PointMapTestBase<Vector1D> {
@@ -29,7 +30,7 @@ class PointMap1DTest extends PointMapTestBase<Vector1D> {
     /** {@inheritDoc} */
     @Override
     protected <V> PointMap<Vector1D, V> getMap(final Precision.DoubleEquivalence precision) {
-        return PointMap1D.of(precision);
+        return EuclideanCollections.pointMap1D(precision);
     }
 
     /** {@inheritDoc} */

@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod;
+package org.apache.commons.geometry.euclidean;
 
 import java.util.List;
 
-import org.apache.commons.geometry.euclidean.internal.AbstractMultiDimensionalPointMap;
+import org.apache.commons.geometry.euclidean.twod.PointMap2D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.core.Precision;
 
 /** Internal {@link PointMap2D} implementation.

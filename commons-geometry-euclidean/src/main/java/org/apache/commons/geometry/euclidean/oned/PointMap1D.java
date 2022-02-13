@@ -17,20 +17,10 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.collection.PointMap;
-import org.apache.commons.numbers.core.Precision;
 
 /** {@link PointMap} type for Euclidean 1D space.
  * @param <V> Map value type
+ * @see org.apache.commons.geometry.euclidean.EuclideanCollections
  */
 public interface PointMap1D<V> extends PointMap<Vector1D, V> {
-
-    /** Construct a new map instance using the given precision context to determine
-     * equality between points.
-     * @param <V> Map value type
-     * @param precision precision context used to determine point equality
-     * @return new point map instance
-     */
-    static <V> PointMap1D<V> of(final Precision.DoubleEquivalence precision) {
-        return new PointMap1DImpl<>(precision);
-    }
 }

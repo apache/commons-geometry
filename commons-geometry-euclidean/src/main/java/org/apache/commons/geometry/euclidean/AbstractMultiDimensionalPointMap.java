@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.internal;
+package org.apache.commons.geometry.euclidean;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -32,10 +32,13 @@ import java.util.function.BiFunction;
 
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
-import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.core.Precision;
 
-public abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
+/** Abstract point map base class for multi-dimensional Euclidean spaces.
+ * @param <P> Point type
+ * @param <V> Map value type
+ */
+abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
     extends AbstractMap<P, V>
     implements PointMap<P, V> {
 

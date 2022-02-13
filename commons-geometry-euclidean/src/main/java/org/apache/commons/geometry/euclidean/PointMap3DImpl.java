@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.threed;
+package org.apache.commons.geometry.euclidean;
 
 import java.util.List;
 
-import org.apache.commons.geometry.euclidean.internal.AbstractMultiDimensionalPointMap;
+import org.apache.commons.geometry.euclidean.threed.PointMap3D;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
 
 /** Internal {@link PointMap3D} implementation.
