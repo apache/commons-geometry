@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.spherical;
 
 import org.apache.commons.geometry.spherical.oned.PointMap1S;
+import org.apache.commons.geometry.spherical.twod.PointMap2S;
 import org.apache.commons.numbers.core.Precision;
 
 /** Class containing utility methods for spherical collection types.
@@ -34,5 +35,15 @@ public final class SphericalCollections {
      */
     public static <V> PointMap1S<V> pointMap1S(final Precision.DoubleEquivalence precision) {
         return new PointMap1SImpl<>(precision);
+    }
+
+    /** Construct a new {@link PointMap2S} instance using the given precision context to determine
+     * equality between points.
+     * @param <V> Map value type
+     * @param precision precision context used to determine point equality
+     * @return new spherical 2D point map instance
+     */
+    public static <V> PointMap2S<V> pointMap2S(final Precision.DoubleEquivalence precision) {
+        return new PointMap2SImpl<>(precision);
     }
 }

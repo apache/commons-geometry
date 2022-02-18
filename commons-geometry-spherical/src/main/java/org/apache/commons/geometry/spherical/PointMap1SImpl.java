@@ -33,7 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 /** Internal implementation of {@link PointMap1S}.
  * @param <V> Map value type
  */
-class PointMap1SImpl<V> implements PointMap1S<V> {
+final class PointMap1SImpl<V> implements PointMap1S<V> {
 
     /** Precision context used to determine floating point equality. */
     private final Precision.DoubleEquivalence precision;
