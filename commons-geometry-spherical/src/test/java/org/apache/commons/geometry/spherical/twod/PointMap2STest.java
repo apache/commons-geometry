@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalCollections;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
@@ -67,17 +68,26 @@ class PointMap2STest extends PointMapTestBase<Point2S> {
     protected List<Point2S> getTestPoints(final int cnt, final double eps) {
         final List<Point2S> pts = new ArrayList<>(cnt);
 
-        final double delta = Angle.TWO_PI / cnt;
-        double az = 0.0;
-        double pol = 0.0;
-        for (int i = 0; i < cnt; ++i) {
-            if (i % 2 == 0) {
-                az += i * delta;
-            } else {
-                pol += i * delta;
-            }
+        final double delta = 10 * eps;
+        final double maxAz = Angle.TWO_PI - delta;
 
-            pts.add(Point2S.of(az, pol));
+        final Transform2S polarRotation = Transform2S.createRotation(Point2S.PLUS_J, Math.PI / cnt);
+
+        Point2S pt = Point2S.PLUS_K;
+        while (pts.size() < cnt) {
+            pts.add(pt);
+
+            if (pts.size() == 1 || pt.getAzimuth() >= maxAz) {
+                // we've wrapped around in azimuth so move toward the
+                // -z pole
+                pt = polarRotation.apply(pt);
+            } else {
+                // rotate in azimuth
+                final Vector3D.Unit u = pt.getVector();
+                final Vector3D.Unit w = u.orthogonal(Vector3D.Unit.PLUS_Z);
+
+                pt = Transform2S.createRotation(w, delta).apply(pt);
+            }
         }
 
         return pts;
@@ -86,10 +96,16 @@ class PointMap2STest extends PointMapTestBase<Point2S> {
     /** {@inheritDoc} */
     @Override
     protected List<Point2S> getTestPointsAtDistance(final Point2S pt, final double dist) {
+        final Vector3D.Unit u = pt.getVector();
+        final Vector3D.Unit v = u.orthogonal();
+        final Vector3D.Unit w = u.cross(v).normalize();
+
+        final double t = dist / Angle.PI_OVER_TWO;
+
         return Arrays.asList(
-                Point2S.of(pt.getAzimuth() - dist, pt.getPolar() - dist),
-                Point2S.of(pt.getAzimuth() - dist, pt.getPolar() + dist),
-                Point2S.of(pt.getAzimuth() + dist, pt.getPolar() - dist),
-                Point2S.of(pt.getAzimuth() + dist, pt.getPolar() + dist));
+                pt.slerp(Point2S.from(v), t),
+                pt.slerp(Point2S.from(v.negate()), t),
+                pt.slerp(Point2S.from(w), t),
+                pt.slerp(Point2S.from(w.negate()), t));
     }
 }

@@ -16,8 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean;
 
-import java.util.List;
-
+import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
 import org.apache.commons.geometry.euclidean.threed.PointMap3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
@@ -26,11 +25,14 @@ import org.apache.commons.numbers.core.Precision;
  * @param <V> Map value type
  */
 final class PointMap3DImpl<V>
-    extends AbstractMultiDimensionalPointMap<Vector3D, V>
+    extends AbstractBucketPointMap<Vector3D, V>
     implements PointMap3D<V> {
 
     /** Number of children per node. */
     private static final int NODE_CHILD_COUNT = 8;
+
+    /** Max entries per node. */
+    private static final int MAX_ENTRIES_PER_NODE = 16;
 
     /** X negative octant flag. */
     private static final int XNEG = 1 << 5;
@@ -68,42 +70,49 @@ final class PointMap3DImpl<V>
      * @param precision precision context
      */
     PointMap3DImpl(final Precision.DoubleEquivalence precision) {
-        super(Node3D::new, precision);
+        super(MapNode3D::new,
+                MAX_ENTRIES_PER_NODE,
+                NODE_CHILD_COUNT,
+                precision);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean pointsEq(final Vector3D a, final Vector3D b) {
+        return a.eq(b, getPrecision());
     }
 
     /** Tree node class for {@link PointMap3DImpl}.
      * @param <V> Map value type
      */
-    private static final class Node3D<V> extends Node<Vector3D, V> {
+    private static final class MapNode3D<V> extends BucketNode<Vector3D, V> {
+
+        /** Point to split child spaces; will be null for leaf nodes. */
+        private Vector3D split;
 
         /** Construct a new instance.
          * @param map owning map
          * @param parent parent node; set to null for the root node
          */
-        Node3D(final AbstractMultiDimensionalPointMap<Vector3D, V> map, final Node<Vector3D, V> parent) {
+        MapNode3D(final AbstractBucketPointMap<Vector3D, V> map,
+                final BucketNode<Vector3D, V> parent) {
             super(map, parent);
         }
 
         /** {@inheritDoc} */
         @Override
-        protected int getNodeChildCount() {
-            return NODE_CHILD_COUNT;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected Vector3D computeSplitPoint(final List<Entry<Vector3D, V>> entries) {
+        protected void computeSplit() {
             final Vector3D.Sum sum = Vector3D.Sum.create();
-            for (Entry<Vector3D, V> entry : entries) {
+            for (Entry<Vector3D, V> entry : this) {
                 sum.add(entry.getKey());
             }
 
-            return sum.get().multiply(1.0 / entries.size());
+            split = sum.get().multiply(1.0 / MAX_ENTRIES_PER_NODE);
         }
 
         /** {@inheritDoc} */
         @Override
-        protected int getLocation(final Vector3D pt, final Vector3D split) {
+        protected int getLocation(final Vector3D pt) {
             final Precision.DoubleEquivalence precision = getPrecision();
 
             int loc = getLocationValue(
@@ -127,6 +136,14 @@ final class PointMap3DImpl<V>
         protected boolean testChildLocation(final int childIdx, final int loc) {
             final int childLoc = CHILD_LOCATIONS[childIdx];
             return (childLoc & loc) == childLoc;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void makeLeaf() {
+            super.makeLeaf();
+
+            split = null;
         }
     }
 }

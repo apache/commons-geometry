@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean;
+package org.apache.commons.geometry.core.internal;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Deque;
 import java.util.Iterator;
@@ -30,29 +31,42 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.collection.PointMap;
-import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.numbers.core.Precision;
 
-/** Abstract point map base class for multi-dimensional Euclidean spaces.
+/** Abstract tree-based {@link PointMap} implementation that stores entries in bucket nodes
+ * that are split once a certain entry count threshold is reached.
  * @param <P> Point type
  * @param <V> Map value type
  */
-abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
+public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     extends AbstractMap<P, V>
     implements PointMap<P, V> {
 
-    /** Max entries per node. */
-    private static final int MAX_ENTRIES_PER_NODE = 16;
+    /** Function used to construct new node instances. */
+    private final BiFunction<AbstractBucketPointMap<P, V>, BucketNode<P, V>, BucketNode<P, V>> nodeFactory;
+
+    /** Maximum number of entries stored per node before the node is split. */
+    private final int maxNodeEntryCount;
+
+    /** Number of child nodes for each non-leaf node. */
+    private final int nodeChildCount;
+
+    /** Size of the node list caches. */
+    private final int listCacheSize;
+
+    /** Cache of node entry lists. */
+    private final Deque<List<Entry<P, V>>> entryListCache;
+
+    /** Cache of node child lists. */
+    private final Deque<List<BucketNode<P, V>>> nodeChildListCache;
 
     /** Precision context. */
     private final Precision.DoubleEquivalence precision;
 
-    /** Function used to construct new node instances. */
-    private final BiFunction<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>, Node<P, V>> nodeFactory;
-
     /** Root of the tree. */
-    private Node<P, V> root;
+    private BucketNode<P, V> root;
 
     /** Size of the tree. */
     private int entryCount;
@@ -60,11 +74,25 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
     /** Version counter, used to track tree modifications. */
     private int version;
 
-    protected AbstractMultiDimensionalPointMap(
-            final BiFunction<AbstractMultiDimensionalPointMap<P, V>, Node<P, V>, Node<P, V>> nodeFactory,
+    /** Construct a new instance.
+     * @param nodeFactory object used to construct new node instances
+     * @param maxNodeEntryCount maximum number of map entries per node before
+     *      the node is split
+     * @param nodeChildCount number of child nodes per internal node
+     * @param precision precision object used for floating point comparisons
+     */
+    protected AbstractBucketPointMap(
+            final BiFunction<AbstractBucketPointMap<P, V>, BucketNode<P, V>, BucketNode<P, V>> nodeFactory,
+            final int maxNodeEntryCount,
+            final int nodeChildCount,
             final Precision.DoubleEquivalence precision) {
-        this.precision = precision;
         this.nodeFactory = nodeFactory;
+        this.maxNodeEntryCount = maxNodeEntryCount;
+        this.nodeChildCount = nodeChildCount;
+        this.listCacheSize = maxNodeEntryCount;
+        this.entryListCache = new ArrayDeque<>(listCacheSize);
+        this.nodeChildListCache = new ArrayDeque<>(listCacheSize);
+        this.precision = precision;
         this.root = nodeFactory.apply(this, null);
     }
 
@@ -115,7 +143,7 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
     /** {@inheritDoc} */
     @Override
     public V get(final Object key) {
-        final Entry<P, V> entry = getEntry(key);
+        final Entry<P, V> entry = findEntry(key);
         return entry != null ?
                 entry.getValue() :
                 null;
@@ -136,7 +164,7 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
     /** {@inheritDoc} */
     @Override
     public boolean containsKey(final Object key) {
-        return getEntry(key) != null;
+        return findEntry(key) != null;
     }
 
     /** {@inheritDoc} */
@@ -151,26 +179,85 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
         return new EntrySet<>(this);
     }
 
+    /** Return true if the given points are equivalent using the precision
+     * configured for the map.
+     * @param a first point
+     * @param b second point
+     * @return true if the given points are equivalent
+     */
+    protected abstract boolean pointsEq(P a, P b);
+
+    /** Get the configured precision for the instance.
+     * @return precision object
+     */
+    protected Precision.DoubleEquivalence getPrecision() {
+        return precision;
+    }
+
     /** Construct a new node instance.
      * @param parent parent node; will be null or the tree root
      * @return the new node instance
      */
-    Node<P, V> createNode(final Node<P, V> parent) {
+    private BucketNode<P, V> createNode(final BucketNode<P, V> parent) {
         return nodeFactory.apply(this, parent);
     }
 
     /** Method called when a new entry is added to the tree.
      */
-    void entryAdded() {
+    private void entryAdded() {
         ++entryCount;
         ++version;
     }
 
     /** Method called when an entry is removed from the tree.
      */
-    void entryRemoved() {
+    private void entryRemoved() {
         --entryCount;
         ++version;
+    }
+
+    /** Get a list for storing map entries.
+     * @return list for storing map entries
+     */
+    private List<Entry<P, V>> getEntryList() {
+        final List<Entry<P, V>> list = entryListCache.pollFirst();
+        if (list == null) {
+            return new ArrayList<>(maxNodeEntryCount);
+        }
+        return list;
+    }
+
+    /** Release a list used to store map entries. Other nodes are
+     * free to reuse this list as needed.
+     * @param list list to release
+     */
+    private void releaseEntryList(final List<Entry<P, V>> list) {
+        if (entryListCache.size() < maxNodeEntryCount) {
+            list.clear();
+            entryListCache.add(list);
+        }
+    }
+
+    /** Get a list for storing node children.
+     * @return list for storing node children
+     */
+    private List<BucketNode<P, V>> getNodeChildList() {
+        final List<BucketNode<P, V>> list = nodeChildListCache.pollFirst();
+        if (list == null) {
+            return new ArrayList<>(Collections.nCopies(nodeChildCount, null));
+        }
+        return list;
+    }
+
+    /** Release a list used to store node children. Other nodes are
+     * free to reuse this list as needed.
+     * @param list list to release
+     */
+    private void releaseNodeChildList(final List<BucketNode<P, V>> list) {
+        if (nodeChildListCache.size() < maxNodeEntryCount) {
+            list.replaceAll(n -> null);
+            nodeChildListCache.add(list);
+        }
     }
 
     /** Get the entry for the given key or null if not found.
@@ -178,70 +265,87 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
      * @return entry for the given key or null if not found
      */
     @SuppressWarnings("unchecked")
-    private Entry<P, V> getEntry(final Object key) {
-        return root.findEntry((P) key);
+    private Entry<P, V> findEntry(final Object key) {
+        final P pt = (P) key;
+        return pt.isFinite() ?
+                root.findEntry(pt) :
+                null;
     }
 
-    /** Spatial paritioning node type.
+    /** Spatial partitioning node type that stores map entries in a list until
+     * a threshold is reached, at which point the node is split.
      * @param <P> Point type
      * @param <V> Value type
      */
-    public abstract static class Node<P extends EuclideanVector<P>, V> {
+    protected abstract static class BucketNode<P extends Point<P>, V>
+        implements Iterable<Map.Entry<P, V>> {
 
         /** Owning map. */
-        private final AbstractMultiDimensionalPointMap<P, V> map;
+        private final AbstractBucketPointMap<P, V> map;
 
         /** Parent node. */
-        private final Node<P, V> parent;
+        private final BucketNode<P, V> parent;
 
         /** Child nodes. */
-        private List<Node<P, V>> children;
+        private List<BucketNode<P, V>> children;
 
-        /** Points stored in the node; this will only be populated for leaf nodes. */
-        private List<Entry<P, V>> entries = new ArrayList<>(MAX_ENTRIES_PER_NODE);
+        /** Entries stored in the node; will be null for non-leaf nodes. */
+        private List<Entry<P, V>> entries;
 
-        /** The split point of the node; will be null for leaf nodes. */
-        private P splitPoint;
-
-        protected Node(final AbstractMultiDimensionalPointMap<P, V> map, final Node<P, V> parent) {
+        /** Construct a new instance.
+         * @param map owning map
+         * @param parent parent node or null if the tree root
+         */
+        protected BucketNode(
+                final AbstractBucketPointMap<P, V> map,
+                final BucketNode<P, V> parent) {
             this.map = map;
             this.parent = parent;
+
+            // pull an entry list from the parent map; this will make
+            // this node a leaf initially
+            this.entries = map.getEntryList();
         }
 
-        /** Return true if the node is a leaf.
-         * @return true if the node is a leaf
+        /**
+         * Return true if this node is a leaf node.
+         * @return true if this node is a leaf node
          */
         public boolean isLeaf() {
-            return splitPoint == null;
+            return entries != null;
         }
 
-        /** Return true if this node is a leaf node and contains no entries.
-         * @return true if this node is a leaf node and contains no entries
+        /**
+         * Return true if the subtree rooted at this node does not
+         * contain any map entries.
+         * @return true if the subtree root at this node is empty
          */
         public boolean isEmpty() {
             return isLeaf() && entries.isEmpty();
         }
 
-        /** Insert a new entry containing the given key and value. No check
-         * is made as to whether or not an entry already exists for the key.
+        /** Insert a new entry containing the given key and value. No
+         * check is made as to whether or not an entry already exists for
+         * the key.
          * @param key key to insert
          * @param value value to insert
          */
         public void insertEntry(final P key, final V value) {
             if (isLeaf()) {
-                if (entries.size() < MAX_ENTRIES_PER_NODE) {
+                if (entries.size() < map.maxNodeEntryCount) {
                     // we have an open spot here so just add the entry
-                    entries.add(new SimpleEntry<>(key, value));
+                    append(new SimpleEntry<>(key, value));
                     return;
                 }
 
-                // no available entries; split the node and add to a child
+                // no available entries; split the node and add the new
+                // entry to a child
                 splitNode();
             }
 
             // non-leaf node
             // determine the relative location of the key
-            final int loc = getLocation(key, splitPoint);
+            final int loc = getLocation(key);
 
             // insert into the first child that can contain the key
             for (int i = 0; i < children.size(); ++i) {
@@ -252,15 +356,24 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
             }
         }
 
-        /** Find the entry matching the given key or null if not found.
-         * @param key key to search for
-         * @return the entry matching the given key or null if not found
+        /**
+         * Append an entry to the entry list for this node. This method must
+         * only be called on leaf nodes.
+         * @param entry entry to append
+         */
+        public void append(final Entry<P, V> entry) {
+            entries.add(entry);
+        }
+
+        /** Find and return the map entry matching the given key.
+         * @param key point key
+         * @return entry matching the given key or null if not found
          */
         public Entry<P, V> findEntry(final P key) {
             if (isLeaf()) {
                 // check the list of entries for a match
                 for (final Entry<P, V> entry : entries) {
-                    if (key.eq(entry.getKey(), map.precision)) {
+                    if (map.pointsEq(key, entry.getKey())) {
                         return entry;
                     }
                 }
@@ -270,7 +383,7 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
 
             // delegate to each child that could possibly contain the
             // point or an equivalent point
-            final int loc = getLocation(key, splitPoint);
+            final int loc = getLocation(key);
             for (int i = 0; i < children.size(); ++i) {
                 if (testChildLocation(i, loc)) {
                     final Entry<P, V> entry = getEntryInChild(i, key);
@@ -301,7 +414,7 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
             }
 
             // delegate to each child
-            for (final Node<P, V> child : children) {
+            for (final BucketNode<P, V> child : children) {
                 if (child != null) {
                     final Entry<P, V> childResult = child.findEntryByValue(value);
                     if (childResult != null) {
@@ -325,7 +438,7 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
                 final Iterator<Entry<P, V>> it = entries.iterator();
                 while (it.hasNext()) {
                     final Entry<P, V> entry = it.next();
-                    if (key.eq(entry.getKey(), map.precision)) {
+                    if (map.pointsEq(key, entry.getKey())) {
                         it.remove();
                         return entry;
                     }
@@ -336,13 +449,15 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
             }
 
             // look through children
-            final int loc = getLocation(key, splitPoint);
+            final int loc = getLocation(key);
             for (int i = 0; i < children.size(); ++i) {
                 if (testChildLocation(i, loc)) {
                     final Entry<P, V> entry = removeFromChild(i, key);
                     if (entry != null) {
 
-                        checkMakeLeaf();
+                        // an entry was removed; check if the subtree can be
+                        // condensed before returning
+                        condenseSubtree();
 
                         return entry;
                     }
@@ -353,10 +468,28 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
             return null;
         }
 
+        /** Attempt to condense the subtree rooted at this node by converting
+         * it to a leaf if no children contain entries.
+         */
+        public void condenseSubtree() {
+            boolean empty = true;
+            for (final BucketNode<P, V> child : children) {
+                if (child != null && !child.isEmpty()) {
+                    empty = false;
+                    break;
+                }
+            }
+
+            if (empty) {
+                makeLeaf();
+            }
+        }
+
         /** Return an iterator for accessing the node entries. The {@code remove()}
          * method of the returned iterator correctly updates the tree state.
          * @return iterator for accessing the node entries
          */
+        @Override
         public Iterator<Map.Entry<P, V>> iterator() {
             final Iterator<Map.Entry<P, V>> it = entries.iterator();
 
@@ -376,56 +509,35 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
                 public void remove() {
                     it.remove();
 
-                    onEntryRemovedDirect();
+                    // notify the owning map
+                    map.entryRemoved();
+
+                    // navigate up the tree and see if any subtrees need
+                    // to be condensed
+                    if (entries.isEmpty()) {
+                        BucketNode<P, V> current = parent;
+                        while (current != null) {
+                            current.condenseSubtree();
+
+                            current = current.parent;
+                        }
+                    }
                 }
             };
         }
 
-        /**
-         * Method called when an entry is directly removed from node without first
-         * being located by traversing the tree.
+        /** Compute the split for this node from the current set
+         * of map entries. Subclasses are responsible for managing
+         * the storage of the split.
          */
-        private void onEntryRemovedDirect() {
-            // notify the owning map
-            map.entryRemoved();
-
-            // navigate up the tree and see if any subtrees need
-            // to be pruned
-            if (entries.isEmpty()) {
-                Node<P, V> current = parent;
-                while (current != null) {
-                    current.checkMakeLeaf();
-
-                    current = current.parent;
-                }
-            }
-        }
-
-        /** Get the precision context for the instance.
-         * @return precision context for the instance
-         */
-        protected Precision.DoubleEquivalence getPrecision() {
-            return map.precision;
-        }
-
-        /** Get the number of children required for each node. This will vary by dimension.
-         * @return number of required children for each node
-         */
-        protected abstract int getNodeChildCount();
-
-        /** Compute the node split point based on the given entry list.
-         * @param nodeEntries entries contained in the node being split
-         * @return the computed split point
-         */
-        protected abstract P computeSplitPoint(List<Entry<P, V>> nodeEntries);
+        protected abstract void computeSplit();
 
         /** Get an int encoding the location of {@code pt} relative to the
-         * node split point.
+         * node split.
          * @param pt point to determine the relative location of
-         * @param split node split point
          * @return encoded point location
          */
-        protected abstract int getLocation(P pt, P split);
+        protected abstract int getLocation(P pt);
 
         /** Return true if the child node at {@code childIdx} matches the given
          * encoded point location.
@@ -435,13 +547,45 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
          */
         protected abstract boolean testChildLocation(int childIdx, int loc);
 
+        /** Make this node a leaf node.
+         */
+        protected void makeLeaf() {
+            entries = map.getEntryList();
+
+            map.releaseNodeChildList(children);
+            children = null;
+        }
+
+        /** Split the node and place all entries into the new child nodes.
+         * This node becomes an internal node.
+         */
+        protected void splitNode() {
+            computeSplit();
+
+            children = map.getNodeChildList();
+
+            for (final Entry<P, V> entry : entries) {
+                moveToChild(entry);
+            }
+
+            map.releaseEntryList(entries);
+            entries = null;
+        }
+
+        /** Get the precision context for the instance.
+         * @return precision context for the instance
+         */
+        protected Precision.DoubleEquivalence getPrecision() {
+            return map.precision;
+        }
+
         /** Get the given entry in the child at {@code idx} or null if not found.
          * @param idx child index
          * @param key key to search for
          * @return entry matching {@code key} in child or null if not found
          */
         private Entry<P, V> getEntryInChild(final int idx, final P key) {
-            final Node<P, V> child = children.get(idx);
+            final BucketNode<P, V> child = children.get(idx);
             if (child != null) {
                 return child.findEntry(key);
             }
@@ -454,70 +598,24 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
          * @return entry removed from the child or null if not found
          */
         private Entry<P, V> removeFromChild(final int idx, final P key) {
-            final Node<P, V> child = children.get(idx);
+            final BucketNode<P, V> child = children.get(idx);
             if (child != null) {
                 return child.removeEntry(key);
             }
             return null;
         }
 
-        /** Split the node and place all entries into the new child nodes.
-         * This node becomes an internal node.
-         */
-        private void splitNode() {
-            splitPoint = computeSplitPoint(entries);
-
-            final int childCount = getNodeChildCount();
-
-            children = new ArrayList<>(childCount);
-            // add null placeholders entries for children; these will be replaced
-            // with actual nodes as needed
-            for (int i = 0; i < childCount; ++i) {
-                children.add(null);
-            }
-
-            for (final Entry<P, V> entry : entries) {
-                moveToChild(entry);
-            }
-
-            entries.clear();
-        }
-
-        /** Attempt to condense the subtree rooted at this internal node by converting
-         * it to a leaf if no children contain entries.
-         */
-        private void checkMakeLeaf() {
-            boolean empty = true;
-            for (final Node<P, V> child : children) {
-                if (child != null && !child.isEmpty()) {
-                    empty = false;
-                    break;
-                }
-            }
-
-            if (empty) {
-                makeLeaf();
-            }
-        }
-
-        /** Make this node a leaf node.
-         */
-        private void makeLeaf() {
-            splitPoint = null;
-            children = null;
-        }
-
         /** Move the previously created entry to a child node.
          * @param entry entry to mode
          */
         private void moveToChild(final Entry<P, V> entry) {
-            final int loc = getLocation(entry.getKey(), splitPoint);
+            final int loc = getLocation(entry.getKey());
 
             final int numChildren = children.size();
             for (int i = 0; i < numChildren; ++i) {
                 // place the entry in the first child that contains it
                 if (testChildLocation(i, loc)) {
-                    getOrCreateChild(i).entries.add(entry);
+                    getOrCreateChild(i).append(entry);
                     break;
                 }
             }
@@ -527,8 +625,8 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
          * @param idx index of the child node
          * @return child node at the given index
          */
-        private Node<P, V> getOrCreateChild(final int idx) {
-            Node<P, V> child = children.get(idx);
+        private BucketNode<P, V> getOrCreateChild(final int idx) {
+            BucketNode<P, V> child = children.get(idx);
             if (child == null) {
                 child = map.createNode(this);
                 children.set(idx, child);
@@ -552,17 +650,17 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
         }
     }
 
-    /** Set view of the map.
+    /** Set view of the map entries.
      * @param <P> Point type
      * @param <V> Value type
      */
-    private static final class EntrySet<P extends EuclideanVector<P>, V>
+    private static final class EntrySet<P extends Point<P>, V>
         extends AbstractSet<Map.Entry<P, V>> {
 
         /** Owning map. */
-        private final AbstractMultiDimensionalPointMap<P, V> map;
+        private final AbstractBucketPointMap<P, V> map;
 
-        EntrySet(final AbstractMultiDimensionalPointMap<P, V> map) {
+        EntrySet(final AbstractBucketPointMap<P, V> map) {
             this.map = map;
         }
 
@@ -574,9 +672,9 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
                 final Map.Entry<?, ?> search = (Map.Entry<?, ?>) obj;
                 final Object key = search.getKey();
 
-                final Map.Entry<P, V> actual = map.getEntry(key);
+                final Map.Entry<P, V> actual = map.findEntry(key);
                 if (actual != null) {
-                    return actual.getKey().eq((P) search.getKey(), map.precision) &&
+                    return map.pointsEq(actual.getKey(), (P) search.getKey()) &&
                             Objects.equals(actual.getValue(), search.getValue());
                 }
             }
@@ -600,14 +698,14 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
      * @param <P> Point type
      * @param <V> Value type
      */
-    private static final class EntryIterator<P extends EuclideanVector<P>, V>
+    private static final class EntryIterator<P extends Point<P>, V>
         implements Iterator<Map.Entry<P, V>> {
 
         /** Owning map. */
-        private final AbstractMultiDimensionalPointMap<P, V> map;
+        private final AbstractBucketPointMap<P, V> map;
 
         /** Queue of nodes waiting to be visited. */
-        private final Deque<Node<P, V>> nodeQueue = new ArrayDeque<>();
+        private final Deque<BucketNode<P, V>> nodeQueue = new ArrayDeque<>();
 
         /** Iterator that returned the previous entry. */
         private Iterator<Map.Entry<P, V>> prevEntryIterator;
@@ -621,7 +719,7 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
         /** Construct a new instance for the given map.
          * @param map map instance
          */
-        EntryIterator(final AbstractMultiDimensionalPointMap<P, V> map) {
+        EntryIterator(final AbstractBucketPointMap<P, V> map) {
             this.map = map;
             this.nodeQueue.add(map.root);
 
@@ -668,7 +766,7 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
          */
         private void queueNextEntry() {
             if (nextEntryIterator == null || !nextEntryIterator.hasNext()) {
-                final Node<P, V> node = findNonEmptyLeafNode();
+                final BucketNode<P, V> node = findNonEmptyLeafNode();
                 if (node != null) {
                     nextEntryIterator = node.iterator();
                 } else {
@@ -681,13 +779,13 @@ abstract class AbstractMultiDimensionalPointMap<P extends EuclideanVector<P>, V>
          * @return the next non-empty leaf node or null if one cannot
          *      be found
          */
-        private Node<P, V> findNonEmptyLeafNode() {
+        private BucketNode<P, V> findNonEmptyLeafNode() {
             while (!nodeQueue.isEmpty()) {
-                final Node<P, V> node = nodeQueue.removeFirst();
+                final BucketNode<P, V> node = nodeQueue.removeFirst();
 
                 if (!node.isLeaf()) {
                     // internal node; add non-null children to the queue
-                    for (final Node<P, V> child : node.children) {
+                    for (final BucketNode<P, V> child : node.children) {
                         if (child != null) {
                             nodeQueue.add(child);
                         }

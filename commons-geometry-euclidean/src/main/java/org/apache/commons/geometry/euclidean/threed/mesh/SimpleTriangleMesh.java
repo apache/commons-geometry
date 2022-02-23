@@ -20,23 +20,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Planes;
+import org.apache.commons.geometry.euclidean.threed.PointMap3D;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
@@ -417,7 +416,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
         private final ArrayList<Vector3D> vertices = new ArrayList<>();
 
         /** Map of vertices to their first occurrence in the vertex list. */
-        private Map<Vector3D, Integer> vertexIndexMap;
+        private PointMap3D<Integer> vertexIndexMap;
 
         /** List of face vertex indices. */
         private final ArrayList<int[]> faces = new ArrayList<>();
@@ -674,9 +673,9 @@ public final class SimpleTriangleMesh implements TriangleMesh {
         /** Get the vertex index map, creating and initializing it if needed.
          * @return the vertex index map
          */
-        private Map<Vector3D, Integer> getVertexIndexMap() {
+        private PointMap3D<Integer> getVertexIndexMap() {
             if (vertexIndexMap == null) {
-                vertexIndexMap = new TreeMap<>(new FuzzyVectorComparator(precision));
+                vertexIndexMap = EuclideanCollections.pointMap3D(precision);
 
                 // populate the index map
                 final int size = vertices.size();
@@ -697,7 +696,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
          * @return the index now associated with the given vertex or its equivalent
          */
         private int addToVertexIndexMap(final Vector3D vertex, final int targetIdx,
-                final Map<? super Vector3D, Integer> map) {
+                final PointMap3D<Integer> map) {
             validateCanModify();
 
             final Integer actualIdx = map.putIfAbsent(vertex, targetIdx);
@@ -743,37 +742,6 @@ public final class SimpleTriangleMesh implements TriangleMesh {
             if (built) {
                 throw new IllegalStateException("Builder instance cannot be modified: mesh construction is complete");
             }
-        }
-    }
-
-    /** Comparator used to sort vectors using non-strict ("fuzzy") comparisons.
-     * Vectors are considered equal if their values in all coordinate dimensions
-     * are equivalent as evaluated by the precision context.
-     */
-    private static final class FuzzyVectorComparator implements Comparator<Vector3D> {
-        /** Precision context to determine floating-point equality. */
-        private final Precision.DoubleEquivalence precision;
-
-        /** Construct a new instance that uses the given precision context for
-         * floating point comparisons.
-         * @param precision precision context used for floating point comparisons
-         */
-        FuzzyVectorComparator(final Precision.DoubleEquivalence precision) {
-            this.precision = precision;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public int compare(final Vector3D a, final Vector3D b) {
-            int result = precision.compare(a.getX(), b.getX());
-            if (result == 0) {
-                result = precision.compare(a.getY(), b.getY());
-                if (result == 0) {
-                    result = precision.compare(a.getZ(), b.getZ());
-                }
-            }
-
-            return result;
         }
     }
 }

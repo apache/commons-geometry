@@ -16,116 +16,133 @@
  */
 package org.apache.commons.geometry.spherical;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
+import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
+import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.spherical.twod.GreatCircle;
+import org.apache.commons.geometry.spherical.twod.GreatCircles;
 import org.apache.commons.geometry.spherical.twod.Point2S;
 import org.apache.commons.geometry.spherical.twod.PointMap2S;
 import org.apache.commons.numbers.core.Precision;
 
-final class PointMap2SImpl<V> implements PointMap2S<V> {
+/** Internal implementation of {@link PointMap2S}.
+ * @param <V> Map value type
+ */
+final class PointMap2SImpl<V>
+    extends AbstractBucketPointMap<Point2S, V>
+    implements PointMap2S<V> {
+
+    /** Number of children per node. */
+    private static final int NODE_CHILD_COUNT = 4;
+
+    /** Max entries per node. */
+    private static final int MAX_ENTRIES_PER_NODE = 16;
+
+    /** First negative quadrant flag. */
+    private static final int NEG1 = 1 << 3;
+
+    /** First positive quadrant flag. */
+    private static final int POS1 = 1 << 2;
+
+    /** Second negative quadrant flag. */
+    private static final int NEG2 = 1 << 1;
+
+    /** Second positive quadrant flag. */
+    private static final int POS2 = 1;
+
+    /** Location flags for child nodes. */
+    private static final int[] CHILD_LOCATIONS = {
+        NEG1 | NEG2,
+        NEG1 | POS2,
+        POS1 | NEG2,
+        POS1 | POS2
+    };
 
     PointMap2SImpl(final Precision.DoubleEquivalence precision) {
+        super(MapNode2S::new,
+                MAX_ENTRIES_PER_NODE,
+                NODE_CHILD_COUNT,
+                precision);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point2S resolveKey(final Point2S pt) {
-        // TODO Auto-generated method stub
-        return null;
+    protected boolean pointsEq(final Point2S a, final Point2S b) {
+        return a.eq(b, getPrecision());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Entry<Point2S, V> resolveEntry(final Point2S pt) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    protected static class MapNode2S<V>
+        extends BucketNode<Point2S, V> {
 
-    /** {@inheritDoc} */
-    @Override
-    public int size() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+        /** First hyperplane split. */
+        private GreatCircle firstSplit;
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+        /** Second hyperplane split. */
+        private GreatCircle secondSplit;
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean containsKey(final Object key) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+        MapNode2S(
+                final AbstractBucketPointMap<Point2S, V> map,
+                final BucketNode<Point2S, V> parent) {
+            super(map, parent);
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean containsValue(final Object value) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+        /** {@inheritDoc} */
+        @Override
+        protected void computeSplit() {
+            final Vector3D.Sum sum = Vector3D.Sum.create();
 
-    /** {@inheritDoc} */
-    @Override
-    public V get(final Object key) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+            for (Entry<Point2S, V> entry : this) {
+                sum.add(entry.getKey().getVector());
+            }
 
-    /** {@inheritDoc} */
-    @Override
-    public V put(final Point2S key, final V value) {
-        GeometryInternalUtils.validatePointMapKey(key);
+            // construct an orthonormal basis
+            Vector3D.Unit u = sum.get().multiply(1.0 / MAX_ENTRIES_PER_NODE)
+                    .normalizeOrNull();
+            if (u == null) {
+                u = Vector3D.Unit.PLUS_X;
+            }
 
-        // TODO Auto-generated method stub
-        return null;
-    }
+            Vector3D.Unit v =  Vector3D.Unit.PLUS_Z.cross(u)
+                    .normalizeOrNull();
+            if (v == null) {
+                v = Vector3D.Unit.PLUS_Y.cross(u)
+                        .normalizeOrNull();
+            }
+            final Vector3D.Unit w = u.cross(v).normalize();
 
-    /** {@inheritDoc} */
-    @Override
-    public V remove(final Object key) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+            // construct the two great circles
+            firstSplit = GreatCircles.fromPole(v.add(w), getPrecision());
+            secondSplit = GreatCircles.fromPole(v.negate().add(w), getPrecision());
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public void putAll(final Map<? extends Point2S, ? extends V> m) {
-        // TODO Auto-generated method stub
+        /** {@inheritDoc} */
+        @Override
+        protected int getLocation(final Point2S pt) {
+            int loc = firstSplit.classify(pt) == HyperplaneLocation.PLUS ?
+                    POS1 :
+                    NEG1;
 
-    }
+            loc |= secondSplit.classify(pt) == HyperplaneLocation.PLUS ?
+                    POS2 :
+                    NEG2;
 
-    /** {@inheritDoc} */
-    @Override
-    public void clear() {
-        // TODO Auto-generated method stub
-    }
+            return loc;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public Set<Point2S> keySet() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        /** {@inheritDoc} */
+        @Override
+        protected boolean testChildLocation(final int childIdx, final int loc) {
+            final int childLoc = CHILD_LOCATIONS[childIdx];
+            return (childLoc & loc) == childLoc;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public Collection<V> values() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        /** {@inheritDoc} */
+        @Override
+        protected void makeLeaf() {
+            super.makeLeaf();
 
-    /** {@inheritDoc} */
-    @Override
-    public Set<Entry<Point2S, V>> entrySet() {
-        // TODO Auto-generated method stub
-        return null;
+            firstSplit = null;
+            secondSplit = null;
+        }
     }
 }

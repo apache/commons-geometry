@@ -164,8 +164,8 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         final PointMap<P, Integer> map = getMap(PRECISION);
 
         final List<P> pts = getTestPoints(3, EPS);
-        insertPoints(pts.subList(1, 3), map);
 
+        insertPoints(pts.subList(1, 3), map);
         // act/assert
         Assertions.assertNull(map.get(pts.get(0)));
 

@@ -16,8 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean;
 
-import java.util.List;
-
+import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
 import org.apache.commons.geometry.euclidean.twod.PointMap2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.core.Precision;
@@ -26,11 +25,14 @@ import org.apache.commons.numbers.core.Precision;
  * @param <V> Map value type
  */
 final class PointMap2DImpl<V>
-    extends AbstractMultiDimensionalPointMap<Vector2D, V>
+    extends AbstractBucketPointMap<Vector2D, V>
     implements PointMap2D<V> {
 
     /** Number of children per node. */
     private static final int NODE_CHILD_COUNT = 4;
+
+    /** Max entries per node. */
+    private static final int MAX_ENTRIES_PER_NODE = 16;
 
     /** X negative quadrant flag. */
     private static final int XNEG = 1 << 3;
@@ -44,7 +46,7 @@ final class PointMap2DImpl<V>
     /** Y positive quadrant flag. */
     private static final int YPOS = 1;
 
-    /** Octant location flags for child nodes. */
+    /** Quadtree location flags for child nodes. */
     private static final int[] CHILD_LOCATIONS = {
         XNEG | YNEG,
         XNEG | YPOS,
@@ -57,32 +59,38 @@ final class PointMap2DImpl<V>
      * @param precision precision context
      */
     PointMap2DImpl(final Precision.DoubleEquivalence precision) {
-        super(Node2D::new, precision);
+        super(MapNode2D::new,
+                MAX_ENTRIES_PER_NODE,
+                NODE_CHILD_COUNT,
+                precision);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean pointsEq(final Vector2D a, final Vector2D b) {
+        return a.eq(b, getPrecision());
     }
 
     /** Tree node class for {@link PointMap2DImpl}.
      * @param <V> Map value type
      */
-    private static final class Node2D<V> extends Node<Vector2D, V> {
+    private static final class MapNode2D<V> extends BucketNode<Vector2D, V> {
+
+        /** Point to split child spaces; will be null for leaf nodes. */
+        private Vector2D split;
 
         /** Construct a new instance.
          * @param map owning map
          * @param parent parent node; set to null for the root node
          */
-        Node2D(final AbstractMultiDimensionalPointMap<Vector2D, V> map,
-                final Node<Vector2D, V> parent) {
+        MapNode2D(final AbstractBucketPointMap<Vector2D, V> map,
+                final BucketNode<Vector2D, V> parent) {
             super(map, parent);
         }
 
         /** {@inheritDoc} */
         @Override
-        protected int getNodeChildCount() {
-            return NODE_CHILD_COUNT;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected int getLocation(final Vector2D pt, final Vector2D split) {
+        protected int getLocation(final Vector2D pt) {
             final Precision.DoubleEquivalence precision = getPrecision();
 
             int loc = getLocationValue(
@@ -99,13 +107,13 @@ final class PointMap2DImpl<V>
 
         /** {@inheritDoc} */
         @Override
-        protected Vector2D computeSplitPoint(final List<Entry<Vector2D, V>> entries) {
+        protected void computeSplit() {
             final Vector2D.Sum sum = Vector2D.Sum.create();
-            for (final Entry<Vector2D, V> entry : entries) {
+            for (final Entry<Vector2D, V> entry : this) {
                 sum.add(entry.getKey());
             }
 
-            return sum.get().multiply(1.0 / entries.size());
+            split = sum.get().multiply(1.0 / MAX_ENTRIES_PER_NODE);
         }
 
         /** {@inheritDoc} */
@@ -113,6 +121,14 @@ final class PointMap2DImpl<V>
         protected boolean testChildLocation(final int childIdx, final int loc) {
             final int childLoc = CHILD_LOCATIONS[childIdx];
             return (childLoc & loc) == childLoc;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void makeLeaf() {
+            super.makeLeaf();
+
+            split = null;
         }
     }
 }
