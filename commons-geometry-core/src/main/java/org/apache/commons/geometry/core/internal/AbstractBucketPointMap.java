@@ -53,15 +53,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     /** Number of child nodes for each non-leaf node. */
     private final int nodeChildCount;
 
-    /** Size of the node list caches. */
-    private final int listCacheSize;
-
-    /** Cache of node entry lists. */
-    private final Deque<List<Entry<P, V>>> entryListCache;
-
-    /** Cache of node child lists. */
-    private final Deque<List<BucketNode<P, V>>> nodeChildListCache;
-
     /** Precision context. */
     private final Precision.DoubleEquivalence precision;
 
@@ -89,9 +80,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         this.nodeFactory = nodeFactory;
         this.maxNodeEntryCount = maxNodeEntryCount;
         this.nodeChildCount = nodeChildCount;
-        this.listCacheSize = maxNodeEntryCount;
-        this.entryListCache = new ArrayDeque<>(listCacheSize);
-        this.nodeChildListCache = new ArrayDeque<>(listCacheSize);
         this.precision = precision;
         this.root = nodeFactory.apply(this, null);
     }
@@ -126,18 +114,12 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     public V put(final P key, final V value) {
         GeometryInternalUtils.validatePointMapKey(key);
 
-        final Entry<P, V> entry = root.findEntry(key);
-        if (entry == null) {
-            root.insertEntry(key, value);
+        final InsertResult<V> result = root.insertOrUpdateEntry(key, value, true);
+        if (result.isNewEntry()) {
             entryAdded();
-
-            return null;
         }
 
-        final V prev = entry.getValue();
-        entry.setValue(value);
-
-        return prev;
+        return result.getPreviousValue();
     }
 
     /** {@inheritDoc} */
@@ -220,44 +202,14 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
      * @return list for storing map entries
      */
     private List<Entry<P, V>> getEntryList() {
-        final List<Entry<P, V>> list = entryListCache.pollFirst();
-        if (list == null) {
-            return new ArrayList<>(maxNodeEntryCount);
-        }
-        return list;
-    }
-
-    /** Release a list used to store map entries. Other nodes are
-     * free to reuse this list as needed.
-     * @param list list to release
-     */
-    private void releaseEntryList(final List<Entry<P, V>> list) {
-        if (entryListCache.size() < maxNodeEntryCount) {
-            list.clear();
-            entryListCache.add(list);
-        }
+        return new ArrayList<>(maxNodeEntryCount);
     }
 
     /** Get a list for storing node children.
      * @return list for storing node children
      */
     private List<BucketNode<P, V>> getNodeChildList() {
-        final List<BucketNode<P, V>> list = nodeChildListCache.pollFirst();
-        if (list == null) {
-            return new ArrayList<>(Collections.nCopies(nodeChildCount, null));
-        }
-        return list;
-    }
-
-    /** Release a list used to store node children. Other nodes are
-     * free to reuse this list as needed.
-     * @param list list to release
-     */
-    private void releaseNodeChildList(final List<BucketNode<P, V>> list) {
-        if (nodeChildListCache.size() < maxNodeEntryCount) {
-            list.replaceAll(n -> null);
-            nodeChildListCache.add(list);
-        }
+        return new ArrayList<>(Collections.nCopies(nodeChildCount, null));
     }
 
     /** Get the entry for the given key or null if not found.
@@ -324,18 +276,34 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             return isLeaf() && entries.isEmpty();
         }
 
-        /** Insert a new entry containing the given key and value. No
-         * check is made as to whether or not an entry already exists for
-         * the key.
+        /** Insert or update an entry in the map.
          * @param key key to insert
          * @param value value to insert
+         * @param insert if true, a new value will be allowed to be created in the subtree; otherwise,
+         *      only existing values will be updated
          */
-        public void insertEntry(final P key, final V value) {
+        public InsertResult<V> insertOrUpdateEntry(final P key, final V value, final boolean insert) {
             if (isLeaf()) {
+                for (final Entry<P, V> entry : entries) {
+                    if (map.pointsEq(key, entry.getKey())) {
+                        // found an existing entry
+                        final InsertResult<V> result = new InsertResult<>(entry.getValue(), false);
+                        entry.setValue(value);
+
+                        return result;
+                    }
+                }
+
+                if (!insert) {
+                    // not inserting; nothing more to do
+                    return null;
+                }
+
                 if (entries.size() < map.maxNodeEntryCount) {
                     // we have an open spot here so just add the entry
                     append(new SimpleEntry<>(key, value));
-                    return;
+
+                    return new InsertResult<>(null, true);
                 }
 
                 // no available entries; split the node and add the new
@@ -347,13 +315,27 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             // determine the relative location of the key
             final int loc = getLocation(key);
 
-            // insert into the first child that can contain the key
-            for (int i = 0; i < children.size(); ++i) {
+            // search backwards through the children, checking first for existing entries
+            // to update and then possibly inserting into the first matching child
+            int firstChildIdx = getFirstMatchingChildIndex(loc);
+
+            for (int i = children.size() - 1; i > firstChildIdx; --i) {
+                // try to update existing entries but do not insert new ones
+                // in this portion of the subtree
                 if (testChildLocation(i, loc)) {
-                    getOrCreateChild(i).insertEntry(key, value);
-                    break;
+                    final BucketNode<P, V> child = children.get(i);
+                    if (child != null) {
+                        final InsertResult<V> result = child.insertOrUpdateEntry(key, value, false);
+
+                        if (result != null) {
+                            return result;
+                        }
+                    }
                 }
             }
+
+            // insert into the first matching child
+            return getOrCreateChild(firstChildIdx).insertOrUpdateEntry(key, value, insert);
         }
 
         /**
@@ -552,7 +534,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         protected void makeLeaf() {
             entries = map.getEntryList();
 
-            map.releaseNodeChildList(children);
             children = null;
         }
 
@@ -568,7 +549,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                 moveToChild(entry);
             }
 
-            map.releaseEntryList(entries);
             entries = null;
         }
 
@@ -621,6 +601,24 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             }
         }
 
+        /** Get the index of the first child node that matches the encoded location.
+         * @param key key object
+         * @return index of the first child node that matches the encoded location.
+         * @throws IllegalArgumentException if no child matches the location; this is
+         *      indication of an incorrect implementation
+         */
+        private int getFirstMatchingChildIndex(final int loc) {
+            for (int i = 0; i < children.size(); ++i) {
+                if (testChildLocation(i, loc)) {
+                    return i;
+                }
+            }
+
+            // this should not happen with properly implemented child classes
+            throw new IllegalArgumentException("No child node matched the location value " + loc +
+                    ". This could be an indication of an incorrect child node split algorithm.");
+        }
+
         /** Get the child node at the given index, creating it if needed.
          * @param idx index of the child node
          * @return child node at the given index
@@ -647,6 +645,26 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                 return pos;
             }
             return neg | pos;
+        }
+    }
+
+    public static final class InsertResult<V> {
+
+        private final V previousValue;
+
+        private final boolean newEntry;
+
+        InsertResult(final V previousValue, final boolean newEntry) {
+            this.previousValue = previousValue;
+            this.newEntry = newEntry;
+        }
+
+        public V getPreviousValue() {
+            return previousValue;
+        }
+
+        public boolean isNewEntry() {
+            return newEntry;
         }
     }
 

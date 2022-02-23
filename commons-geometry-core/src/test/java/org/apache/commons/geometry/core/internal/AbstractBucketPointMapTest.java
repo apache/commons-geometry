@@ -21,17 +21,40 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.geometry.core.internal.AbstractBucketPointMap.BucketNode;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint1D;
 import org.apache.commons.numbers.core.Precision;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
 
+    @Test
+    void testPut_pointsCloseToSplit() {
+        // arrange
+        TestPointMap<Integer> map = getMap(PRECISION);
+
+        final List<TestPoint1D> pts = createPointList(0, 1, TestPointMap.MAX_ENTRY_COUNT);
+        insertPoints(pts, map);
+
+        final TestPoint1D split = centroid(pts);
+
+        final TestPoint1D pt = new TestPoint1D(split.getX() + (1.25 * EPS));
+
+        map.put(pt, 100);
+
+        // act/assert
+        final TestPoint1D close = new TestPoint1D(split.getX() + (0.75 * EPS));
+
+        Assertions.assertEquals(100, map.put(close, 101));
+        Assertions.assertEquals(101, map.get(close));
+        Assertions.assertEquals(101, map.get(pt));
+    }
+
     /** {@inheritDoc} */
     @Override
-    protected <V> PointMap<TestPoint1D, V> getMap(final Precision.DoubleEquivalence precision) {
+    protected <V> TestPointMap<V> getMap(final Precision.DoubleEquivalence precision) {
         return new TestPointMap<>(precision);
     }
 
@@ -58,11 +81,22 @@ class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
     /** {@inheritDoc} */
     @Override
     protected List<TestPoint1D> getTestPoints(final int cnt, final double eps) {
+        final double delta = 10 * eps;
+        return createPointList(-1.0, delta, cnt);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected List<TestPoint1D> getTestPointsAtDistance(final TestPoint1D pt, final double dist) {
+        return Arrays.asList(
+                new TestPoint1D(pt.getX() - dist),
+                new TestPoint1D(pt.getX() + dist));
+    }
+
+    private static List<TestPoint1D> createPointList(final double start, final double delta, final int cnt) {
         final List<TestPoint1D> pts = new ArrayList<>(cnt);
 
-        final double delta = 10 * eps;
-
-        double x = -1.0;
+        double x = start;
         for (int i = 0; i < cnt; ++i) {
             pts.add(new TestPoint1D(x));
 
@@ -72,12 +106,13 @@ class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
         return pts;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected List<TestPoint1D> getTestPointsAtDistance(final TestPoint1D pt, final double dist) {
-        return Arrays.asList(
-                new TestPoint1D(pt.getX() - dist),
-                new TestPoint1D(pt.getX() + dist));
+    private static TestPoint1D centroid(final List<TestPoint1D> pts) {
+        double sum = 0;
+        for (final TestPoint1D pt : pts) {
+            sum += pt.getX();
+        }
+
+        return new TestPoint1D(sum / pts.size());
     }
 
     private static final class TestPointMap<V> extends AbstractBucketPointMap<TestPoint1D, V> {
@@ -102,6 +137,18 @@ class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
 
     private static final class TestNode<V> extends AbstractBucketPointMap.BucketNode<TestPoint1D, V> {
 
+        /** Negative half-space flag. */
+        private static final int NEG = 1 << 1;
+
+        /** Positve half-space flag. */
+        private static final int POS = 1;
+
+        /** Location flags for child nodes. */
+        private static final int[] CHILD_LOCATIONS = {
+            NEG,
+            POS
+        };
+
         private double split;
 
         TestNode(
@@ -124,14 +171,14 @@ class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
         /** {@inheritDoc} */
         @Override
         protected int getLocation(final TestPoint1D pt) {
-            return Double.compare(pt.getX(), split);
+            return getLocationValue(getPrecision().compare(pt.getX(), split), NEG, POS);
         }
 
         /** {@inheritDoc} */
         @Override
         protected boolean testChildLocation(final int childIdx, final int loc) {
-            final int expectedIdx = loc <= 0 ? 0 : 1;
-            return childIdx == expectedIdx;
+            final int childLoc = CHILD_LOCATIONS[childIdx];
+            return (childLoc & loc) == childLoc;
         }
     }
 }

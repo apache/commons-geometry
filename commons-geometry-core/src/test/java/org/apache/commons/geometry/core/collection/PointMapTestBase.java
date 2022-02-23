@@ -42,9 +42,9 @@ import org.junit.jupiter.api.Test;
  */
 public abstract class PointMapTestBase<P extends Point<P>> {
 
-    private static final double EPS = 1e-10;
+    public static final double EPS = 1e-10;
 
-    private static final Precision.DoubleEquivalence PRECISION =
+    public static final Precision.DoubleEquivalence PRECISION =
             Precision.doubleEquivalenceOfEpsilon(EPS);
 
     /** Get a new point map instance for testing.
@@ -311,6 +311,36 @@ public abstract class PointMapTestBase<P extends Point<P>> {
             .expectEntry(a, 3)
             .doesNotContainKeys(pts.subList(1, pts.size()))
             .check();
+    }
+
+    @Test
+    void testPut_equivalentValues_multipleEntries() {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(100, EPS, new Random(10L));
+        insertPoints(pts, map);
+
+        final double delta = 0.75 * EPS;
+
+        // act/assert
+        int i = 0;
+        for (final P pt : pts) {
+            final List<P> closePts = getTestPointsAtDistance(pt, delta);
+            checkPut(map, closePts, i++);
+        }
+    }
+
+    private void checkPut(final PointMap<P, Integer> map, final List<P> pts, final int startValue) {
+        int currentValue = startValue;
+        for (final P pt : pts) {
+            int nextValue = startValue + 1;
+
+            Assertions.assertEquals(currentValue, map.put(pt, nextValue));
+            Assertions.assertEquals(nextValue, map.get(pt));
+
+            currentValue = nextValue;
+        }
     }
 
     @Test
