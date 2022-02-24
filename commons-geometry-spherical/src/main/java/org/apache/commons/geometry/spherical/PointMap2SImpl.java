@@ -71,7 +71,10 @@ final class PointMap2SImpl<V>
         return a.eq(b, getPrecision());
     }
 
-    protected static class MapNode2S<V>
+    /** Tree node class for {@link PointMap2SImpl}.
+     * @param <V> Map value type
+     */
+    private static final class MapNode2S<V>
         extends BucketNode<Point2S, V> {
 
         /** First hyperplane split. */

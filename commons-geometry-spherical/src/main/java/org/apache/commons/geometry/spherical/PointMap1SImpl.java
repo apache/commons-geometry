@@ -55,7 +55,7 @@ final class PointMap1SImpl<V> implements PointMap1S<V> {
     PointMap1SImpl(final Precision.DoubleEquivalence precision) {
         this.precision = precision;
         this.map = new TreeMap<>((a, b) ->
-            Double.compare(a.getNormalizedAzimuth(), b.getNormalizedAzimuth()));
+            precision.compare(a.getNormalizedAzimuth(), b.getNormalizedAzimuth()));
     }
 
     /** {@inheritDoc} */
@@ -83,10 +83,7 @@ final class PointMap1SImpl<V> implements PointMap1S<V> {
         if (floor != null && keyEq(pt, floor)) {
             return floor;
         } else {
-            final Map.Entry<Point1S, V> ceiling = map.ceilingEntry(pt);
-            if (ceiling != null && keyEq(pt, ceiling)) {
-                return ceiling;
-            } else if (pt.getNormalizedAzimuth() < Math.PI) {
+            if (pt.getNormalizedAzimuth() < Math.PI) {
                 if (wrapsLowToHigh(pt)) {
                     return map.lastEntry();
                 }
