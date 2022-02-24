@@ -21,17 +21,66 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.geometry.spherical.SphericalCollections;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class PointMap1STest extends PointMapTestBase<Point1S> {
 
+    @Test
+    void testWrapLowToHigh() {
+        // arrange
+        final PointMap1S<Integer> map = getMap(PRECISION);
+
+        final double delta = 0.25 * EPS;
+
+        map.put(Point1S.of(1), -1);
+
+        final Point1S pt = Point1S.of(Angle.TWO_PI - delta);
+        map.put(pt, 0);
+
+        final Point1S testPt = Point1S.of(delta);
+
+        // act/assert
+        Assertions.assertEquals(0, map.get(testPt));
+        Assertions.assertEquals(pt, map.resolveKey(testPt));
+        Assertions.assertEquals(pt, map.resolveEntry(testPt).getKey());
+
+        Assertions.assertEquals(0, map.put(testPt, 2));
+        Assertions.assertEquals(2, map.get(testPt));
+        Assertions.assertEquals(2, map.get(pt));
+    }
+
+    @Test
+    void testWrapHighToLow() {
+        // arrange
+        final PointMap1S<Integer> map = getMap(PRECISION);
+
+        final double delta = 0.25 * EPS;
+
+        map.put(Point1S.of(1), -1);
+
+        final Point1S pt = Point1S.of(delta);
+        map.put(pt, 0);
+
+        final Point1S testPt = Point1S.of(Angle.TWO_PI - delta);
+
+        // act/assert
+        Assertions.assertEquals(0, map.get(testPt));
+        Assertions.assertEquals(pt, map.resolveKey(testPt));
+        Assertions.assertEquals(pt, map.resolveEntry(testPt).getKey());
+
+        Assertions.assertEquals(0, map.put(testPt, 2));
+        Assertions.assertEquals(2, map.get(testPt));
+        Assertions.assertEquals(2, map.get(pt));
+    }
+
     /** {@inheritDoc} */
     @Override
-    protected <V> PointMap<Point1S, V> getMap(final Precision.DoubleEquivalence precision) {
+    protected <V> PointMap1S<V> getMap(final Precision.DoubleEquivalence precision) {
         return SphericalCollections.pointMap1S(precision);
     }
 
