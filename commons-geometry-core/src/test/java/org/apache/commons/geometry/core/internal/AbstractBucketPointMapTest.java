@@ -170,8 +170,14 @@ class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
 
         /** {@inheritDoc} */
         @Override
-        protected int getLocation(final TestPoint1D pt) {
-            return getLocationValue(getPrecision().compare(pt.getX(), split), NEG, POS);
+        protected int getSearchLocation(final TestPoint1D pt) {
+            return getSearchLocationValue(getPrecision().compare(pt.getX(), split), NEG, POS);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected int getInsertLocation(final TestPoint1D pt) {
+            return getInsertLocationValue(Double.compare(pt.getX(), split), NEG, POS);
         }
 
         /** {@inheritDoc} */

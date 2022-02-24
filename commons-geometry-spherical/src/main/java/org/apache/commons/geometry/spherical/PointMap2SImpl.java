@@ -117,12 +117,22 @@ final class PointMap2SImpl<V>
 
         /** {@inheritDoc} */
         @Override
-        protected int getLocation(final Point2S pt) {
-            int loc = firstSplit.classify(pt) == HyperplaneLocation.PLUS ?
+        protected int getSearchLocation(final Point2S pt) {
+            int loc = getSearchLocationValue(firstSplit.classify(pt), NEG1, POS1);
+
+            loc |= getSearchLocationValue(secondSplit.classify(pt), NEG2, POS2);
+
+            return loc;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected int getInsertLocation(final Point2S pt) {
+            int loc = firstSplit.offset(pt) > 0.0 ?
                     POS1 :
                     NEG1;
 
-            loc |= secondSplit.classify(pt) == HyperplaneLocation.PLUS ?
+            loc |= secondSplit.offset(pt) > 0.0 ?
                     POS2 :
                     NEG2;
 
@@ -143,6 +153,24 @@ final class PointMap2SImpl<V>
 
             firstSplit = null;
             secondSplit = null;
+        }
+
+        /** Get an encoded search location for the given hyperplane location.
+         * @param loc point location
+         * @param neg negative flag
+         * @param pos positive flag
+         * @return encoded search location
+         */
+        private static int getSearchLocationValue(final HyperplaneLocation loc,
+                final int neg, final int pos) {
+            switch (loc) {
+            case MINUS:
+                return neg;
+            case PLUS:
+                return pos;
+            default:
+                return neg | pos;
+            }
         }
     }
 }

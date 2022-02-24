@@ -90,15 +90,30 @@ final class PointMap2DImpl<V>
 
         /** {@inheritDoc} */
         @Override
-        protected int getLocation(final Vector2D pt) {
+        protected int getSearchLocation(final Vector2D pt) {
             final Precision.DoubleEquivalence precision = getPrecision();
 
-            int loc = getLocationValue(
+            int loc = getSearchLocationValue(
                     precision.compare(pt.getX(), split.getX()),
                     XNEG,
                     XPOS);
-            loc |= getLocationValue(
+            loc |= getSearchLocationValue(
                     precision.compare(pt.getY(), split.getY()),
+                    YNEG,
+                    YPOS);
+
+            return loc;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected int getInsertLocation(final Vector2D pt) {
+            int loc = getInsertLocationValue(
+                    Double.compare(pt.getX(), split.getX()),
+                    XNEG,
+                    XPOS);
+            loc |= getInsertLocationValue(
+                    Double.compare(pt.getY(), split.getY()),
                     YNEG,
                     YPOS);
 

@@ -318,7 +318,7 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         // arrange
         final PointMap<P, Integer> map = getMap(PRECISION);
 
-        final List<P> pts = getTestPoints(100, EPS, new Random(10L));
+        final List<P> pts = getTestPoints(1_000, EPS, new Random(10L));
         insertPoints(pts, map);
 
         final double delta = 0.75 * EPS;
@@ -331,10 +331,10 @@ public abstract class PointMapTestBase<P extends Point<P>> {
         }
     }
 
-    private void checkPut(final PointMap<P, Integer> map, final List<P> pts, final int startValue) {
+    public void checkPut(final PointMap<P, Integer> map, final List<? extends P> pts, final int startValue) {
         int currentValue = startValue;
         for (final P pt : pts) {
-            int nextValue = startValue + 1;
+            int nextValue = currentValue + 1;
 
             Assertions.assertEquals(currentValue, map.put(pt, nextValue));
             Assertions.assertEquals(nextValue, map.get(pt));

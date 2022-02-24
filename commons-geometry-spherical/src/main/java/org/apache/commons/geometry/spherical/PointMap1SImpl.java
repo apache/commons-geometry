@@ -20,6 +20,7 @@ import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -38,8 +39,8 @@ final class PointMap1SImpl<V> implements PointMap1S<V> {
     /** Precision context used to determine floating point equality. */
     private final Precision.DoubleEquivalence precision;
 
-    /** Underlying tree map. */
-    private final TreeMap<Point1S, V> map;
+    /** Underlying map. */
+    private final NavigableMap<Point1S, V> map;
 
     /** Minimum key in the map, or null if not known. */
     private Point1S minKey;
@@ -54,7 +55,7 @@ final class PointMap1SImpl<V> implements PointMap1S<V> {
     PointMap1SImpl(final Precision.DoubleEquivalence precision) {
         this.precision = precision;
         this.map = new TreeMap<>((a, b) ->
-            precision.compare(a.getNormalizedAzimuth(), b.getNormalizedAzimuth()));
+            Double.compare(a.getNormalizedAzimuth(), b.getNormalizedAzimuth()));
     }
 
     /** {@inheritDoc} */
@@ -81,12 +82,17 @@ final class PointMap1SImpl<V> implements PointMap1S<V> {
         final Map.Entry<Point1S, V> floor = map.floorEntry(pt);
         if (floor != null && keyEq(pt, floor)) {
             return floor;
-        } else if (pt.getNormalizedAzimuth() < Math.PI) {
-            if (wrapsLowToHigh(pt)) {
-                return map.lastEntry();
+        } else {
+            final Map.Entry<Point1S, V> ceiling = map.ceilingEntry(pt);
+            if (ceiling != null && keyEq(pt, ceiling)) {
+                return ceiling;
+            } else if (pt.getNormalizedAzimuth() < Math.PI) {
+                if (wrapsLowToHigh(pt)) {
+                    return map.lastEntry();
+                }
+            } else if (wrapsHighToLow(pt)) {
+                return map.firstEntry();
             }
-        } else if (wrapsHighToLow(pt)) {
-            return map.firstEntry();
         }
         return null;
     }
@@ -113,6 +119,11 @@ final class PointMap1SImpl<V> implements PointMap1S<V> {
     @Override
     public V put(final Point1S key, final V value) {
         GeometryInternalUtils.validatePointMapKey(key);
+
+        final Map.Entry<Point1S, V> entry = resolveEntry(key);
+        if (entry != null) {
+            return map.put(entry.getKey(), value);
+        }
 
         final V result = map.put(key, value);
         mapUpdated();
@@ -197,7 +208,7 @@ final class PointMap1SImpl<V> implements PointMap1S<V> {
      *      without considering wrap around
      */
     private boolean keyEq(final Point1S pt, final Map.Entry<Point1S, V> entry) {
-        return map.comparator().compare(pt, entry.getKey()) == 0;
+        return precision.eq(pt.getNormalizedAzimuth(), entry.getKey().getNormalizedAzimuth());
     }
 
     /** Return true if the given point wraps around the zero point from high to low

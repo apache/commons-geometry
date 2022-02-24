@@ -114,12 +114,15 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     public V put(final P key, final V value) {
         GeometryInternalUtils.validatePointMapKey(key);
 
-        final InsertResult<V> result = root.insertOrUpdateEntry(key, value, true);
-        if (result.isNewEntry()) {
-            entryAdded();
+        Entry<P, V> entry = root.findEntry(key);
+        if (entry != null) {
+            return entry.setValue(value);
         }
 
-        return result.getPreviousValue();
+        root.insertEntry(key, value);
+        entryAdded();
+
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -276,34 +279,17 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             return isLeaf() && entries.isEmpty();
         }
 
-        /** Insert or update an entry in the map.
+        /** Insert a new entry into the subtree. No check is made as to whether or not the
+         * entry already exists.
          * @param key key to insert
          * @param value value to insert
-         * @param insert if true, a new value will be allowed to be created in the subtree; otherwise,
-         *      only existing values will be updated
          */
-        public InsertResult<V> insertOrUpdateEntry(final P key, final V value, final boolean insert) {
+        public void insertEntry(final P key, final V value) {
             if (isLeaf()) {
-                for (final Entry<P, V> entry : entries) {
-                    if (map.pointsEq(key, entry.getKey())) {
-                        // found an existing entry
-                        final InsertResult<V> result = new InsertResult<>(entry.getValue(), false);
-                        entry.setValue(value);
-
-                        return result;
-                    }
-                }
-
-                if (!insert) {
-                    // not inserting; nothing more to do
-                    return null;
-                }
-
                 if (entries.size() < map.maxNodeEntryCount) {
                     // we have an open spot here so just add the entry
                     append(new SimpleEntry<>(key, value));
-
-                    return new InsertResult<>(null, true);
+                    return;
                 }
 
                 // no available entries; split the node and add the new
@@ -311,31 +297,14 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                 splitNode();
             }
 
-            // non-leaf node
-            // determine the relative location of the key
-            final int loc = getLocation(key);
+            // insert into the first matching child
+            final int loc = getInsertLocation(key);
 
-            // search backwards through the children, checking first for existing entries
-            // to update and then possibly inserting into the first matching child
-            int firstChildIdx = getFirstMatchingChildIndex(loc);
-
-            for (int i = children.size() - 1; i > firstChildIdx; --i) {
-                // try to update existing entries but do not insert new ones
-                // in this portion of the subtree
+            for (int i = 0; i < children.size(); ++i) {
                 if (testChildLocation(i, loc)) {
-                    final BucketNode<P, V> child = children.get(i);
-                    if (child != null) {
-                        final InsertResult<V> result = child.insertOrUpdateEntry(key, value, false);
-
-                        if (result != null) {
-                            return result;
-                        }
-                    }
+                    getOrCreateChild(i).insertEntry(key, value);
                 }
             }
-
-            // insert into the first matching child
-            return getOrCreateChild(firstChildIdx).insertOrUpdateEntry(key, value, insert);
         }
 
         /**
@@ -365,7 +334,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
 
             // delegate to each child that could possibly contain the
             // point or an equivalent point
-            final int loc = getLocation(key);
+            final int loc = getSearchLocation(key);
             for (int i = 0; i < children.size(); ++i) {
                 if (testChildLocation(i, loc)) {
                     final Entry<P, V> entry = getEntryInChild(i, key);
@@ -431,7 +400,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             }
 
             // look through children
-            final int loc = getLocation(key);
+            final int loc = getSearchLocation(key);
             for (int i = 0; i < children.size(); ++i) {
                 if (testChildLocation(i, loc)) {
                     final Entry<P, V> entry = removeFromChild(i, key);
@@ -514,12 +483,21 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
          */
         protected abstract void computeSplit();
 
-        /** Get an int encoding the location of {@code pt} relative to the
-         * node split.
+        /** Get an int encoding the search locations of {@code pt} relative to the
+         * node split. The return value must include all possible locations of
+         * {@code pt} and equivalent points.
          * @param pt point to determine the relative location of
-         * @return encoded point location
+         * @return encoded search location
          */
-        protected abstract int getLocation(P pt);
+        protected abstract int getSearchLocation(P pt);
+
+        /** Get an int encoding the insert location of {@code pt} relative to the
+         * node split. The return value must be strict and only include the single
+         * location where {@code pt} should be inserted.
+         * @param pt point to determine the insert location of
+         * @return encoded insert location
+         */
+        protected abstract int getInsertLocation(P pt);
 
         /** Return true if the child node at {@code childIdx} matches the given
          * encoded point location.
@@ -532,9 +510,8 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** Make this node a leaf node.
          */
         protected void makeLeaf() {
-            entries = map.getEntryList();
-
             children = null;
+            entries = map.getEntryList();
         }
 
         /** Split the node and place all entries into the new child nodes.
@@ -589,7 +566,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
          * @param entry entry to mode
          */
         private void moveToChild(final Entry<P, V> entry) {
-            final int loc = getLocation(entry.getKey());
+            final int loc = getInsertLocation(entry.getKey());
 
             final int numChildren = children.size();
             for (int i = 0; i < numChildren; ++i) {
@@ -599,24 +576,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                     break;
                 }
             }
-        }
-
-        /** Get the index of the first child node that matches the encoded location.
-         * @param key key object
-         * @return index of the first child node that matches the encoded location.
-         * @throws IllegalArgumentException if no child matches the location; this is
-         *      indication of an incorrect implementation
-         */
-        private int getFirstMatchingChildIndex(final int loc) {
-            for (int i = 0; i < children.size(); ++i) {
-                if (testChildLocation(i, loc)) {
-                    return i;
-                }
-            }
-
-            // this should not happen with properly implemented child classes
-            throw new IllegalArgumentException("No child node matched the location value " + loc +
-                    ". This could be an indication of an incorrect child node split algorithm.");
         }
 
         /** Get the child node at the given index, creating it if needed.
@@ -632,13 +591,18 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             return child;
         }
 
-        /** Get the encoded location value for the given comparison value.
+        /** Get an encoded search location value for the given comparison result. If
+         * {@code cmp} is {@code 0}, then the bitwise OR of {@code neg} and {@code pos}
+         * is returned, indicating that both spaces are valid search locations. Otherwise,
+         * {@code neg} is returned for negative {@code cmp} values and {@code pos} for
+         * positive ones. This location value is to be used during entry searches,
+         * when comparisons must be loose and all possible locations included.
          * @param cmp comparison result
          * @param neg negative flag
          * @param pos positive flag
-         * @return encoded location value
+         * @return encoded search location value
          */
-        public static int getLocationValue(final int cmp, final int neg, final int pos) {
+        public static int getSearchLocationValue(final int cmp, final int neg, final int pos) {
             if (cmp < 0) {
                 return neg;
             } else if (cmp > 0) {
@@ -646,25 +610,20 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             }
             return neg | pos;
         }
-    }
 
-    public static final class InsertResult<V> {
-
-        private final V previousValue;
-
-        private final boolean newEntry;
-
-        InsertResult(final V previousValue, final boolean newEntry) {
-            this.previousValue = previousValue;
-            this.newEntry = newEntry;
-        }
-
-        public V getPreviousValue() {
-            return previousValue;
-        }
-
-        public boolean isNewEntry() {
-            return newEntry;
+        /** Get an insert location value for the given comparison result. If {@code cmp}
+         * is less than or equal to {@code 0}, then {@code neg} is returned. Otherwise,
+         * {@code pos} is returned. This location value is to be used during entry inserts,
+         * where comparisons must be strict.
+         * @param cmp comparison result
+         * @param neg negative flag
+         * @param pos positive flag
+         * @return encoded insert location value
+         */
+        public static int getInsertLocationValue(final int cmp, final int neg, final int pos) {
+            return cmp <= 0 ?
+                    neg :
+                    pos;
         }
     }
 

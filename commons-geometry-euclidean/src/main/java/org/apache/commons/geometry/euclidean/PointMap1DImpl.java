@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -32,8 +33,8 @@ import org.apache.commons.numbers.core.Precision;
 final class PointMap1DImpl<V>
     implements PointMap1D<V> {
 
-    /** Underlying tree map. */
-    private final TreeMap<Vector1D, V> map;
+    /** Underlying map. */
+    private final NavigableMap<Vector1D, V> map;
 
     /** Construct a new instance using the given precision context to determine
      * floating point equality.

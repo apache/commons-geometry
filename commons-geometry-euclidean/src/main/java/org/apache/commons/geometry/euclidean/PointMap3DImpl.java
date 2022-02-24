@@ -112,19 +112,38 @@ final class PointMap3DImpl<V>
 
         /** {@inheritDoc} */
         @Override
-        protected int getLocation(final Vector3D pt) {
+        protected int getSearchLocation(final Vector3D pt) {
             final Precision.DoubleEquivalence precision = getPrecision();
 
-            int loc = getLocationValue(
+            int loc = getSearchLocationValue(
                     precision.compare(pt.getX(), split.getX()),
                     XNEG,
                     XPOS);
-            loc |= getLocationValue(
+            loc |= getSearchLocationValue(
                     precision.compare(pt.getY(), split.getY()),
                     YNEG,
                     YPOS);
-            loc |= getLocationValue(
+            loc |= getSearchLocationValue(
                     precision.compare(pt.getZ(), split.getZ()),
+                    ZNEG,
+                    ZPOS);
+
+            return loc;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected int getInsertLocation(final Vector3D pt) {
+            int loc = getInsertLocationValue(
+                    Double.compare(pt.getX(), split.getX()),
+                    XNEG,
+                    XPOS);
+            loc |= getInsertLocationValue(
+                    Double.compare(pt.getY(), split.getY()),
+                    YNEG,
+                    YPOS);
+            loc |= getInsertLocationValue(
+                    Double.compare(pt.getZ(), split.getZ()),
                     ZNEG,
                     ZPOS);
 
