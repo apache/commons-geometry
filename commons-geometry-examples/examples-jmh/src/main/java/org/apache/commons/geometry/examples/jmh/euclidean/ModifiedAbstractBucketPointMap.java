@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.internal;
+package org.apache.commons.geometry.examples.jmh.euclidean;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -28,11 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.collection.PointMap;
+import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.numbers.core.Precision;
 
 /** Abstract tree-based {@link PointMap} implementation that stores entries in bucket nodes
@@ -40,12 +42,12 @@ import org.apache.commons.numbers.core.Precision;
  * @param <P> Point type
  * @param <V> Map value type
  */
-public abstract class AbstractBucketPointMap<P extends Point<P>, V>
+public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
     extends AbstractMap<P, V>
     implements PointMap<P, V> {
 
     /** Function used to construct new node instances. */
-    private final BiFunction<AbstractBucketPointMap<P, V>, BucketNode<P, V>, BucketNode<P, V>> nodeFactory;
+    private final BiFunction<ModifiedAbstractBucketPointMap<P, V>, BucketNode<P, V>, BucketNode<P, V>> nodeFactory;
 
     /** Maximum number of entries stored per node before the node is split. */
     private final int maxNodeEntryCount;
@@ -59,8 +61,12 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     /** Root of the tree. */
     private BucketNode<P, V> root;
 
+    private BucketNode<P, V> secondaryRoot;
+
     /** Version counter, used to track tree modifications. */
     private int version;
+
+    private final Random rnd = new Random(1L);
 
     /** Construct a new instance.
      * @param nodeFactory object used to construct new node instances
@@ -69,8 +75,8 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
      * @param nodeChildCount number of child nodes per internal node
      * @param precision precision object used for floating point comparisons
      */
-    protected AbstractBucketPointMap(
-            final BiFunction<AbstractBucketPointMap<P, V>, BucketNode<P, V>, BucketNode<P, V>> nodeFactory,
+    protected ModifiedAbstractBucketPointMap(
+            final BiFunction<ModifiedAbstractBucketPointMap<P, V>, BucketNode<P, V>, BucketNode<P, V>> nodeFactory,
             final int maxNodeEntryCount,
             final int nodeChildCount,
             final Precision.DoubleEquivalence precision) {
@@ -96,7 +102,8 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     /** {@inheritDoc} */
     @Override
     public int size() {
-        return root.getEntryCount();
+        return root.getEntryCount() +
+                (secondaryRoot != null ? secondaryRoot.entryCount : 0);
     }
 
     /** {@inheritDoc} */
@@ -104,15 +111,72 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     public V put(final P key, final V value) {
         GeometryInternalUtils.validatePointMapKey(key);
 
-        Entry<P, V> entry = root.findEntry(key);
+        // search for an existing entry
+        Entry<P, V> entry = findEntryByValidPoint(key);
         if (entry != null) {
             return entry.setValue(value);
         }
 
-        root.insertEntry(new SimpleEntry<>(key, value));
+        // not found; insert a new entry
+        final int insertDepth = root.insertEntry(new SimpleEntry<>(key, value));
         entryAdded();
 
+        final double targetLeafCount = root.entryCount / (double) maxNodeEntryCount;
+        final double targetDepth = Math.log(targetLeafCount) / Math.log(nodeChildCount);
+//        System.out.println("insertDepth= " + insertDepth + ", targetDepth= " + targetDepth +
+//                ", targetLeafCount= " + targetLeafCount + ", entryCount= " + root.entryCount);
+        if (secondaryRoot == null &&
+                targetLeafCount > 16 &&
+                insertDepth >= (targetDepth * 4)) {
+
+            secondaryRoot = root;
+            root = createNode(null);
+
+//            System.out.println("root= " + getDepth(root) + ", secondary= " + getDepth(secondaryRoot));
+        }
+
+        migrateSecondaryEntries();
+
+//        System.out.println("root= " + getDepth(root) + ", secondary= " + getDepth(secondaryRoot));
+
         return null;
+    }
+
+    private void migrateSecondaryEntries() {
+        if (secondaryRoot != null) {
+            final int offset = version % nodeChildCount;
+            final boolean even = (offset & 1) > 0;
+            final int idx = even ?
+                    offset / 2 :
+                    nodeChildCount - 1 - (offset / 2);
+
+            final Entry<P, V> entry = secondaryRoot.removeEntryAlongChildIndexPath(idx);
+            if (entry != null) {
+                root.insertEntry(entry);
+            }
+
+            if (secondaryRoot.isEmpty()) {
+                secondaryRoot = null;
+            }
+        }
+    }
+
+    public void printDepth() {
+        System.out.println("root depth= " + getDepth(root) + ", secondaryRoot= " +
+                (secondaryRoot != null ? getDepth(secondaryRoot) : "-"));
+
+    }
+
+    private int getDepth(final BucketNode<P, V> node) {
+        int maxDepth = -1;
+        if (node != null && !node.isLeaf()) {
+            for (final BucketNode<P, V> child : node.children) {
+                if (child != null) {
+                    maxDepth = Math.max(maxDepth, getDepth(child));
+                }
+            }
+        }
+        return maxDepth + 1;
     }
 
     /** {@inheritDoc} */
@@ -142,7 +206,8 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     /** {@inheritDoc} */
     @Override
     public boolean containsValue(final Object value) {
-        return root.findEntryByValue(value) != null;
+        return root.findEntryByValue(value) != null ||
+                (secondaryRoot != null && secondaryRoot.findEntryByValue(value) != null);
     }
 
     /** {@inheritDoc} */
@@ -208,8 +273,23 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     private Entry<P, V> findEntry(final Object key) {
         final P pt = (P) key;
         return pt.isFinite() ?
-                root.findEntry(pt) :
+                findEntryByValidPoint(pt) :
                 null;
+    }
+
+    private Entry<P, V> findEntryByValidPoint(final P pt) {
+        // search in the root
+        final Entry<P, V> rootEntry = root.findEntry(pt);
+        if (rootEntry != null) {
+            return rootEntry;
+        } else if (secondaryRoot != null) {
+            // search in the secondary root
+            final Entry<P, V> secondaryEntry = secondaryRoot.findEntry(pt);
+            if (secondaryEntry != null) {
+                return secondaryEntry;
+            }
+        }
+        return null;
     }
 
     /** Return the key for the argument or {@code null} if {@code entry}
@@ -258,7 +338,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         implements Iterable<Map.Entry<P, V>> {
 
         /** Owning map. */
-        private final AbstractBucketPointMap<P, V> map;
+        private final ModifiedAbstractBucketPointMap<P, V> map;
 
         /** Parent node. */
         private final BucketNode<P, V> parent;
@@ -272,15 +352,21 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** Number of entries in this subtree. */
         private int entryCount;
 
+        /** Depth of this node in the tree. */
+        private int depth;
+
         /** Construct a new instance.
          * @param map owning map
          * @param parent parent node or null if the tree root
          */
         protected BucketNode(
-                final AbstractBucketPointMap<P, V> map,
+                final ModifiedAbstractBucketPointMap<P, V> map,
                 final BucketNode<P, V> parent) {
             this.map = map;
             this.parent = parent;
+            this.depth = parent != null ?
+                    parent.depth + 1 :
+                    0;
 
             // pull an entry list from the parent map; this will make
             // this node a leaf initially
@@ -376,13 +462,14 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** Insert a new entry into the subtree, returning the new size of the
          * subtree. No check is made as to whether or not the entry already exists.
          * @param entry entry to insert
+         * @return the number of entries now contained in the subtree
          */
-        public void insertEntry(final Map.Entry<P, V> entry) {
+        public int insertEntry(final Map.Entry<P, V> entry) {
             if (isLeaf()) {
                 if (entries.size() < map.maxNodeEntryCount) {
                     // we have an open spot here so just add the entry
                     append(entry);
-                    return;
+                    return depth;
                 }
 
                 // no available entries; split the node and add the new
@@ -393,15 +480,18 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             // insert into the first matching child
             final int loc = getInsertLocation(entry.getKey());
 
+            int insertedDepth = 0;
             for (int i = 0; i < children.size(); ++i) {
                 if (testChildLocation(i, loc)) {
-                    getOrCreateChild(i).insertEntry(entry);
+                    insertedDepth = getOrCreateChild(i).insertEntry(entry);
 
                     // update the subtree state
                     subtreeEntryAdded();
                     break;
                 }
             }
+
+            return insertedDepth;
         }
 
         /** Remove the given key, returning the previously mapped entry.
@@ -454,6 +544,44 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         public void append(final Entry<P, V> entry) {
             entries.add(entry);
             subtreeEntryAdded();
+        }
+
+        public Entry<P, V> removeEntryAlongChildIndexPath(final int childIdx) {
+            if (isLeaf()) {
+                if (!entries.isEmpty()) {
+                    final Entry<P, V> entry = entries.remove(entries.size() - 1);
+                    subtreeEntryRemoved();
+
+                    return entry;
+                }
+            } else {
+                final int childCount = children.size();
+                final int dir = childIdx % 2 == 0 ?
+                        +1 :
+                        -1;
+
+                for (int n = 0, i = childIdx;
+                        n < childCount;
+                        ++n, i += dir) {
+                    final int adjustedIndex = (i + childCount) % childCount;
+
+                    final BucketNode<P, V> child = children.get(adjustedIndex);
+                    if (child != null) {
+                        final Entry<P, V> entry = child.removeEntryAlongChildIndexPath(childIdx);
+                        if (entry != null) {
+                            if (child.isEmpty()) {
+                                children.set(adjustedIndex, null);
+                            }
+
+                            subtreeEntryRemoved();
+
+                            return entry;
+                        }
+                    }
+                }
+
+            }
+            return null;
         }
 
         /** Return an iterator for accessing the node entries. The {@code remove()}
@@ -527,8 +655,12 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** Make this node a leaf node.
          */
         protected void makeLeaf() {
+            makeLeaf(map.getEntryList());
+        }
+
+        protected void makeLeaf(final List<Entry<P, V>> leafEntries) {
             children = null;
-            entries = map.getEntryList();
+            entries = leafEntries;
         }
 
         /** Split the node and place all entries into the new child nodes.
@@ -621,8 +753,26 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
          */
         private void subtreeEntryRemoved() {
             --entryCount;
-            if (isEmpty() && !isLeaf()) {
-                makeLeaf();
+            if (!isLeaf() && entryCount < (map.maxNodeEntryCount / 2)) {
+                final List<Entry<P, V>> subtreeEntries = map.getEntryList();
+
+                if (!isEmpty()) {
+                    collectSubtreeEntriesRecursive(subtreeEntries);
+                }
+
+                makeLeaf(subtreeEntries);
+            }
+        }
+
+        private void collectSubtreeEntriesRecursive(final List<Entry<P, V>> entryList) {
+            if (isLeaf()) {
+                entryList.addAll(entries);
+            } else {
+                for (final BucketNode<P, V> child : children) {
+                    if (child != null) {
+                        child.collectSubtreeEntriesRecursive(entryList);
+                    }
+                }
             }
         }
 
@@ -670,9 +820,9 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         extends AbstractSet<Map.Entry<P, V>> {
 
         /** Owning map. */
-        private final AbstractBucketPointMap<P, V> map;
+        private final ModifiedAbstractBucketPointMap<P, V> map;
 
-        EntrySet(final AbstractBucketPointMap<P, V> map) {
+        EntrySet(final ModifiedAbstractBucketPointMap<P, V> map) {
             this.map = map;
         }
 
@@ -714,7 +864,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         implements Iterator<Map.Entry<P, V>> {
 
         /** Owning map. */
-        private final AbstractBucketPointMap<P, V> map;
+        private final ModifiedAbstractBucketPointMap<P, V> map;
 
         /** Queue of nodes waiting to be visited. */
         private final Deque<BucketNode<P, V>> nodeQueue = new ArrayDeque<>();
@@ -731,7 +881,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** Construct a new instance for the given map.
          * @param map map instance
          */
-        EntryIterator(final AbstractBucketPointMap<P, V> map) {
+        EntryIterator(final ModifiedAbstractBucketPointMap<P, V> map) {
             this.map = map;
             this.nodeQueue.add(map.root);
 
