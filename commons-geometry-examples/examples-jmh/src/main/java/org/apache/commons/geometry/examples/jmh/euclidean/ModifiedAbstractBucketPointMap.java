@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
 
@@ -65,8 +64,6 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
 
     /** Version counter, used to track tree modifications. */
     private int version;
-
-    private final Random rnd = new Random(1L);
 
     /** Construct a new instance.
      * @param nodeFactory object used to construct new node instances
@@ -121,22 +118,22 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
         final int insertDepth = root.insertEntry(new SimpleEntry<>(key, value));
         entryAdded();
 
-        final double targetLeafCount = root.entryCount / (double) maxNodeEntryCount;
-        final double targetDepth = Math.log(targetLeafCount) / Math.log(nodeChildCount);
-//        System.out.println("insertDepth= " + insertDepth + ", targetDepth= " + targetDepth +
-//                ", targetLeafCount= " + targetLeafCount + ", entryCount= " + root.entryCount);
-        if (secondaryRoot == null &&
-                targetLeafCount > 16 &&
-                insertDepth >= (targetDepth * 4)) {
-
-            secondaryRoot = root;
-            root = createNode(null);
-
-//            System.out.println("root= " + getDepth(root) + ", secondary= " + getDepth(secondaryRoot));
-        }
-
-        migrateSecondaryEntries();
-
+//        final double targetLeafCount = root.entryCount / (double) maxNodeEntryCount;
+//        final double targetDepth = Math.log(targetLeafCount) / Math.log(nodeChildCount);
+////        System.out.println("insertDepth= " + insertDepth + ", targetDepth= " + targetDepth +
+////                ", targetLeafCount= " + targetLeafCount + ", entryCount= " + root.entryCount);
+//        if (secondaryRoot == null &&
+//                targetLeafCount > 16 &&
+//                insertDepth >= (targetDepth * 4)) {
+//
+//            secondaryRoot = root;
+//            root = createNode(null);
+//
+////            System.out.println("root= " + getDepth(root) + ", secondary= " + getDepth(secondaryRoot));
+//        }
+//
+//        migrateSecondaryEntries();
+//
 //        System.out.println("root= " + getDepth(root) + ", secondary= " + getDepth(secondaryRoot));
 
         return null;
@@ -243,6 +240,13 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
      */
     private void entryAdded() {
         ++version;
+
+        if (!root.isLeaf() && secondaryRoot == null) {
+            secondaryRoot = root;
+            root = createNode(null);
+        }
+
+        migrateSecondaryEntries();
     }
 
     /** Method called when an entry is removed from the tree.
@@ -753,10 +757,14 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
          */
         private void subtreeEntryRemoved() {
             --entryCount;
-            if (!isLeaf() && entryCount < (map.maxNodeEntryCount / 2)) {
+
+            final int condenseThreshold = map.maxNodeEntryCount / 2;
+
+            if (!isLeaf() && entryCount <= condenseThreshold) {
                 final List<Entry<P, V>> subtreeEntries = map.getEntryList();
 
-                if (!isEmpty()) {
+                if (!isEmpty() &&
+                        (parent == null || parent.getEntryCount() > condenseThreshold)) {
                     collectSubtreeEntriesRecursive(subtreeEntries);
                 }
 
