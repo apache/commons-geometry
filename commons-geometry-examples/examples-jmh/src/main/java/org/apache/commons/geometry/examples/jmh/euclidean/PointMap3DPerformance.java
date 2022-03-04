@@ -72,15 +72,15 @@ public class PointMap3DPerformance {
     public static class PointMapInput {
 
         /** Data structure implementation. */
-        @Param({"treemap", "pointmap3d", "pointmap3d-mod"})
+        @Param({"treemap", "pointmap3d"})
         private String impl;
 
         /** Point list shape. */
-        @Param({"block", "line" /*, "sphere", "teapot" */})
+        @Param({"block", "line", "sphere", "teapot"})
         private String shape;
 
         /** Point distribution. */
-        @Param({"none", "random" /*, "ordered" */})
+        @Param({"none", "random", "ordered"})
         private String dist;
 
         /** Seed value for randomization. */
@@ -157,8 +157,6 @@ public class PointMap3DPerformance {
                 });
             case "pointmap3d":
                 return EuclideanCollections.pointMap3D(PRECISION);
-            case "pointmap3d-mod":
-                return new ModifiedPointMap3DImpl<>(PRECISION);
             default:
                 throw new IllegalArgumentException("Unknown map implementation: " + impl);
             }

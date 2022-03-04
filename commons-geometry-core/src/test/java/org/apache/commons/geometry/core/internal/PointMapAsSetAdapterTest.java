@@ -20,40 +20,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.collection.PointMapTestBase;
+import org.apache.commons.geometry.core.collection.PointSet;
+import org.apache.commons.geometry.core.collection.PointSetTestBase;
 import org.apache.commons.geometry.core.partitioning.test.TestPoint1D;
 import org.apache.commons.numbers.core.Precision;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
-
-    @Test
-    void testPut_pointsCloseToSplit() {
-        // arrange
-        TestPointMap1D<Integer> map = getMap(PRECISION);
-
-        final List<TestPoint1D> pts = createPointList(0, 1, TestPointMap1D.MAX_ENTRY_COUNT);
-        insertPoints(pts, map);
-
-        final TestPoint1D split = centroid(pts);
-
-        final TestPoint1D pt = new TestPoint1D(split.getX() + (1.25 * EPS));
-
-        map.put(pt, 100);
-
-        // act/assert
-        final TestPoint1D close = new TestPoint1D(split.getX() + (0.75 * EPS));
-
-        Assertions.assertEquals(100, map.put(close, 101));
-        Assertions.assertEquals(101, map.get(close));
-        Assertions.assertEquals(101, map.get(pt));
-    }
+class PointMapAsSetAdapterTest extends PointSetTestBase<TestPoint1D> {
 
     /** {@inheritDoc} */
     @Override
-    protected <V> TestPointMap1D<V> getMap(final Precision.DoubleEquivalence precision) {
-        return new TestPointMap1D<>(precision);
+    protected PointSet<TestPoint1D> getSet(final Precision.DoubleEquivalence precision) {
+        return new PointMapAsSetAdapter<>(new TestPointMap1D<>(precision));
     }
 
     /** {@inheritDoc} */
@@ -102,14 +79,5 @@ class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
         }
 
         return pts;
-    }
-
-    private static TestPoint1D centroid(final List<TestPoint1D> pts) {
-        double sum = 0;
-        for (final TestPoint1D pt : pts) {
-            sum += pt.getX();
-        }
-
-        return new TestPoint1D(sum / pts.size());
     }
 }

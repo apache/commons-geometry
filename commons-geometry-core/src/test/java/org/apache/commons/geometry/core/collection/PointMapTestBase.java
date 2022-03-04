@@ -40,12 +40,8 @@ import org.junit.jupiter.api.Test;
 /** Base test class for {@link PointMap} implementations.
  * @param <P> Point type
  */
-public abstract class PointMapTestBase<P extends Point<P>> {
-
-    public static final double EPS = 1e-10;
-
-    public static final Precision.DoubleEquivalence PRECISION =
-            Precision.doubleEquivalenceOfEpsilon(EPS);
+public abstract class PointMapTestBase<P extends Point<P>>
+    extends PointCollectionTestBase<P> {
 
     /** Get a new point map instance for testing.
      * @param <V> Value type
@@ -53,52 +49,6 @@ public abstract class PointMapTestBase<P extends Point<P>> {
      * @return a new map instance for testing.
      */
     protected abstract <V> PointMap<P, V> getMap(Precision.DoubleEquivalence precision);
-
-    /** Create an empty array of the target point type.
-     * @return empty array of the target pont type
-     */
-    protected abstract P[] createPointArray();
-
-    /** Get a list of points with {@code NaN} coordinates.
-     * @return list of points with {@code NaN} coordinates
-     */
-    protected abstract List<P> getNaNPoints();
-
-    /** Get a list of points with infinite coordinates.
-     * @return list of points with infinite coordinates
-     */
-    protected abstract List<P> getInfPoints();
-
-    /** Get {@code cnt} number of unique test points that differ from each other in
-     * each dimension by <em>at least</em> {@code eps}.
-     * @param cnt number of points to return
-     * @param eps minimum value that each point must differ from other points along
-     *      each dimension
-     * @return list of test points
-     */
-    protected abstract List<P> getTestPoints(int cnt, double eps);
-
-    /** Get a list of points that lie {@code dist} distance from {@code pt}.
-     * @param pt input point
-     * @param dist distance from {@code pt}
-     * @return list of points that lie {@code dist} distance from {@code pt}
-     */
-    protected abstract List<P> getTestPointsAtDistance(P pt, double dist);
-
-    /** Get {@code cnt} number of unique test points that differ from each other in
-     * each dimension by <em>at least</em> {@code eps}. The returned list is shuffled
-     * using {@code rnd}.
-     * @param cnt
-     * @param eps
-     * @param rnd
-     * @return
-     */
-    protected List<P> getTestPoints(final int cnt, final double eps, final Random rnd) {
-        final List<P> pts = new ArrayList<>(getTestPoints(cnt, eps));
-        Collections.shuffle(pts, rnd);
-
-        return pts;
-    }
 
     @Test
     void testEmpty() {
