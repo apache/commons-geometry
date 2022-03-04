@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
 import org.apache.commons.geometry.euclidean.threed.PointMap3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -31,8 +33,12 @@ final class PointMap3DImpl<V>
     /** Number of children per node. */
     private static final int NODE_CHILD_COUNT = 8;
 
-    /** Max entries per node. */
-    private static final int MAX_ENTRIES_PER_NODE = 16;
+    /** Max entries per node. This value was determined empirically was chosen to
+     * provide a balance between having a small number of entries in each node when
+     * searching and having a large number of samples to provide a good split point
+     * during insertion.
+     */
+    private static final int MAX_ENTRIES_PER_NODE = 32;
 
     /** X negative octant flag. */
     private static final int XNEG = 1 << 5;
@@ -159,8 +165,8 @@ final class PointMap3DImpl<V>
 
         /** {@inheritDoc} */
         @Override
-        protected void makeLeaf() {
-            super.makeLeaf();
+        protected void makeLeaf(final List<Entry<Vector3D, V>> leafEntries) {
+            super.makeLeaf(leafEntries);
 
             split = null;
         }

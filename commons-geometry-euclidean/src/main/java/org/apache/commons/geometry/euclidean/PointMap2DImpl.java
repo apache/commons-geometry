@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
 import org.apache.commons.geometry.euclidean.twod.PointMap2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -140,8 +142,8 @@ final class PointMap2DImpl<V>
 
         /** {@inheritDoc} */
         @Override
-        protected void makeLeaf() {
-            super.makeLeaf();
+        protected void makeLeaf(final List<Entry<Vector2D, V>> leafEntries) {
+            super.makeLeaf(leafEntries);
 
             split = null;
         }

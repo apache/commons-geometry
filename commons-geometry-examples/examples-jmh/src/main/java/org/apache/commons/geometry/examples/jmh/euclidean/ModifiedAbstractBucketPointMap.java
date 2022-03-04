@@ -65,6 +65,16 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
     /** Version counter, used to track tree modifications. */
     private int version;
 
+    private final int listCacheSize;
+
+    private final Deque<List<Entry<P, V>>> entryListCache;
+
+    private final Deque<List<BucketNode<P, V>>> childListCache;
+
+    private int entryListCreateCount = 0;
+
+    private int childListCreateCount = 0;
+
     /** Construct a new instance.
      * @param nodeFactory object used to construct new node instances
      * @param maxNodeEntryCount maximum number of map entries per node before
@@ -81,6 +91,11 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
         this.maxNodeEntryCount = maxNodeEntryCount;
         this.nodeChildCount = nodeChildCount;
         this.precision = precision;
+
+        this.listCacheSize = nodeChildCount * 2;
+        this.entryListCache = new ArrayDeque<>(listCacheSize);
+        this.childListCache = new ArrayDeque<>(listCacheSize);
+
         this.root = nodeFactory.apply(this, null);
     }
 
@@ -115,26 +130,8 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
         }
 
         // not found; insert a new entry
-        final int insertDepth = root.insertEntry(new SimpleEntry<>(key, value));
+        root.insertEntry(new SimpleEntry<>(key, value));
         entryAdded();
-
-//        final double targetLeafCount = root.entryCount / (double) maxNodeEntryCount;
-//        final double targetDepth = Math.log(targetLeafCount) / Math.log(nodeChildCount);
-////        System.out.println("insertDepth= " + insertDepth + ", targetDepth= " + targetDepth +
-////                ", targetLeafCount= " + targetLeafCount + ", entryCount= " + root.entryCount);
-//        if (secondaryRoot == null &&
-//                targetLeafCount > 16 &&
-//                insertDepth >= (targetDepth * 4)) {
-//
-//            secondaryRoot = root;
-//            root = createNode(null);
-//
-////            System.out.println("root= " + getDepth(root) + ", secondary= " + getDepth(secondaryRoot));
-//        }
-//
-//        migrateSecondaryEntries();
-//
-//        System.out.println("root= " + getDepth(root) + ", secondary= " + getDepth(secondaryRoot));
 
         return null;
     }
@@ -161,7 +158,11 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
     public void printDepth() {
         System.out.println("root depth= " + getDepth(root) + ", secondaryRoot= " +
                 (secondaryRoot != null ? getDepth(secondaryRoot) : "-"));
+    }
 
+    public void printListCreateCounts() {
+        System.out.println("entryListCreateCount= " + entryListCreateCount +
+                ", childListCreateCount= " + childListCreateCount);
     }
 
     private int getDepth(final BucketNode<P, V> node) {
@@ -259,14 +260,43 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
      * @return list for storing map entries
      */
     private List<Entry<P, V>> getEntryList() {
+        final List<Entry<P, V>> entryList = entryListCache.pollLast();
+        if (entryList != null) {
+            return entryList;
+        }
+
+        ++entryListCreateCount;
         return new ArrayList<>(maxNodeEntryCount);
+    }
+
+    private void releaseEntryList(final List<Entry<P, V>> entryList) {
+        entryList.clear();
+        if (entryListCache.size() < listCacheSize) {
+            entryListCache.addLast(entryList);
+        }
     }
 
     /** Get a list for storing node children.
      * @return list for storing node children
      */
     private List<BucketNode<P, V>> getNodeChildList() {
+        final List<BucketNode<P, V>> childList = childListCache.pollLast();
+        if (childList != null) {
+            return childList;
+        }
+
+        ++childListCreateCount;
         return new ArrayList<>(Collections.nCopies(nodeChildCount, null));
+    }
+
+    private void releaseNodeChildList(final List<BucketNode<P, V>> childList) {
+        if (childListCache.size() < listCacheSize) {
+            for (int i = 0; i < nodeChildCount; ++i) {
+                childList.set(i, null);
+            }
+
+            childListCache.addLast(childList);
+        }
     }
 
     /** Get the entry for the given key or null if not found.
@@ -663,7 +693,9 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
         }
 
         protected void makeLeaf(final List<Entry<P, V>> leafEntries) {
+            map.releaseNodeChildList(children);
             children = null;
+
             entries = leafEntries;
         }
 
@@ -679,6 +711,7 @@ public abstract class ModifiedAbstractBucketPointMap<P extends Point<P>, V>
                 moveToChild(entry);
             }
 
+            map.releaseEntryList(entries);
             entries = null;
         }
 

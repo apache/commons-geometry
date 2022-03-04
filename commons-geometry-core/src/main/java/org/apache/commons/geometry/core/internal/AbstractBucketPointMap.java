@@ -56,8 +56,11 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     /** Precision context. */
     private final Precision.DoubleEquivalence precision;
 
-    /** Root of the tree. */
+    /** Primary tree root. */
     private BucketNode<P, V> root;
+
+    /** Secondary tree root. */
+    private BucketNode<P, V> secondaryRoot;
 
     /** Version counter, used to track tree modifications. */
     private int version;
@@ -84,19 +87,20 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     /** {@inheritDoc} */
     @Override
     public P resolveKey(final P pt) {
-        return getKey(findEntry(pt));
+        return getKey(findEntryByPoint(pt));
     }
 
     /** {@inheritDoc} */
     @Override
     public Map.Entry<P, V> resolveEntry(final P pt) {
-        return exportEntry(findEntry(pt));
+        return exportEntry(findEntryByPoint(pt));
     }
 
     /** {@inheritDoc} */
     @Override
     public int size() {
-        return root.getEntryCount();
+        return root.getEntryCount() +
+                (secondaryRoot != null ? secondaryRoot.getEntryCount() : 0);
     }
 
     /** {@inheritDoc} */
@@ -104,7 +108,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     public V put(final P key, final V value) {
         GeometryInternalUtils.validatePointMapKey(key);
 
-        Entry<P, V> entry = root.findEntry(key);
+        Entry<P, V> entry = findEntryByPoint(key);
         if (entry != null) {
             return entry.setValue(value);
         }
@@ -125,7 +129,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     @Override
     public V remove(final Object key) {
         @SuppressWarnings("unchecked")
-        final Entry<P, V> entry = root.removeEntry((P) key);
+        final Entry<P, V> entry = removeEntryByPoint((P) key);
         if (entry != null) {
             entryRemoved();
             return entry.getValue();
@@ -142,13 +146,21 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     /** {@inheritDoc} */
     @Override
     public boolean containsValue(final Object value) {
-        return root.findEntryByValue(value) != null;
+        return root.findEntryByValue(value) != null ||
+                (secondaryRoot != null && secondaryRoot.findEntryByValue(value) != null);
     }
 
     /** {@inheritDoc} */
     @Override
     public Set<Entry<P, V>> entrySet() {
         return new EntrySet<>(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void clear() {
+        root = createNode(null);
+        secondaryRoot = null;
     }
 
     /** Return true if the given points are equivalent using the precision
@@ -178,12 +190,22 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
      */
     private void entryAdded() {
         ++version;
+
+        if (!root.isLeaf() && secondaryRoot == null) {
+            secondaryRoot = root;
+            root = createNode(null);
+        }
+
+        migrateSecondaryEntries();
+        checkSecondaryRoot();
     }
 
     /** Method called when an entry is removed from the tree.
      */
     private void entryRemoved() {
         ++version;
+
+        checkSecondaryRoot();
     }
 
     /** Get a list for storing map entries.
@@ -206,10 +228,65 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
      */
     @SuppressWarnings("unchecked")
     private Entry<P, V> findEntry(final Object key) {
-        final P pt = (P) key;
-        return pt.isFinite() ?
-                root.findEntry(pt) :
-                null;
+        return findEntryByPoint((P) key);
+    }
+
+    /** Find the entry for the given point or null if one does not
+     * exist.
+     * @param pt point to find the entry for
+     * @return entry for the given point or null if one does not exist
+     */
+    private Entry<P, V> findEntryByPoint(final P pt) {
+        Entry<P, V> entry = null;
+        if (pt.isFinite()) {
+            entry = root.findEntry(pt);
+            if (entry == null && secondaryRoot != null) {
+                entry = secondaryRoot.findEntry(pt);
+            }
+        }
+        return entry;
+    }
+
+    /** Remove and return the entry for the given point or null
+     * if no such entry exists.
+     * @param pt point to remove the entry for
+     * @return the removed entry or null if not found
+     */
+    private Entry<P, V> removeEntryByPoint(final P pt) {
+        Entry<P, V> entry = null;
+        if (pt.isFinite()) {
+            entry = root.removeEntry(pt);
+            if (entry == null && secondaryRoot != null) {
+                entry = secondaryRoot.removeEntry(pt);
+            }
+        }
+        return entry;
+    }
+
+    /** Move entries from the secondary root (if present) to the primary
+     * root.
+     */
+    private void migrateSecondaryEntries() {
+        if (secondaryRoot != null) {
+            final int offset = version % nodeChildCount;
+            final boolean even = (offset & 1) > 0;
+            final int idx = even ?
+                    offset / 2 :
+                    nodeChildCount - 1 - (offset / 2);
+
+            final Entry<P, V> entry = secondaryRoot.removeEntryAlongChildIndexPath(idx);
+            if (entry != null) {
+                root.insertEntry(entry);
+            }
+        }
+    }
+
+    /** Remove the secondary root if empty.
+     */
+    private void checkSecondaryRoot() {
+        if (secondaryRoot != null && secondaryRoot.isEmpty()) {
+            secondaryRoot = null;
+        }
     }
 
     /** Return the key for the argument or {@code null} if {@code entry}
@@ -456,6 +533,48 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             subtreeEntryAdded();
         }
 
+        /** Remove an entry in a leaf node lying on the given child index path.
+         * @param childIdx target child index
+         * @return removed entry
+         */
+        public Entry<P, V> removeEntryAlongChildIndexPath(final int childIdx) {
+            if (isLeaf()) {
+                if (!entries.isEmpty()) {
+                    final Entry<P, V> entry = entries.remove(entries.size() - 1);
+                    subtreeEntryRemoved();
+
+                    return entry;
+                }
+            } else {
+                final int childCount = children.size();
+                final int dir = childIdx % 2 == 0 ?
+                        +1 :
+                        -1;
+
+                for (int n = 0, i = childIdx;
+                        n < childCount;
+                        ++n, i += dir) {
+                    final int adjustedIndex = (i + childCount) % childCount;
+
+                    final BucketNode<P, V> child = children.get(adjustedIndex);
+                    if (child != null) {
+                        final Entry<P, V> entry = child.removeEntryAlongChildIndexPath(childIdx);
+                        if (entry != null) {
+                            if (child.isEmpty()) {
+                                children.set(adjustedIndex, null);
+                            }
+
+                            subtreeEntryRemoved();
+
+                            return entry;
+                        }
+                    }
+                }
+
+            }
+            return null;
+        }
+
         /** Return an iterator for accessing the node entries. The {@code remove()}
          * method of the returned iterator correctly updates the tree state.
          * @return iterator for accessing the node entries
@@ -524,11 +643,12 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
          */
         protected abstract boolean testChildLocation(int childIdx, int loc);
 
-        /** Make this node a leaf node.
+        /** Make this node a leaf node, using the given list of entries.
+         * @param leafEntries list of map entries to use for the node
          */
-        protected void makeLeaf() {
+        protected void makeLeaf(final List<Entry<P, V>> leafEntries) {
             children = null;
-            entries = map.getEntryList();
+            entries = leafEntries;
         }
 
         /** Split the node and place all entries into the new child nodes.
@@ -621,8 +741,30 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
          */
         private void subtreeEntryRemoved() {
             --entryCount;
-            if (isEmpty() && !isLeaf()) {
-                makeLeaf();
+
+            final int condenseThreshold = map.maxNodeEntryCount / 2;
+
+            if (!isLeaf() && entryCount <= condenseThreshold) {
+                final List<Entry<P, V>> subtreeEntries = map.getEntryList();
+
+                if (!isEmpty() &&
+                        (parent == null || parent.getEntryCount() > condenseThreshold)) {
+                    collectSubtreeEntriesRecursive(subtreeEntries);
+                }
+
+                makeLeaf(subtreeEntries);
+            }
+        }
+
+        private void collectSubtreeEntriesRecursive(final List<Entry<P, V>> entryList) {
+            if (isLeaf()) {
+                entryList.addAll(entries);
+            } else {
+                for (final BucketNode<P, V> child : children) {
+                    if (child != null) {
+                        child.collectSubtreeEntriesRecursive(entryList);
+                    }
+                }
             }
         }
 
@@ -734,6 +876,10 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         EntryIterator(final AbstractBucketPointMap<P, V> map) {
             this.map = map;
             this.nodeQueue.add(map.root);
+
+            if (map.secondaryRoot != null) {
+                this.nodeQueue.add(map.secondaryRoot);
+            }
 
             updateExpectedVersion();
             queueNextEntry();

@@ -80,7 +80,7 @@ public class PointMap3DPerformance {
         private String shape;
 
         /** Point distribution. */
-        @Param({"none" /*, "random", "ordered" */})
+        @Param({"none", "random" /*, "ordered" */})
         private String dist;
 
         /** Seed value for randomization. */

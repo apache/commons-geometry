@@ -31,7 +31,7 @@ final class ModifiedPointMap3DImpl<V>
     private static final int NODE_CHILD_COUNT = 8;
 
     /** Max entries per node. */
-    private static final int MAX_ENTRIES_PER_NODE = 16;
+    private static final int DEFAULT_MAX_ENTRIES_PER_NODE = 32;
 
     /** X negative octant flag. */
     private static final int XNEG = 1 << 5;
@@ -64,15 +64,19 @@ final class ModifiedPointMap3DImpl<V>
         XPOS | YPOS | ZPOS
     };
 
+    ModifiedPointMap3DImpl(final int maxEntriesPerNode, final Precision.DoubleEquivalence precision) {
+        super(MapNode3D::new,
+                maxEntriesPerNode,
+                NODE_CHILD_COUNT,
+                precision);
+    }
+
     /** Construct a new instance using the given precision context to determine
      * floating point equality.
      * @param precision precision context
      */
     ModifiedPointMap3DImpl(final Precision.DoubleEquivalence precision) {
-        super(MapNode3D::new,
-                MAX_ENTRIES_PER_NODE,
-                NODE_CHILD_COUNT,
-                precision);
+        this(DEFAULT_MAX_ENTRIES_PER_NODE, precision);
     }
 
     /** {@inheritDoc} */
@@ -102,11 +106,13 @@ final class ModifiedPointMap3DImpl<V>
         @Override
         protected void computeSplit() {
             final Vector3D.Sum sum = Vector3D.Sum.create();
+            int cnt = 0;
             for (Entry<Vector3D, V> entry : this) {
                 sum.add(entry.getKey());
+                ++cnt;
             }
 
-            split = sum.get().multiply(1.0 / MAX_ENTRIES_PER_NODE);
+            split = sum.get().multiply(1.0 / cnt);
         }
 
         /** {@inheritDoc} */

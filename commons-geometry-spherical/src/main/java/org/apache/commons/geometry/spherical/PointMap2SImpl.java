@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.spherical;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -151,8 +153,8 @@ final class PointMap2SImpl<V>
 
         /** {@inheritDoc} */
         @Override
-        protected void makeLeaf() {
-            super.makeLeaf();
+        protected void makeLeaf(final List<Entry<Point2S, V>> leafEntries) {
+            super.makeLeaf(leafEntries);
 
             firstSplit = null;
             secondSplit = null;
