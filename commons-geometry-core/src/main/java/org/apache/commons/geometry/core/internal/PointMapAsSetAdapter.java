@@ -86,11 +86,4 @@ public class PointMapAsSetAdapter<P extends Point<P>, M extends PointMap<P, Obje
     public void clear() {
         map.clear();
     }
-
-    /** Get the backing map instance.
-     * @return backing map instance
-     */
-    protected M getMap() {
-        return map;
-    }
 }

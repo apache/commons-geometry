@@ -18,11 +18,9 @@ package org.apache.commons.geometry.core.internal;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -332,13 +330,13 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
      * @param <V> Value type
      */
     protected abstract static class BucketNode<P extends Point<P>, V>
-        implements Iterable<Map.Entry<P, V>> {
+            implements Iterable<Entry<P, V>> {
 
         /** Owning map. */
-        private final AbstractBucketPointMap<P, V> map;
+        private AbstractBucketPointMap<P, V> map;
 
         /** Parent node. */
-        private final BucketNode<P, V> parent;
+        private BucketNode<P, V> parent;
 
         /** Child nodes. */
         private List<BucketNode<P, V>> children;
@@ -575,19 +573,52 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             return null;
         }
 
-        /** Return an iterator for accessing the node entries. The {@code remove()}
-         * method of the returned iterator correctly updates the tree state.
-         * @return iterator for accessing the node entries
+        /** Destroy this node. The node must not be used after this method is called.
+         */
+        public void destroy() {
+            this.map = null;
+            this.parent = null;
+            this.children = null;
+            this.entries = null;
+            this.entryCount = 0;
+        }
+
+        /** Return true if this node has been destroyed.
+         * @return true if this node has been destroyed
+         */
+        public boolean isDestroyed() {
+            return map == null;
+        }
+
+        /** Return an iterator for accessing the entries stored in this node. The {@code remove()}
+         * method of the returned iterator correctly updates the tree state. This method must only
+         * be called on leaf nodes.
+         * @return iterator for accessing the entries stored in this node
          */
         @Override
         public Iterator<Map.Entry<P, V>> iterator() {
-            final Iterator<Map.Entry<P, V>> it = entries.iterator();
+            return iterator(0);
+        }
+
+        /** Return an iterator for accessing the entries stored in this node, starting at the given
+         * index. The {@code remove()} method of the returned iterator correctly updates the tree state.
+         * This method must only be called on leaf nodes.
+         * @param idx starting index for the iterator
+         * @return iterator for accessing the entries stored in this node, starting with the entry at
+         *      the given index
+         */
+        private Iterator<Map.Entry<P, V>> iterator(final int idx) {
+            final List<Map.Entry<P, V>> iteratedList = idx == 0 ?
+                    entries :
+                    entries.subList(idx, entries.size());
+
+            final Iterator<Map.Entry<P, V>> it = iteratedList.iterator();
 
             return new Iterator<Map.Entry<P, V>>() {
 
                 @Override
                 public boolean hasNext() {
-                    return it.hasNext();
+                    return !isDestroyed() && it.hasNext();
                 }
 
                 @Override
@@ -599,6 +630,10 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                 public void remove() {
                     it.remove();
 
+                    // store the owning map since we may be destroyed as part of
+                    // entry removal
+                    final AbstractBucketPointMap<P, V> owningMap = map;
+
                     // navigate up the tree and perform updates
                     BucketNode<P, V> current = BucketNode.this;
                     while (current != null) {
@@ -608,7 +643,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                     }
 
                     // notify the owning map
-                    map.entryRemoved();
+                    owningMap.entryRemoved();
                 }
             };
         }
@@ -749,22 +784,31 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
 
                 if (!isEmpty() &&
                         (parent == null || parent.getEntryCount() > condenseThreshold)) {
-                    collectSubtreeEntriesRecursive(subtreeEntries);
+                    collectSubtreeEntriesRecursive(subtreeEntries, false);
                 }
 
                 makeLeaf(subtreeEntries);
             }
         }
 
-        private void collectSubtreeEntriesRecursive(final List<Entry<P, V>> entryList) {
+        /** Add all map entries in the subtree rooted at this node to {@code entryList}. If {@code destroyNode}
+         * is true, the node is destroyed after its entries are added to the list.
+         * @param entryList list to add entries to
+         * @param destroyNode if true, the node will be destroyed after its entries are added to the list
+         */
+        private void collectSubtreeEntriesRecursive(final List<Entry<P, V>> entryList, final boolean destroyNode) {
             if (isLeaf()) {
                 entryList.addAll(entries);
             } else {
                 for (final BucketNode<P, V> child : children) {
                     if (child != null) {
-                        child.collectSubtreeEntriesRecursive(entryList);
+                        child.collectSubtreeEntriesRecursive(entryList, true);
                     }
                 }
+            }
+
+            if (destroyNode) {
+                destroy();
             }
         }
 
@@ -858,14 +902,14 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** Owning map. */
         private final AbstractBucketPointMap<P, V> map;
 
-        /** Queue of nodes waiting to be visited. */
-        private final Deque<BucketNode<P, V>> nodeQueue = new ArrayDeque<>();
-
-        /** Iterator that returned the previous entry. */
-        private Iterator<Map.Entry<P, V>> prevEntryIterator;
+        /** Size of the owning map. */
+        private int size;
 
         /** Iterator that produces the next entry to be returned. */
         private Iterator<Map.Entry<P, V>> nextEntryIterator;
+
+        /** Index of the entry that will be returned next from the iterator. */
+        private int nextIdx;
 
         /** Expected map modification version. */
         private int expectedVersion;
@@ -875,20 +919,15 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
          */
         EntryIterator(final AbstractBucketPointMap<P, V> map) {
             this.map = map;
-            this.nodeQueue.add(map.root);
-
-            if (map.secondaryRoot != null) {
-                this.nodeQueue.add(map.secondaryRoot);
-            }
+            this.size = map.size();
 
             updateExpectedVersion();
-            queueNextEntry();
         }
 
         /** {@inheritDoc} */
         @Override
         public boolean hasNext() {
-            return nextEntryIterator != null;
+            return nextIdx < size;
         }
 
         /** {@inheritDoc} */
@@ -900,11 +939,13 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
 
             checkVersion();
 
+            if (nextEntryIterator == null ||
+                    !nextEntryIterator.hasNext()) {
+                nextEntryIterator = findIterator();
+            }
+
             final Map.Entry<P, V> result = nextEntryIterator.next();
-
-            prevEntryIterator = nextEntryIterator;
-
-            queueNextEntry();
+            ++nextIdx;
 
             return result;
         }
@@ -912,48 +953,73 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** {@inheritDoc} */
         @Override
         public void remove() {
-            if (prevEntryIterator == null) {
+            if (nextEntryIterator == null) {
                 throw new IllegalStateException("Cannot remove: no entry has yet been returned");
             }
 
-            prevEntryIterator.remove();
+            nextEntryIterator.remove();
+            --nextIdx;
+            --size;
+
             updateExpectedVersion();
         }
 
-        /** Prepare the next entry to be returned by the iterator.
+        /** Find the next entry iterator in the map.
+         * @return next map entry iterator
          */
-        private void queueNextEntry() {
-            if (nextEntryIterator == null || !nextEntryIterator.hasNext()) {
-                final BucketNode<P, V> node = findNonEmptyLeafNode();
-                if (node != null) {
-                    nextEntryIterator = node.iterator();
-                } else {
-                    nextEntryIterator = null;
+        private Iterator<Entry<P, V>> findIterator() {
+            int offset = 0;
+            if (map.secondaryRoot != null) {
+                final Iterator<Entry<P, V>> secondaryIt = findIteratorRecursive(map.secondaryRoot, offset);
+                if (secondaryIt != null) {
+                    return secondaryIt;
                 }
+
+                offset += map.secondaryRoot.getEntryCount();
             }
+
+            return findIteratorRecursive(map.root, offset);
         }
 
-        /** Find and return the next non-empty leaf node in the map.
-         * @return the next non-empty leaf node or null if one cannot
-         *      be found
+        /** Find the next map entry iterator recursively in the subtree rooted at {@code node}.
+         * @param node root of the subtree to obtain an iterator in
+         * @param offset index offset of the first entry in the subtree
+         * @return the next map entry iterator or null if no leaf nodes in the subtree contain the
+         *      entry at {@code nextIdx}
          */
-        private BucketNode<P, V> findNonEmptyLeafNode() {
-            while (!nodeQueue.isEmpty()) {
-                final BucketNode<P, V> node = nodeQueue.removeFirst();
-
-                if (!node.isLeaf()) {
-                    // internal node; add non-null children to the queue
-                    for (final BucketNode<P, V> child : node.children) {
-                        if (child != null) {
-                            nodeQueue.add(child);
-                        }
-                    }
-                } else if (!node.isEmpty()) {
-                    // return the non-empty iterator
-                    return node;
+        private Iterator<Entry<P, V>> findIteratorRecursive(final BucketNode<P, V> node, final int offset) {
+            if (nextIdx >= offset && nextIdx < offset + node.getEntryCount()) {
+                if (node.isLeaf()) {
+                    return node.iterator(nextIdx - offset);
+                } else {
+                    return findIteratorInNodeChildren(node, offset);
                 }
             }
 
+            return null;
+        }
+
+        /** Find the next map entry iterator in the children of {@code node}.
+         * @param node root of the subtree to obtain an iterator in
+         * @param offset index offset of the first entry in the subtree
+         * @return the next map entry iterator or null if no leaf nodes in the subtree contain the
+         *      entry at {@code nextIdx}
+         */
+        private Iterator<Entry<P, V>> findIteratorInNodeChildren(final BucketNode<P, V> node, final int offset) {
+            final int childCount = node.children.size();
+
+            int currentOffset = offset;
+            for (int i = 0; i < childCount; ++i) {
+                final BucketNode<P, V> child = node.children.get(i);
+                if (child != null) {
+                    Iterator<Entry<P, V>> childIt = findIteratorRecursive(child, currentOffset);
+                    if (childIt != null) {
+                        return childIt;
+                    }
+
+                    currentOffset += child.getEntryCount();
+                }
+            }
             return null;
         }
 

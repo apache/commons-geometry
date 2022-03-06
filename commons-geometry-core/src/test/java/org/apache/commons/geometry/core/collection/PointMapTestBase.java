@@ -281,7 +281,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
         }
     }
 
-    public void checkPut(final PointMap<P, Integer> map, final List<? extends P> pts, final int startValue) {
+    private void checkPut(final PointMap<P, Integer> map, final List<? extends P> pts, final int startValue) {
         int currentValue = startValue;
         for (final P pt : pts) {
             int nextValue = currentValue + 1;
@@ -867,6 +867,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
         // act/assert
         assertCollectionIterator(PointMap::entrySet);
         assertCollectionIteratorRemove(PointMap::entrySet);
+        assertCollectionIteratorRemoveWithMultiplePasses(PointMap::entrySet);
         assertCollectionIteratorRemoveWithoutNext(PointMap::entrySet);
         assertCollectionIteratorRemoveMultipleCalls(PointMap::entrySet);
         assertCollectionIteratorConcurrentModification(PointMap::entrySet);
@@ -1078,6 +1079,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
         // act/assert
         assertCollectionIterator(PointMap::keySet);
         assertCollectionIteratorRemove(PointMap::keySet);
+        assertCollectionIteratorRemoveWithMultiplePasses(PointMap::keySet);
         assertCollectionIteratorRemoveWithoutNext(PointMap::keySet);
         assertCollectionIteratorRemoveMultipleCalls(PointMap::keySet);
         assertCollectionIteratorConcurrentModification(PointMap::keySet);
@@ -1272,6 +1274,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
         // act/assert
         assertCollectionIterator(PointMap::values);
         assertCollectionIteratorRemove(PointMap::values);
+        assertCollectionIteratorRemoveWithMultiplePasses(PointMap::values);
         assertCollectionIteratorRemoveWithoutNext(PointMap::values);
         assertCollectionIteratorRemoveMultipleCalls(PointMap::values);
         assertCollectionIteratorConcurrentModification(PointMap::values);
@@ -1420,15 +1423,48 @@ public abstract class PointMapTestBase<P extends Point<P>>
         insertPoints(pts, map);
 
         // act
+        final Collection<?> coll = collectionFactory.apply(map);
+
+        int removed = 0;
+
+        final Iterator<?> it = coll.iterator();
+        while (it.hasNext()) {
+            Assertions.assertNotNull(it.next());
+            it.remove();
+
+            ++removed;
+        }
+
+        // assert
+        Assertions.assertEquals(pts.size(), removed);
+
+        Assertions.assertEquals(0, coll.size());
+        Assertions.assertTrue(coll.isEmpty());
+
+        assertEmpty(map);
+    }
+
+    private void assertCollectionIteratorRemoveWithMultiplePasses(
+            final Function<PointMap<P, ?>, Collection<?>> collectionFactory) {
+        // arrange
+        final PointMap<P, Integer> map = getMap(PRECISION);
+
+        final List<P> pts = getTestPoints(1_000, EPS, new Random(10L));
+
+        insertPoints(pts, map);
+
+        // act
         // remove the entries in two passes: one to remove the entries with even
         // values and the second to remove the remaining
         final Collection<?> coll = collectionFactory.apply(map);
 
         final Iterator<?> firstPass = coll.iterator();
+        int removed = 0;
         int i = 0;
         while (firstPass.hasNext()) {
             Assertions.assertNotNull(firstPass.next());
             if ((++i) % 2 == 0) {
+                ++removed;
                 firstPass.remove();
             }
         }
@@ -1437,9 +1473,12 @@ public abstract class PointMapTestBase<P extends Point<P>>
         while (secondPass.hasNext()) {
             Assertions.assertNotNull(secondPass.next());
             secondPass.remove();
+            ++removed;
         }
 
         // assert
+        Assertions.assertEquals(pts.size(), removed);
+
         Assertions.assertEquals(0, coll.size());
         Assertions.assertTrue(coll.isEmpty());
 

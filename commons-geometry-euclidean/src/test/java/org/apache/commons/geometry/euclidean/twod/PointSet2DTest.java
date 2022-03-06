@@ -20,17 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.collection.PointMap;
-import org.apache.commons.geometry.core.collection.PointMapTestBase;
+import org.apache.commons.geometry.core.collection.PointSetTestBase;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.numbers.core.Precision.DoubleEquivalence;
 
-class Point2DMapTest extends PointMapTestBase<Vector2D> {
+class PointSet2DTest extends PointSetTestBase<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    protected <V> PointMap<Vector2D, V> getMap(final DoubleEquivalence precision) {
-        return EuclideanCollections.pointMap2D(precision);
+    protected PointSet2D getSet(final DoubleEquivalence precision) {
+        return EuclideanCollections.pointSet2D(precision);
     }
 
     /** {@inheritDoc} */
