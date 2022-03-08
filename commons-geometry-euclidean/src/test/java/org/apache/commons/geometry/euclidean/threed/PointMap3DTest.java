@@ -16,20 +16,47 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class PointMap3DTest extends PointMapTestBase<Vector3D> {
 
+    @Test
+    void testDenseGrid() {
+        // arrange
+        final PointMap3D<Integer> map = getMap(PRECISION);
+
+        final double step = 3 * EPS;
+        final int stepsPerHalfSide = 50;
+        final double max = step * stepsPerHalfSide;
+        final int sideLength = (2 * stepsPerHalfSide) + 1;
+
+        // act
+        EuclideanTestUtils.permute(-max, max, step,
+                (x, y, z) -> map.put(Vector3D.of(x, y, z), 0));
+
+        // act
+        assertEquals(sideLength * sideLength * sideLength, map.size());
+
+        final double offset = 0.9 * EPS;
+        EuclideanTestUtils.permute(-max, max, step, (x, y, z) -> {
+            Assertions.assertEquals(0, map.get(Vector3D.of(x + offset, y + offset, z + offset)));
+        });
+    }
+
     /** {@inheritDoc} */
     @Override
-    protected <V> PointMap<Vector3D, V> getMap(final Precision.DoubleEquivalence precision) {
+    protected <V> PointMap3D<V> getMap(final Precision.DoubleEquivalence precision) {
         return EuclideanCollections.pointMap3D(precision);
     }
 

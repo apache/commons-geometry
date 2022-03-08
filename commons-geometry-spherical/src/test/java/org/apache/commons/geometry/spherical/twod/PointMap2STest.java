@@ -20,18 +20,89 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalCollections;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
+import org.junit.jupiter.api.Test;
 
 class PointMap2STest extends PointMapTestBase<Point2S> {
 
+    @Test
+    void testCircumpolarPoints() {
+        // arrange
+        final int circlePoints = 2_000;
+
+        final List<Point2S> plusZPoints = new ArrayList<>();
+        final List<Point2S> minusZPoints = new ArrayList<>();
+
+        final Point2S plusZCircleStart = Point2S.of(0, 1e-7);
+        final Point2S minusZCircleStart = Point2S.of(0, Math.PI - 1e-7);
+
+        final double delta = Angle.TWO_PI / circlePoints;
+        for (int i = 0; i < circlePoints; ++i) {
+            final Transform2S transform = Transform2S.createRotation(Point2S.PLUS_K, i * delta);
+
+            plusZPoints.add(transform.apply(plusZCircleStart));
+            minusZPoints.add(transform.apply(minusZCircleStart));
+        }
+
+        plusZPoints.add(Point2S.PLUS_K);
+        minusZPoints.add(Point2S.MINUS_K);
+
+        // act
+        final PointMap2S<Integer> map = getMap(PRECISION);
+
+        final PointMapChecker<Point2S, Integer> checker = checkerFor(map);
+        int i = 0;
+        for (final Point2S pt : plusZPoints) {
+            map.put(pt, i);
+
+            checker.expectEntry(pt, i);
+            ++i;
+        }
+        for (final Point2S pt : minusZPoints) {
+            map.put(pt, i);
+
+            checker.expectEntry(pt, i);
+            ++i;
+        }
+
+        // assert
+        checker.check();
+    }
+
+    @Test
+    void testGreatCirclePoints() {
+        // arrange
+        final int cnt = 1_000;
+        final List<Point2S> pts = new ArrayList<>(cnt);
+        final double delta = Angle.TWO_PI / cnt;
+        for (int i = 0; i < cnt; ++i) {
+            pts.add(Transform2S.createRotation(Point2S.PLUS_I, i * delta)
+                    .apply(Point2S.PLUS_K));
+        }
+
+        // act
+        final PointMap2S<Integer> map = getMap(PRECISION);
+
+        final PointMapChecker<Point2S, Integer> checker = checkerFor(map);
+        for (int i = 0; i < cnt; ++i) {
+            final Point2S key = pts.get(i);
+
+            map.put(key, i);
+
+            checker.expectEntry(key, i);
+        }
+
+        // assert
+        checker.check();
+    }
+
     /** {@inheritDoc} */
     @Override
-    protected <V> PointMap<Point2S, V> getMap(final Precision.DoubleEquivalence precision) {
+    protected <V> PointMap2S<V> getMap(final Precision.DoubleEquivalence precision) {
         return SphericalCollections.pointMap2S(precision);
     }
 

@@ -109,7 +109,7 @@ final class PointMap3DImpl<V>
         @Override
         protected void computeSplit() {
             final Vector3D.Sum sum = Vector3D.Sum.create();
-            for (Entry<Vector3D, V> entry : this) {
+            for (final Entry<Vector3D, V> entry : this) {
                 sum.add(entry.getKey());
             }
 
