@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.geometry.spherical.SphericalCollections;
 import org.apache.commons.numbers.angle.Angle;
@@ -33,7 +34,7 @@ class PointMap1STest extends PointMapTestBase<Point1S> {
     @Test
     void testWrapLowToHigh() {
         // arrange
-        final PointMap1S<Integer> map = getMap(PRECISION);
+        final PointMap<Point1S, Integer> map = getMap(PRECISION);
 
         final double delta = 0.25 * EPS;
 
@@ -57,7 +58,7 @@ class PointMap1STest extends PointMapTestBase<Point1S> {
     @Test
     void testWrapHighToLow() {
         // arrange
-        final PointMap1S<Integer> map = getMap(PRECISION);
+        final PointMap<Point1S, Integer> map = getMap(PRECISION);
 
         final double delta = 0.25 * EPS;
 
@@ -80,7 +81,7 @@ class PointMap1STest extends PointMapTestBase<Point1S> {
 
     /** {@inheritDoc} */
     @Override
-    protected <V> PointMap1S<V> getMap(final Precision.DoubleEquivalence precision) {
+    protected <V> PointMap<Point1S, V> getMap(final Precision.DoubleEquivalence precision) {
         return SphericalCollections.pointMap1S(precision);
     }
 

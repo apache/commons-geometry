@@ -18,13 +18,13 @@ package org.apache.commons.geometry.spherical;
 
 import java.util.List;
 
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.twod.GreatCircle;
 import org.apache.commons.geometry.spherical.twod.GreatCircles;
 import org.apache.commons.geometry.spherical.twod.Point2S;
-import org.apache.commons.geometry.spherical.twod.PointMap2S;
 import org.apache.commons.numbers.core.Precision;
 
 /** Internal implementation of {@link PointMap2S}.
@@ -32,7 +32,7 @@ import org.apache.commons.numbers.core.Precision;
  */
 final class PointMap2SImpl<V>
     extends AbstractBucketPointMap<Point2S, V>
-    implements PointMap2S<V> {
+    implements PointMap<Point2S, V> {
 
     /** Number of children per node. */
     private static final int NODE_CHILD_COUNT = 4;

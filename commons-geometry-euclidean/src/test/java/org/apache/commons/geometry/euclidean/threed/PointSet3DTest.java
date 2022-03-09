@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.collection.PointSet;
 import org.apache.commons.geometry.core.collection.PointSetTestBase;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.numbers.core.Precision;
@@ -28,7 +29,7 @@ class PointSet3DTest extends PointSetTestBase<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    protected PointSet3D getSet(final Precision.DoubleEquivalence precision) {
+    protected PointSet<Vector3D> getSet(final Precision.DoubleEquivalence precision) {
         return EuclideanCollections.pointSet3D(precision);
     }
 

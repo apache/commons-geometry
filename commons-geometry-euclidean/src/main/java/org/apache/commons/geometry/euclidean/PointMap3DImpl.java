@@ -18,8 +18,8 @@ package org.apache.commons.geometry.euclidean;
 
 import java.util.List;
 
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
-import org.apache.commons.geometry.euclidean.threed.PointMap3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
 
@@ -28,7 +28,7 @@ import org.apache.commons.numbers.core.Precision;
  */
 final class PointMap3DImpl<V>
     extends AbstractBucketPointMap<Vector3D, V>
-    implements PointMap3D<V> {
+    implements PointMap<Vector3D, V> {
 
     /** Number of children per node. */
     private static final int NODE_CHILD_COUNT = 8;

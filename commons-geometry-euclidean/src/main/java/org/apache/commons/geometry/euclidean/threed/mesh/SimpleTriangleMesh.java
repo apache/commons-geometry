@@ -29,13 +29,13 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.geometry.euclidean.internal.EuclideanUtils;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Planes;
-import org.apache.commons.geometry.euclidean.threed.PointMap3D;
 import org.apache.commons.geometry.euclidean.threed.Triangle3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
@@ -416,7 +416,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
         private final ArrayList<Vector3D> vertices = new ArrayList<>();
 
         /** Map of vertices to their first occurrence in the vertex list. */
-        private PointMap3D<Integer> vertexIndexMap;
+        private PointMap<Vector3D, Integer> vertexIndexMap;
 
         /** List of face vertex indices. */
         private final ArrayList<int[]> faces = new ArrayList<>();
@@ -673,7 +673,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
         /** Get the vertex index map, creating and initializing it if needed.
          * @return the vertex index map
          */
-        private PointMap3D<Integer> getVertexIndexMap() {
+        private PointMap<Vector3D, Integer> getVertexIndexMap() {
             if (vertexIndexMap == null) {
                 vertexIndexMap = EuclideanCollections.pointMap3D(precision);
 
@@ -696,7 +696,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
          * @return the index now associated with the given vertex or its equivalent
          */
         private int addToVertexIndexMap(final Vector3D vertex, final int targetIdx,
-                final PointMap3D<Integer> map) {
+                final PointMap<Vector3D, Integer> map) {
             validateCanModify();
 
             final Integer actualIdx = map.putIfAbsent(vertex, targetIdx);

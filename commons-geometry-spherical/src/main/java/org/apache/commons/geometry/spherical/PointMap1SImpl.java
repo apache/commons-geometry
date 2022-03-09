@@ -25,16 +25,17 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
 import org.apache.commons.geometry.spherical.oned.Point1S;
-import org.apache.commons.geometry.spherical.oned.PointMap1S;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 
-/** Internal implementation of {@link PointMap1S}.
+/** Internal implementation of {@link PointMap1S}. This class uses a
+ * {@link NavigableMap} with special logic to handle wrap around.
  * @param <V> Map value type
  */
-final class PointMap1SImpl<V> implements PointMap1S<V> {
+final class PointMap1SImpl<V> implements PointMap<Point1S, V> {
 
     /** Precision context used to determine floating point equality. */
     private final Precision.DoubleEquivalence precision;

@@ -22,8 +22,8 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.internal.GeometryInternalUtils;
-import org.apache.commons.geometry.euclidean.oned.PointMap1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.core.Precision;
 
@@ -31,7 +31,7 @@ import org.apache.commons.numbers.core.Precision;
  * @param <V> Map value type
  */
 final class PointMap1DImpl<V>
-    implements PointMap1D<V> {
+    implements PointMap<Vector1D, V> {
 
     /** Underlying map. */
     private final NavigableMap<Vector1D, V> map;

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalCollections;
@@ -52,7 +53,7 @@ class PointMap2STest extends PointMapTestBase<Point2S> {
         minusZPoints.add(Point2S.MINUS_K);
 
         // act
-        final PointMap2S<Integer> map = getMap(PRECISION);
+        final PointMap<Point2S, Integer> map = getMap(PRECISION);
 
         final PointMapChecker<Point2S, Integer> checker = checkerFor(map);
         int i = 0;
@@ -85,7 +86,7 @@ class PointMap2STest extends PointMapTestBase<Point2S> {
         }
 
         // act
-        final PointMap2S<Integer> map = getMap(PRECISION);
+        final PointMap<Point2S, Integer> map = getMap(PRECISION);
 
         final PointMapChecker<Point2S, Integer> checker = checkerFor(map);
         for (int i = 0; i < cnt; ++i) {
@@ -102,7 +103,7 @@ class PointMap2STest extends PointMapTestBase<Point2S> {
 
     /** {@inheritDoc} */
     @Override
-    protected <V> PointMap2S<V> getMap(final Precision.DoubleEquivalence precision) {
+    protected <V> PointMap<Point2S, V> getMap(final Precision.DoubleEquivalence precision) {
         return SphericalCollections.pointMap2S(precision);
     }
 

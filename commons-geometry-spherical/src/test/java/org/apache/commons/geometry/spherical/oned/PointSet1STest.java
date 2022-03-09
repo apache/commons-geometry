@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.geometry.core.collection.PointSet;
 import org.apache.commons.geometry.core.collection.PointSetTestBase;
 import org.apache.commons.geometry.spherical.SphericalCollections;
 import org.apache.commons.numbers.angle.Angle;
@@ -30,7 +31,7 @@ class PointSet1STest extends PointSetTestBase<Point1S> {
 
     /** {@inheritDoc} */
     @Override
-    protected PointSet1S getSet(final Precision.DoubleEquivalence precision) {
+    protected PointSet<Point1S> getSet(final Precision.DoubleEquivalence precision) {
         return SphericalCollections.pointSet1S(precision);
     }
 

@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,8 +27,39 @@ import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.numbers.core.Precision;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class PointMap1DTest extends PointMapTestBase<Vector1D> {
+
+    @Test
+    void testDenseLine() {
+        // arrange
+        final PointMap<Vector1D, Integer> map = getMap(PRECISION);
+
+        final double step = 1.1 * EPS;
+        final double start = -1.0;
+        final int cnt = 1_000_000;
+
+        // act
+        double x = start;
+        for (int i = 0; i < cnt; ++i) {
+            map.put(Vector1D.of(x), 0);
+
+            x += step;
+        }
+
+        // act
+        assertEquals(cnt, map.size());
+
+        final double offset = 0.9 * EPS;
+        x = start;
+        for (int i = 0; i < cnt; ++i) {
+            Assertions.assertEquals(0, map.get(Vector1D.of(x + offset)));
+
+            x += step;
+        }
+    }
 
     /** {@inheritDoc} */
     @Override

@@ -19,6 +19,7 @@ package org.apache.commons.geometry.core.internal;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
@@ -216,12 +217,9 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
      * {@code nodeChildCount} number of {@code null} entries.
      * @return list for storing node children
      */
+    @SuppressWarnings("unchecked")
     private List<BucketNode<P, V>> createNodeChildList() {
-        final List<BucketNode<P, V>> childList =  new ArrayList<>(nodeChildCount);
-        for (int i = 0; i < nodeChildCount; ++i) {
-            childList.add(null);
-        }
-        return childList;
+        return Arrays.asList(new BucketNode[nodeChildCount]);
     }
 
     /** Get the entry for the given key or null if not found.

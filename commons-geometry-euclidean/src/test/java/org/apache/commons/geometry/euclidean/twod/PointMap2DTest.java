@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,9 +25,64 @@ import java.util.List;
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision.DoubleEquivalence;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class PointMap2DTest extends PointMapTestBase<Vector2D> {
+
+    @Test
+    void testDenseGrid() {
+        // arrange
+        final PointMap<Vector2D, Integer> map = getMap(PRECISION);
+
+        final double step = 3 * EPS;
+        final int stepsPerHalfSide = 100;
+        final double max = step * stepsPerHalfSide;
+        final int sideLength = (2 * stepsPerHalfSide) + 1;
+
+        // act
+        EuclideanTestUtils.permute(-max, max, step,
+                (x, y, z) -> map.put(Vector2D.of(x, y), 0));
+
+        // act
+        assertEquals(sideLength * sideLength, map.size());
+
+        final double offset = 0.9 * EPS;
+        EuclideanTestUtils.permute(-max, max, step, (x, y) -> {
+            Assertions.assertEquals(0, map.get(Vector2D.of(x + offset, y + offset)));
+        });
+    }
+
+    @Test
+    void testDenseLine() {
+        // arrange
+        final PointMap<Vector2D, Integer> map = getMap(PRECISION);
+
+        final double step = 1.1 * EPS;
+        final double start = -1.0;
+        final int cnt = 10_000;
+
+        // act
+        double x = start;
+        for (int i = 0; i < cnt; ++i) {
+            map.put(Vector2D.of(x, 0), 0);
+
+            x += step;
+        }
+
+        // act
+        assertEquals(cnt, map.size());
+
+        final double offset = 0.9 * EPS;
+        x = start;
+        for (int i = 0; i < cnt; ++i) {
+            Assertions.assertEquals(0, map.get(Vector2D.of(x + offset, 0)));
+
+            x += step;
+        }
+    }
 
     /** {@inheritDoc} */
     @Override

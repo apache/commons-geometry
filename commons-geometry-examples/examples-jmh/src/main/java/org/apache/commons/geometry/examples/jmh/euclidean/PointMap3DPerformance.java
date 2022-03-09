@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
-import org.apache.commons.geometry.euclidean.threed.PointMap3D;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.examples.jmh.euclidean.pointmap.PointMapDataStructurePerformance;

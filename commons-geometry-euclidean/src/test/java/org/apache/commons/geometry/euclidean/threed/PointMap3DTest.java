@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -34,7 +35,7 @@ class PointMap3DTest extends PointMapTestBase<Vector3D> {
     @Test
     void testDenseGrid() {
         // arrange
-        final PointMap3D<Integer> map = getMap(PRECISION);
+        final PointMap<Vector3D, Integer> map = getMap(PRECISION);
 
         final double step = 3 * EPS;
         final int stepsPerHalfSide = 50;
@@ -54,9 +55,38 @@ class PointMap3DTest extends PointMapTestBase<Vector3D> {
         });
     }
 
+    @Test
+    void testDenseLine() {
+        // arrange
+        final PointMap<Vector3D, Integer> map = getMap(PRECISION);
+
+        final double step = 1.1 * EPS;
+        final double start = -1.0;
+        final int cnt = 10_000;
+
+        // act
+        double x = start;
+        for (int i = 0; i < cnt; ++i) {
+            map.put(Vector3D.of(x, 0, 0), 0);
+
+            x += step;
+        }
+
+        // act
+        assertEquals(cnt, map.size());
+
+        final double offset = 0.9 * EPS;
+        x = start;
+        for (int i = 0; i < cnt; ++i) {
+            Assertions.assertEquals(0, map.get(Vector3D.of(x + offset, 0, 0)));
+
+            x += step;
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
-    protected <V> PointMap3D<V> getMap(final Precision.DoubleEquivalence precision) {
+    protected <V> PointMap<Vector3D, V> getMap(final Precision.DoubleEquivalence precision) {
         return EuclideanCollections.pointMap3D(precision);
     }
 

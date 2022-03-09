@@ -18,8 +18,8 @@ package org.apache.commons.geometry.euclidean;
 
 import java.util.List;
 
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
-import org.apache.commons.geometry.euclidean.twod.PointMap2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.core.Precision;
 
@@ -28,7 +28,7 @@ import org.apache.commons.numbers.core.Precision;
  */
 final class PointMap2DImpl<V>
     extends AbstractBucketPointMap<Vector2D, V>
-    implements PointMap2D<V> {
+    implements PointMap<Vector2D, V> {
 
     /** Number of children per node. */
     private static final int NODE_CHILD_COUNT = 4;

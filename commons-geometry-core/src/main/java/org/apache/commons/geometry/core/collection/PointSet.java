@@ -20,7 +20,10 @@ import java.util.Set;
 
 import org.apache.commons.geometry.core.Point;
 
-/** {@link Set} containing {@link Point} values.
+/** {@link Set} containing {@link Point} values. This interface is intended for
+ * use in cases where effectively equivalent (but not necessarily equal) points must
+ * be considered as equal by the set. As such, this interface breaks the strict contract
+ * for {@link Set} where membership is consistent with {@link Object#equals(Object)}.
  * @param <P> Point type
  */
 public interface PointSet<P extends Point<P>> extends Set<P> {

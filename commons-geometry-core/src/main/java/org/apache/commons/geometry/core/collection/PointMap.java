@@ -20,7 +20,10 @@ import java.util.Map;
 
 import org.apache.commons.geometry.core.Point;
 
-/** {@link Map} type that uses points as keys.
+/** {@link Map} type that uses points as keys. This interface is intended for
+ * use in cases where effectively equivalent (but not necessarily equal) points must
+ * map to the same entry. As such, this interface breaks the strict contract for
+ * {@link Map} where key equality is consistent with {@link Object#equals(Object)}.
  * @param <P> Point type
  * @param <V> Value type
  */
