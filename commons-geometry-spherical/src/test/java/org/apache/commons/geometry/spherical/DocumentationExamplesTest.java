@@ -19,6 +19,7 @@ package org.apache.commons.geometry.spherical;
 import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.collection.PointSet;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
@@ -129,5 +130,24 @@ class DocumentationExamplesTest {
         // ---------------------
         Assertions.assertEquals(Math.PI / 4, minusSize, TEST_EPS);
         Assertions.assertEquals(1, minusPaths.size());
+    }
+
+    @Test
+    void testPointSet2SExample() {
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
+
+        final PointSet<Point2S> set = SphericalCollections.pointSet2S(precision);
+        set.add(Point2S.of(0, 2));
+        set.add(Point2S.of(1, 2));
+
+        final boolean contains1 = set.contains(Point2S.of(1e-7, 2)); // contains1 = true
+        final boolean contains2 = set.contains(Point2S.of(1e-5, 2)); // contains2 = false
+
+        final Point2S original = set.get(Point2S.of(1e-7, 2 + 1e-7)); // original = Point2S.of(0, 2);
+
+        // ---------------------
+        Assertions.assertTrue(contains1);
+        Assertions.assertFalse(contains2);
+        Assertions.assertEquals(Point2S.of(0, 2), original);
     }
 }

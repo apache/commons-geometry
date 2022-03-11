@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 import org.apache.commons.geometry.euclidean.oned.Interval;
@@ -440,5 +441,24 @@ class DocumentationExamplesTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), intersection, TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), normal, TEST_EPS);
+    }
+
+    @Test
+    void testPointMap3DExample() {
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
+
+        final PointMap<Vector3D, String> map = EuclideanCollections.pointMap3D(precision);
+        map.put(Vector3D.ZERO, "a");
+        map.put(Vector3D.Unit.PLUS_X, "b");
+
+        final String originValue = map.get(Vector3D.of(1e-8, 1e-8, -1e-8)); // originValue = "a"
+        final String plusXValue = map.get(Vector3D.of(1, 0, 1e-8)); // plusXValue = "b"
+
+        final String missingValue = map.get(Vector3D.of(1e-5, 0, 0)); // missingValue = null
+
+        // ---------------------
+        Assertions.assertEquals("a", originValue);
+        Assertions.assertEquals("b", plusXValue);
+        Assertions.assertNull(missingValue);
     }
 }

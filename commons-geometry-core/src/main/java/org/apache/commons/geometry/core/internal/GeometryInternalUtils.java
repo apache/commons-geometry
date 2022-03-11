@@ -16,6 +16,10 @@
  */
 package org.apache.commons.geometry.core.internal;
 
+import java.util.Objects;
+
+import org.apache.commons.geometry.core.Point;
+
 /** Internal utility methods for <em>commons-geometry</em>.
  */
 public final class GeometryInternalUtils {
@@ -33,5 +37,19 @@ public final class GeometryInternalUtils {
      */
     public static boolean sameInstance(final Object a, final Object b) {
         return a == b;
+    }
+
+    /** Throw an exception if the given point cannot be used as a key in a
+     * {@link org.apache.commons.geometry.core.collection.PointMap PointMap}.
+     * @param <P> Point type
+     * @param pt point to check
+     * @throws NullPointerException if the point is null
+     * @throws IllegalArgumentException if the point is not finite
+     */
+    public static <P extends Point<P>> void validatePointMapKey(final P pt) {
+        Objects.requireNonNull(pt);
+        if (!pt.isFinite()) {
+            throw new IllegalArgumentException("Non-finite map key: " + pt);
+        }
     }
 }

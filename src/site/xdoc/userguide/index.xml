@@ -49,6 +49,9 @@
             <li>
               <a href="#bsp_trees">BSP Trees</a>
             </li>
+            <li>
+              <a href="#point_map_point_set">PointMap and PointSet</a>
+            </li>
           </ul>
         </li>
         <li>
@@ -176,7 +179,7 @@ precision.compare(1.0009, 1.0); // 0
 precision.compare(1.002, 1.0); // 1
         </source>
 
-        <h4><span class="code">equals()</span> vs <span class="code">eq()</span></h4>
+        <h4 id="eq"><span class="code">equals()</span> vs <span class="code">eq()</span></h4>
         <p>
           Many objects in <em>Commons Geometry</em> provide both a standard Java <span class="code">equals()</span>
           method as well as an <span class="code">eq()</span> method. The <span class="code">equals()</span> method
@@ -401,6 +404,66 @@ Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
         </source>
 
       </subsection>
+
+    <subsection name="PointMap and PointSet" id="point_map_point_set">
+        <p>
+          <em>Commons Geometry</em> provides two key geometric collection types designed for use with
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Point.html">Point</a>s:
+        </p>
+        <p>
+          <ul>
+            <li><a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/collection/PointMap.html">PointMap</a>,
+                which extends <span class="code">java.util.Map</span>, and</li>
+            <li><a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/collection/PointSet.html">PointSet</a>,
+                which extends <span class="code">java.util.Set</span>.</li>
+          </ul>
+        </p>
+        <p>
+          These types provide all of the functionality expected from implementations of the associated JDK interfaces.
+          However, in order to remain useful in domains subject to floating point errors, these types replace strict 
+          consistency with the <span class="code">equals()</span> method (as documented for 
+          <span class="code">Map/Set</span>) with consistency with the concept of 
+          <a href="#eq">equivalence</a> defined for each <span class="code">Point</span> implementation. This means,
+          for example, that values can be retrieved from <span class="code">PointMap</span> instances using keys
+          that are very close, but not exactly equal, to the key originally used to store the value. Due to this
+          inherent "fuzziness", two methods are provided to retrieve the original key stored in the collection 
+          using an equivalent key:
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/collection/PointMap.html#getEntry(P)">PointMap.getEntry(P)</a>
+          and
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/collection/PointSet.html#get(P)">PointSet.get(P)</a>.
+        </p>
+        <p>
+          <span class="code">PointMap/PointSet</span> instances are created using the factory methods in
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/euclidean/EuclideanCollections.html">EuclideanCollections</a>
+          and 
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/spherical/SphericalCollections.html">SphericalCollections</a>. 
+          The examples below show usage in Euclidean and spherical space.
+        </p>
+<source>
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
+
+PointMap&lt;Vector3D, String&gt; map = EuclideanCollections.pointMap3D(precision);
+map.put(Vector3D.ZERO, "a");
+map.put(Vector3D.Unit.PLUS_X, "b");
+
+String originValue = map.get(Vector3D.of(1e-8, 1e-8, -1e-8)); // originValue = "a"
+String plusXValue = map.get(Vector3D.of(1, 0, 1e-8)); // plusXValue = "b"
+
+String missingValue = map.get(Vector3D.of(1e-5, 0, 0)); // missingValue = null
+</source>
+<source>
+Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-6);
+
+PointSet&lt;Point2S&gt; set = SphericalCollections.pointSet2S(precision);
+set.add(Point2S.of(0, 2));
+set.add(Point2S.of(1, 2));
+
+boolean contains1 = set.contains(Point2S.of(1e-7, 2)); // contains1 = true
+boolean contains2 = set.contains(Point2S.of(1e-5, 2)); // contains2 = false
+
+Point2S original = set.get(Point2S.of(1e-7, 2 + 1e-7)); // original = Point2S.of(0, 2);
+</source>
+    </subsection>
 
     </section>
     <section name="Core Interfaces" id="interfaces">
