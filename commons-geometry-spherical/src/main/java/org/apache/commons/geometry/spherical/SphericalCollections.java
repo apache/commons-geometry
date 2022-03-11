@@ -58,7 +58,7 @@ public final class SphericalCollections {
         return new PointMapAsSetAdapter<>(pointMap2S(precision));
     }
 
-    /** Construct a new spherical 2D {@link PointMap2S} instance using the given precision context to determine
+    /** Construct a new spherical 2D {@link PointMap} instance using the given precision context to determine
      * equality between points.
      * @param <V> Map value type
      * @param precision precision context used to determine point equality

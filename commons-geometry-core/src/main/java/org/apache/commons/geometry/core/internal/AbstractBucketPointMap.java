@@ -34,7 +34,25 @@ import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.numbers.core.Precision;
 
 /** Abstract tree-based {@link PointMap} implementation that stores entries in bucket nodes
- * that are split once a certain entry count threshold is reached.
+ * that are split once a certain entry count threshold is reached. The main goal of this class
+ * is to provide a generic, multidimensional implementation that maintains reasonable performance
+ * regardless of point count and insertion order. Like other tree data structures, performance
+ * is tied closely to tree depth, which can vary depending on insertion order for a given set of
+ * points. In order to help maintain performance in cases of non-optimal point insertion order,
+ * this class uses a strategy of "point folding", implemented as follows:
+ * <ul>
+ *  <li>Two separate tree roots are maintained by the map: a primary root and a secondary root.</li>
+ *  <li>Entries are added to the primary root until the it reaches its capacity and is split using
+ *      an algorithm specific to the space and dimension. At this point, the populated primary root
+ *      becomes the secondary root and a new, empty primary root is created.</li>
+ *  <li>Points are inserted into the new primary root as before. However, for each new point inserted,
+ *      an existing point is removed from the secondary root and inserted into the primary root.</li>
+ *  <li>Points are moved from the secondary root and inserted into the primary root in this way until the
+ *      secondary root is empty. At this point, the primary root becomes the secondary root and another
+ *      primary root is created.</li>
+ * </ul>
+ * In this way, previously inserted points can apply a balancing influence on the low levels of the tree
+ * as new points are inserted.
  * @param <P> Point type
  * @param <V> Map value type
  */

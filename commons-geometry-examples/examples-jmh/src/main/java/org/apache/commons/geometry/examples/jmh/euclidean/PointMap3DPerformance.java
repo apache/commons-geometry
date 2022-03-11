@@ -16,11 +16,6 @@
  */
 package org.apache.commons.geometry.examples.jmh.euclidean;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +28,6 @@ import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.examples.jmh.euclidean.pointmap.PointMapDataStructurePerformance;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -50,7 +44,8 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
 
-/** Benchmarks for {@link PointMap3D}.
+/** Benchmarks for the 3D Euclidean
+ * {@link org.apache.commons.geometry.core.collection.PointMap PointMap} implementation.
  */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -75,7 +70,7 @@ public class PointMap3DPerformance {
         private String impl;
 
         /** Point list shape. */
-        @Param({"block", "line", "sphere", "teapot"})
+        @Param({"block", "line", "sphere"})
         private String shape;
 
         /** Point distribution. */
@@ -172,8 +167,6 @@ public class PointMap3DPerformance {
                 return createLine(8_000, 1);
             case "sphere":
                 return createPointSphere(5, 5, 10);
-            case "teapot":
-                return loadTeapotPoints();
             default:
                 throw new IllegalArgumentException("Unknown point distribution " + impl);
             }
@@ -294,30 +287,6 @@ public class PointMap3DPerformance {
         points.add(Vector3D.of(0, 0, -radius));
 
         return points;
-    }
-
-    /** Load the list of points from the teapot tutorial model.
-     * @return list of points from the teapot tutorial model
-     */
-    private static List<Vector3D> loadTeapotPoints() {
-        final List<Vector3D> pts = new ArrayList<>();
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                PointMapDataStructurePerformance.class.getResourceAsStream("/jmh-data/teapot-points.txt"),
-                StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String[] parts = line.split("\\s+");
-                pts.add(Vector3D.of(
-                    Double.parseDouble(parts[0]),
-                    Double.parseDouble(parts[1]),
-                    Double.parseDouble(parts[2])));
-            }
-        } catch (IOException exc) {
-            throw new UncheckedIOException(exc);
-        }
-
-        return pts;
     }
 
     /** Benchmark that inserts each point in the input into the target map.

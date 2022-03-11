@@ -307,12 +307,7 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
         private Vector3DEntry<V> removeFromChild(final int idx, final Vector3D key) {
             final VariableSplitOctreeNode<V> child = children.get(idx);
             if (child != null) {
-                final Vector3DEntry<V> entry = child.removeEntry(key);
-                if (entry != null) {
-
-                }
-
-                return entry;
+                return child.removeEntry(key);
             }
             return null;
         }
