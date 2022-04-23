@@ -43,7 +43,14 @@ public class TestBucketPointMap1D<V> extends AbstractBucketPointMap<TestPoint1D,
         return getPrecision().eq(a.getX(), b.getX());
     }
 
-    private static final class TestNode1D<V> extends AbstractBucketPointMap.BucketNode<TestPoint1D, V> {
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguatePointComparison(final TestPoint1D a, final TestPoint1D b) {
+        return Double.compare(a.getX(), b.getX());
+    }
+
+    private static final class TestNode1D<V>
+        extends AbstractBucketPointMap.BucketNode<TestPoint1D, V> {
 
         /** Negative half-space flag. */
         private static final int NEG = 1 << 1;
@@ -61,8 +68,9 @@ public class TestBucketPointMap1D<V> extends AbstractBucketPointMap<TestPoint1D,
 
         TestNode1D(
                 final AbstractBucketPointMap<TestPoint1D, V> map,
-                final BucketNode<TestPoint1D, V> parent) {
-            super(map, parent);
+                final BucketNode<TestPoint1D, V> parent,
+                final int childIndex) {
+            super(map, parent, childIndex);
         }
 
         /** {@inheritDoc} */
@@ -93,6 +101,27 @@ public class TestBucketPointMap1D<V> extends AbstractBucketPointMap<TestPoint1D,
         protected boolean testChildLocation(final int childIdx, final int loc) {
             final int childLoc = CHILD_LOCATIONS[childIdx];
             return (childLoc & loc) == childLoc;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getMinChildDistance(final int childIdx, final TestPoint1D pt, final int ptLoc) {
+            return ptLoc == CHILD_LOCATIONS[childIdx] ?
+                    0d :
+                    Math.abs(pt.getX() - split);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getMaxChildDistance(final int childIdx, final TestPoint1D pt, final int ptLoc) {
+            final TestNode1D<V> parent = (TestNode1D<V>) getParent();
+            if (parent != null &&
+                childIdx != getChildIndex()) {
+
+                return getMaxDistance(pt.getX(), parent.split, split);
+            }
+
+            return Double.POSITIVE_INFINITY;
         }
     }
 }

@@ -39,17 +39,19 @@ public final class GeometryInternalUtils {
         return a == b;
     }
 
-    /** Throw an exception if the given point cannot be used as a key in a
-     * {@link org.apache.commons.geometry.core.collection.PointMap PointMap}.
+    /** Throw an exception if the given point is not finite.
      * @param <P> Point type
      * @param pt point to check
+     * @return point given as the argument
      * @throws NullPointerException if the point is null
      * @throws IllegalArgumentException if the point is not finite
      */
-    public static <P extends Point<P>> void validatePointMapKey(final P pt) {
+    public static <P extends Point<P>> P requireFinite(final P pt) {
         Objects.requireNonNull(pt);
         if (!pt.isFinite()) {
-            throw new IllegalArgumentException("Non-finite map key: " + pt);
+            throw new IllegalArgumentException("Non-finite point: " + pt);
         }
+
+        return pt;
     }
 }

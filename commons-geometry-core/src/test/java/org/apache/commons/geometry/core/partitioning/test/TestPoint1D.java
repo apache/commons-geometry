@@ -71,6 +71,23 @@ public final class TestPoint1D implements Point<TestPoint1D> {
 
     /** {@inheritDoc} */
     @Override
+    public int hashCode() {
+        return Double.hashCode(x);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof TestPoint1D)) {
+            return false;
+        }
+
+        final TestPoint1D other = (TestPoint1D) obj;
+        return Double.compare(x, other.x) == 0;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "(" + x + ")";
     }

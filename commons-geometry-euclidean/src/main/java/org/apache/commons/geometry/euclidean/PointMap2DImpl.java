@@ -48,6 +48,12 @@ final class PointMap2DImpl<V>
     /** Y positive quadrant flag. */
     private static final int YPOS = 1;
 
+    /** Bit mask for x location. */
+    private static final int XMASK = XNEG | XPOS;
+
+    /** Bit mask for y location. */
+    private static final int YMASK = YNEG | YPOS;
+
     /** Quadtree location flags for child nodes. */
     private static final int[] CHILD_LOCATIONS = {
         XNEG | YNEG,
@@ -73,6 +79,12 @@ final class PointMap2DImpl<V>
         return a.eq(b, getPrecision());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguatePointComparison(final Vector2D a, final Vector2D b) {
+        return Vector2D.COORDINATE_ASCENDING_ORDER.compare(a, b);
+    }
+
     /** Tree node class for {@link PointMap2DImpl}.
      * @param <V> Map value type
      */
@@ -84,10 +96,13 @@ final class PointMap2DImpl<V>
         /** Construct a new instance.
          * @param map owning map
          * @param parent parent node; set to null for the root node
+         * @param childIndex index of this node in its parent's child list;
+         *      set to {@code -1} for the root node
          */
         MapNode2D(final AbstractBucketPointMap<Vector2D, V> map,
-                final BucketNode<Vector2D, V> parent) {
-            super(map, parent);
+                final BucketNode<Vector2D, V> parent,
+                final int childIndex) {
+            super(map, parent, childIndex);
         }
 
         /** {@inheritDoc} */
@@ -146,6 +161,53 @@ final class PointMap2DImpl<V>
             super.makeLeaf(leafEntries);
 
             split = null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getMinChildDistance(final int childIdx, final Vector2D pt, final int ptLoc) {
+            final int childLoc = CHILD_LOCATIONS[childIdx];
+
+            final boolean sameX = (ptLoc & XMASK) == (childLoc & XMASK);
+            final boolean sameY = (ptLoc & YMASK) == (childLoc & YMASK);
+
+            final Vector2D diff = pt.subtract(split);
+
+            if (sameX) {
+                return sameY ?
+                        0d :
+                        Math.abs(diff.getY());
+            } else if (sameY) {
+                return Math.abs(diff.getX());
+            }
+
+            return diff.norm();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getMaxChildDistance(final int childIdx, final Vector2D pt, final int ptLoc) {
+            final MapNode2D<V> grandParent = (MapNode2D<V>) getParent();
+            if (grandParent != null) {
+                final int nodeLoc = CHILD_LOCATIONS[getChildIndex()];
+                final int childLoc = CHILD_LOCATIONS[childIdx];
+
+                final boolean oppositeX = (nodeLoc & XMASK) != (childLoc & XMASK);
+                final boolean oppositeY = (nodeLoc & YMASK) != (childLoc & YMASK);
+
+                if (oppositeX && oppositeY) {
+                    // the grandparent and parent splits form a completely enclosed region,
+                    // meaning that we can determine a max distance
+                    final Vector2D diff = Vector2D.of(
+                                getMaxDistance(pt.getX(), grandParent.split.getX(), split.getX()),
+                                getMaxDistance(pt.getY(), grandParent.split.getY(), split.getY())
+                            );
+
+                    return diff.norm();
+                }
+            }
+
+            return Double.POSITIVE_INFINITY;
         }
     }
 }

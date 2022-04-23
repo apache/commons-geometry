@@ -75,6 +75,12 @@ class PointMapAsSetAdapterTest extends PointSetTestBase<TestPoint1D> {
         return precision.eq(a.getX(), b.getX());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguateNearToFarOrder(final TestPoint1D a, final TestPoint1D b) {
+        return Double.compare(a.getX(), b.getX());
+    }
+
     private static List<TestPoint1D> createPointList(final double start, final double delta, final int cnt) {
         final List<TestPoint1D> pts = new ArrayList<>(cnt);
 

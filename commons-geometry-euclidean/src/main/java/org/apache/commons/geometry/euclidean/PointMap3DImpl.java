@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.internal.AbstractBucketPointMap;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
 
@@ -59,6 +60,15 @@ final class PointMap3DImpl<V>
     /** Z positive octant flag. */
     private static final int ZPOS = 1;
 
+    /** Bit mask for x location. */
+    private static final int XMASK = XNEG | XPOS;
+
+    /** Bit mask for y location. */
+    private static final int YMASK = YNEG | YPOS;
+
+    /** Bit mask for z location. */
+    private static final int ZMASK = ZNEG | ZPOS;
+
     /** Octant location flags for child nodes. */
     private static final int[] CHILD_LOCATIONS = {
         XNEG | YNEG | ZNEG,
@@ -89,6 +99,12 @@ final class PointMap3DImpl<V>
         return a.eq(b, getPrecision());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguatePointComparison(final Vector3D a, final Vector3D b) {
+        return Vector3D.COORDINATE_ASCENDING_ORDER.compare(a, b);
+    }
+
     /** Tree node class for {@link PointMap3DImpl}.
      * @param <V> Map value type
      */
@@ -100,10 +116,13 @@ final class PointMap3DImpl<V>
         /** Construct a new instance.
          * @param map owning map
          * @param parent parent node; set to null for the root node
+         * @param childIndex index of this node in its parent's child list;
+         *      set to {@code -1} for the root node
          */
         MapNode3D(final AbstractBucketPointMap<Vector3D, V> map,
-                final BucketNode<Vector3D, V> parent) {
-            super(map, parent);
+                final BucketNode<Vector3D, V> parent,
+                final int childIndex) {
+            super(map, parent, childIndex);
         }
 
         /** {@inheritDoc} */
@@ -170,6 +189,65 @@ final class PointMap3DImpl<V>
             super.makeLeaf(leafEntries);
 
             split = null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getMinChildDistance(final int childIdx, final Vector3D pt, final int ptLoc) {
+            final int childLoc = CHILD_LOCATIONS[childIdx];
+
+            final boolean sameX = (ptLoc & XMASK) == (childLoc & XMASK);
+            final boolean sameY = (ptLoc & YMASK) == (childLoc & YMASK);
+            final boolean sameZ = (ptLoc & ZMASK) == (childLoc & ZMASK);
+
+            final Vector3D diff = pt.subtract(split);
+
+            if (sameX) {
+                if (sameY) {
+                    return sameZ ?
+                            0d :
+                            Math.abs(diff.getZ());
+                }
+                return sameZ ?
+                        Math.abs(diff.getY()) :
+                        Vectors.norm(diff.getY(), diff.getZ());
+            } else if (sameY) {
+                return sameZ ?
+                        Math.abs(diff.getX()) :
+                        Vectors.norm(diff.getX(), diff.getZ());
+            } else if (sameZ) {
+                return Vectors.norm(diff.getX(), diff.getY());
+            }
+
+            return diff.norm();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getMaxChildDistance(final int childIdx, final Vector3D pt, final int ptLoc) {
+            final MapNode3D<V> grandParent = (MapNode3D<V>) getParent();
+            if (grandParent != null) {
+                final int nodeLoc = CHILD_LOCATIONS[getChildIndex()];
+                final int childLoc = CHILD_LOCATIONS[childIdx];
+
+                final boolean oppositeX = (nodeLoc & XMASK) != (childLoc & XMASK);
+                final boolean oppositeY = (nodeLoc & YMASK) != (childLoc & YMASK);
+                final boolean oppositeZ = (nodeLoc & ZMASK) != (childLoc & ZMASK);
+
+                if (oppositeX && oppositeY && oppositeZ) {
+                    // the grandparent and parent splits form a completely enclosed region,
+                    // meaning that we can determine a max distance
+                    final Vector3D diff = Vector3D.of(
+                                getMaxDistance(pt.getX(), grandParent.split.getX(), split.getX()),
+                                getMaxDistance(pt.getY(), grandParent.split.getY(), split.getY()),
+                                getMaxDistance(pt.getZ(), grandParent.split.getZ(), split.getZ())
+                            );
+
+                    return diff.norm();
+                }
+            }
+
+            return Double.POSITIVE_INFINITY;
         }
     }
 }

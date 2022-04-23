@@ -106,4 +106,10 @@ class PointSet2DTest extends PointSetTestBase<Vector2D> {
     protected boolean eq(final Vector2D a, final Vector2D b, final Precision.DoubleEquivalence precision) {
         return a.eq(b, precision);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguateNearToFarOrder(final Vector2D a, final Vector2D b) {
+        return Vector2D.COORDINATE_ASCENDING_ORDER.compare(a, b);
+    }
 }

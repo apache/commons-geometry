@@ -129,4 +129,10 @@ class PointMap1STest extends PointMapTestBase<Point1S> {
     protected boolean eq(final Point1S a, final Point1S b, final Precision.DoubleEquivalence precision) {
         return a.eq(b, precision);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguateNearToFarOrder(final Point1S a, final Point1S b) {
+        return Point1S.NORMALIZED_AZIMUTH_ASCENDING_ORDER.compare(a, b);
+    }
 }

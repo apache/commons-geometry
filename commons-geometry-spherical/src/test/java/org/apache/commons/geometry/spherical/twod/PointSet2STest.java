@@ -114,4 +114,10 @@ class PointSet2STest extends PointSetTestBase<Point2S> {
     protected boolean eq(final Point2S a, final Point2S b, final Precision.DoubleEquivalence precision) {
         return a.eq(b, precision);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguateNearToFarOrder(final Point2S a, final Point2S b) {
+        return Point2S.POLAR_AZIMUTH_ASCENDING_ORDER.compare(a, b);
+    }
 }

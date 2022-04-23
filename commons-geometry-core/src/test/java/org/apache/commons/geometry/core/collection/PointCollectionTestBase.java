@@ -20,7 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -92,6 +94,13 @@ public abstract class PointCollectionTestBase<P extends Point<P>> {
      */
     protected abstract boolean eq(P a, P b, Precision.DoubleEquivalence precision);
 
+    /** Compare two points with equal distances computed during a "closest first" ordering.
+     * @param a first point
+     * @param b second point
+     * @return comparison of the two points
+     */
+    protected abstract int disambiguateNearToFarOrder(P a, P b);
+
     /** Assert that {@code a} and {@code b} are equivalent using the given precision context.
      * @param a first point
      * @param b second point
@@ -108,5 +117,58 @@ public abstract class PointCollectionTestBase<P extends Point<P>> {
      */
     protected void assertNotEq(final P a, final P b, final Precision.DoubleEquivalence precision) {
         assertFalse(eq(a, b, precision), () -> "Expected " + a + " and " + b + " to not be equivalent");
+    }
+
+    /** Create a comparator for use in testing "near to far" ordering.
+     * @param refPt reference point
+     * @return comparator for use in testing "near to far" ordering
+     */
+    protected Comparator<P> createNearToFarComparator(final P refPt) {
+        final Comparator<P> cmp = (a, b) -> Double.compare(a.distance(refPt), b.distance(refPt));
+        return cmp.thenComparing(this::disambiguateNearToFarOrder);
+    }
+
+    /** Create a comparator for use in testing "far to near" ordering.
+     * @param refPt reference point
+     * @return comparator for use in testing "far to near" ordering
+     */
+    protected Comparator<P> createFarToNearComparator(final P refPt) {
+        return createNearToFarComparator(refPt).reversed();
+    }
+
+    /** Find the element in {@code list} farthest away from {@code refPt}.
+     * @param refPt reference point
+     * @param list list to search
+     * @return element in {@code list} farthest from {@code refPt}
+     */
+    protected P findFarthest(final P refPt, final List<P> list) {
+        final Comparator<P> cmp = createFarToNearComparator(refPt);
+
+        P result = null;
+        for (final P pt : list) {
+            if (result == null || cmp.compare(pt, result) < 0) {
+                result = pt;
+            }
+        }
+
+        return result;
+    }
+
+    /** Return the maximum distance from {@code refPt} to the points in {@code pts}.
+     * @param <P> Point type
+     * @param refPt reference point
+     * @param pts test points
+     * @return maximum distance from {@code refPt} to the points in {@code pts}
+     */
+    protected double findMaxDistance(final P refPt, final Collection<P> pts) {
+        double maxDist = 0d;
+        for (final P pt : pts) {
+            final double dist = pt.distance(refPt);
+            if (maxDist > dist) {
+                maxDist = dist;
+            }
+        }
+
+        return maxDist;
     }
 }

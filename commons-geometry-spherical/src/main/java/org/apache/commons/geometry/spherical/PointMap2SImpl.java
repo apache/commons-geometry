@@ -25,6 +25,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.twod.GreatCircle;
 import org.apache.commons.geometry.spherical.twod.GreatCircles;
 import org.apache.commons.geometry.spherical.twod.Point2S;
+import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 
 /** Internal {@link PointMap} implementation for 2D spherical space.
@@ -52,6 +53,12 @@ final class PointMap2SImpl<V>
     /** Second positive quadrant flag. */
     private static final int POS2 = 1;
 
+    /** Bit mask for first location. */
+    private static final int MASK1 = NEG1 | POS1;
+
+    /** Bit mask for second location. */
+    private static final int MASK2 = NEG2 | POS2;
+
     /** Location flags for child nodes. */
     private static final int[] CHILD_LOCATIONS = {
         NEG1 | NEG2,
@@ -73,22 +80,38 @@ final class PointMap2SImpl<V>
         return a.eq(b, getPrecision());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguatePointComparison(final Point2S a, final Point2S b) {
+        return Point2S.POLAR_AZIMUTH_ASCENDING_ORDER.compare(a, b);
+    }
+
     /** Tree node class for {@link PointMap2SImpl}.
      * @param <V> Map value type
      */
     private static final class MapNode2S<V>
         extends BucketNode<Point2S, V> {
 
+        /** Primary intersection point of the splitting hyperplanes. */
+        private Point2S splitPoint;
+
         /** First hyperplane split. */
-        private GreatCircle firstSplit;
+        private GreatCircle firstSplitCircle;
 
         /** Second hyperplane split. */
-        private GreatCircle secondSplit;
+        private GreatCircle secondSplitCircle;
 
+        /** Construct a new instance.
+         * @param map owning map
+         * @param parent parent node; set to null for the root node
+         * @param childIndex index of this node in its parent's child list;
+         *      set to {@code -1} for the root node
+         */
         MapNode2S(
                 final AbstractBucketPointMap<Point2S, V> map,
-                final BucketNode<Point2S, V> parent) {
-            super(map, parent);
+                final BucketNode<Point2S, V> parent,
+                final int childIndex) {
+            super(map, parent, childIndex);
         }
 
         /** {@inheritDoc} */
@@ -100,7 +123,8 @@ final class PointMap2SImpl<V>
                 sum.add(entry.getKey().getVector());
             }
 
-            // construct an orthonormal basis
+            // construct an orthonormal basis with u pointing to the centroid
+            // of the points
             Vector3D.Unit u = sum.get().multiply(1.0 / MAX_ENTRIES_PER_NODE)
                     .normalizeOrNull();
             if (u == null) {
@@ -115,17 +139,21 @@ final class PointMap2SImpl<V>
             }
             final Vector3D.Unit w = u.cross(v).normalize();
 
-            // construct the two great circles
-            firstSplit = GreatCircles.fromPole(v.add(w), getPrecision());
-            secondSplit = GreatCircles.fromPole(v.negate().add(w), getPrecision());
+            // set the split point
+            splitPoint = Point2S.from(u);
+
+            // construct the splitting hyperplanes as two great circles intersecting at
+            // the split point and with orthogonal poles
+            firstSplitCircle = GreatCircles.fromPoleAndU(v.add(w), u, getPrecision());
+            secondSplitCircle = GreatCircles.fromPoleAndU(v.negate().add(w), u, getPrecision());
         }
 
         /** {@inheritDoc} */
         @Override
         protected int getSearchLocation(final Point2S pt) {
-            int loc = getSearchLocationValue(firstSplit.classify(pt), NEG1, POS1);
+            int loc = getSearchLocationValue(firstSplitCircle.classify(pt), NEG1, POS1);
 
-            loc |= getSearchLocationValue(secondSplit.classify(pt), NEG2, POS2);
+            loc |= getSearchLocationValue(secondSplitCircle.classify(pt), NEG2, POS2);
 
             return loc;
         }
@@ -133,11 +161,11 @@ final class PointMap2SImpl<V>
         /** {@inheritDoc} */
         @Override
         protected int getInsertLocation(final Point2S pt) {
-            int loc = firstSplit.offset(pt) > 0.0 ?
+            int loc = firstSplitCircle.offset(pt) > 0.0 ?
                     POS1 :
                     NEG1;
 
-            loc |= secondSplit.offset(pt) > 0.0 ?
+            loc |= secondSplitCircle.offset(pt) > 0.0 ?
                     POS2 :
                     NEG2;
 
@@ -156,8 +184,60 @@ final class PointMap2SImpl<V>
         protected void makeLeaf(final List<Entry<Point2S, V>> leafEntries) {
             super.makeLeaf(leafEntries);
 
-            firstSplit = null;
-            secondSplit = null;
+            splitPoint = null;
+            firstSplitCircle = null;
+            secondSplitCircle = null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getMinChildDistance(final int childIdx, final Point2S pt, final int ptLoc) {
+            final int childLoc = CHILD_LOCATIONS[childIdx];
+
+            final boolean sameFirst = (ptLoc & MASK1) == (childLoc & MASK1);
+            final boolean sameSecond = (ptLoc & MASK2) == (childLoc & MASK2);
+
+            if (sameFirst) {
+                return sameSecond ?
+                        0d :
+                        Math.abs(secondSplitCircle.offset(pt));
+            } else if (sameSecond) {
+                return Math.abs(firstSplitCircle.offset(pt));
+            }
+
+            // the reference point is in the opposite quadrant; this means that the
+            // closest point will be either the split point or the antipode of the
+            // split point
+            final double splitPointDist = pt.distance(splitPoint);
+            return splitPointDist > Angle.PI_OVER_TWO ?
+                Math.PI - splitPointDist :
+                splitPointDist;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getMaxChildDistance(final int childIdx, final Point2S pt, final int ptLoc) {
+            final int childLoc = CHILD_LOCATIONS[childIdx];
+
+            final boolean oppositeFirst = (ptLoc & MASK1) != (childLoc & MASK1);
+            final boolean oppositeSecond = (ptLoc & MASK2) != (childLoc & MASK2);
+
+
+            if (oppositeFirst) {
+                return oppositeSecond ?
+                        Math.PI :
+                        Math.PI - Math.abs(secondSplitCircle.offset(pt));
+            } else if (oppositeSecond) {
+                return Math.PI - Math.abs(firstSplitCircle.offset(pt));
+            }
+
+            // the reference point is in the same quadrant; this means that the
+            // farthest point will be either the split point or the antipode of the
+            // split point
+            final double splitPointDist = pt.distance(splitPoint);
+            return splitPointDist > Angle.PI_OVER_TWO ?
+                splitPointDist :
+                Math.PI - splitPointDist;
         }
 
         /** Get an encoded search location for the given hyperplane location.

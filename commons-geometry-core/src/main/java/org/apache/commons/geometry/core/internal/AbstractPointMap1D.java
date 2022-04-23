@@ -16,15 +16,18 @@
  */
 package org.apache.commons.geometry.core.internal;
 
+import java.util.AbstractCollection;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.function.ToDoubleFunction;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.collection.PointMap;
+import org.apache.commons.numbers.core.Precision;
 
 /** Abstract base class for 1D {@link PointMap} implementations. This class delegates
  * entry storage to an internal {@link TreeMap} instance. Simple methods, such as
@@ -36,15 +39,23 @@ import org.apache.commons.geometry.core.collection.PointMap;
 public abstract class AbstractPointMap1D<P extends Point<P>, V>
     implements PointMap<P, V> {
 
+    /** Precision context. */
+    private final Precision.DoubleEquivalence precision;
+
     /** Underlying map. */
     private final NavigableMap<P, V> map;
 
-    /** Construct a new instance that uses the given comparator in the
-     * underlying {@link TreeMap}.
-     * @param cmp tree map comparator
+    /** Construct a new instance that uses the given precision and coordinate accessor
+     * function to sort elements.
+     * @param precision precision object used for floating point comparisons
+     * @param coordinateFn function used to obtain coordinate values from point instance
      */
-    protected AbstractPointMap1D(final Comparator<P> cmp) {
-        this.map = new TreeMap<>(cmp);
+    protected AbstractPointMap1D(
+            final Precision.DoubleEquivalence precision,
+            final ToDoubleFunction<P> coordinateFn) {
+        this.precision = precision;
+        this.map = new TreeMap<>(
+                (a, b) -> precision.compare(coordinateFn.applyAsDouble(a), coordinateFn.applyAsDouble(b)));
     }
 
     /** {@inheritDoc} */
@@ -65,24 +76,23 @@ public abstract class AbstractPointMap1D<P extends Point<P>, V>
         return map.containsValue(value);
     }
 
-
     /** {@inheritDoc} */
     @Override
-    public Map.Entry<P, V> getEntry(final P key) {
+    public Entry<P, V> getEntry(final P key) {
         return exportEntry(getEntryInternal(key));
     }
 
     /** {@inheritDoc} */
     @Override
     public V put(final P key, final V value) {
-        GeometryInternalUtils.validatePointMapKey(key);
+        GeometryInternalUtils.requireFinite(key);
         return putInternal(key, value);
     }
 
     /** {@inheritDoc} */
     @Override
     public void putAll(final Map<? extends P, ? extends V> m) {
-        for (final Map.Entry<? extends P, ? extends V> entry : m.entrySet()) {
+        for (final Entry<? extends P, ? extends V> entry : m.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
@@ -91,6 +101,54 @@ public abstract class AbstractPointMap1D<P extends Point<P>, V>
     @Override
     public Collection<V> values() {
         return map.values();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Entry<P, V> nearestEntry(final P pt) {
+        GeometryInternalUtils.requireFinite(pt);
+
+        final Iterator<Entry<P, V>> it = nearToFarIterator(pt);
+        return it.hasNext() ?
+                it.next() :
+                null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Entry<P, V> farthestEntry(final P pt) {
+        GeometryInternalUtils.requireFinite(pt);
+
+        final Iterator<Entry<P, V>> it = farToNearIterator(pt);
+        return it.hasNext() ?
+                it.next() :
+                null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Collection<Entry<P, V>> entriesNearToFar(final P pt) {
+        GeometryInternalUtils.requireFinite(pt);
+
+        return new AbstractEntryCollection() {
+            @Override
+            public Iterator<Entry<P, V>> iterator() {
+                return nearToFarIterator(pt);
+            }
+        };
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Collection<Entry<P, V>> entriesFarToNear(final P pt) {
+        GeometryInternalUtils.requireFinite(pt);
+
+        return new AbstractEntryCollection() {
+            @Override
+            public Iterator<Entry<P, V>> iterator() {
+                return farToNearIterator(pt);
+            }
+        };
     }
 
     /** {@inheritDoc} */
@@ -144,6 +202,29 @@ public abstract class AbstractPointMap1D<P extends Point<P>, V>
                 null;
     }
 
+    /** Get the configured precision for the instance.
+     * @return precision object
+     */
+    protected Precision.DoubleEquivalence getPrecision() {
+        return precision;
+    }
+
+    /** Get an iterator for accessing map entries in order of nearest to farthest
+     * from {@code pt}.
+     * @param pt reference point
+     * @return iterator for accessing map entries in order of nearest to farthest
+     * f        from {@code pt}.
+     */
+    protected abstract Iterator<Entry<P, V>> nearToFarIterator(P pt);
+
+    /** Get an iterator for accessing map entries in order of farthest to nearest
+     * from {@code pt}.
+     * @param pt reference point
+     * @return iterator for accessing map entries in order of farthest to nearest
+     * f        from {@code pt}.
+     */
+    protected abstract Iterator<Entry<P, V>> farToNearIterator(P pt);
+
     /** {@link Map.Entry} subclass that adds support for the {@link Map.Entry#setValue(Object)}.
      */
     private final class MutableEntryWrapper extends SimpleEntry<P, V> {
@@ -166,6 +247,17 @@ public abstract class AbstractPointMap1D<P extends Point<P>, V>
 
             // set the local value
             return super.setValue(value);
+        }
+    }
+
+    /** Abstract type representing a collection over the entries in this map.
+     */
+    private abstract class AbstractEntryCollection extends AbstractCollection<Entry<P, V>> {
+
+        /** {@inheritDoc} */
+        @Override
+        public int size() {
+            return AbstractPointMap1D.this.size();
         }
     }
 }

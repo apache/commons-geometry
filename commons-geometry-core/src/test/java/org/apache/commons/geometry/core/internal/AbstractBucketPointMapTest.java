@@ -50,6 +50,60 @@ class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
         Assertions.assertEquals(101, map.get(pt));
     }
 
+    @Test
+    void testEntriesNearToFar_pointsAtEqualDistances() {
+        // arrange
+        TestBucketPointMap1D<Integer> map = getMap(PRECISION);
+
+        final List<TestPoint1D> pts = Arrays.asList(
+                new TestPoint1D(-2),
+                new TestPoint1D(-1),
+                new TestPoint1D(0),
+                new TestPoint1D(1),
+                new TestPoint1D(2));
+
+        insertPoints(pts, map);
+
+        final List<TestPoint1D> expected = Arrays.asList(
+                new TestPoint1D(0),
+                new TestPoint1D(-1),
+                new TestPoint1D(1),
+                new TestPoint1D(-2),
+                new TestPoint1D(2));
+
+        // act/assert
+        assertIterableOrder(
+                expected,
+                map.entriesNearToFar(new TestPoint1D(0)));
+    }
+
+    @Test
+    void testEntriesFarToNear_pointsAtEqualDistances() {
+        // arrange
+        TestBucketPointMap1D<Integer> map = getMap(PRECISION);
+
+        final List<TestPoint1D> pts = Arrays.asList(
+                new TestPoint1D(-2),
+                new TestPoint1D(-1),
+                new TestPoint1D(0),
+                new TestPoint1D(1),
+                new TestPoint1D(2));
+
+        insertPoints(pts, map);
+
+        final List<TestPoint1D> expected = Arrays.asList(
+                new TestPoint1D(2),
+                new TestPoint1D(-2),
+                new TestPoint1D(1),
+                new TestPoint1D(-1),
+                new TestPoint1D(0));
+
+        // act/assert
+        assertIterableOrder(
+                expected,
+                map.entriesFarToNear(new TestPoint1D(0)));
+    }
+
     /** {@inheritDoc} */
     @Override
     protected <V> TestBucketPointMap1D<V> getMap(final Precision.DoubleEquivalence precision) {
@@ -117,5 +171,11 @@ class AbstractBucketPointMapTest extends PointMapTestBase<TestPoint1D> {
         }
 
         return new TestPoint1D(sum / pts.size());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguateNearToFarOrder(final TestPoint1D a, final TestPoint1D b) {
+        return Double.compare(a.getX(), b.getX());
     }
 }

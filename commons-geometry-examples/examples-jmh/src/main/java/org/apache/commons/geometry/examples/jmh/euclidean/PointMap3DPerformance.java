@@ -23,7 +23,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 
+import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
@@ -61,13 +63,12 @@ public class PointMap3DPerformance {
     /** Value inserted into maps during runs. */
     private static final Integer VAL = Integer.valueOf(1);
 
-    /** Base input class for point map benchmarks. */
-    @State(Scope.Thread)
-    public static class PointMapInput {
+    /** Maximum number of iterable instances used during iterable benchmarks. */
+    private static final int MAX_ITERABLES = 100;
 
-        /** Data structure implementation. */
-        @Param({"treemap", "pointmap3d"})
-        private String impl;
+    /** Abstract base class for point map benchmark input. */
+    @State(Scope.Thread)
+    public abstract static class AbstractPointMapInput {
 
         /** Point list shape. */
         @Param({"block", "line", "sphere"})
@@ -81,9 +82,6 @@ public class PointMap3DPerformance {
         @Param({"1"})
         private int randomSeed;
 
-        /** Map instance for the run. */
-        private Map<Vector3D, Integer> map;
-
         /** List of points for the run. */
         private List<Vector3D> points;
 
@@ -94,8 +92,6 @@ public class PointMap3DPerformance {
         @Setup(Level.Iteration)
         public void setup() {
             random = new Random(randomSeed);
-
-            map = createMap();
             points = createPoints();
 
             switch (dist) {
@@ -115,9 +111,7 @@ public class PointMap3DPerformance {
         /** Get the map instance under test.
          * @return map instance
          */
-        public Map<Vector3D, Integer> getMap() {
-            return map;
-        }
+        public abstract Map<Vector3D, Integer> getMap();
 
         /** Get the points for the run.
          * @return list of points
@@ -133,29 +127,6 @@ public class PointMap3DPerformance {
             return random;
         }
 
-        /** Create the map implementation for the run.
-         * @return map instance
-         */
-        private Map<Vector3D, Integer> createMap() {
-            switch (impl.toLowerCase()) {
-            case "treemap":
-                return new TreeMap<>((a, b) -> {
-                    int cmp = PRECISION.compare(a.getX(), b.getX());
-                    if (cmp == 0) {
-                        cmp = PRECISION.compare(a.getY(), b.getY());
-                        if (cmp == 0) {
-                            cmp = PRECISION.compare(a.getZ(), b.getZ());
-                        }
-                    }
-                    return cmp;
-                });
-            case "pointmap3d":
-                return EuclideanCollections.pointMap3D(PRECISION);
-            default:
-                throw new IllegalArgumentException("Unknown map implementation: " + impl);
-            }
-        }
-
         /** Create the list of points for the run.
          * @return list of points
          */
@@ -168,14 +139,15 @@ public class PointMap3DPerformance {
             case "sphere":
                 return createPointSphere(5, 5, 10);
             default:
-                throw new IllegalArgumentException("Unknown point distribution " + impl);
+                throw new IllegalArgumentException("Unknown point distribution " + shape);
             }
         }
     }
 
     /** Input class containing pre-inserted points. */
     @State(Scope.Thread)
-    public static class PreInsertedPointMapInput extends PointMapInput {
+    public abstract static class AbstractPreInsertedPointMapInput
+        extends AbstractPointMapInput {
 
         /** List of test points. */
         private List<Vector3D> testPoints;
@@ -219,6 +191,73 @@ public class PointMap3DPerformance {
         public List<Vector3D> getTestPoints() {
             return testPoints;
         }
+    }
+
+    /** Input class containing a {@link PointMap} instance.
+     */
+    @State(Scope.Thread)
+    public static class PointMapInput extends AbstractPointMapInput {
+
+        /** {@inheritDoc} */
+        @Override
+        public PointMap<Vector3D, Integer> getMap() {
+            return EuclideanCollections.pointMap3D(PRECISION);
+        }
+    }
+
+    /** Input class containing a {@link PointMap} instance with pre-inserted points.
+     */
+    @State(Scope.Thread)
+    public static class PreInsertedPointMapInput extends AbstractPreInsertedPointMapInput {
+
+        /** {@inheritDoc} */
+        @Override
+        public PointMap<Vector3D, Integer> getMap() {
+            return EuclideanCollections.pointMap3D(PRECISION);
+        }
+    }
+
+    /** Input class that uses a {@link TreeMap} to store points.
+     */
+    @State(Scope.Thread)
+    public static class TreeMapInput extends AbstractPointMapInput {
+
+        /** {@inheritDoc} */
+        @Override
+        public Map<Vector3D, Integer> getMap() {
+            return createTreeMap();
+        }
+    }
+
+    /** Input class that uses a {@link TreeMap} with pre-inserted points.
+     */
+    @State(Scope.Thread)
+    public static class PreInsertedTreeMapInput extends AbstractPreInsertedPointMapInput {
+
+        /** {@inheritDoc} */
+        @Override
+        public Map<Vector3D, Integer> getMap() {
+            return createTreeMap();
+        }
+    }
+
+    /** Create a {@link TreeMap} configured to compare points using the precision
+     * context for the benchmarks. This map is only intended to be used as a baseline
+     * for a well-performing tree structure. It does not properly
+     * partition the input points.
+     * @return a new {@link TreeMap} instance
+     */
+    private static Map<Vector3D, Integer> createTreeMap() {
+        return new TreeMap<>((a, b) -> {
+            int cmp = PRECISION.compare(a.getX(), b.getX());
+            if (cmp == 0) {
+                cmp = PRECISION.compare(a.getY(), b.getY());
+                if (cmp == 0) {
+                    cmp = PRECISION.compare(a.getZ(), b.getZ());
+                }
+            }
+            return cmp;
+        });
     }
 
     /** Create a solid block of points.
@@ -289,13 +328,12 @@ public class PointMap3DPerformance {
         return points;
     }
 
-    /** Benchmark that inserts each point in the input into the target map.
+    /** Run a benchmark using the {@link Map#put(Object, Object)} method.
      * @param input input for the run
      * @param bh blackhole instance
      * @return input instance
      */
-    @Benchmark
-    public PointMapInput put(final PointMapInput input, final Blackhole bh) {
+    private static AbstractPointMapInput doPut(final AbstractPointMapInput input, final Blackhole bh) {
         final Map<Vector3D, Integer> map = input.getMap();
 
         for (final Vector3D p : input.getPoints()) {
@@ -305,29 +343,27 @@ public class PointMap3DPerformance {
         return input;
     }
 
-    /** Benchmark that retrieves each point in the input from the target map.
+    /** Run a benchmark using the {@link Map#get(Object)} method.
      * @param input input for the run
      * @param bh blackhole instance
      * @return input instance
      */
-    @Benchmark
-    public PointMapInput get(final PreInsertedPointMapInput input, final Blackhole bh) {
+    private static AbstractPointMapInput doGet(final AbstractPointMapInput input, final Blackhole bh) {
         final Map<Vector3D, Integer> map = input.getMap();
 
-        for (final Vector3D p : input.getTestPoints()) {
+        for (final Vector3D p : input.getPoints()) {
             bh.consume(map.get(p));
         }
 
         return input;
     }
 
-    /** Benchmark that remove each point in the input from the target map.
+    /** Run a benchmark using the {@link Map#remove(Object)} method.
      * @param input input for the run
      * @param bh blackhole instance
      * @return input instance
      */
-    @Benchmark
-    public PointMapInput remove(final PreInsertedPointMapInput input, final Blackhole bh) {
+    private static AbstractPointMapInput doRemove(final AbstractPointMapInput input, final Blackhole bh) {
         final Map<Vector3D, Integer> map = input.getMap();
 
         for (final Vector3D p : input.getPoints()) {
@@ -335,5 +371,212 @@ public class PointMap3DPerformance {
         }
 
         return input;
+    }
+
+    /** Run a benchmark for a distance-ordered map iteration.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @param count maximum number of elements to iterate through for each test point
+     * @param iterableFactory function to create the iterable instance for each test point
+     * @return input instance
+     */
+    private static PreInsertedPointMapInput doDistanceIteration(
+            final PreInsertedPointMapInput input,
+            final Blackhole bh,
+            final int count,
+            final BiFunction<
+                PointMap<Vector3D, Integer>,
+                Vector3D,
+                Iterable<?>> iterableFactory) {
+
+        final PointMap<Vector3D, Integer> map = input.getMap();
+
+        int i = 0;
+        for (final Vector3D pt : input.getTestPoints()) {
+            int cnt = 0;
+            for (final Object element : iterableFactory.apply(map, pt)) {
+                bh.consume(element);
+
+                if (++cnt >= cnt) {
+                    break;
+                }
+            }
+
+            if (++i >= MAX_ITERABLES) {
+                break;
+            }
+        }
+
+        return input;
+    }
+
+    /** Run a benchmark for a distance select operation.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @param selectFn function used to select from the map
+     * @return input instance
+     */
+    private static PreInsertedPointMapInput doDistanceSelect(
+            final PreInsertedPointMapInput input,
+            final Blackhole bh,
+            final BiFunction<
+                PointMap<Vector3D, Integer>,
+                Vector3D,
+                Map.Entry<Vector3D, Integer>> selectFn) {
+        final PointMap<Vector3D, Integer> map = input.getMap();
+
+        for (final Vector3D pt : input.getTestPoints()) {
+            bh.consume(selectFn.apply(map, pt));
+        }
+
+        return input;
+    }
+
+    /** Baseline benchmark for {@link Map#put(Object, Object)} using a {@link TreeMap}.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object putTreeMapBaseline(final TreeMapInput input, final Blackhole bh) {
+        return doPut(input, bh);
+    }
+
+    /** Benchmark that inserts each point in the input into the target map.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object put(final TreeMapInput input, final Blackhole bh) {
+        return doPut(input, bh);
+    }
+
+    /** Baseline benchmark for {@link Map#get(Object)} using a {@link TreeMap}.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object getTreeMapBaseline(final PreInsertedTreeMapInput input, final Blackhole bh) {
+        return doGet(input, bh);
+    }
+
+    /** Benchmark that retrieves each point in the input from the target map.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object get(final PreInsertedPointMapInput input, final Blackhole bh) {
+        return doGet(input, bh);
+    }
+
+    /** Baseline benchmark for {@link Map#remove(Object)} using a {@link TreeMap}.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object removeTreeMapBaseline(final PreInsertedTreeMapInput input, final Blackhole bh) {
+        return doGet(input, bh);
+    }
+
+    /** Benchmark that removes each point in the input from the target map.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object remove(final PreInsertedPointMapInput input, final Blackhole bh) {
+        return doRemove(input, bh);
+    }
+
+    /** Benchmark for the {@link PointMap#entriesNearToFar(org.apache.commons.geometry.core.Point)} method.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object entriesNearToFar(final PreInsertedPointMapInput input, final Blackhole bh) {
+        return doDistanceIteration(
+                input,
+                bh,
+                input.getPoints().size(),
+                PointMap::entriesNearToFar);
+    }
+
+    /** Benchmark for iterating through a portion of the elements returned by the
+     * {@link PointMap#entriesNearToFar(org.apache.commons.geometry.core.Point)} method.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object entriesNearToFarPartial(final PreInsertedPointMapInput input, final Blackhole bh) {
+        final int cnt = input.getPoints().size() / 2;
+
+        return doDistanceIteration(
+                input,
+                bh,
+                cnt,
+                PointMap::entriesNearToFar);
+    }
+
+    /** Benchmark for the {@link PointMap#nearestEntry(org.apache.commons.geometry.core.Point)} method.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object nearestEntry(final PreInsertedPointMapInput input, final Blackhole bh) {
+        return doDistanceSelect(
+                input,
+                bh,
+                PointMap::nearestEntry);
+    }
+
+    /** Benchmark for the {@link PointMap#entriesFarToNear(org.apache.commons.geometry.core.Point)} method.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object entriesFarToNear(final PreInsertedPointMapInput input, final Blackhole bh) {
+        return doDistanceIteration(
+                input,
+                bh,
+                input.getPoints().size(),
+                PointMap::entriesFarToNear);
+    }
+
+    /** Benchmark for iterating through a portion of the results of the
+     * {@link PointMap#entriesFarToNear(org.apache.commons.geometry.core.Point)} method.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object entriesFarToNearPartial(final PreInsertedPointMapInput input, final Blackhole bh) {
+        final int cnt = input.getPoints().size() / 2;
+
+        return doDistanceIteration(
+                input,
+                bh,
+                cnt,
+                PointMap::entriesFarToNear);
+    }
+
+    /** Benchmark for the {@link PointMap#farthestEntry(org.apache.commons.geometry.core.Point)} method.
+     * @param input input for the run
+     * @param bh blackhole instance
+     * @return input instance
+     */
+    @Benchmark
+    public Object farthestEntry(final PreInsertedPointMapInput input, final Blackhole bh) {
+        return doDistanceSelect(
+                input,
+                bh,
+                PointMap::farthestEntry);
     }
 }

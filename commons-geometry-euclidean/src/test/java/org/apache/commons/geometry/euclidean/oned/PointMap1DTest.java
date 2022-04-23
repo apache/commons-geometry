@@ -18,10 +18,12 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.geometry.core.collection.PointMap;
 import org.apache.commons.geometry.core.collection.PointMapTestBase;
@@ -58,6 +60,56 @@ class PointMap1DTest extends PointMapTestBase<Vector1D> {
             Assertions.assertEquals(0, map.get(Vector1D.of(x + offset)));
 
             x += step;
+        }
+    }
+
+    @Test
+    void testNearesAndFarthesttEntry_equalDistances() {
+        // arrange
+        final PointMap<Vector1D, Integer> map = getMap(PRECISION);
+
+        int i = 0;
+
+        map.put(Vector1D.Unit.MINUS, ++i);
+        map.put(Vector1D.Unit.PLUS, ++i);
+
+        // act/assert
+        Assertions.assertEquals(new SimpleEntry<>(Vector1D.Unit.MINUS, 1), map.nearestEntry(Vector1D.ZERO));
+        Assertions.assertEquals(new SimpleEntry<>(Vector1D.Unit.PLUS, 2), map.farthestEntry(Vector1D.ZERO));
+    }
+
+    @Test
+    void testEntryDistanceOrder_random() {
+        // arrange
+        final PointMap<Vector1D, Integer> map = getMap(PRECISION);
+
+        final Random rnd = new Random(3L);
+        final int testCnt = 5;
+        final int pointCnt = 1_000;
+        final double range = 1e10;
+
+        final List<Vector1D> pts = new ArrayList<>();
+
+        for (int i = 0; i < pointCnt; ++i) {
+            final Vector1D pt = randomPoint(rnd, range);
+            pts.add(pt);
+
+            map.put(pt, i);
+        }
+
+        // act/assert
+        for (int i = 0; i < testCnt; ++i) {
+            final Vector1D refPt = randomPoint(rnd, range);
+
+            assertCollectionOrder(
+                    pts,
+                    createNearToFarComparator(refPt),
+                    map.entriesNearToFar(refPt));
+
+            assertCollectionOrder(
+                    pts,
+                    createFarToNearComparator(refPt),
+                    map.entriesFarToNear(refPt));
         }
     }
 
@@ -116,5 +168,20 @@ class PointMap1DTest extends PointMapTestBase<Vector1D> {
     @Override
     protected boolean eq(final Vector1D a, final Vector1D b, final Precision.DoubleEquivalence precision) {
         return a.eq(b, precision);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected int disambiguateNearToFarOrder(final Vector1D a, final Vector1D b) {
+        return Vector1D.COORDINATE_ASCENDING_ORDER.compare(a, b);
+    }
+
+    /** Create a random point with coordinate values in the range {@code [-range/2, range/2)}.
+     * @param rnd random source
+     * @param range distance between min and max coordinate values
+     * @return random point
+     */
+    private static Vector1D randomPoint(final Random rnd, final double range) {
+        return Vector1D.of((rnd.nextDouble() - 0.5) * range);
     }
 }
