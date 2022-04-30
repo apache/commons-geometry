@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.threed.line;
 
 import org.apache.commons.geometry.core.RegionEmbedding;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Sized;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -75,4 +76,10 @@ public abstract class LineSubset3D implements RegionEmbedding<Vector3D, Vector1D
      */
     @Override
     public abstract HyperplaneBoundedRegion<Vector1D> getSubspaceRegion();
+
+    /** Classify the given line abscissa value with respect to the subspace region.
+     * @param abscissa the abscissa value to classify
+     * @return the region location of the line abscissa value
+     */
+    public abstract RegionLocation classifyAbscissa(double abscissa);
 }

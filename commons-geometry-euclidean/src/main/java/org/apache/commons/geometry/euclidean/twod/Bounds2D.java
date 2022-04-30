@@ -17,8 +17,11 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.euclidean.AbstractBounds;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.apache.commons.numbers.core.Precision;
@@ -29,7 +32,8 @@ import org.apache.commons.numbers.core.Precision;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D> {
+public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D>
+    implements Linecastable2D {
 
     /** Simple constructor. Callers are responsible for ensuring the min is not greater than max.
      * @param min minimum point
@@ -110,6 +114,66 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D> {
         }
 
         return null; // no intersection
+    }
+
+    /** Return {@code true} if the region represented by this instance shares any points with
+     * the given line. Floating point comparisons are made using the
+     * {@link Line#getPrecision() precision} of the line.
+     * @param line line to determine intersection with
+     * @return {@code true} if the region represented by this instance intersects
+     *      the given line
+     */
+    public boolean intersects(final Line line) {
+        return intersects(line.span());
+    }
+
+    /** Return {@code true} if the region represented by this instance shares any points with
+     * the given line convex subset. Floating point comparisons are made using the
+     * {@link Line#getPrecision() precision} of the subset's line.
+     * @param subset line convex subset to determine intersection with
+     * @return {@code true} if the region represented by this instance intersects
+     *      the given line convex subset
+     */
+    public boolean intersects(final LineConvexSubset subset) {
+        return new BoundsLinecaster2D(subset).intersectsRegion();
+    }
+
+    /** Return a {@link Segment} representing the intersection of the region
+     * represented by this instance with the given line or {@code null} if no such
+     * intersection exists. Floating point comparisons are made using the
+     * {@link Line#getPrecision() precision} of the line.
+     * @param line line to intersect with
+     * @return {@link Segment} representing the intersection of the region
+     *      represented by this instance with the given line or {@code null}
+     *      if no such intersection exists
+     */
+    public Segment intersection(final Line line) {
+        return intersection(line.span());
+    }
+
+    /** Return a {@link Segment} representing the intersection of the region
+     * represented by this instance with the given line convex subset or {@code null}
+     * if no such intersection exists. Floating point comparisons are made using the
+     * {@link Line#getPrecision() precision} of the subset's line.
+     * @param subset line convex subset to intersect with
+     * @return {@link Segment} representing the intersection of the region
+     *      represented by this instance with the given line convex subset or {@code null}
+     *      if no such intersection exists
+     */
+    public Segment intersection(final LineConvexSubset subset) {
+        return new BoundsLinecaster2D(subset).getRegionIntersection();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<LinecastPoint2D> linecast(final LineConvexSubset subset) {
+        return new BoundsLinecaster2D(subset).getBoundaryIntersections();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinecastPoint2D linecastFirst(final LineConvexSubset subset) {
+        return new BoundsLinecaster2D(subset).getFirstBoundaryIntersection();
     }
 
     /** {@inheritDoc}
@@ -266,6 +330,99 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D> {
             }
 
             return new Bounds2D(min, max);
+        }
+    }
+
+    /** Subclass of {@link BoundsLinecaster} for 2D space.
+     */
+    private final class BoundsLinecaster2D extends BoundsLinecaster<Segment, LinecastPoint2D> {
+
+        /** Line convex subset to be tested against the bounds. */
+        private final LineConvexSubset subset;
+
+        /** Line instance for the subset being tested. */
+        private final Line line;
+
+         /** Construct a new instance for computing bounds intersection information with
+          * the given line convex subset.
+          * @param subset line convex subset to compute intersection information for
+          */
+        BoundsLinecaster2D(final LineConvexSubset subset) {
+            super(subset.getLine().getPrecision());
+
+            this.subset = subset;
+            this.line = subset.getLine();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Segment createSegment(final double startAbscissa, final double endAbscissa) {
+            return line.segment(startAbscissa, endAbscissa);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected LinecastPoint2D createBoundaryIntersection(final Vector2D pt, final Vector2D normal) {
+            return new LinecastPoint2D(pt, normal, line);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void addBoundaryIntersections(final double abscissa, final List<LinecastPoint2D> results) {
+            if (subset.classifyAbscissa(abscissa) != RegionLocation.OUTSIDE) {
+                final Vector2D pt = line.toSpace(abscissa);
+
+                addBoundaryIntersectionIfPresent(
+                        pt,
+                        Vector2D.Unit.MINUS_X,
+                        Vector2D.Unit.PLUS_X,
+                        Vector2D::getX,
+                        results);
+
+                addBoundaryIntersectionIfPresent(
+                        pt,
+                        Vector2D.Unit.MINUS_Y,
+                        Vector2D.Unit.PLUS_Y,
+                        Vector2D::getY,
+                        results);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected boolean computeNearFar() {
+            return updateNearFar(Vector2D::getX) &&
+                    updateNearFar(Vector2D::getY);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Comparator<LinecastPoint2D> getBoundaryIntersectionComparator() {
+            return LinecastPoint2D.ABSCISSA_ORDER;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Vector2D getLineDir() {
+            return line.getDirection();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Vector2D getLineOrigin() {
+            return line.getOrigin();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getSubspaceStart() {
+            return subset.getSubspaceStart();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getSubspaceEnd() {
+            return subset.getSubspaceEnd();
         }
     }
 }

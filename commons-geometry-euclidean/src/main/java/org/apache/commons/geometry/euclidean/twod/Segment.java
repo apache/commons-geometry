@@ -141,21 +141,7 @@ public final class Segment extends LineConvexSubset {
 
     /** {@inheritDoc} */
     @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName())
-            .append("[startPoint= ")
-            .append(getStartPoint())
-            .append(", endPoint= ")
-            .append(getEndPoint())
-            .append(']');
-
-        return sb.toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    RegionLocation classifyAbscissa(final double abscissa) {
+    public RegionLocation classifyAbscissa(final double abscissa) {
         final Precision.DoubleEquivalence precision = getPrecision();
         final int startCmp = precision.compare(abscissa, getSubspaceStart());
         if (startCmp > 0) {
@@ -170,6 +156,20 @@ public final class Segment extends LineConvexSubset {
         }
 
         return RegionLocation.OUTSIDE;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName())
+            .append("[startPoint= ")
+            .append(getStartPoint())
+            .append(", endPoint= ")
+            .append(getEndPoint())
+            .append(']');
+
+        return sb.toString();
     }
 
     /** {@inheritDoc} */

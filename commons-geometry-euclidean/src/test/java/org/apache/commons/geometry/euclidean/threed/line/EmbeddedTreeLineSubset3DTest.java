@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed.line;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
@@ -114,6 +115,8 @@ class EmbeddedTreeLineSubset3DTest {
         Assertions.assertEquals(0, empty.getSize(), TEST_EPS);
         Assertions.assertNull(empty.getCentroid());
         Assertions.assertNull(empty.getBounds());
+
+        Assertions.assertEquals(RegionLocation.OUTSIDE, empty.classifyAbscissa(0));
     }
 
     @Test
@@ -129,6 +132,10 @@ class EmbeddedTreeLineSubset3DTest {
         GeometryTestUtils.assertPositiveInfinity(half.getSize());
         Assertions.assertNull(half.getCentroid());
         Assertions.assertNull(half.getBounds());
+
+        Assertions.assertEquals(RegionLocation.OUTSIDE, half.classifyAbscissa(0));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, half.classifyAbscissa(1));
+        Assertions.assertEquals(RegionLocation.INSIDE, half.classifyAbscissa(2));
     }
 
     @Test
@@ -151,6 +158,18 @@ class EmbeddedTreeLineSubset3DTest {
         final Bounds3D bounds = sub.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-2, -2, 1), bounds.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), bounds.getMax(), TEST_EPS);
+
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classifyAbscissa(-10));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classifyAbscissa(-2 * sqrt2));
+        Assertions.assertEquals(RegionLocation.INSIDE, sub.classifyAbscissa(-1.5 * sqrt2));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classifyAbscissa(-sqrt2));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classifyAbscissa(-1.1));
+
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classifyAbscissa(-0.1));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classifyAbscissa(0));
+        Assertions.assertEquals(RegionLocation.INSIDE, sub.classifyAbscissa(0.1));
+        Assertions.assertEquals(RegionLocation.BOUNDARY, sub.classifyAbscissa(sqrt2));
+        Assertions.assertEquals(RegionLocation.OUTSIDE, sub.classifyAbscissa(2));
     }
 
     @Test

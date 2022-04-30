@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed.line;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
@@ -102,6 +103,12 @@ public final class EmbeddedTreeLineSubset3D extends LineSubset3D {
         }
 
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RegionLocation classifyAbscissa(final double abscissa) {
+        return region.classify(abscissa);
     }
 
     /** Transform this instance.

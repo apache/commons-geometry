@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.text.MessageFormat;
 
-import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
 
@@ -147,12 +146,6 @@ final class LineSpanningSubset extends LineConvexSubset {
                 getClass().getSimpleName(),
                 line.getOrigin(),
                 line.getDirection());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    RegionLocation classifyAbscissa(final double abscissa) {
-        return RegionLocation.INSIDE;
     }
 
     /** {@inheritDoc} */

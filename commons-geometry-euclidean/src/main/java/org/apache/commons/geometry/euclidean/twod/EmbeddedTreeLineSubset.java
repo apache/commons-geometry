@@ -156,6 +156,12 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
         return region;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public RegionLocation classifyAbscissa(final double abscissa) {
+        return region.classify(abscissa);
+    }
+
     /** {@inheritDoc}
      *
      * <p>In all cases, the current instance is not modified. However, In order to avoid
@@ -242,11 +248,5 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
             .append(']');
 
         return sb.toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    RegionLocation classifyAbscissa(final double abscissa) {
-        return region.classify(abscissa);
     }
 }

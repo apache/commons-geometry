@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
@@ -114,6 +115,12 @@ public abstract class LineConvexSubset extends LineSubset implements HyperplaneC
         final double abscissa = line.abscissa(pt);
 
         return line.toSpace(closestAbscissa(abscissa));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RegionLocation classifyAbscissa(final double abscissa) {
+        return RegionLocation.INSIDE;
     }
 
     /** {@inheritDoc} */

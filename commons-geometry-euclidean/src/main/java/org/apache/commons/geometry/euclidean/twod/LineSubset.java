@@ -131,7 +131,7 @@ public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEm
      * @param abscissa the abscissa value to classify
      * @return the region location of the line abscissa value
      */
-    abstract RegionLocation classifyAbscissa(double abscissa);
+    public abstract RegionLocation classifyAbscissa(double abscissa);
 
     /** Get a split result for cases where no intersection exists between the splitting line and the
      * line underlying the given line subset. This occurs when the two lines are parallel or coincident.

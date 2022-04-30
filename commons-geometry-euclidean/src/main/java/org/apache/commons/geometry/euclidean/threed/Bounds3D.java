@@ -17,9 +17,17 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.euclidean.AbstractBounds;
+import org.apache.commons.geometry.euclidean.threed.line.Line3D;
+import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
+import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
+import org.apache.commons.geometry.euclidean.threed.line.Segment3D;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.numbers.core.Precision;
 
@@ -29,7 +37,8 @@ import org.apache.commons.numbers.core.Precision;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D> {
+public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D>
+    implements Linecastable3D {
 
     /** Simple constructor. Callers are responsible for ensuring the min is not greater than max.
      * @param min minimum point
@@ -118,6 +127,66 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D> {
         }
 
         return null; // no intersection
+    }
+
+    /** Return {@code true} if the region represented by this instance shares any points with
+     * the given line. Floating point comparisons are made using the
+     * {@link Line3D#getPrecision() precision} of the line.
+     * @param line line to determine intersection with
+     * @return {@code true} if the region represented by this instance intersects
+     *      the given line
+     */
+    public boolean intersects(final Line3D line) {
+        return intersects(line.span());
+    }
+
+    /** Return {@code true} if the region represented by this instance shares any points with
+     * the given line convex subset. Floating point comparisons are made using the
+     * {@link Line3D#getPrecision() precision} of the subset's line.
+     * @param subset line convex subset to determine intersection with
+     * @return {@code true} if the region represented by this instance intersects
+     *      the given line convex subset
+     */
+    public boolean intersects(final LineConvexSubset3D subset) {
+        return new BoundsLinecaster3D(subset).intersectsRegion();
+    }
+
+    /** Return a {@link Segment3D} representing the intersection of the region
+     * represented by this instance with the given line or {@code null} if no such
+     * intersection exists. Floating point comparisons are made using the
+     * {@link Line3D#getPrecision() precision} of the line.
+     * @param line line to intersect with
+     * @return {@link Segment3D} representing the intersection of the region
+     *      represented by this instance with the given line or {@code null}
+     *      if no such intersection exists
+     */
+    public Segment3D intersection(final Line3D line) {
+        return intersection(line.span());
+    }
+
+    /** Return a {@link Segment3D} representing the intersection of the region
+     * represented by this instance with the given line convex subset or {@code null}
+     * if no such intersection exists. Floating point comparisons are made using the
+     * {@link Line3D#getPrecision() precision} of the subset's line.
+     * @param subset line convex subset to intersect with
+     * @return {@link Segment3D} representing the intersection of the region
+     *      represented by this instance with the given line convex subset or {@code null}
+     *      if no such intersection exists
+     */
+    public Segment3D intersection(final LineConvexSubset3D subset) {
+        return new BoundsLinecaster3D(subset).getRegionIntersection();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<LinecastPoint3D> linecast(final LineConvexSubset3D subset) {
+        return new BoundsLinecaster3D(subset).getBoundaryIntersections();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinecastPoint3D linecastFirst(final LineConvexSubset3D subset) {
+        return new BoundsLinecaster3D(subset).getFirstBoundaryIntersection();
     }
 
     /** {@inheritDoc}
@@ -285,6 +354,107 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D> {
             }
 
             return new Bounds3D(min, max);
+        }
+    }
+
+    /** Subclass of {@link BoundsLinecaster} for 3D space.
+     */
+    private final class BoundsLinecaster3D extends BoundsLinecaster<Segment3D, LinecastPoint3D> {
+
+        /** Line convex subset to be tested against the bounds. */
+        private final LineConvexSubset3D subset;
+
+        /** Line instance for the subset being tested. */
+        private final Line3D line;
+
+         /** Construct a new instance for computing bounds intersection information with
+          * the given line convex subset.
+          * @param subset line convex subset to compute intersection information for
+          */
+        BoundsLinecaster3D(final LineConvexSubset3D subset) {
+            super(subset.getLine().getPrecision());
+
+            this.subset = subset;
+            this.line = subset.getLine();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Segment3D createSegment(final double startAbscissa, final double endAbscissa) {
+            return line.segment(startAbscissa, endAbscissa);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected LinecastPoint3D createBoundaryIntersection(final Vector3D pt, final Vector3D normal) {
+            return new LinecastPoint3D(pt, normal, line);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void addBoundaryIntersections(final double abscissa, final List<LinecastPoint3D> results) {
+            if (subset.classifyAbscissa(abscissa) != RegionLocation.OUTSIDE) {
+                final Vector3D pt = line.toSpace(abscissa);
+
+                addBoundaryIntersectionIfPresent(
+                        pt,
+                        Vector3D.Unit.MINUS_X,
+                        Vector3D.Unit.PLUS_X,
+                        Vector3D::getX,
+                        results);
+
+                addBoundaryIntersectionIfPresent(
+                        pt,
+                        Vector3D.Unit.MINUS_Y,
+                        Vector3D.Unit.PLUS_Y,
+                        Vector3D::getY,
+                        results);
+
+                addBoundaryIntersectionIfPresent(
+                        pt,
+                        Vector3D.Unit.MINUS_Z,
+                        Vector3D.Unit.PLUS_Z,
+                        Vector3D::getZ,
+                        results);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected boolean computeNearFar() {
+            return updateNearFar(Vector3D::getX) &&
+                    updateNearFar(Vector3D::getY) &&
+                    updateNearFar(Vector3D::getZ);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Comparator<LinecastPoint3D> getBoundaryIntersectionComparator() {
+            return LinecastPoint3D.ABSCISSA_ORDER;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Vector3D getLineDir() {
+            return line.getDirection();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Vector3D getLineOrigin() {
+            return line.getOrigin();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getSubspaceStart() {
+            return subset.getSubspaceStart();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getSubspaceEnd() {
+            return subset.getSubspaceEnd();
         }
     }
 }

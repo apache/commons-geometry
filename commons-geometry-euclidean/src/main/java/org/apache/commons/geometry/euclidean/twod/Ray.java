@@ -151,6 +151,19 @@ public final class Ray extends LineConvexSubset {
 
     /** {@inheritDoc} */
     @Override
+    public RegionLocation classifyAbscissa(final double abscissa) {
+        final int cmp = getPrecision().compare(abscissa, getSubspaceStart());
+        if (cmp > 0) {
+            return RegionLocation.INSIDE;
+        } else if (cmp == 0) {
+            return RegionLocation.BOUNDARY;
+        }
+
+        return RegionLocation.OUTSIDE;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName())
@@ -161,19 +174,6 @@ public final class Ray extends LineConvexSubset {
             .append(']');
 
         return sb.toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    RegionLocation classifyAbscissa(final double abscissa) {
-        final int cmp = getPrecision().compare(abscissa, getSubspaceStart());
-        if (cmp > 0) {
-            return RegionLocation.INSIDE;
-        } else if (cmp == 0) {
-            return RegionLocation.BOUNDARY;
-        }
-
-        return RegionLocation.OUTSIDE;
     }
 
     /** {@inheritDoc} */

@@ -44,7 +44,8 @@ public class LinecastPoint3D extends AbstractLinecastPoint<Vector3D, Vector3D.Un
         return cmp;
     };
 
-    /** Construct a new instance from its components.
+    /** Construct a new instance from its components. Callers are responsible for ensuring that
+     * {@code point} lies on the given line.
      * @param point intersection point
      * @param normal normal of the target boundary at the intersection point
      * @param line intersecting line
