@@ -86,4 +86,14 @@
     <BugPattern name="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
   </Match>
 
+  <!--
+    AbstractBucketPointMap.entrySetInstance is stateless and can be cached and reused without
+    exposing implementation internals.
+  -->
+  <Match>
+    <Class name="org.apache.commons.geometry.core.internal.AbstractBucketPointMap" />
+    <Field name="entrySetInstance" />
+    <BugPattern name="EI_EXPOSE_REP"/>
+  </Match>
+
 </FindBugsFilter>

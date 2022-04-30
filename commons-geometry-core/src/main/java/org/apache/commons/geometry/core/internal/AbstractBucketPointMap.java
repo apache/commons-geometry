@@ -103,7 +103,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     /** Secondary tree root. */
     private BucketNode<P, V> secondaryRoot;
 
-    /** Cached entry set instance. */
+    /** Cached entry set; instances are stateless so we need only one. */
     private EntrySet entrySetInstance;
 
     /** Version counter, used to track tree modifications. */
@@ -515,13 +515,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             // pull an entry list from the parent map; this will make
             // this node a leaf initially
             this.entries = map.createEntryList();
-        }
-
-        /** Get the parent node or null if one does not exist.
-         * @return parent node or null if one does not exist.
-         */
-        public BucketNode<P, V> getParent() {
-            return parent;
         }
 
         /** Get the index of this node in its parent, or {@code -1} if this
@@ -1005,6 +998,13 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             }
 
             entries = null;
+        }
+
+        /** Get the parent node or null if one does not exist.
+         * @return parent node or null if one does not exist.
+         */
+        protected BucketNode<P, V> getParent() {
+            return parent;
         }
 
         /** Get the precision context for the instance.
