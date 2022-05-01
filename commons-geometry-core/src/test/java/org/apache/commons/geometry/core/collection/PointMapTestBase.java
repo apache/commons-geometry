@@ -211,9 +211,11 @@ public abstract class PointMapTestBase<P extends Point<P>>
 
         insertPoints(getTestPoints(3, EPS), map);
 
+        final Object objKey = new Object();
+
         // act/assert
         Assertions.assertThrows(NullPointerException.class, () -> map.get(null));
-        Assertions.assertThrows(ClassCastException.class, () -> map.get(new Object()));
+        Assertions.assertThrows(ClassCastException.class, () -> map.get(objKey));
     }
 
     @Test
@@ -1049,16 +1051,13 @@ public abstract class PointMapTestBase<P extends Point<P>>
         insertPoints(pts, e);
 
         // act/assert
-        Assertions.assertFalse(a.equals(null));
-        Assertions.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assertions.assertTrue(a.equals(a));
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
+        Assertions.assertNotEquals(a, d);
 
-        Assertions.assertFalse(a.equals(b));
-        Assertions.assertFalse(a.equals(c));
-        Assertions.assertFalse(a.equals(d));
-
-        Assertions.assertTrue(a.equals(e));
+        Assertions.assertEquals(a, e);
     }
 
     @Test
@@ -1829,15 +1828,12 @@ public abstract class PointMapTestBase<P extends Point<P>>
         final Collection<?> d = collectionFactory.apply(mapD);
 
         // act/assert
-        Assertions.assertFalse(a.equals(null));
-        Assertions.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assertions.assertTrue(a.equals(a));
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
 
-        Assertions.assertFalse(a.equals(b));
-        Assertions.assertFalse(a.equals(c));
-
-        Assertions.assertTrue(a.equals(d));
+        Assertions.assertEquals(a, d);
     }
 
     private void assertCollectionHashCode(final Function<PointMap<P, ?>, Collection<?>> collectionFactory) {

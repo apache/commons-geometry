@@ -385,7 +385,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                     offset / 2 :
                     nodeChildCount - 1 - (offset / 2);
 
-            final Entry<P, V> entry = secondaryRoot.removeEntryAlongChildIndexPath(idx);
+            final Entry<P, V> entry = secondaryRoot.removeEntryAlongIndexPath(idx);
             if (entry != null) {
                 root.insertEntry(entry);
             }
@@ -489,7 +489,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** Index of this node in its parent child list. */
         private int childIndex;
 
-        /** Child nodes. */
+        /** Child nodes; elements may be null. */
         private List<BucketNode<P, V>> children;
 
         /** Entries stored in the node; will be null for non-leaf nodes. */
@@ -562,21 +562,29 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                         return entry;
                     }
                 }
-            } else {
-                // internal node; delegate to each child that could possibly contain
-                // the point or an equivalent point
-                final int loc = getSearchLocation(key);
-                for (int i = 0; i < children.size(); ++i) {
-                    if (testChildLocation(i, loc)) {
-                        final Entry<P, V> entry = getEntryInChild(i, key);
-                        if (entry != null) {
-                            return entry;
-                        }
+                return null;
+            }
+
+            // internal node; delegate to each child that could possibly contain
+            // the point or an equivalent point
+            return findEntryInChildren(key);
+        }
+
+        /** Find and return the map entry matching the given key in the node's children.
+         * This method must only be called on internal nodes.
+         * @param key point key
+         * @return entry matching the given key or null if not found
+         */
+        private Entry<P, V> findEntryInChildren(final P key) {
+            final int loc = getSearchLocation(key);
+            for (int i = 0; i < children.size(); ++i) {
+                if (testChildLocation(i, loc)) {
+                    final Entry<P, V> entry = getEntryInChild(i, key);
+                    if (entry != null) {
+                        return entry;
                     }
                 }
             }
-
-            // not found
             return null;
         }
 
@@ -592,19 +600,27 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                         return entry;
                     }
                 }
-            } else {
-                // internal node; delegate to each child
-                for (final BucketNode<P, V> child : children) {
-                    if (child != null) {
-                        final Entry<P, V> childResult = child.findEntryByValue(value);
-                        if (childResult != null) {
-                            return childResult;
-                        }
+                return null;
+            }
+
+            // internal node; delegate to each child
+            return findEntryByValueInChildren(value);
+        }
+
+        /** Find the first entry in the child subtrees for this node with the given value or null
+         * if not found. This method must only be called on internal nodes.
+         * @param value value to search for
+         * @return the first entry in the child subtrees with the given value or null if not found
+         */
+        private Entry<P, V> findEntryByValueInChildren(final Object value) {
+            for (final BucketNode<P, V> child : children) {
+                if (child != null) {
+                    final Entry<P, V> childResult = child.findEntryByValue(value);
+                    if (childResult != null) {
+                        return childResult;
                     }
                 }
             }
-
-            // not found
             return null;
         }
 
@@ -659,23 +675,33 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                         return entry;
                     }
                 }
-            } else {
-                // internal node; look through children
-                final int loc = getSearchLocation(key);
-                for (int i = 0; i < children.size(); ++i) {
-                    if (testChildLocation(i, loc)) {
-                        final Entry<P, V> entry = removeFromChild(i, key);
-                        if (entry != null) {
-                            // update the subtree state
-                            subtreeEntryRemoved();
 
-                            return entry;
-                        }
+                return null;
+            }
+
+            // internal node; delegate to each child
+            return removeEntryFromChildren(key);
+        }
+
+        /** Remove the given key from the node's child subtrees, returning the previously
+         * mapped entry. This method must only be called on internal nodes.
+         * @param key key to remove
+         * @return the value previously mapped to the key or null if no
+         *       value was mapped
+         */
+        private Entry<P, V> removeEntryFromChildren(final P key) {
+            final int loc = getSearchLocation(key);
+            for (int i = 0; i < children.size(); ++i) {
+                if (testChildLocation(i, loc)) {
+                    final Entry<P, V> entry = removeFromChild(i, key);
+                    if (entry != null) {
+                        // update the subtree state
+                        subtreeEntryRemoved();
+
+                        return entry;
                     }
                 }
             }
-
-            // not found
             return null;
         }
 
@@ -712,39 +738,52 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                 }
 
                 return closest;
-            } else {
-                // internal node; look through children in order of increasing minimum
-                // distance from the reference point
-                final List<DistancedValue<BucketNode<P, V>>> sortedNodeList = new ArrayList<>(map.nodeChildCount);
-
-                final int loc = getInsertLocation(refPt);
-                for (int i = 0; i < children.size(); ++i) {
-                    final BucketNode<P, V> child = children.get(i);
-                    if (child != null) {
-                        final double minChildDist = getMinChildDistance(i, refPt, loc);
-                        if (map.distanceIsWithinMax(minChildDist, maxDist)) {
-                            sortedNodeList.add(DistancedValue.of(child, minChildDist));
-                        }
-                    }
-                }
-
-                Collections.sort(sortedNodeList, DistancedValue.ascendingDistance());
-
-                DistancedValue<Entry<P, V>> closest = null;
-                for (final DistancedValue<BucketNode<P, V>> nodeValue : sortedNodeList) {
-                    if (closest != null &&
-                            map.distanceIsWithinMax(closest.getDistance(), nodeValue.getDistance())) {
-                        // no more child nodes can contain anything closer so we can stop looking
-                        break;
-                    }
-
-                    final DistancedValue<Entry<P, V>> entry = nodeValue.getValue()
-                            .findNearestEntry(refPt, maxDist);
-                    closest = map.getNearest(entry, closest);
-                }
-
-                return closest;
             }
+
+            // internal node;
+            return findNearestEntryInChildren(refPt, maxDist);
+        }
+
+        /** Find the nearest entry to {@code refPt} within the maximum distance specified in the child subtrees
+         * rooted at this node, or null if no such entry exists. This method must only be call on internal
+         * nodes.
+         * @param refPt reference point
+         * @param maxDist maximum search distance
+         * @return nearest entry to {@code refPt} within the maximum distance specified in the subtree
+         *      rooted at this node, or null if no such entry exists.
+         */
+        private DistancedValue<Entry<P, V>> findNearestEntryInChildren(final P refPt, final double maxDist) {
+            // look through children in order of increasing minimum distance from the
+            // reference point
+            final List<DistancedValue<BucketNode<P, V>>> sortedNodeList = new ArrayList<>(map.nodeChildCount);
+
+            final int loc = getInsertLocation(refPt);
+            for (int i = 0; i < children.size(); ++i) {
+                final BucketNode<P, V> child = children.get(i);
+                if (child != null) {
+                    final double minChildDist = getMinChildDistance(i, refPt, loc);
+                    if (map.distanceIsWithinMax(minChildDist, maxDist)) {
+                        sortedNodeList.add(DistancedValue.of(child, minChildDist));
+                    }
+                }
+            }
+
+            Collections.sort(sortedNodeList, DistancedValue.ascendingDistance());
+
+            DistancedValue<Entry<P, V>> closest = null;
+            for (final DistancedValue<BucketNode<P, V>> nodeValue : sortedNodeList) {
+                if (closest != null &&
+                        map.distanceIsWithinMax(closest.getDistance(), nodeValue.getDistance())) {
+                    // no more child nodes can contain anything closer so we can stop looking
+                    break;
+                }
+
+                final DistancedValue<Entry<P, V>> entry = nodeValue.getValue()
+                        .findNearestEntry(refPt, maxDist);
+                closest = map.getNearest(entry, closest);
+            }
+
+            return closest;
         }
 
         /** Find the farthest entry from {@code refPt} within the subtree rooted at this node..
@@ -808,10 +847,10 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         }
 
         /** Remove an entry in a leaf node lying on the given child index path.
-         * @param childIdx target child index
+         * @param idx target child index
          * @return removed entry
          */
-        public Entry<P, V> removeEntryAlongChildIndexPath(final int childIdx) {
+        public Entry<P, V> removeEntryAlongIndexPath(final int idx) {
             if (isLeaf()) {
                 if (!entries.isEmpty()) {
                     // remove the last entry in the list
@@ -822,30 +861,45 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                 }
             } else {
                 final int childCount = children.size();
-                final int delta = childIdx < (map.nodeChildCount / 2) ?
+                final int delta = idx < (map.nodeChildCount / 2) ?
                         +1 :
                         -1;
 
-                for (int n = 0, i = childIdx;
+                for (int n = 0, i = idx;
                         n < childCount;
                         ++n, i += delta) {
                     final int adjustedIndex = (i + childCount) % childCount;
 
-                    final BucketNode<P, V> child = children.get(adjustedIndex);
-                    if (child != null) {
-                        final Entry<P, V> entry = child.removeEntryAlongChildIndexPath(childIdx);
-                        if (entry != null) {
-                            // destroy and remove the child if empty
-                            if (child.isEmpty()) {
-                                child.destroy();
-                                children.set(adjustedIndex, null);
-                            }
-
-                            subtreeEntryRemoved();
-
-                            return entry;
-                        }
+                    final Entry<P, V> entry = removeEntryAlongIndexPathFromChild(adjustedIndex, idx);
+                    if (entry != null) {
+                        return entry;
                     }
+                }
+            }
+
+            return null;
+        }
+
+        /** Remove an entry in a leaf node lying on the given index path, starting at the child at the
+         * given index.
+         * @param childIdx child index to remove from
+         * @param idx index path
+         * @return removed entry
+         */
+        private Entry<P, V> removeEntryAlongIndexPathFromChild(final int childIdx, final int idx) {
+            final BucketNode<P, V> child = children.get(childIdx);
+            if (child != null) {
+                final Entry<P, V> entry = child.removeEntryAlongIndexPath(idx);
+                if (entry != null) {
+                    // destroy and remove the child if empty
+                    if (child.isEmpty()) {
+                        child.destroy();
+                        children.set(childIdx, null);
+                    }
+
+                    subtreeEntryRemoved();
+
+                    return entry;
                 }
             }
 
@@ -1229,7 +1283,12 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** {@inheritDoc} */
         @Override
         public boolean hasNext() {
-            return nextIdx < size;
+            if (nextEntryIterator == null ||
+                    !nextEntryIterator.hasNext()) {
+                nextEntryIterator = findIterator();
+            }
+
+            return nextEntryIterator != null;
         }
 
         /** {@inheritDoc} */
@@ -1240,11 +1299,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             }
 
             checkVersion();
-
-            if (nextEntryIterator == null ||
-                    !nextEntryIterator.hasNext()) {
-                nextEntryIterator = findIterator();
-            }
 
             final Entry<P, V> result = nextEntryIterator.next();
             ++nextIdx;
@@ -1571,7 +1625,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                     refPt,
                     Double.POSITIVE_INFINITY,
                     DistancedValue.descendingDistance(),
-                    (a, b) -> map.compareEntries(b, a, 0d));
+                    (a, b) -> -map.compareEntries(a, b, 0d));
 
             queueNextEntry();
         }

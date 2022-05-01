@@ -193,9 +193,11 @@ public abstract class PointSetTestBase<P extends Point<P>>
 
         set.addAll(getTestPoints(3, EPS));
 
+        final Object objKey = new Object();
+
         // act/assert
         Assertions.assertThrows(NullPointerException.class, () -> set.get(null));
-        Assertions.assertThrows(ClassCastException.class, () -> set.contains(new Object()));
+        Assertions.assertThrows(ClassCastException.class, () -> set.contains(objKey));
     }
 
     @Test
@@ -1065,15 +1067,12 @@ public abstract class PointSetTestBase<P extends Point<P>>
         d.addAll(pts);
 
         // act/assert
-        Assertions.assertFalse(a.equals(null));
-        Assertions.assertFalse(a.equals(new Object()));
+        GeometryTestUtils.assertSimpleEqualsCases(a);
 
-        Assertions.assertTrue(a.equals(a));
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, c);
 
-        Assertions.assertFalse(a.equals(b));
-        Assertions.assertFalse(a.equals(c));
-
-        Assertions.assertTrue(a.equals(d));
+        Assertions.assertEquals(a, d);
     }
 
     @Test
