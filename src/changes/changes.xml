@@ -63,6 +63,19 @@ Apache Commons Geometry 1.0 contains the following library modules:
   commons-geometry-io-core (requires Java 8+)
   commons-geometry-io-euclidean (requires Java 8+)
 ">
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-147">
+          Add line intersection methods to Bounds2D and Bounds3D.
+      </action>
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-146">
+          Add distance ordering methods (e.g., nearest/farthest) to PointMap and PointSet.
+      </action>
+      <action dev="mattjuntunen" type="add" issue="GEOMETRY-142">
+          Add PointMap and PointSet types that use points as keys and consider floating point
+          equivalency in look ups.
+      </action>
+      <action dev="mattjuntunen" type="fix" issue="GEOMETRY-143" due-to="Ron Goldman">
+          Fix misclassification of points near zero in AngularInterval.
+      </action>
     </release>
 
         <release version="1.0" date="2021-08-21" description="
