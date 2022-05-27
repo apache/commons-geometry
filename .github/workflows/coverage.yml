@@ -47,11 +47,4 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        files: >
-          ./commons-geometry-core/target/site/jacoco/jacoco.xml,
-          ./commons-geometry-enclosing/target/site/jacoco/jacoco.xml,
-          ./commons-geometry-euclidean/target/site/jacoco/jacoco.xml,
-          ./commons-geometry-hull/target/site/jacoco/jacoco.xml,
-          ./commons-geometry-io-core/target/site/jacoco/jacoco.xml,
-          ./commons-geometry-io-euclidean/target/site/jacoco/jacoco.xml,
-          ./commons-geometry-spherical/target/site/jacoco/jacoco.xml
+        files: ./commons-geometry-core/target/site/jacoco/jacoco.xml,./commons-geometry-enclosing/target/site/jacoco/jacoco.xml,./commons-geometry-euclidean/target/site/jacoco/jacoco.xml,./commons-geometry-hull/target/site/jacoco/jacoco.xml,./commons-geometry-io-core/target/site/jacoco/jacoco.xml,./commons-geometry-io-euclidean/target/site/jacoco/jacoco.xml,./commons-geometry-spherical/target/site/jacoco/jacoco.xml
