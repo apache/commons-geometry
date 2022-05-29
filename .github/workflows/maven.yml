@@ -45,6 +45,6 @@ jobs:
       # Use the default goal
       run: mvn -V --no-transfer-progress
     - name: Build examples with Maven
-      # Use a custom goal for more lenient code checks on examples
+      # Use the default goal
       working-directory: ./commons-geometry-examples
-      run: mvn -V --no-transfer-progress verify apache-rat:check checkstyle:check
+      run: mvn -V --no-transfer-progress
