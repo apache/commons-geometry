@@ -43,8 +43,8 @@
 Apache Commons Geometry
 ===================
 
-[![Build Status](https://travis-ci.org/apache/commons-geometry.svg?branch=master)](https://travis-ci.org/apache/commons-geometry)
-[![Coverage Status](https://coveralls.io/repos/github/apache/commons-geometry/badge.svg?branch=master)](https://coveralls.io/github/apache/commons-geometry?branch=master)
+[![Build Status](https://github.com/apache/commons-geometry/actions/workflows/maven.yml/badge.svg)](https://github.com/apache/commons-geometry/actions/workflows/maven.yml)
+[![Coverage Status](https://codecov.io/gh/apache/commons-geometry/branch/master/graph/badge.svg)](https://app.codecov.io/gh/apache/commons-geometry)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=commons-geometry&metric=alert_status)](https://sonarcloud.io/dashboard?id=commons-geometry)
 <!---
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/)

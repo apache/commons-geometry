@@ -43,8 +43,8 @@
 Apache Commons Geometry Enclosing
 ===================
 
-[![Build Status](https://travis-ci.org/apache/commons-geometry-enclosing.svg?branch=master)](https://travis-ci.org/apache/commons-geometry-enclosing)
-[![Coverage Status](https://coveralls.io/repos/apache/commons-geometry-enclosing/badge.svg?branch=master)](https://coveralls.io/r/apache/commons-geometry-enclosing)
+[![Build Status](https://github.com/apache/commons-geometry/actions/workflows/maven.yml/badge.svg)](https://github.com/apache/commons-geometry/actions/workflows/maven.yml)
+[![Coverage Status](https://codecov.io/gh/apache/commons-geometry/branch/master/graph/badge.svg)](https://app.codecov.io/gh/apache/commons-geometry)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/)
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 

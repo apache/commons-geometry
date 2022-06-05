@@ -43,9 +43,8 @@
 Apache Commons Geometry JMH Benchmark
 ===================
 
-[![Build Status](https://travis-ci.org/apache/commons-geometry.svg)](https://travis-ci.org/apache/commons-geometry)
-[![Coverage Status](https://coveralls.io/repos/apache/commons-geometry/badge.svg)](https://coveralls.io/r/apache/commons-geometry)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples-jmh/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples-jmh/)
+[![Build Status](https://github.com/apache/commons-geometry/actions/workflows/maven.yml/badge.svg)](https://github.com/apache/commons-geometry/actions/workflows/maven.yml)
+[![Coverage Status](https://codecov.io/gh/apache/commons-geometry/branch/master/graph/badge.svg)](https://app.codecov.io/gh/apache/commons-geometry)
 [![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-examples-jmh/1.0.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-examples-jmh/1.0)
 
 Code for running JMH benchmarks that assess performance.

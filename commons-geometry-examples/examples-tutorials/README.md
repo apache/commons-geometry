@@ -43,9 +43,8 @@
 Apache Commons Geometry Tutorials
 ===================
 
-[![Build Status](https://travis-ci.org/apache/commons-geometry.svg)](https://travis-ci.org/apache/commons-geometry)
-[![Coverage Status](https://coveralls.io/repos/apache/commons-geometry/badge.svg)](https://coveralls.io/r/apache/commons-geometry)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples-tutorials/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-examples-tutorials/)
+[![Build Status](https://github.com/apache/commons-geometry/actions/workflows/maven.yml/badge.svg)](https://github.com/apache/commons-geometry/actions/workflows/maven.yml)
+[![Coverage Status](https://codecov.io/gh/apache/commons-geometry/branch/master/graph/badge.svg)](https://app.codecov.io/gh/apache/commons-geometry)
 [![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-examples-tutorials/1.0.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-examples-tutorials/1.0)
 
 Contains code used in project tutorials.

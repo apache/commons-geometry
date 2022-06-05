@@ -43,8 +43,8 @@
 Apache Commons Geometry Euclidean
 ===================
 
-[![Build Status](https://travis-ci.org/apache/commons-geometry-euclidean.svg?branch=master)](https://travis-ci.org/apache/commons-geometry-euclidean)
-[![Coverage Status](https://coveralls.io/repos/apache/commons-geometry-euclidean/badge.svg?branch=master)](https://coveralls.io/r/apache/commons-geometry-euclidean)
+[![Build Status](https://github.com/apache/commons-geometry/actions/workflows/maven.yml/badge.svg)](https://github.com/apache/commons-geometry/actions/workflows/maven.yml)
+[![Coverage Status](https://codecov.io/gh/apache/commons-geometry/branch/master/graph/badge.svg)](https://app.codecov.io/gh/apache/commons-geometry)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/)
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
