@@ -659,33 +659,6 @@ This is avoided by creating an empty directory when svn is not available.
       </build>
     </profile>
 
-    <profile>
-      <id>travis</id>
-      <activation>
-        <property>
-          <name>env.TRAVIS</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>${commons.jacoco.version}</version>
-          </plugin>
-          <plugin>
-            <groupId>org.eluder.coveralls</groupId>
-            <artifactId>coveralls-maven-plugin</artifactId>
-            <version>${commons.coveralls.version}</version>
-            <configuration>
-              <timestampFormat>${commons.coveralls.timestampFormat}</timestampFormat>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <!--
         Profiles for modules with special requirements.
     -->
