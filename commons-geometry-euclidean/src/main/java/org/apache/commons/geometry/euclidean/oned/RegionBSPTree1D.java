@@ -201,7 +201,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
             }
         }
 
-        if (start != null && end != null) {
+        if (start != null) {
             intervals.add(createInterval(start, end));
         }
 
