@@ -90,7 +90,7 @@ public class Bounds3DPerformance {
         /** Set up the instance for the benchmark. */
         @Setup(Level.Iteration)
         public void setup() {
-            random = RandomSource.MT.create(randomSeed);
+            random = RandomSource.XO_SHI_RO_256_PP.create(randomSeed);
 
             final UnitBallSampler ballSampler = UnitBallSampler.of(random, 3);
 

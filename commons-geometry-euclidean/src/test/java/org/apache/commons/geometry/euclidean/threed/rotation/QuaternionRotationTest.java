@@ -443,7 +443,7 @@ class QuaternionRotationTest {
 
         QuaternionRotation q = QuaternionRotation.identity();
 
-        final UniformRandomProvider rand = RandomSource.JDK.create(2L);
+        final UniformRandomProvider rand = RandomSource.XO_SHI_RO_256_PP.create(0x975e1238facd123L);
 
         // act
         for (int i = 0; i < slices; ++i) {

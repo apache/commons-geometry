@@ -178,7 +178,7 @@ class SphereGeneratorTest {
     @Test
     void testRandom() {
         // arrange
-        final UniformRandomProvider random = RandomSource.WELL_1024_A.create(0xd015982e9f31ee04L);
+        final UniformRandomProvider random = RandomSource.XO_SHI_RO_256_PP.create(0xd015982e9f31ee04L);
         final UnitSphereSampler sr = UnitSphereSampler.of(random, 3);
         for (int i = 0; i < 100; ++i) {
             final double d = 25 * random.nextDouble();

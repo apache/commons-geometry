@@ -58,7 +58,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     public void setUp() {
         // by default, do not include collinear points
         generator = createConvexHullGenerator(false);
-        random = RandomSource.MT.create(10);
+        random = RandomSource.XO_SHI_RO_256_PP.create(10);
     }
 
     // ------------------------------------------------------------------------------

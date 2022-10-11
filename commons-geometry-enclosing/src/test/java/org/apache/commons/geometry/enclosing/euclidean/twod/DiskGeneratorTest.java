@@ -132,7 +132,7 @@ class DiskGeneratorTest {
     @Test
     void testRandom() {
         // arrange
-        final UniformRandomProvider random = RandomSource.WELL_1024_A.create(0x12faa818373ffe90L);
+        final UniformRandomProvider random = RandomSource.XO_SHI_RO_256_PP.create(0x12faa818373ffe90L);
         final UnitSphereSampler sr = UnitSphereSampler.of(random, 2);
         for (int i = 0; i < 500; ++i) {
             final double d = 25 * random.nextDouble();

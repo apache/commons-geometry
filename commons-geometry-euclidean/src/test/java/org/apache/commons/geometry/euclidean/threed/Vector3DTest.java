@@ -644,7 +644,7 @@ class Vector3DTest {
     void testCrossProduct_accuracy() {
         // we compare accurate versus naive cross product implementations
         // on regular vectors (i.e. not extreme cases like in the previous test)
-        final UniformRandomProvider random = RandomSource.WELL_1024_A.create(885362227452043215L);
+        final UniformRandomProvider random = RandomSource.XO_SHI_RO_256_PP.create(885362227452043215L);
         for (int i = 0; i < 10000; ++i) {
             // arrange
             final double ux = 10000 * random.nextDouble();
@@ -780,7 +780,7 @@ class Vector3DTest {
     void testDotProduct_accuracy() {
         // we compare accurate versus naive dot product implementations
         // on regular vectors (i.e. not extreme cases like in the previous test)
-        final UniformRandomProvider random = RandomSource.WELL_1024_A.create(553267312521321237L);
+        final UniformRandomProvider random = RandomSource.XO_SHI_RO_256_PP.create(553267312521321237L);
         for (int i = 0; i < 10000; ++i) {
             // arrange
             final double ux = 10000 * random.nextDouble();
@@ -795,7 +795,7 @@ class Vector3DTest {
             final double sAccurate = Vector3D.of(ux, uy, uz).dot(Vector3D.of(vx, vy, vz));
 
             // assert
-            Assertions.assertEquals(sNaive, sAccurate, 2.5e-16 * sAccurate);
+            Assertions.assertEquals(sNaive, sAccurate, 2 * Math.ulp(sAccurate));
         }
     }
 
