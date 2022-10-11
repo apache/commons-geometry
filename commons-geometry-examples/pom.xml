@@ -51,6 +51,7 @@
     <commons.automatic.module.name>org.apache.commons.geometry.examples</commons.automatic.module.name>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}/..</geometry.parent.dir>
+    <geometry.jira.component>examples</geometry.jira.component>
 
     <!-- Disable JApiCmp failures (but keep the report). The examples API is allowed to change. -->
     <commons.japicmp.breakBuildOnBinaryIncompatibleModifications>false</commons.japicmp.breakBuildOnBinaryIncompatibleModifications>

@@ -101,6 +101,9 @@
     <commons.numbers.version>1.0</commons.numbers.version>
     <commons.rng.version>1.4</commons.rng.version>
     <junit.version>5.8.1</junit.version>
+
+    <!-- Set by modules to create a custom jira report -->
+    <geometry.jira.component />
   </properties>
 
   <modules>
@@ -121,7 +124,7 @@
 
   <issueManagement>
     <system>jira</system>
-    <url>https://issues.apache.org/jira/browse/Geometry</url>
+    <url>https://issues.apache.org/jira/browse/GEOMETRY</url>
   </issueManagement>
 
   <distributionManagement>
@@ -391,19 +394,11 @@
         <artifactId>maven-changes-plugin</artifactId>
         <version>${commons.changes.version}</version>
         <configuration>
-          <xmlPath>${basedir}/src/changes/changes.xml</xmlPath>
-          <columnNames>Fix Version,Key,Component,Summary,Type,Resolution,Status</columnNames>
-          <!-- Sort cols in natural order when using JQL for JIRA 5.1 -->
-          <sortColumnNames>Fix Version DESC,Type,Key DESC</sortColumnNames>
-          <resolutionIds>Fixed</resolutionIds>
+          <resolutionIds>Fixed,Implemented</resolutionIds>
           <statusIds>Resolved,Closed</statusIds>
           <!-- Don't include sub-task -->
           <typeIds>Bug,New Feature,Task,Improvement,Wish,Test</typeIds>
-          <!-- For JIRA >= 5.1 -->
-          <useJql>true</useJql>
-          <onlyCurrentVersion>${commons.changes.onlyCurrentVersion}</onlyCurrentVersion>
-          <maxEntries>${commons.changes.maxEntries}</maxEntries>
-          <runOnlyAtExecutionRoot>${commons.changes.runOnlyAtExecutionRoot}</runOnlyAtExecutionRoot>
+          <component>${geometry.jira.component}</component>
         </configuration>
         <reportSets>
           <reportSet>

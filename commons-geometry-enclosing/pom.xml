@@ -39,6 +39,7 @@
     <commons.automatic.module.name>org.apache.commons.geometry.enclosing</commons.automatic.module.name>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}/..</geometry.parent.dir>
+    <geometry.jira.component>enclosing</geometry.jira.component>
   </properties>
 
   <dependencies>
