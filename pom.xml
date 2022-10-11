@@ -181,7 +181,7 @@
   </dependencyManagement>
 
   <build>
-    <defaultGoal>clean verify pmd:check spotbugs:check javadoc:javadoc</defaultGoal>
+    <defaultGoal>clean verify javadoc:javadoc</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -246,6 +246,14 @@
           <effort>Default</effort>
           <excludeFilterFile>${geometry.parent.dir}/src/main/resources/spotbugs/spotbugs-exclude-filter.xml</excludeFilterFile>
         </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -306,6 +314,14 @@
             <excludeRoot>target/generated-sources/annotations</excludeRoot>
           </excludeRoots>
         </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.rat</groupId>
