@@ -60,7 +60,6 @@
     <geometry.checkstyle.version>3.1.2</geometry.checkstyle.version>
     <geometry.checkstyle.dep.version>9.1</geometry.checkstyle.dep.version>
     <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
-    <geometry.antrun.version>1.8</geometry.antrun.version>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
     <!-- Multi-module support fixed in commons-parent 55 -->
@@ -549,7 +548,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>${geometry.antrun.version}</version>
             <executions>
               <!-- For multi-module builds, only the parent directory requires a site checkout.
                    This task will create an empty directory as the site checkout is missing. -->
@@ -609,7 +607,6 @@ This is avoided by creating an empty directory when svn is not available.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>${geometry.antrun.version}</version>
             <executions>
               <execution>
                 <id>remove-checkout</id>
