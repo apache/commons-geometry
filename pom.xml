@@ -61,10 +61,6 @@
     <!-- Multi-module support fixed in commons-parent 55 -->
     <cyclonedx.skip>true</cyclonedx.skip>
 
-    <commons.spotbugs.version>4.3.0</commons.spotbugs.version>
-    <!-- Required for Java 13 build -->
-    <commons.spotbugs.dep.version>4.3.0</commons.spotbugs.dep.version>
-
     <!-- Fix to avoid JXR 3.0.0 forking the lifecycle phase 'compile' during site report
        jxr:aggregate. If compile is forked, the dist-archive build fails when attempting
        to collect the artifacts from other modules. -->
@@ -229,14 +225,6 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${commons.spotbugs.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs</artifactId>
-            <version>${commons.spotbugs.dep.version}</version>
-          </dependency>
-        </dependencies>
         <configuration>
           <threshold>Normal</threshold>
           <effort>Default</effort>
@@ -398,7 +386,6 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${commons.spotbugs.version}</version>
         <configuration>
           <threshold>Normal</threshold>
           <effort>Default</effort>
