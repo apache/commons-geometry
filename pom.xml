@@ -104,7 +104,6 @@
     <!-- Dependency versions -->
     <commons.numbers.version>1.0</commons.numbers.version>
     <commons.rng.version>1.5</commons.rng.version>
-    <junit.version>5.8.1</junit.version>
 
     <!-- Set by modules to create a custom jira report -->
     <geometry.jira.component />
@@ -178,13 +177,6 @@
         <version>${commons.rng.version}</version>
         <scope>import</scope>
         <type>pom</type>
-      </dependency>
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>${junit.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
