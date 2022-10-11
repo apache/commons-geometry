@@ -66,7 +66,7 @@
        to collect the artifacts from other modules. -->
     <commons.jxr.version>2.5</commons.jxr.version>
 
-    <commons.jacoco.haltOnFailure>false</commons.jacoco.haltOnFailure>
+    <commons.jacoco.haltOnFailure>true</commons.jacoco.haltOnFailure>
 
     <commons.site.path>geometry</commons.site.path>
     <commons.scmPubUrl>https://svn.apache.org/repos/infra/websites/production/commons/content/proper/commons-geometry</commons.scmPubUrl>
