@@ -113,7 +113,7 @@ public class PointMapAsSetAdapter<P extends Point<P>, M extends PointMap<P, Obje
         return new AbstractElementCollection() {
             @Override
             public Iterator<P> iterator() {
-                return new EntryIteratorWrapper<P>(map.entriesNearToFar(pt).iterator());
+                return new EntryIteratorWrapper<>(map.entriesNearToFar(pt).iterator());
             }
         };
     }
@@ -126,7 +126,7 @@ public class PointMapAsSetAdapter<P extends Point<P>, M extends PointMap<P, Obje
         return new AbstractElementCollection() {
             @Override
             public Iterator<P> iterator() {
-                return new EntryIteratorWrapper<P>(map.entriesFarToNear(pt).iterator());
+                return new EntryIteratorWrapper<>(map.entriesFarToNear(pt).iterator());
             }
         };
     }

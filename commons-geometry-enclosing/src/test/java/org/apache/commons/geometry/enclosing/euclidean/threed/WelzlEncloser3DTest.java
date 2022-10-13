@@ -50,7 +50,7 @@ class WelzlEncloser3DTest {
         }, IllegalArgumentException.class, msg);
 
         GeometryTestUtils.assertThrowsWithMessage(() -> {
-            encloser.enclose(new ArrayList<Vector3D>());
+            encloser.enclose(new ArrayList<>());
         }, IllegalArgumentException.class, msg);
     }
 
