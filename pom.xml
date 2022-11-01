@@ -55,7 +55,9 @@
     <commons.encoding>UTF-8</commons.encoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
+    <!-- MathJax configuration also includes the prerequisite polyfill.min.js script.
+         See the maven-javadoc-plugin plugin. -->
+    <geometry.mathjax.url>https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js</geometry.mathjax.url>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
     <!-- Multi-module support fixed in commons-parent 55 -->
@@ -318,7 +320,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <!-- Enable MathJax -->
-          <additionalOptions>${doclint.javadoc.qualifier} --allow-script-in-comments -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalOptions>
+          <additionalOptions>${doclint.javadoc.qualifier} --allow-script-in-comments -header '&lt;script src="https://polyfill.io/v3/polyfill.min.js?features=es6"&gt;&lt;/script&gt;&lt;script type="text/javascript" async src="${geometry.mathjax.url}"&gt;&lt;/script&gt;'</additionalOptions>
           <links>
             <link>https://commons.apache.org/proper/commons-numbers/commons-numbers-core/javadocs/api-${commons.numbers.version}/</link>
             <link>https://commons.apache.org/proper/commons-numbers/commons-numbers-quaternion/javadocs/api-${commons.numbers.version}/</link>
@@ -438,7 +440,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <!-- Enable MathJax -->
-          <additionalOptions>${doclint.javadoc.qualifier} --allow-script-in-comments -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalOptions>
+          <additionalOptions>${doclint.javadoc.qualifier} --allow-script-in-comments -header '&lt;script src="https://polyfill.io/v3/polyfill.min.js?features=es6"&gt;&lt;/script&gt;&lt;script type="text/javascript" async src="${geometry.mathjax.url}"&gt;&lt;/script&gt;'</additionalOptions>
           <links>
             <link>https://commons.apache.org/proper/commons-numbers/commons-numbers-core/javadocs/api-${commons.numbers.version}/</link>
             <link>https://commons.apache.org/proper/commons-numbers/commons-numbers-quaternion/javadocs/api-${commons.numbers.version}/</link>

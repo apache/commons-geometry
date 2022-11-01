@@ -31,10 +31,8 @@
   <body>
     <!-- Custom <head> tag with injected XHTML is supported. -->
     <head>
-      <![CDATA[
-        <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-        </script>
-      ]]>
+      <![CDATA[<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>]]>
 
      <!--
         Workaround to get styles for inline code elements. The current version
