@@ -89,7 +89,7 @@
     <doclint.javadoc.qualifier></doclint.javadoc.qualifier>
 
     <!-- Dependency versions -->
-    <commons.numbers.version>1.0</commons.numbers.version>
+    <commons.numbers.version>1.1</commons.numbers.version>
     <commons.rng.version>1.5</commons.rng.version>
 
     <!-- Workaround to avoid the SVN site checkout in all modules.
@@ -138,28 +138,10 @@
     <dependencies>
       <dependency>
         <groupId>org.apache.commons</groupId>
-        <artifactId>commons-numbers-core</artifactId>
+        <artifactId>commons-numbers-bom</artifactId>
         <version>${commons.numbers.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-numbers-arrays</artifactId>
-        <version>${commons.numbers.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-numbers-angle</artifactId>
-        <version>${commons.numbers.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-numbers-fraction</artifactId>
-        <version>${commons.numbers.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-numbers-quaternion</artifactId>
-        <version>${commons.numbers.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
       </dependency>
 
       <dependency>
