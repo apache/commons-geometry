@@ -53,8 +53,12 @@
     <commons.jira.id>GEOMETRY</commons.jira.id>
     <commons.jira.pid>12321920</commons.jira.pid>
     <commons.encoding>UTF-8</commons.encoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- JVM target version, in the newer JDK 9+ format. -->
+    <jvm.target>8</jvm.target>
+    <!-- Compiler properties. Several plugin executions (e.g., enforcer, animal-sniffer) expect versions
+        in the older "1.x" version format. -->
+    <maven.compiler.source>1.${jvm.target}</maven.compiler.source>
+    <maven.compiler.target>1.${jvm.target}</maven.compiler.target>
     <!-- MathJax configuration also includes the prerequisite polyfill.min.js script.
          See the maven-javadoc-plugin plugin. -->
     <geometry.mathjax.url>https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js</geometry.mathjax.url>
@@ -434,6 +438,23 @@
   </reporting>
 
   <profiles>
+    <profile>
+        <id>compiler-release-property</id>
+        <activation>
+            <jdk>[9,)</jdk>
+        </activation>
+        <properties>
+            <!--
+                The "release" compiler property (available in JDK 9+) must be set in order to generate
+                binary-compatible artifacts for the target JVM. This flag sets the version of the platform
+                APIs to compile against, which is necessary when building with a later JDK but targeting
+                an earlier one. For example, a covariant return type was added to java.nio.ByteBuffer.rewind()
+                in Java 9. If the release property is not set when compiling with JDK 9 for Java 8, then the
+                Java 9 method will be referenced in the bytecode, causing a runtime error when running on 8.
+            -->
+            <maven.compiler.release>${jvm.target}</maven.compiler.release>
+        </properties>
+    </profile>
     <profile>
       <id>jgit-buildnumber</id>
       <activation>
