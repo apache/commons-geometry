@@ -40,7 +40,7 @@
     <commons.osgi.symbolicName>org.apache.commons.geometry.parent</commons.osgi.symbolicName>
     <commons.osgi.export>org.apache.commons.geometry.parent</commons.osgi.export>
     <!-- Java 9+ -->
-    <commons.automatic.module.name>org.apache.commons.geometry.parent</commons.automatic.module.name>
+    <commons.module.name>org.apache.commons.geometry.parent</commons.module.name>
     <!-- This flag should only be true in the dist-archive module. -->
     <commons.release.isDistModule>false</commons.release.isDistModule>
     <!-- do not use snapshot suffix here -->
@@ -168,7 +168,7 @@
           <archive combine.children="append">
             <manifestEntries>
               <!-- Java 9 -->
-              <Automatic-Module-Name>${commons.automatic.module.name}</Automatic-Module-Name>
+              <Automatic-Module-Name>${commons.module.name}</Automatic-Module-Name>
             </manifestEntries>
           </archive>
         </configuration>

@@ -48,7 +48,7 @@
     <commons.osgi.symbolicName>org.apache.commons.geometry.examples</commons.osgi.symbolicName>
     <commons.osgi.export>org.apache.commons.geometry.examples.*</commons.osgi.export>
     <!-- Java 9+ -->
-    <commons.automatic.module.name>org.apache.commons.geometry.examples</commons.automatic.module.name>
+    <commons.module.name>org.apache.commons.geometry.examples</commons.module.name>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}/..</geometry.parent.dir>
     <geometry.jira.component>examples</geometry.jira.component>

@@ -36,7 +36,7 @@
     <commons.osgi.symbolicName>org.apache.commons.geometry.euclidean</commons.osgi.symbolicName>
     <commons.osgi.export>org.apache.commons.geometry.euclidean.*</commons.osgi.export>
     <!-- Java 9+ -->
-    <commons.automatic.module.name>org.apache.commons.geometry.euclidean</commons.automatic.module.name>
+    <commons.module.name>org.apache.commons.geometry.euclidean</commons.module.name>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}/..</geometry.parent.dir>
     <geometry.jira.component>euclidean1D,euclidean2D,euclidean3D</geometry.jira.component>
