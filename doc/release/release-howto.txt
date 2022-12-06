@@ -434,7 +434,6 @@ area on the Apache servers.
   Copy other files from the RC workspace:
 
     $ cp path-to-the-RC-workspace/RELEASE-NOTES.txt .
-    $ cp path-to-the-RC-workspace/CONTRIBUTING.md .
     $ cp path-to-the-RC-workspace/dist-archive/target/*-bin.* binaries
     $ cp path-to-the-RC-workspace/dist-archive/target/*-src.* source
 
@@ -460,7 +459,6 @@ area on the Apache servers.
   Commit to SVN:
 
     $ svn add \
-      CONTRIBUTING.md \
       README.html \
       RELEASE-NOTES.txt \
       binaries/* \
