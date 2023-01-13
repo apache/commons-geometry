@@ -58,7 +58,7 @@ public final class QuaternionRotation implements Rotation3D {
 
     /** Simple constructor. The given quaternion is converted to positive polar form.
      * @param quat quaternion instance
-     * @throws IllegalStateException if the the norm of the given components is zero,
+     * @throws IllegalStateException if the norm of the given components is zero,
      *                              NaN, or infinite
      */
     private QuaternionRotation(final Quaternion quat) {
@@ -523,7 +523,7 @@ public final class QuaternionRotation implements Rotation3D {
      *
      * @param quat the quaternion to use for the rotation
      * @return a new instance built from the given quaternion.
-     * @throws IllegalStateException if the the norm of the given components is zero,
+     * @throws IllegalStateException if the norm of the given components is zero,
      *                              NaN, or infinite
      * @see Quaternion#normalize()
      * @see Quaternion#positivePolarForm()
@@ -541,7 +541,7 @@ public final class QuaternionRotation implements Rotation3D {
      * @param y second quaternion vectorial component
      * @param z third quaternion vectorial component
      * @return a new instance containing the normalized quaterion components
-     * @throws IllegalStateException if the the norm of the given components is zero,
+     * @throws IllegalStateException if the norm of the given components is zero,
      *                              NaN, or infinite
      * @see Quaternion#normalize()
      * @see Quaternion#positivePolarForm()

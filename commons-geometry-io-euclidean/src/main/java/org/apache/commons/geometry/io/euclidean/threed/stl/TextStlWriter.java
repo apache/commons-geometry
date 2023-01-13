@@ -113,7 +113,7 @@ public class TextStlWriter extends AbstractTextFormatWriter {
     }
 
     /** Write the facet defined by the given vertices and normal to the output as triangles.
-     * If the the given list of vertices contains more than 3 vertices, it is converted to
+     * If the given list of vertices contains more than 3 vertices, it is converted to
      * triangles using a triangle fan. Callers are responsible for ensuring that the given
      * vertices represent a valid convex polygon.
      *
