@@ -16,6 +16,10 @@
  */
 package org.apache.commons.geometry.hull.euclidean.threed;
 
+import java.util.Collection;
+
+import org.apache.commons.geometry.euclidean.threed.ConvexPolygon3D;
+import org.apache.commons.geometry.euclidean.threed.ConvexVolume;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.hull.ConvexHull;
 
@@ -23,5 +27,19 @@ import org.apache.commons.geometry.hull.ConvexHull;
  * This class represents a convex hull in three-dimensional Euclidean space.
  */
 public interface ConvexHull3D extends ConvexHull<Vector3D> {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    ConvexVolume getRegion();
+
+    /**
+     * Return a collection of all two-dimensional faces (called facets) of the
+     * convex hull.
+     *
+     * @return a collection of all two-dimensional faces.
+     */
+    Collection<? extends ConvexPolygon3D> getFacets();
 
 }
