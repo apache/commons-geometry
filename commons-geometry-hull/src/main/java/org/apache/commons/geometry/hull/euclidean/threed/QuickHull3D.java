@@ -113,10 +113,11 @@ public class QuickHull3D implements ConvexHullGenerator<Vector3D> {
             Collection<ConvexPolygon3D> visibleFacets = builder.findVisibleFacets(conflictFace, conflictPoint);
             List<Vector3D[]> horizon = builder.findHorizon(visibleFacets);
 
-            //Construct a cone from the horizon and conflict point, The conflict face is used for
+            // Construct a cone from the horizon and conflict point, The conflict face is
+            // used for
             List<ConvexPolygon3D> cone = constructCone(conflictFace.getCentroid(), conflictPoint, horizon);
 
-            //Remove all visible facets and redistribute the associated outside points.
+            // Remove all visible facets and redistribute the associated outside points.
             Collection<Vector3D> outsidePoints = builder.remove(visibleFacets);
             cone.forEach(builder::addFacet);
             outsidePoints.forEach(builder::appendPoint);
@@ -125,10 +126,21 @@ public class QuickHull3D implements ConvexHullGenerator<Vector3D> {
         return new SimpleConvexHull3D(builder.getFacets());
     }
 
+    /**
+     * Constructs a new cone of polygons from the horizon to the given point. All
+     * constructed facets are oriented in such a way, that the reference points
+     * resides in the negative half-space of all newly constructed polygons.
+     *
+     * @param referencePoint reference point for orientation.
+     * @param point          the point that is to be appended to the hull.
+     * @param horizon        the horizon which form the other edges of the cone.
+     * @return a list of newly constructed polygons which form a cone.
+     */
     private List<ConvexPolygon3D> constructCone(Vector3D referencePoint, Vector3D point, List<Vector3D[]> horizon) {
         List<ConvexPolygon3D> newFacets = new ArrayList<>();
         for (Vector3D[] edge : horizon) {
-            ConvexPolygon3D newFacet = Planes.convexPolygonFromVertices(Arrays.asList(edge[0], edge[1], point), precision);
+            ConvexPolygon3D newFacet = Planes.convexPolygonFromVertices(Arrays.asList(edge[0], edge[1], point),
+                    precision);
             if (!isInside(newFacet, referencePoint)) {
                 newFacet = newFacet.reverse();
             }
@@ -262,26 +274,46 @@ public class QuickHull3D implements ConvexHullGenerator<Vector3D> {
             this.outsideSets = new HashMap<>();
         }
 
+        /**
+         * Return a list of all facets which are currently added to the builder.
+         *
+         * @return a list of all facets which are currently added to the builder.
+         */
         Collection<? extends ConvexPolygon3D> getFacets() {
             return outsideSets.keySet();
         }
 
+        /**
+         * Removes all the facets in the collection from the builder and returns all
+         * previously associated outside points.
+         *
+         * @param visibleFacets the collection of facets.
+         * @return a collection of all previously associated outside points.
+         */
         Collection<Vector3D> remove(Collection<ConvexPolygon3D> visibleFacets) {
             Set<Vector3D> outsidePoints = EuclideanCollections.pointSet3D(precision);
             visibleFacets.forEach(f -> outsidePoints.addAll(remove(f)));
             return outsidePoints;
         }
 
+        /**
+         * Removes the polygon from the vertex to facet map and returns the set off
+         * outside points. Previously associated with the facet.
+         *
+         * @param facet the facet that will be removed.
+         * @return the collection of outside points previously associated with the
+         *         facet.
+         */
         Collection<Vector3D> remove(ConvexPolygon3D facet) {
-            for(Vector3D vertex : facet.getVertices()) {
+            for (Vector3D vertex : facet.getVertices()) {
                 Set<ConvexPolygon3D> facets = vertexToFacetMap.get(vertex);
                 facets.remove(facet);
-                if(facets.isEmpty()) {
+                if (facets.isEmpty()) {
                     vertexToFacetMap.remove(vertex);
                 }
             }
 
-            //Get the associated outside set
+            // Get the associated outside set
             return outsideSets.remove(facet);
         }
 
@@ -370,20 +402,19 @@ public class QuickHull3D implements ConvexHullGenerator<Vector3D> {
         /**
          * Returns a collection of all polygons that have the given point as vertex.
          *
-         * @param first  the first vertex.
-         * @param others additional vertices.
+         * @param vertex the given vertex.
          * @return a collection of all polygons that have the given points as vertices.
          */
         Collection<ConvexPolygon3D> get(Vector3D vertex) {
-            return vertexToFacetMap.containsKey(vertex) ? Collections.unmodifiableSet(vertexToFacetMap.get(vertex))
-                    : Collections.emptySet();
+            return vertexToFacetMap.containsKey(vertex) ? Collections.unmodifiableSet(vertexToFacetMap.get(vertex)) :
+                Collections.emptySet();
         }
 
         /**
          * Returns a collection of all polygons that have the given points as vertices.
          *
          * @param first  the first vertex.
-         * @param others additional vertices.
+         * @param second the second vertex.
          * @return a collection of all polygons that have the given points as vertices.
          */
         Collection<ConvexPolygon3D> get(Vector3D first, Vector3D second) {
@@ -417,13 +448,13 @@ public class QuickHull3D implements ConvexHullGenerator<Vector3D> {
          * Returns a collection of all polygons which are visible from the given outside
          * point.
          *
-         * @param coonflictFace
-         * @param outsidePoint
-         * @return
+         * @param conflictFace the starting point of the recursive seach for all visible facets.
+         * @param outsidePoint the outside point which is visible from all returned facets.
+         * @return a collection of all visible facets from the outside point.
          */
-        Collection<ConvexPolygon3D> findVisibleFacets(ConvexPolygon3D coonflictFace, Vector3D outsidePoint) {
+        Collection<ConvexPolygon3D> findVisibleFacets(ConvexPolygon3D conflictFace, Vector3D outsidePoint) {
             Collection<ConvexPolygon3D> visibleFacets = new HashSet<>();
-            addIfVisible(outsidePoint, coonflictFace, visibleFacets);
+            addIfVisible(outsidePoint, conflictFace, visibleFacets);
             return visibleFacets;
         }
 
@@ -466,7 +497,13 @@ public class QuickHull3D implements ConvexHullGenerator<Vector3D> {
             return order(edges);
         }
 
-        private List<Vector3D[]> order(List<Vector3D[]> edges) {
+        /**
+         * Orders the list of edges in such a way that it forms a closed path.
+         *
+         * @param edges the list of edges.
+         * @return an ordered list of edges.
+         */
+        List<Vector3D[]> order(List<Vector3D[]> edges) {
             for (int i = 0; i < edges.size(); i++) {
                 Vector3D[] current = edges.get(i);
                 for (int j = i + 1; j < edges.size(); j++) {
@@ -476,7 +513,7 @@ public class QuickHull3D implements ConvexHullGenerator<Vector3D> {
                         break;
                     } else if (next[1].eq(current[1], precision)) {
                         next = edges.remove(j);
-                        Vector3D[] nextReversed = { next[1], next[0] };
+                        Vector3D[] nextReversed = {next[1], next[0]};
                         edges.add(i + 1, nextReversed);
                         break;
                     }
@@ -489,11 +526,19 @@ public class QuickHull3D implements ConvexHullGenerator<Vector3D> {
             return edges;
         }
 
-        private Vector3D[] findEdge(ConvexPolygon3D facet, ConvexPolygon3D neighbor) {
-            List<Vector3D> vertices = new ArrayList<>(facet.getVertices());
-            vertices.retainAll(neighbor.getVertices());
-            //Only two vertices can remain.
-            Vector3D[] edge = { vertices.get(0), vertices.get(1) };
+        /**
+         * Finds the two vertices that form the edge between the first and second
+         * polygon.
+         *
+         * @param first  the first polygon.
+         * @param second the second polygon.
+         * @return the edge between the two polygons as array.
+         */
+        Vector3D[] findEdge(ConvexPolygon3D first, ConvexPolygon3D second) {
+            List<Vector3D> vertices = new ArrayList<>(first.getVertices());
+            vertices.retainAll(second.getVertices());
+            // Only two vertices can remain.
+            Vector3D[] edge = {vertices.get(0), vertices.get(1)};
             return edge;
         }
     }
