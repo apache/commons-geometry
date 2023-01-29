@@ -89,4 +89,68 @@ public class QuickHull3DTest {
         assertTrue(vertices.equals(hull.getVertices()));
     }
 
+    @Test
+    void simplex() {
+        ConvexHull3D hull = generator.generate(
+                Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)));
+        assertNotNull(hull.getRegion());
+        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
+        // The size of the simplex is finite and non zero.
+        assertTrue(TEST_PRECISION.eq(1.0 / 6.0, hull.getRegion().getSize()));
+    }
+
+    @Test
+    void simplexPlusPoint() {
+        ConvexHull3D hull = generator.generate(Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0),
+                Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 1)));
+        assertNotNull(hull.getRegion());
+        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
+        assertTrue(TEST_PRECISION.eq(1.0 / 2.0, hull.getRegion().getSize()));
+
+        //Check if all facets are connected with neighbors.
+    }
+
+    @Test
+    void unitCube() {
+        ConvexHull3D hull = generator
+                .generate(Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1),
+                        Vector3D.of(1, 1, 0), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1), Vector3D.of(1, 1, 1)));
+        assertNotNull(hull.getRegion());
+        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
+        assertTrue(TEST_PRECISION.eq(1.0, hull.getRegion().getSize()));
+    }
+
+    @Test
+    void multiplePoints() {
+        ConvexHull3D hull = generator.generate(Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0),
+                Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 0), Vector3D.of(1, 0, 1),
+                Vector3D.of(0, 1, 1), Vector3D.of(1, 1, 1), Vector3D.of(10, 20, 30), Vector3D.of(-0.5, 0, 5)));
+        assertNotNull(hull.getRegion());
+        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(10, 20, 30)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(-0.5, 0, 5)));
+        assertTrue(TEST_PRECISION.eq(42.58333333333329, hull.getRegion().getSize()));
+    }
+
 }
