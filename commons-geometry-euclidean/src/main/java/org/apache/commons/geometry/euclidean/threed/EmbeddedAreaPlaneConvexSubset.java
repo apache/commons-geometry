@@ -36,7 +36,7 @@ final class EmbeddedAreaPlaneConvexSubset extends AbstractEmbeddedRegionPlaneSub
     private final ConvexArea area;
 
     /** Create a new instance from its component parts.
-     * @param plane plane the the convex area is embedded in
+     * @param plane plane the convex area is embedded in
      * @param area the embedded convex area
      */
     EmbeddedAreaPlaneConvexSubset(final EmbeddingPlane plane, final ConvexArea area) {
