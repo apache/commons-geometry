@@ -39,39 +39,55 @@ import org.apache.commons.numbers.core.Precision;
  * space wraps around, a single oriented point is not sufficient to partition the space;
  * any point could be classified as being on the plus or minus side of a hyperplane
  * depending on the direction that the circle is traversed. The approach taken in this
- * class to address this issue is to (1) define a second, implicit cut point at \(0\pi\) and
- * (2) define the domain of hyperplane points (for partitioning purposes) to be the
- * range \([0, 2\pi)\). Each hyperplane then splits the space into the intervals
- * \([0, x]\) and \([x, 2\pi)\), where \(x\) is the location of the hyperplane.
+ * class to address this issue is to:
+ * <ol>
+ *   <li>
+ *     Define a second, implicit cut point at &pi;, <b><i>and</i></b>
+ *   </li>
+ *   <li>
+ *     Define the domain of hyperplane points (for partitioning purposes) to be the
+ *     range [0, 2&pi;). Each hyperplane then splits the space into the intervals
+ *     [0, x] and [x, 2&pi;), where <i>x</i> is the location of the hyperplane.
+ *  </li>
+ * </ol>
+ *
  * One way to visualize this is to picture the circle as a cake that has already been
- * cut at \(0\pi\). Each hyperplane then specifies the location of the second
- * cut of the cake, with the plus and minus sides being the pieces thus cut.
- * </p>
+ * cut at &pi;. Each hyperplane then specifies the location of the second
+ * cut of the cake, with the plus and minus sides being the pieces thus cut.</p>
  *
  * <p>Note that with the hyperplane partitioning approach described above, the hyperplane
- * at \(0\pi\) is unique in that it has the entire space on one side (except for the
+ * at &pi; is unique in that it has the entire space on one side (except for the
  * hyperplane itself) and no points whatsoever on the other. This is very different from
  * hyperplanes in Euclidean space, which always have infinitely many points on both sides.</p>
  *
- * <p>Due to the unique status of the \(0\pi\) point, special care must be given to azimuths very
+ * <p>Due to the unique status of the &pi; point, special care must be given to azimuths very
  * close to this value. The rules below define exactly how points are classified when the hyperplane
- * point, the test point, or both lie very close to \(0\pi\). In what follows, \(H\) represents the
- * hyperplane point, \(P\) the point being classified, and the symbol \(\approx\) means equivalent as
+ * point, the test point, or both lie very close to &pi;. In what follows, <i>H</i> represents the
+ * hyperplane point, <i>P</i> the point being classified, and the symbol ~ means equivalent as
  * evaluated by the instance's {@link #getPrecision() precision context}. Note that points are considered
- * equivalent to \(0\pi\) if their normalized azimuths are close to either \(0\pi\) or \(2\pi\).
+ * equivalent to &pi; if their normalized azimuths are close to either &pi; or 2&pi;.
  * <ul>
- *  <li>\(H \approx P\) \(\implies\) \(P\) is classified as {@link HyperplaneLocation#ON ON}.</li>
- *  <li>\(H \approx 0\) and \(P \approx 0\) \(\implies\) \(P\) is classified as
- *      {@link HyperplaneLocation#ON ON}.</li>
- *  <li>\(H \approx 0\) and \(P \neq 0\) \(\implies\) \(P\) is classified as {@link HyperplaneLocation#PLUS PLUS}
- *      if the cut is positive facing and {@link HyperplaneLocation#MINUS MINUS} if negative facing.</li>
- *  <li>\(H \neq 0\) and \(P \approx 0\) \(\implies\) \(P\) is classified as {@link HyperplaneLocation#MINUS MINUS}
- *      if the cut is positive facing and {@link HyperplaneLocation#PLUS PLUS} if negative facing.</li>
- *  <li>\(H \neq 0\) and \(P \neq 0\) \(\implies\) The normalized azimuths of \(H\) and \(P\) are compared and the
- *      standard rules applied. If \(P \gt H\), then \(P\) is classified as {@link HyperplaneLocation#PLUS PLUS}
+ *  <li>
+ *    <i>H</i> ~ <i>P</i> &rArr; <i>P</i> is classified as {@link HyperplaneLocation#ON ON}.
+ *  </li>
+ *  <li>
+ *    <i>H</i> ~ 0 and <i>P</i> ~ 0 &rArr; <i>P</i> is classified as {@link HyperplaneLocation#ON ON}.
+ *  </li>
+ *  <li>
+ *    <i>H</i> ~ 0 and <i>P</i> < 0 &rArr; <i>P</i> is classified as {@link HyperplaneLocation#PLUS PLUS}
+ *      if the cut is positive facing and {@link HyperplaneLocation#MINUS MINUS} if negative facing.
+ *  </li>
+ *  <li>
+ *    <i>H</i> < 0 and <i>P</i> ~ 0 &rArr; <i>P</i> is classified as {@link HyperplaneLocation#MINUS MINUS}
+ *      if the cut is positive facing and {@link HyperplaneLocation#PLUS PLUS} if negative facing.
+ *  </li>
+ *  <li>
+ *    <i>H</i> < 0 and <i>P</i> < 0 &rArr; The normalized azimuths of <i>H</i> and <i>P</i> are compared and the
+ *      standard rules applied. If <i>P</i> &gt; <i>H</i>, then <i>P</i> is classified as {@link HyperplaneLocation#PLUS PLUS}
  *      if the cut is positive facing and {@link HyperplaneLocation#MINUS MINUS} if negative facing. If
- *      \(P \lt H\), then \(P\) is classified as {@link HyperplaneLocation#MINUS MINUS} if the cut is
- *      positive facing and {@link HyperplaneLocation#PLUS PLUS} if negative facing.</li>
+ *      <i>P</i> < H\), then <i>P</i> is classified as {@link HyperplaneLocation#MINUS MINUS} if the cut is
+ *      positive facing and {@link HyperplaneLocation#PLUS PLUS} if negative facing.
+ *   </li>
  * </ul>
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
@@ -117,10 +133,10 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
     }
 
     /** Get the location of the hyperplane as a single value, normalized
-     * to the range {@code [0, 2pi)}. This is equivalent to
+     * to the range {@code [0, 2&pi;)}. This is equivalent to
      * {@code cutAngle.getPoint().getNormalizedAzimuth()}.
      * @return the location of the hyperplane, normalized to the range
-     *      {@code [0, 2pi)}
+     *      {@code [0, 2&pi;)}
      * @see #getPoint()
      * @see Point1S#getNormalizedAzimuth()
      */
@@ -141,7 +157,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
      * given precision context for comparison.
      * <p>The instances are considered equivalent if they
      * <ol>
-     *    <li>have equivalent point locations (points separated by multiples of 2pi are
+     *    <li>have equivalent point locations (points separated by multiples of 2&pi; are
      *      considered equivalent) and
      *    <li>point in the same direction.</li>
      * </ol>
