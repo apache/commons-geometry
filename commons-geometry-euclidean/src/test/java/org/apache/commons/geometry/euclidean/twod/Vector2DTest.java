@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
@@ -1167,6 +1168,26 @@ class Vector2DTest {
         // An already normalized vector will avoid unnecessary creation.
         final Vector2D v = Vector2D.of(4, 5).normalize();
         Assertions.assertSame(v, v.normalize());
+    }
+
+    @Test
+    void testIsCodirectionalTo() {
+        final Vector2D v1 = Vector2D.of(2, 2);
+        final Vector2D v2 = Vector2D.of(1, 1);
+        final Vector2D v3 = Vector2D.of(-2, -2);
+        final Vector2D v4 = Vector2D.of(2, -2);
+
+        // Test codirectional vectors (same direction)
+        Assertions.assertTrue(v1.isCodirectionalTo(v2));
+        Assertions.assertTrue(v2.isCodirectionalTo(v1));
+
+        // Test codirectional vectors (opposite direction)
+        Assertions.assertTrue(v1.isCodirectionalTo(v3));
+        Assertions.assertTrue(v3.isCodirectionalTo(v1));
+
+        // Test non-codirectional vectors
+        Assertions.assertFalse(v1.isCodirectionalTo(v4));
+        Assertions.assertFalse(v4.isCodirectionalTo(v1));
     }
 
     private void checkVector(final Vector2D v, final double x, final double y) {

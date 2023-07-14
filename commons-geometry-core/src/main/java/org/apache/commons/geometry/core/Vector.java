@@ -142,4 +142,13 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * @throws IllegalArgumentException if either vector has a zero, NaN, or infinite norm
      */
     double angle(V v);
+
+    /** Checks if the two vectors point at the same direction.
+     * This means that each vector can be obtained from the other by multiplying by a positive scalar.
+     * Any vector is considered as codirectional to a zero vector.
+     * @param v other vector
+     * @return {@code true} if both vectors point at the same direction.
+     * @throws IllegalArgumentException if either vector has a zero, NaN, or infinite norm
+     */
+    boolean isCodirectionalTo(V v);
 }

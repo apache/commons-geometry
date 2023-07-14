@@ -232,6 +232,18 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         return (sig1 == sig2) ? 0.0 : Math.PI;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override public boolean isCodirectionalTo(Vector1D v) {
+        // validate the norm values
+        getCheckedNorm();
+        v.getCheckedNorm();
+        return v.x / x > 0.0;
+    }
+
+
     /** Convenience method to apply a function to this vector. This
      * can be used to transform the vector inline with other methods.
      * @param fn the function to apply

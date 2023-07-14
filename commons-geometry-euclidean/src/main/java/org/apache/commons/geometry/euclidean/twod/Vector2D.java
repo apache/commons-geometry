@@ -269,6 +269,26 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         return Math.acos(dot / normProduct);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override public boolean isCodirectionalTo(Vector2D v) {
+        // validate the norm values
+        double magnitudeOfThis = getCheckedNorm();
+        double magnitudeOfV = v.getCheckedNorm();
+        // Handle zero vectors: consider any vector as codirectional to a zero vector
+        if ((x == 0 && y == 0) || (v.x == 0 && v.y == 0)) {
+            return true;
+        }
+
+        // If the ratios are equal, the vectors are codirectional.
+        double ratio = x / v.x;
+        // use a tolerance due to floating point inaccuracies
+        return Math.abs(ratio - (y / v.y)) < 0.000001;
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public Vector2D project(final Vector2D base) {

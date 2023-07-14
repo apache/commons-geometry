@@ -756,6 +756,21 @@ class Vector1DTest {
         Assertions.assertSame(v, v.normalize());
     }
 
+    @Test
+    void testIsCodirectionalTo() {
+        final Vector1D v1 = Vector1D.of(1);
+        final Vector1D v2 = Vector1D.of(4);
+        Assertions.assertTrue(v1.isCodirectionalTo(v2));
+        Assertions.assertTrue(v2.isCodirectionalTo(v1));
+
+        final Vector1D v3 = Vector1D.of(-1);
+        final Vector1D v4 = Vector1D.of(-4);
+        Assertions.assertTrue(v3.isCodirectionalTo(v4));
+        Assertions.assertTrue(v3.isCodirectionalTo(v4));
+
+        Assertions.assertFalse(v1.isCodirectionalTo(v3));
+    }
+
     private void checkVector(final Vector1D v, final double x) {
         Assertions.assertEquals(x, v.getX(), TEST_TOLERANCE);
     }

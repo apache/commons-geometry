@@ -26,6 +26,7 @@ import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVectorSum;
 import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.core.Precision;
 
 /** This class represents vectors and points in three-dimensional Euclidean space.
@@ -319,6 +320,28 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         // the vectors are sufficiently separated to use the cosine
         return Math.acos(dot / normProduct);
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override public boolean isCodirectionalTo(Vector3D v) {
+        // validate the norm values
+        double magnitudeOfThis = getCheckedNorm();
+        double magnitudeOfV = v.getCheckedNorm();
+        // Handle zero vectors: consider any vector as codirectional to a zero vector
+        if ((x == 0 && y == 0 && z == 0) || (v.x == 0 && v.y == 0 && v.z == 0)) {
+            return true;
+        }
+
+        // If the ratios are equal, the vectors are codirectional.
+        double ratioX = x / v.x;
+        double ratioY = y / v.y;
+        double ratioZ = z / v.z;
+        // use a tolerance due to floating point inaccuracies
+        return Math.abs(ratioX - ratioY) < 0.000001 && Math.abs(ratioY - ratioZ) < 0.000001;
+    }
+
 
     /** {@inheritDoc} */
     @Override
