@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.core;
 
+import org.apache.commons.numbers.core.Precision;
+
 /** Interface representing a vector in a vector space or displacement vectors
  * in an affine space.
  *
@@ -142,4 +144,24 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * @throws IllegalArgumentException if either vector has a zero, NaN, or infinite norm
      */
     double angle(V v);
+
+
+    /**
+     * Determines if this vector has teh same direction as the other vector.
+     * It normalizes both vectors and if the dot product of them is 1,
+     * then it returns {@code true}, otherwise {@code false}.
+     * @param other other vector
+     * @param precision precision object used for floating point comparisons
+     * @return {@code true} if this vector has the same direction as the otehr vector.
+     */
+    default boolean isCodirectionalWith(final V other, final Precision.DoubleEquivalence precision) {
+        final V thisNormalized = normalizeOrNull();
+        final V otherNormalized = other.normalizeOrNull();
+
+        if (thisNormalized != null && otherNormalized != null) {
+            final double dot = thisNormalized.dot(otherNormalized);
+            return precision.eq(dot, 1.0);
+        }
+        return false;
+    }
 }

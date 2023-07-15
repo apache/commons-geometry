@@ -33,6 +33,8 @@ import org.junit.jupiter.api.Test;
 class Vector2DTest {
 
     private static final double EPS = Math.ulp(1d);
+    private static final Precision.DoubleEquivalence TEST_PRECISION =
+                    Precision.doubleEquivalenceOfEpsilon(EPS);
 
     @Test
     void testConstants() {
@@ -1167,6 +1169,26 @@ class Vector2DTest {
         // An already normalized vector will avoid unnecessary creation.
         final Vector2D v = Vector2D.of(4, 5).normalize();
         Assertions.assertSame(v, v.normalize());
+    }
+
+    @Test
+    void testIsCodirectionalWith() {
+        final Vector2D v1 = Vector2D.of(2, 2);
+        final Vector2D v2 = Vector2D.of(1, 1);
+        final Vector2D v3 = Vector2D.of(-2, -2);
+        final Vector2D v4 = Vector2D.of(2, -2);
+
+        // Test codirectional vectors (same direction)
+        Assertions.assertTrue(v1.isCodirectionalWith(v2, TEST_PRECISION));
+        Assertions.assertTrue(v2.isCodirectionalWith(v1, TEST_PRECISION));
+
+        // Test codirectional vectors (opposite direction)
+        Assertions.assertFalse(v1.isCodirectionalWith(v3, TEST_PRECISION));
+        Assertions.assertFalse(v3.isCodirectionalWith(v1, TEST_PRECISION));
+
+        // Test non-codirectional vectors
+        Assertions.assertFalse(v1.isCodirectionalWith(v4, TEST_PRECISION));
+        Assertions.assertFalse(v4.isCodirectionalWith(v1, TEST_PRECISION));
     }
 
     private void checkVector(final Vector2D v, final double x, final double y) {
