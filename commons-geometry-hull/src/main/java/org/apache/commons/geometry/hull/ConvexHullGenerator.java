@@ -18,6 +18,7 @@ package org.apache.commons.geometry.hull;
 
 import java.util.Collection;
 
+import org.apache.commons.geometry.core.ConvexHull;
 import org.apache.commons.geometry.core.Point;
 
 /**

@@ -21,10 +21,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.geometry.core.ConvexHull;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
-import org.apache.commons.geometry.hull.ConvexHull;
 import org.apache.commons.numbers.core.Precision;
 
 /**
