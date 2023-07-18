@@ -14,12 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.hull;
+package org.apache.commons.geometry.core;
 
 import java.util.List;
-
-import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Region;
 
 /**
  * This class represents a convex hull.
