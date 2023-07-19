@@ -41,6 +41,7 @@ import org.apache.commons.geometry.euclidean.threed.line.Ray3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
+import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Lines;
@@ -48,6 +49,7 @@ import org.apache.commons.geometry.euclidean.twod.Ray;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.hull.ConvexHull2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.apache.commons.numbers.angle.Angle;
@@ -462,42 +464,43 @@ class DocumentationExamplesTest {
         Assertions.assertNull(missingValue);
     }
 
-//    @Test TODO
-//    void testMonotoneChainExample() {
-//        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
-//
-//        // create a list of input points for the algorithm
-//        final List<Vector2D> pts = Arrays.asList(
-//                    Vector2D.ZERO,
-//                    Vector2D.of(0.5, 0.5),
-//                    Vector2D.of(0, 0.5),
-//                    Vector2D.of(0, 1),
-//                    Vector2D.of(0.25, 0.1),
-//                    Vector2D.of(1, 0),
-//                    Vector2D.of(1, 1),
-//                    Vector2D.of(0.75, 0.9)
-//                );
-//
-//        // create an instance of the monotone chain convex hull generator
-//        final MonotoneChain mc = new MonotoneChain(precision);
-//
-//        // compute the convex hull
-//        final ConvexHull2D hull = mc.generate(pts);
-//
-//        // list the vertices from the input that were used in the hull
-//        final List<Vector2D> vertices = hull.getVertices(); // [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
-//
-//        // get the hull as a region
-//        final ConvexArea region = hull.getRegion();
-//        final boolean containsAll = pts.stream().allMatch(region::contains); // true - region contains all input points
-//
-//        // ---
-//        Assertions.assertEquals(4, vertices.size());
-//        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
-//        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(1), TEST_EPS);
-//        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), vertices.get(2), TEST_EPS);
-//        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1), vertices.get(3), TEST_EPS);
-//
-//        Assertions.assertTrue(containsAll);
-//    }
+    @Test
+    void testMonotoneChainExample() {
+        final Precision.DoubleEquivalence precision = Precision.doubleEquivalenceOfEpsilon(1e-10);
+
+        // create a list of input points for the algorithm
+        final List<Vector2D> pts = Arrays.asList(
+                    Vector2D.ZERO,
+                    Vector2D.of(0.5, 0.5),
+                    Vector2D.of(0, 0.5),
+                    Vector2D.of(0, 1),
+                    Vector2D.of(0.25, 0.1),
+                    Vector2D.of(1, 0),
+                    Vector2D.of(1, 1),
+                    Vector2D.of(0.75, 0.9)
+                );
+
+        // create an instance of the monotone chain convex hull generator
+        final ConvexHull2D.Builder builder = new ConvexHull2D.Builder(false, precision);
+
+        // compute the convex hull
+        builder.append(pts);
+        final ConvexHull2D hull = builder.build();
+
+        // list the vertices from the input that were used in the hull
+        final List<Vector2D> vertices = hull.getVertices(); // [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
+
+        // get the hull as a region
+        final ConvexArea region = hull.getRegion();
+        final boolean containsAll = pts.stream().allMatch(region::contains); // true - region contains all input points
+
+        // ---
+        Assertions.assertEquals(4, vertices.size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1), vertices.get(3), TEST_EPS);
+
+        Assertions.assertTrue(containsAll);
+    }
 }
