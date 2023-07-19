@@ -275,7 +275,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          * @param quadrilateralPoints the convex quadrilateral, represented by 4 points
          * @return {@code true} if the point is inside the quadrilateral, {@code false} otherwise
          */
-        private static boolean insideQuadrilateral(final Vector2D point,
+        private boolean insideQuadrilateral(final Vector2D point,
                                                    final List<? extends Vector2D> quadrilateralPoints) {
 
             Vector2D v1 = quadrilateralPoints.get(0);
@@ -287,6 +287,13 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
 
             // get the location of the point relative to the first two vertices
             final double last = signedAreaPoints(v1, v2, point);
+
+            // If the area is zero then this means the given point is on a boundary line.
+            // and must be included as collinear point.
+            if (precision.eq(last, 0.0) && includeCollinearPoints) {
+                return false;
+            }
+
             final int size = quadrilateralPoints.size();
             // loop through the rest of the vertices
             for (int i = 1; i < size; i++) {
