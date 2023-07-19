@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.commons.geometry.euclidean.twod.hull;
 
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
         private Vector2D maxY;
 
         /** Collection of all remaining candidates for a convex hull. */
-        private final Collection<Vector2D> points;
+        private final Collection<Vector2D> candidates;
 
         /** A precision context for comparing points. */
         private final Precision.DoubleEquivalence precision;
@@ -160,7 +161,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
         public Builder(final boolean includeCollinearPoints, final Precision.DoubleEquivalence builderPrecision) {
             this.precision = builderPrecision;
             this.includeCollinearPoints = includeCollinearPoints;
-            points = EuclideanCollections.pointSet2D(precision);
+            candidates = EuclideanCollections.pointSet2D(builderPrecision);
         }
 
         /** Appends the given point to a collection of possible hull points, if and only
@@ -175,7 +176,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
             checkCorners(point);
 
             //Only proceed if the quadrilateral is complete.
-            if (points.size() < 4) {
+            if (candidates.size() < 4) {
                 return this;
             }
 
@@ -188,7 +189,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
             // check all points if they are within the quadrilateral
             // in which case they can not be part of the convex hull
             if (!insideQuadrilateral(point, quadrilateral)) {
-                points.add(point);
+                candidates.add(point);
             }
 
             return this;
@@ -216,10 +217,10 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          */
         public ConvexHull2D build() {
             Collection<Vector2D> hullVertices;
-            if (points.size() < 2) {
-                hullVertices = points;
+            if (candidates.size() < 2) {
+                hullVertices = candidates;
             } else {
-                hullVertices = findHullVertices(points);
+                hullVertices = findHullVertices(candidates);
             }
 
             if (!isConvex(hullVertices)) {
@@ -252,22 +253,21 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          */
         private void checkCorners(Vector2D point) {
             if (minX == null || point.getX() < minX.getX()) {
-                points.remove(minX);
                 minX = point;
+                candidates.add(point);
             }
             if (maxX == null || point.getX() > maxX.getX()) {
-                points.remove(maxX);
                 maxX = point;
+                candidates.add(point);
             }
             if (minY == null || point.getY() < minY.getY()) {
-                points.remove(minY);
                 minY = point;
+                candidates.add(point);
             }
             if (maxY == null || point.getY() > maxY.getY()) {
-                points.remove(maxY);
                 maxY = point;
+                candidates.add(point);
             }
-            points.add(point);
         }
 
         /** Checks if the given point is located within the convex quadrilateral.
