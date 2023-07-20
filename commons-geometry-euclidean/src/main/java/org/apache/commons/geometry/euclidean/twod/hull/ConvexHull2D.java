@@ -252,7 +252,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          * @param point a given point.
          */
         private void checkCorners(Vector2D point) {
-            if(minX == null) {
+            if (minX == null) {
                 minX = minY = maxX = maxY = point;
                 candidates.add(point);
                 return;
