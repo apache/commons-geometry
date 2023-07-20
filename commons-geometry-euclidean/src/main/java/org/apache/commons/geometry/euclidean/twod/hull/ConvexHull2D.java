@@ -126,16 +126,16 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
      */
     public static final class Builder {
 
-        /** Corner of triangle with minimal x coordinate. */
+        /** Corner of quadrilateral with minimal x coordinate. */
         private Vector2D minX;
 
-        /** Corner of triangle with maximal x coordinate. */
+        /** Corner of quadrilateral with maximal x coordinate. */
         private Vector2D maxX;
 
-        /** Corner of triangle with minimal y coordinate. */
+        /** Corner of quadrilateral with minimal y coordinate. */
         private Vector2D minY;
 
-        /** Corner of triangle with maximal y coordinate. */
+        /** Corner of quadrilateral with maximal y coordinate. */
         private Vector2D maxY;
 
         /** Collection of all remaining candidates for a convex hull. */
@@ -149,7 +149,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          */
         private final boolean includeCollinearPoints;
 
-        /**Return a {@link Builder} instance configured with the given precision
+        /** Return a {@link Builder} instance configured with the given precision
          * context. The precision context is used when comparing points.
          *
          * @param builderPrecision       precision context to use when building a convex
@@ -172,10 +172,10 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          */
         public Builder append(Vector2D point) {
 
-            //Checks if the given point supersedes one of the corners.
+            // Checks if the given point supersedes one of the corners.
             checkCorners(point);
 
-            //Only proceed if the quadrilateral is complete.
+            // Only proceed if the quadrilateral is complete.
             if (candidates.size() < 4) {
                 return this;
             }
@@ -252,19 +252,24 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          * @param point a given point.
          */
         private void checkCorners(Vector2D point) {
-            if (minX == null || point.getX() < minX.getX()) {
+            if(minX == null) {
+                minX = minY = maxX = maxY = point;
+                candidates.add(point);
+                return;
+            }
+            if (point.getX() < minX.getX()) {
                 minX = point;
                 candidates.add(point);
             }
-            if (maxX == null || point.getX() > maxX.getX()) {
+            if (point.getX() > maxX.getX()) {
                 maxX = point;
                 candidates.add(point);
             }
-            if (minY == null || point.getY() < minY.getY()) {
+            if (point.getY() < minY.getY()) {
                 minY = point;
                 candidates.add(point);
             }
-            if (maxY == null || point.getY() > maxY.getY()) {
+            if (point.getY() > maxY.getY()) {
                 maxY = point;
                 candidates.add(point);
             }
@@ -275,11 +280,10 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          * @param quadrilateralPoints the convex quadrilateral, represented by 4 points
          * @return {@code true} if the point is inside the quadrilateral, {@code false} otherwise
          */
-        private boolean insideQuadrilateral(final Vector2D point,
-                                                   final List<? extends Vector2D> quadrilateralPoints) {
+        private boolean insideQuadrilateral(final Vector2D point, final List<? extends Vector2D> quadrilateralPoints) {
 
-            Vector2D v1 = quadrilateralPoints.get(0);
-            Vector2D v2 = quadrilateralPoints.get(1);
+            Vector2D v1 = quadrilateralPoints.get(quadrilateralPoints.size() - 1);
+            Vector2D v2 = quadrilateralPoints.get(0);
 
             if (point.equals(v1) || point.equals(v2)) {
                 return true;
@@ -298,7 +302,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
             // loop through the rest of the vertices
             for (int i = 1; i < size; i++) {
                 v1 = v2;
-                v2 = quadrilateralPoints.get((i + 1) == size ? 0 : i + 1);
+                v2 = quadrilateralPoints.get(i);
 
                 if (point.equals(v2)) {
                     return true;
@@ -307,7 +311,10 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 // do side of line test: multiply the last location with this location
                 // if they are the same sign then the operation will yield a positive result
                 // -x * -y = +xy, x * y = +xy, -x * y = -xy, x * -y = -xy
-                if (last * signedAreaPoints(v1, v2, point) < 0) {
+                double signedArea = signedAreaPoints(v1, v2, point);
+                // three collinear points have an area of zero. If we include collinear points
+                // we have to consider this case.
+                if (last * signedArea < 0 || precision.eq(signedArea, 0.0) && includeCollinearPoints) {
                     return false;
                 }
             }
