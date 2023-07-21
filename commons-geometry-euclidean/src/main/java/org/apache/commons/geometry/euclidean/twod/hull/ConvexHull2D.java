@@ -367,12 +367,12 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
             }
 
             // concatenate the lower and upper hulls
-            // the last point of each list is omitted as it is repeated at the beginning of the other list
+            // the first point of each list is omitted as it is repeated at the end of the other list
             final List<Vector2D> hullVertices = new ArrayList<>(lowerHull.size() + upperHull.size() - 2);
-            for (int idx = 0; idx < lowerHull.size() - 1; idx++) {
+            for (int idx = 1; idx < lowerHull.size(); idx++) {
                 hullVertices.add(lowerHull.get(idx));
             }
-            for (int idx = 0; idx < upperHull.size() - 1; idx++) {
+            for (int idx = 1; idx < upperHull.size(); idx++) {
                 hullVertices.add(upperHull.get(idx));
             }
 
@@ -452,13 +452,12 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
             Vector2D p2 = it.next();
             Vector2D p3;
 
-            Vector2D v1;
+            Vector2D v1 = p1.vectorTo(p2);
             Vector2D v2;
 
             while (it.hasNext()) {
                 p3 = it.next();
 
-                v1 = p1.vectorTo(p2);
                 v2 = p2.vectorTo(p3);
 
                 // negative signed areas mean a clockwise winding
@@ -468,6 +467,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
 
                 p1 = p2;
                 p2 = p3;
+                v1 = v2;
             }
 
             return true;
