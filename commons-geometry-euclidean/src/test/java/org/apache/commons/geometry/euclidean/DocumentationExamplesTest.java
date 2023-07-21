@@ -496,10 +496,10 @@ class DocumentationExamplesTest {
 
         // ---
         Assertions.assertEquals(4, vertices.size());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(1), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), vertices.get(2), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1), vertices.get(3), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(3), TEST_EPS);
 
         Assertions.assertTrue(containsAll);
     }
