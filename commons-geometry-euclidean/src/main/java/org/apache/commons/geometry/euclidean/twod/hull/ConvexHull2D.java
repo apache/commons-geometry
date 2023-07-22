@@ -448,17 +448,17 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
 
             final Iterator<Vector2D> it = vertices.iterator();
 
+            Vector2D first = it.next();
             Vector2D p1 = it.next();
-            Vector2D p2 = it.next();
-            Vector2D p3;
+            Vector2D v1 = first.vectorTo(p1);
 
-            Vector2D v1 = p1.vectorTo(p2);
+            Vector2D p2;
             Vector2D v2;
 
             while (it.hasNext()) {
-                p3 = it.next();
+                p2 = it.next();
 
-                v2 = p2.vectorTo(p3);
+                v2 = p1.vectorTo(p2);
 
                 // negative signed areas mean a clockwise winding
                 if (precision.compare(v1.signedArea(v2), 0.0) < 0) {
@@ -466,7 +466,6 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 }
 
                 p1 = p2;
-                p2 = p3;
                 v1 = v2;
             }
 
