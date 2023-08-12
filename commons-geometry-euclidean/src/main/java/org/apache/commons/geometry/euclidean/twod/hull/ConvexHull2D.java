@@ -378,11 +378,6 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 hullVertices.add(upperHull.get(idx));
             }
 
-            // special case: if the lower and upper hull may contain only 1 point if all are identical
-            if (hullVertices.isEmpty() && !lowerHull.isEmpty()) {
-                hullVertices.add(lowerHull.get(0));
-            }
-
             return hullVertices;
         }
 
@@ -401,14 +396,10 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 final double offset = Lines.fromPoints(p1, p2, precision).offset(point);
                 if (precision.eqZero(offset)) {
                     // the point is collinear to the line (p1, p2)
+                	// Calculate distance to both points.
+                	final double distanceToCurrent = p1.distance(point);
+                	final double distanceToLast = p1.distance(p2);
 
-                    final double distanceToCurrent = p1.distance(point);
-                    if (precision.eqZero(distanceToCurrent) || precision.eqZero(p2.distance(point))) {
-                        // the point is assumed to be identical to either p1 or p2
-                        return;
-                    }
-
-                    final double distanceToLast = p1.distance(p2);
                     if (includeCollinearPoints) {
                         final int index = distanceToCurrent < distanceToLast ? size - 1 : size;
                         hull.add(index, point);
