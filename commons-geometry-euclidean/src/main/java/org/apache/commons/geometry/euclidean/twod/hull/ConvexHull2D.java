@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.ConvexHull;
+import org.apache.commons.geometry.core.collection.PointSet;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Lines;
@@ -139,8 +140,9 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
         private Vector2D maxY;
 
         /** Collection of all remaining candidates for a convex hull. */
-        private final Collection<Vector2D> candidates;
+        private final PointSet<Vector2D> candidates;
 
+        /** Points are tested against this quadrilateral */
         private final List<Vector2D> quadrilateral;
 
         /** A precision context for comparing points. */
@@ -391,14 +393,6 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          * @param hull the partial hull
          */
         private void updateHull(final Vector2D point, final List<Vector2D> hull) {
-            if (hull.size() == 1) {
-                // ensure that we do not add an identical point
-                final Vector2D p1 = hull.get(0);
-                if (p1.eq(point, precision)) {
-                    return;
-                }
-            }
-
             while (hull.size() >= 2) {
                 final int size = hull.size();
                 final Vector2D p1 = hull.get(size - 2);
