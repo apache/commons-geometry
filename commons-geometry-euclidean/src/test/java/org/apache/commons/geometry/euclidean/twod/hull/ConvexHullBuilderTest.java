@@ -231,6 +231,43 @@ class ConvexHullBuilderTest {
     }
 
     @Test
+    void testCollinearPointsIncludedColinearToFirstSide() {
+    	// arrange
+    	final Collection<Vector2D> points = new ArrayList<>();
+    	points.add(Vector2D.of(1, 1));
+    	points.add(Vector2D.of(2, 4));
+    	points.add(Vector2D.of(10, 1));
+    	points.add(Vector2D.of(1.5, 2.5));
+
+    	// act
+    	ConvexHull2D.Builder builder = createConvexHullGenerator(true);
+    	builder.append(points);
+    	final ConvexHull2D hull = builder.build();
+
+    	// assert
+    	checkConvexHull(points, hull, true);
+    }
+
+    @Test
+    void testCollinearPointsExcludedColinearToFirstSide() {
+    	// arrange
+    	final Collection<Vector2D> points = new ArrayList<>();
+    	points.add(Vector2D.of(1, 1));
+    	points.add(Vector2D.of(2, 4));
+    	points.add(Vector2D.of(10, 1));
+    	points.add(Vector2D.of(1.5, 2.5));
+
+    	// act
+    	ConvexHull2D.Builder builder = createConvexHullGenerator(false);
+    	builder.append(points);
+    	final ConvexHull2D hull = builder.build();
+
+    	points.remove(Vector2D.of(1.5, 2.5));
+    	// assert
+    	checkConvexHull(points, hull, false);
+    }
+
+    @Test
     void testIdenticalPoints() {
         // arrange
         final Collection<Vector2D> points = new ArrayList<>();
@@ -283,6 +320,23 @@ class ConvexHullBuilderTest {
 
         // assert
         checkConvexHull(points, hull);
+    }
+
+    @Test
+    void testOrderisIrrelevant() {
+    	// arrange
+    	final Collection<Vector2D> points = new ArrayList<>();
+    	points.add(Vector2D.of(0, 0));
+    	points.add(Vector2D.of(6, 6));
+    	points.add(Vector2D.of(3, 4));
+    	points.add(Vector2D.of(12, 0));
+
+    	// act
+    	generator.append(points);
+    	final ConvexHull2D hull = generator.build();
+
+    	// assert
+    	checkConvexHull(points, hull);
     }
 
     @Test
