@@ -141,6 +141,8 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
         /** Collection of all remaining candidates for a convex hull. */
         private final Collection<Vector2D> candidates;
 
+        private final List<Vector2D> quadrilateral;
+
         /** A precision context for comparing points. */
         private final Precision.DoubleEquivalence precision;
 
@@ -162,6 +164,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
             this.precision = builderPrecision;
             this.includeCollinearPoints = includeCollinearPoints;
             candidates = EuclideanCollections.pointSet2D(builderPrecision);
+            quadrilateral = new ArrayList<>();
         }
 
         /** Appends the given point to a collection of possible hull points, if and only
@@ -180,7 +183,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 return this;
             }
 
-            final List<Vector2D> quadrilateral = buildQuadrilateral(minY, maxX, maxY, minX);
+            buildQuadrilateral(minY, maxX, maxY, minX);
             // if the quadrilateral is not well formed, e.g. only 2 points, do not attempt to reduce
             if (quadrilateral.size() < 3) {
                 return this;
@@ -236,14 +239,13 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          * @param points the respective points with min/max x/y coordinate
          * @return the quadrilateral
          */
-        private static List<Vector2D> buildQuadrilateral(final Vector2D... points) {
-            final List<Vector2D> quadrilateral = new ArrayList<>();
+        private void buildQuadrilateral(final Vector2D... points) {
+            quadrilateral.clear();
             for (final Vector2D p : points) {
                 if (!quadrilateral.contains(p)) {
                     quadrilateral.add(p);
                 }
             }
-            return quadrilateral;
         }
 
         /** Checks if the given point supersedes one of the corners. If it does the old
@@ -457,7 +459,6 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
 
             while (it.hasNext()) {
                 p2 = it.next();
-
                 v2 = p1.vectorTo(p2);
 
                 // negative signed areas mean a clockwise winding
