@@ -142,7 +142,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
         /** Collection of all remaining candidates for a convex hull. */
         private final PointSet<Vector2D> candidates;
 
-        /** Points are tested against this quadrilateral */
+        /** Points are tested against this quadrilateral. */
         private final List<Vector2D> quadrilateral;
 
         /** A precision context for comparing points. */
@@ -184,8 +184,8 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
             buildQuadrilateral(minY, maxX, maxY, minX);
             // if the quadrilateral is not well formed, e.g. only 2 points, do not attempt to reduce
             if (quadrilateral.size() < 3) {
-            	//Point cannot yet be dismissed.
-            	candidates.add(point);
+                // Point cannot yet be dismissed.
+                candidates.add(point);
                 return this;
             }
 
@@ -237,7 +237,6 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          * coordinates).
          *
          * @param points the respective points with min/max x/y coordinate
-         * @return the quadrilateral
          */
         private void buildQuadrilateral(final Vector2D... points) {
             quadrilateral.clear();
@@ -396,9 +395,9 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 final double offset = Lines.fromPoints(p1, p2, precision).offset(point);
                 if (precision.eqZero(offset)) {
                     // the point is collinear to the line (p1, p2)
-                	// Calculate distance to both points.
-                	final double distanceToCurrent = p1.distance(point);
-                	final double distanceToLast = p1.distance(p2);
+                    // Calculate distance to both points.
+                    final double distanceToCurrent = p1.distance(point);
+                    final double distanceToLast = p1.distance(p2);
 
                     if (includeCollinearPoints) {
                         final int index = distanceToCurrent < distanceToLast ? size - 1 : size;
