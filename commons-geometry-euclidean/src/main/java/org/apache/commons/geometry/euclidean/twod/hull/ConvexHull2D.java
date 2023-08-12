@@ -395,18 +395,11 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 final double offset = Lines.fromPoints(p1, p2, precision).offset(point);
                 if (precision.eqZero(offset)) {
                     // the point is collinear to the line (p1, p2)
-                    // Calculate distance to both points.
-                    final double distanceToCurrent = p1.distance(point);
-                    final double distanceToLast = p1.distance(p2);
-
                     if (includeCollinearPoints) {
-                        final int index = distanceToCurrent < distanceToLast ? size - 1 : size;
-                        hull.add(index, point);
+                        hull.add(size, point);
                     } else {
-                        if (distanceToCurrent > distanceToLast) {
-                            hull.remove(size - 1);
-                            hull.add(point);
-                        }
+                        hull.remove(size - 1);
+                        hull.add(point);
                     }
                     return;
                 } else if (offset > 0) {
