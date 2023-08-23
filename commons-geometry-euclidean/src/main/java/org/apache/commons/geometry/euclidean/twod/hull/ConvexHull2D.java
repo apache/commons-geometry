@@ -258,12 +258,12 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          *         {@code false} otherwise.
          */
         boolean checkCorners(Vector2D point) {
-            boolean hasBeenModified = false;
             if (minX == null) {
                 minX = minY = maxX = maxY = point;
                 candidates.add(point);
                 return true;
             }
+            boolean hasBeenModified = false;
             if (point.getX() < minX.getX()) {
                 minX = point;
                 candidates.add(point);
