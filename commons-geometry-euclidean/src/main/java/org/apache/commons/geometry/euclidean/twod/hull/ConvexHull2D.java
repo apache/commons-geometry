@@ -181,6 +181,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
             if (checkCorners(point)) {
                 //build quadrilateral if any of the corners has changed.
                 buildQuadrilateral(minY, maxX, maxY, minX);
+                return this;
             }
 
             // if the quadrilateral is not well formed, e.g. only 2 points, do not attempt to reduce
