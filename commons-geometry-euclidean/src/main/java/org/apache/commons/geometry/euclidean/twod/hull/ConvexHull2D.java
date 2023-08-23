@@ -178,10 +178,11 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
         public Builder append(Vector2D point) {
 
             // Checks if the given point supersedes one of the corners.
-            checkCorners(point);
+            if (checkCorners(point)) {
+                //build quadrilateral if any of the corners has changed.
+                buildQuadrilateral(minY, maxX, maxY, minX);
+            }
 
-
-            buildQuadrilateral(minY, maxX, maxY, minX);
             // if the quadrilateral is not well formed, e.g. only 2 points, do not attempt to reduce
             if (quadrilateral.size() < 3) {
                 // Point cannot yet be dismissed.
@@ -191,7 +192,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
 
             // check all points if they are within the quadrilateral
             // in which case they can not be part of the convex hull
-            if (!insideQuadrilateral(point, quadrilateral)) {
+            if (!insideQuadrilateral(point)) {
                 candidates.add(point);
             }
 
@@ -247,44 +248,52 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
             }
         }
 
-        /** Checks if the given point supersedes one of the corners. If it does the old
+        /**
+         * Checks if the given point supersedes one of the corners. If it does the old
          * corner is removed and the point added to the collection of points.
          *
          * @param point a given point.
+         * @return {@code true} if any of the corners changed as a result of the check,
+         *         {@code false} otherwise.
          */
-        private void checkCorners(Vector2D point) {
+        boolean checkCorners(Vector2D point) {
+            boolean hasBeenModified = false;
             if (minX == null) {
                 minX = minY = maxX = maxY = point;
                 candidates.add(point);
-                return;
+                return true;
             }
             if (point.getX() < minX.getX()) {
                 minX = point;
                 candidates.add(point);
+                hasBeenModified = true;
             }
             if (point.getX() > maxX.getX()) {
                 maxX = point;
                 candidates.add(point);
+                hasBeenModified = true;
             }
             if (point.getY() < minY.getY()) {
                 minY = point;
                 candidates.add(point);
+                hasBeenModified = true;
             }
             if (point.getY() > maxY.getY()) {
                 maxY = point;
                 candidates.add(point);
+                hasBeenModified = true;
             }
+            return hasBeenModified;
         }
 
         /** Checks if the given point is located within the convex quadrilateral.
          * @param point the point to check
-         * @param quadrilateralPoints the convex quadrilateral, represented by 4 points
          * @return {@code true} if the point is inside the quadrilateral, {@code false} otherwise
          */
-        private boolean insideQuadrilateral(final Vector2D point, final List<? extends Vector2D> quadrilateralPoints) {
+        private boolean insideQuadrilateral(final Vector2D point) {
 
-            Vector2D v1 = quadrilateralPoints.get(quadrilateralPoints.size() - 1);
-            Vector2D v2 = quadrilateralPoints.get(0);
+            Vector2D v1 = quadrilateral.get(quadrilateral.size() - 1);
+            Vector2D v2 = quadrilateral.get(0);
 
             if (point.equals(v1) || point.equals(v2)) {
                 return true;
@@ -299,11 +308,11 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 return false;
             }
 
-            final int size = quadrilateralPoints.size();
+            final int size = quadrilateral.size();
             // loop through the rest of the vertices
             for (int i = 1; i < size; i++) {
                 v1 = v2;
-                v2 = quadrilateralPoints.get(i);
+                v2 = quadrilateral.get(i);
 
                 if (point.equals(v2)) {
                     return true;
