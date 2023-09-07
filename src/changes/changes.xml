@@ -77,8 +77,8 @@ Apache Commons Geometry 1.0 contains the following library modules:
           Fix misclassification of points near zero in AngularInterval.
       </action>
       <!-- UPDATE -->
-      <action dev="ggregory" type="fix" due-to="Dependabot">
-          Bump commons-parent from 55 to 56 #202.
+      <action dev="ggregory" type="fix" due-to="Dependabot, Gary Gregory">
+          Bump commons-parent from 55 to 58 #202.
       </action>
     </release>
 
