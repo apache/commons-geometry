@@ -104,7 +104,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      * @return a collection of all two-dimensional faces.
      */
     public Collection<? extends ConvexPolygon3D> getFacets() {
-        return facets;
+        return Collections.unmodifiableCollection(facets);
     }
 
     /**
