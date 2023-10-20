@@ -184,6 +184,7 @@ public class ConvexHull3DTest {
      */
     @Test
     void randomUnitPoints() {
+        //All points in the set must be on the hull. This is a worst case scenario.
         Set<Vector3D> set = createRandomPoints(1000, true);
         builder.append(set);
         ConvexHull3D hull = builder.build();
@@ -212,12 +213,13 @@ public class ConvexHull3DTest {
      * Create a specified number of random points on the unit sphere.
      *
      * @param number the given number.
+     * @param normalize normalize the output points.
      * @return a specified number of random points on the unit sphere.
      */
     private Set<Vector3D> createRandomPoints(int number, boolean normalize) {
         Set<Vector3D> set = EuclideanCollections.pointSet3D(TEST_PRECISION);
         for (int i = 0; i < number; i++) {
-            if(normalize) {
+            if (normalize) {
                 set.add(Vector3D.Unit.from(random.nextDouble(), random.nextDouble(), random.nextDouble()));
             } else {
                 set.add(Vector3D.of(random.nextDouble(), random.nextDouble(), random.nextDouble()));
