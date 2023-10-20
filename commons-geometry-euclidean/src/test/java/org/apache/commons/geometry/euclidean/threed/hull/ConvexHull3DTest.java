@@ -24,9 +24,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.geometry.euclidean.EuclideanCollections;
+import org.apache.commons.geometry.euclidean.threed.ConvexVolume;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.rng.UniformRandomProvider;
+import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,9 +43,12 @@ public class ConvexHull3DTest {
 
     private ConvexHull3D.Builder builder;
 
+    private UniformRandomProvider random;
+
     @BeforeEach
     public void setUp() {
         builder = new ConvexHull3D.Builder(TEST_PRECISION);
+        random = RandomSource.XO_SHI_RO_256_PP.create(10);
     }
 
     /**
@@ -75,7 +83,8 @@ public class ConvexHull3DTest {
 
     @Test
     void colinearPoints() {
-        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0), Vector3D.of(3, 0, 0));
+        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0),
+                Vector3D.of(3, 0, 0));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
         assertNotNull(hull);
@@ -86,7 +95,8 @@ public class ConvexHull3DTest {
 
     @Test
     void coplanarPoints() {
-        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(3, 0, 0));
+        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
+                Vector3D.of(3, 0, 0));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
         assertNotNull(hull);
@@ -97,7 +107,8 @@ public class ConvexHull3DTest {
 
     @Test
     void simplex() {
-        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1));
+        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
+                Vector3D.of(0, 0, 1));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
         assertNotNull(hull.getRegion());
@@ -112,8 +123,8 @@ public class ConvexHull3DTest {
     @Test
     void simplexPlusPoint() {
 
-        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0),
-                Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 1));
+        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
+                Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 1));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
         assertNotNull(hull.getRegion());
@@ -124,13 +135,14 @@ public class ConvexHull3DTest {
         assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
         assertTrue(TEST_PRECISION.eq(1.0 / 2.0, hull.getRegion().getSize()));
 
-        //Check if all facets are connected with neighbors.
+        // Check if all facets are connected with neighbors.
     }
 
     @Test
     void unitCube() {
-        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1),
-                Vector3D.of(1, 1, 0), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1), Vector3D.of(1, 1, 1));
+        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
+                Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 0), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1),
+                Vector3D.of(1, 1, 1));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
         assertNotNull(hull.getRegion());
@@ -147,9 +159,9 @@ public class ConvexHull3DTest {
 
     @Test
     void multiplePoints() {
-        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0),
-                Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 0), Vector3D.of(1, 0, 1),
-                Vector3D.of(0, 1, 1), Vector3D.of(1, 1, 1), Vector3D.of(10, 20, 30), Vector3D.of(-0.5, 0, 5));
+        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
+                Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 0), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1),
+                Vector3D.of(1, 1, 1), Vector3D.of(10, 20, 30), Vector3D.of(-0.5, 0, 5));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
         assertNotNull(hull.getRegion());
@@ -164,6 +176,54 @@ public class ConvexHull3DTest {
         assertTrue(hull.getRegion().contains(Vector3D.of(10, 20, 30)));
         assertTrue(hull.getRegion().contains(Vector3D.of(-0.5, 0, 5)));
         assertTrue(TEST_PRECISION.eq(42.58333333333329, hull.getRegion().getSize()));
+    }
+
+    /**
+     * Create 1000 points on a unit sphere. Then every point of the set must be a
+     * vertex of the hull.
+     */
+    @Test
+    void randomUnitPoints() {
+        Set<Vector3D> set = createRandomPoints(1000, true);
+        builder.append(set);
+        ConvexHull3D hull = builder.build();
+        ConvexVolume region = hull.getRegion();
+        assertNotNull(region);
+        List<Vector3D> vertices = hull.getVertices();
+        for (Vector3D p : set) {
+            assertTrue(vertices.contains(p));
+            assertTrue(region.contains(p));
+        }
+    }
+
+    @Test
+    void randomPoints() {
+        Set<Vector3D> set = createRandomPoints(100000, false);
+        builder.append(set);
+        ConvexHull3D hull = builder.build();
+        ConvexVolume region = hull.getRegion();
+        assertNotNull(region);
+        for (Vector3D p : set) {
+            assertTrue(region.contains(p));
+        }
+    }
+
+    /**
+     * Create a specified number of random points on the unit sphere.
+     *
+     * @param number the given number.
+     * @return a specified number of random points on the unit sphere.
+     */
+    private Set<Vector3D> createRandomPoints(int number, boolean normalize) {
+        Set<Vector3D> set = EuclideanCollections.pointSet3D(TEST_PRECISION);
+        for (int i = 0; i < number; i++) {
+            if(normalize) {
+                set.add(Vector3D.Unit.from(random.nextDouble(), random.nextDouble(), random.nextDouble()));
+            } else {
+                set.add(Vector3D.of(random.nextDouble(), random.nextDouble(), random.nextDouble()));
+            }
+        }
+        return set;
     }
 
 }
