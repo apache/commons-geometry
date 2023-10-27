@@ -218,9 +218,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 Set<Vector3D[]> horizon = getHorizon(visibleFacets);
                 Vector3D referencePoint = conflictFacet.getPolygon().getCentroid();
                 Set<Facet> cone = constructCone(conflictPoint, horizon, referencePoint);
-                Set<Vector3D> outsidePoints = removeFacets(visibleFacets);
+                removeFacets(visibleFacets);
                 cone.forEach(this::addFacet);
-                distributePoints(outsidePoints);
+                distributePoints(candidates);
             }
             Collection<ConvexPolygon3D> hull = vertexToFacetMap.values().stream().flatMap(Collection::stream)
                     .map(Facet::getPolygon).collect(Collectors.toSet());
@@ -489,14 +489,13 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
 
         /**
          * Removes the facets from vertexToFacets map and returns a set of all
-         * associated outside points.
+         * associated outside points. All outside set associated with the visible facets
+         * are added to the possible candidates again.
          *
          * @param visibleFacets a set of facets.
-         * @return a set of all associated outside points.
          */
-        private Set<Vector3D> removeFacets(Set<Facet> visibleFacets) {
-            Set<Vector3D> outsidePoints = EuclideanCollections.pointSet3D(precision);
-            visibleFacets.forEach(f -> outsidePoints.addAll(f.outsideSet()));
+        private void removeFacets(Set<Facet> visibleFacets) {
+            visibleFacets.forEach(f -> candidates.addAll(f.outsideSet()));
 
             // Remove facets from vertxToFacetMap
             for (Facet facet : visibleFacets) {
@@ -508,7 +507,6 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                     }
                 }
             }
-            return outsidePoints;
         }
     }
 
