@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -200,10 +201,10 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             }
 
             // Construct an initial simplex with extreme properties.
-            Collection<Facet> simplex = createSimplex(candidates);
+            Simplex simplex = createSimplex(candidates);
 
             // The simplex is degenerate.
-            if (simplex.isEmpty()) {
+            if (simplex.isDegenerate()) {
                 return new ConvexHull3D(candidates, true);
             }
 
@@ -258,7 +259,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param points the given point set.
          * @return an initial simplex.
          */
-        private Collection<Facet> createSimplex(Collection<Vector3D> points) {
+        private Simplex createSimplex(Collection<Vector3D> points) {
 
             // First vertex of the simplex
             Vector3D vertex1 = points.stream().min(Vector3D.COORDINATE_ASCENDING_ORDER).get();
@@ -269,7 +270,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
 
             // The point is degenerate if all points are equivalent.
             if (vertex1.eq(vertex2, precision)) {
-                return Collections.emptyList();
+                return new Simplex(Collections.emptyList());
             }
 
             // First and second vertex form a line.
@@ -280,7 +281,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
 
             // The point set is degenerate because all points are colinear.
             if (line.contains(vertex3)) {
-                return Collections.emptyList();
+                return new Simplex(Collections.emptyList());
             }
 
             // Form a triangle with the first three vertices.
@@ -293,7 +294,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
 
             // The point set is degenerate, because all points are coplanar.
             if (plane.contains(vertex4)) {
-                return Collections.emptyList();
+                return new Simplex(Collections.emptyList());
             }
 
             // Construct the other three facets.
@@ -307,15 +308,16 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             List<Facet> facets = new ArrayList<>();
 
             // Choose the right orientation for all facets.
-            facets.add(isInside(facet1, vertex4, precision) ? new Facet(facet1, precision)
-                    : new Facet(facet1.reverse(), precision));
-            facets.add(isInside(facet2, vertex3, precision) ? new Facet(facet2, precision)
-                    : new Facet(facet2.reverse(), precision));
-            facets.add(isInside(facet3, vertex2, precision) ? new Facet(facet3, precision)
-                    : new Facet(facet3.reverse(), precision));
-            facets.add(isInside(facet4, vertex1, precision) ? new Facet(facet4, precision) : new Facet(facet4.reverse(), precision));
+            facets.add(isInside(facet1, vertex4, precision) ? new Facet(facet1, precision) :
+                new Facet(facet1.reverse(), precision));
+            facets.add(isInside(facet2, vertex3, precision) ? new Facet(facet2, precision) :
+                new Facet(facet2.reverse(), precision));
+            facets.add(isInside(facet3, vertex2, precision) ? new Facet(facet3, precision) :
+                new Facet(facet3.reverse(), precision));
+            facets.add(isInside(facet4, vertex1, precision) ? new Facet(facet4, precision) :
+                new Facet(facet4.reverse(), precision));
 
-            return facets;
+            return new Simplex(facets);
         }
 
         /**
@@ -503,6 +505,17 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private void removeFacets(Set<Facet> visibleFacets) {
             visibleFacets.forEach(f -> candidates.addAll(f.outsideSet()));
 
+            if (vertexToFacetMap != null) {
+                removeFacetsFromVertexMap(visibleFacets);
+            }
+        }
+
+        /**
+         * Removes the given facets from the vertexToFacetMap.
+         *
+         * @param visibleFacets the facets to be removed.
+         */
+        private void removeFacetsFromVertexMap(Set<Facet> visibleFacets) {
             // Remove facets from vertxToFacetMap
             for (Facet facet : visibleFacets) {
                 for (Vector3D vertex : facet.getPolygon().getVertices()) {
@@ -595,6 +608,40 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         public Vector3D getConflictPoint() {
             Plane plane = polygon.getPlane();
             return outsideSet.stream().max((u, v) -> Double.compare(plane.offset(u), plane.offset(v))).get();
+        }
+    }
+
+    /**
+     * This class represents a simple simplex with four facets.
+     */
+    private static class Simplex implements Iterable<Facet> {
+
+        /** The facets of the simplex. */
+        private final Set<Facet> facets;
+
+        /**
+         * Constructs a new simplex with the given facets.
+         * @param facets the given facets.
+         */
+        Simplex(Collection<Facet> facets) {
+            this.facets = new HashSet<>(facets);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Iterator<Facet> iterator() {
+            return facets.iterator();
+        }
+
+        /**
+         * Returns {@code true} if the collection of facets is empty.
+         *
+         * @return {@code true} if the collection of facets is empty.
+         */
+        public boolean isDegenerate() {
+            return facets.isEmpty();
         }
     }
 }
