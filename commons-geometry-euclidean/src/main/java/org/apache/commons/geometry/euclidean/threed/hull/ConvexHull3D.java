@@ -200,7 +200,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             }
 
             // Construct an initial simplex with extreme properties.
-            Collection<ConvexPolygon3D> simplex = createSimplex(candidates);
+            Collection<Facet> simplex = createSimplex(candidates);
 
             // The simplex is degenerate.
             if (simplex.isEmpty()) {
@@ -208,8 +208,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             }
 
             vertexToFacetMap = new HashMap<>();
-            simplex.forEach(p -> addFacet(new Facet(p, precision)));
-            distributePoints(candidates);
+            simplex.forEach(this::addFacet);
+            distributePoints(simplex);
             while (isInconflict()) {
                 Facet conflictFacet = getConflictFacet();
                 Vector3D conflictPoint = conflictFacet.getConflictPoint();
@@ -220,7 +220,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 Set<Facet> cone = constructCone(conflictPoint, horizon, referencePoint);
                 removeFacets(visibleFacets);
                 cone.forEach(this::addFacet);
-                distributePoints(candidates);
+                distributePoints(cone);
             }
             Collection<ConvexPolygon3D> hull = vertexToFacetMap.values().stream().flatMap(Collection::stream)
                     .map(Facet::getPolygon).collect(Collectors.toSet());
@@ -258,7 +258,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param points the given point set.
          * @return an initial simplex.
          */
-        private Collection<ConvexPolygon3D> createSimplex(Collection<Vector3D> points) {
+        private Collection<Facet> createSimplex(Collection<Vector3D> points) {
 
             // First vertex of the simplex
             Vector3D vertex1 = points.stream().min(Vector3D.COORDINATE_ASCENDING_ORDER).get();
@@ -304,13 +304,18 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             ConvexPolygon3D facet4 = Planes.convexPolygonFromVertices(Arrays.asList(vertex2, vertex3, vertex4),
                     precision);
 
-            // Choose the right orientation for all facets.
-            facet1 = isInside(facet1, vertex4, precision) ? facet1 : facet1.reverse();
-            facet2 = isInside(facet2, vertex3, precision) ? facet2 : facet2.reverse();
-            facet3 = isInside(facet3, vertex2, precision) ? facet3 : facet3.reverse();
-            facet4 = isInside(facet4, vertex1, precision) ? facet4 : facet4.reverse();
+            List<Facet> facets = new ArrayList<>();
 
-            return Arrays.asList(facet1, facet2, facet3, facet4);
+            // Choose the right orientation for all facets.
+            facets.add(isInside(facet1, vertex4, precision) ? new Facet(facet1, precision)
+                    : new Facet(facet1.reverse(), precision));
+            facets.add(isInside(facet2, vertex3, precision) ? new Facet(facet2, precision)
+                    : new Facet(facet2.reverse(), precision));
+            facets.add(isInside(facet3, vertex2, precision) ? new Facet(facet3, precision)
+                    : new Facet(facet3.reverse(), precision));
+            facets.add(isInside(facet4, vertex1, precision) ? new Facet(facet4, precision) : new Facet(facet4.reverse(), precision));
+
+            return facets;
         }
 
         /**
@@ -357,25 +362,26 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         }
 
         /**
-         * Associates each point with an outside set if possible.
+         * Associates each point of the candidates set with an outside set of the given
+         * facets. Afterwards the candidates set is cleared.
          *
-         * @param points the given collection of points.
+         * @param facets the facets to check against.
          */
-        private void distributePoints(Collection<Vector3D> points) {
-            points.forEach(this::distributePoint);
+        private void distributePoints(Iterable<Facet> facets) {
+            candidates.forEach(p -> distributePoint(p, facets));
+            candidates.clear();
         }
 
         /**
          * Associates the given point with an outside set if possible.
          *
          * @param p the given point.
+         * @param facets the facets to check against.
          */
-        private void distributePoint(Vector3D p) {
-            for (Set<Facet> set : vertexToFacetMap.values()) {
-                for (Facet facet : set) {
-                    if (facet.addPoint(p)) {
-                        return;
-                    }
+        private static void distributePoint(Vector3D p, Iterable<Facet> facets) {
+            for (Facet facet : facets) {
+                if (facet.addPoint(p)) {
+                    return;
                 }
             }
         }
