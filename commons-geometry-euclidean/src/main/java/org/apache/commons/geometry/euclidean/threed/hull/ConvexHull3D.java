@@ -151,6 +151,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         /** Precision context used to compare floating point numbers. */
         private final DoubleEquivalence precision;
 
+        /** Simplex for testing new points and starting the algorithm. */
+        private Simplex simplex;
+
         /**
          * A map which contains all the vertices of the current hull as keys and the
          * associated facets as values.
@@ -186,7 +189,11 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return this instance.
          */
         public Builder append(Collection<Vector3D> points) {
-            points.forEach(this::append);
+            simplex = createSimplex(points);
+            candidates.addAll(points);
+            if (!simplex.isDegenerate()) {
+                distributePoints(simplex);
+            }
             return this;
         }
 
@@ -196,12 +203,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return a convex hull containing all appended points.
          */
         public ConvexHull3D build() {
-            if (candidates.size() < 4) {
+            if (simplex == null) {
                 return new ConvexHull3D(candidates, true);
             }
-
-            // Construct an initial simplex with extreme properties.
-            Simplex simplex = createSimplex(candidates);
 
             // The simplex is degenerate.
             if (simplex.isDegenerate()) {
