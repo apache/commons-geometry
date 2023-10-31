@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -158,6 +159,25 @@ public class ConvexHull3DTest {
     }
 
     @Test
+    void unitCubeSequentially() {
+        List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
+                Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 0), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1),
+                Vector3D.of(1, 1, 1));
+        vertices.forEach(builder::append);
+        ConvexHull3D hull = builder.build();
+        assertNotNull(hull.getRegion());
+        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 0)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 1)));
+        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
+        assertTrue(TEST_PRECISION.eq(1.0, hull.getRegion().getSize()));
+    }
+
+    @Test
     void multiplePoints() {
         List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 0), Vector3D.of(1, 0, 1), Vector3D.of(0, 1, 1),
@@ -184,7 +204,7 @@ public class ConvexHull3DTest {
      */
     @Test
     void randomUnitPoints() {
-        //All points in the set must be on the hull. This is a worst case scenario.
+        // All points in the set must be on the hull. This is a worst case scenario.
         Set<Vector3D> set = createRandomPoints(1000, true);
         builder.append(set);
         ConvexHull3D hull = builder.build();
@@ -209,10 +229,41 @@ public class ConvexHull3DTest {
         }
     }
 
+    @Test
+    void randomPointsInTwoSets() {
+        Set<Vector3D> set1 = createRandomPoints(50000, false);
+        Set<Vector3D> set2 = createRandomPoints(50000, false);
+        builder.append(set1);
+        builder.append(set2);
+        ConvexHull3D hull = builder.build();
+        ConvexVolume region = hull.getRegion();
+        assertNotNull(region);
+        for (Vector3D p : set1) {
+            assertTrue(region.contains(p));
+        }
+        for (Vector3D p : set2) {
+            assertTrue(region.contains(p));
+        }
+    }
+
+    @Test
+    void randomPointsSequentially() {
+        // Points are added sequentially
+        List<Vector3D> list = new ArrayList<>(createRandomPoints(100, false));
+        list.forEach(builder::append);
+        ConvexHull3D hull = builder.build();
+        ConvexVolume region = hull.getRegion();
+        assertNotNull(region);
+        for (int i = 0; i < 100; i++) {
+            Vector3D p = list.get(i);
+            assertTrue(region.contains(p), String.format("The Vector with position %d is different.", i));
+        }
+    }
+
     /**
      * Create a specified number of random points on the unit sphere.
      *
-     * @param number the given number.
+     * @param number    the given number.
      * @param normalize normalize the output points.
      * @return a specified number of random points on the unit sphere.
      */
