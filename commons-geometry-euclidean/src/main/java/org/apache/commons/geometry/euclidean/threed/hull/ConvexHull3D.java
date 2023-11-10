@@ -52,7 +52,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
     private final ConvexVolume region;
 
     /** A collection of all facets that form the convex volume of the hull. */
-    private final Collection<ConvexPolygon3D> facets;
+    private final List<ConvexPolygon3D> facets;
 
     /** Flag for when the hull is degenerate. */
     private final boolean isDegenerate;
@@ -64,10 +64,10 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      * @param facets the facets of the hull.
      */
     ConvexHull3D(Collection<? extends ConvexPolygon3D> facets) {
-        vertices = Collections
-                .unmodifiableList(facets.stream().flatMap(f -> f.getVertices().stream()).collect(Collectors.toList()));
+        vertices = Collections.unmodifiableList(
+                new ArrayList<>(facets.stream().flatMap(f -> f.getVertices().stream()).collect(Collectors.toSet())));
         region = ConvexVolume.fromBounds(() -> facets.stream().map(ConvexPolygon3D::getPlane).iterator());
-        this.facets = Collections.unmodifiableSet(new HashSet<>(facets));
+        this.facets = Collections.unmodifiableList(new ArrayList<>(facets));
         this.isDegenerate = false;
     }
 
@@ -81,7 +81,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
     ConvexHull3D(Collection<Vector3D> points, boolean isDegenerate) {
         vertices = Collections.unmodifiableList(new ArrayList<>(points));
         region = null;
-        this.facets = Collections.emptySet();
+        this.facets = Collections.emptyList();
         this.isDegenerate = isDegenerate;
     }
 
@@ -103,8 +103,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      *
      * @return a collection of all two-dimensional faces.
      */
-    public Collection<? extends ConvexPolygon3D> getFacets() {
-        return Collections.unmodifiableCollection(facets);
+    public List<? extends ConvexPolygon3D> getFacets() {
+        return facets;
     }
 
     /**

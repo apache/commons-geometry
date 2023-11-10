@@ -215,6 +215,7 @@ public class ConvexHull3DTest {
             assertTrue(vertices.contains(p));
             assertTrue(region.contains(p));
         }
+        assertEquals(1000, hull.getVertices().size());
     }
 
     @Test
