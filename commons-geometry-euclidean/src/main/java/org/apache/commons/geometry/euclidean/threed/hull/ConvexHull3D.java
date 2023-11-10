@@ -67,7 +67,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         vertices = Collections.unmodifiableList(
                 new ArrayList<>(facets.stream().flatMap(f -> f.getVertices().stream()).collect(Collectors.toSet())));
         region = ConvexVolume.fromBounds(() -> facets.stream().map(ConvexPolygon3D::getPlane).iterator());
-        this.facets = Collections.unmodifiableList(new ArrayList<>(facets));
+        this.facets = new ArrayList<>(facets);
         this.isDegenerate = false;
     }
 
@@ -104,7 +104,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      * @return a collection of all two-dimensional faces.
      */
     public List<? extends ConvexPolygon3D> getFacets() {
-        return facets;
+        return Collections.unmodifiableList(facets);
     }
 
     /**
@@ -390,7 +390,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return {@code true} if any of the facets is in conflict.
          */
         private boolean isInconflict() {
-            return vertexToFacetMap.values().stream().flatMap(Collection::stream).anyMatch(Facet::isInConflict);
+            return vertexToFacetMap.values().stream().flatMap(Collection::stream).anyMatch(Facet::hasOutsidePoints);
         }
 
         /**
@@ -446,7 +446,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          *         set.
          */
         private Facet getConflictFacet() {
-            return vertexToFacetMap.values().stream().flatMap(Collection::stream).filter(Facet::isInConflict)
+            return vertexToFacetMap.values().stream().flatMap(Collection::stream).filter(Facet::hasOutsidePoints)
                     .findFirst().get();
         }
 
@@ -612,7 +612,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return {@code true} if the facet is in conflict e.g the outside set is
          *         non-empty.
          */
-        boolean isInConflict() {
+        boolean hasOutsidePoints() {
             return !outsideSet.isEmpty();
         }
 
@@ -631,7 +631,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return an unmodifiable view of the associated outside set.
          */
         public Set<Vector3D> outsideSet() {
-            return Collections.unmodifiableSet(outsideSet);
+            return outsideSet;
         }
 
         /**
@@ -691,7 +691,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return the facets of the simplex as set.
          */
         public Set<Facet> facets() {
-            return Collections.unmodifiableSet(facets);
+            return facets;
         }
     }
 }
