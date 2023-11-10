@@ -259,7 +259,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             vertexToFacetMap = new HashMap<>();
             simplex.facets().forEach(this::addFacet);
             distributePoints(simplex.facets());
-            while (isInconflict()) {
+            while (hasOutsidePoints()) {
                 Facet conflictFacet = getConflictFacet();
                 Vector3D conflictPoint = conflictFacet.getConflictPoint();
                 Set<Facet> visibleFacets = new HashSet<>();
@@ -385,11 +385,11 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         }
 
         /**
-         * Returns {@code true} if any of the facets is in conflict.
+         * Returns {@code true} if any of the facets has outside points.
          *
-         * @return {@code true} if any of the facets is in conflict.
+         * @return {@code true} if any of the facets has outside points.
          */
-        private boolean isInconflict() {
+        private boolean hasOutsidePoints() {
             return vertexToFacetMap.values().stream().flatMap(Collection::stream).anyMatch(Facet::hasOutsidePoints);
         }
 
@@ -656,7 +656,16 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          */
         public Vector3D getConflictPoint() {
             Plane plane = polygon.getPlane();
-            return outsideSet.stream().max((u, v) -> Double.compare(plane.offset(u), plane.offset(v))).get();
+            Vector3D conflictPoint = outsideSet.stream().findFirst().get();
+            double max = plane.offset(conflictPoint);
+            for (Vector3D p : outsideSet) {
+                double offset = plane.offset(p);
+                if (precision.gt(offset, max)) {
+                    max = offset;
+                    conflictPoint = p;
+                }
+            }
+            return conflictPoint;
         }
     }
 
