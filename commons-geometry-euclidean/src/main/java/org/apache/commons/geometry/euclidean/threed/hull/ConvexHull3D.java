@@ -658,8 +658,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             Plane plane = polygon.getPlane();
             Vector3D conflictPoint = outsideSet.stream().findFirst().get();
             double max = plane.offset(conflictPoint);
+            double offset;
             for (Vector3D p : outsideSet) {
-                double offset = plane.offset(p);
+                offset = plane.offset(p);
                 if (precision.gt(offset, max)) {
                     max = offset;
                     conflictPoint = p;
