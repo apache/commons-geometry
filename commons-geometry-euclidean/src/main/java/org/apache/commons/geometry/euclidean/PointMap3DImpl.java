@@ -45,7 +45,7 @@ final class PointMap3DImpl<V>
     /** X negative octant flag. */
     private static final int XNEG = 1 << 5;
 
-    /** X postive octant flag. */
+    /** X positive octant flag. */
     private static final int XPOS = 1 << 4;
 
     /** Y negative octant flag. */

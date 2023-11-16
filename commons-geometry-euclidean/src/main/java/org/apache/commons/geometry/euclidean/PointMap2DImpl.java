@@ -39,7 +39,7 @@ final class PointMap2DImpl<V>
     /** X negative quadrant flag. */
     private static final int XNEG = 1 << 3;
 
-    /** X postive quadrant flag. */
+    /** X positive quadrant flag. */
     private static final int XPOS = 1 << 2;
 
     /** Y negative quadrant flag. */
