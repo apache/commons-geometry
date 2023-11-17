@@ -215,11 +215,11 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             candidates.add(point);
             if (hasBeenModified) {
                 // Remove all outside Points and add all vertices again.
-                removeFacets(simplex.facets());
-                simplex.facets().stream().map(Facet::getPolygon).forEach(p -> candidates.addAll(p.getVertices()));
+                removeFacets(simplex.getFacets());
+                simplex.getFacets().stream().map(Facet::getPolygon).forEach(p -> candidates.addAll(p.getVertices()));
                 simplex = createSimplex(candidates);
             }
-            distributePoints(simplex.facets());
+            distributePoints(simplex.getFacets());
             return this;
         }
 
@@ -232,12 +232,12 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         public Builder append(Collection<Vector3D> points) {
             if (simplex != null) {
                 // Remove all outside Points and add all vertices again.
-                removeFacets(simplex.facets());
-                simplex.facets().stream().map(Facet::getPolygon).forEach(p -> candidates.addAll(p.getVertices()));
+                removeFacets(simplex.getFacets());
+                simplex.getFacets().stream().map(Facet::getPolygon).forEach(p -> candidates.addAll(p.getVertices()));
             }
             candidates.addAll(points);
             simplex = createSimplex(candidates);
-            distributePoints(simplex.facets());
+            distributePoints(simplex.getFacets());
             return this;
         }
 
@@ -257,11 +257,11 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             }
 
             vertexToFacetMap = new HashMap<>();
-            simplex.facets().forEach(this::addFacet);
-            distributePoints(simplex.facets());
+            simplex.getFacets().forEach(this::addFacet);
+            distributePoints(simplex.getFacets());
             while (hasOutsidePoints()) {
                 Facet conflictFacet = getConflictFacet();
-                Vector3D conflictPoint = conflictFacet.getConflictPoint();
+                Vector3D conflictPoint = conflictFacet.getOutsidePoint();
                 Set<Facet> visibleFacets = new HashSet<>();
                 getVisibleFacets(conflictFacet, conflictPoint, visibleFacets);
                 Set<Vector3D[]> horizon = getHorizon(visibleFacets);
@@ -553,7 +553,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param visibleFacets a set of facets.
          */
         private void removeFacets(Set<Facet> visibleFacets) {
-            visibleFacets.forEach(f -> candidates.addAll(f.outsideSet()));
+            visibleFacets.forEach(f -> candidates.addAll(f.getOutsideSet()));
             if (!vertexToFacetMap.isEmpty()) {
                 removeFacetsFromVertexMap(visibleFacets);
             }
@@ -630,7 +630,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          *
          * @return an unmodifiable view of the associated outside set.
          */
-        public Set<Vector3D> outsideSet() {
+        public Set<Vector3D> getOutsideSet() {
             return outsideSet;
         }
 
@@ -654,7 +654,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return the outside point with the greatest offset distance to the hyperplane
          *         defined by the associated polygon.
          */
-        public Vector3D getConflictPoint() {
+        public Vector3D getOutsidePoint() {
             Plane plane = polygon.getPlane();
             Vector3D conflictPoint = outsideSet.stream().findFirst().get();
             double max = plane.offset(conflictPoint);
@@ -700,7 +700,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          *
          * @return the facets of the simplex as set.
          */
-        public Set<Facet> facets() {
+        public Set<Facet> getFacets() {
             return facets;
         }
     }
