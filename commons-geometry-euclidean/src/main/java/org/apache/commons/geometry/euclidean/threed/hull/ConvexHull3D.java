@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.geometry.core.ConvexHull;
 import org.apache.commons.geometry.core.collection.PointSet;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexPolygon3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexVolume;
 import org.apache.commons.geometry.euclidean.threed.Plane;
@@ -154,7 +155,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private Simplex simplex;
 
         /** The minX, maxX, minY, maxY, minZ, maxZ points. */
-        private final Vector3D[] box;
+        private Bounds3D box;
 
         /**
          * A map which contains all the vertices of the current hull as keys and the
@@ -171,7 +172,6 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             candidates = EuclideanCollections.pointSet3D(precision);
             this.precision = precision;
             vertexToFacetMap = EuclideanCollections.pointMap3D(precision);
-            box = new Vector3D[6];
             simplex = new Simplex(Collections.emptySet());
         }
 
@@ -182,38 +182,16 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return this instance.
          */
         public Builder append(Vector3D point) {
-            if (box[0] == null) {
-                box[0] = box[1] = box[2] = box[3] = box[4] = box[5] = point;
-                candidates.add(point);
-                return this;
-            }
-            boolean hasBeenModified = false;
-            if (box[0].getX() > point.getX()) {
-                box[0] = point;
-                hasBeenModified = true;
-            }
-            if (box[1].getX() < point.getX()) {
-                box[1] = point;
-                hasBeenModified = true;
-            }
-            if (box[2].getY() > point.getY()) {
-                box[2] = point;
-                hasBeenModified = true;
-            }
-            if (box[3].getY() < point.getY()) {
-                box[3] = point;
-                hasBeenModified = true;
-            }
-            if (box[4].getZ() > point.getZ()) {
-                box[4] = point;
-                hasBeenModified = true;
-            }
-            if (box[5].getZ() < point.getZ()) {
-                box[5] = point;
-                hasBeenModified = true;
+            boolean recomputeSimplex = false;
+            if (box == null) {
+                box = Bounds3D.from(point);
+                recomputeSimplex = true;
+            } else if (!box.contains(point)) {
+                box = Bounds3D.from(box.getMin(), box.getMax(), point);
+                recomputeSimplex = true;
             }
             candidates.add(point);
-            if (hasBeenModified) {
+            if (recomputeSimplex) {
                 // Remove all outside Points and add all vertices again.
                 removeFacets(simplex.getFacets());
                 simplex.getFacets().stream().map(Facet::getPolygon).forEach(p -> candidates.addAll(p.getVertices()));
