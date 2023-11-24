@@ -208,13 +208,22 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return this instance.
          */
         public Builder append(Collection<Vector3D> points) {
-            if (simplex != null) {
+            boolean recomputeSimplex = false;
+            if (box == null) {
+                box = Bounds3D.from(points);
+                recomputeSimplex = true;
+            } else if (points.stream().anyMatch(p -> !box.contains(p))) {
+                box = Bounds3D.builder().add(box).addAll(points).build();
+                recomputeSimplex = true;
+            }
+
+            candidates.addAll(points);
+            if (recomputeSimplex) {
                 // Remove all outside Points and add all vertices again.
                 removeFacets(simplex.getFacets());
                 simplex.getFacets().stream().map(Facet::getPolygon).forEach(p -> candidates.addAll(p.getVertices()));
+                simplex = createSimplex(candidates);
             }
-            candidates.addAll(points);
-            simplex = createSimplex(candidates);
             distributePoints(simplex.getFacets());
             return this;
         }
