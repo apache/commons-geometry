@@ -68,7 +68,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         vertices = Collections.unmodifiableList(
                 new ArrayList<>(facets.stream().flatMap(f -> f.getVertices().stream()).collect(Collectors.toSet())));
         region = ConvexVolume.fromBounds(() -> facets.stream().map(ConvexPolygon3D::getPlane).iterator());
-        this.facets = new ArrayList<>(facets);
+        this.facets = Collections.unmodifiableList(new ArrayList<>(facets));
         this.isDegenerate = false;
     }
 
@@ -105,7 +105,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      * @return a collection of all two-dimensional faces.
      */
     public List<? extends ConvexPolygon3D> getFacets() {
-        return Collections.unmodifiableList(facets);
+        return facets;
     }
 
     /**
@@ -246,8 +246,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             vertexToFacetMap = new HashMap<>();
             simplex.getFacets().forEach(this::addFacet);
             distributePoints(simplex.getFacets());
-            while (hasOutsidePoints()) {
-                Facet conflictFacet = getConflictFacet();
+            Facet conflictFacet = getConflictFacet();
+            while (conflictFacet != null) {
                 Vector3D conflictPoint = conflictFacet.getOutsidePoint();
                 Set<Facet> visibleFacets = new HashSet<>();
                 getVisibleFacets(conflictFacet, conflictPoint, visibleFacets);
@@ -257,6 +257,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 removeFacets(visibleFacets);
                 cone.forEach(this::addFacet);
                 distributePoints(cone);
+                conflictFacet = getConflictFacet();
             }
             Collection<ConvexPolygon3D> hull = vertexToFacetMap.values().stream().flatMap(Collection::stream)
                     .map(Facet::getPolygon).collect(Collectors.toSet());
@@ -372,15 +373,6 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         }
 
         /**
-         * Returns {@code true} if any of the facets has outside points.
-         *
-         * @return {@code true} if any of the facets has outside points.
-         */
-        private boolean hasOutsidePoints() {
-            return vertexToFacetMap.values().stream().flatMap(Collection::stream).anyMatch(Facet::hasOutsidePoints);
-        }
-
-        /**
          * Adds the facet for the quickhull algorithm.
          *
          * @param facet the given facet.
@@ -434,7 +426,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          */
         private Facet getConflictFacet() {
             return vertexToFacetMap.values().stream().flatMap(Collection::stream).filter(Facet::hasOutsidePoints)
-                    .findFirst().get();
+                    .findFirst().orElse(null);
         }
 
         /**
