@@ -277,12 +277,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private Set<Facet> constructCone(Vector3D conflictPoint, Set<Vector3D[]> horizon, Vector3D referencePoint) {
             Set<Facet> newFacets = new HashSet<>();
             for (Vector3D[] edge : horizon) {
-                ConvexPolygon3D newFacet = Planes
+                ConvexPolygon3D newPolygon = Planes
                         .convexPolygonFromVertices(Arrays.asList(edge[0], edge[1], conflictPoint), precision);
-                if (!isInside(newFacet, referencePoint, precision)) {
-                    newFacet = newFacet.reverse();
-                }
-                newFacets.add(new Facet(newFacet, precision));
+                newFacets.add(new Facet(newPolygon, referencePoint, precision));
             }
             return newFacets;
         }
@@ -315,7 +312,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             // Find a point with maximal distance from the line.
             Vector3D vertex3 = points.stream().max((u, v) -> Double.compare(line.distance(u), line.distance(v))).get();
 
-            // The point set is degenerate because all points are colinear.
+            // The point set is degenerate because all points are collinear.
             if (line.contains(vertex3)) {
                 return new Simplex(Collections.emptyList());
             }
@@ -344,32 +341,12 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             List<Facet> facets = new ArrayList<>();
 
             // Choose the right orientation for all facets.
-            facets.add(isInside(facet1, vertex4, precision) ? new Facet(facet1, precision) :
-                new Facet(facet1.reverse(), precision));
-            facets.add(isInside(facet2, vertex3, precision) ? new Facet(facet2, precision) :
-                new Facet(facet2.reverse(), precision));
-            facets.add(isInside(facet3, vertex2, precision) ? new Facet(facet3, precision) :
-                new Facet(facet3.reverse(), precision));
-            facets.add(isInside(facet4, vertex1, precision) ? new Facet(facet4, precision) :
-                new Facet(facet4.reverse(), precision));
+            facets.add(new Facet(facet1, vertex4, precision));
+            facets.add(new Facet(facet2, vertex3, precision));
+            facets.add(new Facet(facet3, vertex2, precision));
+            facets.add(new Facet(facet4, vertex1, precision));
 
             return new Simplex(facets);
-        }
-
-        /**
-         * Returns {@code true} if the given point resides inside the negative
-         * half-space of the oriented facet. Points which are coplanar are also assumed
-         * to be inside. Mathematically a point is inside if the calculated oriented
-         * offset, of the point to the hyperplane is less than or equal to zero.
-         *
-         * @param facet     the given facet.
-         * @param point     a reference point.
-         * @param precision the given precision.
-         * @return {@code true} if the given point resides inside the negative
-         *         half-space.
-         */
-        private static boolean isInside(ConvexPolygon3D facet, Vector3D point, DoubleEquivalence precision) {
-            return precision.lte(facet.getPlane().offset(point), 0);
         }
 
         /**
@@ -442,9 +419,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             }
 
             // Check the facet and all neighbors.
-            if (!Builder.isInside(facet.getPolygon(), conflictPoint, precision)) {
+            if (facet.isOutside(conflictPoint)) {
                 collector.add(facet);
-                findNeighbors(facet).stream().forEach(f -> getVisibleFacets(f, conflictPoint, collector));
+                findNeighbors(facet).forEach(f -> getVisibleFacets(f, conflictPoint, collector));
             }
         }
 
@@ -520,8 +497,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             List<Vector3D> vertices = new ArrayList<>(facet.getPolygon().getVertices());
             vertices.retainAll(neighbor.getPolygon().getVertices());
             // Only two vertices can remain.
-            Vector3D[] edge = {vertices.get(0), vertices.get(1)};
-            return edge;
+            return new Vector3D[]{vertices.get(0), vertices.get(1)};
         }
 
         /**
@@ -555,8 +531,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 }
             }
         }
-    }
 
+    }
     /**
      * A facet is a convex polygon with an associated outside set.
      */
@@ -572,14 +548,16 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private final DoubleEquivalence precision;
 
         /**
-         * Constructs a new facet with a the given polygon and an associated empty
-         * outside set.
+         * Constructs a new facet with the given polygon and an associated empty
+         * outside set in such a way, that the reference point is in the negative half-space of the associated oriented
+         * polygon.
          *
-         * @param polygon   the given polygon.
-         * @param precision context used to compare floating point numbers.
+         * @param polygon        the given polygon.
+         * @param referencePoint reference point for construction.
+         * @param precision      context used to compare floating point numbers.
          */
-        Facet(ConvexPolygon3D polygon, DoubleEquivalence precision) {
-            this.polygon = polygon;
+        Facet(ConvexPolygon3D polygon, Vector3D referencePoint, DoubleEquivalence precision) {
+            this.polygon = precision.lte(polygon.getPlane().offset(referencePoint), 0) ? polygon : polygon.reverse();
             outsideSet = EuclideanCollections.pointSet3D(precision);
             this.precision = precision;
         }
@@ -623,7 +601,21 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          *         otherwise.
          */
         public boolean addPoint(Vector3D p) {
-            return !Builder.isInside(polygon, p, precision) ? outsideSet.add(p) : false;
+            return isOutside(p) && outsideSet.add(p);
+        }
+
+        /**
+         * Returns {@code true} if the given point resides outside the negative
+         * half-space of the oriented facet. Points which are coplanar are assumed
+         * to be inside. Mathematically a point is outside, if the calculated oriented
+         * offset, of the point to the hyperplane is greater than zero.
+         *
+         * @param point     a reference point.
+         * @return {@code true} if the given point resides outside the negative
+         *         half-space.
+         */
+        public boolean isOutside(Vector3D point) {
+            return precision.gt(polygon.getPlane().offset(point), 0);
         }
 
         /**
@@ -648,11 +640,11 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             return conflictPoint;
         }
     }
-
     /**
      * This class represents a simple simplex with four facets.
      */
     private static class Simplex {
+
 
         /** The facets of the simplex. */
         private final Set<Facet> facets;

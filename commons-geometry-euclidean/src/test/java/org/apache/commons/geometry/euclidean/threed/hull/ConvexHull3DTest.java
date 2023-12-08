@@ -63,7 +63,7 @@ public class ConvexHull3DTest {
         assertNotNull(hull);
         assertNull(hull.getRegion());
         assertTrue(hull.getFacets().isEmpty());
-        assertTrue(vertices.equals(hull.getVertices()));
+        assertEquals(vertices, hull.getVertices());
     }
 
     /**
@@ -83,7 +83,7 @@ public class ConvexHull3DTest {
     }
 
     @Test
-    void colinearPoints() {
+    void collinearPoints() {
         List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0),
                 Vector3D.of(3, 0, 0));
         builder.append(vertices);
@@ -91,7 +91,7 @@ public class ConvexHull3DTest {
         assertNotNull(hull);
         assertNull(hull.getRegion());
         assertTrue(hull.getFacets().isEmpty());
-        assertTrue(vertices.equals(hull.getVertices()));
+        assertEquals(vertices, hull.getVertices());
     }
 
     @Test
@@ -102,8 +102,8 @@ public class ConvexHull3DTest {
         ConvexHull3D hull = builder.build();
         assertNotNull(hull);
         assertNull(hull.getRegion());
-        assertTrue(hull.getFacets().isEmpty());
-        assertTrue(vertices.equals(hull.getVertices()));
+        assertTrue(hull.getFacets().isEmpty());assertEquals(vertices, hull.getVertices());
+        assertEquals(vertices, hull.getVertices());
     }
 
     @Test
@@ -117,13 +117,13 @@ public class ConvexHull3DTest {
         assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
         assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
         assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
-        // The size of the simplex is finite and non zero.
+        // The size of the simplex is finite and non-zero.
         assertTrue(TEST_PRECISION.eq(1.0 / 6.0, hull.getRegion().getSize()));
+        assertEquals(4, hull.getFacets().size());
     }
 
     @Test
     void simplexPlusPoint() {
-
         List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0),
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 1));
         builder.append(vertices);
@@ -135,8 +135,7 @@ public class ConvexHull3DTest {
         assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
         assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
         assertTrue(TEST_PRECISION.eq(1.0 / 2.0, hull.getRegion().getSize()));
-
-        // Check if all facets are connected with neighbors.
+        assertEquals(6, hull.getFacets().size());
     }
 
     @Test
