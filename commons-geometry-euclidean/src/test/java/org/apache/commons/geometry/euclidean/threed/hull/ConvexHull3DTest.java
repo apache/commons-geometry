@@ -102,7 +102,7 @@ public class ConvexHull3DTest {
         ConvexHull3D hull = builder.build();
         assertNotNull(hull);
         assertNull(hull.getRegion());
-        assertTrue(hull.getFacets().isEmpty());assertEquals(vertices, hull.getVertices());
+        assertTrue(hull.getFacets().isEmpty());
         assertEquals(vertices, hull.getVertices());
     }
 

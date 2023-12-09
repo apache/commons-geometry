@@ -17,17 +17,6 @@
 
 package org.apache.commons.geometry.euclidean.threed.hull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.geometry.core.ConvexHull;
 import org.apache.commons.geometry.core.collection.PointSet;
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
@@ -41,21 +30,41 @@ import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
 import org.apache.commons.numbers.core.Precision.DoubleEquivalence;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * This class represents a convex hull in three-dimensional Euclidean space.
  */
 public class ConvexHull3D implements ConvexHull<Vector3D> {
 
-    /** The vertices of the convex hull. */
+    /**
+     * The vertices of the convex hull.
+     */
     private final List<Vector3D> vertices;
 
-    /** The region defined by the hull. */
+    /**
+     * The region defined by the hull.
+     */
     private final ConvexVolume region;
 
-    /** A collection of all facets that form the convex volume of the hull. */
+    /**
+     * A collection of all facets that form the convex volume of the hull.
+     */
     private final List<ConvexPolygon3D> facets;
 
-    /** Flag for when the hull is degenerate. */
+    /**
+     * Flag for when the hull is degenerate.
+     */
     private final boolean isDegenerate;
 
     /**
@@ -65,8 +74,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      * @param facets the facets of the hull.
      */
     ConvexHull3D(Collection<? extends ConvexPolygon3D> facets) {
-        vertices = Collections.unmodifiableList(
-                new ArrayList<>(facets.stream().flatMap(f -> f.getVertices().stream()).collect(Collectors.toSet())));
+        vertices = Collections.unmodifiableList(new ArrayList<>(facets.stream().flatMap(f -> f.getVertices().stream())
+                .collect(Collectors.toSet())));
         region = ConvexVolume.fromBounds(() -> facets.stream().map(ConvexPolygon3D::getPlane).iterator());
         this.facets = Collections.unmodifiableList(new ArrayList<>(facets));
         this.isDegenerate = false;
@@ -86,13 +95,17 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         this.isDegenerate = isDegenerate;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Vector3D> getVertices() {
         return vertices;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConvexVolume getRegion() {
         return region;
@@ -145,23 +158,27 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      */
     public static class Builder {
 
-        /** Set of possible candidates. */
+        /**
+         * Set of possible candidates.
+         */
         private final PointSet<Vector3D> candidates;
 
-        /** Precision context used to compare floating point numbers. */
-        private final DoubleEquivalence precision;
-
-        /** Simplex for testing new points and starting the algorithm. */
-        private Simplex simplex;
-
-        /** The minX, maxX, minY, maxY, minZ, maxZ points. */
-        private Bounds3D box;
-
         /**
-         * A map which contains all the vertices of the current hull as keys and the
-         * associated facets as values.
+         * Precision context used to compare floating point numbers.
          */
-        private Map<Vector3D, Set<Facet>> vertexToFacetMap;
+        private final DoubleEquivalence precision;
+        /**
+         * Map containing all edges as keys and the associated facets as values.
+         */
+        private final Map<Edge, Set<Facet>> edgeMap;
+        /**
+         * Simplex for testing new points and starting the algorithm.
+         */
+        private Simplex simplex;
+        /**
+         * The minX, maxX, minY, maxY, minZ, maxZ points.
+         */
+        private Bounds3D box;
 
         /**
          * Constructor for a builder with the given precision.
@@ -171,8 +188,22 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         public Builder(DoubleEquivalence precision) {
             candidates = EuclideanCollections.pointSet3D(precision);
             this.precision = precision;
-            vertexToFacetMap = EuclideanCollections.pointMap3D(precision);
             simplex = new Simplex(Collections.emptySet());
+            edgeMap = new HashMap<>();
+        }
+
+        /**
+         * Associates the given point with an outside set if possible.
+         *
+         * @param p      the given point.
+         * @param facets the facets to check against.
+         */
+        private static void distributePoint(Vector3D p, Iterable<Facet> facets) {
+            for (Facet facet : facets) {
+                if (facet.addPoint(p)) {
+                    return;
+                }
+            }
         }
 
         /**
@@ -243,7 +274,6 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 return new ConvexHull3D(candidates, true);
             }
 
-            vertexToFacetMap = new HashMap<>();
             simplex.getFacets().forEach(this::addFacet);
             distributePoints(simplex.getFacets());
             Facet conflictFacet = getConflictFacet();
@@ -251,7 +281,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 Vector3D conflictPoint = conflictFacet.getOutsidePoint();
                 Set<Facet> visibleFacets = new HashSet<>();
                 getVisibleFacets(conflictFacet, conflictPoint, visibleFacets);
-                Set<Vector3D[]> horizon = getHorizon(visibleFacets);
+                Set<Edge> horizon = getHorizon(visibleFacets);
                 Vector3D referencePoint = conflictFacet.getPolygon().getCentroid();
                 Set<Facet> cone = constructCone(conflictPoint, horizon, referencePoint);
                 removeFacets(visibleFacets);
@@ -259,7 +289,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 distributePoints(cone);
                 conflictFacet = getConflictFacet();
             }
-            Collection<ConvexPolygon3D> hull = vertexToFacetMap.values().stream().flatMap(Collection::stream)
+            Collection<ConvexPolygon3D> hull = edgeMap.values().stream().flatMap(Collection::stream)
                     .map(Facet::getPolygon).collect(Collectors.toSet());
             return new ConvexHull3D(hull);
         }
@@ -274,11 +304,11 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param referencePoint a reference point for orientation.
          * @return a set of newly constructed facets.
          */
-        private Set<Facet> constructCone(Vector3D conflictPoint, Set<Vector3D[]> horizon, Vector3D referencePoint) {
+        private Set<Facet> constructCone(Vector3D conflictPoint, Set<Edge> horizon, Vector3D referencePoint) {
             Set<Facet> newFacets = new HashSet<>();
-            for (Vector3D[] edge : horizon) {
-                ConvexPolygon3D newPolygon = Planes
-                        .convexPolygonFromVertices(Arrays.asList(edge[0], edge[1], conflictPoint), precision);
+            for (Edge edge : horizon) {
+                ConvexPolygon3D newPolygon = Planes.convexPolygonFromVertices(Arrays.asList(edge.getFirst(),
+                        edge.getSecond(), conflictPoint), precision);
                 newFacets.add(new Facet(newPolygon, referencePoint, precision));
             }
             return newFacets;
@@ -322,8 +352,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
 
             // Find a point with maximal distance to the plane formed by the triangle.
             Plane plane = facet1.getPlane();
-            Vector3D vertex4 = points.stream()
-                    .max((u, v) -> Double.compare(Math.abs(plane.offset(u)), Math.abs(plane.offset(v)))).get();
+            Vector3D vertex4 = points.stream().max((u, v) -> Double.compare(Math.abs(plane.offset(u)),
+                    Math.abs(plane.offset(v)))).get();
 
             // The point set is degenerate, because all points are coplanar.
             if (plane.contains(vertex4)) {
@@ -355,14 +385,14 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param facet the given facet.
          */
         private void addFacet(Facet facet) {
-            for (Vector3D p : facet.getPolygon().getVertices()) {
-                if (vertexToFacetMap.containsKey(p)) {
-                    Set<Facet> set = vertexToFacetMap.get(p);
+            for (Edge e : facet.getEdges()) {
+                if (edgeMap.containsKey(e)) {
+                    Set<Facet> set = edgeMap.get(e);
                     set.add(facet);
                 } else {
-                    Set<Facet> set = new HashSet<>(3);
+                    Set<Facet> set = new HashSet<>(2);
                     set.add(facet);
-                    vertexToFacetMap.put(p, set);
+                    edgeMap.put(e, set);
                 }
             }
         }
@@ -381,35 +411,21 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         }
 
         /**
-         * Associates the given point with an outside set if possible.
-         *
-         * @param p the given point.
-         * @param facets the facets to check against.
-         */
-        private static void distributePoint(Vector3D p, Iterable<Facet> facets) {
-            for (Facet facet : facets) {
-                if (facet.addPoint(p)) {
-                    return;
-                }
-            }
-        }
-
-        /**
          * Returns any facet, which is currently in conflict e.g has a non empty outside
          * set.
          *
          * @return any facet, which is currently in conflict e.g has a non empty outside
-         *         set.
+         * set.
          */
         private Facet getConflictFacet() {
-            return vertexToFacetMap.values().stream().flatMap(Collection::stream).filter(Facet::hasOutsidePoints)
-                    .findFirst().orElse(null);
+            return edgeMap.values().stream().flatMap(Collection::stream).filter(Facet::hasOutsidePoints).findFirst()
+                    .orElse(null);
         }
 
         /**
          * Adds all visible facets to the provided set.
          *
-         * @param facet the given conflictFacet.
+         * @param facet         the given conflictFacet.
          * @param conflictPoint the given conflict point.
          * @param collector     visible facets are collected in this set.
          */
@@ -432,39 +448,21 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return a set of all neighbors.
          */
         private Set<Facet> findNeighbors(Facet facet) {
-            List<Vector3D> vertices = facet.getPolygon().getVertices();
+            List<Edge> edges = facet.getEdges();
             Set<Facet> neighbors = new HashSet<>();
-            for (int i = 0; i < vertices.size(); i++) {
-                for (int j = i + 1; j < vertices.size(); j++) {
-                    neighbors.addAll(getFacets(vertices.get(i), vertices.get(j)));
-                }
-            }
+            edges.forEach(e -> neighbors.addAll(getFacets(e)));
             neighbors.remove(facet);
             return neighbors;
         }
 
         /**
-         * Gets all the facets, which have the given point as vertex or {@code null}.
+         * Gets all the facets, which have the given edge as an edge. If none is present the empty set is returned.
          *
-         * @param vertex the given point.
+         * @param e the given edge.
          * @return a set containing all facets with the given vertex.
          */
-        private Set<Facet> getFacets(Vector3D vertex) {
-            Set<Facet> set = vertexToFacetMap.get(vertex);
-            return set == null ? Collections.emptySet() : Collections.unmodifiableSet(set);
-        }
-
-        /**
-         * Returns a set of all facets that have the given points as vertices.
-         *
-         * @param first  the first vertex.
-         * @param second the second vertex.
-         * @return a set of all facets that have the given points as vertices.
-         */
-        private Set<Facet> getFacets(Vector3D first, Vector3D second) {
-            Set<Facet> set = new HashSet<>(getFacets(first));
-            set.retainAll(getFacets(second));
-            return Collections.unmodifiableSet(set);
+        private Set<Facet> getFacets(Edge e) {
+            return Collections.unmodifiableSet(edgeMap.getOrDefault(e, Collections.emptySet()));
         }
 
         /**
@@ -473,31 +471,16 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param visibleFacets the given set of facets.
          * @return a set of arrays with size 2.
          */
-        private Set<Vector3D[]> getHorizon(Set<Facet> visibleFacets) {
-            Set<Vector3D[]> edges = new HashSet<>();
+        private Set<Edge> getHorizon(Set<Facet> visibleFacets) {
+            Set<Edge> edges = new HashSet<>();
             for (Facet facet : visibleFacets) {
                 for (Facet neighbor : findNeighbors(facet)) {
                     if (!visibleFacets.contains(neighbor)) {
-                        edges.add(findEdge(facet, neighbor));
+                        edges.add(facet.getBorder(neighbor));
                     }
                 }
             }
             return edges;
-        }
-
-        /**
-         * Finds the two vertices that form the edge between the facet and neighbor
-         * facet..
-         *
-         * @param facet    the given facet.
-         * @param neighbor the neighboring facet.
-         * @return the edge between the two polygons as array.
-         */
-        private Vector3D[] findEdge(Facet facet, Facet neighbor) {
-            List<Vector3D> vertices = new ArrayList<>(facet.getPolygon().getVertices());
-            vertices.retainAll(neighbor.getPolygon().getVertices());
-            // Only two vertices can remain.
-            return new Vector3D[]{vertices.get(0), vertices.get(1)};
         }
 
         /**
@@ -509,7 +492,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          */
         private void removeFacets(Set<Facet> visibleFacets) {
             visibleFacets.forEach(f -> candidates.addAll(f.getOutsideSet()));
-            if (!vertexToFacetMap.isEmpty()) {
+            if (!edgeMap.isEmpty()) {
                 removeFacetsFromVertexMap(visibleFacets);
             }
         }
@@ -522,29 +505,41 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private void removeFacetsFromVertexMap(Set<Facet> visibleFacets) {
             // Remove facets from vertxToFacetMap
             for (Facet facet : visibleFacets) {
-                for (Vector3D vertex : facet.getPolygon().getVertices()) {
-                    Set<Facet> facets = vertexToFacetMap.get(vertex);
+                for (Edge e : facet.getEdges()) {
+                    Set<Facet> facets = edgeMap.get(e);
                     facets.remove(facet);
                     if (facets.isEmpty()) {
-                        vertexToFacetMap.remove(vertex);
+                        edgeMap.remove(e);
                     }
                 }
             }
         }
 
     }
+
     /**
      * A facet is a convex polygon with an associated outside set.
      */
     private static class Facet {
 
-        /** The polygon of the facet. */
+        /**
+         * The polygon of the facet.
+         */
         private final ConvexPolygon3D polygon;
 
-        /** The outside set of the facet. */
+        /**
+         * The edges of the facet.
+         */
+        private final List<Edge> edges;
+
+        /**
+         * The outside set of the facet.
+         */
         private final Set<Vector3D> outsideSet;
 
-        /** Precision context used to compare floating point numbers. */
+        /**
+         * Precision context used to compare floating point numbers.
+         */
         private final DoubleEquivalence precision;
 
         /**
@@ -560,6 +555,14 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             this.polygon = precision.lte(polygon.getPlane().offset(referencePoint), 0) ? polygon : polygon.reverse();
             outsideSet = EuclideanCollections.pointSet3D(precision);
             this.precision = precision;
+            List<Edge> edgesCol = new ArrayList<>();
+            List<Vector3D> vertices = polygon.getVertices();
+            for (int i = 0; i < vertices.size(); i++) {
+                for (int j = i + 1; j < vertices.size(); j++) {
+                    edgesCol.add(new Edge(vertices.get(i), vertices.get(j)));
+                }
+            }
+            edges = Collections.unmodifiableList(edgesCol);
         }
 
         /**
@@ -567,7 +570,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * non-empty.
          *
          * @return {@code true} if the facet is in conflict e.g the outside set is
-         *         non-empty.
+         * non-empty.
          */
         boolean hasOutsidePoints() {
             return !outsideSet.isEmpty();
@@ -592,13 +595,37 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         }
 
         /**
+         * Returns a list of all edges.
+         *
+         * @return a list of all edges.
+         */
+        public List<Edge> getEdges() {
+            return edges;
+        }
+
+        /**
+         * Returns the shared edge of this facet and the given neighbor or {@code null} if they share no edge.
+         *
+         * @param neighbor the given neighbor.
+         * @return the shared edge or {@code null}.
+         */
+        public Edge getBorder(Facet neighbor) {
+            for (Edge e : edges) {
+                if (neighbor.getEdges().contains(e)) {
+                    return e;
+                }
+            }
+            return null;
+        }
+
+        /**
          * Returns {@code true} if the point resides in the positive half-space defined
          * by the associated hyperplane of the polygon and {@code false} otherwise. If
          * {@code true} the point is added to the associated outside set.
          *
          * @param p the given point.
          * @return {@code true} if the point is added to the outside set, {@code false}
-         *         otherwise.
+         * otherwise.
          */
         public boolean addPoint(Vector3D p) {
             return isOutside(p) && outsideSet.add(p);
@@ -610,9 +637,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * to be inside. Mathematically a point is outside, if the calculated oriented
          * offset, of the point to the hyperplane is greater than zero.
          *
-         * @param point     a reference point.
+         * @param point a reference point.
          * @return {@code true} if the given point resides outside the negative
-         *         half-space.
+         * half-space.
          */
         public boolean isOutside(Vector3D point) {
             return precision.gt(polygon.getPlane().offset(point), 0);
@@ -623,7 +650,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * defined by the associated polygon.
          *
          * @return the outside point with the greatest offset distance to the hyperplane
-         *         defined by the associated polygon.
+         * defined by the associated polygon.
          */
         public Vector3D getOutsidePoint() {
             Plane plane = polygon.getPlane();
@@ -640,17 +667,91 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             return conflictPoint;
         }
     }
+
+    /**
+     * This class represents an edge consisting of two vertices. The order of the vertices is not relevant so two edges
+     * are equivalent if the edges are equivalent irrespectively of the order.
+     */
+    private static class Edge {
+
+        /**
+         * The first vertex.
+         */
+        private final Vector3D first;
+
+        /**
+         * The second vertex.
+         */
+        private final Vector3D second;
+
+        /**
+         * Simple Constructor.
+         *
+         * @param first  the first edge.
+         * @param second the second edge.
+         */
+        Edge(Vector3D first, Vector3D second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        /**
+         * Getter for the first vertex.
+         *
+         * @return the first vertex.
+         */
+        public Vector3D getFirst() {
+            return first;
+        }
+
+        /**
+         * Getter for the second vertex.
+         *
+         * @return the second vertex.
+         */
+        public Vector3D getSecond() {
+            return second;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Edge edge = (Edge) o;
+            return Objects.equals(first, edge.first) && Objects.equals(second, edge.second) ||
+                    Objects.equals(first, edge.second) && Objects.equals(second, edge.first);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return first.hashCode() + second.hashCode();
+        }
+    }
+
     /**
      * This class represents a simple simplex with four facets.
      */
     private static class Simplex {
 
 
-        /** The facets of the simplex. */
+        /**
+         * The facets of the simplex.
+         */
         private final Set<Facet> facets;
 
         /**
          * Constructs a new simplex with the given facets.
+         *
          * @param facets the given facets.
          */
         Simplex(Collection<Facet> facets) {
