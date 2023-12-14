@@ -411,7 +411,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         return 643 * (164 * Double.hashCode(x) + 3 * Double.hashCode(y) + Double.hashCode(z));
     }
 
-    /**d
+    /**
      * Test for the equality of two vector instances.
      * <p>
      * If all coordinates of two vectors are exactly the same, and none are
