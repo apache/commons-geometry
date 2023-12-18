@@ -170,7 +170,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         /**
          * Map containing all edges as keys and the associated facets as values.
          */
-        private final Map<Edge, Set<Facet>> edgeMap;
+        private final Map<Edge, Facet> edgeMap;
         /**
          * Simplex for testing new points and starting the algorithm.
          */
@@ -289,7 +289,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 distributePoints(cone);
                 conflictFacet = getConflictFacet();
             }
-            Collection<ConvexPolygon3D> hull = edgeMap.values().stream().flatMap(Collection::stream)
+            Collection<ConvexPolygon3D> hull = edgeMap.values().stream()
                     .map(Facet::getPolygon).collect(Collectors.toSet());
             return new ConvexHull3D(hull);
         }
@@ -387,13 +387,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private void addFacet(Facet facet) {
             for (Edge e : facet.getEdges()) {
                 if (edgeMap.containsKey(e)) {
-                    Set<Facet> set = edgeMap.get(e);
-                    set.add(facet);
-                } else {
-                    Set<Facet> set = new HashSet<>(2);
-                    set.add(facet);
-                    edgeMap.put(e, set);
+                    System.out.println("Gefunden.");
                 }
+                edgeMap.put(e, facet);
             }
         }
 
@@ -418,7 +414,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * set.
          */
         private Facet getConflictFacet() {
-            return edgeMap.values().stream().flatMap(Collection::stream).filter(Facet::hasOutsidePoints).findFirst()
+            return edgeMap.values().stream().filter(Facet::hasOutsidePoints).findFirst()
                     .orElse(null);
         }
 
@@ -450,8 +446,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private Set<Facet> findNeighbors(Facet facet) {
             List<Edge> edges = facet.getEdges();
             Set<Facet> neighbors = new HashSet<>();
-            edges.forEach(e -> neighbors.addAll(getFacets(e)));
-            neighbors.remove(facet);
+            edges.forEach(e -> neighbors.add(getFacet(e.getInverse())));
             return neighbors;
         }
 
@@ -461,8 +456,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param e the given edge.
          * @return a set containing all facets with the given vertex.
          */
-        private Set<Facet> getFacets(Edge e) {
-            return Collections.unmodifiableSet(edgeMap.getOrDefault(e, Collections.emptySet()));
+        private Facet getFacet(Edge e) {
+            return edgeMap.get(e);
         }
 
         /**
@@ -506,11 +501,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             // Remove facets from vertxToFacetMap
             for (Facet facet : visibleFacets) {
                 for (Edge e : facet.getEdges()) {
-                    Set<Facet> facets = edgeMap.get(e);
-                    facets.remove(facet);
-                    if (facets.isEmpty()) {
-                        edgeMap.remove(e);
-                    }
+                    edgeMap.remove(e);
                 }
             }
         }
@@ -556,12 +547,12 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             outsideSet = EuclideanCollections.pointSet3D(precision);
             this.precision = precision;
             List<Edge> edgesCol = new ArrayList<>();
-            List<Vector3D> vertices = polygon.getVertices();
+            List<Vector3D> vertices = this.polygon.getVertices();
 
-            Vector3D start = vertices.get(vertices.size() - 1);
-            for (Vector3D end : vertices) {
+            for (int i = 0; i < vertices.size(); i++) {
+                Vector3D start = vertices.get(i);
+                Vector3D end = vertices.get(i + 1 == vertices.size() ? 0 : i + 1);
                 edgesCol.add(new Edge(start, end));
-                start = end;
             }
             edges = Collections.unmodifiableList(edgesCol);
         }
@@ -612,7 +603,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          */
         public Edge getBorder(Facet neighbor) {
             for (Edge e : edges) {
-                if (neighbor.getEdges().contains(e)) {
+                if (neighbor.getEdges().contains(e.getInverse())) {
                     return e;
                 }
             }
@@ -715,19 +706,23 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         }
 
         /**
+         * Returns the inverse of this given edge.
+         *
+         * @return the inverse of this given edge.
+         */
+        public Edge getInverse() {
+            return new Edge(second, first);
+        }
+
+        /**
          * {@inheritDoc}
          */
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             Edge edge = (Edge) o;
-            return Objects.equals(first, edge.first) && Objects.equals(second, edge.second) ||
-                    Objects.equals(first, edge.second) && Objects.equals(second, edge.first);
+            return Objects.equals(first, edge.first) && Objects.equals(second, edge.second);
         }
 
         /**
@@ -735,7 +730,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          */
         @Override
         public int hashCode() {
-            return first.hashCode() + second.hashCode();
+            return Objects.hash(first, second);
         }
     }
 
