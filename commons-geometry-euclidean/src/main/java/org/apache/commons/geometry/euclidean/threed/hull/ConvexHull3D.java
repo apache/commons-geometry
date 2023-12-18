@@ -386,9 +386,6 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          */
         private void addFacet(Facet facet) {
             for (Edge e : facet.getEdges()) {
-                if (edgeMap.containsKey(e)) {
-                    System.out.println("Gefunden.");
-                }
                 edgeMap.put(e, facet);
             }
         }
