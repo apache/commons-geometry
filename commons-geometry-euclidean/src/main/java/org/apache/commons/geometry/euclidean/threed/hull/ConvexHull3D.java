@@ -557,10 +557,11 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             this.precision = precision;
             List<Edge> edgesCol = new ArrayList<>();
             List<Vector3D> vertices = polygon.getVertices();
-            for (int i = 0; i < vertices.size(); i++) {
-                for (int j = i + 1; j < vertices.size(); j++) {
-                    edgesCol.add(new Edge(vertices.get(i), vertices.get(j)));
-                }
+
+            Vector3D start = vertices.get(vertices.size() - 1);
+            for (Vector3D end : vertices) {
+                edgesCol.add(new Edge(start, end));
+                start = end;
             }
             edges = Collections.unmodifiableList(edgesCol);
         }
