@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -133,7 +134,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
     /**
      * Implementation of quick-hull algorithm by Barber, Dobkin and Huhdanpaa. The
      * algorithm constructs the convex hull for a given finite set of points.
-     * Empirically, the number of points processed by Quickhull is proportional to
+     * Empirically, the number of points processed by quickhull is proportional to
      * the number of vertices in the output. The algorithm runs on an input of size
      * n with r processed points in time O(n log r). We define a point of the given
      * set to be extreme, if and only if the point is part of the final hull. The
@@ -280,8 +281,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             while (conflictFacet != null) {
                 Vector3D conflictPoint = conflictFacet.getOutsidePoint();
                 Set<Facet> visibleFacets = new HashSet<>();
-                getVisibleFacets(conflictFacet, conflictPoint, visibleFacets);
-                Set<Edge> horizon = getHorizon(visibleFacets);
+                visibleFacets.add(conflictFacet);
+                Set<Edge> horizon = new HashSet<>();
+                getVisibleFacets(conflictFacet, conflictPoint, visibleFacets, horizon);
                 Vector3D referencePoint = conflictFacet.getPolygon().getCentroid();
                 Set<Facet> cone = constructCone(conflictPoint, horizon, referencePoint);
                 removeFacets(visibleFacets);
@@ -328,8 +330,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             Vector3D vertex1 = points.stream().min(Vector3D.COORDINATE_ASCENDING_ORDER).get();
 
             // Find a point with maximal distance to the second.
-            Vector3D vertex2 = points.stream().max((u, v) -> Double.compare(vertex1.distance(u), vertex1.distance(v)))
-                    .get();
+            Vector3D vertex2 = points.stream().max(Comparator.comparingDouble(vertex1::distance)).get();
 
             // The point is degenerate if all points are equivalent.
             if (vertex1.eq(vertex2, precision)) {
@@ -340,7 +341,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             Line3D line = Lines3D.fromPoints(vertex1, vertex2, precision);
 
             // Find a point with maximal distance from the line.
-            Vector3D vertex3 = points.stream().max((u, v) -> Double.compare(line.distance(u), line.distance(v))).get();
+            Vector3D vertex3 = points.stream().max(Comparator.comparingDouble(line::distance)).get();
 
             // The point set is degenerate because all points are collinear.
             if (line.contains(vertex3)) {
@@ -352,8 +353,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
 
             // Find a point with maximal distance to the plane formed by the triangle.
             Plane plane = facet1.getPlane();
-            Vector3D vertex4 = points.stream().max((u, v) -> Double.compare(Math.abs(plane.offset(u)),
-                    Math.abs(plane.offset(v)))).get();
+            Vector3D vertex4 = points.stream().max(Comparator.comparingDouble(d -> Math.abs(plane.offset(d)))).get();
 
             // The point set is degenerate, because all points are coplanar.
             if (plane.contains(vertex4)) {
@@ -392,7 +392,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
 
         /**
          * Associates each point of the candidates set with an outside set of the given
-         * facets. Afterwards the candidates set is cleared.
+         * facets. Afterward the candidates set is cleared.
          *
          * @param facets the facets to check against.
          */
@@ -404,10 +404,10 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         }
 
         /**
-         * Returns any facet, which is currently in conflict e.g has a non empty outside
+         * Returns any facet, which is currently in conflict e.g. has a non-empty outside
          * set.
          *
-         * @return any facet, which is currently in conflict e.g has a non empty outside
+         * @return any facet, which is currently in conflict e.g. has a non-empty outside
          * set.
          */
         private Facet getConflictFacet() {
@@ -419,60 +419,21 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * Adds all visible facets to the provided set.
          *
          * @param facet         the given conflictFacet.
-         * @param conflictPoint the given conflict point.
-         * @param collector     visible facets are collected in this set.
+         * @param outsidePoint the given outside point.
+         * @param visibleFacets visible facets are collected in this set.
+         * @param horizon       horizon edges.
          */
-        private void getVisibleFacets(Facet facet, Vector3D conflictPoint, Set<Facet> collector) {
-            if (collector.contains(facet)) {
-                return;
-            }
-
-            // Check the facet and all neighbors.
-            if (facet.isOutside(conflictPoint)) {
-                collector.add(facet);
-                findNeighbors(facet).forEach(f -> getVisibleFacets(f, conflictPoint, collector));
-            }
-        }
-
-        /**
-         * Returns a set of all neighbors for the given facet.
-         *
-         * @param facet the given facet.
-         * @return a set of all neighbors.
-         */
-        private Set<Facet> findNeighbors(Facet facet) {
-            List<Edge> edges = facet.getEdges();
-            Set<Facet> neighbors = new HashSet<>();
-            edges.forEach(e -> neighbors.add(getFacet(e.getInverse())));
-            return neighbors;
-        }
-
-        /**
-         * Gets all the facets, which have the given edge as an edge. If none is present the empty set is returned.
-         *
-         * @param e the given edge.
-         * @return a set containing all facets with the given vertex.
-         */
-        private Facet getFacet(Edge e) {
-            return edgeMap.get(e);
-        }
-
-        /**
-         * Finds the horizon of the given set of facets as a set of arrays.
-         *
-         * @param visibleFacets the given set of facets.
-         * @return a set of arrays with size 2.
-         */
-        private Set<Edge> getHorizon(Set<Facet> visibleFacets) {
-            Set<Edge> edges = new HashSet<>();
-            for (Facet facet : visibleFacets) {
-                for (Facet neighbor : findNeighbors(facet)) {
-                    if (!visibleFacets.contains(neighbor)) {
-                        edges.add(facet.getBorder(neighbor));
+        private void getVisibleFacets(Facet facet, Vector3D outsidePoint, Set<Facet> visibleFacets, Set<Edge> horizon) {
+            for (Edge e : facet.getEdges()) {
+                Facet neighbor = edgeMap.get(e.getInverse());
+                if (precision.gt(neighbor.offset(outsidePoint), 0.0)) {
+                    if (visibleFacets.add(neighbor)) {
+                        getVisibleFacets(neighbor, outsidePoint, visibleFacets, horizon);
                     }
+                } else {
+                    horizon.add(e);
                 }
             }
-            return edges;
         }
 
         /**
@@ -531,6 +492,16 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private final DoubleEquivalence precision;
 
         /**
+         * Store the offset with the biggest distance to the plane.
+         */
+        private double maximumOffset;
+
+        /**
+         * Store the point with the biggest distance.
+         */
+        private Vector3D maximumPoint;
+
+        /**
          * Constructs a new facet with the given polygon and an associated empty
          * outside set in such a way, that the reference point is in the negative half-space of the associated oriented
          * polygon.
@@ -545,6 +516,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             this.precision = precision;
             List<Edge> edgesCol = new ArrayList<>();
             List<Vector3D> vertices = this.polygon.getVertices();
+            maximumOffset = 0.0;
 
             for (int i = 0; i < vertices.size(); i++) {
                 Vector3D start = vertices.get(i);
@@ -555,10 +527,10 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         }
 
         /**
-         * Return {@code true} if the facet is in conflict e.g the outside set is
+         * Return {@code true} if the facet is in conflict e.g. the outside set is
          * non-empty.
          *
-         * @return {@code true} if the facet is in conflict e.g the outside set is
+         * @return {@code true} if the facet is in conflict e.g. the outside set is
          * non-empty.
          */
         boolean hasOutsidePoints() {
@@ -593,21 +565,6 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         }
 
         /**
-         * Returns the shared edge of this facet and the given neighbor or {@code null} if they share no edge.
-         *
-         * @param neighbor the given neighbor.
-         * @return the shared edge or {@code null}.
-         */
-        public Edge getBorder(Facet neighbor) {
-            for (Edge e : edges) {
-                if (neighbor.getEdges().contains(e.getInverse())) {
-                    return e;
-                }
-            }
-            return null;
-        }
-
-        /**
          * Returns {@code true} if the point resides in the positive half-space defined
          * by the associated hyperplane of the polygon and {@code false} otherwise. If
          * {@code true} the point is added to the associated outside set.
@@ -617,21 +574,26 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * otherwise.
          */
         public boolean addPoint(Vector3D p) {
-            return isOutside(p) && outsideSet.add(p);
+            double offset = offset(p);
+            if (precision.gt(offset, 0.0)) {
+                outsideSet.add(p);
+                if (precision.gt(offset, maximumOffset)) {
+                    maximumOffset = offset;
+                    maximumPoint = p;
+                }
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Returns {@code true} if the given point resides outside the negative
-         * half-space of the oriented facet. Points which are coplanar are assumed
-         * to be inside. Mathematically a point is outside, if the calculated oriented
-         * offset, of the point to the hyperplane is greater than zero.
+         * Returns the offset of the given point to the plane defined by this instance.
          *
          * @param point a reference point.
-         * @return {@code true} if the given point resides outside the negative
-         * half-space.
+         * @return the offset of the given point to the plane defined by this instance.
          */
-        public boolean isOutside(Vector3D point) {
-            return precision.gt(polygon.getPlane().offset(point), 0);
+        public double offset(Vector3D point) {
+            return polygon.getPlane().offset(point);
         }
 
         /**
@@ -642,18 +604,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * defined by the associated polygon.
          */
         public Vector3D getOutsidePoint() {
-            Plane plane = polygon.getPlane();
-            Vector3D conflictPoint = outsideSet.stream().findFirst().get();
-            double max = plane.offset(conflictPoint);
-            double offset;
-            for (Vector3D p : outsideSet) {
-                offset = plane.offset(p);
-                if (precision.gt(offset, max)) {
-                    max = offset;
-                    conflictPoint = p;
-                }
-            }
-            return conflictPoint;
+            return maximumPoint;
         }
     }
 
@@ -716,8 +667,12 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          */
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Edge edge = (Edge) o;
             return Objects.equals(first, edge.first) && Objects.equals(second, edge.second);
         }
