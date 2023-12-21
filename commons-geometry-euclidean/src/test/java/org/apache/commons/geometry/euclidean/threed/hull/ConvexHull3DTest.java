@@ -18,16 +18,22 @@
 package org.apache.commons.geometry.euclidean.threed.hull;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.euclidean.EuclideanCollections;
+import org.apache.commons.geometry.euclidean.threed.ConvexPolygon3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexVolume;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.core.Precision;
@@ -53,17 +59,14 @@ public class ConvexHull3DTest {
     }
 
     /**
-     * A Hull with less than four points is degenerate.
+     * A hull with less than four points is degenerate.
      */
     @Test
     void lessThanFourPoints() {
         List<Vector3D> vertices = Arrays.asList(Vector3D.of(0, 0, 0), Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
-        assertNotNull(hull);
-        assertNull(hull.getRegion());
-        assertTrue(hull.getFacets().isEmpty());
-        assertEquals(vertices, hull.getVertices());
+        checkDegenerateHull(hull, vertices);
     }
 
     /**
@@ -74,12 +77,7 @@ public class ConvexHull3DTest {
         List<Vector3D> vertices = Arrays.asList(Vector3D.ZERO, Vector3D.ZERO, Vector3D.ZERO, Vector3D.ZERO);
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
-        assertNotNull(hull);
-        assertNull(hull.getRegion());
-        assertTrue(hull.getFacets().isEmpty());
-        List<Vector3D> hullVertices = hull.getVertices();
-        assertEquals(1, hullVertices.size());
-        assertTrue(hullVertices.contains(Vector3D.ZERO));
+        checkDegenerateHull(hull, vertices);
     }
 
     @Test
@@ -88,10 +86,7 @@ public class ConvexHull3DTest {
                 Vector3D.of(3, 0, 0));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
-        assertNotNull(hull);
-        assertNull(hull.getRegion());
-        assertTrue(hull.getFacets().isEmpty());
-        assertEquals(vertices, hull.getVertices());
+        checkDegenerateHull(hull, vertices);
     }
 
     @Test
@@ -100,10 +95,7 @@ public class ConvexHull3DTest {
                 Vector3D.of(3, 0, 0));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
-        assertNotNull(hull);
-        assertNull(hull.getRegion());
-        assertTrue(hull.getFacets().isEmpty());
-        assertEquals(vertices, hull.getVertices());
+        checkDegenerateHull(hull, vertices);
     }
 
     @Test
@@ -112,12 +104,7 @@ public class ConvexHull3DTest {
                 Vector3D.of(0, 0, 1));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
-        assertNotNull(hull.getRegion());
-        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
-        // The size of the simplex is finite and non-zero.
+        checkHull(hull, vertices);
         assertTrue(TEST_PRECISION.eq(1.0 / 6.0, hull.getRegion().getSize()));
         assertEquals(4, hull.getFacets().size());
     }
@@ -128,12 +115,7 @@ public class ConvexHull3DTest {
                 Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 1));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
-        assertNotNull(hull.getRegion());
-        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
+        checkHull(hull, vertices);
         assertTrue(TEST_PRECISION.eq(1.0 / 2.0, hull.getRegion().getSize()));
         assertEquals(6, hull.getFacets().size());
     }
@@ -145,16 +127,9 @@ public class ConvexHull3DTest {
                 Vector3D.of(1, 1, 1));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
-        assertNotNull(hull.getRegion());
-        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
+        checkHull(hull, vertices);
         assertTrue(TEST_PRECISION.eq(1.0, hull.getRegion().getSize()));
+        assertEquals(12, hull.getFacets().size());
     }
 
     @Test
@@ -164,16 +139,9 @@ public class ConvexHull3DTest {
                 Vector3D.of(1, 1, 1));
         vertices.forEach(builder::append);
         ConvexHull3D hull = builder.build();
-        assertNotNull(hull.getRegion());
-        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
+        checkHull(hull, vertices);
         assertTrue(TEST_PRECISION.eq(1.0, hull.getRegion().getSize()));
+        assertEquals(12, hull.getFacets().size());
     }
 
     @Test
@@ -183,18 +151,9 @@ public class ConvexHull3DTest {
                 Vector3D.of(1, 1, 1), Vector3D.of(10, 20, 30), Vector3D.of(-0.5, 0, 5));
         builder.append(vertices);
         ConvexHull3D hull = builder.build();
-        assertNotNull(hull.getRegion());
-        assertTrue(hull.getRegion().contains(Vector3D.ZERO));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 0, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 0)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 0, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(0, 1, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(1, 1, 1)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(10, 20, 30)));
-        assertTrue(hull.getRegion().contains(Vector3D.of(-0.5, 0, 5)));
+        checkHull(hull, vertices);
         assertTrue(TEST_PRECISION.eq(42.58333333333329, hull.getRegion().getSize()));
+        assertEquals(14, hull.getFacets().size());
     }
 
     /**
@@ -212,9 +171,10 @@ public class ConvexHull3DTest {
         List<Vector3D> vertices = hull.getVertices();
         for (Vector3D p : set) {
             assertTrue(vertices.contains(p));
-            assertTrue(region.contains(p));
         }
+        checkHull(hull, vertices);
         assertEquals(1000, hull.getVertices().size());
+        assertEquals(1996, hull.getFacets().size());
     }
 
     @Test
@@ -222,11 +182,8 @@ public class ConvexHull3DTest {
         Set<Vector3D> set = createRandomPoints(100000, false);
         builder.append(set);
         ConvexHull3D hull = builder.build();
-        ConvexVolume region = hull.getRegion();
-        assertNotNull(region);
-        for (Vector3D p : set) {
-            assertTrue(region.contains(p));
-        }
+        checkHull(hull, set);
+        assertEquals(376, hull.getFacets().size());
     }
 
     @Test
@@ -236,14 +193,9 @@ public class ConvexHull3DTest {
         builder.append(set1);
         builder.append(set2);
         ConvexHull3D hull = builder.build();
-        ConvexVolume region = hull.getRegion();
-        assertNotNull(region);
-        for (Vector3D p : set1) {
-            assertTrue(region.contains(p));
-        }
-        for (Vector3D p : set2) {
-            assertTrue(region.contains(p));
-        }
+        checkHull(hull, set1);
+        checkHull(hull, set2);
+        assertEquals(376, hull.getFacets().size());
     }
 
     @Test
@@ -252,12 +204,8 @@ public class ConvexHull3DTest {
         List<Vector3D> list = new ArrayList<>(createRandomPoints(100, false));
         list.forEach(builder::append);
         ConvexHull3D hull = builder.build();
-        ConvexVolume region = hull.getRegion();
-        assertNotNull(region);
-        for (int i = 0; i < 100; i++) {
-            Vector3D p = list.get(i);
-            assertTrue(region.contains(p), String.format("The Vector with position %d is different.", i));
-        }
+        checkHull(hull, list);
+        assertEquals(70, hull.getFacets().size());
     }
 
     /**
@@ -277,6 +225,56 @@ public class ConvexHull3DTest {
             }
         }
         return set;
+    }
+
+    /**
+     * Check if the hull contains all the points in the given collection and checks if the volume is finite and
+     * non-zero.
+     */
+    private void checkHull(ConvexHull3D hull, Collection<Vector3D> points) {
+        ConvexVolume region = hull.getRegion();
+        assertNotNull(region);
+        assertTrue(region.isFinite());
+        assertFalse(region.isEmpty());
+        for (Vector3D p : points) {
+            assertTrue(region.contains(p));
+        }
+        checkFacets(hull);
+    }
+
+    private void checkFacets(ConvexHull3D hull) {
+        List<ConvexPolygon3D> polygons = hull.getFacets();
+        assertFalse(polygons.isEmpty());
+
+        // Build an edge map to check if every facet has a neighbor and all edges share two facets.
+        Vector3D centroid = hull.getRegion().getCentroid();
+        Set<ConvexHull3D.Facet> facets = polygons.stream().map(p -> new ConvexHull3D.Facet(p, centroid, TEST_PRECISION))
+                .collect(Collectors.toSet());
+
+        //Populate edgeMap.
+        Map<ConvexHull3D.Edge, ConvexHull3D.Facet> edgeMap = new HashMap<>();
+        for (ConvexHull3D.Facet f : facets) {
+            for (ConvexHull3D.Edge e : f.getEdges()) {
+                edgeMap.put(e, f);
+            }
+        }
+
+        //Check if all edges are shared by two facets.
+        for (ConvexHull3D.Facet f : facets) {
+            for (ConvexHull3D.Edge e : f.getEdges()) {
+                assertTrue(edgeMap.containsKey(e.getInverse()));
+            }
+        }
+    }
+
+    private void checkDegenerateHull(ConvexHull3D hull, Collection<Vector3D> points) {
+        assertTrue(hull.isDegenerate());
+        assertNull(hull.getRegion());
+        assertTrue(hull.getFacets().isEmpty());
+        List<Vector3D> vertices = hull.getVertices();
+        for (Vector3D p : points) {
+            assertTrue(vertices.contains(p));
+        }
     }
 
 }

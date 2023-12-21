@@ -118,7 +118,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      *
      * @return a collection of all two-dimensional faces.
      */
-    public List<? extends ConvexPolygon3D> getFacets() {
+    public List<ConvexPolygon3D> getFacets() {
         return facets;
     }
 
@@ -275,6 +275,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 return new ConvexHull3D(candidates, true);
             }
 
+
             simplex.getFacets().forEach(this::addFacet);
             distributePoints(simplex.getFacets());
             Facet conflictFacet = getConflictFacet();
@@ -309,8 +310,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private Set<Facet> constructCone(Vector3D conflictPoint, Set<Edge> horizon, Vector3D referencePoint) {
             Set<Facet> newFacets = new HashSet<>();
             for (Edge edge : horizon) {
-                ConvexPolygon3D newPolygon = Planes.convexPolygonFromVertices(Arrays.asList(edge.getFirst(),
-                        edge.getSecond(), conflictPoint), precision);
+                ConvexPolygon3D newPolygon = Planes.convexPolygonFromVertices(Arrays.asList(edge.getStart(),
+                        edge.getEnd(), conflictPoint), precision);
                 newFacets.add(new Facet(newPolygon, referencePoint, precision));
             }
             return newFacets;
@@ -419,7 +420,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * Adds all visible facets to the provided set.
          *
          * @param facet         the given conflictFacet.
-         * @param outsidePoint the given outside point.
+         * @param outsidePoint  the given outside point.
          * @param visibleFacets visible facets are collected in this set.
          * @param horizon       horizon edges.
          */
@@ -456,7 +457,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param visibleFacets the facets to be removed.
          */
         private void removeFacetsFromVertexMap(Set<Facet> visibleFacets) {
-            // Remove facets from vertxToFacetMap
+            // Remove facets from edgeMap
             for (Facet facet : visibleFacets) {
                 for (Edge e : facet.getEdges()) {
                     edgeMap.remove(e);
@@ -469,7 +470,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
     /**
      * A facet is a convex polygon with an associated outside set.
      */
-    private static class Facet {
+    static class Facet {
 
         /**
          * The polygon of the facet.
@@ -612,45 +613,45 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      * This class represents an edge consisting of two vertices. The order of the vertices is not relevant so two edges
      * are equivalent if the edges are equivalent irrespectively of the order.
      */
-    private static class Edge {
+    static class Edge {
 
         /**
          * The first vertex.
          */
-        private final Vector3D first;
+        private final Vector3D start;
 
         /**
          * The second vertex.
          */
-        private final Vector3D second;
+        private final Vector3D end;
 
         /**
          * Simple Constructor.
          *
-         * @param first  the first edge.
-         * @param second the second edge.
+         * @param start the start of the edge.
+         * @param end   the end of the edge.
          */
-        Edge(Vector3D first, Vector3D second) {
-            this.first = first;
-            this.second = second;
+        Edge(Vector3D start, Vector3D end) {
+            this.start = start;
+            this.end = end;
         }
 
         /**
-         * Getter for the first vertex.
+         * Getter for the start vertex.
          *
-         * @return the first vertex.
+         * @return the start vertex.
          */
-        public Vector3D getFirst() {
-            return first;
+        public Vector3D getStart() {
+            return start;
         }
 
         /**
-         * Getter for the second vertex.
+         * Getter for the end vertex.
          *
-         * @return the second vertex.
+         * @return the end vertex.
          */
-        public Vector3D getSecond() {
-            return second;
+        public Vector3D getEnd() {
+            return end;
         }
 
         /**
@@ -659,7 +660,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return the inverse of this given edge.
          */
         public Edge getInverse() {
-            return new Edge(second, first);
+            return new Edge(end, start);
         }
 
         /**
@@ -674,7 +675,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
                 return false;
             }
             Edge edge = (Edge) o;
-            return Objects.equals(first, edge.first) && Objects.equals(second, edge.second);
+            return Objects.equals(start, edge.start) && Objects.equals(end, edge.end);
         }
 
         /**
@@ -682,7 +683,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          */
         @Override
         public int hashCode() {
-            return Objects.hash(first, second);
+            return Objects.hash(start, end);
         }
     }
 
