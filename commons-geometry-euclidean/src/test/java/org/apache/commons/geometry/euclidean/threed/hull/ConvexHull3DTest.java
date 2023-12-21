@@ -236,6 +236,7 @@ public class ConvexHull3DTest {
         assertNotNull(region);
         assertTrue(region.isFinite());
         assertFalse(region.isEmpty());
+        assertFalse(hull.isDegenerate());
         for (Vector3D p : points) {
             assertTrue(region.contains(p));
         }
