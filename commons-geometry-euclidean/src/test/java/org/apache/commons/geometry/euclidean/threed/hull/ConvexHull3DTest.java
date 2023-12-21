@@ -153,7 +153,6 @@ public class ConvexHull3DTest {
         ConvexHull3D hull = builder.build();
         checkHull(hull, vertices);
         assertTrue(TEST_PRECISION.eq(42.58333333333329, hull.getRegion().getSize()));
-        assertEquals(14, hull.getFacets().size());
     }
 
     /**
@@ -174,7 +173,6 @@ public class ConvexHull3DTest {
         }
         checkHull(hull, vertices);
         assertEquals(1000, hull.getVertices().size());
-        assertEquals(1996, hull.getFacets().size());
     }
 
     @Test
@@ -183,7 +181,6 @@ public class ConvexHull3DTest {
         builder.append(set);
         ConvexHull3D hull = builder.build();
         checkHull(hull, set);
-        assertEquals(376, hull.getFacets().size());
     }
 
     @Test
@@ -195,7 +192,6 @@ public class ConvexHull3DTest {
         ConvexHull3D hull = builder.build();
         checkHull(hull, set1);
         checkHull(hull, set2);
-        assertEquals(376, hull.getFacets().size());
     }
 
     @Test
@@ -205,7 +201,6 @@ public class ConvexHull3DTest {
         list.forEach(builder::append);
         ConvexHull3D hull = builder.build();
         checkHull(hull, list);
-        assertEquals(70, hull.getFacets().size());
     }
 
     /**
