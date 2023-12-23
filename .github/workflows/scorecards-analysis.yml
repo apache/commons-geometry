@@ -57,13 +57,13 @@ jobs:
           publish_results: true
 
       - name: "Upload artifact"
-        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb    # 3.1.0
+        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb    # 3.1.1
         with:
           name: SARIF file
           path: results.sarif
           retention-days: 5
 
       - name: "Upload to code-scanning"
-        uses: github/codeql-action/upload-sarif@b398f525a5587552e573b247ac661067fafa920b    # 2.1.22
+        uses: github/codeql-action/upload-sarif@012739e5082ff0c22ca6d6ab32e07c36df03c4a4 # v3.22.12
         with:
           sarif_file: results.sarif
