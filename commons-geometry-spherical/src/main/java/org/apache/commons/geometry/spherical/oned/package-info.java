@@ -21,7 +21,7 @@
  * </p>
  * <p>
  * We use here the topologists definition of the 1-sphere (see
- * <a href="http://mathworld.wolfram.com/Sphere.html">Sphere</a> on
+ * <a href="https://mathworld.wolfram.com/Sphere.html">Sphere</a> on
  * MathWorld), i.e. the 1-sphere is the one-dimensional closed curve
  * defined in 2D as x<sup>2</sup>+y<sup>2</sup>=1.
  * </p>

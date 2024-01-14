@@ -122,7 +122,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
      * distribution.
      *
      * @see <a href=
-     *      "http://en.wikipedia.org/wiki/Convex_hull_algorithms#Akl-Toussaint_heuristic">
+     *      "https://en.wikipedia.org/wiki/Convex_hull_algorithms#Akl-Toussaint_heuristic">
      *      Akl-Toussaint heuristic (Wikipedia)</a>
      */
     public static final class Builder {

@@ -40,7 +40,7 @@ public interface Vector<V extends Vector<V>> extends Spatial {
     /** Get the L<sub>2</sub> norm (commonly known as the Euclidean norm) for the vector.
      * This corresponds to the common notion of vector magnitude or length and
      * is defined as the square root of the sum of the squares of all vector components.
-     * @see <a href="http://mathworld.wolfram.com/L2-Norm.html">L2 Norm</a>
+     * @see <a href="https://mathworld.wolfram.com/L2-Norm.html">L2 Norm</a>
      * @return L<sub>2</sub> norm for the vector
      */
     double norm();

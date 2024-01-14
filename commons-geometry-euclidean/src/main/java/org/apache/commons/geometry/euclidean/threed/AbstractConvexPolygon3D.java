@@ -71,7 +71,7 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
     /** {@inheritDoc} */
     @Override
     public double getSize() {
-        // see http://geomalgorithms.com/a01-_area.html#3D-Planar-Polygons
+        // see https://geomalgorithms.com/a01-_area.html#3D-Planar-Polygons
         final List<Vector3D> vertices = getVertices();
 
         double crossSumX = 0.0;
