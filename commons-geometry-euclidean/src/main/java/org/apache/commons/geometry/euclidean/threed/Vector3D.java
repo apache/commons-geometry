@@ -408,7 +408,15 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         if (isNaN()) {
             return 642;
         }
-        return 643 * (164 * Double.hashCode(x) + 3 * Double.hashCode(y) + Double.hashCode(z));
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(z);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 
     /**
