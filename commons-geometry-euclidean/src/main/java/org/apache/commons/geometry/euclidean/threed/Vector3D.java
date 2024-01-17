@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
@@ -401,8 +402,6 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * Get a hashCode for the vector.
      * <p>
      * All NaN values have the same hash code.
-     * <p>
-     * The hashing approach is adopted from the Joshua Bloch's book 'Effective Java, 1st ed, 2008'  ( see Item 9 ).   
      * @return a hash code value for this object
      */
     @Override
@@ -410,23 +409,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         if (isNaN()) {
             return 642;
         }
-        // resulting hash will be combined by summing up hashes of separate fields ( X,Y, and Z coordinates )
-        int result = 17;
-        // temporary variable storing the hash of a separate field ( X, Y, or Z coordinate )
-        long temp;
-        // pre-hash the X coordinate
-        temp = Double.doubleToLongBits(x);
-        // final hash of the X coordinate
-        result = (int) (temp ^ (temp >>> 32));
-        // pre-hash the Y coordinate
-        temp = Double.doubleToLongBits(y);
-        // final hash of the Y coordinate combined with X's hash
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        // pre-hash the Z coordinate
-        temp = Double.doubleToLongBits(z);
-        // final hash of the Z coordinate combined with X and Y's hashes
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        // return combined hash value for this instance of Vector3D
+        int result = Double.hashCode(x);
+        result = 31 * result + Double.hashCode(y);
+        result = 31 * result + Double.hashCode(z);
         return result;
     }
 
