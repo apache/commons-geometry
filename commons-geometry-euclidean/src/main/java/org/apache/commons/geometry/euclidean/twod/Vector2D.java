@@ -340,7 +340,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * Get a hashCode for the 2D coordinates.
      * <p>
      * All NaN values have the same hash code.</p>
-     *
+     * <p>
+     * The hashing approach is adopted from the Joshua Bloch's book 'Effective Java, 1st ed, 2008'  ( see Item 9 ).
      * @return a hash code value for this object
      */
     @Override
@@ -348,12 +349,19 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         if (isNaN()) {
             return 542;
         }
-        int result;
+        // resulting hash will be combined by summing up hashes of separate fields ( X,Y, and Z coordinates )
+        int result = 17;
+        // temporary variable storing the hash of a separate field ( X, Y, or Z coordinate )
         long temp;
+        // pre-hash the X coordinate
         temp = Double.doubleToLongBits(x);
+        // final hash of the X coordinate
         result = (int) (temp ^ (temp >>> 32));
+        // pre-hash the Y coordinate
         temp = Double.doubleToLongBits(y);
+        // final hash of the Y coordinate combined with X's hash
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        // return combined hash value for this instance of Vector2D
         return result;
     }
 
