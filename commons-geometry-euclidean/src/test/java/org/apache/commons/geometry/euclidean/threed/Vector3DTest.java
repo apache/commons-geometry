@@ -23,10 +23,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
@@ -1149,16 +1147,16 @@ class Vector3DTest {
 
     @Test
     void testHashCodeCollisions_symmetricAboutZero() {
-        final double ANY = Math.random();
-        final double NEG = -ANY;
-        final double POS = +ANY;
+        final double any = Math.random();
+        final double neg = -any;
+        final double pos = +any;
 
-        final Vector3D negX = Vector3D.of(NEG, 0.0, 0.0);
-        final Vector3D posX = Vector3D.of(POS, 0.0, 0.0);
-        final Vector3D negY = Vector3D.of(0.0, NEG, 0.0);
-        final Vector3D posY = Vector3D.of(0.0, POS, 0.0);
-        final Vector3D negZ = Vector3D.of(0.0, 0.0, NEG);
-        final Vector3D posZ = Vector3D.of(0.0, 0.0, POS);
+        final Vector3D negX = Vector3D.of(neg, 0.0, 0.0);
+        final Vector3D posX = Vector3D.of(pos, 0.0, 0.0);
+        final Vector3D negY = Vector3D.of(0.0, neg, 0.0);
+        final Vector3D posY = Vector3D.of(0.0, pos, 0.0);
+        final Vector3D negZ = Vector3D.of(0.0, 0.0, neg);
+        final Vector3D posZ = Vector3D.of(0.0, 0.0, pos);
 
         int xNegHash = negX.hashCode();
         int xPosHash = posX.hashCode();
@@ -1178,17 +1176,17 @@ class Vector3DTest {
 
     @Test
     void testHashCodeCollisions_symmetricAboutArbitraryValue() {
-        final double ANY = Math.random();
-        final double ARB = Math.random();
-        final double NEG = -ANY;
-        final double POS = +ANY;
+        final double any = Math.random();
+        final double arb = Math.random();
+        final double neg = -any;
+        final double pos = +any;
 
-        final Vector3D negX = Vector3D.of(NEG, ARB, ARB);
-        final Vector3D posX = Vector3D.of(POS, ARB, ARB);
-        final Vector3D negY = Vector3D.of(ARB, NEG, ARB);
-        final Vector3D posY = Vector3D.of(ARB, POS, ARB);
-        final Vector3D negZ = Vector3D.of(ARB, ARB, NEG);
-        final Vector3D posZ = Vector3D.of(ARB, ARB, POS);
+        final Vector3D negX = Vector3D.of(neg, arb, arb);
+        final Vector3D posX = Vector3D.of(pos, arb, arb);
+        final Vector3D negY = Vector3D.of(arb, neg, arb);
+        final Vector3D posY = Vector3D.of(arb, pos, arb);
+        final Vector3D negZ = Vector3D.of(arb, arb, neg);
+        final Vector3D posZ = Vector3D.of(arb, arb, pos);
 
         int xNegHash = negX.hashCode();
         int xPosHash = posX.hashCode();

@@ -347,7 +347,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         if (isNaN()) {
             return 542;
         }
-      return 31 * Double.hashCode(x) + Double.hashCode(y);
+        return 31 * Double.hashCode(x) + Double.hashCode(y);
     }
 
     /**

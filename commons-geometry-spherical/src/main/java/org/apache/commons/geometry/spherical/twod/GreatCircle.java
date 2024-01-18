@@ -338,7 +338,17 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return Objects.hash(pole, u, v, getPrecision());
+        int result = 1;
+        long temp;
+        temp = pole.hashCode();
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = u.hashCode();
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = v.hashCode();
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = getPrecision().hashCode();
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 
     /** {@inheritDoc} */

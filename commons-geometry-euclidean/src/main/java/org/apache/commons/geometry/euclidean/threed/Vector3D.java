@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.function.DoubleUnaryOperator;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
@@ -409,9 +408,14 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         if (isNaN()) {
             return 642;
         }
-        int result = Double.hashCode(x);
-        result = 31 * result + Double.hashCode(y);
-        result = 31 * result + Double.hashCode(z);
+        int result = 17;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(z);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
