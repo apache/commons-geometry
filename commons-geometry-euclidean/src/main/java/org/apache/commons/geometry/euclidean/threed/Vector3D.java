@@ -339,6 +339,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * frame with one of the axes in a predefined direction. The
      * following example shows how to build a frame having the k axis
      * aligned with the known vector u :
+     *
      * <pre><code>
      *   Vector3D k = u.normalize();
      *   Vector3D i = k.orthogonal();
@@ -399,8 +400,8 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /**
      * Get a hashCode for the vector.
-     * <p>
-     * All NaN values have the same hash code.
+     * <p>All NaN values have the same hash code.</p>
+     *
      * @return a hash code value for this object
      */
     @Override
@@ -408,14 +409,10 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         if (isNaN()) {
             return 642;
         }
-        int result = 17;
-        long temp;
-        temp = Double.doubleToLongBits(x);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(y);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(z);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        int result = 1;
+        result = 31 * result + Double.hashCode(x);
+        result = 31 * result + Double.hashCode(y);
+        result = 31 * result + Double.hashCode(z);
         return result;
     }
 
