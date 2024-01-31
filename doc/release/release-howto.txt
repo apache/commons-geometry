@@ -577,7 +577,7 @@ RAT Report:
     https://home.apache.org/~mattjuntunen/commons-geometry-1.0-RC4-site/rat-report.html
 
 KEYS:
-  https://www.apache.org/dist/commons/KEYS
+  https://downloads.apache.org/commons/KEYS
 
 Please review the release candidate and vote.
 This vote will close no sooner that 72 hours from now.
