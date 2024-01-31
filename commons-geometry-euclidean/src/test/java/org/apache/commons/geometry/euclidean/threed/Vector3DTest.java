@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.angle.Angle;
@@ -1144,6 +1143,65 @@ class Vector3DTest {
 
         Assertions.assertTrue(b.equals(d));
         Assertions.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @Test
+    void testHashCodeCollisions_symmetricAboutZero() {
+        final double any = Math.random();
+        final double neg = -any;
+        final double pos = +any;
+
+        final Vector3D negX = Vector3D.of(neg, 0.0, 0.0);
+        final Vector3D posX = Vector3D.of(pos, 0.0, 0.0);
+        final Vector3D negY = Vector3D.of(0.0, neg, 0.0);
+        final Vector3D posY = Vector3D.of(0.0, pos, 0.0);
+        final Vector3D negZ = Vector3D.of(0.0, 0.0, neg);
+        final Vector3D posZ = Vector3D.of(0.0, 0.0, pos);
+
+        int xNegHash = negX.hashCode();
+        int xPosHash = posX.hashCode();
+        int yNegHash = negY.hashCode();
+        int yPosHash = posY.hashCode();
+        int zNegHash = negZ.hashCode();
+        int zPosHash = posZ.hashCode();
+
+        String xMessage = String.format("negXHash: %s, posXHash: %s (expected to be non-equal)\n", xNegHash, xPosHash);
+        String yMessage = String.format("negYHash: %s, posYHash: %s (expected to be non-equal)\n", yNegHash, yPosHash);
+        String zMessage = String.format("negZHash: %s, posZHash: %s (expected to be non-equal)\n", zNegHash, zPosHash);
+
+        Assertions.assertNotEquals(zNegHash, zPosHash, zMessage);
+        Assertions.assertNotEquals(yNegHash, yPosHash, yMessage);
+        Assertions.assertNotEquals(xNegHash, xPosHash, xMessage);
+    }
+
+    @Test
+    void testHashCodeCollisions_symmetricAboutArbitraryValue() {
+        final double any = Math.random();
+        final double arb = Math.random();
+        final double neg = -any;
+        final double pos = +any;
+
+        final Vector3D negX = Vector3D.of(neg, arb, arb);
+        final Vector3D posX = Vector3D.of(pos, arb, arb);
+        final Vector3D negY = Vector3D.of(arb, neg, arb);
+        final Vector3D posY = Vector3D.of(arb, pos, arb);
+        final Vector3D negZ = Vector3D.of(arb, arb, neg);
+        final Vector3D posZ = Vector3D.of(arb, arb, pos);
+
+        int xNegHash = negX.hashCode();
+        int xPosHash = posX.hashCode();
+        int yNegHash = negY.hashCode();
+        int yPosHash = posY.hashCode();
+        int zNegHash = negZ.hashCode();
+        int zPosHash = posZ.hashCode();
+
+        String xMessage = String.format("negXHash: %s, posXHash: %s (expected to be non-equal)\n", xNegHash, xPosHash);
+        String yMessage = String.format("negYHash: %s, posYHash: %s (expected to be non-equal)\n", yNegHash, yPosHash);
+        String zMessage = String.format("negZHash: %s, posZHash: %s (expected to be non-equal)\n", zNegHash, zPosHash);
+
+        Assertions.assertNotEquals(zNegHash, zPosHash, zMessage);
+        Assertions.assertNotEquals(yNegHash, yPosHash, yMessage);
+        Assertions.assertNotEquals(xNegHash, xPosHash, xMessage);
     }
 
     @Test
