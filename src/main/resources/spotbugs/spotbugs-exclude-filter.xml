@@ -95,5 +95,10 @@
     <Field name="entrySetInstance" />
     <BugPattern name="EI_EXPOSE_REP"/>
   </Match>
+  <Match>
+    <Class name="org.apache.commons.geometry.euclidean.threed.hull.ConvexHull3D" />
+    <Field name="facets" />
+    <BugPattern name="EI_EXPOSE_REP"/>
+  </Match>
 
 </FindBugsFilter>
