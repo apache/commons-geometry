@@ -588,7 +588,6 @@ class Vector2DTest {
         Assertions.assertEquals(0.004999958333958323, Vector2D.of(20.0, 0.0).angle(Vector2D.of(20.0, 0.1)), EPS);
     }
 
-
     @Test
     void testAngle_illegalNorm() {
         // arrange
@@ -910,6 +909,53 @@ class Vector2DTest {
         Assertions.assertEquals(Vector2D.of(0, Double.NaN).hashCode(), Vector2D.NaN.hashCode());
         Assertions.assertEquals(Vector2D.of(Double.NaN, 0).hashCode(), Vector2D.NaN.hashCode());
         Assertions.assertEquals(Vector2D.of(0, Double.NaN).hashCode(), Vector2D.of(Double.NaN, 0).hashCode());
+    }
+
+    @Test
+    void testHashCodeCollisions_symmetricAboutZero() {
+        final double any = Math.random();
+        final double neg = -any;
+        final double pos = +any;
+
+        final Vector2D negX = Vector2D.of(neg, 0.0);
+        final Vector2D posX = Vector2D.of(pos, 0.0);
+        final Vector2D negY = Vector2D.of(0.0, neg);
+        final Vector2D posY = Vector2D.of(0.0, pos);
+
+        int xNegHash = negX.hashCode();
+        int xPosHash = posX.hashCode();
+        int yNegHash = negY.hashCode();
+        int yPosHash = posY.hashCode();
+
+        String xMessage = String.format("xNegHash: %s, xPosHash: %s (expected to be non-equal)\n", xNegHash, xPosHash);
+        String yMessage = String.format("yNegHash: %s, yPosHash: %s (expected to be non-equal)\n", yNegHash, yPosHash);
+
+        Assertions.assertNotEquals(xNegHash, xPosHash, xMessage);
+        Assertions.assertNotEquals(yNegHash, yPosHash, yMessage);
+    }
+
+    @Test
+    void testHashCodeCollisions_symmetricAboutArbitraryValue() {
+        final double any = Math.random();
+        final double arb = Math.random();
+        final double neg = -any;
+        final double pos = +any;
+
+        final Vector2D negX = Vector2D.of(neg, arb);
+        final Vector2D posX = Vector2D.of(pos, arb);
+        final Vector2D negY = Vector2D.of(arb, neg);
+        final Vector2D posY = Vector2D.of(arb, pos);
+
+        int xNegHash = negX.hashCode();
+        int xPosHash = posX.hashCode();
+        int yNegHash = negY.hashCode();
+        int yPosHash = posY.hashCode();
+
+        String xMessage = String.format("xNegHash: %s, xPosHash: %s (expected to be non-equal)\n", xNegHash, xPosHash);
+        String yMessage = String.format("yNegHash: %s, yPosHash: %s (expected to be non-equal)\n", yNegHash, yPosHash);
+
+        Assertions.assertNotEquals(xNegHash, xPosHash, xMessage);
+        Assertions.assertNotEquals(yNegHash, yPosHash, yMessage);
     }
 
     @Test
