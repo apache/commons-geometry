@@ -230,7 +230,7 @@ public final class EuclideanTestUtils {
     }
 
     /**
-     * Asserts that the given value is negative infinity..
+     * Asserts that the given value is negative infinity.
      *
      * @param value
      */
