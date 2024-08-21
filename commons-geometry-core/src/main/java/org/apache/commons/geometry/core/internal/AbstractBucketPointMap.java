@@ -786,7 +786,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             return closest;
         }
 
-        /** Find the farthest entry from {@code refPt} within the subtree rooted at this node..
+        /** Find the farthest entry from {@code refPt} within the subtree rooted at this node.
          * @param refPt reference point
          * @return farthest entry from {@code refPt} in the subtree rooted at this node, or null
          *      if no such entry exists.

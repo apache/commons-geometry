@@ -37,7 +37,7 @@ public final class GeometryTestUtils {
         Assertions.assertTrue(value > 0, msg);
     }
 
-    /** Asserts that the given value is negative infinity..
+    /** Asserts that the given value is negative infinity.
      * @param value
      */
     public static void assertNegativeInfinity(final double value) {
