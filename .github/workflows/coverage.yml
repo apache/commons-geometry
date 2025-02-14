@@ -42,6 +42,6 @@ jobs:
       run: mvn --show-version --batch-mode --no-transfer-progress test jacoco:report
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
+      uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
       with:
         files: ./commons-geometry-core/target/site/jacoco/jacoco.xml,./commons-geometry-enclosing/target/site/jacoco/jacoco.xml,./commons-geometry-euclidean/target/site/jacoco/jacoco.xml,./commons-geometry-hull/target/site/jacoco/jacoco.xml,./commons-geometry-io-core/target/site/jacoco/jacoco.xml,./commons-geometry-io-euclidean/target/site/jacoco/jacoco.xml,./commons-geometry-spherical/target/site/jacoco/jacoco.xml
