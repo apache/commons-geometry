@@ -35,7 +35,7 @@
     </menu>
 
     <head>
-      <![CDATA[<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+      <![CDATA[<script type="text/javascript" src="https://commons.apache.org/js/mathjax/tex-mml-chtml.js">
       </script>]]>
     </head>
 
