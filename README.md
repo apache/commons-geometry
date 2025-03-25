@@ -55,6 +55,7 @@ Apache Commons Geometry
 --->
 [![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/apache/commons-geometry.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/apache/commons-geometry/context:java)
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![libs.tech recommends](https://libs.tech/project/127740535/badge.svg)](https://libs.tech/project/127740535/commons-geometry)
 
 The Apache Commons Geometry project provides geometric types and utilities.
 
