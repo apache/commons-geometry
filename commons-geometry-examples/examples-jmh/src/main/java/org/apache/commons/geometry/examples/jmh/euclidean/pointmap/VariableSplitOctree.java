@@ -42,6 +42,11 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
     /** Size of the tree. */
     private int entryCount;
 
+    /**
+     * Create an instance.
+     *
+     * @param precision the precision
+     */
     public VariableSplitOctree(final Precision.DoubleEquivalence precision) {
         this.precision = precision;
         this.root = new VariableSplitOctreeNode<>(this);
