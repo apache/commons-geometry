@@ -330,7 +330,7 @@ class AbstractGreatArcPathConnectorTest {
         }
     }
 
-    private static class TestConnector extends AbstractGreatArcConnector {
+    private static final class TestConnector extends AbstractGreatArcConnector {
 
         @Override
         protected ConnectableGreatArc selectConnection(final ConnectableGreatArc incoming,

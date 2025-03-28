@@ -556,7 +556,7 @@ class AbstractLinePathConnectorTest {
         }
     }
 
-    private static class TestConnector extends AbstractLinePathConnector {
+    private static final class TestConnector extends AbstractLinePathConnector {
 
         @Override
         protected ConnectableLineSubset selectConnection(final ConnectableLineSubset incoming, final List<ConnectableLineSubset> outgoing) {
