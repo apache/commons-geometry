@@ -106,6 +106,7 @@
       <Class name="org.apache.commons.geometry.core.internal.SimpleTupleFormat" />
       <Class name="org.apache.commons.geometry.euclidean.threed.ConvexVolume" />
       <Class name="org.apache.commons.geometry.euclidean.twod.path.LinePath" />
+      <Class name="org.apache.commons.geometry.spherical.twod.GreatArcPath" />
     </Or>
     <BugPattern name="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
   </Match>
