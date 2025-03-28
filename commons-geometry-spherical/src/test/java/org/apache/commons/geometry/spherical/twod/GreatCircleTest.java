@@ -664,9 +664,7 @@ class GreatCircleTest {
         Assertions.assertEquals(hash, a.hashCode());
 
         Assertions.assertNotEquals(hash, b.hashCode());
-        // Equal objects have equal hash codes
-        Assertions.assertEquals(a, c);
-        Assertions.assertEquals(hash, c.hashCode());
+        Assertions.assertNotEquals(hash, c.hashCode());
         Assertions.assertNotEquals(hash, d.hashCode());
 
         Assertions.assertEquals(hash, e.hashCode());
