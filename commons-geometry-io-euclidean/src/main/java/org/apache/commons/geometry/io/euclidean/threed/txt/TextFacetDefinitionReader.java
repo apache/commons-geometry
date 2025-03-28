@@ -20,7 +20,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Objects;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.io.core.internal.GeometryIOUtils;
 import org.apache.commons.geometry.io.core.internal.SimpleTextParser;
@@ -100,7 +100,7 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
      * @param reader reader to read characters from
      */
     public TextFacetDefinitionReader(final Reader reader) {
-        this(reader, DEFAULT_COMMENT_TOKEN);
+        this(Objects.requireNonNull(reader), DEFAULT_COMMENT_TOKEN, false);
     }
 
     /** Construct a new instance with the given reader and comment token.
@@ -109,9 +109,17 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
      * @throws IllegalArgumentException if {@code commentToken} is non-null and contains whitespace
      */
     public TextFacetDefinitionReader(final Reader reader, final String commentToken) {
+        this(Objects.requireNonNull(reader), checkCommentToken(commentToken), false);
+    }
+
+    /** Private constructor executed after all arguments have been validated.
+     * @param reader reader to read characters from
+     * @param commentToken comment token string; set to null to disable comment parsing
+     * @param ignored Ignored parameter.
+     */
+    private TextFacetDefinitionReader(final Reader reader, final String commentToken, boolean ignored) {
         this.reader = reader;
         this.parser = new SimpleTextParser(reader);
-
         setCommentTokenInternal(commentToken);
     }
 
@@ -131,7 +139,7 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
      * @throws IllegalArgumentException if the argument is non-null and contains whitespace
      */
     public void setCommentToken(final String commentToken) {
-        setCommentTokenInternal(commentToken);
+        setCommentTokenInternal(checkCommentToken(commentToken));
     }
 
     /** {@inheritDoc} */
@@ -265,16 +273,26 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
      * @throws IllegalArgumentException if the argument is non-null and contains whitespace
      */
     private void setCommentTokenInternal(final String commentTokenStr) {
-        if (commentTokenStr != null && containsWhitespace(commentTokenStr)) {
-            throw new IllegalArgumentException("Comment token cannot contain whitespace; was [" +
-                    commentTokenStr + "]");
-        }
-
         this.commentToken = commentTokenStr;
         this.hasCommentToken = commentTokenStr != null && commentTokenStr.length() > 0;
         this.commentStartChar = this.hasCommentToken ?
                 commentTokenStr.charAt(0) :
                 -1;
+    }
+
+    /**
+     * Check comment token.
+     *
+     * @param commentTokenStr the comment token
+     * @return the comment token
+     * @throws IllegalArgumentException if the argument is non-null and contains whitespace
+     */
+    private static String checkCommentToken(final String commentTokenStr) {
+        if (commentTokenStr != null && containsWhitespace(commentTokenStr)) {
+            throw new IllegalArgumentException("Comment token cannot contain whitespace; was [" +
+                    commentTokenStr + "]");
+        }
+        return commentTokenStr;
     }
 
     /** Return true if the given character is considered as part of a data token

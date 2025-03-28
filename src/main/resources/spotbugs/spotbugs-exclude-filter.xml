@@ -102,20 +102,20 @@
   </Match>
   <!-- False positive singleton identification -->
   <Match>
-    <Class name="org.apache.commons.geometry.core.internal.SimpleTupleFormat" />
-    <BugPattern name="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.commons.geometry.euclidean.threed.ConvexVolume" />
-    <BugPattern name="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.commons.geometry.euclidean.twod.path.LinePath" />
+    <Or>
+      <Class name="org.apache.commons.geometry.core.internal.SimpleTupleFormat" />
+      <Class name="org.apache.commons.geometry.euclidean.threed.ConvexVolume" />
+      <Class name="org.apache.commons.geometry.euclidean.twod.path.LinePath" />
+    </Or>
     <BugPattern name="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
   </Match>
   <!-- False positive -->
   <Match>
-    <Class name="org.apache.commons.geometry.io.core.internal.CharReadBuffer" />
+    <Or>
+      <Class name="org.apache.commons.geometry.io.core.internal.CharReadBuffer" />
+      <Class name="org.apache.commons.geometry.io.euclidean.threed.SimpleFacetDefinition" />
+      <Class name="org.apache.commons.geometry.io.euclidean.threed.txt.TextFacetDefinitionReader" />
+    </Or>
     <BugPattern name="CT_CONSTRUCTOR_THROW"/>
   </Match>
 
