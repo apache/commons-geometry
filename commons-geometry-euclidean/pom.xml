@@ -119,4 +119,20 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <!-- Java 21 and up -->
+      <id>javadoc-21</id>
+      <activation>
+        <jdk>[21,)</jdk>
+      </activation>
+      <properties>
+        <!-- TODO: Remove this profile when JDK 21 is fixed.
+          JDK 21.0.6 creates a warning that ReverseRay.splitOnIntersection uses inheritDoc 
+          but does not override a method. This is a false positive. -->
+          <commons.javadoc.failOnWarnings>false</commons.javadoc.failOnWarnings>
+      </properties>
+    </profile>
+  </profiles>
 </project>
