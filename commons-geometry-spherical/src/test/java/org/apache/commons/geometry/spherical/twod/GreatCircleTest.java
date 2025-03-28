@@ -652,7 +652,7 @@ class GreatCircleTest {
         final GreatCircle a = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         final GreatCircle b = GreatCircles.fromPoleAndU(Vector3D.of(0, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
-        final GreatCircle c = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        final GreatCircle c = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.of(0, -1, 1), TEST_PRECISION);
         final GreatCircle d = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, precision);
 
         final GreatCircle e = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
