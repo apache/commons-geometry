@@ -100,9 +100,17 @@
     <Field name="facets" />
     <BugPattern name="EI_EXPOSE_REP"/>
   </Match>
+  <!-- False positive singleton identification -->
   <Match>
-    <!-- False positive -->
     <Class name="org.apache.commons.geometry.core.internal.SimpleTupleFormat" />
+    <BugPattern name="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.commons.geometry.euclidean.threed.ConvexVolume" />
+    <BugPattern name="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.commons.geometry.euclidean.twod.path.LinePath" />
     <BugPattern name="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
   </Match>
 
