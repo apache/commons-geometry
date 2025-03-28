@@ -221,7 +221,7 @@
         <configuration>
           <threshold>Normal</threshold>
           <effort>Default</effort>
-          <excludeFilterFile>${geometry.parent.dir}/src/main/resources/spotbugs/spotbugs-exclude-filter.xml</excludeFilterFile>
+          <excludeFilterFile>${geometry.parent.dir}/src/conf/spotbugs/spotbugs-exclude-filter.xml</excludeFilterFile>
         </configuration>
         <executions>
           <execution>
@@ -237,9 +237,9 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <configLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle.xml</configLocation>
-          <headerLocation>${geometry.parent.dir}/src/main/resources/checkstyle/license-header.txt</headerLocation>
-          <suppressionsLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+          <configLocation>${geometry.parent.dir}/src/conf/checkstyle/checkstyle.xml</configLocation>
+          <headerLocation>${geometry.parent.dir}/src/conf/checkstyle/license-header.txt</headerLocation>
+          <suppressionsLocation>${geometry.parent.dir}/src/conf/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
           <enableRulesSummary>false</enableRulesSummary>
           <logViolationsToConsole>true</logViolationsToConsole>
           <failOnViolation>true</failOnViolation>
@@ -263,7 +263,7 @@
           <skipEmptyReport>false</skipEmptyReport>
           <analysisCache>true</analysisCache>
           <rulesets>
-            <ruleset>${geometry.parent.dir}/src/main/resources/pmd/pmd-ruleset.xml</ruleset>
+            <ruleset>${geometry.parent.dir}/src/conf/pmd/pmd-ruleset.xml</ruleset>
           </rulesets>
           <excludeRoots>
             <excludeRoot>target/generated-sources/annotations</excludeRoot>
@@ -378,16 +378,16 @@
         <configuration>
           <threshold>Normal</threshold>
           <effort>Default</effort>
-          <excludeFilterFile>${geometry.parent.dir}/src/main/resources/spotbugs/spotbugs-exclude-filter.xml</excludeFilterFile>
+          <excludeFilterFile>${geometry.parent.dir}/src/conf/spotbugs/spotbugs-exclude-filter.xml</excludeFilterFile>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
-          <configLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle.xml</configLocation>
-          <headerLocation>${geometry.parent.dir}/src/main/resources/checkstyle/license-header.txt</headerLocation>
-          <suppressionsLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+          <configLocation>${geometry.parent.dir}/src/conf/checkstyle/checkstyle.xml</configLocation>
+          <headerLocation>${geometry.parent.dir}/src/conf/checkstyle/license-header.txt</headerLocation>
+          <suppressionsLocation>${geometry.parent.dir}/src/conf/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
           <enableRulesSummary>false</enableRulesSummary>
           <includeResources>false</includeResources>
         </configuration>
@@ -408,7 +408,7 @@
           <skipEmptyReport>false</skipEmptyReport>
           <analysisCache>true</analysisCache>
           <rulesets>
-            <ruleset>${geometry.parent.dir}/src/main/resources/pmd/pmd-ruleset.xml</ruleset>
+            <ruleset>${geometry.parent.dir}/src/conf/pmd/pmd-ruleset.xml</ruleset>
           </rulesets>
           <excludeRoots>
             <excludeRoot>target/generated-sources/annotations</excludeRoot>
