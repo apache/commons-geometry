@@ -454,16 +454,16 @@ class SimpleTupleFormatTest {
         }
     }
 
-    private static class Stub1D {
+    private static final class Stub1D {
         private double v;
     }
 
-    private static class Stub2D {
+    private static final class Stub2D {
         private double v1;
         private double v2;
     }
 
-    private static class Stub3D {
+    private static final class Stub3D {
         private double v1;
         private double v2;
         private double v3;
