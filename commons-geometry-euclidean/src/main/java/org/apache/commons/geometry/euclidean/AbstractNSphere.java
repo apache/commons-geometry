@@ -53,16 +53,58 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
      *      less than or equal to zero as evaluated by the given precision context
      */
     protected AbstractNSphere(final V center, final double radius, final Precision.DoubleEquivalence precision) {
-        if (!center.isFinite()) {
-            throw new IllegalArgumentException("Illegal center point: " + center);
-        }
-        if (!Double.isFinite(radius) || precision.lte(radius, 0.0)) {
-            throw new IllegalArgumentException("Illegal radius: " + radius);
-        }
+        this(precision, checkCenter(center), checkRadius(radius, precision));
+    }
 
+    /**
+     * Private constructor.
+     * @param precision precision context used to perform floating point comparisons
+     * @param center the center point of the n-sphere
+     * @param radius the radius of the n-sphere
+     */
+    private AbstractNSphere(final Precision.DoubleEquivalence precision, final V center, final double radius) {
         this.center = center;
         this.radius = radius;
         this.precision = precision;
+    }
+
+    /**
+     * Check the center.
+     *
+     * <p>This method exists to raise an exception before invocation of the
+     * private constructor; this mitigates Finalizer attacks
+     * (see SpotBugs CT_CONSTRUCTOR_THROW).
+     *
+     * @param <V> Vector implementation type
+     * @param center the center point of the n-sphere
+     * @return the center
+     * @throws IllegalArgumentException if center is not finite
+     */
+    private static <V extends EuclideanVector<V>> V checkCenter(final V center) {
+        if (!center.isFinite()) {
+            throw new IllegalArgumentException("Illegal center point: " + center);
+        }
+        return center;
+    }
+
+    /**
+     * Check the radius.
+     *
+     * <p>This method exists to raise an exception before invocation of the
+     * private constructor; this mitigates Finalizer attacks
+     * (see SpotBugs CT_CONSTRUCTOR_THROW).
+     *
+     * @param radius the radius of the n-sphere
+     * @param precision precision context used to perform floating point comparisons
+     * @return the radius
+     * @throws IllegalArgumentException if radius is not finite or is
+     *      less than or equal to zero as evaluated by the given precision context
+     */
+    private static double checkRadius(final double radius, final Precision.DoubleEquivalence precision) {
+        if (!Double.isFinite(radius) || precision.lte(radius, 0.0)) {
+            throw new IllegalArgumentException("Illegal radius: " + radius);
+        }
+        return radius;
     }
 
     /** Get the center point of the n-sphere.
