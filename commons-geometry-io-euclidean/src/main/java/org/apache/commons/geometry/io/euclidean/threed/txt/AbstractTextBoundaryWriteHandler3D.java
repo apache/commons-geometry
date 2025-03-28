@@ -46,6 +46,11 @@ public abstract class AbstractTextBoundaryWriteHandler3D extends AbstractBoundar
     /** Double format function. */
     private DoubleFunction<String> doubleFormat = Double::toString;
 
+    /** Create an instance. */
+    public AbstractTextBoundaryWriteHandler3D() {
+        // Do nothing
+    }
+
     /** Get the text output default charset, used if the output does not
      * specify a charset.
      * @return text output default charset

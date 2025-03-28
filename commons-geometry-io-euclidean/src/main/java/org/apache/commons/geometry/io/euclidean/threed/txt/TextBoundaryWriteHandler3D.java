@@ -37,6 +37,11 @@ public class TextBoundaryWriteHandler3D extends AbstractTextBoundaryWriteHandler
     /** Number of vertices required per facet; will be -1 if disabled. */
     private int facetVertexCount = TextFacetDefinitionWriter.DEFAULT_FACET_VERTEX_COUNT;
 
+    /** Create an instance. */
+    public TextBoundaryWriteHandler3D() {
+        // Do nothing
+    }
+
     /** Get the string used to separate vertex components (ie, individual x, y, z values).
      * @return string used to separate vertex components
      * @see TextFacetDefinitionWriter#getVertexComponentSeparator()

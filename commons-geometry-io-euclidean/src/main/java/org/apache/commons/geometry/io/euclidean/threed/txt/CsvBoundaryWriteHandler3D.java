@@ -25,6 +25,11 @@ import org.apache.commons.geometry.io.euclidean.threed.GeometryFormat3D;
  */
 public class CsvBoundaryWriteHandler3D extends AbstractTextBoundaryWriteHandler3D {
 
+    /** Create an instance. */
+    public CsvBoundaryWriteHandler3D() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     public GeometryFormat getFormat() {

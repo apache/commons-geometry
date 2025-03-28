@@ -29,6 +29,12 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  */
 public abstract class AbstractGreatArcConnector
     extends AbstractPathConnector<AbstractGreatArcConnector.ConnectableGreatArc> {
+
+    /** Create an instance. */
+    public AbstractGreatArcConnector() {
+        // Do nothing
+    }
+
     /** Add an arc to the connector, leaving it unconnected until a later call to
      * to {@link #connect(Iterable)} or {@link #connectAll()}.
      * @param arc arc to add

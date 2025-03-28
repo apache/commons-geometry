@@ -29,6 +29,11 @@ import org.apache.commons.numbers.fraction.BigFraction;
  */
 public class DiskGenerator implements SupportBallGenerator<Vector2D> {
 
+    /** Create an instance. */
+    public DiskGenerator() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     public EnclosingBall<Vector2D> ballOnSupport(final List<Vector2D> support) {

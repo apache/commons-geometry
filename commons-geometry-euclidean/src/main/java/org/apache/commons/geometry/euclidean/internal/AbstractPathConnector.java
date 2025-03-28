@@ -66,6 +66,11 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
     /** List used to store possible point-like (zero-length) connections for the current element. */
     private final List<E> possiblePointConnections = new ArrayList<>();
 
+    /** Create an instance. */
+    public AbstractPathConnector() {
+        // Do nothing
+    }
+
     /** Add a collection of path elements to the connector and attempt to connect each new element
      * with previously added ones.
      * @param elements path elements to connect
@@ -281,6 +286,11 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
 
         /** Flag set to true when this element has exported its value to a path. */
         private boolean exported;
+
+        /** Create an instance. */
+        public ConnectableElement() {
+            // Do nothing
+        }
 
         /** Return true if the instance is connected to another element's start point.
          * @return true if the instance has a next element

@@ -49,6 +49,11 @@ public class StlBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
     /** Initial size of data buffers used during write operations. */
     private int initialBufferSize = DEFAULT_BUFFER_SIZE;
 
+    /** Create an instance. */
+    public StlBoundaryWriteHandler3D() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     public GeometryFormat getFormat() {

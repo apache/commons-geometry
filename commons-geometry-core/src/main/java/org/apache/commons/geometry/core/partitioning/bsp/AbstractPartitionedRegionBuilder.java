@@ -85,12 +85,38 @@ public abstract class AbstractPartitionedRegionBuilder<
      * @throws IllegalArgumentException if the tree is not empty
      */
     protected AbstractPartitionedRegionBuilder(final AbstractRegionBSPTree<P, N> tree) {
+        this(checkTree(tree), false);
+    }
+
+    /**
+     * Private constructor.
+     * @param tree tree to build the region in; must be empty
+     * @param ignored Ignored value.
+     */
+    private AbstractPartitionedRegionBuilder(final AbstractRegionBSPTree<P, N> tree, boolean ignored) {
+        this.tree = tree;
+        this.subtreeInit = tree.getSubtreeInitializer(RegionCutRule.MINUS_INSIDE);
+    }
+
+    /**
+     * Check the tree is empty.
+     *
+     * <p>This method exists to raise an exception before invocation of the
+     * private constructor; this mitigates Finalizer attacks
+     * (see SpotBugs CT_CONSTRUCTOR_THROW).
+     *
+     * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
+     * @param tree tree to build the region in; must be empty
+     * @return the tree
+     * @throws IllegalArgumentException if the tree is not empty
+     */
+    private static <P extends Point<P>, N extends AbstractRegionNode<P, N>>
+            AbstractRegionBSPTree<P, N> checkTree(final AbstractRegionBSPTree<P, N> tree) {
         if (!tree.isEmpty()) {
             throw new IllegalArgumentException("Tree must be empty");
         }
-
-        this.tree = tree;
-        this.subtreeInit = tree.getSubtreeInitializer(RegionCutRule.MINUS_INSIDE);
+        return tree;
     }
 
     /** Internal method to build and return the tree representing the final partitioned region.

@@ -530,7 +530,8 @@ class AbstractBSPTreeMergeOperatorTest {
         PartitionTestUtils.assertTreeStructure(b);
     }
 
-    private static class TestMergeOperator extends AbstractBSPTreeMergeOperator<TestPoint2D, AttributeNode<TestPoint2D, String>> {
+    private static final class TestMergeOperator extends
+        AbstractBSPTreeMergeOperator<TestPoint2D, AttributeNode<TestPoint2D, String>> {
 
         /** Perform the test merge operation with the given arguments.
          * @param input1

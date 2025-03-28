@@ -43,7 +43,7 @@
     <geometry.parent.dir>${basedir}/../..</geometry.parent.dir>
 
     <!-- JMH Benchmark related properties: version, name of the benchmarking uber jar. -->
-    <jmh.version>1.32</jmh.version>
+    <jmh.version>1.37</jmh.version>
     <uberjar.name>examples-jmh</uberjar.name>
     <project.mainClass>org.openjdk.jmh.Main</project.mainClass>
     <!-- Disable analysis for benchmarking code. -->
@@ -257,6 +257,18 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <!-- Java 21 and up -->
+      <id>javadoc-21</id>
+      <activation>
+        <jdk>[21,)</jdk>
+      </activation>
+      <properties>
+        <!-- JDK 21 emits warnings for missing (undocumented) default constructors. -->
+        <commons.javadoc.failOnWarnings>false</commons.javadoc.failOnWarnings>
+      </properties>
     </profile>
   </profiles>
 

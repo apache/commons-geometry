@@ -54,6 +54,11 @@ public class ObjBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
     /** Batch size used for mesh buffer creation. */
     private int meshBufferBatchSize = DEFAULT_MESH_BUFFER_BATCH_SIZE;
 
+    /** Create an instance. */
+    public ObjBoundaryWriteHandler3D() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     public GeometryFormat getFormat() {

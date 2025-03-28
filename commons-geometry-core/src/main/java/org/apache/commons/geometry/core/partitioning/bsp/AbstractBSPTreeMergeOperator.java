@@ -42,6 +42,11 @@ public abstract class AbstractBSPTreeMergeOperator<P extends Point<P>, N extends
      */
     private AbstractBSPTree<P, N> outputTree;
 
+    /** Create an instance. */
+    public AbstractBSPTreeMergeOperator() {
+        // Do nothing
+    }
+
     /** Set the tree used as output for this instance.
      * @param outputTree the tree used as output for this instance
      */

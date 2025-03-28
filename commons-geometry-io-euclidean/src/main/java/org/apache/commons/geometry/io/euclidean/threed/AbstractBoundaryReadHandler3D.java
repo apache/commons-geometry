@@ -39,6 +39,11 @@ import org.apache.commons.numbers.core.Precision;
  */
 public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandler3D {
 
+    /** Create an instance. */
+    public AbstractBoundaryReadHandler3D() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     public BoundarySource3D read(final GeometryInput in, final Precision.DoubleEquivalence precision) {

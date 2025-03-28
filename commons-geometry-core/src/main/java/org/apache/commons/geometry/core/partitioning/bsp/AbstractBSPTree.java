@@ -93,6 +93,11 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      */
     private int version;
 
+    /** Create an instance. */
+    public AbstractBSPTree() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     public N getRoot() {

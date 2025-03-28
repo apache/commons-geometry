@@ -41,13 +41,19 @@ class TextFacetDefinitionReaderTest {
         Assertions.assertEquals("#", reader.getCommentToken());
     }
 
+    @SuppressWarnings("resource")
     @Test
     void testSetCommentToken_invalidArgs() {
         // arrange
         TextFacetDefinitionReader reader = facetReader("");
         String baseMsg = "Comment token cannot contain whitespace; was [";
+        StringReader baseReader = new StringReader("");
 
         // act/assert
+        GeometryTestUtils.assertThrowsWithMessage(() -> {
+            new TextFacetDefinitionReader(baseReader, " ");
+        }, IllegalArgumentException.class, baseMsg + " ]");
+
         GeometryTestUtils.assertThrowsWithMessage(() -> {
             reader.setCommentToken(" ");
         }, IllegalArgumentException.class, baseMsg + " ]");
@@ -167,9 +173,9 @@ class TextFacetDefinitionReaderTest {
                 "1 1 1 2 2 2 3 3 3\n" +
                 "\t\n" +
                 "5$line comment\n" +
-                "5 5 5 5 5 5 5 5 5\n");
-
-        reader.setCommentToken("5$");
+                "5 5 5 5 5 5 5 5 5\n",
+                // Comment token
+                "5$");
 
         // act
         List<FacetDefinition> facets = EuclideanIOTestUtils.readAll(reader);
@@ -314,5 +320,10 @@ class TextFacetDefinitionReaderTest {
 
     private static TextFacetDefinitionReader facetReader(final String content) {
         return new TextFacetDefinitionReader(new StringReader(content));
+    }
+
+    private static TextFacetDefinitionReader facetReader(final String content, final String commentToken) {
+        // Used for coverage of the overloaded constructor
+        return new TextFacetDefinitionReader(new StringReader(content), commentToken);
     }
 }

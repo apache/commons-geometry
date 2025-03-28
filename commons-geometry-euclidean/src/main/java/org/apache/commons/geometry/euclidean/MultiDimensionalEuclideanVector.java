@@ -23,6 +23,11 @@ package org.apache.commons.geometry.euclidean;
  */
 public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensionalEuclideanVector<V>>
         extends EuclideanVector<V> {
+    /** Create an instance. */
+    public MultiDimensionalEuclideanVector() {
+        // Do nothing
+    }
+
     /** Get the projection of the instance onto the given base vector. The returned
      * vector is parallel to {@code base}. Vector projection and rejection onto
      * a given base are related by the equation

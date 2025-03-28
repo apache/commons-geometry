@@ -32,6 +32,12 @@ import java.util.List;
  * </p>
  */
 public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcConnector {
+
+    /** Create an instance. */
+    public InteriorAngleGreatArcConnector() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     protected ConnectableGreatArc selectConnection(final ConnectableGreatArc incoming,
@@ -90,6 +96,11 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
      * arc.
      */
     public static class Maximize extends InteriorAngleGreatArcConnector {
+        /** Create an instance. */
+        public Maximize() {
+            // Do nothing
+        }
+
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(final double newAngle, final double previousAngle) {
@@ -104,6 +115,11 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
      * arc.
      */
     public static class Minimize extends InteriorAngleGreatArcConnector {
+        /** Create an instance. */
+        public Minimize() {
+            // Do nothing
+        }
+
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(final double newAngle, final double previousAngle) {

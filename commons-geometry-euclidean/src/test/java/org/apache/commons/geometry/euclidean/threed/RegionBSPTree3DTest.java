@@ -1540,7 +1540,7 @@ class RegionBSPTree3DTest {
         Assertions.assertFalse(result.isFull());
 
         Assertions.assertEquals(cubeVolume(size), result.getSize(), tolerance);
-        Assertions.assertEquals(cubeSurface(size) + (sphereSurface(radius)),
+        Assertions.assertEquals(cubeSurface(size) + sphereSurface(radius),
                 result.getBoundarySize(), tolerance);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,

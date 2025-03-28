@@ -52,6 +52,11 @@ public class BoundaryIOManager3D extends BoundaryIOManager<
         BoundaryReadHandler3D,
         BoundaryWriteHandler3D> {
 
+    /** Create an instance. */
+    public BoundaryIOManager3D() {
+        // Do nothing
+    }
+
     /** Get a {@link FacetDefinitionReader} for reading facet information from the given input.
      * @param in input to read facets from
      * @param fmt format of the input; if null, the format is determined implicitly from the
