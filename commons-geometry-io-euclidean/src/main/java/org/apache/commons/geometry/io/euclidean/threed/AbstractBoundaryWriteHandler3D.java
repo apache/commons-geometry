@@ -27,6 +27,11 @@ import org.apache.commons.geometry.io.core.output.GeometryOutput;
  */
 public abstract class AbstractBoundaryWriteHandler3D implements BoundaryWriteHandler3D {
 
+    /** Create an instance. */
+    public AbstractBoundaryWriteHandler3D() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     public void write(final BoundarySource3D src, final GeometryOutput out) {

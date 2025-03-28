@@ -33,6 +33,11 @@ public class StlBoundaryReadHandler3D extends AbstractBoundaryReadHandler3D {
     /** Default charset for reading text input. */
     private Charset defaultCharset = StlConstants.DEFAULT_CHARSET;
 
+    /** Create an instance. */
+    public StlBoundaryReadHandler3D() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     public GeometryFormat getFormat() {

@@ -37,6 +37,11 @@ public class ObjBoundaryReadHandler3D extends AbstractBoundaryReadHandler3D {
     /** Charset for reading text input. */
     private Charset defaultCharset = StandardCharsets.UTF_8;
 
+    /** Create an instance. */
+    public ObjBoundaryReadHandler3D() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     public GeometryFormat getFormat() {

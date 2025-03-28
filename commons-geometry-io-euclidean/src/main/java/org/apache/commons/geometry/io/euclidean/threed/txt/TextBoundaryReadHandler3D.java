@@ -35,6 +35,11 @@ public class TextBoundaryReadHandler3D extends AbstractBoundaryReadHandler3D {
     /** Default charset for reading text input. */
     private Charset defaultCharset = StandardCharsets.UTF_8;
 
+    /** Create an instance. */
+    public TextBoundaryReadHandler3D() {
+        // Do nothing
+    }
+
     /** Get the text input default charset, used if the input does not
      * specify a charset.
      * @return text input default charset

@@ -86,6 +86,11 @@ public class BoundaryIOManager<
     /** Write handler registry. */
     private final HandlerRegistry<W> writeRegistry = new HandlerRegistry<>();
 
+    /** Create an instance. */
+    public BoundaryIOManager() {
+        // Do nothing
+    }
+
     /** Register a {@link BoundaryReadHandler read handler} with the instance, replacing
      * any handler previously registered for the argument's supported data format, as returned
      * by {@link BoundaryReadHandler#getFormat()}.
