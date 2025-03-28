@@ -26,7 +26,7 @@ public class SimpleTupleFormat {
     private static final String DEFAULT_SEPARATOR = ",";
 
     /** Space character. */
-    private static final String SPACE = " ";
+    private static final char SPACE = ' ';
 
     /** Static instance configured with default values. Tuples in this format
      * are enclosed by parentheses and separated by commas.
