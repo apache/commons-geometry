@@ -29,6 +29,9 @@ import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class Vector2DTest {
 
@@ -588,7 +591,6 @@ class Vector2DTest {
         Assertions.assertEquals(0.004999958333958323, Vector2D.of(20.0, 0.0).angle(Vector2D.of(20.0, 0.1)), EPS);
     }
 
-
     @Test
     void testAngle_illegalNorm() {
         // arrange
@@ -910,6 +912,37 @@ class Vector2DTest {
         Assertions.assertEquals(Vector2D.of(0, Double.NaN).hashCode(), Vector2D.NaN.hashCode());
         Assertions.assertEquals(Vector2D.of(Double.NaN, 0).hashCode(), Vector2D.NaN.hashCode());
         Assertions.assertEquals(Vector2D.of(0, Double.NaN).hashCode(), Vector2D.of(Double.NaN, 0).hashCode());
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {1.23, 4.56, 42, Math.PI})
+    void testHashCodeCollisions_symmetricAboutZero(double any) {
+        testHashCodeCollisions_symmetricAboutArbitraryValue(any, 0.0);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "1.23, 0.5",
+        "4.56, 0.25",
+        "42, -16",
+        "3.141592, -9.87",
+    })
+    void testHashCodeCollisions_symmetricAboutArbitraryValue(double any, double arb) {
+        final double neg = -any;
+        final double pos = +any;
+
+        final Vector2D negX = Vector2D.of(neg, arb);
+        final Vector2D posX = Vector2D.of(pos, arb);
+        final Vector2D negY = Vector2D.of(arb, neg);
+        final Vector2D posY = Vector2D.of(arb, pos);
+
+        int xNegHash = negX.hashCode();
+        int xPosHash = posX.hashCode();
+        int yNegHash = negY.hashCode();
+        int yPosHash = posY.hashCode();
+
+        Assertions.assertNotEquals(xNegHash, xPosHash, "+/- x hash");
+        Assertions.assertNotEquals(yNegHash, yPosHash, "+/- y hash");
     }
 
     @Test

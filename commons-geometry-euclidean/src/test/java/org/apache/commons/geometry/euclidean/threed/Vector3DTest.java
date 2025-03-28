@@ -32,6 +32,9 @@ import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class Vector3DTest {
 
@@ -1144,6 +1147,42 @@ class Vector3DTest {
 
         Assertions.assertTrue(b.equals(d));
         Assertions.assertEquals(b.hashCode(), d.hashCode());
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {1.23, 4.56, 42, Math.PI})
+    void testHashCodeCollisions_symmetricAboutZero(double any) {
+        testHashCodeCollisions_symmetricAboutArbitraryValue(any, 0.0);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "1.23, 0.5",
+        "4.56, 0.25",
+        "42, -16",
+        "3.141592, -9.87",
+    })
+    void testHashCodeCollisions_symmetricAboutArbitraryValue(double any, double arb) {
+        final double neg = -any;
+        final double pos = +any;
+
+        final Vector3D negX = Vector3D.of(neg, arb, arb);
+        final Vector3D posX = Vector3D.of(pos, arb, arb);
+        final Vector3D negY = Vector3D.of(arb, neg, arb);
+        final Vector3D posY = Vector3D.of(arb, pos, arb);
+        final Vector3D negZ = Vector3D.of(arb, arb, neg);
+        final Vector3D posZ = Vector3D.of(arb, arb, pos);
+
+        int xNegHash = negX.hashCode();
+        int xPosHash = posX.hashCode();
+        int yNegHash = negY.hashCode();
+        int yPosHash = posY.hashCode();
+        int zNegHash = negZ.hashCode();
+        int zPosHash = posZ.hashCode();
+
+        Assertions.assertNotEquals(xNegHash, xPosHash, "+/- x hash");
+        Assertions.assertNotEquals(yNegHash, yPosHash, "+/- y hash");
+        Assertions.assertNotEquals(zNegHash, zPosHash, "+/- z hash");
     }
 
     @Test
