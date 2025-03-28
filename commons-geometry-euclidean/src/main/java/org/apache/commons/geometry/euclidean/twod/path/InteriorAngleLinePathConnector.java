@@ -35,6 +35,11 @@ import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
  * </p>
  */
 public abstract class InteriorAngleLinePathConnector extends AbstractLinePathConnector {
+    /** Create an instance. */
+    public InteriorAngleLinePathConnector() {
+        // Do nothing
+    }
+
     /** {@inheritDoc} */
     @Override
     protected ConnectableLineSubset selectConnection(final ConnectableLineSubset incoming,
@@ -93,6 +98,11 @@ public abstract class InteriorAngleLinePathConnector extends AbstractLinePathCon
      * line subset.
      */
     public static final class Maximize extends InteriorAngleLinePathConnector {
+        /** Create an instance. */
+        public Maximize() {
+            // Do nothing
+        }
+
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(final double newAngle, final double previousAngle) {
@@ -107,6 +117,11 @@ public abstract class InteriorAngleLinePathConnector extends AbstractLinePathCon
      * line subset.
      */
     public static final class Minimize extends InteriorAngleLinePathConnector {
+        /** Create an instance. */
+        public Minimize() {
+            // Do nothing
+        }
+
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(final double newAngle, final double previousAngle) {

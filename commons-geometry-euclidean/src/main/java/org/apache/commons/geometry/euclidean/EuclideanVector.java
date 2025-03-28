@@ -31,6 +31,11 @@ import org.apache.commons.numbers.core.Precision;
 public abstract class EuclideanVector<V extends EuclideanVector<V>>
     implements Vector<V>, Point<V> {
 
+    /** Create an instance. */
+    public EuclideanVector() {
+        // Do nothing
+    }
+
     /** Return the vector representing the displacement from this vector
      * to the given vector. This is exactly equivalent to {@code v.subtract(thisVector)}
      * but with a method name that is much easier to visualize.

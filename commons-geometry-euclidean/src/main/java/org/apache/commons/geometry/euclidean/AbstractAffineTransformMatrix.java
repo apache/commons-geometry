@@ -26,6 +26,11 @@ public abstract class AbstractAffineTransformMatrix<
         M extends AbstractAffineTransformMatrix<V, M>>
     implements EuclideanTransform<V> {
 
+    /** Create an instance. */
+    public AbstractAffineTransformMatrix() {
+        // Do nothing
+    }
+
     /** Apply this transform to the given vector, ignoring translations and normalizing the
      * result. This is equivalent to {@code transform.applyVector(vec).normalize()} but without
      * the intermediate vector instance.
