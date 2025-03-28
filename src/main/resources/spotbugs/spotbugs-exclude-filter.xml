@@ -113,5 +113,10 @@
     <Class name="org.apache.commons.geometry.euclidean.twod.path.LinePath" />
     <BugPattern name="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
   </Match>
+  <!-- False positive -->
+  <Match>
+    <Class name="org.apache.commons.geometry.io.core.internal.CharReadBuffer" />
+    <BugPattern name="CT_CONSTRUCTOR_THROW"/>
+  </Match>
 
 </FindBugsFilter>
