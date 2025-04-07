@@ -53,7 +53,6 @@ Apache Commons Geometry
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-hull?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-hull/)
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-spherical?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-spherical/)
 --->
-[![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/apache/commons-geometry.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/apache/commons-geometry/context:java)
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 The Apache Commons Geometry project provides geometric types and utilities.
