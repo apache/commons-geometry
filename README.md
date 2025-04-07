@@ -47,11 +47,11 @@ Apache Commons Geometry
 [![Coverage Status](https://codecov.io/gh/apache/commons-geometry/branch/master/graph/badge.svg)](https://app.codecov.io/gh/apache/commons-geometry)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=commons-geometry&metric=alert_status)](https://sonarcloud.io/dashboard?id=commons-geometry)
 <!---
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-spherical/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-spherical/)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-core?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-core/)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-enclosing?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-enclosing/)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-euclidean?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-euclidean/)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-hull?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-hull/)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-spherical?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-spherical/)
 --->
 [![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/apache/commons-geometry.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/apache/commons-geometry/context:java)
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)

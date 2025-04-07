@@ -45,7 +45,7 @@ Apache Commons Geometry Euclidean
 
 [![Build Status](https://github.com/apache/commons-geometry/actions/workflows/maven.yml/badge.svg)](https://github.com/apache/commons-geometry/actions/workflows/maven.yml)
 [![Coverage Status](https://codecov.io/gh/apache/commons-geometry/branch/master/graph/badge.svg)](https://app.codecov.io/gh/apache/commons-geometry)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-euclidean?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-euclidean/)
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 Geometric primitives for euclidean space.

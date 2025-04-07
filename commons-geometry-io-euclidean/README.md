@@ -45,8 +45,8 @@ Apache Commons Geometry Euclidean IO
 
 [![Build Status](https://github.com/apache/commons-geometry/actions/workflows/maven.yml/badge.svg)](https://github.com/apache/commons-geometry/actions/workflows/maven.yml)
 [![Coverage Status](https://codecov.io/gh/apache/commons-geometry/branch/master/graph/badge.svg)](https://app.codecov.io/gh/apache/commons-geometry)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean-io/)
-[![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-euclidean-io/1.0.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-euclidean-io/1.0)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-io-euclidean?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-io-euclidean/)
+[![Javadocs](https://javadoc.io/badge/org.apache.commons/commons-geometry-io-euclidean/1.0.svg)](https://javadoc.io/doc/org.apache.commons/commons-geometry-io-euclidean/1.0)
 
 Euclidean IO interfaces and classes for Apache Commons Geometry.
 
@@ -66,7 +66,7 @@ Alternatively, you can pull it from the central Maven repositories:
 ```xml
 <dependency>
   <groupId>org.apache.commons</groupId>
-  <artifactId>commons-geometry-euclidean-io</artifactId>
+  <artifactId>commons-geometry-io-euclidean</artifactId>
   <version>1.0</version>
 </dependency>
 ```

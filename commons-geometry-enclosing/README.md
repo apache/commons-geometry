@@ -45,7 +45,7 @@ Apache Commons Geometry Enclosing
 
 [![Build Status](https://github.com/apache/commons-geometry/actions/workflows/maven.yml/badge.svg)](https://github.com/apache/commons-geometry/actions/workflows/maven.yml)
 [![Coverage Status](https://codecov.io/gh/apache/commons-geometry/branch/master/graph/badge.svg)](https://app.codecov.io/gh/apache/commons-geometry)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.commons/commons-geometry-enclosing?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.commons/commons-geometry-enclosing/)
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 Algorithms for computing enclosing balls.
