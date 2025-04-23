@@ -740,7 +740,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
                 return closest;
             }
 
-            // internal node;
+            // internal node
             return findNearestEntryInChildren(refPt, maxDist);
         }
 
