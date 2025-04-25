@@ -48,7 +48,7 @@ class TextFacetDefinitionWriterTest {
     private TextFacetDefinitionWriter fdWriter;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         writer = new StringWriter();
         fdWriter = new TextFacetDefinitionWriter(writer);
     }
