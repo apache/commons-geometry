@@ -157,7 +157,7 @@ class StlBoundaryReadHandler3DTest {
             Assertions.assertNotNull(reader.readFacet());
             Assertions.assertNotNull(reader.readFacet());
 
-            Assertions.assertThrows(IllegalStateException.class, () -> reader.readFacet());
+            Assertions.assertThrows(IllegalStateException.class, reader::readFacet);
         }
     }
 
