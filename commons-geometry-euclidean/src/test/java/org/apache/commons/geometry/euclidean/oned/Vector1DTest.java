@@ -591,7 +591,7 @@ class Vector1DTest {
         final Vector1D w = Vector1D.of(1);
 
         // act/assert
-        Assertions.assertTrue(u.hashCode() != v.hashCode());
+        Assertions.assertNotEquals(u.hashCode(), v.hashCode());
         Assertions.assertEquals(u.hashCode(), w.hashCode());
 
         Assertions.assertEquals(Vector1D.of(Double.NaN).hashCode(), Vector1D.NaN.hashCode());
