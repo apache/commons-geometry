@@ -217,7 +217,7 @@ class DocumentationExamplesTest {
         tree.add(Interval.of(1.5, 3, precision));
         tree.add(Interval.of(-1, -2, precision));
 
-        // compute the size;
+        // compute the size
         final double size = tree.getSize(); // 3
 
         // convert back to intervals
