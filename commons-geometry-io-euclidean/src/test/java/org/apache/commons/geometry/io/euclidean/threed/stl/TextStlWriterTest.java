@@ -76,7 +76,7 @@ class TextStlWriterTest {
 
             // act/assert
             GeometryTestUtils.assertThrowsWithMessage(
-                    () -> writer.startSolid(),
+                    writer::startSolid,
                     IllegalStateException.class, "Cannot start solid definition: a solid is already being written");
         }
     }
@@ -87,7 +87,7 @@ class TextStlWriterTest {
         try (TextStlWriter writer = new TextStlWriter(out)) {
             // act/assert
             GeometryTestUtils.assertThrowsWithMessage(
-                    () -> writer.endSolid(),
+                    writer::endSolid,
                     IllegalStateException.class, "Cannot end solid definition: no solid has been started");
         }
     }
