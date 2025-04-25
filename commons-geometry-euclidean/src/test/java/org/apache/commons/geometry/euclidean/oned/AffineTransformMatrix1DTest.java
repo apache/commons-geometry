@@ -631,7 +631,7 @@ class AffineTransformMatrix1DTest {
     void testNormalTransform_nonInvertible() {
         // act/assert
         final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(0);
-        Assertions.assertThrows(IllegalStateException.class, () -> transform.normalTransform());
+        Assertions.assertThrows(IllegalStateException.class, transform::normalTransform);
     }
 
     @Test

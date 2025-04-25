@@ -274,7 +274,7 @@ class SimpleTextParserTest {
         p.nextLine();
 
         // act/assert
-        final Throwable exc = Assertions.assertThrows(IllegalStateException.class, () -> p.getCurrentTokenAsDouble());
+        final Throwable exc = Assertions.assertThrows(IllegalStateException.class, p::getCurrentTokenAsDouble);
         Assertions.assertEquals(NumberFormatException.class, exc.getCause().getClass());
     }
 
@@ -342,7 +342,7 @@ class SimpleTextParserTest {
         p.nextLine();
 
         // act/assert
-        final Throwable exc = Assertions.assertThrows(IllegalStateException.class, () -> p.getCurrentTokenAsInt());
+        final Throwable exc = Assertions.assertThrows(IllegalStateException.class, p::getCurrentTokenAsInt);
         Assertions.assertEquals(NumberFormatException.class, exc.getCause().getClass());
     }
 
@@ -1058,9 +1058,8 @@ class SimpleTextParserTest {
             p.chooseIgnoreCase("X", "Y", "Z");
         }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [X, Y, Z] but found [a]");
 
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.chooseIgnoreCase();
-        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [] but found [a]");
+        GeometryTestUtils.assertThrowsWithMessage(p::chooseIgnoreCase,
+            IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [] but found [a]");
     }
 
     @Test
