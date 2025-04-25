@@ -49,7 +49,7 @@ class ConvexHullBuilderTest {
     private UniformRandomProvider random;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         // by default, do not include collinear points
         generator = createConvexHullGenerator(false);
         random = RandomSource.XO_SHI_RO_256_PP.create(10);
