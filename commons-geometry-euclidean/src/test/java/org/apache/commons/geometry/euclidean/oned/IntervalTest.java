@@ -637,23 +637,6 @@ class IntervalTest {
         // arrange
         final Interval interval = Interval.full();
         final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
-                Vector1D.of(1), true, TEST_PRECISION);
-
-        // act
-        final Split<Interval> split = interval.split(splitter);
-
-        // assert
-        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
-
-        checkInterval(split.getMinus(), Double.NEGATIVE_INFINITY, 1);
-        checkInterval(split.getPlus(), 1, Double.POSITIVE_INFINITY);
-    }
-
-    @Test
-    void testSplit_halfSpace_positiveFacingSplitter() {
-        // arrange
-        final Interval interval = Interval.min(-1, TEST_PRECISION);
-        final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(1), false, TEST_PRECISION);
 
         // act
@@ -663,7 +646,24 @@ class IntervalTest {
         Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         checkInterval(split.getMinus(), 1, Double.POSITIVE_INFINITY);
-        checkInterval(split.getPlus(), -1, 1);
+        checkInterval(split.getPlus(), Double.NEGATIVE_INFINITY, 1);
+    }
+
+    @Test
+    void testSplit_halfSpace_positiveFacingSplitter() {
+        // arrange
+        final Interval interval = Interval.min(-1, TEST_PRECISION);
+        final OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
+                Vector1D.of(1), true, TEST_PRECISION);
+
+        // act
+        final Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assertions.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        checkInterval(split.getMinus(), -1, 1);
+        checkInterval(split.getPlus(), 1, Double.POSITIVE_INFINITY);
     }
 
 
