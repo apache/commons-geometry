@@ -570,11 +570,9 @@ class ConvexHullBuilderTest {
                     .addProduct(-d1.getY(), d2.getX()).getAsDouble();
             final int cmp = Precision.compareTo(cross, 0.0, TEST_EPS);
 
-            if (sign != 0 && cmp != sign) {
-                if (!includesCollinearPoints || cmp != 0) {
-                    // in case of collinear points the cross product will be zero
-                    return false;
-                }
+            if (sign != 0 && cmp != sign && (!includesCollinearPoints || cmp != 0)) {
+                // in case of collinear points the cross product will be zero
+                return false;
             }
 
             sign = cmp;
