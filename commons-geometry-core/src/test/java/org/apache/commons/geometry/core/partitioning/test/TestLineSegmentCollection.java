@@ -147,7 +147,7 @@ public final class TestLineSegmentCollection implements HyperplaneSubset<TestPoi
     @Override
     public RegionLocation classify(final TestPoint2D point) {
 
-        // simply return the first value that is not outside;
+        // simply return the first value that is not outside.
         // this is decidedly not robust but should work for testing purposes
         for (final TestLineSegment seg : segments) {
             final RegionLocation loc = seg.classify(point);
