@@ -1095,7 +1095,7 @@ class Vector3DTest {
         final Vector3D w = Vector3D.of(1, 1, 1);
 
         // act/assert
-        Assertions.assertTrue(u.hashCode() != v.hashCode());
+        Assertions.assertNotEquals(u.hashCode(), v.hashCode());
         Assertions.assertEquals(u.hashCode(), w.hashCode());
 
         Assertions.assertEquals(Vector3D.of(0, 0, Double.NaN).hashCode(), Vector3D.NaN.hashCode());

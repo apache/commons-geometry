@@ -906,7 +906,7 @@ class Vector2DTest {
         final Vector2D w = Vector2D.of(1, 1);
 
         // act/assert
-        Assertions.assertTrue(u.hashCode() != v.hashCode());
+        Assertions.assertNotEquals(u.hashCode(), v.hashCode());
         Assertions.assertEquals(u.hashCode(), w.hashCode());
 
         Assertions.assertEquals(Vector2D.of(0, Double.NaN).hashCode(), Vector2D.NaN.hashCode());
