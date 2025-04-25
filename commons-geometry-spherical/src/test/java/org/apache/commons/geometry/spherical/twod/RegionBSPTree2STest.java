@@ -344,10 +344,10 @@ class RegionBSPTree2STest {
     void testToConvex_doubleLune_complement() {
         // arrange
         final RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
-                .append(EQUATOR.arc(0,  Math.PI))
-                .append(X_MERIDIAN.arc(Math.PI, 0))
-                .append(EQUATOR.reverse().arc(0, Math.PI))
-                .append(X_MERIDIAN.reverse().arc(Math.PI, 0))
+                .append(EQUATOR.arc(Math.PI, 0))
+                .append(X_MERIDIAN.arc(0, Math.PI))
+                .append(EQUATOR.reverse().arc(Math.PI, 0))
+                .append(X_MERIDIAN.reverse().arc(0, Math.PI))
                 .build()
                 .toTree();
 
