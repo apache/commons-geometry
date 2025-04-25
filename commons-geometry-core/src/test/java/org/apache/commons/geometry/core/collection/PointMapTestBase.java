@@ -847,14 +847,14 @@ public abstract class PointMapTestBase<P extends Point<P>>
         final Iterator<Map.Entry<P, Integer>> it = map.entriesNearToFar(pts.get(0)).iterator();
         Assertions.assertTrue(it.hasNext());
         Assertions.assertEquals(new SimpleEntry<>(pts.get(0), 0), it.next());
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> it.remove());
+        Assertions.assertThrows(UnsupportedOperationException.class, it::remove);
 
         Assertions.assertTrue(it.hasNext());
         Assertions.assertEquals(new SimpleEntry<>(pts.get(1), 1), it.next());
 
         Assertions.assertFalse(it.hasNext());
 
-        Assertions.assertThrows(NoSuchElementException.class, () -> it.next());
+        Assertions.assertThrows(NoSuchElementException.class, it::next);
     }
 
     @Test
@@ -870,7 +870,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
         map.remove(pts.get(0));
 
         // assert
-        Assertions.assertThrows(ConcurrentModificationException.class, () -> it.next());
+        Assertions.assertThrows(ConcurrentModificationException.class, it::next);
     }
 
     @Test
@@ -961,14 +961,14 @@ public abstract class PointMapTestBase<P extends Point<P>>
         final Iterator<Map.Entry<P, Integer>> it = map.entriesFarToNear(pts.get(0)).iterator();
         Assertions.assertTrue(it.hasNext());
         Assertions.assertEquals(new SimpleEntry<>(pts.get(1), 1), it.next());
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> it.remove());
+        Assertions.assertThrows(UnsupportedOperationException.class, it::remove);
 
         Assertions.assertTrue(it.hasNext());
         Assertions.assertEquals(new SimpleEntry<>(pts.get(0), 0), it.next());
 
         Assertions.assertFalse(it.hasNext());
 
-        Assertions.assertThrows(NoSuchElementException.class, () -> it.next());
+        Assertions.assertThrows(NoSuchElementException.class, it::next);
     }
 
     @Test
@@ -984,7 +984,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
         map.remove(pts.get(0));
 
         // assert
-        Assertions.assertThrows(ConcurrentModificationException.class, () -> it.next());
+        Assertions.assertThrows(ConcurrentModificationException.class, it::next);
     }
 
     @Test
@@ -1881,7 +1881,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
         Assertions.assertNotNull(it.next());
 
         Assertions.assertFalse(it.hasNext());
-        Assertions.assertThrows(NoSuchElementException.class, () -> it.next());
+        Assertions.assertThrows(NoSuchElementException.class, it::next);
     }
 
     private void assertCollectionIteratorRemove(final Function<PointMap<P, ?>, Collection<?>> collectionFactory) {
@@ -1965,7 +1965,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
         // act/assert
         final Iterator<?> it = coll.iterator();
 
-        Assertions.assertThrows(IllegalStateException.class, () -> it.remove());
+        Assertions.assertThrows(IllegalStateException.class, it::remove);
     }
 
     private void assertCollectionIteratorRemoveMultipleCalls(
@@ -1981,7 +1981,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
         Assertions.assertNotNull(it.next());
         it.remove();
 
-        Assertions.assertThrows(IllegalStateException.class, () -> it.remove());
+        Assertions.assertThrows(IllegalStateException.class, it::remove);
 
         Assertions.assertEquals(0, map.size());
     }
@@ -2003,7 +2003,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
 
         // assert
         Assertions.assertTrue(it.hasNext());
-        Assertions.assertThrows(ConcurrentModificationException.class, () -> it.next());
+        Assertions.assertThrows(ConcurrentModificationException.class, it::next);
     }
 
     /** Assert that {@code collection} returns entries with the same keys in the same order as
