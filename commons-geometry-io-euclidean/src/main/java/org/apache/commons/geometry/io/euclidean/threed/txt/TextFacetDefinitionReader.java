@@ -274,7 +274,7 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
      */
     private void setCommentTokenInternal(final String commentTokenStr) {
         this.commentToken = commentTokenStr;
-        this.hasCommentToken = commentTokenStr != null && commentTokenStr.length() > 0;
+        this.hasCommentToken = commentTokenStr != null && !commentTokenStr.isEmpty();
         this.commentStartChar = this.hasCommentToken ?
                 commentTokenStr.charAt(0) :
                 -1;
