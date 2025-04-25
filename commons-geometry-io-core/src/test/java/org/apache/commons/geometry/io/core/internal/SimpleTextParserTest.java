@@ -232,45 +232,38 @@ class SimpleTextParserTest {
         final SimpleTextParser p = parser("abc\n1.1.1a");
 
         // act/assert
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsDouble();
-        }, IllegalStateException.class, "No token has been read from the character stream");
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsDouble,
+            IllegalStateException.class, "No token has been read from the character stream");
 
         p.next(SimpleTextParser::isNotNewLinePart);
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsDouble();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsDouble,
+            IllegalStateException.class,
                 "Parsing failed at line 1, column 1: expected double but found [abc]");
 
         p.nextAlphanumeric();
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsDouble();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsDouble,
+            IllegalStateException.class,
                 "Parsing failed at line 1, column 4: expected double but found end of line");
 
         p.discardLine()
             .next(c -> c != 'a');
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsDouble();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsDouble,
+            IllegalStateException.class,
                 "Parsing failed at line 2, column 1: expected double but found [1.1.1]");
 
         p.next(Character::isDigit);
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsDouble();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsDouble,
+            IllegalStateException.class,
                 "Parsing failed at line 2, column 6: expected double but found empty token followed by [a]");
 
         p.nextLine();
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsDouble();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsDouble,
+            IllegalStateException.class,
                 "Parsing failed at line 2, column 6: expected double but found [a]");
 
         p.nextLine();
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsDouble();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsDouble,
+            IllegalStateException.class,
                 "Parsing failed at line 2, column 7: expected double but found end of content");
     }
 
@@ -307,45 +300,38 @@ class SimpleTextParserTest {
         final SimpleTextParser p = parser("abc\n1.1.1a");
 
         // act/assert
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsInt();
-        }, IllegalStateException.class, "No token has been read from the character stream");
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsInt,
+            IllegalStateException.class, "No token has been read from the character stream");
 
         p.next(SimpleTextParser::isNotNewLinePart);
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsInt();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsInt,
+            IllegalStateException.class,
                 "Parsing failed at line 1, column 1: expected integer but found [abc]");
 
         p.nextAlphanumeric();
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsInt();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsInt,
+            IllegalStateException.class,
                 "Parsing failed at line 1, column 4: expected integer but found end of line");
 
         p.discardLine()
             .next(c -> c != 'a');
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsInt();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsInt,
+            IllegalStateException.class,
                 "Parsing failed at line 2, column 1: expected integer but found [1.1.1]");
 
         p.next(Character::isDigit);
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsInt();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsInt,
+            IllegalStateException.class,
                 "Parsing failed at line 2, column 6: expected integer but found empty token followed by [a]");
 
         p.nextLine();
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsInt();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsInt,
+            IllegalStateException.class,
                 "Parsing failed at line 2, column 6: expected integer but found [a]");
 
         p.nextLine();
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.getCurrentTokenAsInt();
-        }, IllegalStateException.class,
+        GeometryTestUtils.assertThrowsWithMessage(p::getCurrentTokenAsInt,
+            IllegalStateException.class,
                 "Parsing failed at line 2, column 7: expected integer but found end of content");
     }
 
@@ -578,7 +564,7 @@ class SimpleTextParserTest {
         final SimpleTextParser p = parser("\na,b c\r\n12.3\rdef\n");
 
         // act/assert
-        p.discard(c -> Character.isWhitespace(c));
+        p.discard(Character::isWhitespace);
         assertChar('a', p.peekChar());
         assertPosition(p, 2, 1);
 
@@ -586,11 +572,11 @@ class SimpleTextParserTest {
         assertChar(' ', p.peekChar());
         assertPosition(p, 2, 4);
 
-        p.discard(c -> Character.isDigit(c)); // should not advance
+        p.discard(Character::isDigit); // should not advance
         assertChar(' ', p.peekChar());
         assertPosition(p, 2, 4);
 
-        p.discard(c -> Character.isWhitespace(c));
+        p.discard(Character::isWhitespace);
         assertChar('c', p.peekChar());
         assertPosition(p, 2, 5);
 
@@ -614,7 +600,7 @@ class SimpleTextParserTest {
         final SimpleTextParser p = parser("\na,|\r\nb |c\r\n1|\r|\n2.3\rdef\n");
 
         // act/assert
-        p.discardWithLineContinuation(cont, c -> Character.isWhitespace(c));
+        p.discardWithLineContinuation(cont, Character::isWhitespace);
         assertChar('a', p.peekChar());
         assertPosition(p, 2, 1);
 
@@ -622,11 +608,11 @@ class SimpleTextParserTest {
         assertChar(' ', p.peekChar());
         assertPosition(p, 3, 2);
 
-        p.discardWithLineContinuation(cont, c -> Character.isDigit(c)); // should not advance
+        p.discardWithLineContinuation(cont, Character::isDigit); // should not advance
         assertChar(' ', p.peekChar());
         assertPosition(p, 3, 2);
 
-        p.discardWithLineContinuation(cont, c -> Character.isWhitespace(c));
+        p.discardWithLineContinuation(cont, Character::isWhitespace);
         assertChar('|', p.peekChar());
         assertPosition(p, 3, 3);
 
@@ -1028,9 +1014,8 @@ class SimpleTextParserTest {
             p.choose("A");
         }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [A] but found [a]");
 
-        GeometryTestUtils.assertThrowsWithMessage(() -> {
-            p.choose();
-        }, IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [] but found [a]");
+        GeometryTestUtils.assertThrowsWithMessage(p::choose,
+            IllegalStateException.class, "Parsing failed at line 1, column 1: expected one of [] but found [a]");
     }
 
     @Test
