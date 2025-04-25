@@ -74,7 +74,7 @@ class ConvexHullBuilderTest {
         // act/assert
         ConvexHull2D.Builder builder = new ConvexHull2D.Builder(true, Precision.doubleEquivalenceOfEpsilon(1));
         builder.append(points);
-        Assertions.assertThrows(IllegalStateException.class, () ->  builder.build());
+        Assertions.assertThrows(IllegalStateException.class, builder::build);
     }
 
     @Test
