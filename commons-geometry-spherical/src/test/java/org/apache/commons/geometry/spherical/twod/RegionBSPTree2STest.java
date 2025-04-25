@@ -642,8 +642,8 @@ class RegionBSPTree2STest {
         // assert
         // compute the area, adjusting the first computation for the fact that the triangles comprising the
         // outer diamond have lengths greater than pi/2
-        final double nonComplementedArea = 4 * ((Math.PI - rightTriangleArea(outerRadius, outerRadius) -
-                rightTriangleArea(midRadius, midRadius) + rightTriangleArea(innerRadius, innerRadius)));
+        final double nonComplementedArea = 4 * (Math.PI - rightTriangleArea(outerRadius, outerRadius) -
+                rightTriangleArea(midRadius, midRadius) + rightTriangleArea(innerRadius, innerRadius));
         final double area = (4 * Math.PI) - nonComplementedArea;
         Assertions.assertEquals(area, tree.getSize(), TEST_EPS);
 
