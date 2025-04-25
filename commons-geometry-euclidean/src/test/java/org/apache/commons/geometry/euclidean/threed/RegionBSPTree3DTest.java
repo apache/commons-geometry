@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1329,7 +1328,7 @@ class RegionBSPTree3DTest {
     }
 
     @Test
-    void testBoolean_union() throws IOException {
+    void testBoolean_union() {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;
@@ -1409,7 +1408,7 @@ class RegionBSPTree3DTest {
     }
 
     @Test
-    void testBoolean_intersection() throws IOException {
+    void testBoolean_intersection() {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;
@@ -1487,7 +1486,7 @@ class RegionBSPTree3DTest {
     }
 
     @Test
-    void testBoolean_xor_twoCubes() throws IOException {
+    void testBoolean_xor_twoCubes() {
         // arrange
         final double size = 1.0;
         final RegionBSPTree3D box1 = createRect(Vector3D.ZERO, Vector3D.of(size, size, size));

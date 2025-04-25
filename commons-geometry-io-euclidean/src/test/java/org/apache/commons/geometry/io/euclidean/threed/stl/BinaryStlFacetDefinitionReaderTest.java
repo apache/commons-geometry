@@ -140,7 +140,7 @@ class BinaryStlFacetDefinitionReaderTest {
     }
 
     @Test
-    void testGetHeader_ioException() throws IOException {
+    void testGetHeader_ioException() {
         // arrange
         final InputStream failIn = new InputStream() {
             @Override
