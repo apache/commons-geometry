@@ -107,10 +107,12 @@ class AbstractTextFormatWriterTest {
 
             @Override
             public void flush() {
+                // Not tested
             }
 
             @Override
             public void close() {
+                // Not tested
             }
         };
 
