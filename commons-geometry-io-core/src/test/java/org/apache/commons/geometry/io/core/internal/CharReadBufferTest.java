@@ -324,6 +324,7 @@ class CharReadBufferTest {
 
             @Override
             public void close() {
+                // Not used
             }
         };
     }
