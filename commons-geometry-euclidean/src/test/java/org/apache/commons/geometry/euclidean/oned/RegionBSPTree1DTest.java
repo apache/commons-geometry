@@ -1060,11 +1060,11 @@ class RegionBSPTree1DTest {
     @Test
     void testGetMinMax_full() {
         // arrange
-        final RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        final RegionBSPTree1D tree = RegionBSPTree1D.full();
 
         // act/assert
-        GeometryTestUtils.assertPositiveInfinity(tree.getMin());
-        GeometryTestUtils.assertNegativeInfinity(tree.getMax());
+        GeometryTestUtils.assertNegativeInfinity(tree.getMin());
+        GeometryTestUtils.assertPositiveInfinity(tree.getMax());
     }
 
     @Test
