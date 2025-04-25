@@ -143,7 +143,7 @@ class DocumentationExamplesTest {
         final boolean contains1 = set.contains(Point2S.of(1e-7, 2)); // contains1 = true
         final boolean contains2 = set.contains(Point2S.of(1e-5, 2)); // contains2 = false
 
-        final Point2S original = set.get(Point2S.of(1e-7, 2 + 1e-7)); // original = Point2S.of(0, 2);
+        final Point2S original = set.get(Point2S.of(1e-7, 2 + 1e-7)); // original = Point2S.of(0, 2)
 
         // ---------------------
         Assertions.assertTrue(contains1);
