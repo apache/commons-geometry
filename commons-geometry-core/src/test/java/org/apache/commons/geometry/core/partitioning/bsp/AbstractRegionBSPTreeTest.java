@@ -51,7 +51,7 @@ class AbstractRegionBSPTreeTest {
     private TestRegionNode root;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         tree = new TestRegionBSPTree();
         root = tree.getRoot();
     }
