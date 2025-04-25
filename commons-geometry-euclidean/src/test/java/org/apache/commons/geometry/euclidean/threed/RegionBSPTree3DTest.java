@@ -1523,7 +1523,7 @@ class RegionBSPTree3DTest {
     }
 
     @Test
-    void testBoolean_xor_cubeAndSphere() throws IOException {
+    void testBoolean_xor_cubeAndSphere() {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;
@@ -1599,7 +1599,7 @@ class RegionBSPTree3DTest {
     }
 
     @Test
-    void testBoolean_difference() throws IOException {
+    void testBoolean_difference() {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;
@@ -1673,7 +1673,7 @@ class RegionBSPTree3DTest {
     }
 
     @Test
-    void testBoolean_multiple() throws IOException {
+    void testBoolean_multiple() {
         // arrange
         final double tolerance = 0.05;
         final double size = 1.0;
