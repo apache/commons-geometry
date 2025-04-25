@@ -463,8 +463,10 @@ class AffineTransformMatrix1DTest {
     @Test
     void testApplyDirection_illegalNorm() {
         // act/assert
-        Assertions.assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix1D.createScale(0).applyDirection(Vector1D.Unit.PLUS));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> AffineTransformMatrix1D.createScale(2).applyDirection(Vector1D.ZERO));
+        final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(0);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> transform.applyDirection(Vector1D.Unit.PLUS));
+        final AffineTransformMatrix1D transform2 = AffineTransformMatrix1D.createScale(0);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> transform2.applyDirection(Vector1D.ZERO));
     }
 
     @Test
@@ -628,7 +630,8 @@ class AffineTransformMatrix1DTest {
     @Test
     void testNormalTransform_nonInvertible() {
         // act/assert
-        Assertions.assertThrows(IllegalStateException.class, () -> AffineTransformMatrix1D.createScale(0).normalTransform());
+        final AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(0);
+        Assertions.assertThrows(IllegalStateException.class, () -> transform.normalTransform());
     }
 
     @Test
