@@ -870,16 +870,6 @@ class IntervalTest {
      * @param max
      */
     private static void checkInterval(final Interval interval, final double min, final double max) {
-        checkInterval(interval, min, max, TEST_PRECISION);
-    }
-
-    /** Check that the given interval matches the arguments and is internally consistent.
-     * @param interval
-     * @param min
-     * @param max
-     * @param precision
-     */
-    private static void checkInterval(final Interval interval, final double min, final double max, final Precision.DoubleEquivalence precision) {
         Assertions.assertEquals(min, interval.getMin(), TEST_EPS);
         Assertions.assertEquals(max, interval.getMax(), TEST_EPS);
 

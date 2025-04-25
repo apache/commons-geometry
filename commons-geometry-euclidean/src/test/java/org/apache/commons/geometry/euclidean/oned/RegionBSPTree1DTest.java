@@ -1221,10 +1221,6 @@ class RegionBSPTree1DTest {
     }
 
     private static void checkInterval(final Interval interval, final double min, final double max) {
-        checkInterval(interval, min, max, TEST_PRECISION);
-    }
-
-    private static void checkInterval(final Interval interval, final double min, final double max, final Precision.DoubleEquivalence precision) {
         Assertions.assertEquals(min, interval.getMin(), TEST_EPS);
         Assertions.assertEquals(max, interval.getMax(), TEST_EPS);
     }
