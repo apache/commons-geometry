@@ -42,7 +42,7 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ConvexHull3DTest {
+class ConvexHull3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -53,7 +53,7 @@ public class ConvexHull3DTest {
     private UniformRandomProvider random;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         builder = new ConvexHull3D.Builder(TEST_PRECISION);
         random = RandomSource.XO_SHI_RO_256_PP.create(10);
     }
