@@ -15,12 +15,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<project name="Geometry">
-  <bannerRight>
-    <name>Apache Commons Geometry</name>
-    <!-- Use a full URL allows a correct banner for the modules. -->
-    <src>https://commons.apache.org/proper/commons-geometry/images/commons_geometry.small.png</src>
-    <href>https://commons.apache.org/proper/commons-geometry/index.html</href>
+<site name="Geometry">
+  <!-- Use a full URL allows a correct banner for the modules. -->
+  <bannerRight name="Apache Commons Geometry" href="https://commons.apache.org/proper/commons-geometry/index.html">
+    <image src="https://commons.apache.org/proper/commons-geometry/images/commons_geometry.small.png"/>
   </bannerRight>
 
   <body>
@@ -40,4 +38,4 @@
     </head>
 
   </body>
-</project>
+</site>
