@@ -106,7 +106,7 @@
   </modules>
 
   <scm>
-    <connection>scm:git:http://gitbox.apache.org/repos/asf/commons-geometry.git</connection>
+    <connection>scm:git:https://gitbox.apache.org/repos/asf/commons-geometry.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/commons-geometry.git</developerConnection>
     <url>https://gitbox.apache.org/repos/asf/commons-geometry.git</url>
   </scm>
