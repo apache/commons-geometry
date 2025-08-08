@@ -16,7 +16,7 @@
  */
 /**
  * <p>
- * This package provides components related to rotations in 2 dimensional
+ * This package provides components related to rotations in 2-dimensional
  * Euclidean space.
  * </p>
  *

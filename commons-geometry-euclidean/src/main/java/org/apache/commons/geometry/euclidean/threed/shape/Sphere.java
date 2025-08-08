@@ -36,7 +36,7 @@ import org.apache.commons.geometry.euclidean.threed.mesh.SimpleTriangleMesh;
 import org.apache.commons.geometry.euclidean.threed.mesh.TriangleMesh;
 import org.apache.commons.numbers.core.Precision;
 
-/** Class representing a 3 dimensional sphere in Euclidean space.
+/** Class representing a 3-dimensional sphere in Euclidean space.
  */
 public final class Sphere extends AbstractNSphere<Vector3D> implements Linecastable3D {
 

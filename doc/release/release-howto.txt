@@ -49,7 +49,7 @@ X.Y-release branch is synchronized by running a 'git merge' command on the branc
 This is shown by the 'm' in the second line. A new commit is tagged as RC2. This second
 release candidate also fails, and a new correction is made on master branch, a new merge
 is done on the X.Y-release branch, a new commit is tagged and a third release candidate is
-create, which succeeds. Then a final tag will be added on the final commit of this branch
+created, which succeeds. Then a final tag will be added on the final commit of this branch
 showing the status as released. Then the files are cleaned to prepare for next version
 (pom getting again a SNAPSHOT suffix, changes.xml getting a new placeholder for changes)
 and the cleaned branch is merged back to master. Once the X.Y-release branch has been merged,
@@ -103,7 +103,7 @@ that the build process can create all the necessary artifacts.
   should create the artifacts in the "target/deploy" directory. (Note that this
   command uses the commons-geometry-examples profile to include the example modules
   in the build. These artifacts are not part of the binary distribution and will not
-  be present in the deploy directory. However, it is important to include them at this
+  be present in the deployed directory. However, it is important to include them at this
   stage in order to ensure that they build correctly.)
 
   At some point when processing the above command, the GPG passphrase will be
@@ -233,7 +233,7 @@ header description to the previous release notes in src/site/resources/release-n
 and update the line wrap formatting to match. Remove trailing whitespace.
 Ensure the lines wrap at 100 characters.
 Note that wrapping is taken from changes.xml which should be written to wrap
-at 100 characters but allowing for a indent on the first line due to the
+at 100 characters but allowing for an indent on the first line due to the
 issue field. Update changes.xml if appropriate.
 
 Append the previous release notes from src/site/resources/release-notes/ to the current one:
@@ -343,7 +343,7 @@ for your apache id in the settings.xml file which is used for Nexus repository s
 The release process requires commit access for the commons SVN repository used to host the
 web site. This will use the provided 'user.name' for SVN. If your SVN is not set-up to
 cache passwords then a password must be provided. This can be done using a <server> section in
-the maven settings.xml file. Typically the username is the same for Nexus repository staging
+the maven settings.xml file. Typically, the username is the same for Nexus repository staging
 (i.e. your apache id) so the server 'apache.releases.https' configured in the example
 settings.xml file can be used by setting the commons.distServer property for the commons release
 plugin (see https://commons.apache.org/proper/commons-release-plugin/index.html).
@@ -363,7 +363,7 @@ You can then run
 which will transfer the artifacts to the Nexus repository located at
   https://repository.apache.org/index.html#stagingRepositories
 
-This process transfers more files than really needed in the the "staging" (i.e.
+This process transfers more files than really needed in the "staging" (i.e.
 non official) maven repository. The files expected in the repository are
   commons-geometry-<ModuleArtifactID>-1.0.pom
   commons-geometry-<ModuleArtifactID>-1.0.jar
@@ -474,7 +474,7 @@ transfer it to your apache personal area for review.
 Here is how to do this using "lftp" to initiate the sftp transfer. "lftp" supports
 a mirror command for recursive transfers; don't forget the -R flag for uploading
 instead of downloading the site.
-If you haven't setup your login on home.apache.org you will need to go to
+If you haven't set up your login on home.apache.org you will need to go to
   https://id.apache.org/
 login and copy the contents of your
   ~/.ssh/id_rsa.pub
@@ -518,7 +518,7 @@ Apache Commons Geometry (full distribution) 1.0 RC4 is available for review here
 
 The Git tag commons-geometry-1.0-rc4 commit for this RC is 5326851864f93a486409562628afaaa485b6d99f which you can browse here:
     https://gitbox.apache.org/repos/asf?p=commons-geometry.git;a=commit;h=5326851864f93a486409562628afaaa485b6d99f
-You may checkout this tag using:
+You may check out this tag using:
     git clone https://gitbox.apache.org/repos/asf/commons-geometry.git --branch commons-geometry-1.0-rc4 commons-geometry-1.0-rc4
 
 Maven artifacts are here:
@@ -580,7 +580,7 @@ KEYS:
   https://downloads.apache.org/commons/KEYS
 
 Please review the release candidate and vote.
-This vote will close no sooner that 72 hours from now.
+This vote will close no sooner than 72 hours from now.
 
   [ ] +1 Release these artifacts
   [ ] +0 OK, but...

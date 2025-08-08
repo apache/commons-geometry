@@ -167,7 +167,7 @@ b.insertCut(Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(-1, 1), precision));
       <img src="../images/tutorials/bsp-tree/bu-cut-2.svg" />
       <p>
       Our inside region is now restricted to only the <var>d</var> node, and once again the region is infinite. We can
-      also see that the region boundary (indicated with a orange line) no longer travels the full length of <var>a</var>'s
+      also see that the region boundary (indicated with an orange line) no longer travels the full length of <var>a</var>'s
       cut. Rather, only a portion of the cut forms a boundary between an inside part of the region and an outside part.
       </p>
 
@@ -248,7 +248,7 @@ tree.insert(firstBoundary);</source>
       <img src="../images/tutorials/bsp-tree/td-1.svg" />
 
       <p>
-        "Wait a minute!" you may be saying. "I specifically requested that a line segment be inserted into the tree and
+        "Wait a minute!" you may be saying. "I specifically requested that a line segment be inserted into the tree, and
         now I have an entire line span!" This is true. However, if we go back to one of the important notes from the previous
         section, we will be reminded that node cuts always fill the <em>entire</em> space of the node being cut. That
         is a crucial part of a tree's geometric consistency. Since we ended up cutting the root node when we inserted
@@ -258,7 +258,7 @@ tree.insert(firstBoundary);</source>
       </p>
 
       <p>
-        Let's continue inserting boundaries for the left side of the shape and we will begin to feel our sanity returning.
+        Let's continue inserting boundaries for the left side of the shape, and we will begin to feel our sanity returning.
       </p>
       <source>
 tree.insert(Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(-5, 3), precision));

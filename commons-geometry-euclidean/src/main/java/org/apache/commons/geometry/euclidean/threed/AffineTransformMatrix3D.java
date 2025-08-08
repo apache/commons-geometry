@@ -24,7 +24,7 @@ import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 
-/** Class using a matrix to represent affine transformations in 3 dimensional Euclidean space.
+/** Class using a matrix to represent affine transformations in 3-dimensional Euclidean space.
  *
  * <p>Instances of this class use a 4x4 matrix for all transform operations.
  * The last row of this matrix is always set to the values <code>[0 0 0 1]</code> and so
@@ -360,9 +360,9 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
     }
 
     /** Apply a scale operation to the current instance, returning the result as a new transform.
-     * @param x scale factor for the x axis
-     * @param y scale factor for the y axis
-     * @param z scale factor for the z axis
+     * @param x scale factor for the x-axis
+     * @param y scale factor for the y-axis
+     * @param z scale factor for the z-axis
      * @return a new transform containing the result of applying a scale operation to
      *      the current instance
      */
@@ -434,7 +434,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
     @Override
     public AffineTransformMatrix3D inverse() {
 
-        // Our full matrix is 4x4 but we can significantly reduce the amount of computations
+        // Our full matrix is 4x4, but we can significantly reduce the amount of computations
         // needed here since we know that our last row is [0 0 0 1].
 
         final double det = Matrices.checkDeterminantForInverse(determinant());
@@ -717,9 +717,9 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
     }
 
     /** Create a transform representing a scale operation.
-     * @param x scale factor for the x axis
-     * @param y scale factor for the y axis
-     * @param z scale factor for the z axis
+     * @param x scale factor for the x-axis
+     * @param y scale factor for the y-axis
+     * @param z scale factor for the z-axis
      * @return a new transform representing a scale operation
      */
     public static AffineTransformMatrix3D createScale(final double x, final double y, final double z) {

@@ -18,7 +18,7 @@ This document summarizes the development process of Commons Geometry:
 
 1. The "master" branch collects all modifications that will be part
    of the next release.
-   Usually, non trivial changes should not be committed directly to the "master"
+   Usually, non-trivial changes should not be committed directly to the "master"
    branch; they should be merged from a branch specifically created for
    that purpose (see next point).
 2. Work on an identified issue (bug fix or new feature) must be done in a

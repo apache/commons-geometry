@@ -264,7 +264,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         return tree;
     }
 
-    /** BSP tree node for two dimensional spherical space.
+    /** BSP tree node for two-dimensional spherical space.
      */
     public static final class RegionNode2S extends AbstractRegionBSPTree.AbstractRegionNode<Point2S, RegionNode2S> {
         /** Simple constructor.

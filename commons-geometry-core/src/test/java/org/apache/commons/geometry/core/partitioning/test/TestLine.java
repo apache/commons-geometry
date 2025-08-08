@@ -21,7 +21,7 @@ import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 
-/** Class representing a line in two dimensional Euclidean space. This
+/** Class representing a line in two-dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
 public final class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {

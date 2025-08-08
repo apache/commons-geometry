@@ -37,7 +37,7 @@ public enum GeometryFormat3D implements GeometryFormat {
 
     /** Value representing a simple, <em>non-standard</em> text geometry format that defines facets one per line
      * by listing the coordinates of the facet vertices in order, separated by non-numeric characters (e.g. whitespace,
-     * commas, semicolons, etc). Each line follows the pattern
+     * commas, semicolons, etc.). Each line follows the pattern
      * <p>
      * <code>
      *      p1<sub>x</sub> p1<sub>y</sub> p1<sub>z</sub> p2<sub>x</sub> p2<sub>y</sub> p2<sub>z</sub> p3<sub>x</sub> p3<sub>y</sub> p3<sub>z</sub> ...

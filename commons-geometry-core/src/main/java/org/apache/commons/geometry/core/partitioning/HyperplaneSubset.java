@@ -86,7 +86,7 @@ public interface HyperplaneSubset<P extends Point<P>> extends Splittable<P, Hype
      *  <li>{@link RegionLocation#BOUNDARY BOUNDARY} - The point lies on the hyperplane
      *      and is on the boundary of the subset region.</li>
      *  <li>{@link RegionLocation#OUTSIDE OUTSIDE} - The point does not lie on
-     *      the hyperplane or it does lie on the hyperplane but is outside of the
+     *      the hyperplane, or it does lie on the hyperplane but is outside of the
      *      subset region.</li>
      * </ul>
      * @param pt the point to classify

@@ -37,7 +37,7 @@ public enum SplitLocation {
     BOTH,
 
     /** Value indicating that the split object lies neither on the plus
-     * or minus sides of the splitting hyperplane. This is the case when
+     * nor minus sides of the splitting hyperplane. This is the case when
      * the object lies entirely on the hyperplane or is empty (and
      * therefore "lies" nowhere).
      */

@@ -34,7 +34,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.Angle;
 import org.apache.commons.numbers.core.Precision;
 
-/** Class representing a circle in 2 dimensional Euclidean space.
+/** Class representing a circle in 2-dimensional Euclidean space.
  */
 public final class Circle extends AbstractNSphere<Vector2D> implements Linecastable2D {
 
@@ -148,7 +148,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
     /** Construct a circle from a center point and radius.
      * @param center the center point of the circle
      * @param radius the circle radius
-     * @param precision precision precision context used to compare floating point numbers
+     * @param precision precision context used to compare floating point numbers
      * @return a circle with the given center and radius
      * @throws IllegalArgumentException if center is not finite or radius is not finite or is
      *      less than or equal to zero as evaluated by the given precision context

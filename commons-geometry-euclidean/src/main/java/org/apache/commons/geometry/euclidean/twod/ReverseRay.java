@@ -22,7 +22,7 @@ import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.numbers.core.Precision;
 
 /** Class representing a portion of a line in 2D Euclidean space that starts at infinity and
- * continues in the direction of the line up to a single end point. This is equivalent to taking a
+ * continues in the direction of the line, up to a single end point. This is equivalent to taking a
  * {@link Ray} and reversing the line direction.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>

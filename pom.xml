@@ -76,7 +76,7 @@
     <commons.scmPubCheckoutDirectory>site-content</commons.scmPubCheckoutDirectory>
 
     <!--
-        Override so that "mvn commons:download-page" will generates a web page
+        Override so that "mvn commons:download-page" will generate a web page
         referring to the files created by the "dist-archive" module.
         Temporary workaround?
     -->
@@ -283,7 +283,7 @@
         <artifactId>apache-rat-plugin</artifactId>
         <configuration>
         <!--
-          Needed for command-line access, e.g mvn apache-rat:rat and mvn apache-rat:check
+          Needed for command-line access, e.g. mvn apache-rat:rat and mvn apache-rat:check
           Below should agree with config in <reporting> section, so the site
           gets consistent output.
         -->
@@ -498,11 +498,11 @@
                     <exec executable="svn" failifexecutionfails="false">
                       <arg line="checkout --depth immediates ${commons.scmPubUrl} ${commons.scmPubCheckoutDirectory}" />
                     </exec>
-                    <!-- Create the directory in the event that no svn exectuable is on the path -->
+                    <!-- Create the directory in the event that no svn executable is on the path -->
                     <mkdir dir="${commons.scmPubCheckoutDirectory}"/>
 
                     <echo file="${commons.scmPubCheckoutDirectory}.README">The '${commons.scmPubCheckoutDirectory}' directory is controlled by "subversion".
-Running "svn up" will download *all* the files of the live web site at
+Running "svn up" will download *all* the files of the live website at
     https://commons.apache.org/geometry
 This is avoided by creating an empty directory when svn is not available.
                     </echo>

@@ -184,7 +184,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 return this;
             }
 
-            // if the quadrilateral is not well formed, e.g. only 2 points, do not attempt to reduce
+            // if the quadrilateral is not well-formed, e.g. only 2 points, do not attempt to reduce
             if (quadrilateral.size() < 3) {
                 // Point cannot yet be dismissed.
                 candidates.add(point);

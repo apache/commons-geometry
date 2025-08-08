@@ -219,7 +219,7 @@ public final class GreatArcPath implements BoundarySource2S {
      * to calling {@link #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
      * fromPoints(points, true, precision)}.
      * @param vertices the points to construct the path from
-     * @param precision precision precision context used to construct the arc instances for the
+     * @param precision precision context used to construct the arc instances for the
      *      path
      * @return a new path formed by connecting the given vertices
      * @see #fromVertices(Collection, boolean, Precision.DoubleEquivalence)
@@ -383,7 +383,7 @@ public final class GreatArcPath implements BoundarySource2S {
                 endVertex = vertex;
                 endVertexPrecision = vertexPrecision;
             } else if (!endVertex.eq(vertex, vertexPrecision)) {
-                // only add the vertex if its not equal to the end point
+                // only add the vertex if it's not equal to the end point
                 // of the last arc
                 appendInternal(GreatCircles.arcFromPoints(endVertex, vertex, endVertexPrecision));
             }
@@ -515,7 +515,7 @@ public final class GreatArcPath implements BoundarySource2S {
                 closePath();
             }
 
-            // combine all of the arcs
+            // combine all the arcs
             List<GreatArc> result = null;
 
             if (prependedArcs != null) {

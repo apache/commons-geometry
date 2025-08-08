@@ -244,7 +244,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
 
         LineConvexSubset element;
 
-        // we can skip the last element since the we know that the path is closed, meaning that the
+        // we can skip the last element since we know that the path is closed, meaning that the
         // last element's end point is equal to our start point
         for (int i = 0; i < elements.size() - 1; ++i) {
             element = elements.get(i);

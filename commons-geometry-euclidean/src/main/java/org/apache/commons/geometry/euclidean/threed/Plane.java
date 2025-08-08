@@ -27,7 +27,7 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.numbers.core.Precision;
 
-/** Class representing a plane in 3 dimensional Euclidean space. Each plane is defined by a
+/** Class representing a plane in 3-dimensional Euclidean space. Each plane is defined by a
  * {@link #getNormal() normal} and an {@link #getOriginOffset() origin offset}. If \(\vec{n}\) is the plane normal,
  * \(d\) is the origin offset, and \(p\) and \(q\) are any points in the plane, then the following are true:
  * <ul>
@@ -213,7 +213,7 @@ public class Plane extends AbstractHyperplane<Vector3D> {
 
     /** Get the intersection of a line with this plane.
      * @param line line intersecting the instance
-     * @return intersection point between between the line and the instance (null if
+     * @return intersection point between the line and the instance (null if
      *         the line is parallel to the instance)
      */
     public Vector3D intersection(final Line3D line) {

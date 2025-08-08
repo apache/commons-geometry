@@ -370,7 +370,7 @@ public final class Planes {
      * @param path path to extrude
      * @param plane plane to extrude the path from
      * @param extrusionVector vector to extrude the polygon points through
-     * @param precision precision precision context used to construct the 3D region boundaries
+     * @param precision precision context used to construct the 3D region boundaries
      * @return the boundaries of the extruded 3D region
      * @throws IllegalArgumentException if regions of non-zero size cannot be produced with the
      *      given plane and extrusion vector. This occurs when the extrusion vector has zero length
@@ -387,7 +387,7 @@ public final class Planes {
      * @param region region to extrude
      * @param plane plane to extrude the region from
      * @param extrusionVector vector to extrude the region points through
-     * @param precision precision precision context used to construct the 3D region boundaries
+     * @param precision precision context used to construct the 3D region boundaries
      * @return the boundaries of the extruded 3D region
      * @throws IllegalArgumentException if regions of non-zero size cannot be produced with the
      *      given plane and extrusion vector. This occurs when the extrusion vector has zero length
@@ -506,7 +506,7 @@ public final class Planes {
     /** Construct a convex polygon 3D from a plane and a list of vertices lying in the plane. Callers are
      * responsible for ensuring that the vertices lie in the plane and define a convex polygon.
      * @param plane the plane containing the convex polygon
-     * @param vertices vertices defining the closed, convex polygon. The must must contain at least 3 unique
+     * @param vertices vertices defining the closed, convex polygon. They must contain at least 3 unique
      *      vertices and should not include the start vertex at the end of the list.
      * @return a new convex polygon instance
      * @throws IllegalArgumentException if the size of {@code vertices} if less than 3

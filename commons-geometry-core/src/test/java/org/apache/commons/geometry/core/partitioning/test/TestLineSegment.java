@@ -25,7 +25,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 
-/** Class representing a line segment in two dimensional Euclidean space. This
+/** Class representing a line segment in two-dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
 public final class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {

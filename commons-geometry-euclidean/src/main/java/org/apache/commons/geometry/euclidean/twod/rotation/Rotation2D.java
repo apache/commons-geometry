@@ -21,7 +21,7 @@ import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-/** Class representing a rotation in 2 dimensional Euclidean space. Positive
+/** Class representing a rotation in 2-dimensional Euclidean space. Positive
  * rotations are in a <em>counter-clockwise</em> direction.
  */
 public final class Rotation2D implements EuclideanTransform<Vector2D> {

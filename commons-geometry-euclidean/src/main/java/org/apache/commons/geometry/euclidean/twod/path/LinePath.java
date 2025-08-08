@@ -560,7 +560,7 @@ public class LinePath implements BoundarySource2D, Sized {
                 endVertex = vertex;
                 endVertexPrecision = vertexPrecision;
             } else if (!endVertex.eq(vertex, endVertexPrecision)) {
-                // only add the vertex if its not equal to the end point
+                // only add the vertex if it's not equal to the end point
                 // of the last element
                 appendInternal(Lines.segmentFromPoints(endVertex, vertex, endVertexPrecision));
             }
@@ -695,7 +695,7 @@ public class LinePath implements BoundarySource2D, Sized {
                 closePath();
             }
 
-            // combine all of the line subsets
+            // combine all the line subsets
             List<LineConvexSubset> result = null;
 
             if (prepended != null) {

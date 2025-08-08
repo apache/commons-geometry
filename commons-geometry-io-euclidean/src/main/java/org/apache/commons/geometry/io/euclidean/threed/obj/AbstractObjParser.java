@@ -117,7 +117,7 @@ public abstract class AbstractObjParser {
     }
 
     /** Read a whitespace-delimited 3D vector from the current data line.
-     * @return vector vector read from the current line
+     * @return vector read from the current line
      * @throws IllegalStateException if parsing fails
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */

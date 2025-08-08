@@ -1060,7 +1060,7 @@ class Bounds2DTest {
         /** Assert that the two collections contain the same linecast points and that the elements
          * of {@code actual} are arranged in ascending abscissa order. Note that this does <em>not</em>
          * assert that {@code expected} and {@code actual} have the same exact ordering, since the
-         * specific ordering if sensitive to floating point errors.
+         * specific ordering is sensitive to floating point errors.
          * @param expected expected collection
          * @param actual actual collection
          */

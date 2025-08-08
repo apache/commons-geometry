@@ -24,7 +24,7 @@ import java.util.Objects;
  * rotations are commonly called <em>Euler angles</em>, <em>Tait-Bryan angles</em>,
  * or <em>Cardan angles</em> depending on the properties of the rotation sequence and
  * the particular use case. A sequence of three rotations around at least two different
- * axes is sufficient to represent any rotation or orientation in 3 dimensional space.
+ * axes is sufficient to represent any rotation or orientation in 3-dimensional space.
  * However, in order to unambiguously represent the rotation, the following information
  * must be provided along with the rotation angles:
  * <ul>

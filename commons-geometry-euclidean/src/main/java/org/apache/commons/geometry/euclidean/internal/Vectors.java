@@ -148,7 +148,7 @@ public final class Vectors {
      * @param a1 first factor of the first term
      * @param b1 second factor of the first term
      * @param a2 first factor of the second term
-     * @param b2 second factor of the seconf term
+     * @param b2 second factor of the second term
      * @return linear combination.
      * @see Sum
      */
@@ -163,7 +163,7 @@ public final class Vectors {
      * @param a1 first factor of the first term
      * @param b1 second factor of the first term
      * @param a2 first factor of the second term
-     * @param b2 second factor of the seconf term
+     * @param b2 second factor of the second term
      * @param a3 first factor of the third term
      * @param b3 second factor of the third term
      * @return linear combination.

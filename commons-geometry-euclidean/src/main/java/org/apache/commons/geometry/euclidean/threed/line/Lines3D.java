@@ -180,7 +180,7 @@ public final class Lines3D {
      * @param b second point
      * @return a new line segment representing the points between the projected locations of {@code a}
      *      and {@code b} on the given line
-     * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values)
+     * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
      */
     public static Segment3D segmentFromPoints(final Line3D line, final Vector3D a, final Vector3D b) {
         return segmentFromLocations(line, line.abscissa(a), line.abscissa(b));

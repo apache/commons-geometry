@@ -55,7 +55,7 @@ public class TestBucketPointMap1D<V> extends AbstractBucketPointMap<TestPoint1D,
         /** Negative half-space flag. */
         private static final int NEG = 1 << 1;
 
-        /** Positve half-space flag. */
+        /** Positive half-space flag. */
         private static final int POS = 1;
 
         /** Location flags for child nodes. */

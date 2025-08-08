@@ -32,7 +32,7 @@ public enum RegionCutRule {
     PLUS_INSIDE,
 
     /** Set both child nodes to the same location as the parent node. For example, if the
-     * parent node is marked as inside, both child nodes will be marked as inside. Similarly
+     * parent node is marked as inside, both child nodes will be marked as inside. Similarly,
      * if the parent node is marked as outside, both child nodes will be marked as outside.
      * This rule can be used to modify the tree structure (to perhaps produce a more efficient,
      * balanced tree) without changing the represented region.

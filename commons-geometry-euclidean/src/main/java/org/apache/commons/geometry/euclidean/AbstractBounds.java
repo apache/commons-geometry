@@ -87,7 +87,7 @@ public abstract class AbstractBounds<
     public abstract boolean hasSize(Precision.DoubleEquivalence precision);
 
     /** Return true if the given point is strictly within or on the boundary of the bounding box.
-     * In other words, true if returned if <code>p<sub>t</sub> &gt;= min<sub>t</sub></code> and
+     * In other words, true is returned if <code>p<sub>t</sub> &gt;= min<sub>t</sub></code> and
      * <code>p<sub>t</sub> &lt;= max<sub>t</sub></code> for each coordinate value <code>t</code>.
      * Floating point comparisons are strict; values are considered equal only if they match exactly.
      * @param pt the point to check
@@ -120,7 +120,7 @@ public abstract class AbstractBounds<
 
     /** Return the intersection of this bounding box and the argument, or null if no intersection exists.
      * Floating point comparisons are strict; values are considered equal only if they match exactly. Note
-     * this this method may return bounding boxes with zero size in one or more coordinate axes.
+     * this method may return bounding boxes with zero size in one or more coordinate axes.
      * @param other bounding box to intersect with
      * @return the intersection of this instance and the argument, or null if no such intersection
      *      exists

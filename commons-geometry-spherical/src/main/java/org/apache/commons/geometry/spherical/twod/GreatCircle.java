@@ -257,7 +257,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     /** Return one of the two intersection points between this instance and the argument.
      * If the circles occupy the same space (ie, their poles are parallel or anti-parallel),
      * then null is returned. Otherwise, the intersection located at the cross product of
-     * the pole of this instance and that of the argument is returned (ie, {@code thisPole.cross(otherPole)}.
+     * the pole of this instance and that of the argument is returned (ie, {@code thisPole.cross(otherPole)}).
      * The other intersection point of the pair is antipodal to this point.
      * @param other circle to intersect with
      * @return one of the two intersection points between this instance and the argument
@@ -322,7 +322,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     }
 
     /** Return true if this instance should be considered equivalent to the argument, using the
-     * given precision context for comparison. Instances are considered equivalent if have equivalent
+     * given precision context for comparison. Instances are considered equivalent if they have equivalent
      * {@code pole}, {@code u}, and {@code v} vectors.
      * @param other great circle to compare with
      * @param precision precision context to use for the comparison

@@ -83,7 +83,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
         }
     }
 
-    /** Add a single path element to the connector, leaving it unconnected until a later call to
+    /** Add a single path element to the connector, leaving it unconnected until a later call
      * to {@link #connectPathElements(Iterable)} or {@link #computePathRoots()}.
      * @param element value to add to the connector
      * @see #connectPathElements(Iterable)

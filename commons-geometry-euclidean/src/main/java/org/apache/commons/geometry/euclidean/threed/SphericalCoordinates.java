@@ -23,7 +23,7 @@ import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.numbers.angle.Angle;
 
 /** Class representing <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a>
- * in 3 dimensional Euclidean space.
+ * in 3-dimensional Euclidean space.
  *
  * <p>Spherical coordinates for a point are defined by three values:
  * <ol>
@@ -102,7 +102,7 @@ public final class SphericalCoordinates implements Spatial {
     }
 
     /** Return the azimuth angle in radians. This is the angle in the x-y plane measured counter-clockwise from
-     * the positive x axis. The angle is in the range {@code [0, 2pi)}.
+     * the positive x-axis. The angle is in the range {@code [0, 2pi)}.
      * @return the azimuth angle in radians
      */
     public double getAzimuth() {

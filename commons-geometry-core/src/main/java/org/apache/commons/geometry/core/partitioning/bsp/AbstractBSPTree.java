@@ -34,7 +34,7 @@ import org.apache.commons.geometry.core.partitioning.SplitLocation;
  * class contains basic structures and algorithms that should be common
  * to all BSP tree implementations, regardless of the end use cases for the tree
  * (eg, whether the tree is intended to represent polytopes, hold attributes like
- * a map, etc).
+ * a map, etc.).
  *
  * <h2>Implementation Notes</h2>
  * <ul>

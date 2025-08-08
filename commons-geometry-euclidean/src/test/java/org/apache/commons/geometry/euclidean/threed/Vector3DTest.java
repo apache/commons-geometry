@@ -759,7 +759,7 @@ class Vector3DTest {
     @Test
     void testDotProduct_nearlyOrthogonal() {
         // the following two vectors are nearly but not exactly orthogonal
-        // naive dot product (i.e. computing u1.x * u2.x + u1.y * u2.y + u1.z * u2.z
+        // naive dot product (i.e. computing u1.x * u2.x + u1.y * u2.y + u1.z * u2.z)
         // leads to a result of 0.0, instead of the correct -1.855129...
 
         // arrange

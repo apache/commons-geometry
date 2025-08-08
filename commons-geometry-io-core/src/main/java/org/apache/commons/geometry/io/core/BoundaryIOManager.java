@@ -391,7 +391,7 @@ public class BoundaryIOManager<
          * and the {@code fileName} argument is ignored. Otherwise, the file extension is extracted
          * from {@code fileName} and used to look up the handler.
          * @param fmt format to look up; if present, {@code fileName} is ignored
-         * @param fileName file name to use for the look up if {@code fmt} is null
+         * @param fileName file name to use for the look-up if {@code fmt} is null
          * @return the handler matching the arguments
          * @throws IllegalArgumentException if a handler cannot be found
          */

@@ -229,7 +229,7 @@ public final class Point1S implements Point<Point1S> {
     /**
      * Get a hashCode for the point. Points normally must have exactly the
      * same azimuth angles in order to have the same hash code. Points
-     * will angles that differ by multiples of {@code 2pi} will not
+     * with angles that differ by multiples of {@code 2pi} will not
      * necessarily have the same hash code.
      *
      * <p>All NaN values have the same hash code.</p>

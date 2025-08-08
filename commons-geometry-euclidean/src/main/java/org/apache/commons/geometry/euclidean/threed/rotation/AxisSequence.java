@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.threed.rotation;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
-/** Enum containing rotation axis sequences for use in defining 3 dimensional rotations.
+/** Enum containing rotation axis sequences for use in defining 3-dimensional rotations.
  */
 public enum AxisSequence {
 

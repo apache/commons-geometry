@@ -74,7 +74,7 @@ public final class QuaternionRotation implements Rotation3D {
 
     /**
      * Get the axis of rotation as a normalized {@link Vector3D}. The rotation axis
-     * is not well defined when the rotation is the identity rotation, ie it has a
+     * is not well-defined when the rotation is the identity rotation, ie it has a
      * rotation angle of zero. In this case, the vector representing the positive
      * x-axis is returned.
      *
@@ -396,7 +396,7 @@ public final class QuaternionRotation implements Rotation3D {
     private double[] getRelativeTaitBryanAngles(final Vector3D axis1, final Vector3D axis2, final Vector3D axis3) {
 
         // We can use geometry to get the first and second angles pretty easily here by analyzing the positions
-        // of the transformed rotation axes. The third angle is trickier but we can get it by treating it as
+        // of the transformed rotation axes. The third angle is trickier, but we can get it by treating it as
         // if it were the first rotation in the inverse (which it would be).
 
         final Vector3D vec3 = apply(axis3);

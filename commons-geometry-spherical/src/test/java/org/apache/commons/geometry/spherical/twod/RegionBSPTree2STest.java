@@ -940,7 +940,7 @@ class RegionBSPTree2STest {
         final Point2S center = Point2S.of(1.0, 1.0);
         final int numPts = 200;
 
-        // boundary size is independent from winding
+        // boundary size is independent of winding
         final double boundary = Angle.TWO_PI * Math.sin(radius);
 
         final RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false, TEST_PRECISION);

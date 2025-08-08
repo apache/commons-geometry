@@ -147,7 +147,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
      * face of the simplex defines a positive and negative half-space. A point can
      * be assigned to the outside set of the polygon if it is an element of the
      * positive half space.</li>
-     * <li>For each polygon-face (facet) with a non empty outside set we choose a
+     * <li>For each polygon-face (facet) with a non-empty outside set we choose a
      * point with maximal distance to the given facet.</li>
      * <li>We determine all the visible facets from the given outside point and find
      * a path around the horizon.</li>

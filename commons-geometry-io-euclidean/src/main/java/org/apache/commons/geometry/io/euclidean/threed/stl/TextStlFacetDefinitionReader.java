@@ -121,7 +121,7 @@ public class TextStlFacetDefinitionReader implements FacetDefinitionReader {
     }
 
     /** Ensure that an STL solid definition is in the process of being read. If not, the beginning
-     * of a the definition is attempted to be read from the input.
+     * of the definition is attempted to be read from the input.
      * @throws IllegalStateException if a data format error occurs
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */

@@ -806,7 +806,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
 
                 return farthest;
             } else {
-                // internal node; look through children in order of decreasing maximum distance
+                // internal node; look through children in order of decreasing maximum
                 // distance from the reference point
                 final List<DistancedValue<BucketNode<P, V>>> sortedNodeList = new ArrayList<>(map.nodeChildCount);
 
@@ -1022,7 +1022,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         protected abstract double getMinChildDistance(int childIdx, P pt, int ptLoc);
 
         /** Get the maximum distance from {@code pt} to the region for the child
-         * child node at the specified index. A value of {@code Double#POSITIVE_INFINITY}
+         * node at the specified index. A value of {@code Double#POSITIVE_INFINITY}
          * should be returned if there is no maximum.
          * @param childIdx index of the child in question
          * @param pt reference point

@@ -179,7 +179,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
 
         final boolean reverseDirection = swapsInsideOutside(transform);
 
-        // transform all of the segments
+        // transform all the segments
         if (reverseDirection) {
             tBoundary = tBoundary.reverse();
         }
@@ -435,12 +435,12 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             return boundaries;
         }
 
-        /** Split the given bounding hyperplane by all of the other hyperplanes in the given collection, returning the
+        /** Split the given bounding hyperplane by all the other hyperplanes in the given collection, returning the
          * remaining hyperplane subset.
          * @param currentBound the bound to split; this value is assumed to have come from {@code bounds}
          * @param bounds collection of bounds to use to split {@code currentBound}
          * @param currentBoundIdx the index of {@code currentBound} in {@code bounds}
-         * @return the part of {@code currentBound}'s hyperplane subset that lies on the minus side of all of the
+         * @return the part of {@code currentBound}'s hyperplane subset that lies on the minus side of all the
          *      splitting hyperplanes
          * @throws IllegalArgumentException if the hyperplanes do not form a convex region
          */

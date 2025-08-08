@@ -24,7 +24,7 @@ import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
 
-/** Class using a matrix to represent affine transformations in 2 dimensional Euclidean space.
+/** Class using a matrix to represent affine transformations in 2-dimensional Euclidean space.
 *
 * <p>Instances of this class use a 3x3 matrix for all transform operations.
 * The last row of this matrix is always set to the values <code>[0 0 1]</code> and so
@@ -289,8 +289,8 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
     }
 
     /** Apply a scale operation to the current instance, returning the result as a new transform.
-     * @param x scale factor for the x axis
-     * @param y scale factor for the y axis
+     * @param x scale factor for the x-axis
+     * @param y scale factor for the y-axis
      * @return a new transform containing the result of applying a scale operation to
      *      the current instance
      */
@@ -395,7 +395,7 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
     @Override
     public AffineTransformMatrix2D inverse() {
 
-        // Our full matrix is 3x3 but we can significantly reduce the amount of computations
+        // Our full matrix is 3x3, but we can significantly reduce the amount of computations
         // needed here since we know that our last row is [0 0 1].
 
         final double det = Matrices.checkDeterminantForInverse(determinant());
@@ -619,8 +619,8 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
     }
 
     /** Create a transform representing a scale operation.
-     * @param x scale factor for the x axis
-     * @param y scale factor for the y axis
+     * @param x scale factor for the x-axis
+     * @param y scale factor for the y-axis
      * @return a new transform representing a scale operation
      */
     public static AffineTransformMatrix2D createScale(final double x, final double y) {
@@ -648,7 +648,7 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * @return a new transform representing the rotation about the given center
      */
     public static AffineTransformMatrix2D createRotation(final Vector2D center, final double angle) {
-        // it's possible to do this using Rotation2D to create the rotation matrix but we
+        // it's possible to do this using Rotation2D to create the rotation matrix, but we
         // can avoid the matrix multiplications by simply doing everything in-line here
         final double x = center.getX();
         final double y = center.getY();

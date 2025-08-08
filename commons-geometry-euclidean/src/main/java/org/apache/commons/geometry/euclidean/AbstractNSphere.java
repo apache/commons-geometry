@@ -29,7 +29,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.core.Precision;
 
-/** Abstract base class representing an n-sphere, which is a generalization of the ordinary 3 dimensional
+/** Abstract base class representing an n-sphere, which is a generalization of the ordinary 3-dimensional
  * sphere to arbitrary dimensions.
  * @param <V> Vector implementation type
  * @see <a href="https://wikipedia.org/wiki/N-sphere">N-sphere</a>

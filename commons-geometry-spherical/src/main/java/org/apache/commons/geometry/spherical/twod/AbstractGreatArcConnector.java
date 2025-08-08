@@ -35,7 +35,7 @@ public abstract class AbstractGreatArcConnector
         // Do nothing
     }
 
-    /** Add an arc to the connector, leaving it unconnected until a later call to
+    /** Add an arc to the connector, leaving it unconnected until a later call
      * to {@link #connect(Iterable)} or {@link #connectAll()}.
      * @param arc arc to add
      * @see #connect(Iterable)

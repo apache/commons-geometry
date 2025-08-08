@@ -140,7 +140,7 @@ public class TextFacetDefinitionWriter extends AbstractTextFormatWriter {
 
     /** Get the number of vertices required per facet or {@code -1} if no specific
      * number is required. The default value is {@value #DEFAULT_FACET_VERTEX_COUNT}.
-     * @return the number of vertices required per facet or {@code -1} if any geometricallly
+     * @return the number of vertices required per facet or {@code -1} if any geometrically
      *      valid number is allowed (ie, any number greater than or equal to 3)
      */
     public int getFacetVertexCount() {

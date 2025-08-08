@@ -143,7 +143,7 @@ public class SimpleTextParser {
     }
 
     /** Get the current token. This is the most recent string read by one of the {@code nextXXX()}
-     * methods. This value will be null if no token has yet been read or if the end of content has
+     * methods. This value will be {@code null} if no token has yet been read or if the end of content has
      * been reached.
      * @return the current token
      * @see #next(int)
@@ -164,8 +164,8 @@ public class SimpleTextParser {
     }
 
     /** Get the line number that the current token started on. This value will
-     * be -1 if no token has been read yet.
-     * @return current token starting line number or -1 if no token has been
+     * be {@code -1} if no token has been read yet.
+     * @return current token starting line number or {@code -1} if no token has been
      *      read yet
      * @see #getCurrentToken()
      */
@@ -174,8 +174,8 @@ public class SimpleTextParser {
     }
 
     /** Get the column position that the current token started on. This value will
-     * be -1 if no token has been read yet.
-     * @return current token column number or -1 if no oken has been read yet
+     * be {@code -1} if no token has been read yet.
+     * @return current token column number or {@code -1} if no token has been read yet
      * @see #getCurrentToken()
      */
     public int getCurrentTokenColumnNumber() {
@@ -329,8 +329,8 @@ public class SimpleTextParser {
 
     /** Read characters from the stream while the given predicate returns true and set the result
      * as the current token. The next call to {@link #readChar()} will return either a character
-     * that fails the predicate test or -1 if the end of the stream has been reached.
-     * The token will be null if the end of the stream has been reached prior to the method call.
+     * that fails the predicate test or {@code -1} if the end of the stream has been reached.
+     * The token will be {@code null} if the end of the stream has been reached prior to the method call.
      * @param pred predicate function passed characters read from the input; reading continues
      *      until the predicate returns false
      * @return this instance
@@ -392,7 +392,7 @@ public class SimpleTextParser {
     /** Read characters from the current parser position to the next new line sequence and
      * set the result as the current token . The newline character sequence
      * ('\r', '\n', or '\r\n') at the end of the line is consumed but is not included in the token.
-     * The token will be null if the end of the stream has been reached prior to the method call.
+     * The token will be {@code null} if the end of the stream has been reached prior to the method call.
      * @return this instance
      * @throws IllegalStateException if the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}
@@ -409,7 +409,7 @@ public class SimpleTextParser {
 
     /** Read a sequence of alphanumeric characters starting from the current parser position
      * and set the result as the current token. The token will be the empty string if the next
-     * character in the stream is not alphanumeric and will be null if the end of the stream has
+     * character in the stream is not alphanumeric and will be {@code null} if the end of the stream has
      * been reached prior to the method call.
      * @return this instance
      * @throws IllegalStateException if the length of the produced string exceeds the configured
@@ -445,7 +445,7 @@ public class SimpleTextParser {
     }
 
     /** Discard characters from the stream while the given predicate returns true. The next call
-     * to {@link #readChar()} will return either a character that fails the predicate test or -1
+     * to {@link #readChar()} will return either a character that fails the predicate test or {@code -1}
      * if the end of the stream has been reached. The parser position is updated but the current
      * token is not changed.
      * @param pred predicate test for characters to discard
@@ -458,7 +458,7 @@ public class SimpleTextParser {
 
     /** Discard characters from the stream while the given predicate returns true. New line sequences
      * beginning with {@code lineContinuationChar} are skipped. The next call o {@link #readChar()}
-     * will return either a character that fails the predicate test or -1 if the end of the stream
+     * will return either a character that fails the predicate test or {@code -1} if the end of the stream
      * has been reached. The parser position is updated but the current token is not changed.
      * @param lineContinuationChar character used to indicate skipped new line sequences
      * @param pred predicate test for characters to discard
@@ -472,7 +472,7 @@ public class SimpleTextParser {
 
     /** Discard a sequence of whitespace characters from the character stream starting from the
      * current parser position. The next call to {@link #readChar()} will return either a non-whitespace
-     * character or -1 if the end of the stream has been reached. The parser position is updated
+     * character or {@code -1} if the end of the stream has been reached. The parser position is updated
      * but the current token is not changed.
      * @return this instance
      * @throws java.io.UncheckedIOException if an I/O error occurs
@@ -483,7 +483,7 @@ public class SimpleTextParser {
 
     /** Discard the next whitespace characters on the current line. The next call to
      * {@link #readChar()} will return either a non-whitespace character on the current line,
-     * the newline character sequence (indicating the end of the line), or -1 (indicating the
+     * the newline character sequence (indicating the end of the line), or {@code -1} (indicating the
      * end of the stream). The parser position is updated but the current token is not changed.
      * @return this instance
      * @throws java.io.UncheckedIOException if an I/O error occurs
@@ -515,7 +515,7 @@ public class SimpleTextParser {
 
     /** Discard all remaining characters on the current line, including the terminating
      * newline character sequence. The next call to {@link #readChar()} will return either the
-     * first character on the next line or -1 if the end of the stream has been reached.
+     * first character on the next line or {@code -1} if the end of the stream has been reached.
      * The parser position is updated but the current token is not changed.
      * @return this instance
      * @throws java.io.UncheckedIOException if an I/O error occurs
@@ -619,7 +619,7 @@ public class SimpleTextParser {
     }
 
     /** Return the next character in the stream but do not advance the parser position.
-     * @return the next character in the stream or -1 if the end of the stream has been
+     * @return the next character in the stream or {@code -1} if the end of the stream has been
      *      reached
      * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #readChar()
@@ -628,11 +628,11 @@ public class SimpleTextParser {
         return buffer.peek();
     }
 
-    /** Return a string containing containing at most {@code len} characters from the stream but
+    /** Return a string containing at most {@code len} characters from the stream but
      * without changing the parser position. Characters are added to the string until the
      * string has the specified length or the end of the stream is reached.
      * @param len the maximum length of the returned string
-     * @return a string containing containing at most {@code len} characters from the stream
+     * @return a string containing at most {@code len} characters from the stream
      *      or null if the parser has already reached the end of the stream
      * @throws IllegalArgumentException if {@code len} is less than 0 or greater than the
      *      configured {@link #getMaxStringLength() maximum string length}
@@ -788,9 +788,9 @@ public class SimpleTextParser {
     }
 
     /** Return the index of the argument that exactly matches the {@link #getCurrentToken() current token}
-     * or -1 if no match is found. String comparisons are case-sensitive.
+     * or {@code -1} if no match is found. String comparisons are case-sensitive.
      * @param expected strings to compare with the current token
-     * @return index of the argument that exactly matches the current token or -1 if
+     * @return index of the argument that exactly matches the current token or {@code -1} if
      *      no match is found
      * @throws IllegalStateException if no token has been read
      */
@@ -799,9 +799,9 @@ public class SimpleTextParser {
     }
 
     /** Return the index of the argument that exactly matches the {@link #getCurrentToken() current token}
-     * or -1 if no match is found. String comparisons are case-sensitive.
+     * or {@code -1} if no match is found. String comparisons are case-sensitive.
      * @param expected strings to compare with the current token
-     * @return index of the argument that exactly matches the current token or -1 if
+     * @return index of the argument that exactly matches the current token or {@code -1} if
      *      no match is found
      * @throws IllegalStateException if no token has been read
      */
@@ -810,9 +810,9 @@ public class SimpleTextParser {
     }
 
     /** Return the index of the argument that matches the {@link #getCurrentToken() current token}
-     * or -1 if no match is found. String comparisons are <em>not</em> case-sensitive.
+     * or {@code -1} if no match is found. String comparisons are <em>not</em> case-sensitive.
      * @param expected strings to compare with the current token
-     * @return index of the argument that matches the current token (ignoring case) or -1 if
+     * @return index of the argument that matches the current token (ignoring case) or {@code -1} if
      *      no match is found
      * @throws IllegalStateException if no token has been read
      */
@@ -821,9 +821,9 @@ public class SimpleTextParser {
     }
 
     /** Return the index of the argument that matches the {@link #getCurrentToken() current token}
-     * or -1 if no match is found. String comparisons are <em>not</em> case-sensitive.
+     * or {@code -1} if no match is found. String comparisons are <em>not</em> case-sensitive.
      * @param expected strings to compare with the current token
-     * @return index of the argument that matches the current token (ignoring case) or -1 if
+     * @return index of the argument that matches the current token (ignoring case) or {@code -1} if
      *      no match is found
      * @throws IllegalStateException if no token has been read
      */
@@ -836,7 +836,7 @@ public class SimpleTextParser {
      * @param expected strings to compare with the current token
      * @param caseSensitive if the comparisons should be case-sensitive
      * @param throwOnFailure if an exception should be thrown if no match is found
-     * @return the index of the matching argument or -1 if no match is found
+     * @return the index of the matching argument or {@code -1} if no match is found
      * @throws IllegalStateException if no token has been read or no match is found and
      *      {@code throwOnFailure} is true
      */

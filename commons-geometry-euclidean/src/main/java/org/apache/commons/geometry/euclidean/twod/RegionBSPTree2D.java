@@ -34,7 +34,7 @@ import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConn
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.numbers.core.Precision;
 
-/** Binary space partitioning (BSP) tree representing a region in two dimensional
+/** Binary space partitioning (BSP) tree representing a region in 2-dimensional
  * Euclidean space.
  */
 public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, RegionBSPTree2D.RegionNode2D>
@@ -317,7 +317,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         return new PartitionedRegionBuilder2D();
     }
 
-    /** BSP tree node for two dimensional Euclidean space.
+    /** BSP tree node for two-dimensional Euclidean space.
      */
     public static final class RegionNode2D extends AbstractRegionBSPTree.AbstractRegionNode<Vector2D, RegionNode2D> {
         /** Simple constructor.
@@ -612,7 +612,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
                 if (pt != null) {
                     if (firstOnly && !results.isEmpty() &&
                             line.getPrecision().compare(minAbscissa, line.abscissa(pt)) < 0) {
-                        // we have results and we are now sure that no other intersection points will be
+                        // we have results, and we are now sure that no other intersection points will be
                         // found that are closer or at the same position on the intersecting line.
                         return Result.TERMINATE;
                     } else if (linecastSubset.contains(pt)) {

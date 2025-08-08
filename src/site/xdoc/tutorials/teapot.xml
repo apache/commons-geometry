@@ -136,7 +136,7 @@ public RegionBSPTree3D buildTeapot() {
       work. The easiest way to do this is to export our geometries using a common 3D file format, such as
       <a href="https://en.wikipedia.org/wiki/STL_%28file_format%29">STL</a>, and view the
       model in a 3D modeling program. I enjoy working with <a href="https://www.blender.org/" target="_blank">Blender</a>
-      so that is the modeling program I have chosen to use for this tutorial. However any program able to load and display
+      so that is the modeling program I have chosen to use for this tutorial. However, any program able to load and display
       3D models should work. To create our geometry files, we will use the 3D file writing capabilities of <em>Commons Geometry</em>
       accessible through the
       <a class="code" href="../commons-geometry-io-euclidean/apidocs/org/apache/commons/geometry/io/euclidean/threed/IO3D.html">IO3D</a>
@@ -161,7 +161,7 @@ IO3D.write(teapot, Paths.get("teapot.stl"));</source>
     <section name="Building the Parts" id="parts">
       <p>
       Our teapot will contain four main parts: the body, the lid, the handle, and the spout. We will create
-      private methods for each of theses parts in our <var>TeapotBuilder</var> class. Later, we will
+      private methods for each of these parts in our <var>TeapotBuilder</var> class. Later, we will
       combine the outputs of these methods to form the final geometry.
       </p>
 
@@ -241,15 +241,15 @@ body.transform(t);</source>
 
         <p>
         Note that our choice to scale along the z-axis (as opposed to the x or y axes) was completely arbitrary; our
-        sphere was entirely symmetrical and we had no definition of what was "up" and what was "down" as it relates
+        sphere was entirely symmetrical, and we had no definition of what was "up" and what was "down" as it relates
         to our teapot. Now that we have performed our first non-symmetrical operation, we should officially declare the
-        orientation of our teapot: henceforth the positive z-axis will be "up" and the the positive x-axis will be
+        orientation of our teapot: henceforth the positive z-axis will be "up" and the positive x-axis will be
         "forward" (the direction that the spout is pointing) in "teapot-space". Keeping this orientation in mind
         will help us when working through later transformations.
         </p>
 
         <p>
-        Our teapot is now pleasantly flattened but it is still very likely to roll off tables and create all manner
+        Our teapot is now pleasantly flattened, but it is still very likely to roll off tables and create all manner
         of messes. To address this shortcoming, we will chop off part of the bottom to make a flat base for the teapot
         to sit on. In code, we will define this plane, construct a region of infinite size with that plane as the "top",
         and compute the difference between our flattened sphere and the infinite region.
@@ -625,7 +625,7 @@ DoubleFunction&lt;QuaternionRotation&gt; slerp = startRotation.slerp(endRotation
           has a method to create this type of transformation.</li>
           <li>In order to keep the curve smooth, we will start rotating each point from its position projected on the
           xy plane (with z = 0). This prevents the rotation from being affected by the changing distance of the vertex from
-          the curve center. You can picture this as taking a hula hoop lying in the xy plane and swinging it back and
+          the curve center. You can picture this as taking a hula-hoop lying in the xy plane and swinging it back and
           forth to define a tube in 3D space.</li>
         </ol>
         Below is our updated vertex transform code.
@@ -733,7 +733,7 @@ private RegionBSPTree3D buildSpout() {
 
         <p>
         We'll start with the taper. We want the spout to be an oval that is wider at the base and narrower
-        near the top. We can represent this as a two different scalings in the horizontal plane and store the scale
+        near the top. We can represent this as two different scalings in the horizontal plane and store the scale
         factors in 2D vectors. We'll define the factors for the base and then simply compute the factors for the top
         as a multiple of that. The scaling for each vertex is then a linear interpolation between the two, with the
         vertex z value as the interpolation parameter. We'll use the vector

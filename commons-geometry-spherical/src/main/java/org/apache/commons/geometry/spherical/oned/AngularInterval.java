@@ -292,7 +292,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * given precision context.
      * @param min min azimuth value
      * @param max max azimuth value
-     * @param precision precision precision context used to compare floating point values
+     * @param precision precision context used to compare floating point values
      * @return a new instance resulting the angular region between the given min and max azimuths
      * @throws IllegalArgumentException if either azimuth is infinite or NaN
      */
@@ -308,7 +308,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * given precision context.
      * @param min min azimuth value
      * @param max max azimuth value
-     * @param precision precision precision context used to compare floating point values
+     * @param precision precision context used to compare floating point values
      * @return a new instance resulting the angular region between the given min and max points
      * @throws IllegalArgumentException if either azimuth is infinite or NaN
      */
@@ -337,7 +337,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * given precision context.
      * @param min min azimuth value
      * @param max max azimuth value
-     * @param precision precision precision context used to compare floating point values
+     * @param precision precision context used to compare floating point values
      * @param factory factory object used to create new instances; this object is passed the validated
      *      min (negative-facing) cut and the max (positive-facing) cut, in that order
      * @param <T> Angular interval implementation type
@@ -588,7 +588,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
          * given precision context.
          * @param min min azimuth value
          * @param max max azimuth value
-         * @param precision precision precision context used to compare floating point values
+         * @param precision precision context used to compare floating point values
          * @return a new instance resulting the angular region between the given min and max azimuths
          * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
          *      interval is not convex (meaning it has a size of greater than {@code pi})
@@ -604,7 +604,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
          * given precision context.
          * @param min min azimuth value
          * @param max max azimuth value
-         * @param precision precision precision context used to compare floating point values
+         * @param precision precision context used to compare floating point values
          * @return a new instance resulting the angular region between the given min and max points
          * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
          *      interval is not convex (meaning it has a size of greater than {@code pi})

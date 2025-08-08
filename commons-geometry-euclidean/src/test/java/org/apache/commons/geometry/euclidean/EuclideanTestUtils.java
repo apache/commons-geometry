@@ -240,7 +240,7 @@ public final class EuclideanTestUtils {
         Assertions.assertTrue(value < 0, msg);
     }
 
-    /** Assert that all of the given points lie within the specified location relative to
+    /** Assert that all the given points lie within the specified location relative to
      * {@code region}.
      * @param region
      * @param loc
@@ -252,7 +252,7 @@ public final class EuclideanTestUtils {
         }
     }
 
-    /** Assert that all of the given points lie within the specified location relative to
+    /** Assert that all the given points lie within the specified location relative to
      * {@code region}.
      * @param region
      * @param loc
@@ -264,7 +264,7 @@ public final class EuclideanTestUtils {
         }
     }
 
-    /** Assert that all of the given points lie within the specified location relative to
+    /** Assert that all the given points lie within the specified location relative to
      * {@code region}.
      * @param region
      * @param loc
@@ -276,7 +276,7 @@ public final class EuclideanTestUtils {
         }
     }
 
-    /** Assert that all of the given points lie within the specified location relative to {@code sub}.
+    /** Assert that all the given points lie within the specified location relative to {@code sub}.
      * @param sub
      * @param loc
      * @param pts
@@ -287,7 +287,7 @@ public final class EuclideanTestUtils {
         }
     }
 
-    /** Assert that all of the given points lie within the specified location relative to {@code sub}.
+    /** Assert that all the given points lie within the specified location relative to {@code sub}.
      * @param sub
      * @param loc
      * @param pts
@@ -298,7 +298,7 @@ public final class EuclideanTestUtils {
         }
     }
 
-    /** Assert that all of the given points lie within the specified location relative to {@code sub}.
+    /** Assert that all the given points lie within the specified location relative to {@code sub}.
      * @param sub
      * @param loc
      * @param pts

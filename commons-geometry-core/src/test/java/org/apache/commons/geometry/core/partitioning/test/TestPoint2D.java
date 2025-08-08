@@ -18,7 +18,7 @@ package org.apache.commons.geometry.core.partitioning.test;
 
 import org.apache.commons.geometry.core.Point;
 
-/** Class representing a point in two dimensional Euclidean space. This
+/** Class representing a point in two-dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
 public final class TestPoint2D implements Point<TestPoint2D> {

@@ -46,8 +46,8 @@ import org.apache.commons.numbers.core.Precision;
  * in the plane. It is sufficient to select one specific point in the
  * line (the orthogonal projection of the original reference frame on
  * the line) and to use the unit vector in the line direction (see
- * {@link #getDirection()} and the orthogonal vector oriented from the
- * left half plane to the right half plane (see {@link #getOffsetDirection()}.
+ * {@link #getDirection()}) and the orthogonal vector oriented from the
+ * left half plane to the right half plane (see {@link #getOffsetDirection()}).
  * We define two coordinates by the process, the <em>abscissa</em> along
  * the line, and the <em>offset</em> across the line. All points of the
  * plane are uniquely identified by these two coordinates. The line is
@@ -213,7 +213,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
     }
 
     /** Create a new convex line subset that starts at infinity and continues along
-     * the line up to the projection of the given end point.
+     * the line, up to the projection of the given end point.
      * @param endPoint point defining the end point of the line subset; the end point
      *      is equal to the projection of this point onto the line
      * @return a new, half-open line subset that ends at the given point
@@ -225,7 +225,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
     }
 
     /** Create a new convex line subset that starts at infinity and continues along
-     * the line up to the given 1D location.
+     * the line, up to the given 1D location.
      * @param endLocation the 1D location of the end of the half-line
      * @return a new, half-open line subset that ends at the given 1D location
      * @throws IllegalArgumentException if {@code endLocation} is NaN or infinite
@@ -392,7 +392,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * of the line. Note that the direction of increasing offsets points
      * to the <em>right</em> of the line. This means that if one pictures
      * the line (abscissa) direction as equivalent to the +x-axis, the offset
-     * direction will point along the -y axis.
+     * direction will point along the y-axis.
      * @param abscissa desired abscissa (distance along the line) for the point
      * @param offset desired offset (distance perpendicular to the line) for the point
      * @return one point in the plane, with given abscissa and offset
@@ -426,7 +426,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
     /** Compute the distance between the instance and a point.
      * <p>This is a shortcut for invoking Math.abs(getOffset(p)),
      * and provides consistency with what is in the
-     * org.apache.commons.geometry.euclidean.threed.Line class.</p>
+     * {@code org.apache.commons.geometry.euclidean.threed.Line} class.</p>
      *
      * @param p to check
      * @return distance between the instance and the point

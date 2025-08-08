@@ -109,7 +109,7 @@ public abstract class AbstractRegionBSPTree<
         root.setLocationValue(RegionLocation.INSIDE);
     }
 
-    /** Modify this instance so that is is completely empty.
+    /** Modify this instance so that is completely empty.
      * @see #isEmpty()
      */
     public void setEmpty() {

@@ -22,7 +22,7 @@ import java.util.Objects;
 
 /** Class used to buffer characters read from an underlying {@link Reader}.
  * Characters can be consumed from the buffer, examined without being consumed,
- * and pushed back onto the buffer. The internal bufer is resized as needed.
+ * and pushed back onto the buffer. The internal buffer is resized as needed.
  */
 public class CharReadBuffer {
 

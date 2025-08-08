@@ -2217,7 +2217,7 @@ public abstract class PointMapTestBase<P extends Point<P>>
                     "Unexpected values collection size");
 
             // check that each value in the list occurs the value number of times
-            // as expect)ed
+            // as expected
             final Map<V, Integer> expectedCounts = new HashMap<>();
             for (final Map.Entry<P, V> entry : expectedMap.entrySet()) {
                 expectedCounts.merge(entry.getValue(), 1, (a, b) -> a + b);

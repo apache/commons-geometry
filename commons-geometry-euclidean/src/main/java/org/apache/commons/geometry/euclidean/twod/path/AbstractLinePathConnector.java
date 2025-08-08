@@ -37,7 +37,7 @@ public abstract class AbstractLinePathConnector
         // Do nothing
     }
 
-    /** Add a line subset to the connector, leaving it unconnected until a later call to
+    /** Add a line subset to the connector, leaving it unconnected until a later call
      * to {@link #connect(Iterable)} or {@link #connectAll()}.
      * @param subset line subset to add
      * @see #connect(Iterable)
