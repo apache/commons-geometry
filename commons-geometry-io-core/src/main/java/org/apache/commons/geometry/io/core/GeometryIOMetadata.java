@@ -23,13 +23,13 @@ import java.nio.charset.Charset;
 public interface GeometryIOMetadata {
 
     /** Get the file name associated with the operation, if any.
-     * @return file name associated with the operation or null
+     * @return file name associated with the operation or {@code null}
      *      if unknown or not applicable
      */
     String getFileName();
 
     /** Get the charset for the operation, if any.
-     * @return charset for the operation or null if unknown or
+     * @return charset for the operation or {@code null} if unknown or
      *      not applicable
      */
     Charset getCharset();

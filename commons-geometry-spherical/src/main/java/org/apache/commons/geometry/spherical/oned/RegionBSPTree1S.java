@@ -418,7 +418,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
     }
 
     /** Perform a union operation with {@code target} and {@code input}, storing the result
-     * in {@code target}; does nothing if {@code input} is null.
+     * in {@code target}; does nothing if {@code input} is {@code null}.
      * @param target target tree
      * @param input input tree
      */

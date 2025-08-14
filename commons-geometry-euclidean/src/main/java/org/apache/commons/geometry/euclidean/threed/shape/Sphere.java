@@ -196,7 +196,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
         return intersections(line, Line3D::abscissa, Line3D::distance);
     }
 
-    /** Get the first intersection point between the given line and this sphere, or null
+    /** Get the first intersection point between the given line and this sphere, or {@code null}
      * if no such point exists. The "first" intersection point is the first such point
      * encountered when traveling in the direction of the line from infinity.
      * @param line line to intersect with the sphere

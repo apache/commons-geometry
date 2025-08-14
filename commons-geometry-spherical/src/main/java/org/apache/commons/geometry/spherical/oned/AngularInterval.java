@@ -91,9 +91,9 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
                 0.0;
     }
 
-    /** Get the minimum boundary for the interval, or null if the
+    /** Get the minimum boundary for the interval, or {@code null} if the
      * interval represents the full space.
-     * @return the minimum point for the interval or null if
+     * @return the minimum point for the interval or {@code null} if
      *      the interval represents the full space
      */
     public CutAngle getMinBoundary() {
@@ -111,18 +111,18 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
                 Angle.TWO_PI;
     }
 
-    /** Get the maximum point for the interval. This will be null if the
+    /** Get the maximum point for the interval. This will be {@code null} if the
      * interval represents the full space.
-     * @return the maximum point for the interval or null if
+     * @return the maximum point for the interval or {@code null} if
      *      the interval represents the full space
      */
     public CutAngle getMaxBoundary() {
         return maxBoundary;
     }
 
-    /** Get the midpoint of the interval or null if the interval represents
+    /** Get the midpoint of the interval or {@code null} if the interval represents
      *  the full space.
-     * @return the midpoint of the interval or null if the interval represents
+     * @return the midpoint of the interval or {@code null} if the interval represents
      *      the full space
      * @see #getCentroid()
      */

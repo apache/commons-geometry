@@ -178,7 +178,7 @@ final class PointMap1DImpl<V>
         /** Get a {@link DistancedValue} instance containing the next entry from the given
          * iterator.
          * @param it iterator to get the next value from
-         * @return distanced value containing the next entry from the iterator or null if the iterator
+         * @return distanced value containing the next entry from the iterator or {@code null} if the iterator
          *      does not contain any more elements
          */
         private DistancedValue<Entry<Vector1D, V>> getNextEntry(final Iterator<Entry<Vector1D, V>> it) {

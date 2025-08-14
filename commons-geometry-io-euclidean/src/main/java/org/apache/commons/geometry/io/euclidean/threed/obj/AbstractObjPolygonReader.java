@@ -68,8 +68,8 @@ public abstract class AbstractObjPolygonReader implements Closeable {
         GeometryIOUtils.closeUnchecked(reader);
     }
 
-    /** Return the next face from the OBJ content or null if no face is found.
-     * @return the next face from the OBJ content or null if no face is found
+    /** Return the next face from the OBJ content or {@code null} if no face is found.
+     * @return the next face from the OBJ content or {@code null} if no face is found
      * @throws IllegalStateException if a parsing error occurs
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */

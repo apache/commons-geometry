@@ -99,10 +99,10 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      */
     V normalize();
 
-    /** Attempt to compute a normalized vector aligned with the instance, returning null if
+    /** Attempt to compute a normalized vector aligned with the instance, returning {@code null} if
      * such a vector cannot be computed. This method is equivalent to {@link #normalize()}
      * but returns null instead of throwing an exception on failure.
-     * @return normalized vector or null if such a vector cannot be computed, i.e. if the
+     * @return normalized vector or {@code null} if such a vector cannot be computed, i.e. if the
      *      norm is zero, NaN, or infinite
      * @see #normalize()
      */

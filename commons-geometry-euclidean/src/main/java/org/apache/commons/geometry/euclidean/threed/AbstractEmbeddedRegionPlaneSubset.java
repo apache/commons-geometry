@@ -117,7 +117,7 @@ abstract class AbstractEmbeddedRegionPlaneSubset extends AbstractPlaneSubset imp
 
     /** Compute 3D bounds from a subspace boundary source.
      * @param src subspace boundary source
-     * @return 3D bounds from the given embedded subspace boundary source or null
+     * @return 3D bounds from the given embedded subspace boundary source or {@code null}
      *      if no valid bounds could be determined
      */
     protected Bounds3D getBoundsFromSubspace(final BoundarySource2D src) {

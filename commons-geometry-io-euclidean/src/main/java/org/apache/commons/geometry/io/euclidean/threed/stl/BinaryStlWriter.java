@@ -40,10 +40,10 @@ public class BinaryStlWriter implements Closeable {
         this.out = out;
     }
 
-    /** Write binary STL header content. If {@code headerContent} is null, the written header
+    /** Write binary STL header content. If {@code headerContent} is {@code null}, the written header
      * will consist entirely of zeros. Otherwise, up to 80 bytes from {@code headerContent}
      * are written to the header, with any remaining bytes of the header filled with zeros.
-     * @param headerContent bytes to include in the header; may be null
+     * @param headerContent bytes to include in the header; may be {@code null}
      * @param triangleCount number of triangles to be included in the content
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */
@@ -62,7 +62,7 @@ public class BinaryStlWriter implements Closeable {
      * @param p1 first point
      * @param p2 second point
      * @param p3 third point
-     * @param normal triangle normal; may be null
+     * @param normal triangle normal; may be {@code null}
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public void writeTriangle(final Vector3D p1, final Vector3D p2, final Vector3D p3,
@@ -82,7 +82,7 @@ public class BinaryStlWriter implements Closeable {
      * @param p1 first point
      * @param p2 second point
      * @param p3 third point
-     * @param normal triangle normal; may be null
+     * @param normal triangle normal; may be {@code null}
      * @param attributeValue 2-byte STL triangle attribute value
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */
@@ -122,7 +122,7 @@ public class BinaryStlWriter implements Closeable {
     }
 
     /** Write binary STL header content to the given output stream. If {@code headerContent}
-     * is null, the written header will consist entirely of zeros. Otherwise, up to 80 bytes
+     * is {@code null}, the written header will consist entirely of zeros. Otherwise, up to 80 bytes
      * from {@code headerContent} are written to the header, with any remaining bytes of the
      * header filled with zeros.
      * @param headerContent

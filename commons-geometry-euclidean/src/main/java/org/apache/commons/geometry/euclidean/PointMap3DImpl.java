@@ -110,7 +110,7 @@ final class PointMap3DImpl<V>
      */
     private static final class MapNode3D<V> extends BucketNode<Vector3D, V> {
 
-        /** Point to split child spaces; will be null for leaf nodes. */
+        /** Point to split child spaces; will be {@code null} for leaf nodes. */
         private Vector3D split;
 
         /** Construct a new instance.

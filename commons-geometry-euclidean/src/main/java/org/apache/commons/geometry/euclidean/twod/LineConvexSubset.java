@@ -27,7 +27,7 @@ import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 
 /** Class representing a convex subset of a line in 2D Euclidean space. Instances
- * need not be finite, in which case the start or end point (or both) will be null.
+ * need not be finite, in which case the start or end point (or both) will be {@code null}.
  * Line segments and rays are examples of convex line subsets.
  * @see Lines
  */
@@ -56,7 +56,7 @@ public abstract class LineConvexSubset extends LineSubset implements HyperplaneC
     }
 
     /** Get the start point for the subset.
-     * @return the start point for the subset, or null if no start point exists
+     * @return the start point for the subset, or {@code null} if no start point exists
      */
     public abstract Vector2D getStartPoint();
 
@@ -68,7 +68,7 @@ public abstract class LineConvexSubset extends LineSubset implements HyperplaneC
     public abstract double getSubspaceStart();
 
     /** Get the end point for the subset.
-     * @return the end point for the subset, or null if no end point exists.
+     * @return the end point for the subset, or {@code null} if no end point exists.
      */
     public abstract Vector2D getEndPoint();
 

@@ -45,7 +45,7 @@ public final class GeometryIOUtils {
     /** Utility class; no instantiation. */
     private GeometryIOUtils() {}
 
-    /** Get the file name of the given path or null if one does not exist
+    /** Get the file name of the given path or {@code null} if one does not exist
      * or is the empty string.
      * @param path path to get the file name of
      * @return file name of the given path
@@ -58,7 +58,7 @@ public final class GeometryIOUtils {
         return null;
     }
 
-    /** Get the file name of the given url or null if one does not exist or is
+    /** Get the file name of the given url or {@code null} if one does not exist or is
      * the empty string.
      * @param url url to get the file name of
      * @return file name of the given url
@@ -73,10 +73,10 @@ public final class GeometryIOUtils {
 
     /** Get the file name from the given path string, defined as
      * the substring following the last path separator character.
-     * Null is returned if the argument is null or the file name is
+     * {@code null} is returned if the argument is {@code null} or the file name is
      * the empty string.
      * @param path path to get the file name from
-     * @return file name of the given path string or null if a
+     * @return file name of the given path string or {@code null} if a
      *      non-empty file name does not exist
      */
     public static String getFileName(final String path) {
@@ -96,7 +96,7 @@ public final class GeometryIOUtils {
     /** Get the part of the file name after the last dot.
      * @param fileName file name to get the extension for
      * @return the extension of the file name, the empty string if no extension is found, or
-     *      null if the argument is null
+     *      null if the argument is {@code null}
      */
     public static String getFileExtension(final String fileName) {
         if (fileName != null) {
@@ -112,7 +112,7 @@ public final class GeometryIOUtils {
     }
 
     /** Create a {@link BufferedReader} for reading from the given input. The charset used is the charset
-     * defined in {@code input} or {@code defaultCharset} if null.
+     * defined in {@code input} or {@code defaultCharset} if {@code null}.
      * @param input input to read from
      * @param defaultCharset charset to use if no charset is defined in the input
      * @return new reader instance
@@ -127,7 +127,7 @@ public final class GeometryIOUtils {
     }
 
     /** Create a {@link BufferedWriter} for writing to the given output. The charset used is the charset
-     * defined in {@code output} or {@code defaultCharset} if null.
+     * defined in {@code output} or {@code defaultCharset} if {@code null}.
      * @param output output to write to
      * @param defaultCharset charset to use if no charset is defined in the output
      * @return new writer instance

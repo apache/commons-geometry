@@ -123,9 +123,9 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
     }
 
     /** Trim the given hyperplane subset to the portion contained inside this instance.
-     * @param sub hyperplane subset to trim. Null is returned if the subset does not intersect the instance.
+     * @param sub hyperplane subset to trim. {@code null} is returned if the subset does not intersect the instance.
      * @return portion of the argument that lies entirely inside the region represented by
-     *      this instance, or null if it does not intersect.
+     *      this instance, or {@code null} if it does not intersect.
      */
     public HyperplaneConvexSubset<P> trim(final HyperplaneConvexSubset<P> sub) {
         HyperplaneConvexSubset<P> remaining = sub;

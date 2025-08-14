@@ -43,7 +43,7 @@ public interface PointMap<P extends Point<P>, V> extends Map<P, V> {
      * the {@link Entry#setValue(Object)} method to modify the
      * mapping.
      * @param pt point to fetch the map entry for
-     * @return map entry for the given point or null if no such entry
+     * @return map entry for the given point or {@code null} if no such entry
      *      exists
      */
     Entry<P, V> getEntry(P pt);

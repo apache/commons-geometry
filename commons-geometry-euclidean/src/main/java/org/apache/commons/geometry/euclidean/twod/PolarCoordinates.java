@@ -145,7 +145,7 @@ public final class PolarCoordinates implements Spatial {
      *
      * @param other Object to test for equality to this
      * @return true if two PolarCoordinates objects are equal, false if
-     *         object is null, not an instance of PolarCoordinates, or
+     *         object is {@code null}, not an instance of PolarCoordinates, or
      *         not equal to this PolarCoordinates instance
      *
      */

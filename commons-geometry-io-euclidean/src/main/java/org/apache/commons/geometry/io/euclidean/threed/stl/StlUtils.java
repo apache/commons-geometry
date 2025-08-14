@@ -43,7 +43,7 @@ final class StlUtils {
      * @param p1 first point
      * @param p2 second point
      * @param p3 third point
-     * @param normal defined triangle normal; may be null
+     * @param normal defined triangle normal; may be {@code null}
      * @return STL normal for the triangle
      */
     static Vector3D determineNormal(final Vector3D p1, final Vector3D p2, final Vector3D p3,
@@ -64,12 +64,12 @@ final class StlUtils {
     }
 
     /** Return true if the given points are arranged counter-clockwise relative to the
-     * given normal. Returns true if {@code normal} is null.
+     * given normal. Returns true if {@code normal} is {@code null}.
      * @param p1 first point
      * @param p2 second point
      * @param p3 third point
-     * @param normal normal; may be null, in which case the zero vector is used
-     * @return true if {@code normal} is null or if the given points are arranged counter-clockwise
+     * @param normal normal; may be {@code null}, in which case the zero vector is used
+     * @return true if {@code normal} is {@code null} or if the given points are arranged counter-clockwise
      *      relative to {@code normal}
      */
     static boolean pointsAreCounterClockwise(final Vector3D p1, final Vector3D p2, final Vector3D p3,
@@ -84,12 +84,12 @@ final class StlUtils {
         return true;
     }
 
-    /** Get the normal using the right-hand rule for the given triangle vertices. Null is returned
+    /** Get the normal using the right-hand rule for the given triangle vertices. {@code null} is returned
      * if the normal could not be computed.
      * @param p1 first point
      * @param p2 second point
      * @param p3 third point
-     * @return the normal for the given triangle vertices or null if one could not be computed
+     * @return the normal for the given triangle vertices or {@code null} if one could not be computed
      */
     private static Vector3D computeTriangleNormal(final Vector3D p1, final Vector3D p2, final Vector3D p3) {
         final Vector3D normal = p1.vectorTo(p2).cross(p1.vectorTo(p3)).normalizeOrNull();

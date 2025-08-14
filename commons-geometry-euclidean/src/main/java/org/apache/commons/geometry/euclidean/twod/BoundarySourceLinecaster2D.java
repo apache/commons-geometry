@@ -75,7 +75,7 @@ final class BoundarySourceLinecaster2D implements Linecastable2D {
      * returned if no intersection is discovered.
      * @param boundary boundary from the boundary source
      * @param subset line subset to intersect with
-     * @return the linecast intersection between the two arguments or null if there is no such
+     * @return the linecast intersection between the two arguments or {@code null} if there is no such
      *      intersection
      */
     private LinecastPoint2D computeIntersection(final LineConvexSubset boundary, final LineConvexSubset subset) {

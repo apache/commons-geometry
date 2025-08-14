@@ -55,8 +55,8 @@ public final class GreatArcPath implements BoundarySource2S {
         return arcs;
     }
 
-    /** Get the start arc for the path or null if the path is empty.
-     * @return the start arc for the path or null if the path is empty
+    /** Get the start arc for the path or {@code null} if the path is empty.
+     * @return the start arc for the path or {@code null} if the path is empty
      */
     public GreatArc getStartArc() {
         if (!isEmpty()) {
@@ -65,8 +65,8 @@ public final class GreatArcPath implements BoundarySource2S {
         return null;
     }
 
-    /** Get the end arc for the path or null if the path is empty.
-     * @return the end arc for the path or null if the path is empty
+    /** Get the end arc for the path or {@code null} if the path is empty.
+     * @return the end arc for the path or {@code null} if the path is empty
      */
     public GreatArc getEndArc() {
         if (!isEmpty()) {
@@ -75,7 +75,7 @@ public final class GreatArcPath implements BoundarySource2S {
         return null;
     }
 
-    /** Get the start vertex for the path or null if the path is empty
+    /** Get the start vertex for the path or {@code null} if the path is empty
      * or consists of a single, full arc.
      * @return the start vertex for the path
      */
@@ -84,7 +84,7 @@ public final class GreatArcPath implements BoundarySource2S {
         return (arc != null) ? arc.getStartPoint() : null;
     }
 
-    /** Get the end vertex for the path or null if the path is empty
+    /** Get the end vertex for the path or {@code null} if the path is empty
      * or consists of a single, full arc.
      * @return the end vertex for the path
      */
@@ -265,7 +265,7 @@ public final class GreatArcPath implements BoundarySource2S {
      * context. The precision context is used when building arcs from points
      * and may be omitted if raw points are not used.
      * @param precision precision context to use when building arcs from
-     *      raw points; may be null if raw points are not used.
+     *      raw points; may be {@code null} if raw points are not used.
      * @return a new {@link Builder} instance
      */
     public static Builder builder(final Precision.DoubleEquivalence precision) {
@@ -324,7 +324,7 @@ public final class GreatArcPath implements BoundarySource2S {
             return this;
         }
 
-        /** Get the arc at the start of the path or null if it does not exist.
+        /** Get the arc at the start of the path or {@code null} if it does not exist.
          * @return the arc at the start of the path
          */
         public GreatArc getStartArc() {
@@ -335,7 +335,7 @@ public final class GreatArcPath implements BoundarySource2S {
             return start;
         }
 
-        /** Get the arc at the end of the path or null if it does not exist.
+        /** Get the arc at the end of the path or {@code null} if it does not exist.
          * @return the arc at the end of the path
          */
         public GreatArc getEndArc() {
@@ -569,7 +569,7 @@ public final class GreatArcPath implements BoundarySource2S {
 
         /** Validate that the given arcs are connected, meaning that the end point of {@code previous}
          * is equivalent to the start point of {@code next}. The arcs are considered valid if either
-         * arc is null.
+         * arc is {@code null}.
          * @param previous previous arc
          * @param next next arc
          * @throws IllegalStateException if previous and next are not null and the end point of previous
@@ -642,10 +642,10 @@ public final class GreatArcPath implements BoundarySource2S {
             prependedArcs.add(arc);
         }
 
-        /** Get the first element in the list or null if the list is null
+        /** Get the first element in the list or {@code null} if the list is {@code null}
          * or empty.
          * @param list the list to return the first item from
-         * @return the first item from the given list or null if it does not exist
+         * @return the first item from the given list or {@code null} if it does not exist
          */
         private GreatArc getFirst(final List<GreatArc> list) {
             if (list != null && !list.isEmpty()) {
@@ -654,10 +654,10 @@ public final class GreatArcPath implements BoundarySource2S {
             return null;
         }
 
-        /** Get the last element in the list or null if the list is null
+        /** Get the last element in the list or {@code null} if the list is {@code null}
          * or empty.
          * @param list the list to return the last item from
-         * @return the last item from the given list or null if it does not exist
+         * @return the last item from the given list or {@code null} if it does not exist
          */
         private GreatArc getLast(final List<GreatArc> list) {
             if (list != null && !list.isEmpty()) {

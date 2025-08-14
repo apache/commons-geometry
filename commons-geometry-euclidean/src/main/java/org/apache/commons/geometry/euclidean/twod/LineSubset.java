@@ -62,9 +62,9 @@ public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEm
     }
 
     /** Get a {@link Bounds2D} object defining an axis-aligned bounding box containing all
-     * vertices for this subset. Null is returned if the subset is infinite or does not
+     * vertices for this subset. {@code null} is returned if the subset is infinite or does not
      * contain any vertices.
-     * @return the bounding box for this instance or null if no valid bounds could be determined
+     * @return the bounding box for this instance or {@code null} if no valid bounds could be determined
      */
     public abstract Bounds2D getBounds();
 
@@ -97,7 +97,7 @@ public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEm
      * parallel or coincident) or the line does not intersect this instance.
      * @param inputLine line to intersect with this line subset
      * @return the unique intersection point between the line and this line subset
-     *      or null if no such point exists.
+     *      or {@code null} if no such point exists.
      * @see Line#intersection(Line)
      */
     public Vector2D intersection(final Line inputLine) {

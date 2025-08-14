@@ -277,7 +277,7 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
      * @param abscissaFn function used to compute the abscissa value of a point on a line
      * @param distanceFn function used to compute the smallest distance between a point
      *      and a line
-     * @return the first intersection between the given line and this instance or null if
+     * @return the first intersection between the given line and this instance or {@code null} if
      *      no such intersection exists
      */
     protected <L extends Embedding<V, Vector1D>> V firstIntersection(final L line,

@@ -89,7 +89,7 @@ public final class IO3D {
 
     /** Get a {@link FacetDefinitionReader} for reading facet information from the given input.
      * @param in input to read from
-     * @param fmt format of the input; if null, the format is determined implicitly from the
+     * @param fmt format of the input; if {@code null}, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @return facet definition reader
      * @throws IllegalArgumentException if no handler has been registered with the
@@ -174,7 +174,7 @@ public final class IO3D {
      *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
      *  </ul>
      * @param in input to read from
-     * @param fmt format of the input; if null, the format is determined implicitly from the
+     * @param fmt format of the input; if {@code null}, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @return stream providing access to the facets in the input
      * @throws IllegalArgumentException if no read handler has been registered with the
@@ -264,7 +264,7 @@ public final class IO3D {
      *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
      *  </ul>
      * @param in input to read boundaries from
-     * @param fmt format of the input; if null, the format is determined implicitly from the
+     * @param fmt format of the input; if {@code null}, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the boundaries in the input
@@ -356,7 +356,7 @@ public final class IO3D {
      *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
      *  </ul>
      * @param in input to read from
-     * @param fmt format of the input; if null, the format is determined implicitly from the
+     * @param fmt format of the input; if {@code null}, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to the triangles in the input
@@ -406,7 +406,7 @@ public final class IO3D {
     /** Return a {@link BoundarySource3D} containing all boundaries from the given input. A runtime
      * exception may be thrown if mathematically invalid boundaries are encountered.
      * @param in input to read boundaries from
-     * @param fmt format of the input; if null, the format is determined implicitly from the
+     * @param fmt format of the input; if {@code null}, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return object containing all boundaries from the input
@@ -456,7 +456,7 @@ public final class IO3D {
     /** Return a {@link TriangleMesh} containing all triangles from the given input. A runtime exception
      * may be thrown if mathematically invalid boundaries are encountered.
      * @param in input to read from
-     * @param fmt format of the input; if null, the format is determined implicitly from the
+     * @param fmt format of the input; if {@code null}, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return a mesh containing all triangles from the input
@@ -493,7 +493,7 @@ public final class IO3D {
      * in a try-with-resources statement outside of this method if the stream is required to be closed.</p>
      * @param boundaries stream containing boundaries to write
      * @param out output to write to
-     * @param fmt format of the output; if null, the format is determined implicitly from the
+     * @param fmt format of the output; if {@code null}, the format is determined implicitly from the
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
@@ -523,7 +523,7 @@ public final class IO3D {
     /** Write all boundaries from {@code src} to the given output.
      * @param src boundary source containing the boundaries to write
      * @param out output to write to
-     * @param fmt format of the output; if null, the format is determined implicitly from the
+     * @param fmt format of the output; if {@code null}, the format is determined implicitly from the
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
@@ -551,7 +551,7 @@ public final class IO3D {
     /** Write the given collection of facets to the output.
      * @param facets facets to write
      * @param out output to write to
-     * @param fmt format of the output; if null, the format is determined implicitly from the
+     * @param fmt format of the output; if {@code null}, the format is determined implicitly from the
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format
@@ -585,7 +585,7 @@ public final class IO3D {
      * in a try-with-resources statement outside of this method if the stream is required to be closed.</p>
      * @param facets stream containing facets to write
      * @param out output to write to
-     * @param fmt format of the output; if null, the format is determined implicitly from the
+     * @param fmt format of the output; if {@code null}, the format is determined implicitly from the
      *      file extension of the output {@link GeometryOutput#getFileName() file name}
      * @throws IllegalArgumentException if no write handler is registered with the
      *      {@link #getDefaultManager() default manager} for the output format

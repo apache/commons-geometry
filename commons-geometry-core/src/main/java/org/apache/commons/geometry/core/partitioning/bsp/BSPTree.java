@@ -133,7 +133,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
          */
         int depth();
 
-        /** Get the parent of the node. This will be null if the node is the
+        /** Get the parent of the node. This will be {@code null} if the node is the
          * root of the tree.
          * @return the parent node for this instance
          */
@@ -141,7 +141,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
 
         /** Get the cut for the node. This is a hyperplane convex subset that splits
          * the region for the cell into two disjoint regions, namely the plus and
-         * minus regions. This will be null for leaf nodes.
+         * minus regions. This will be {@code null} for leaf nodes.
          * @see #getPlus()
          * @see #getMinus()
          * @return the cut for the cell
@@ -150,19 +150,19 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
         HyperplaneConvexSubset<P> getCut();
 
         /** Get the hyperplane containing the node cut, if it exists.
-         * @return the hyperplane containing the node cut, or null if
+         * @return the hyperplane containing the node cut, or {@code null} if
          *      the node does not have a cut
          * @see #getCut()
          */
         Hyperplane<P> getCutHyperplane();
 
-        /** Get the node for the minus region of the cell. This will be null if the
+        /** Get the node for the minus region of the cell. This will be {@code null} if the
          * node has not been cut, ie if it is a leaf node.
          * @return the node for the minus region of the cell
          */
         N getMinus();
 
-        /** Get the node for the plus region of the cell. This will be null if the
+        /** Get the node for the plus region of the cell. This will be {@code null} if the
          * node has not been cut, ie if it is a leaf node.
          * @return the node for the plus region of the cell
          */
@@ -194,10 +194,10 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
 
         /** Trim the given hyperplane subset to the region defined by this node by cutting
          * the argument with the cut hyperplanes (binary partitioners) of all parent nodes
-         * up to the root. Null is returned if the hyperplane subset lies outside of the region
+         * up to the root. {@code null} is returned if the hyperplane subset lies outside of the region
          * defined by the node.
          * @param sub the hyperplane subset to trim
-         * @return the trimmed hyperplane subset or null if no part of the argument lies
+         * @return the trimmed hyperplane subset or {@code null} if no part of the argument lies
          *      within the node's region
          */
         HyperplaneConvexSubset<P> trim(HyperplaneConvexSubset<P> sub);

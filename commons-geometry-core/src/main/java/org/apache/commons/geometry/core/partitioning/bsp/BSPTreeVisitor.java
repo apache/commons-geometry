@@ -87,8 +87,8 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
     Result visit(N node);
 
     /** Determine the visit order for the given internal node. This is called for each
-     * internal node before {@link #visit(BSPTree.Node)} is called. Returning null
-     * or {@link Order#NONE}from this method skips the subtree rooted at the given node.
+     * internal node before {@link #visit(BSPTree.Node)} is called. Returning {@code null}
+     * or {@link Order#NONE} from this method skips the subtree rooted at the given node.
      * This method is not called on leaf nodes.
      * @param internalNode the internal node to determine the visit order for
      * @return the order that the subtree rooted at the given node should be visited

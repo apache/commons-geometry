@@ -31,10 +31,10 @@ public interface ConvexHull<P extends Point<P>> {
     List<P> getVertices();
 
     /** Return the region representing the convex hull. This will return
-     * null in cases where the hull does not define a region with non-zero
+     * {@code null} in cases where the hull does not define a region with non-zero
      * size, such as when only a single unique point exists or when all points
      * are collinear.
-     * @return the region representing by the convex hull or null if the
+     * @return the region representing by the convex hull or {@code null} if the
      *      convex hull does not define a region of non-zero size
      */
     Region<P> getRegion();

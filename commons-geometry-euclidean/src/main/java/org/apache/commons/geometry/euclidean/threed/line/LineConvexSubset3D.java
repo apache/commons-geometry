@@ -22,7 +22,7 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class representing a convex subset of a line in 3D Euclidean space. Instances
- * need not be finite, in which case the start or end point (or both) will be null.
+ * need not be finite, in which case the start or end point (or both) will be {@code null}.
  * @see Lines3D
  */
 public abstract class LineConvexSubset3D extends LineSubset3D {
@@ -35,7 +35,7 @@ public abstract class LineConvexSubset3D extends LineSubset3D {
     }
 
     /** Get the start point for the line subset.
-     * @return the start point for the line subset, or null if no start point exists
+     * @return the start point for the line subset, or {@code null} if no start point exists
      */
     public abstract Vector3D getStartPoint();
 
@@ -47,7 +47,7 @@ public abstract class LineConvexSubset3D extends LineSubset3D {
     public abstract double getSubspaceStart();
 
     /** Get the end point for the line subset.
-     * @return the end point for the line subset, or null if no end point exists.
+     * @return the end point for the line subset, or {@code null} if no end point exists.
      */
     public abstract Vector3D getEndPoint();
 

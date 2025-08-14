@@ -276,7 +276,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      *
      * @param other Object to test for equality to this
      * @return true if two vector objects are equal, false if
-     *         object is null, not an instance of Vector1D, or
+     *         object is {@code null}, not an instance of Vector1D, or
      *         not equal to this Vector1D instance
      *
      */
@@ -399,7 +399,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          * is returned.
          * @param x x coordinate
          * @param throwOnFailure if true, an exception will be thrown if a normalized vector cannot be created
-         * @return normalized vector or null if one cannot be created and {@code throwOnFailure}
+         * @return normalized vector or {@code null} if one cannot be created and {@code throwOnFailure}
          *      is false
          * @throws IllegalArgumentException if the computed norm is zero, NaN, or infinite
          */

@@ -509,7 +509,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      *
      * @param node the node representing the region to fit the hyperplane subset to
      * @param sub the hyperplane subset to trim to the node's region
-     * @return the trimmed hyperplane subset or null if the given hyperplane subset does not intersect
+     * @return the trimmed hyperplane subset or {@code null} if the given hyperplane subset does not intersect
      *      the node's region
      */
     protected HyperplaneConvexSubset<P> trimToNode(final N node, final HyperplaneConvexSubset<P> sub) {
@@ -824,18 +824,18 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** The owning tree instance. */
         private final AbstractBSPTree<P, N> tree;
 
-        /** The parent node; this will be null for the tree root node. */
+        /** The parent node; this will be {@code null} for the tree root node. */
         private N parent;
 
-        /** The hyperplane convex subset cutting the node's region; this will be null for leaf nodes. */
+        /** The hyperplane convex subset cutting the node's region; this will be {@code null} for leaf nodes. */
         private HyperplaneConvexSubset<P> cut;
 
-        /** The node lying on the minus side of the cut hyperplane; this will be null
+        /** The node lying on the minus side of the cut hyperplane; this will be {@code null}
          * for leaf nodes.
          */
         private N minus;
 
-        /** The node lying on the plus side of the cut hyperplane; this will be null
+        /** The node lying on the plus side of the cut hyperplane; this will be {@code null}
          * for leaf nodes.
          */
         private N plus;

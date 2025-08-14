@@ -118,11 +118,11 @@ public abstract class AbstractBounds<
      */
     public abstract boolean intersects(B other);
 
-    /** Return the intersection of this bounding box and the argument, or null if no intersection exists.
+    /** Return the intersection of this bounding box and the argument, or {@code null} if no intersection exists.
      * Floating point comparisons are strict; values are considered equal only if they match exactly. Note
      * this method may return bounding boxes with zero size in one or more coordinate axes.
      * @param other bounding box to intersect with
-     * @return the intersection of this instance and the argument, or null if no such intersection
+     * @return the intersection of this instance and the argument, or {@code null} if no such intersection
      *      exists
      * @see #intersects(AbstractBounds)
      */
@@ -240,7 +240,7 @@ public abstract class AbstractBounds<
         }
 
         /** Get an object representing the <em>first</em> intersection of the line convex subset
-         * with the boundaries of the bounding box. Null is returned if no such intersection exists.
+         * with the boundaries of the bounding box. {@code null} is returned if no such intersection exists.
          * @return object representing the first intersection of the line convex subset with the
          *      boundaries of the bounding box, or {@code null} if no such intersection exists
          */

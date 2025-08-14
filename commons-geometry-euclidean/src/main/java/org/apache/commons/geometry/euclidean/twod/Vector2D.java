@@ -369,7 +369,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      *
      * @param other Object to test for equality to this
      * @return true if two Vector2D objects are equal, false if
-     *         object is null, not an instance of Vector2D, or
+     *         object is {@code null}, not an instance of Vector2D, or
      *         not equal to this Vector2D instance
      *
      */
@@ -701,7 +701,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
          * @param x x coordinate
          * @param y y coordinate
          * @param throwOnFailure if true, an exception will be thrown if a normalized vector cannot be created
-         * @return normalized vector or null if one cannot be created and {@code throwOnFailure}
+         * @return normalized vector or {@code null} if one cannot be created and {@code throwOnFailure}
          *      is false
          * @throws IllegalArgumentException if the computed norm is zero, NaN, or infinite
          */

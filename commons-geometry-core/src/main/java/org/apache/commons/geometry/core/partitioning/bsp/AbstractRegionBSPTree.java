@@ -873,7 +873,7 @@ public abstract class AbstractRegionBSPTree<
             return a;
         }
 
-        /** Get the projected point on the region's boundary, or null if no point could be found.
+        /** Get the projected point on the region's boundary, or {@code null} if no point could be found.
          * @return the projected point on the region's boundary
          */
         public P getProjected() {
@@ -1068,7 +1068,7 @@ public abstract class AbstractRegionBSPTree<
         /** Recursively condense nodes that have children with homogenous location attributes
          * (eg, both inside, both outside) into single nodes.
          * @param node the root of the subtree to condense
-         * @return the location of the successfully condensed subtree or null if no condensing was
+         * @return the location of the successfully condensed subtree or {@code null} if no condensing was
          *      able to be performed
          */
         private RegionLocation condenseRecursive(final N node) {

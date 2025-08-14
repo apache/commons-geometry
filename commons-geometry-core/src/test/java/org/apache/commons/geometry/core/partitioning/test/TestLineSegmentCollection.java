@@ -38,7 +38,7 @@ public final class TestLineSegmentCollection implements HyperplaneSubset<TestPoi
     /** Create a new instance with the given line segments. The segments
      * are all assumed to lie on the same hyperplane.
      * @param segments the segments to use in the collection
-     * @throws IllegalArgumentException if the collection is null or empty
+     * @throws IllegalArgumentException if the collection is {@code null} or empty
      */
     public TestLineSegmentCollection(final List<TestLineSegment> segments) {
         this.segments = Collections.unmodifiableList(new ArrayList<>(segments));

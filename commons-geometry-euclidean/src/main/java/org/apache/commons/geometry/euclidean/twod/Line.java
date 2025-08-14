@@ -306,7 +306,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
     /** Get the intersection point of the instance and another line.
      * @param other other line
      * @return intersection point of the instance and the other line
-     *      or null if there is no unique intersection point (ie, the lines
+     *      or {@code null} if there is no unique intersection point (ie, the lines
      *      are parallel or coincident)
      */
     public Vector2D intersection(final Line other) {

@@ -134,9 +134,9 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
     }
 
     /** Connect the end point of the given element to the start point of another element. Returns
-     * the newly connected element or null if no forward connection was made.
+     * the newly connected element or {@code null} if no forward connection was made.
      * @param element element to connect
-     * @return the next element in the path or null if no connection was made
+     * @return the next element in the path or {@code null} if no connection was made
      */
     private E makeForwardConnection(final E element) {
         findPossibleConnections(element);
@@ -354,7 +354,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
          * (or this element in the case of a loop). Each path can only be
          * exported once. Later calls to this method on this instance or any of its
          * connected elements will return null.
-         * @return the root of the path or null if the path that this element
+         * @return the root of the path or {@code null} if the path that this element
          *      belongs to has already been exported
          */
         public E exportPath() {
