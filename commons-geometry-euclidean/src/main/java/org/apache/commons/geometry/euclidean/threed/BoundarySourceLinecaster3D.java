@@ -79,7 +79,7 @@ final class BoundarySourceLinecaster3D implements Linecastable3D {
      * returned if no intersection is discovered.
      * @param planeSubset plane subset from the boundary source
      * @param lineSubset line subset to intersect with
-     * @return the linecast intersection between the two arguments or null if there is no such
+     * @return the linecast intersection between the two arguments or {@code null} if there is no such
      *      intersection
      */
     private LinecastPoint3D computeIntersection(final PlaneConvexSubset planeSubset,

@@ -22,15 +22,15 @@ import java.util.stream.Stream;
 
 /** Class used to construct {@link Bounds3D} instances representing the min and
  * max points present in a {@link BoundarySource3D}. The implementation examines
- * the vertices of each boundary in turn. Null is returned if any boundaries are
+ * the vertices of each boundary in turn. {@code null} is returned if any boundaries are
  * infinite or no vertices are present.
  */
 final class BoundarySourceBoundsBuilder3D {
 
     /** Get a {@link Bounds3D} instance containing all vertices in the given boundary source.
-     * Null is returned if any encountered boundaries were not finite or no vertices were found.
+     * {@code null} is returned if any encountered boundaries were not finite or no vertices were found.
      * @param src the boundary source to compute the bounds of
-     * @return the bounds of the argument or null if no valid bounds could be determined
+     * @return the bounds of the argument or {@code null} if no valid bounds could be determined
      */
     public Bounds3D getBounds(final BoundarySource3D src) {
         final Bounds3D.Builder builder = Bounds3D.builder();

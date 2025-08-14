@@ -404,7 +404,7 @@ public final class Planes {
      * @param planeSubset plane subset to intersect with
      * @param line line to intersect with this plane subset
      * @return the unique intersection point between the line and this plane subset
-     *      or null if no such point exists.
+     *      or {@code null} if no such point exists.
      */
     static Vector3D intersection(final PlaneSubset planeSubset, final Line3D line) {
         final Vector3D pt = planeSubset.getPlane().intersection(line);

@@ -70,10 +70,10 @@ public class LinePath implements BoundarySource2D, Sized {
         return elements;
     }
 
-    /** Get the line subset at the start of the path or null if the path is empty. If the
+    /** Get the line subset at the start of the path or {@code null} if the path is empty. If the
      * path consists of a single line subset, then the returned instance with be the same
      * as that returned by {@link #getEnd()}.
-     * @return the line subset at the start of the path or null if the path is empty
+     * @return the line subset at the start of the path or {@code null} if the path is empty
      * @see #getEnd()
      */
     public LineConvexSubset getStart() {
@@ -83,10 +83,10 @@ public class LinePath implements BoundarySource2D, Sized {
         return null;
     }
 
-    /** Get the line subset at the end of the path or null if the path is empty. If the
+    /** Get the line subset at the end of the path or {@code null} if the path is empty. If the
      * path consists of a single line subset, then the returned instance with be the same
      * as that returned by {@link #getStart()}.
-     * @return the line subset at the end of the path or null if the path is empty
+     * @return the line subset at the end of the path or {@code null} if the path is empty
      * @see #getStart()
      */
     public LineConvexSubset getEnd() {
@@ -339,9 +339,9 @@ public class LinePath implements BoundarySource2D, Sized {
         return sb.toString();
     }
 
-    /** Get the start vertex for the path or null if the path is empty
+    /** Get the start vertex for the path or {@code null} if the path is empty
      * or has an infinite start line subset.
-     * @return the start vertex for the path or null if the path does
+     * @return the start vertex for the path or {@code null} if the path does
      *      not start with a vertex
      */
     private Vector2D getStartVertex() {
@@ -349,9 +349,9 @@ public class LinePath implements BoundarySource2D, Sized {
         return (seg != null) ? seg.getStartPoint() : null;
     }
 
-    /** Get the end vertex for the path or null if the path is empty
+    /** Get the end vertex for the path or {@code null} if the path is empty
      * or has an infinite end line subset.
-     * @return the end vertex for the path or null if the path does
+     * @return the end vertex for the path or {@code null} if the path does
      *      not end with a vertex
      */
     private Vector2D getEndVertex() {
@@ -447,7 +447,7 @@ public class LinePath implements BoundarySource2D, Sized {
      * context. The precision context is used when building line segments from
      * vertices and may be omitted if raw vertices are not used.
      * @param precision precision context to use when building line segments from
-     *      raw vertices; may be null if raw vertices are not used.
+     *      raw vertices; may be {@code null} if raw vertices are not used.
      * @return a new {@link Builder} instance
      */
     public static Builder builder(final Precision.DoubleEquivalence precision) {
@@ -500,7 +500,7 @@ public class LinePath implements BoundarySource2D, Sized {
             return this;
         }
 
-        /** Get the line subset at the start of the path or null if it does not exist.
+        /** Get the line subset at the start of the path or {@code null} if it does not exist.
          * @return the line subset at the start of the path
          */
         public LineConvexSubset getStart() {
@@ -511,7 +511,7 @@ public class LinePath implements BoundarySource2D, Sized {
             return start;
         }
 
-        /** Get the line subset at the end of the path or null if it does not exist.
+        /** Get the line subset at the end of the path or {@code null} if it does not exist.
          * @return the line subset at the end of the path
          */
         public LineConvexSubset getEnd() {
@@ -750,7 +750,7 @@ public class LinePath implements BoundarySource2D, Sized {
 
         /** Validate that the given line subsets  are connected, meaning that the end vertex of {@code previous}
          * is equivalent to the start vertex of {@code next}. The line subsets are considered valid if either
-         * line subset is null.
+         * line subset is {@code null}.
          * @param previous previous line subset
          * @param next next line subset
          * @throws IllegalStateException if previous and next are not null and the end vertex of previous
@@ -823,10 +823,10 @@ public class LinePath implements BoundarySource2D, Sized {
             prepended.add(subset);
         }
 
-        /** Get the first element in the list or null if the list is null
+        /** Get the first element in the list or {@code null} if the list is {@code null}
          * or empty.
          * @param list the list to return the first item from
-         * @return the first item from the given list or null if it does not exist
+         * @return the first item from the given list or {@code null} if it does not exist
          */
         private LineConvexSubset getFirst(final List<? extends LineConvexSubset> list) {
             if (list != null && !list.isEmpty()) {
@@ -835,10 +835,10 @@ public class LinePath implements BoundarySource2D, Sized {
             return null;
         }
 
-        /** Get the last element in the list or null if the list is null
+        /** Get the last element in the list or {@code null} if the list is {@code null}
          * or empty.
          * @param list the list to return the last item from
-         * @return the last item from the given list or null if it does not exist
+         * @return the last item from the given list or {@code null} if it does not exist
          */
         private LineConvexSubset getLast(final List<? extends LineConvexSubset> list) {
             if (list != null && !list.isEmpty()) {

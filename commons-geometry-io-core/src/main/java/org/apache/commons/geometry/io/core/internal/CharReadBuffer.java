@@ -55,7 +55,7 @@ public class CharReadBuffer {
 
     /** Construct a new instance that buffers characters from the given reader.
      * @param reader underlying reader instance
-     * @throws NullPointerException if {@code reader} is null
+     * @throws NullPointerException if {@code reader} is {@code null}
      */
     public CharReadBuffer(final Reader reader) {
         this(checkReader(reader), DEFAULT_INITIAL_CAPACITY, DEFAULT_INITIAL_CAPACITY >>> 1, false);
@@ -65,7 +65,7 @@ public class CharReadBuffer {
      * @param reader underlying reader instance
      * @param initialCapacity the initial capacity of the internal buffer; the buffer
      *      is resized as needed
-     * @throws NullPointerException if {@code reader} is null
+     * @throws NullPointerException if {@code reader} is {@code null}
      * @throws IllegalArgumentException if {@code initialCapacity} is less than one.
      */
     public CharReadBuffer(final Reader reader, final int initialCapacity) {
@@ -79,7 +79,7 @@ public class CharReadBuffer {
      * @param minRead the minimum number of characters to request from the reader
      *      when fetching more characters into the buffer; this can be used to limit the
      *      number of calls made to the reader
-     * @throws NullPointerException if {@code reader} is null
+     * @throws NullPointerException if {@code reader} is {@code null}
      * @throws IllegalArgumentException if {@code initialCapacity} or {@code minRead}
      *      are less than one.
      */
@@ -183,7 +183,7 @@ public class CharReadBuffer {
      * the number of characters available in the buffer up to {@code len}. Null is
      * returned if no more characters are available.
      * @param len requested length of the string
-     * @return a string from the read buffer or null if no more characters are available
+     * @return a string from the read buffer or {@code null} if no more characters are available
      * @throws IllegalArgumentException if {@code len} is less than 0
      * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #peekString(int)
@@ -214,7 +214,7 @@ public class CharReadBuffer {
      * the number of characters available in the buffer up to {@code len}. Null is
      * returned if no more characters are available.
      * @param len requested length of the string
-     * @return a string from the read buffer or null if no more characters are available
+     * @return a string from the read buffer or {@code null} if no more characters are available
      * @throws IllegalArgumentException if {@code len} is less than 0
      * @throws java.io.UncheckedIOException if an I/O error occurs
      * @see #readString(int)

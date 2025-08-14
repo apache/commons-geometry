@@ -92,9 +92,9 @@ public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset>, Lin
     }
 
     /** Get a {@link Bounds3D} object defining the axis-aligned box containing all vertices
-     * in the boundaries for this instance. Null is returned if any boundary is infinite
+     * in the boundaries for this instance. {@code null} is returned if any boundary is infinite
      * or no vertices are found.
-     * @return the bounding box for this instance or null if no valid bounds could be determined
+     * @return the bounding box for this instance or {@code null} if no valid bounds could be determined
      */
     default Bounds3D getBounds() {
         return new BoundarySourceBoundsBuilder3D().getBounds(this);

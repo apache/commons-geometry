@@ -53,7 +53,7 @@ public interface Linecastable3D {
     /** Intersect the given line against the boundaries in this instance, returning the first
      * intersection found when traveling in the direction of the line from infinity.
      * @param line the line to intersect
-     * @return the first intersection found or null if no intersection
+     * @return the first intersection found or {@code null} if no intersection
      *      is found
      */
     default LinecastPoint3D linecastFirst(final Line3D line) {
@@ -64,7 +64,7 @@ public interface Linecastable3D {
      * the first intersection found when traveling in the direction of the line subset from its
      * start point.
      * @param subset line subset to intersect
-     * @return the first intersection found or null if no intersection
+     * @return the first intersection found or {@code null} if no intersection
      *      is found
      */
     LinecastPoint3D linecastFirst(LineConvexSubset3D subset);

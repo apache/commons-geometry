@@ -261,7 +261,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
     /** Get the intersection point of the instance and another line.
      * @param line other line
      * @return intersection point of the instance and the other line
-     * or null if there are no intersection points
+     * or {@code null} if there are no intersection points
      */
     public Vector3D intersection(final Line3D line) {
         final Vector3D closestPt = closest(line);

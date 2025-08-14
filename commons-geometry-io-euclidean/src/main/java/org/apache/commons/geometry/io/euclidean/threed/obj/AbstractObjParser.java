@@ -40,8 +40,8 @@ public abstract class AbstractObjParser {
     }
 
     /** Get the current keyword, meaning the keyword most recently parsed via the {@link #nextKeyword()}
-     * method. Null is returned if parsing has not started or the end of the content has been reached.
-     * @return the current keyword or null if parsing has not started or the end
+     * method. {@code null} is returned if parsing has not started or the end of the content has been reached.
+     * @return the current keyword or {@code null} if parsing has not started or the end
      *      of the content has been reached
      */
     public String getCurrentKeyword() {
@@ -92,7 +92,7 @@ public abstract class AbstractObjParser {
 
     /** Read the remaining content on the current data line, taking line continuation characters into
      * account.
-     * @return remaining content on the current data line or null if the end of the content has
+     * @return remaining content on the current data line or {@code null} if the end of the content has
      *      been reached
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */

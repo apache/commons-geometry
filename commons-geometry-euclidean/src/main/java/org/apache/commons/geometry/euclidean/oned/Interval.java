@@ -37,13 +37,13 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
     private static final Interval FULL = new Interval(null, null);
 
     /** {@link OrientedPoint} instance representing the min boundary of the interval,
-     * or null if no min boundary exists. If present, this instance will be negative-facing.
+     * or {@code null} if no min boundary exists. If present, this instance will be negative-facing.
      * Infinite values are allowed but not NaN.
      */
     private final OrientedPoint minBoundary;
 
     /** {@link OrientedPoint} instance representing the max boundary of the interval,
-     * or null if no max boundary exists. If present, this instance will be negative-facing.
+     * or {@code null} if no max boundary exists. If present, this instance will be negative-facing.
      * Infinite values are allowed but not NaN.
      */
     private final OrientedPoint maxBoundary;
@@ -79,7 +79,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
 
     /**
      * Get the {@link OrientedPoint} forming the minimum bounding hyperplane
-     * of the interval, or null if none exists. If present, This hyperplane
+     * of the interval, or {@code null} if none exists. If present, This hyperplane
      * is oriented to point in the negative direction.
      * @return the hyperplane forming the minimum boundary of the interval or
      *      null if no minimum boundary exists
@@ -90,7 +90,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
 
     /**
      * Get the {@link OrientedPoint} forming the maximum bounding hyperplane
-     * of the interval, or null if none exists. If present, this hyperplane
+     * of the interval, or {@code null} if none exists. If present, this hyperplane
      * is oriented to point in the positive direction.
      * @return the hyperplane forming the maximum boundary of the interval or
      *      null if no maximum boundary exists

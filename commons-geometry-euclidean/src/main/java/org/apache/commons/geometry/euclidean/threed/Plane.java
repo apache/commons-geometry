@@ -238,10 +238,10 @@ public class Plane extends AbstractHyperplane<Vector3D> {
      * is the normal of the current instance and <code>n<sub>2</sub></code> is the normal
      * of the argument.
      *
-     * <p>Null is returned if the planes are parallel.</p>
+     * <p>{@code null} is returned if the planes are parallel.</p>
      *
      * @param other other plane
-     * @return line at the intersection of the instance and the other plane, or null
+     * @return line at the intersection of the instance and the other plane, or {@code null}
      *      if no such line exists
      */
     public Line3D intersection(final Plane other) {
@@ -403,7 +403,7 @@ public class Plane extends AbstractHyperplane<Vector3D> {
      * @param plane1 first plane1
      * @param plane2 second plane2
      * @param plane3 third plane2
-     * @return intersection point of the three planes or null if no unique intersection point exists
+     * @return intersection point of the three planes or {@code null} if no unique intersection point exists
      */
     public static Vector3D intersection(final Plane plane1, final Plane plane2, final Plane plane3) {
 

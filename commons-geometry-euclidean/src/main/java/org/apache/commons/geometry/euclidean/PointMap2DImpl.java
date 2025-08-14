@@ -90,7 +90,7 @@ final class PointMap2DImpl<V>
      */
     private static final class MapNode2D<V> extends BucketNode<Vector2D, V> {
 
-        /** Point to split child spaces; will be null for leaf nodes. */
+        /** Point to split child spaces; will be {@code null} for leaf nodes. */
         private Vector2D split;
 
         /** Construct a new instance.

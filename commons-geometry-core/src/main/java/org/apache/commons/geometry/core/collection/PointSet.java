@@ -37,10 +37,10 @@ import org.apache.commons.geometry.core.Point;
  */
 public interface PointSet<P extends Point<P>> extends Set<P> {
 
-    /** Get the element equivalent to {@code pt} or null if no
+    /** Get the element equivalent to {@code pt} or {@code null} if no
      * such an element exists.
      * @param pt point to find an equivalent for
-     * @return set entry equivalent to {@code pt} or null if
+     * @return set entry equivalent to {@code pt} or {@code null} if
      *      no such entry exists
      */
     P get(P pt);

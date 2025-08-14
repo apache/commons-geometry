@@ -85,7 +85,7 @@ public final class Point2S implements Point<Point2S> {
     /** Build a point from its internal components.
      * @param azimuth azimuthal angle in the x-y plane
      * @param polar polar angle
-     * @param vector corresponding vector; if null, the vector is computed
+     * @param vector corresponding vector; if {@code null}, the vector is computed
      */
     private Point2S(final double azimuth, final double polar, final Vector3D.Unit vector) {
         this.azimuth = SphericalCoordinates.normalizeAzimuth(azimuth);
@@ -112,7 +112,7 @@ public final class Point2S implements Point<Point2S> {
     }
 
     /** Get the corresponding normalized vector in 3D Euclidean space.
-     * This value will be null if the spherical coordinates of the point
+     * This value will be {@code null} if the spherical coordinates of the point
      * are infinite or NaN.
      * @return normalized vector
      */
@@ -225,7 +225,7 @@ public final class Point2S implements Point<Point2S> {
      *
      * @param other Object to test for equality to this
      * @return true if two points on the 2-sphere objects are exactly equal, false if
-     *         object is null, not an instance of Point2S, or
+     *         object is {@code null}, not an instance of Point2S, or
      *         not equal to this Point2S instance
      */
     @Override
@@ -294,11 +294,11 @@ public final class Point2S implements Point<Point2S> {
     }
 
     /** Compute the 3D Euclidean vector associated with the given spherical coordinates.
-     * Null is returned if the coordinates are infinite or NaN.
+     * {@code null} is returned if the coordinates are infinite or NaN.
      * @param azimuth azimuth value
      * @param polar polar value
      * @return the 3D Euclidean vector associated with the given spherical coordinates
-     *      or null if either of the arguments are infinite or NaN.
+     *      or {@code null} if either of the arguments are infinite or NaN.
      */
     private static Vector3D.Unit computeVector(final double azimuth, final double polar) {
         if (Double.isFinite(azimuth) && Double.isFinite(polar)) {

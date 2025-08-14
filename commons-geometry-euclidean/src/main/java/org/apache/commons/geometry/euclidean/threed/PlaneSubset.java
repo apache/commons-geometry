@@ -55,9 +55,9 @@ public interface PlaneSubset extends HyperplaneSubset<Vector3D> {
     List<Triangle3D> toTriangles();
 
     /** Get a {@link Bounds3D} object defining an axis-aligned bounding box containing all
-     * vertices for this subset. Null is returned if the subset is infinite or does not
+     * vertices for this subset. {@code null} is returned if the subset is infinite or does not
      * contain any vertices.
-     * @return the bounding box for this instance or null if no valid bounds could be determined
+     * @return the bounding box for this instance or {@code null} if no valid bounds could be determined
      */
     Bounds3D getBounds();
 
@@ -71,7 +71,7 @@ public interface PlaneSubset extends HyperplaneSubset<Vector3D> {
      * parallel or coincident) or the line does not intersect the plane subset.
      * @param line line to intersect with this plane subset
      * @return the unique intersection point between the line and this plane subset
-     *      or null if no such point exists.
+     *      or {@code null} if no such point exists.
      * @see Plane#intersection(Line3D)
      */
     Vector3D intersection(Line3D line);

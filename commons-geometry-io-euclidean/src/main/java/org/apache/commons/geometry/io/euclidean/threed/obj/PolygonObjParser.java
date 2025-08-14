@@ -305,11 +305,11 @@ public class PolygonObjParser extends AbstractObjParser {
         }
 
         /** Get a composite normal for the face by computing the sum of all defined vertex
-         * normals and normalizing the result. Null is returned if no vertex normals are
+         * normals and normalizing the result. {@code null} is returned if no vertex normals are
          * defined or the defined normals sum to zero.
          * @param modelNormalFn function used to access normals parsed earlier in the model;
          *      callers are responsible for storing these values as they are parsed
-         * @return composite face normal or null if no composite normal can be determined from the
+         * @return composite face normal or {@code null} if no composite normal can be determined from the
          *      normals defined for the face
          */
         public Vector3D getDefinedCompositeNormal(final IntFunction<Vector3D> modelNormalFn) {
@@ -327,12 +327,12 @@ public class PolygonObjParser extends AbstractObjParser {
         }
 
         /** Compute a normal for the face using its first three vertices. The vertices will wind in a
-         * counter-clockwise direction when viewed looking down the returned normal. Null is returned
+         * counter-clockwise direction when viewed looking down the returned normal. {@code null} is returned
          * if the normal could not be determined, which would be the case if the vertices lie in the
          * same line or two or more are equal.
          * @param modelVertexFn function used to access model vertices parsed earlier in the content;
          *      callers are responsible for storing these values as they are passed
-         * @return a face normal computed from the first 3 vertices or null if a normal cannot
+         * @return a face normal computed from the first 3 vertices or {@code null} if a normal cannot
          *      be determined
          */
         public Vector3D computeNormalFromVertices(final IntFunction<Vector3D> modelVertexFn) {
@@ -345,8 +345,8 @@ public class PolygonObjParser extends AbstractObjParser {
 
         /** Get the vertex attributes for the face listed in the order that produces a counter-clockwise
          * winding of vertices when viewed looking down the given normal direction. If {@code normal}
-         * is null, the original vertex sequence is used.
-         * @param normal requested face normal; may be null
+         * is {@code null}, the original vertex sequence is used.
+         * @param normal requested face normal; may be {@code null}
          * @param modelVertexFn function used to access model vertices parsed earlier in the content;
          *      callers are responsible for storing these values as they are passed
          * @return list of vertex attributes for the face, oriented to correspond with the given

@@ -166,7 +166,7 @@ public class TextFacetDefinitionReader implements FacetDefinitionReader {
 
     /** Internal method to read a facet definition starting from the current parser
      * position. Empty lines (including lines containing only comments) are discarded.
-     * @return facet definition or null if the end of input is reached
+     * @return facet definition or {@code null} if the end of input is reached
      * @throws IllegalStateException if a data format error occurs
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */

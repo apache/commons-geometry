@@ -54,8 +54,8 @@ public class TextStlFacetDefinitionReader implements FacetDefinitionReader {
         this.parser = new SimpleTextParser(reader);
     }
 
-    /** Get the name of the STL solid being read or null if no name was specified.
-     * @return the name of the STL solid being read or null if no name was specified
+    /** Get the name of the STL solid being read or {@code null} if no name was specified.
+     * @return the name of the STL solid being read or {@code null} if no name was specified
      * @throws IllegalStateException if a data format error occurs
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */
@@ -189,10 +189,10 @@ public class TextStlFacetDefinitionReader implements FacetDefinitionReader {
                 .getCurrentTokenAsDouble();
     }
 
-    /** Return a trimmed version of the given string or null if the string contains
+    /** Return a trimmed version of the given string or {@code null} if the string contains
      * only whitespace.
      * @param str input stream
-     * @return a trimmed version of the given string or null if the string contains only
+     * @return a trimmed version of the given string or {@code null} if the string contains only
      *      whitespace
      */
     private static String trimmedOrNull(final String str) {

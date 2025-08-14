@@ -169,7 +169,7 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
         /** Points stored in the node; this will only be populated for leaf nodes. */
         private List<Vector3DEntry<V>> entries = new ArrayList<>(MAX_ENTRIES);
 
-        /** The split point of the node; will be null for leaf nodes. */
+        /** The split point of the node; will be {@code null} for leaf nodes. */
         private Vector3D splitPoint;
 
         VariableSplitOctreeNode(final VariableSplitOctree<V> map) {
@@ -220,9 +220,9 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
             }
         }
 
-        /** Get the entry matching the given key or null if not found.
+        /** Get the entry matching the given key or {@code null} if not found.
          * @param key key to search for
-         * @return the entry matching the given key or null if not found
+         * @return the entry matching the given key or {@code null} if not found
          */
         public Vector3DEntry<V> getEntry(final Vector3D key) {
             if (isLeaf()) {
@@ -254,7 +254,7 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
 
         /** Remove the given key, returning the previously mapped entry.
          * @param key key to remove
-         * @return the value previously mapped to the key or null if no
+         * @return the value previously mapped to the key or {@code null} if no
          *       value was mapped
          */
         public Vector3DEntry<V> removeEntry(final Vector3D key) {
@@ -291,10 +291,10 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
             return null;
         }
 
-        /** Get the given entry in the child at {@code idx} or null if not found.
+        /** Get the given entry in the child at {@code idx} or {@code null} if not found.
          * @param idx child index
          * @param key key to search for
-         * @return entry matching {@code key} in child or null if not found
+         * @return entry matching {@code key} in child or {@code null} if not found
          */
         private Vector3DEntry<V> getEntryInChild(final int idx, final Vector3D key) {
             final VariableSplitOctreeNode<V> child = children.get(idx);
@@ -307,7 +307,7 @@ public class VariableSplitOctree<V> extends AbstractMap<Vector3D, V> {
         /** Remove the given key from the child at {@code idx}.
          * @param idx index of the child
          * @param key key to remove
-         * @return entry removed from the child or null if not found
+         * @return entry removed from the child or {@code null} if not found
          */
         private Vector3DEntry<V> removeFromChild(final int idx, final Vector3D key) {
             final VariableSplitOctreeNode<V> child = children.get(idx);

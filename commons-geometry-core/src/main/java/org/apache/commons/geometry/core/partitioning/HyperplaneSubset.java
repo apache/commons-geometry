@@ -65,7 +65,7 @@ public interface HyperplaneSubset<P extends Point<P>> extends Splittable<P, Hype
      */
     boolean isEmpty();
 
-    /** Get the centroid, or geometric center, of the hyperplane subset or null
+    /** Get the centroid, or geometric center, of the hyperplane subset or {@code null}
      * if no centroid exists or one exists but is not unique. A centroid will not
      * exist for empty or infinite subsets.
      *
@@ -74,7 +74,7 @@ public interface HyperplaneSubset<P extends Point<P>> extends Splittable<P, Hype
      * lying on the boundary. If a physical object has a uniform density, then its center
      * of mass is the same as its geometric centroid.
      * </p>
-     * @return the centroid of the hyperplane subset or null if no unique centroid exists
+     * @return the centroid of the hyperplane subset or {@code null} if no unique centroid exists
      * @see <a href="https://en.wikipedia.org/wiki/Centroid">Centroid</a>
      */
     P getCentroid();
@@ -106,11 +106,11 @@ public interface HyperplaneSubset<P extends Point<P>> extends Splittable<P, Hype
     }
 
     /** Return the closest point to the argument that is contained in the subset
-     * (ie, not classified as {@link RegionLocation#OUTSIDE outside}), or null if no
+     * (ie, not classified as {@link RegionLocation#OUTSIDE outside}), or {@code null} if no
      * such point exists.
      * @param pt the reference point
      * @return the closest point to the reference point that is contained in the subset,
-     *      or null if no such point exists
+     *      or {@code null} if no such point exists
      */
     P closest(P pt);
 

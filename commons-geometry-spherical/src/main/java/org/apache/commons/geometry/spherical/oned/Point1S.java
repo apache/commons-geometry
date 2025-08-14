@@ -259,7 +259,7 @@ public final class Point1S implements Point<Point1S> {
      *
      * @param other Object to test for equality to this
      * @return true if two points on the 1-sphere objects are exactly equal, false if
-     *         object is null, not an instance of Point1S, or
+     *         object is {@code null}, not an instance of Point1S, or
      *         not equal to this Point1S instance
      *
      */

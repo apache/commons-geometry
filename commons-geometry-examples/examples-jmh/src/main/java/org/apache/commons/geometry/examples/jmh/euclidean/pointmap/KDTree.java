@@ -66,7 +66,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
     /** Precision context. */
     private final Precision.DoubleEquivalence precision;
 
-    /** Root node; may be null. */
+    /** Root node; may be {@code null}. */
     private KDTreeNode<V> root;
 
     /** Tree node count. */
@@ -295,10 +295,10 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         }
     }
 
-    /** Find the node with the given {@code key} or null if not found.
+    /** Find the node with the given {@code key} or {@code null} if not found.
      * @param node subtree root
      * @param key map key
-     * @return the node matching the given {@code key} or null if not found
+     * @return the node matching the given {@code key} or {@code null} if not found
      */
     private KDTreeNode<V> findNodeRecursive(final KDTreeNode<V> node, final Vector3D key) {
         if (node != null) {
@@ -376,8 +376,8 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
     /** Find the node with the minimum value along the given cut dimension.
      * @param node subtree root
      * @param cutDimension cut dimension to search along
-     * @return node with the minimum value along the cut dimension or null if {@code node}
-     *      is null
+     * @return node with the minimum value along the cut dimension or {@code null} if {@code node}
+     *      is {@code null}
      */
     private KDTreeNode<V> findMin(final KDTreeNode<V> node, final CutDimension cutDimension) {
         if (node != null) {
@@ -419,7 +419,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
     }
 
     /** Return the node containing the minimum value along the given cut dimension. If one
-     * argument is null, the other argument is returned.
+     * argument is {@code null}, the other argument is returned.
      * @param a first node
      * @param b second node
      * @param cutDimension search dimension
@@ -452,7 +452,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
      */
     static final class KDTreeNode<V> implements Map.Entry<Vector3D, V> {
 
-        /** Parent node; may be null. */
+        /** Parent node; may be {@code null}. */
         private KDTreeNode<V> parent;
 
         /** Map key value. */
@@ -461,17 +461,17 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         /** Map entry value. */
         private V value;
 
-        /** Left child; may be null. */
+        /** Left child; may be {@code null}. */
         private KDTreeNode<V> left;
 
-        /** Right child; may be null. */
+        /** Right child; may be {@code null}. */
         private KDTreeNode<V> right;
 
         /** Node cut dimension. */
         private CutDimension cutDimension;
 
         /** Construct a new instance.
-         * @param parent parent node; may be null
+         * @param parent parent node; may be {@code null}
          * @param key map key
          * @param cutDimension cut dimension
          */
@@ -517,7 +517,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         }
 
         /** Get the parent node.
-         * @return parent node; may be null
+         * @return parent node; may be {@code null}
          */
         public KDTreeNode<V> getParent() {
             return parent;
@@ -531,7 +531,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         }
 
         /** Get the left child node.
-         * @return left child node; may be null
+         * @return left child node; may be {@code null}
          */
         public KDTreeNode<V> getLeft() {
             return left;
@@ -545,7 +545,7 @@ public class KDTree<V> extends AbstractMap<Vector3D, V> {
         }
 
         /** Get the right child node.
-         * @return right child node; may be null
+         * @return right child node; may be {@code null}
          */
         public KDTreeNode<V> getRight() {
             return right;

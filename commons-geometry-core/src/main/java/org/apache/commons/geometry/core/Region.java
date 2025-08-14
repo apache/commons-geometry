@@ -42,7 +42,7 @@ public interface Region<P extends Point<P>> extends Sized {
      */
     double getBoundarySize();
 
-    /** Get the centroid, or geometric center, of the region or null if no centroid
+    /** Get the centroid, or geometric center, of the region or {@code null} if no centroid
      * exists or one exists but is not unique. A centroid will not exist for empty or
      * infinite regions.
      *
@@ -51,7 +51,7 @@ public interface Region<P extends Point<P>> extends Sized {
      * lying on the boundary. If a physical object has a uniform density, then its center
      * of mass is the same as its geometric centroid.
      * </p>
-     * @return the centroid of the region or null if no unique centroid exists
+     * @return the centroid of the region or {@code null} if no unique centroid exists
      * @see <a href="https://en.wikipedia.org/wiki/Centroid">Centroid</a>
      */
     P getCentroid();
@@ -72,11 +72,11 @@ public interface Region<P extends Point<P>> extends Sized {
         return location != null && location != RegionLocation.OUTSIDE;
     }
 
-    /** Project a point onto the boundary of the region. Null is returned if
+    /** Project a point onto the boundary of the region. {@code null} is returned if
      * the region contains no boundaries (ie, is either {@link #isFull() full}
      * or {@link #isEmpty() empty}).
      * @param pt pt to project
-     * @return projection of the point on the boundary of the region or null
+     * @return projection of the point on the boundary of the region or {@code null}
      *      if the region does not contain any boundaries
      */
     P project(P pt);

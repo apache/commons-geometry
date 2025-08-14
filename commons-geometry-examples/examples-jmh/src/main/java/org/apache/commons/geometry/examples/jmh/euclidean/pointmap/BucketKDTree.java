@@ -247,10 +247,10 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
             this.parent = parent;
         }
 
-        /** Return the map entry equivalent to the given key or null if not
+        /** Return the map entry equivalent to the given key or {@code null} if not
          * found.
          * @param key key to search for
-         * @return entry equivalent to {@code key} or null if not found
+         * @return entry equivalent to {@code key} or {@code null} if not found
          */
         public abstract Vector3DEntry<V> find(Vector3D key);
 
@@ -274,10 +274,10 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
          */
         public abstract void insertExisting(Vector3DEntry<V> entry);
 
-        /** Remove the map entry equivalent to the given key or null if one
+        /** Remove the map entry equivalent to the given key or {@code null} if one
          * was not found.
          * @param key map key
-         * @return the removed entry or null if not found
+         * @return the removed entry or {@code null} if not found
          */
         public abstract Vector3DEntry<V> remove(Vector3D key);
 
@@ -336,7 +336,7 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
         }
 
         /** Replace this node with the given node.
-         * @param node replacement node; may be null
+         * @param node replacement node; may be {@code null}
          */
         protected void replaceSelf(final Node<V> node) {
             if (parent == null) {
@@ -375,10 +375,10 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
         /** Map entry. */
         private Vector3DEntry<V> entry;
 
-        /** Left child node; may be null. */
+        /** Left child node; may be {@code null}. */
         private Node<V> left;
 
-        /** Right child node; may be null. */
+        /** Right child node; may be {@code null}. */
         private Node<V> right;
 
         /** Cut dimension; not null. */
@@ -961,7 +961,7 @@ public class BucketKDTree<V> extends AbstractMap<Vector3D, V> {
     }
 
     /** Return the node containing the minimum value along the given cut dimension. If one
-     * argument is null, the other argument is returned.
+     * argument is {@code null}, the other argument is returned.
      * @param <V> Value type
      * @param a first node
      * @param b second node

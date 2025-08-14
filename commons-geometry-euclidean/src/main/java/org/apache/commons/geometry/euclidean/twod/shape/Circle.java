@@ -108,7 +108,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
         return intersections(line, Line::abscissa, Line::distance);
     }
 
-    /** Get the first intersection point between the given line and this circle, or null
+    /** Get the first intersection point between the given line and this circle, or {@code null}
      * if no such point exists. The "first" intersection point is the first such point
      * encountered when traveling in the direction of the line from infinity.
      * @param line line to intersect with the circle

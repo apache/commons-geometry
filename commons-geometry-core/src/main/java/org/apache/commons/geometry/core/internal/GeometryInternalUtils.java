@@ -43,7 +43,7 @@ public final class GeometryInternalUtils {
      * @param <P> Point type
      * @param pt point to check
      * @return point given as the argument
-     * @throws NullPointerException if the point is null
+     * @throws NullPointerException if the point is {@code null}
      * @throws IllegalArgumentException if the point is not finite
      */
     public static <P extends Point<P>> P requireFinite(final P pt) {

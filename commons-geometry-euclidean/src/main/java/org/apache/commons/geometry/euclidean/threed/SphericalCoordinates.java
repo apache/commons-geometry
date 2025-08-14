@@ -178,7 +178,7 @@ public final class SphericalCoordinates implements Spatial {
      *
      * @param other Object to test for equality to this
      * @return true if two SphericalCoordinates objects are equal, false if
-     *         object is null, not an instance of SphericalCoordinates, or
+     *         object is {@code null}, not an instance of SphericalCoordinates, or
      *         not equal to this SphericalCoordinates instance
      *
      */

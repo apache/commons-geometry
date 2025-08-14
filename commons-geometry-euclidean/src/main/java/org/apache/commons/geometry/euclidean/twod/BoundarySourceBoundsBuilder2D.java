@@ -21,15 +21,15 @@ import java.util.stream.Stream;
 
 /** Class used to construct {@link Bounds2D} instances representing the min and
  * max points present in a {@link BoundarySource2D}. The implementation examines
- * the vertices of each boundary in turn. Null is returned if any boundaries are
+ * the vertices of each boundary in turn. {@code null} is returned if any boundaries are
  * infinite or no vertices are present.
  */
 final class BoundarySourceBoundsBuilder2D {
 
     /** Get a {@link Bounds2D} instance containing all vertices in the given boundary source.
-     * Null is returned if any encountered boundaries were not finite or no vertices were found.
+     * {@code null} is returned if any encountered boundaries were not finite or no vertices were found.
      * @param src boundary source to compute the bounds of
-     * @return the bounds of the argument or null if no valid bounds could be determined
+     * @return the bounds of the argument or {@code null} if no valid bounds could be determined
      */
     public Bounds2D getBounds(final BoundarySource2D src) {
 

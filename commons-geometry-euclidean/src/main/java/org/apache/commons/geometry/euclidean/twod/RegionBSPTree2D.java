@@ -632,11 +632,11 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             return Result.CONTINUE;
         }
 
-        /** Compute the linecast point for the given intersection point and tree node, returning null
+        /** Compute the linecast point for the given intersection point and tree node, returning {@code null}
          * if the point does not actually lie on the region boundary.
          * @param pt intersection point
          * @param node node containing the cut that the linecast line intersected with
-         * @return a new linecast point instance or null if the intersection point does not lie
+         * @return a new linecast point instance or {@code null} if the intersection point does not lie
          *      on the region boundary
          */
         private LinecastPoint2D computeLinecastPoint(final Vector2D pt, final RegionNode2D node) {

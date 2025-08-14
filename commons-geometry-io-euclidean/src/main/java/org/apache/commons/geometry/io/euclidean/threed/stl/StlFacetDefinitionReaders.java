@@ -40,7 +40,7 @@ public final class StlFacetDefinitionReaders {
      * or text file and an appropriate reader is returned.
      * @param in input to read from
      * @param charset charset to use when checking the input for text content;
-     *      if null, the input is assumed to use the UTF-8 charset
+     *      if {@code null}, the input is assumed to use the UTF-8 charset
      * @return facet definition reader
      * @throws IllegalStateException if a parsing error occurs
      * @throws java.io.UncheckedIOException if an I/O error occurs

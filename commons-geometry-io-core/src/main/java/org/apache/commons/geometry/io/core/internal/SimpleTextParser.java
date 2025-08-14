@@ -633,7 +633,7 @@ public class SimpleTextParser {
      * string has the specified length or the end of the stream is reached.
      * @param len the maximum length of the returned string
      * @return a string containing at most {@code len} characters from the stream
-     *      or null if the parser has already reached the end of the stream
+     *      or {@code null} if the parser has already reached the end of the stream
      * @throws IllegalArgumentException if {@code len} is less than 0 or greater than the
      *      configured {@link #getMaxStringLength() maximum string length}
      * @throws java.io.UncheckedIOException if an I/O error occurs
@@ -649,7 +649,7 @@ public class SimpleTextParser {
      * change the current token or advance the parser position.
      * @param pred predicate function passed characters read from the input; reading continues
      *      until the predicate returns false
-     * @return string containing characters matching {@code pred} or null if the parser has already
+     * @return string containing characters matching {@code pred} or {@code null} if the parser has already
      *      reached the end of the stream
      * @throws IllegalStateException if the length of the produced string exceeds the configured
      *      {@link #getMaxStringLength() maximum string length}

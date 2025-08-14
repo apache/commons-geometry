@@ -54,7 +54,7 @@ public interface Linecastable2D {
      * the first intersection found when traveling in the direction of the line from
      * infinity.
      * @param line the line to intersect
-     * @return the first intersection found or null if no intersection
+     * @return the first intersection found or {@code null} if no intersection
      *      is found
      */
     default LinecastPoint2D linecastFirst(final Line line) {
@@ -65,7 +65,7 @@ public interface Linecastable2D {
      * the first intersection found when traveling in the direction of the line subset
      * from its start location.
      * @param subset line subset to intersect
-     * @return the first intersection found or null if no intersection
+     * @return the first intersection found or {@code null} if no intersection
      *      is found
      */
     LinecastPoint2D linecastFirst(LineConvexSubset subset);

@@ -71,13 +71,13 @@ public class BoundaryIOManager<
     R extends BoundaryReadHandler<H, B>,
     W extends BoundaryWriteHandler<H, B>> {
 
-    /** Error message used when a handler is null. */
+    /** Error message used when a handler is {@code null}. */
     private static final String HANDLER_NULL_ERR = "Handler cannot be null";
 
-    /** Error message used when a format is null. */
+    /** Error message used when a format is {@code null}. */
     private static final String FORMAT_NULL_ERR = "Format cannot be null";
 
-    /** Error message used when a format name is null. */
+    /** Error message used when a format name is {@code null}. */
     private static final String FORMAT_NAME_NULL_ERR = "Format name cannot be null";
 
     /** Read handler registry. */
@@ -104,8 +104,8 @@ public class BoundaryIOManager<
     }
 
     /** Unregister a previously registered {@link BoundaryReadHandler read handler};
-     * does nothing if the argument is null or is not currently registered.
-     * @param handler handler to unregister; may be null
+     * does nothing if the argument is {@code null} or is not currently registered.
+     * @param handler handler to unregister; may be {@code null}
      */
     public void unregisterReadHandler(final R handler) {
         readRegistry.unregister(handler);
@@ -132,17 +132,17 @@ public class BoundaryIOManager<
     /** Get the {@link BoundaryReadHandler read handler} for the given format or
      * null if no such handler has been registered.
      * @param fmt format to obtain a handler for
-     * @return read handler for the given format or null if not found
+     * @return read handler for the given format or {@code null} if not found
      */
     public R getReadHandlerForFormat(final GeometryFormat fmt) {
         return readRegistry.getByFormat(fmt);
     }
 
     /** Get the {@link BoundaryReadHandler read handler} for the given file extension
-     * or null if no such handler has been registered. File extension comparisons are
+     * or {@code null} if no such handler has been registered. File extension comparisons are
      * not case-sensitive.
      * @param fileExt file extension to obtain a handler for
-     * @return read handler for the given file extension or null if not found
+     * @return read handler for the given file extension or {@code null} if not found
      * @see GeometryFormat#getFileExtensions()
      */
     public R getReadHandlerForFileExtension(final String fileExt) {
@@ -162,8 +162,8 @@ public class BoundaryIOManager<
     }
 
     /** Unregister a previously registered {@link BoundaryWriteHandler write handler};
-     * does nothing if the argument is null or is not currently registered.
-     * @param handler handler to unregister; may be null
+     * does nothing if the argument is {@code null} or is not currently registered.
+     * @param handler handler to unregister; may be {@code null}
      */
     public void unregisterWriteHandler(final W handler) {
         writeRegistry.unregister(handler);
@@ -190,17 +190,17 @@ public class BoundaryIOManager<
     /** Get the {@link BoundaryWriteHandler write handler} for the given format or
      * null if no such handler has been registered.
      * @param fmt format to obtain a handler for
-     * @return write handler for the given format or null if not found
+     * @return write handler for the given format or {@code null} if not found
      */
     public W getWriteHandlerForFormat(final GeometryFormat fmt) {
         return writeRegistry.getByFormat(fmt);
     }
 
     /** Get the {@link BoundaryWriteHandler write handler} for the given file extension
-     * or null if no such handler has been registered. File extension comparisons are
+     * or {@code null} if no such handler has been registered. File extension comparisons are
      * not case-sensitive.
      * @param fileExt file extension to obtain a handler for
-     * @return write handler for the given file extension or null if not found
+     * @return write handler for the given file extension or {@code null} if not found
      * @see GeometryFormat#getFileExtensions()
      */
     public W getWriteHandlerForFileExtension(final String fileExt) {
@@ -210,7 +210,7 @@ public class BoundaryIOManager<
     /** Return a {@link BoundarySource} containing all boundaries from the given input.
      * A runtime exception may be thrown if mathematically invalid boundaries are encountered.
      * @param in input to read boundaries from
-     * @param fmt format of the input; if null, the format is determined implicitly from the
+     * @param fmt format of the input; if {@code null}, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return object containing all boundaries from the input
@@ -238,7 +238,7 @@ public class BoundaryIOManager<
      *      <li>{@link java.io.UncheckedIOException UncheckedIOException} if an I/O error occurs</li>
      *  </ul>
      * @param in input to read boundaries from
-     * @param fmt format of the input; if null, the format is determined implicitly from the
+     * @param fmt format of the input; if {@code null}, the format is determined implicitly from the
      *      file extension of the input {@link GeometryInput#getFileName() file name}
      * @param precision precision context used for floating point comparisons
      * @return stream providing access to all boundaries from the input
@@ -255,7 +255,7 @@ public class BoundaryIOManager<
     /** Write all boundaries from {@code src} to the given output.
      * @param src object containing boundaries to write
      * @param out output to write boundaries to
-     * @param fmt format of the output; if null, the format is determined implicitly from the
+     * @param fmt format of the output; if {@code null}, the format is determined implicitly from the
      *      file extension of the output {@link GeometryOutput#getFileName()}
      * @throws IllegalArgumentException if no {@link BoundaryWriteHandler write handler} can be found
      *      for the output format
@@ -267,14 +267,14 @@ public class BoundaryIOManager<
 
     /** Get the {@link BoundaryReadHandler read handler} matching the arguments, throwing an exception
      * on failure. If {@code fmt} is given, the handler registered for that format is returned and the
-     * {@code input} object is not examined. If {@code fmt} is null, the file extension of the input
+     * {@code input} object is not examined. If {@code fmt} is {@code null}, the file extension of the input
      * {@link GeometryInput#getFileName() file name} is used to implicitly determine the format and locate
      * the handler.
      * @param in input object
-     * @param fmt format; may be null
-     * @return the read handler for {@code fmt} or, if {@code fmt} is null, the read handler for the
+     * @param fmt format; may be {@code null}
+     * @return the read handler for {@code fmt} or, if {@code fmt} is {@code null}, the read handler for the
      *      file extension indicated by the input
-     * @throws NullPointerException if {@code in} is null
+     * @throws NullPointerException if {@code in} is {@code null}
      * @throws IllegalArgumentException if no matching handler can be found
      */
     protected R requireReadHandler(final GeometryInput in, final GeometryFormat fmt) {
@@ -284,14 +284,14 @@ public class BoundaryIOManager<
 
     /** Get the {@link BoundaryWriteHandler write handler} matching the arguments, throwing an exception
      * on failure. If {@code fmt} is given, the handler registered for that format is returned and the
-     * {@code input} object is not examined. If {@code fmt} is null, the file extension of the output
+     * {@code input} object is not examined. If {@code fmt} is {@code null}, the file extension of the output
      * {@link GeometryOutput#getFileName() file name} is used to implicitly determine the format and locate
      * the handler.
      * @param out output object
-     * @param fmt format; may be null
-     * @return the write handler for {@code fmt} or, if {@code fmt} is null, the write handler for the
+     * @param fmt format; may be {@code null}
+     * @return the write handler for {@code fmt} or, if {@code fmt} is {@code null}, the write handler for the
      *      file extension indicated by the output
-     * @throws NullPointerException if {@code out} is null
+     * @throws NullPointerException if {@code out} is {@code null}
      * @throws IllegalArgumentException if no matching handler can be found
      */
     protected W requireWriteHandler(final GeometryOutput out, final GeometryFormat fmt) {
@@ -317,7 +317,7 @@ public class BoundaryIOManager<
         /** Register a handler for the given {@link GeometryFormat format}.
          * @param fmt format for the handler
          * @param handler handler to register
-         * @throws NullPointerException if either argument is null
+         * @throws NullPointerException if either argument is {@code null}
          */
         public synchronized void register(final GeometryFormat fmt, final T handler) {
             Objects.requireNonNull(fmt, FORMAT_NULL_ERR);
@@ -346,9 +346,9 @@ public class BoundaryIOManager<
         }
 
         /** Unregister the current handler for the given format and return it.
-         * Null is returned if no handler was registered.
+         * {@code null} is returned if no handler was registered.
          * @param fmt format to unregister
-         * @return handler instance previously registered for the format or null
+         * @return handler instance previously registered for the format or {@code null}
          *      if not found
          */
         public synchronized T unregisterFormat(final GeometryFormat fmt) {
@@ -366,7 +366,7 @@ public class BoundaryIOManager<
             return Collections.unmodifiableList(new ArrayList<>(handlers));
         }
 
-        /** Get the first handler registered for the given format, or null if
+        /** Get the first handler registered for the given format, or {@code null} if
          * not found.
          * @param fmt format to obtain a handler for
          * @return first handler registered for the format
@@ -378,9 +378,9 @@ public class BoundaryIOManager<
             return null;
         }
 
-        /** Get the first handler registered for the given file extension or null if not found.
+        /** Get the first handler registered for the given file extension or {@code null} if not found.
          * @param fileExt file extension
-         * @return first handler registered for the given file extension or null if not found
+         * @return first handler registered for the given file extension or {@code null} if not found
          */
         public synchronized T getByFileExtension(final String fileExt) {
             return getByNormalizedKey(handlersByFileExtension, fileExt);
@@ -391,7 +391,7 @@ public class BoundaryIOManager<
          * and the {@code fileName} argument is ignored. Otherwise, the file extension is extracted
          * from {@code fileName} and used to look up the handler.
          * @param fmt format to look up; if present, {@code fileName} is ignored
-         * @param fileName file name to use for the look-up if {@code fmt} is null
+         * @param fileName file name to use for the look-up if {@code fmt} is {@code null}
          * @return the handler matching the arguments
          * @throws IllegalArgumentException if a handler cannot be found
          */
@@ -425,7 +425,7 @@ public class BoundaryIOManager<
         /** Add the handler to the internal format name map.
          * @param fmtName format name
          * @param handler handler to add
-         * @throws NullPointerException if {@code fmtName} is null
+         * @throws NullPointerException if {@code fmtName} is {@code null}
          */
         private void addToFormat(final String fmtName, final T handler) {
             Objects.requireNonNull(fmtName, FORMAT_NAME_NULL_ERR);
@@ -454,12 +454,12 @@ public class BoundaryIOManager<
             }
         }
 
-        /** Normalize the given key and return its associated value in the map, or null
+        /** Normalize the given key and return its associated value in the map, or {@code null}
          * if not found.
          * @param <V> Value type
          * @param map map to search
          * @param key unnormalized map key
-         * @return the value associated with the key after normalization, or null if not found
+         * @return the value associated with the key after normalization, or {@code null} if not found
          */
         private static <V> V getByNormalizedKey(final Map<String, V> map, final String key) {
             if (key != null) {
