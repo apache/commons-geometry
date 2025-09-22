@@ -143,7 +143,7 @@ public class BinaryStlWriter implements Closeable {
         GeometryIOUtils.acceptUnchecked(out::write, bytes);
 
         // write the triangle count number
-        ByteBuffer countBuffer = StlUtils.byteBuffer(Integer.BYTES);
+        final ByteBuffer countBuffer = StlUtils.byteBuffer(Integer.BYTES);
         countBuffer.putInt(triangleCount);
         countBuffer.flip();
 

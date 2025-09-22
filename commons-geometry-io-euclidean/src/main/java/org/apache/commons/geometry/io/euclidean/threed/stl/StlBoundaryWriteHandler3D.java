@@ -180,7 +180,7 @@ public class StlBoundaryWriteHandler3D extends AbstractBoundaryWriteHandler3D {
         try (OutputStream os = out.getOutputStream()) {
             BinaryStlWriter.writeHeader(null, count, os);
             triangleBuffer.writeTo(os);
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw GeometryIOUtils.createUnchecked(exc);
         }
     }

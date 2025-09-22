@@ -37,7 +37,7 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
     private final ByteBuffer triangleBuffer = StlUtils.byteBuffer(StlConstants.BINARY_TRIANGLE_BYTES);
 
     /** Header content. */
-    private ByteBuffer header = StlUtils.byteBuffer(StlConstants.BINARY_HEADER_BYTES);
+    private final ByteBuffer header = StlUtils.byteBuffer(StlConstants.BINARY_HEADER_BYTES);
 
     /** Total number of triangles declared to be present in the input. */
     private long triangleTotal;
@@ -86,7 +86,7 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
 
         // strip out any control characters, such as '\0'
         final StringBuilder sb = new StringBuilder();
-        for (char c : raw.toCharArray()) {
+        for (final char c : raw.toCharArray()) {
             if (!Character.isISOControl(c)) {
                 sb.append(c);
             }
@@ -178,7 +178,7 @@ public class BinaryStlFacetDefinitionReader implements FacetDefinitionReader {
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     private int fill(final ByteBuffer buf) {
-        int read = GeometryIOUtils.applyAsIntUnchecked(in::read, buf.array());
+        final int read = GeometryIOUtils.applyAsIntUnchecked(in::read, buf.array());
         buf.rewind();
 
         return read;

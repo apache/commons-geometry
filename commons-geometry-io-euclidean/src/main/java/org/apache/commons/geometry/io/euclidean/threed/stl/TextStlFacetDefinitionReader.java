@@ -32,10 +32,10 @@ import org.apache.commons.geometry.io.euclidean.threed.SimpleFacetDefinition;
 public class TextStlFacetDefinitionReader implements FacetDefinitionReader {
 
     /** Underlying reader instance. */
-    private Reader reader;
+    private final Reader reader;
 
     /** Text parser. */
-    private SimpleTextParser parser;
+    private final SimpleTextParser parser;
 
     /** Flag indicating if the start of a solid definition was detected. */
     private boolean foundSolidStart;
@@ -73,7 +73,7 @@ public class TextStlFacetDefinitionReader implements FacetDefinitionReader {
 
             nextWord();
 
-            int choice = parser.chooseIgnoreCase(
+            final int choice = parser.chooseIgnoreCase(
                     StlConstants.FACET_START_KEYWORD,
                     StlConstants.SOLID_END_KEYWORD);
 

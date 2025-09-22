@@ -322,7 +322,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
                 // do side of line test: multiply the last location with this location
                 // if they are the same sign then the operation will yield a positive result
                 // -x * -y = +xy, x * y = +xy, -x * y = -xy, x * -y = -xy
-                double signedArea = signedAreaPoints(v1, v2, point);
+                final double signedArea = signedAreaPoints(v1, v2, point);
                 // three collinear points have an area of zero. If we include collinear points
                 // we have to consider this case.
                 if (last * signedArea < 0 || precision.eq(signedArea, 0.0) && includeCollinearPoints) {
@@ -435,7 +435,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
 
             final Iterator<Vector2D> it = vertices.iterator();
 
-            Vector2D first = it.next();
+            final Vector2D first = it.next();
             Vector2D p1 = it.next();
             Vector2D v1 = first.vectorTo(p1);
 
