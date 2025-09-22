@@ -457,7 +457,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          * @return new instance set to zero
          */
         public static Sum create() {
-            return new Sum(Vector1D.ZERO);
+            return new Sum(ZERO);
         }
 
         /** Construct a new instance with an initial value set to the argument.
