@@ -104,7 +104,7 @@ abstract class AbstractEmbeddedRegionPlaneSubset extends AbstractPlaneSubset imp
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(256);
         sb.append(getClass().getSimpleName())
             .append("[plane= ")
             .append(getPlane())

@@ -438,7 +438,7 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(256);
         sb.append(getClass().getSimpleName())
             .append("[normal= ")
             .append(getPlane().getNormal())
