@@ -196,7 +196,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(128);
         sb.append(getClass().getSimpleName())
             .append("[vertexCount= ")
             .append(getVertexCount())
@@ -358,7 +358,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder(256);
             sb.append(getClass().getSimpleName())
                 .append("[index= ")
                 .append(getIndex())
