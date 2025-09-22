@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.function.ToDoubleBiFunction;
 
 import org.apache.commons.geometry.core.Embedding;
+import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -158,7 +159,7 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
     /** {@inheritDoc} */
     @Override
     public RegionLocation classify(final V pt) {
-        final double dist = center.distance(pt);
+        final double dist = ((Point<V>) center).distance(pt);
         final int cmp = precision.compare(dist, radius);
         if (cmp < 0) {
             return RegionLocation.INSIDE;
