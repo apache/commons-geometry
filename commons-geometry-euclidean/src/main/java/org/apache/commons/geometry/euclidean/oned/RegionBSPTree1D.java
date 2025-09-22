@@ -58,7 +58,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree1D copy() {
-        final RegionBSPTree1D result = RegionBSPTree1D.empty();
+        final RegionBSPTree1D result = empty();
         result.copy(this);
 
         return result;
@@ -122,7 +122,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      */
     @Override
     public Split<RegionBSPTree1D> split(final Hyperplane<Vector1D> splitter) {
-        return split(splitter, RegionBSPTree1D.empty(), RegionBSPTree1D.empty());
+        return split(splitter, empty(), empty());
     }
 
     /** Get the minimum value on the inside of the region; returns {@link Double#NEGATIVE_INFINITY}
