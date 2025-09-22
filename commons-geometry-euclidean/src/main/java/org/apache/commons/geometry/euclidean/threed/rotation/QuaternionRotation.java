@@ -276,7 +276,7 @@ public final class QuaternionRotation implements Rotation3D {
      */
     public DoubleFunction<QuaternionRotation> slerp(final QuaternionRotation end) {
         final Slerp s = new Slerp(getQuaternion(), end.getQuaternion());
-        return t -> QuaternionRotation.of(s.apply(t));
+        return t -> of(s.apply(t));
     }
 
     /** Get a sequence of axis-angle rotations that produce an overall rotation equivalent to this instance.

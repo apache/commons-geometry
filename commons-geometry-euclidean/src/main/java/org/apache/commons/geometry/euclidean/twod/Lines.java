@@ -88,7 +88,7 @@ public final class Lines {
      */
     public static Ray rayFromPointAndDirection(final Vector2D startPoint, final Vector2D direction,
             final Precision.DoubleEquivalence precision) {
-        final Line line = Lines.fromPointAndDirection(startPoint, direction, precision);
+        final Line line = fromPointAndDirection(startPoint, direction, precision);
 
         return new Ray(line, startPoint);
     }
@@ -134,7 +134,7 @@ public final class Lines {
      */
     public static ReverseRay reverseRayFromPointAndDirection(final Vector2D endPoint, final Vector2D lineDirection,
             final Precision.DoubleEquivalence precision) {
-        final Line line = Lines.fromPointAndDirection(endPoint, lineDirection, precision);
+        final Line line = fromPointAndDirection(endPoint, lineDirection, precision);
 
         return new ReverseRay(line, endPoint);
     }
@@ -180,7 +180,7 @@ public final class Lines {
      */
     public static Segment segmentFromPoints(final Vector2D startPoint, final Vector2D endPoint,
             final Precision.DoubleEquivalence precision) {
-        final Line line = Lines.fromPoints(startPoint, endPoint, precision);
+        final Line line = fromPoints(startPoint, endPoint, precision);
 
         // we know that the points lie on the line and are in increasing abscissa order
         // since they were used to create the line
