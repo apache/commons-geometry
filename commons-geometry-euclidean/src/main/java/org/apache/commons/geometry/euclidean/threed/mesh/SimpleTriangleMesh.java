@@ -436,7 +436,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
          * @param precision precision context used for floating point comparisons; may
          *      be null if vertices are not to be combined in this builder.
          */
-        private Builder(final Precision.DoubleEquivalence precision) {
+        Builder(final Precision.DoubleEquivalence precision) {
             Objects.requireNonNull(precision, "Precision context must not be null");
 
             this.precision = precision;
