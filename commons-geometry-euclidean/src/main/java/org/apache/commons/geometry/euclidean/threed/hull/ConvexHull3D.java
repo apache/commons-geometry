@@ -200,7 +200,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param facets the facets to check against.
          */
         private static void distributePoint(Vector3D p, Iterable<Facet> facets) {
-            for (Facet facet : facets) {
+            for (final Facet facet : facets) {
                 if (facet.addPoint(p)) {
                     return;
                 }
@@ -280,19 +280,19 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             distributePoints(simplex.getFacets());
             Facet conflictFacet = getConflictFacet();
             while (conflictFacet != null) {
-                Vector3D conflictPoint = conflictFacet.getOutsidePoint();
-                Set<Facet> visibleFacets = new HashSet<>();
+                final Vector3D conflictPoint = conflictFacet.getOutsidePoint();
+                final Set<Facet> visibleFacets = new HashSet<>();
                 visibleFacets.add(conflictFacet);
-                Set<Edge> horizon = new HashSet<>();
+                final Set<Edge> horizon = new HashSet<>();
                 getVisibleFacets(conflictFacet, conflictPoint, visibleFacets, horizon);
-                Vector3D referencePoint = conflictFacet.getPolygon().getCentroid();
-                Set<Facet> cone = constructCone(conflictPoint, horizon, referencePoint);
+                final Vector3D referencePoint = conflictFacet.getPolygon().getCentroid();
+                final Set<Facet> cone = constructCone(conflictPoint, horizon, referencePoint);
                 removeFacets(visibleFacets);
                 cone.forEach(this::addFacet);
                 distributePoints(cone);
                 conflictFacet = getConflictFacet();
             }
-            Collection<ConvexPolygon3D> hull = edgeMap.values().stream()
+            final Collection<ConvexPolygon3D> hull = edgeMap.values().stream()
                     .map(Facet::getPolygon).collect(Collectors.toSet());
             return new ConvexHull3D(hull);
         }
@@ -308,9 +308,9 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @return a set of newly constructed facets.
          */
         private Set<Facet> constructCone(Vector3D conflictPoint, Set<Edge> horizon, Vector3D referencePoint) {
-            Set<Facet> newFacets = new HashSet<>();
-            for (Edge edge : horizon) {
-                ConvexPolygon3D newPolygon = Planes.convexPolygonFromVertices(Arrays.asList(edge.getStart(),
+            final Set<Facet> newFacets = new HashSet<>();
+            for (final Edge edge : horizon) {
+                final ConvexPolygon3D newPolygon = Planes.convexPolygonFromVertices(Arrays.asList(edge.getStart(),
                         edge.getEnd(), conflictPoint), precision);
                 newFacets.add(new Facet(newPolygon, referencePoint, precision));
             }
@@ -328,10 +328,10 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
         private Simplex createSimplex(Collection<Vector3D> points) {
 
             // First vertex of the simplex
-            Vector3D vertex1 = points.stream().min(Vector3D.COORDINATE_ASCENDING_ORDER).get();
+            final Vector3D vertex1 = points.stream().min(Vector3D.COORDINATE_ASCENDING_ORDER).get();
 
             // Find a point with maximal distance to the second.
-            Vector3D vertex2 = points.stream().max(Comparator.comparingDouble(vertex1::distance)).get();
+            final Vector3D vertex2 = points.stream().max(Comparator.comparingDouble(vertex1::distance)).get();
 
             // The point is degenerate if all points are equivalent.
             if (vertex1.eq(vertex2, precision)) {
@@ -339,10 +339,10 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             }
 
             // First and second vertex form a line.
-            Line3D line = Lines3D.fromPoints(vertex1, vertex2, precision);
+            final Line3D line = Lines3D.fromPoints(vertex1, vertex2, precision);
 
             // Find a point with maximal distance from the line.
-            Vector3D vertex3 = points.stream().max(Comparator.comparingDouble(line::distance)).get();
+            final Vector3D vertex3 = points.stream().max(Comparator.comparingDouble(line::distance)).get();
 
             // The point set is degenerate because all points are collinear.
             if (line.contains(vertex3)) {
@@ -350,11 +350,11 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             }
 
             // Form a triangle with the first three vertices.
-            ConvexPolygon3D facet1 = Planes.triangleFromVertices(vertex1, vertex2, vertex3, precision);
+            final ConvexPolygon3D facet1 = Planes.triangleFromVertices(vertex1, vertex2, vertex3, precision);
 
             // Find a point with maximal distance to the plane formed by the triangle.
-            Plane plane = facet1.getPlane();
-            Vector3D vertex4 = points.stream().max(Comparator.comparingDouble(d -> Math.abs(plane.offset(d)))).get();
+            final Plane plane = facet1.getPlane();
+            final Vector3D vertex4 = points.stream().max(Comparator.comparingDouble(d -> Math.abs(plane.offset(d)))).get();
 
             // The point set is degenerate, because all points are coplanar.
             if (plane.contains(vertex4)) {
@@ -362,14 +362,14 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             }
 
             // Construct the other three facets.
-            ConvexPolygon3D facet2 = Planes.convexPolygonFromVertices(Arrays.asList(vertex1, vertex2, vertex4),
+            final ConvexPolygon3D facet2 = Planes.convexPolygonFromVertices(Arrays.asList(vertex1, vertex2, vertex4),
                     precision);
-            ConvexPolygon3D facet3 = Planes.convexPolygonFromVertices(Arrays.asList(vertex1, vertex3, vertex4),
+            final ConvexPolygon3D facet3 = Planes.convexPolygonFromVertices(Arrays.asList(vertex1, vertex3, vertex4),
                     precision);
-            ConvexPolygon3D facet4 = Planes.convexPolygonFromVertices(Arrays.asList(vertex2, vertex3, vertex4),
+            final ConvexPolygon3D facet4 = Planes.convexPolygonFromVertices(Arrays.asList(vertex2, vertex3, vertex4),
                     precision);
 
-            List<Facet> facets = new ArrayList<>();
+            final List<Facet> facets = new ArrayList<>();
 
             // Choose the right orientation for all facets.
             facets.add(new Facet(facet1, vertex4, precision));
@@ -386,7 +386,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param facet the given facet.
          */
         private void addFacet(Facet facet) {
-            for (Edge e : facet.getEdges()) {
+            for (final Edge e : facet.getEdges()) {
                 edgeMap.put(e, facet);
             }
         }
@@ -425,8 +425,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * @param horizon       horizon edges.
          */
         private void getVisibleFacets(Facet facet, Vector3D outsidePoint, Set<Facet> visibleFacets, Set<Edge> horizon) {
-            for (Edge e : facet.getEdges()) {
-                Facet neighbor = edgeMap.get(e.getInverse());
+            for (final Edge e : facet.getEdges()) {
+                final Facet neighbor = edgeMap.get(e.getInverse());
                 if (precision.gt(neighbor.offset(outsidePoint), 0.0)) {
                     if (visibleFacets.add(neighbor)) {
                         getVisibleFacets(neighbor, outsidePoint, visibleFacets, horizon);
@@ -458,8 +458,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          */
         private void removeFacetsFromVertexMap(Set<Facet> visibleFacets) {
             // Remove facets from edgeMap
-            for (Facet facet : visibleFacets) {
-                for (Edge e : facet.getEdges()) {
+            for (final Facet facet : visibleFacets) {
+                for (final Edge e : facet.getEdges()) {
                     edgeMap.remove(e);
                 }
             }
@@ -515,13 +515,13 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             this.polygon = precision.lte(polygon.getPlane().offset(referencePoint), 0) ? polygon : polygon.reverse();
             outsideSet = EuclideanCollections.pointSet3D(precision);
             this.precision = precision;
-            List<Edge> edgesCol = new ArrayList<>();
-            List<Vector3D> vertices = this.polygon.getVertices();
+            final List<Edge> edgesCol = new ArrayList<>();
+            final List<Vector3D> vertices = this.polygon.getVertices();
             maximumOffset = 0.0;
 
             for (int i = 0; i < vertices.size(); i++) {
-                Vector3D start = vertices.get(i);
-                Vector3D end = vertices.get(i + 1 == vertices.size() ? 0 : i + 1);
+                final Vector3D start = vertices.get(i);
+                final Vector3D end = vertices.get(i + 1 == vertices.size() ? 0 : i + 1);
                 edgesCol.add(new Edge(start, end));
             }
             edges = Collections.unmodifiableList(edgesCol);
@@ -575,7 +575,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
          * otherwise.
          */
         public boolean addPoint(Vector3D p) {
-            double offset = offset(p);
+            final double offset = offset(p);
             if (precision.gt(offset, 0.0)) {
                 outsideSet.add(p);
                 if (precision.gt(offset, maximumOffset)) {
@@ -674,7 +674,7 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            Edge edge = (Edge) o;
+            final Edge edge = (Edge) o;
             return Objects.equals(start, edge.start) && Objects.equals(end, edge.end);
         }
 
