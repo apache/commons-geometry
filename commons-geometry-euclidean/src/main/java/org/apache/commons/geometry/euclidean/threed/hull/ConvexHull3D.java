@@ -354,7 +354,8 @@ public class ConvexHull3D implements ConvexHull<Vector3D> {
 
             // Find a point with maximal distance to the plane formed by the triangle.
             final Plane plane = facet1.getPlane();
-            final Vector3D vertex4 = points.stream().max(Comparator.comparingDouble(d -> Math.abs(plane.offset(d)))).get();
+            final Vector3D vertex4 = points.stream()
+                .max(Comparator.comparingDouble(d -> Math.abs(plane.offset(d)))).get();
 
             // The point set is degenerate, because all points are coplanar.
             if (plane.contains(vertex4)) {
