@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 
 import org.apache.commons.geometry.core.Point;
@@ -1425,10 +1426,10 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         private final P refPt;
 
         /** Queue of nodes remaining to be visited. */
-        private final PriorityQueue<DistancedValue<BucketNode<P, V>>> nodes;
+        private final Queue<DistancedValue<BucketNode<P, V>>> nodes;
 
         /** Queue of entries waiting to be returned. */
-        private final PriorityQueue<DistancedValue<Entry<P, V>>> entries;
+        private final Queue<DistancedValue<Entry<P, V>>> entries;
 
         /** The next entry to be returned from the iterator. */
         private Entry<P, V> nextEntry;
