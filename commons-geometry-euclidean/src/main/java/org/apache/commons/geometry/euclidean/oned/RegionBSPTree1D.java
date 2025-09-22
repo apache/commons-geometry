@@ -350,7 +350,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         /** Simple constructor.
          * @param tree the owning tree instance
          */
-        private RegionNode1D(final AbstractBSPTree<Vector1D, RegionNode1D> tree) {
+        RegionNode1D(final AbstractBSPTree<Vector1D, RegionNode1D> tree) {
             super(tree);
         }
 
@@ -371,7 +371,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
          * @param visitor the object that will receive the min and max boundaries for the node's
          *      convex region
          */
-        private void visitNodeInterval(final BiConsumer<? super OrientedPoint, ? super OrientedPoint> visitor) {
+        void visitNodeInterval(final BiConsumer<? super OrientedPoint, ? super OrientedPoint> visitor) {
             OrientedPoint min = null;
             OrientedPoint max = null;
 

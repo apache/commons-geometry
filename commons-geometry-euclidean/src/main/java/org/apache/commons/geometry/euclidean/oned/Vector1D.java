@@ -403,7 +403,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          *      is false
          * @throws IllegalArgumentException if the computed norm is zero, NaN, or infinite
          */
-        private static Unit tryCreateNormalized(final double x, final boolean throwOnFailure) {
+        static Unit tryCreateNormalized(final double x, final boolean throwOnFailure) {
             final double norm = Vectors.norm(x);
 
             if (Vectors.isRealNonZero(norm)) {
