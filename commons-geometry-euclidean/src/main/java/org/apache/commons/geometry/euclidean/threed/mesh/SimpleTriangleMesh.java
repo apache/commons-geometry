@@ -72,7 +72,7 @@ public final class SimpleTriangleMesh implements TriangleMesh {
      * @param bounds mesh bounds
      * @param precision precision context used when creating face polygons
      */
-    private SimpleTriangleMesh(final List<Vector3D> vertices, final List<int[]> faces, final Bounds3D bounds,
+    SimpleTriangleMesh(final List<Vector3D> vertices, final List<int[]> faces, final Bounds3D bounds,
             final Precision.DoubleEquivalence precision) {
         this.vertices = Collections.unmodifiableList(vertices);
         this.faces = Collections.unmodifiableList(faces);
