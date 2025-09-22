@@ -626,7 +626,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
         final Vector3D v = tPlusY.subtract(tZero);
         final Vector3D w = tPlusZ.subtract(tZero);
 
-        final AffineTransformMatrix3D mat =  AffineTransformMatrix3D.fromColumnVectors(u, v, w, tZero);
+        final AffineTransformMatrix3D mat =  fromColumnVectors(u, v, w, tZero);
 
         final double det = mat.determinant();
         if (!Vectors.isRealNonZero(det)) {

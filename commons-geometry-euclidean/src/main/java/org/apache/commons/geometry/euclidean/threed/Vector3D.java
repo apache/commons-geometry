@@ -571,7 +571,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
             z = Math.max(z, vec.getZ());
         }
 
-        return Vector3D.of(x, y, z);
+        return of(x, y, z);
     }
 
     /** Return a vector containing the minimum component values from all input vectors.
@@ -616,7 +616,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
             z = Math.min(z, vec.getZ());
         }
 
-        return Vector3D.of(x, y, z);
+        return of(x, y, z);
     }
 
     /** Compute the centroid of the given points. The centroid is the arithmetic mean position of a set
@@ -878,7 +878,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          * @return new instance set to zero
          */
         public static Sum create() {
-            return new Sum(Vector3D.ZERO);
+            return new Sum(ZERO);
         }
 
         /** Construct a new instance with an initial value set to the argument.

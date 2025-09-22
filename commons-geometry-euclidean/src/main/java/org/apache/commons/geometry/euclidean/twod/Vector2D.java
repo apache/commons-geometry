@@ -504,7 +504,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
             y = Math.max(y, vec.getY());
         }
 
-        return Vector2D.of(x, y);
+        return of(x, y);
     }
 
     /** Return a vector containing the minimum component values from all input vectors.
@@ -547,7 +547,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
             y = Math.min(y, vec.getY());
         }
 
-        return Vector2D.of(x, y);
+        return of(x, y);
     }
 
     /** Compute the centroid of the given points. The centroid is the arithmetic mean position of a set
@@ -793,7 +793,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
          * @return new instance set to zero
          */
         public static Sum create() {
-            return new Sum(Vector2D.ZERO);
+            return new Sum(ZERO);
         }
 
         /** Construct a new instance with an initial value set to the argument.
