@@ -441,7 +441,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         final double aDist = a != null ? a.getDistance() : nullDistance;
         final double bDist = b != null ? b.getDistance() : nullDistance;
 
-        int cmp = Double.compare(aDist, bDist);
+        final int cmp = Double.compare(aDist, bDist);
         if (cmp == 0 &&
                 a != null &&
                 b != null) {
@@ -1368,7 +1368,7 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
             for (int i = 0; i < childCount; ++i) {
                 final BucketNode<P, V> child = node.children.get(i);
                 if (child != null) {
-                    Iterator<Entry<P, V>> childIt = findIteratorRecursive(child, currentOffset);
+                    final Iterator<Entry<P, V>> childIt = findIteratorRecursive(child, currentOffset);
                     if (childIt != null) {
                         return childIt;
                     }
