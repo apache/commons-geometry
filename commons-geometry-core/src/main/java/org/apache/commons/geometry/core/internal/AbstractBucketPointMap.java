@@ -1261,9 +1261,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     private final class EntryIterator
         implements Iterator<Entry<P, V>> {
 
-        /** Size of the owning map. */
-        private int size;
-
         /** Iterator that produces the next entry to be returned. */
         private Iterator<Entry<P, V>> nextEntryIterator;
 
@@ -1276,8 +1273,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
         /** Simple constructor.
          */
         EntryIterator() {
-            this.size = AbstractBucketPointMap.this.size();
-
             updateExpectedVersion();
         }
 
@@ -1316,7 +1311,6 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
 
             nextEntryIterator.remove();
             --nextIdx;
-            --size;
 
             updateExpectedVersion();
         }
