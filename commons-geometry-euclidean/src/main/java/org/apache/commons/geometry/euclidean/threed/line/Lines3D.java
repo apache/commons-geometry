@@ -77,7 +77,7 @@ public final class Lines3D {
      */
     public static Ray3D rayFromPointAndDirection(final Vector3D startPoint, final Vector3D direction,
             final Precision.DoubleEquivalence precision) {
-        final Line3D line = Lines3D.fromPointAndDirection(startPoint, direction, precision);
+        final Line3D line = fromPointAndDirection(startPoint, direction, precision);
 
         return new Ray3D(line, startPoint);
     }
@@ -121,7 +121,7 @@ public final class Lines3D {
      */
     public static ReverseRay3D reverseRayFromPointAndDirection(final Vector3D endPoint, final Vector3D lineDirection,
             final Precision.DoubleEquivalence precision) {
-        final Line3D line = Lines3D.fromPointAndDirection(endPoint, lineDirection, precision);
+        final Line3D line = fromPointAndDirection(endPoint, lineDirection, precision);
 
         return new ReverseRay3D(line, endPoint);
     }
@@ -165,7 +165,7 @@ public final class Lines3D {
      */
     public static Segment3D segmentFromPoints(final Vector3D startPoint, final Vector3D endPoint,
             final Precision.DoubleEquivalence precision) {
-        final Line3D line = Lines3D.fromPoints(startPoint, endPoint, precision);
+        final Line3D line = fromPoints(startPoint, endPoint, precision);
 
         // we know that the points lie on the line and are in increasing abscissa order
         // since they were used to create the line
