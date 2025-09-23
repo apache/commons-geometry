@@ -483,7 +483,7 @@ public class LinePath implements BoundarySource2D, Sized {
          * @param precision precision context to use when creating line segments
          *      from vertices
          */
-        private Builder(final Precision.DoubleEquivalence precision) {
+        Builder(final Precision.DoubleEquivalence precision) {
             setPrecision(precision);
         }
 
@@ -857,7 +857,7 @@ public class LinePath implements BoundarySource2D, Sized {
          * a valid, simplified path.
          * @param elements line subsets comprising the path
          */
-        private SimplifiedLinePath(final List<LineConvexSubset> elements) {
+        SimplifiedLinePath(final List<LineConvexSubset> elements) {
             super(elements);
         }
 

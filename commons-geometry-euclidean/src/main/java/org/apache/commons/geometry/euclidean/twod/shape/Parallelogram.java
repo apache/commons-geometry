@@ -185,7 +185,7 @@ public final class Parallelogram extends ConvexArea {
         /** Construct a new instance configured with the given precision context.
          * @param precision precision context used to create boundaries
          */
-        private Builder(final Precision.DoubleEquivalence precision) {
+        Builder(final Precision.DoubleEquivalence precision) {
             this.precision = precision;
         }
 

@@ -44,7 +44,7 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D>
      * @param min minimum point
      * @param max maximum point
      */
-    private Bounds3D(final Vector3D min, final Vector3D max) {
+    Bounds3D(final Vector3D min, final Vector3D max) {
         super(min, max);
     }
 
@@ -275,8 +275,8 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D>
         /** Maximum z coordinate. */
         private double maxZ = Double.NEGATIVE_INFINITY;
 
-        /** Private constructor; instantiate through factory method. */
-        private Builder() { }
+        /** Create an instance. */
+        Builder() { }
 
         /** Add a point to this instance.
          * @param pt point to add

@@ -442,7 +442,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */
-        private BoundaryProjector3D(final Vector3D point) {
+        BoundaryProjector3D(final Vector3D point) {
             super(point);
         }
 

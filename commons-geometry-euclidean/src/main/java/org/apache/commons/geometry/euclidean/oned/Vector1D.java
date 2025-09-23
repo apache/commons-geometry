@@ -68,7 +68,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
     /** Simple constructor.
      * @param x abscissa (coordinate value)
      */
-    private Vector1D(final double x) {
+    Vector1D(final double x) {
         this.x = x;
     }
 

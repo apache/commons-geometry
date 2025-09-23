@@ -39,7 +39,7 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D>
      * @param min minimum point
      * @param max maximum point
      */
-    private Bounds2D(final Vector2D min, final Vector2D max) {
+    Bounds2D(final Vector2D min, final Vector2D max) {
         super(min, max);
     }
 
@@ -256,8 +256,8 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D>
         /** Maximum y coordinate. */
         private double maxY = Double.NEGATIVE_INFINITY;
 
-        /** Private constructor; instantiate through factory method. */
-        private Builder() { }
+        /** Create an instance. */
+        Builder() { }
 
         /** Add a point to this instance.
          * @param pt point to add

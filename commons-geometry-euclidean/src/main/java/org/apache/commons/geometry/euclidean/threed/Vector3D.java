@@ -86,7 +86,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param y y coordinate value
      * @param z z coordinate value
      */
-    private Vector3D(final double x, final double y, final double z) {
+    Vector3D(final double x, final double y, final double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -700,7 +700,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          * @param y x coordinate value
          * @param z x coordinate value
          */
-        private Unit(final double x, final double y, final double z) {
+        Unit(final double x, final double y, final double z) {
             super(x, y, z);
         }
 

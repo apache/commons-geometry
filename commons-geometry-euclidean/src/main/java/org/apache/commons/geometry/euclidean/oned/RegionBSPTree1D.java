@@ -483,6 +483,11 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         /** The max boundary for the region. */
         private OrientedPoint max;
 
+        /** Create an instance. */
+        NodeRegionVisitor() {
+           // Allow package level instantiation
+        }
+
         /** {@inheritDoc} */
         @Override
         public void accept(final OrientedPoint minBoundary, final OrientedPoint maxBoundary) {
@@ -513,6 +518,11 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
         /** The sum of the centroids of each inside interval, scaled by the size of the interval. */
         private double scaledCentroidSum;
+
+        /** Create an instance. */
+        RegionSizePropertiesVisitor() {
+           // Allow package level instantiation
+        }
 
         /** {@inheritDoc} */
         @Override

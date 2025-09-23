@@ -78,7 +78,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param x abscissa (first coordinate)
      * @param y ordinate (second coordinate)
      */
-    private Vector2D(final double x, final double y) {
+    Vector2D(final double x, final double y) {
         this.x = x;
         this.y = y;
     }
