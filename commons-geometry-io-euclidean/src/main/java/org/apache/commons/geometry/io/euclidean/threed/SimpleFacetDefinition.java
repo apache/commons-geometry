@@ -92,7 +92,7 @@ public class SimpleFacetDefinition implements FacetDefinition {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(256);
         sb.append(getClass().getSimpleName())
             .append("[vertices= ")
             .append(getVertices())

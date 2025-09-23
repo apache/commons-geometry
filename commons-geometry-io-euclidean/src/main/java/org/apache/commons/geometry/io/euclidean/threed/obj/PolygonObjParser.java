@@ -253,7 +253,7 @@ public class PolygonObjParser extends AbstractObjParser {
                 objIndex - 1;
 
         if (normalizedIndex < 0 || normalizedIndex >= available) {
-            final StringBuilder err = new StringBuilder();
+            final StringBuilder err = new StringBuilder(128);
             err.append(type)
                 .append(" index ");
 
