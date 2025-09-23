@@ -947,6 +947,11 @@ public abstract class AbstractRegionBSPTree<
     private static final class UnionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends RegionMergeOperator<P, N> {
 
+        /** Create an instance. */
+        UnionOperator() {
+            // Allow package level instantiation
+        }
+
         /** {@inheritDoc} */
         @Override
         protected N mergeLeaf(final N node1, final N node2) {
@@ -966,6 +971,11 @@ public abstract class AbstractRegionBSPTree<
     private static final class IntersectionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends RegionMergeOperator<P, N> {
 
+        /** Create an instance. */
+        IntersectionOperator() {
+            // Allow package level instantiation
+        }
+
         /** {@inheritDoc} */
         @Override
         protected N mergeLeaf(final N node1, final N node2) {
@@ -984,6 +994,11 @@ public abstract class AbstractRegionBSPTree<
      */
     private static final class DifferenceOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends RegionMergeOperator<P, N> {
+
+        /** Create an instance. */
+        DifferenceOperator() {
+            // Allow package level instantiation
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -1016,6 +1031,11 @@ public abstract class AbstractRegionBSPTree<
      */
     private static final class XorOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends RegionMergeOperator<P, N> {
+
+        /** Create an instance. */
+        XorOperator() {
+            // Allow package level instantiation
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -1051,6 +1071,11 @@ public abstract class AbstractRegionBSPTree<
     private static final class Condenser<P extends Point<P>, N extends AbstractRegionNode<P, N>> {
         /** Flag set to true if the tree was modified during the operation. */
         private boolean modifiedTree;
+
+        /** Create an instance. */
+        Condenser() {
+            // Allow package level instantiation
+        }
 
         /** Condense the nodes in the subtree rooted at the given node. Redundant child nodes are
          * removed. The tree is invalidated if the tree structure was modified.
