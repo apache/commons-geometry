@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point type.
  * @see EnclosingBall
  */
+@FunctionalInterface
 public interface Encloser<P extends Point<P>> {
 
     /** Find a ball enclosing a list of points.

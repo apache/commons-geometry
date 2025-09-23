@@ -28,6 +28,7 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point type.
  * @see EnclosingBall
  */
+@FunctionalInterface
 public interface SupportBallGenerator<P extends Point<P>> {
 
     /** Create a ball whose boundary lies on prescribed support points.
