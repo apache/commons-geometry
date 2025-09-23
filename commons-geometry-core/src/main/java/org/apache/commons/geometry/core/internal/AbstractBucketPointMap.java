@@ -1226,6 +1226,11 @@ public abstract class AbstractBucketPointMap<P extends Point<P>, V>
     private final class EntrySet
         extends AbstractSet<Entry<P, V>> {
 
+        /** Create an instance. */
+        EntrySet() {
+            // Allow package level instantiation
+        }
+
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         @Override
