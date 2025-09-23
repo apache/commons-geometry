@@ -50,7 +50,7 @@ public abstract class AbstractRegionBSPTree<
     extends AbstractBSPTree<P, N> implements HyperplaneBoundedRegion<P> {
 
     /** The default {@link RegionCutRule}. */
-    private static final RegionCutRule DEFAULT_REGION_CUT_RULE = RegionCutRule.MINUS_INSIDE;
+    static final RegionCutRule DEFAULT_REGION_CUT_RULE = RegionCutRule.MINUS_INSIDE;
 
     /** Value used to indicate an unknown size. */
     private static final double UNKNOWN_SIZE = -1.0;
@@ -423,7 +423,7 @@ public abstract class AbstractRegionBSPTree<
     /** Recursively switch all inside nodes to outside nodes and vice versa.
      * @param node the node at the root of the subtree to switch
      */
-    private void complementRecursive(final AbstractRegionNode<P, N> node) {
+    void complementRecursive(final AbstractRegionNode<P, N> node) {
         if (node != null) {
             final RegionLocation newLoc = (node.getLocation() == RegionLocation.INSIDE) ?
                     RegionLocation.OUTSIDE :
