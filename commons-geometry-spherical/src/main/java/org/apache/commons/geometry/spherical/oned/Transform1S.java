@@ -175,7 +175,7 @@ public final class Transform1S implements Transform<Point1S> {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(128);
 
         sb.append(this.getClass().getSimpleName())
             .append("[negate= ")

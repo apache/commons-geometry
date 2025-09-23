@@ -361,7 +361,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(128);
         sb.append(getClass().getSimpleName())
             .append("[pole= ")
             .append(pole)

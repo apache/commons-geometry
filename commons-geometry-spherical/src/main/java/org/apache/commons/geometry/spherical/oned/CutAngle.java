@@ -271,7 +271,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(128);
         sb.append(this.getClass().getSimpleName())
             .append("[point= ")
             .append(point)
@@ -416,7 +416,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder(128);
             sb.append(this.getClass().getSimpleName())
                 .append("[hyperplane= ")
                 .append(hyperplane)

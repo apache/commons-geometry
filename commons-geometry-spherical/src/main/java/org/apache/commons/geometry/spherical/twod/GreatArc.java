@@ -174,7 +174,7 @@ public final class GreatArc extends GreatCircleSubset implements HyperplaneConve
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(256);
         sb.append(this.getClass().getSimpleName()).append('[');
 
         if (isFull()) {

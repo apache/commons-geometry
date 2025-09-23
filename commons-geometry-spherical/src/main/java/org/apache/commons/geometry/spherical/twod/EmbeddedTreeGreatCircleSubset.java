@@ -154,7 +154,7 @@ public final class EmbeddedTreeGreatCircleSubset extends GreatCircleSubset {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(256);
         sb.append(this.getClass().getSimpleName())
             .append('[')
             .append("circle= ")
