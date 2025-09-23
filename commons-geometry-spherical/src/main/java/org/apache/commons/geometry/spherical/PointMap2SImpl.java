@@ -119,7 +119,7 @@ final class PointMap2SImpl<V>
         protected void computeSplit() {
             final Vector3D.Sum sum = Vector3D.Sum.create();
 
-            for (Entry<Point2S, V> entry : this) {
+            for (final Entry<Point2S, V> entry : this) {
                 sum.add(entry.getKey().getVector());
             }
 

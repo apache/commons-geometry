@@ -337,7 +337,7 @@ final class PointMap1SImpl<V>
         private int remaining;
 
         /** Expected modification version of the map. */
-        private int expectedVersion;
+        private final int expectedVersion;
 
         /** Construct a new instance with the given reference point.
          * @param refPt reference point
