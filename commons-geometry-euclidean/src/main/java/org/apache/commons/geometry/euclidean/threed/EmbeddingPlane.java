@@ -236,7 +236,7 @@ public final class EmbeddingPlane extends Plane implements EmbeddingHyperplane<V
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(128);
         sb.append(getClass().getSimpleName())
             .append("[origin= ")
             .append(getOrigin())
