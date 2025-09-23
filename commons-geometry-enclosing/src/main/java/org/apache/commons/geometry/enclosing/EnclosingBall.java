@@ -105,7 +105,7 @@ public class EnclosingBall<P extends Point<P>> {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(128);
         sb.append(getClass().getSimpleName())
             .append("[center= ")
             .append(getCenter())
