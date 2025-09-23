@@ -60,7 +60,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree3D copy() {
-        final RegionBSPTree3D result = RegionBSPTree3D.empty();
+        final RegionBSPTree3D result = empty();
         result.copy(this);
 
         return result;
@@ -125,7 +125,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
     /** {@inheritDoc} */
     @Override
     public Split<RegionBSPTree3D> split(final Hyperplane<Vector3D> splitter) {
-        return split(splitter, RegionBSPTree3D.empty(), RegionBSPTree3D.empty());
+        return split(splitter, empty(), empty());
     }
 
     /** {@inheritDoc} */

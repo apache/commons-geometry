@@ -147,7 +147,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** {@inheritDoc} */
     @Override
     public Split<RegionBSPTree2D> split(final Hyperplane<Vector2D> splitter) {
-        return split(splitter, RegionBSPTree2D.empty(), RegionBSPTree2D.empty());
+        return split(splitter, empty(), empty());
     }
 
     /** {@inheritDoc} */
