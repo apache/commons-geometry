@@ -20,6 +20,7 @@ package org.apache.commons.geometry.core;
  * of the size will vary between spaces and dimensions. For example, the size
  * of a line is its length, while the size of a polygon is its area.
  */
+@FunctionalInterface
 public interface Sized {
 
     /** Get the size of the instance.
