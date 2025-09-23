@@ -779,7 +779,7 @@ public abstract class AbstractRegionBSPTree<
                 .append(getCut())
                 .append(", location= ")
                 .append(getLocation())
-                .append("]");
+                .append(']');
 
             return sb.toString();
         }
