@@ -307,7 +307,7 @@ public class LinePath implements BoundarySource2D, Sized {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(256);
         sb.append(this.getClass().getSimpleName())
             .append('[');
 
