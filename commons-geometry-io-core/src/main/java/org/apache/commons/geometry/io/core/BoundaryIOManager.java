@@ -314,6 +314,11 @@ public class BoundaryIOManager<
         /** Handlers keyed by lower-case file extension. */
         private final Map<String, T> handlersByFileExtension = new HashMap<>();
 
+        /** Create an instance. */
+        HandlerRegistry() {
+            // Allow package level instantiation
+        }
+
         /** Register a handler for the given {@link GeometryFormat format}.
          * @param fmt format for the handler
          * @param handler handler to register
