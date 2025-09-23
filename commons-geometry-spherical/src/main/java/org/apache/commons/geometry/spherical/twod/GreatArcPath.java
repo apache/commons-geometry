@@ -38,7 +38,7 @@ public final class GreatArcPath implements BoundarySource2S {
     /** Simple constructor. No validation is performed on the input arc.
      * @param arcs arcs for the path, in connection order
      */
-    private GreatArcPath(final List<GreatArc> arcs) {
+    GreatArcPath(final List<GreatArc> arcs) {
         this.arcs = Collections.unmodifiableList(arcs);
     }
 
@@ -308,7 +308,7 @@ public final class GreatArcPath implements BoundarySource2S {
          * @param precision precision context to use when creating arcs
          *      from points
          */
-        private Builder(final Precision.DoubleEquivalence precision) {
+        Builder(final Precision.DoubleEquivalence precision) {
             setPrecision(precision);
         }
 

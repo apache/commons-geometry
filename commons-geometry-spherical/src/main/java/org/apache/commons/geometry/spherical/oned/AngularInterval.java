@@ -58,7 +58,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * @param minBoundary minimum boundary for the interval
      * @param maxBoundary maximum boundary for the interval
      */
-    private AngularInterval(final CutAngle minBoundary, final CutAngle maxBoundary) {
+    AngularInterval(final CutAngle minBoundary, final CutAngle maxBoundary) {
 
         this.minBoundary = minBoundary;
         this.maxBoundary = maxBoundary;
@@ -469,7 +469,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
          * @param maxBoundary maximum boundary for the interval
          * @throws IllegalArgumentException if the interval is not convex
          */
-        private Convex(final CutAngle minBoundary, final CutAngle maxBoundary) {
+        Convex(final CutAngle minBoundary, final CutAngle maxBoundary) {
             super(minBoundary, maxBoundary);
 
             if (!isConvex(minBoundary, maxBoundary)) {

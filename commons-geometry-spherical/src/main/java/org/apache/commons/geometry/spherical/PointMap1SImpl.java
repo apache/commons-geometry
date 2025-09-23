@@ -223,6 +223,11 @@ final class PointMap1SImpl<V>
     private final class KeySet
         extends AbstractSet<Point1S> {
 
+        /** Create an instance. */
+        KeySet() {
+            // Allow package level instantiation
+        }
+
         /** {@inheritDoc} */
         @Override
         public boolean contains(final Object obj) {
@@ -246,6 +251,11 @@ final class PointMap1SImpl<V>
      */
     private final class EntrySet
         extends AbstractSet<Entry<Point1S, V>> {
+
+        /** Create an instance. */
+        EntrySet() {
+            // Allow package level instantiation
+        }
 
         /** {@inheritDoc} */
         @Override
