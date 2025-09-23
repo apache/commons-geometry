@@ -221,7 +221,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
          *      the given set of input points
          */
         public ConvexHull2D build() {
-            Collection<Vector2D> hullVertices;
+            final Collection<Vector2D> hullVertices;
             if (candidates.size() < 2) {
                 hullVertices = candidates;
             } else {
