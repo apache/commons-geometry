@@ -40,13 +40,13 @@ import org.apache.commons.numbers.core.Precision;
 public final class Point1S implements Point<Point1S> {
 
     /** A point with coordinates set to {@code 0*pi}. */
-    public static final Point1S ZERO = Point1S.of(0.0);
+    public static final Point1S ZERO = of(0.0);
 
     /** A point with coordinates set to {@code pi}. */
-    public static final Point1S PI = Point1S.of(Math.PI);
+    public static final Point1S PI = of(Math.PI);
 
     /** A point with all coordinates set to NaN. */
-    public static final Point1S NaN = Point1S.of(Double.NaN);
+    public static final Point1S NaN = of(Double.NaN);
 
     /** Comparator that sorts points by normalized azimuth in ascending order.
      * Points are only considered equal if their normalized azimuths match exactly.
@@ -194,7 +194,7 @@ public final class Point1S implements Point<Point1S> {
             az -= Angle.TWO_PI;
         }
 
-        return Point1S.of(az);
+        return of(az);
     }
 
     /** Return true if this instance is equivalent to the argument. The points are

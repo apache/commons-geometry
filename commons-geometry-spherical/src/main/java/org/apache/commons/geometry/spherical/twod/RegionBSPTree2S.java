@@ -60,7 +60,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree2S copy() {
-        final RegionBSPTree2S result = RegionBSPTree2S.empty();
+        final RegionBSPTree2S result = empty();
         result.copy(this);
 
         return result;

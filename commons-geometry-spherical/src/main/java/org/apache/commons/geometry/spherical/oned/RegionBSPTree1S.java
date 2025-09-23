@@ -60,7 +60,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree1S copy() {
-        final RegionBSPTree1S result = RegionBSPTree1S.empty();
+        final RegionBSPTree1S result = empty();
         result.copy(this);
 
         return result;
@@ -138,7 +138,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             }
         }
 
-        return split(splitter, RegionBSPTree1S.empty(), RegionBSPTree1S.empty());
+        return split(splitter, empty(), empty());
     }
 
     /** Split the instance along a circle diameter.The diameter is defined by the given
@@ -164,8 +164,8 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         final Split<RegionBSPTree1S> firstSplit = split(splitter);
         final Split<RegionBSPTree1S> secondSplit = split(opposite);
 
-        RegionBSPTree1S minus = RegionBSPTree1S.empty();
-        RegionBSPTree1S plus = RegionBSPTree1S.empty();
+        RegionBSPTree1S minus = empty();
+        RegionBSPTree1S plus = empty();
 
         if (zeroOnPlusSide) {
             // zero wrap-around needs to be handled on the plus side of the split

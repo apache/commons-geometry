@@ -108,7 +108,7 @@ public final class GreatCircles {
      */
     public static GreatArc arcFromPoints(final Point2S start, final Point2S end,
             final Precision.DoubleEquivalence precision) {
-        final GreatCircle circle = GreatCircles.fromPoints(start, end, precision);
+        final GreatCircle circle = fromPoints(start, end, precision);
 
         final Point1S subspaceStart = circle.toSubspace(start);
         final Point1S subspaceEnd = circle.toSubspace(end);

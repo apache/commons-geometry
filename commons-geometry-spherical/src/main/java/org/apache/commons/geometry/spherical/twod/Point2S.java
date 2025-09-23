@@ -175,7 +175,7 @@ public final class Point2S implements Point<Point2S> {
 
         final QuaternionRotation quat = start.slerp(end).apply(t);
 
-        return Point2S.from(quat.apply(getVector()));
+        return from(quat.apply(getVector()));
     }
 
     /** Return true if this point should be considered equivalent to the argument using the

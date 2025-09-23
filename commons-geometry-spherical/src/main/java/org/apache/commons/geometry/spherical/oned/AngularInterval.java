@@ -219,7 +219,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * @return a new instance transformed by the argument
      */
     public AngularInterval transform(final Transform<Point1S> transform) {
-        return AngularInterval.transform(this, transform, AngularInterval::of);
+        return transform(this, transform, AngularInterval::of);
     }
 
     /** {@inheritDoc}
@@ -503,8 +503,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
                     splitter.getPrecision());
 
             if (isFull()) {
-                final Convex minus = Convex.of(splitter, opposite);
-                final Convex plus = Convex.of(splitter.reverse(), opposite.reverse());
+                final Convex minus = of(splitter, opposite);
+                final Convex plus = of(splitter.reverse(), opposite.reverse());
 
                 return new Split<>(minus, plus);
             }
@@ -537,12 +537,12 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
                     final CutAngle posCut = positiveFacingSplit ?
                             opposite.reverse() :
                             opposite;
-                    pos = Convex.of(minBoundary, posCut);
+                    pos = of(minBoundary, posCut);
 
                     final CutAngle negCut = positiveFacingSplit ?
                             opposite :
                             opposite.reverse();
-                    neg = Convex.of(negCut, maxBoundary);
+                    neg = of(negCut, maxBoundary);
                 }
             } else if (minLoc < 0) {
                 // min is on the neg side
@@ -555,12 +555,12 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
                     final CutAngle posCut = positiveFacingSplit ?
                             splitter.reverse() :
                             splitter;
-                    pos = Convex.of(maxBoundary, posCut);
+                    pos = of(maxBoundary, posCut);
 
                     final CutAngle negCut = positiveFacingSplit ?
                             splitter :
                             splitter.reverse();
-                    neg = Convex.of(negCut, minBoundary);
+                    neg = of(negCut, minBoundary);
                 }
             } else {
                 // min is directly on the splitter; determine whether it was on the main split
@@ -610,7 +610,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
          *      interval is not convex (meaning it has a size of greater than {@code pi})
          */
         public static Convex of(final Point1S min, final Point1S max, final Precision.DoubleEquivalence precision) {
-            return createInterval(min, max, precision, Convex::new, Convex.FULL);
+            return createInterval(min, max, precision, Convex::new, FULL);
         }
 
         /** Return an instance representing the convex angular interval between the given oriented points.
@@ -624,7 +624,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
          *      interval is not convex (meaning it has a size of greater than {@code pi})
          */
         public static Convex of(final CutAngle a, final CutAngle b) {
-            return createInterval(a, b, Convex::new, Convex.FULL);
+            return createInterval(a, b, Convex::new, FULL);
         }
     }
 }
