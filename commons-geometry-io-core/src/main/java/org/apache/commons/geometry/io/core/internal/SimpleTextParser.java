@@ -879,7 +879,7 @@ public class SimpleTextParser {
      */
     public IllegalStateException unexpectedToken(final String expected, final Throwable cause) {
 
-        StringBuilder msg = new StringBuilder(128);
+        final StringBuilder msg = new StringBuilder(128);
         msg.append("expected ")
             .append(expected)
             .append(" but found ")

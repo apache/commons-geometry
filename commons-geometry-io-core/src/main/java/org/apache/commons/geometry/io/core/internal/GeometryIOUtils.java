@@ -239,7 +239,7 @@ public final class GeometryIOUtils {
     public static <T, C extends Closeable> T tryApplyCloseable(final IOFunction<C, T> function,
             final IOSupplier<? extends C> closeableSupplier) {
         C closeable = null;
-        RuntimeException exc;
+        final RuntimeException exc;
         try {
             closeable = closeableSupplier.get();
             return function.apply(closeable);
