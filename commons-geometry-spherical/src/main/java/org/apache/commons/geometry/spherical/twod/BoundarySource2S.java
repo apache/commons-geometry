@@ -26,6 +26,7 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
 /** Extension of the {@link BoundarySource} interface for spherical 2D
  * space.
  */
+@FunctionalInterface
 public interface BoundarySource2S extends BoundarySource<GreatArc> {
 
     /** Return a {@link BoundaryList2S} containing the boundaries in this instance.

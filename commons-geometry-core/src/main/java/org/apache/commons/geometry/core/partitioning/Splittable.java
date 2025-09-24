@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point implementation type
  * @param <S> Split type
  */
+@FunctionalInterface
 public interface Splittable<P extends Point<P>, S extends Splittable<P, S>> {
 
     /** Split this instance with the given hyperplane.
