@@ -150,8 +150,7 @@ public final class EmbeddedTreeLineSubset3D extends LineSubset3D {
 
         final StringBuilder sb = new StringBuilder(256);
         sb.append(this.getClass().getSimpleName())
-            .append('[')
-            .append("lineOrigin= ")
+            .append("[lineOrigin= ")
             .append(line.getOrigin())
             .append(", lineDirection= ")
             .append(line.getDirection())
