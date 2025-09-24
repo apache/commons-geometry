@@ -276,7 +276,9 @@ public final class Bounds3D extends AbstractBounds<Vector3D, Bounds3D>
         private double maxZ = Double.NEGATIVE_INFINITY;
 
         /** Create an instance. */
-        Builder() { }
+        Builder() {
+            // do nothing
+        }
 
         /** Add a point to this instance.
          * @param pt point to add

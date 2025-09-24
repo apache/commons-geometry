@@ -257,7 +257,9 @@ public final class Bounds2D extends AbstractBounds<Vector2D, Bounds2D>
         private double maxY = Double.NEGATIVE_INFINITY;
 
         /** Create an instance. */
-        Builder() { }
+        Builder() {
+            // do nothing
+        }
 
         /** Add a point to this instance.
          * @param pt point to add
