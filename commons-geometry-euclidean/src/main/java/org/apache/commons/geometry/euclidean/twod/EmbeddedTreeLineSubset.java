@@ -236,10 +236,9 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
     public String toString() {
         final Line line = getLine();
 
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(128);
         sb.append(this.getClass().getSimpleName())
-            .append('[')
-            .append("lineOrigin= ")
+            .append("[lineOrigin= ")
             .append(line.getOrigin())
             .append(", lineDirection= ")
             .append(line.getDirection())
