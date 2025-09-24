@@ -401,7 +401,7 @@ public class BoundaryIOManager<
          * @throws IllegalArgumentException if a handler cannot be found
          */
         public synchronized T requireHandlerByFormatOrFileName(final GeometryFormat fmt, final String fileName) {
-            T handler;
+            final T handler;
             if (fmt != null) {
                 handler = getByFormat(fmt);
 
