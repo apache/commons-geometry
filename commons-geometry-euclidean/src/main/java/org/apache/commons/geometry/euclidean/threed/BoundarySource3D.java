@@ -32,6 +32,7 @@ import org.apache.commons.numbers.core.Precision;
 
 /** Extension of the {@link BoundarySource} interface for Euclidean 3D space.
  */
+@FunctionalInterface
 public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset>, Linecastable3D {
 
     /** Return a {@link BoundaryList3D} containing the boundaries in this instance.

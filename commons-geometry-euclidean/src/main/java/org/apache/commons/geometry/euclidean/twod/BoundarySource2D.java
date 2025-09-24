@@ -25,6 +25,7 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
 
 /** Extension of the {@link BoundarySource} interface for Euclidean 2D space.
  */
+@FunctionalInterface
 public interface BoundarySource2D extends BoundarySource<LineConvexSubset>, Linecastable2D {
 
     /** Return a {@link BoundaryList2D} containing the boundaries in this instance.
