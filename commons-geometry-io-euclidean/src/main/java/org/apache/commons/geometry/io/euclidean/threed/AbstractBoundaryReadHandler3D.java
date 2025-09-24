@@ -107,7 +107,7 @@ public abstract class AbstractBoundaryReadHandler3D implements BoundaryReadHandl
         private final FacetDefinitionReader reader;
 
         /** Number of facets read from the reader. */
-        private int loadCount = 0;
+        private int loadCount;
 
         /** Next facet to return from the instance; may be null. */
         private FacetDefinition next;
