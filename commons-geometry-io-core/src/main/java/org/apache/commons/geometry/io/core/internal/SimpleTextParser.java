@@ -982,7 +982,7 @@ public class SimpleTextParser {
                     }
                     return "empty token followed by [" + peek(1) + "]";
                 }
-            } catch (IllegalStateException exc) {
+            } catch (IllegalStateException ignored) {
                 // ignore
             }
         }
