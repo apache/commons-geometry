@@ -237,7 +237,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D> {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
+        sb.append(this.getClass().getSimpleName(128))
             .append("[point= ")
             .append(point)
             .append(", direction= ")
