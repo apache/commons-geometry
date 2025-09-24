@@ -337,7 +337,7 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
         final double scale = tOne.subtract(tZero).getX();
         final double translate = tZero.getX();
 
-        final AffineTransformMatrix1D mat =  AffineTransformMatrix1D.of(scale, translate);
+        final AffineTransformMatrix1D mat = of(scale, translate);
 
         final double det = mat.determinant();
         if (!Vectors.isRealNonZero(det)) {

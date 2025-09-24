@@ -63,7 +63,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree2D copy() {
-        final RegionBSPTree2D result = RegionBSPTree2D.empty();
+        final RegionBSPTree2D result = empty();
         result.copy(this);
 
         return result;
@@ -395,7 +395,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         /** Construct a new builder instance.
          */
         private PartitionedRegionBuilder2D() {
-            super(RegionBSPTree2D.empty());
+            super(empty());
         }
 
         /** Insert a partition line.

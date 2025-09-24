@@ -537,7 +537,7 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
         final Vector2D u = tPlusX.subtract(tZero);
         final Vector2D v = tPlusY.subtract(tZero);
 
-        final AffineTransformMatrix2D mat =  AffineTransformMatrix2D.fromColumnVectors(u, v, tZero);
+        final AffineTransformMatrix2D mat = fromColumnVectors(u, v, tZero);
 
         final double det = mat.determinant();
         if (!Vectors.isRealNonZero(det)) {

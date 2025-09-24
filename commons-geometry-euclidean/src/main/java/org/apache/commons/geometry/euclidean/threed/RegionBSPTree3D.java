@@ -310,7 +310,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         /** Construct a new builder instance.
          */
         private PartitionedRegionBuilder3D() {
-            super(RegionBSPTree3D.empty());
+            super(empty());
         }
 
         /** Insert a partition plane.
