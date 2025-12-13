@@ -322,7 +322,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      *  <li>If no boundaries match the above conditions, then the sizes of the split boundaries are compared. If
      *      the sum of the sizes of the boundaries on the minus side is greater than the sum of the sizes of
      *      the boundaries on the plus size, then {@link SplitLocation#MINUS MINUS} is returned. Otherwise,
-     *      {@link SplitLocation#PLUS PLUS} is returned.
+     *      {@link SplitLocation#PLUS PLUS} is returned.</li>
      * </ol>
      * @param splitter splitter to classify the region against; the splitter is assumed to lie
      *      completely outside of the region
