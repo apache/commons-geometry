@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-parent</artifactId>
-    <version>90</version>
+    <version>96</version>
   </parent>
 
   <artifactId>commons-geometry-parent</artifactId>
@@ -301,6 +301,13 @@
             <exclude>src/site/resources/release-notes/RELEASE-NOTES-*.txt</exclude>
             <exclude>src/site/resources/txt/userguide/stress/**</exclude>
             <exclude>dist-archive/**</exclude>
+            <exclude>commons-geometry-io-euclidean/src/test/resources/models/cube-minus-sphere.csv</exclude>
+            <exclude>commons-geometry-io-euclidean/src/test/resources/models/cube-minus-sphere.txt</exclude>
+            <exclude>commons-geometry-io-euclidean/src/test/resources/models/cube.csv</exclude>
+            <exclude>commons-geometry-io-euclidean/src/test/resources/models/cube.txt</exclude>
+            <exclude>commons-geometry-io-euclidean/src/test/resources/models/empty.csv</exclude>
+            <exclude>commons-geometry-io-euclidean/src/test/resources/models/empty.stl</exclude>
+            <exclude>commons-geometry-io-euclidean/src/test/resources/models/empty.txt</exclude>
           </excludes>
         </configuration>
       </plugin>
