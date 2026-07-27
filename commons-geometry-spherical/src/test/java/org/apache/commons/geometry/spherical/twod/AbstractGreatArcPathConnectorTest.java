@@ -291,7 +291,7 @@ class AbstractGreatArcPathConnectorTest {
         // act/assert
         Assertions.assertEquals(a, a);
 
-        Assertions.assertFalse(a.equals(null));
+        Assertions.assertNotEquals(a, null);
         Assertions.assertFalse(a.equals(new Object()));
 
         Assertions.assertNotEquals(a, new ConnectableGreatArc(arcB));
