@@ -1219,7 +1219,7 @@ class AffineTransformMatrix3DTest {
         final AffineTransformMatrix3D d = AffineTransformMatrix3D.of(arrWithNegZero);
 
         // act/assert
-        Assertions.assertFalse(a.equals(b));
+        Assertions.assertNotEquals(a, b);
         Assertions.assertNotEquals(a.hashCode(), b.hashCode());
 
         Assertions.assertTrue(a.equals(c));

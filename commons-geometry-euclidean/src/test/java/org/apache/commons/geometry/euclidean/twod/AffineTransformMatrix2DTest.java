@@ -1360,7 +1360,7 @@ class AffineTransformMatrix2DTest {
         final AffineTransformMatrix2D d = AffineTransformMatrix2D.of(arrWithNegZero);
 
         // act/assert
-        Assertions.assertFalse(a.equals(b));
+        Assertions.assertNotEquals(a, b);
         Assertions.assertNotEquals(a.hashCode(), b.hashCode());
 
         Assertions.assertTrue(a.equals(c));

@@ -1140,7 +1140,7 @@ class Vector3DTest {
         final Vector3D d = Vector3D.of(-0.0, 0.0, -0.0);
 
         // act/assert
-        Assertions.assertFalse(a.equals(b));
+        Assertions.assertNotEquals(a, b);
 
         Assertions.assertTrue(a.equals(c));
         Assertions.assertEquals(a.hashCode(), c.hashCode());

@@ -775,7 +775,7 @@ class AffineTransformMatrix1DTest {
         final AffineTransformMatrix1D d = AffineTransformMatrix1D.of(-0.0, 0.0);
 
         // act/assert
-        Assertions.assertFalse(a.equals(b));
+        Assertions.assertNotEquals(a, b);
 
         Assertions.assertTrue(a.equals(c));
         Assertions.assertEquals(a.hashCode(), c.hashCode());

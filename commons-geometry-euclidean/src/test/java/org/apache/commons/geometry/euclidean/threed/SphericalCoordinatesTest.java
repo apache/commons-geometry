@@ -329,7 +329,7 @@ class SphericalCoordinatesTest {
         final SphericalCoordinates d = SphericalCoordinates.of(-0.0, 0.0, -0.0);
 
         // act/assert
-        Assertions.assertFalse(a.equals(b));
+        Assertions.assertNotEquals(a, b);
         Assertions.assertNotEquals(a.hashCode(), b.hashCode());
 
         Assertions.assertTrue(a.equals(c));

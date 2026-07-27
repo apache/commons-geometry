@@ -977,7 +977,7 @@ class Vector2DTest {
         final Vector2D d = Vector2D.of(-0.0, -0.0);
 
         // act/assert
-        Assertions.assertFalse(a.equals(b));
+        Assertions.assertNotEquals(a, b);
 
         Assertions.assertTrue(a.equals(c));
         Assertions.assertEquals(a.hashCode(), c.hashCode());
