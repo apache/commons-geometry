@@ -1222,10 +1222,10 @@ class AffineTransformMatrix3DTest {
         Assertions.assertNotEquals(a, b);
         Assertions.assertNotEquals(a.hashCode(), b.hashCode());
 
-        Assertions.assertTrue(a.equals(c));
+        Assertions.assertEquals(a, c);
         Assertions.assertEquals(a.hashCode(), c.hashCode());
 
-        Assertions.assertTrue(b.equals(d));
+        Assertions.assertEquals(b, d);
         Assertions.assertEquals(b.hashCode(), d.hashCode());
     }
 
