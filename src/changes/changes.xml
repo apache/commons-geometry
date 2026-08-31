@@ -63,6 +63,10 @@ Apache Commons Geometry 1.0 contains the following library modules:
   commons-geometry-io-core (requires Java 8+)
   commons-geometry-io-euclidean (requires Java 8+)
 ">
+      <action dev="pkarwasz" type="fix">
+          Create XML documents and transformers in the tutorial SVG writer through
+          org.apache.commons:commons-secure-xml, so they run with XML secure processing enabled.
+      </action>
       <action dev="aherbert" type="update" due-to="Ivan Shuba">
           Fix hash code collision for Vector2D and Vector3D. Modifies the
           hashCode() method to reduce collision for non-identical instances of vectors.
