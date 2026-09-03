@@ -46,6 +46,8 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.xml.secure.SecureDocumentBuilderFactory;
+import org.apache.commons.xml.secure.SecureTransformerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -209,7 +211,7 @@ public class BSPTreeSVGWriter {
      */
     public void write(final RegionBSPTree2D tree, final Map<RegionNode2D, String> nodeNames, final File file) {
         try {
-            final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilderFactory docBuilderFactory = SecureDocumentBuilderFactory.newInstance();
             final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
             final Document doc = docBuilder.newDocument();
@@ -236,7 +238,7 @@ public class BSPTreeSVGWriter {
             writeTreeStructureArea(tree, nodeNames, root, doc);
 
             // output to the target file
-            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            final TransformerFactory transformerFactory = SecureTransformerFactory.newInstance();
             final Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(INDENT_AMOUNT_KEY, String.valueOf(INDENT_AMOUNT));
