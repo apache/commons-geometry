@@ -63,7 +63,7 @@ Apache Commons Geometry 1.0 contains the following library modules:
   commons-geometry-io-core (requires Java 8+)
   commons-geometry-io-euclidean (requires Java 8+)
 ">
-      <action dev="pkarwasz" type="fix">
+      <action dev="pkarwasz" type="fix" due-to="Piotr P. Karwasz, Gary Gregory">
           Create XML documents and transformers in the tutorial SVG writer through
           org.apache.commons:commons-secure-xml, so they run with XML secure processing enabled.
       </action>
