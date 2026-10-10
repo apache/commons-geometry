@@ -16,6 +16,8 @@
 github:
   description: "Apache Commons Geometry"
   homepage: https://commons.apache.org/geometry/
+  autolink_jira:
+    - GEOMETRY
 
   rulesets:
     - name: "Default Branch Protection"
