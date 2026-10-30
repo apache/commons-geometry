@@ -29,7 +29,7 @@ public final class GeometryTestUtils {
     private GeometryTestUtils() {}
 
     /** Asserts that the given value is positive infinity.
-     * @param value
+     * @param value value to test
      */
     public static void assertPositiveInfinity(final double value) {
         final String msg = "Expected value to be positive infinity but was " + value;
@@ -38,7 +38,7 @@ public final class GeometryTestUtils {
     }
 
     /** Asserts that the given value is negative infinity.
-     * @param value
+     * @param value value to test
      */
     public static void assertNegativeInfinity(final double value) {
         final String msg = "Expected value to be negative infinity but was " + value;
@@ -70,8 +70,8 @@ public final class GeometryTestUtils {
     }
 
     /** Assert that a string contains a given substring value.
-     * @param substr
-     * @param actual
+     * @param substr expected substring
+     * @param actual actual string
      */
     public static void assertContains(final String substr, final String actual) {
         final String msg = "Expected string to contain [" + substr + "] but was [" + actual + "]";
