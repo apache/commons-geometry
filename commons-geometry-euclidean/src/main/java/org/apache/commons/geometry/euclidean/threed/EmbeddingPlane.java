@@ -163,7 +163,10 @@ public final class EmbeddingPlane extends Plane implements EmbeddingHyperplane<V
         return new EmbeddingPlane(v, u, getNormal().negate(), -getOriginOffset(), getPrecision());
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * <p>The transformed {@code u} direction is preserved, while the transformed
+     * {@code v} direction is orthogonalized to maintain an orthonormal basis.</p>
+     */
     @Override
     public EmbeddingPlane transform(final Transform<Vector3D> transform) {
         final Vector3D origin = getOrigin();
@@ -178,9 +181,11 @@ public final class EmbeddingPlane extends Plane implements EmbeddingHyperplane<V
         final Vector3D.Unit tV = tOrigin.directionTo(tPlusV);
         final Vector3D.Unit tW = tU.cross(tV).normalize();
 
+        // Recompute v to ensure the transformed basis is orthonormal.
+        final Vector3D.Unit orthogonalV = tW.cross(tU).normalize();
         final double tOriginOffset = -tOrigin.dot(tW);
 
-        return new EmbeddingPlane(tU, tV, tW, tOriginOffset, getPrecision());
+        return new EmbeddingPlane(tU, orthogonalV, tW, tOriginOffset, getPrecision());
     }
 
     /** Translate the plane by the specified amount.
