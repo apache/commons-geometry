@@ -86,9 +86,11 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      * does not affect the geometry, although it may affect how the file content
      * is read by other programs.
      * @param objectName the name to write
+     * @throws IllegalArgumentException if {@code objectName} contains new line characters
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public void writeObjectName(final String objectName) {
+        checkName("Object", objectName);
         writeKeywordLine(ObjConstants.OBJECT_KEYWORD, objectName);
     }
 
@@ -96,9 +98,11 @@ public final class ObjWriter extends AbstractTextFormatWriter {
      * does not affect the geometry, although it may affect how the file content
      * is read by other programs.
      * @param groupName the name to write
+     * @throws IllegalArgumentException if {@code groupName} contains new line characters
      * @throws java.io.UncheckedIOException if an I/O error occurs
      */
     public void writeGroupName(final String groupName) {
+        checkName("Group", groupName);
         writeKeywordLine(ObjConstants.GROUP_KEYWORD, groupName);
     }
 
@@ -337,6 +341,19 @@ public final class ObjWriter extends AbstractTextFormatWriter {
         write(SPACE);
         write(content);
         writeNewLine();
+    }
+
+    /** Throw an exception if the given name contains new line characters. Names are written on a
+     * single line, so an embedded new line would let the trailing content be interpreted as
+     * additional OBJ statements.
+     * @param type type of name being checked; used in the error message
+     * @param name name to check; may be null
+     * @throws IllegalArgumentException if {@code name} contains a '\r' or '\n' character
+     */
+    private static void checkName(final String type, final String name) {
+        if (name != null && (name.indexOf('\r') > -1 || name.indexOf('\n') > -1)) {
+            throw new IllegalArgumentException(type + " name cannot contain new line characters");
+        }
     }
 
     /** Class used to produce OBJ mesh content from sequences of facets. As facets are added to the buffer
