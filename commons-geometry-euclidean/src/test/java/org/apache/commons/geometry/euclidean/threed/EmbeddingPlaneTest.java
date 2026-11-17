@@ -156,6 +156,96 @@ class EmbeddingPlaneTest {
     }
 
     @Test
+    void testTransform_shear() {
+        // arrange
+        final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 2),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final AffineTransformMatrix3D transform = AffineTransformMatrix3D.of(
+                1, 1, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0);
+
+        // act
+        final EmbeddingPlane result = plane.transform(transform);
+
+        // assert
+        checkPlane(result, Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y);
+        checkTransform(plane, transform, result);
+    }
+
+    @Test
+    void testTransform_nonuniformScaleAndRotation() {
+        // arrange
+        final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.of(1, 1, 0), Vector3D.of(-1, 1, 0), TEST_PRECISION);
+        final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createScale(2, 1, 3)
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Angle.PI_OVER_TWO))
+                .translate(1, 2, 3);
+
+        // act
+        final EmbeddingPlane result = plane.transform(transform);
+
+        // assert
+        checkPlane(result, Vector3D.of(4, 0, 0), Vector3D.of(0, 1, -2), Vector3D.of(0, 2, 1));
+        checkTransform(plane, transform, result);
+    }
+
+    @Test
+    void testTransform_translation() {
+        // arrange
+        final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.of(1, 1, 0), Vector3D.of(-1, 1, 0), TEST_PRECISION);
+        final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(2, 3, 4);
+
+        // act
+        final EmbeddingPlane result = plane.transform(transform);
+
+        // assert
+        checkPlane(result, Vector3D.of(0, 0, 5), plane.getU(), plane.getV());
+        checkTransform(plane, transform, result);
+    }
+
+    @Test
+    void testTransform_collapsedPlane() {
+        // arrange
+        final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.ZERO,
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final AffineTransformMatrix3D collinear = AffineTransformMatrix3D.of(
+                1, 2, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 1, 0);
+        final AffineTransformMatrix3D collinearNonAxisAligned = AffineTransformMatrix3D.of(
+                -5, -10, 0, 0,
+                -5, -10, 0, 0,
+                -4, -8, 1, 0);
+
+        // act/assert
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> plane.transform(AffineTransformMatrix3D.createScale(0, 1, 1)));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> plane.transform(AffineTransformMatrix3D.createScale(1, 0, 1)));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> plane.transform(AffineTransformMatrix3D.createScale(0, 0, 0)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> plane.transform(collinear));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> plane.transform(collinearNonAxisAligned));
+    }
+
+    @Test
+    void testTransform_singularButPlanePreserved() {
+        // arrange
+        final EmbeddingPlane plane = Planes.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        final AffineTransformMatrix3D transform = AffineTransformMatrix3D.createScale(1, 1, 0);
+
+        // act
+        final EmbeddingPlane result = plane.transform(transform);
+
+        // assert
+        checkPlane(result, Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y);
+        checkTransform(plane, transform, result);
+    }
+
+    @Test
     void testTransform_negateOneComponent() {
         // arrange
         final Vector3D pt = Vector3D.of(0, 0, 1);
@@ -222,7 +312,7 @@ class EmbeddingPlaneTest {
             final AffineTransformMatrix3D t = AffineTransformMatrix3D.identity()
                     .rotate(Vector3D.of(-1, 2, 3),
                             QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.3 * a))
-                    .scale(Math.max(a, 1), Math.max(b, 1), Math.max(c, 1))
+                    .scale(a != 0 ? a : 1, b != 0 ? b : 1, c != 0 ? c : 1)
                     .translate(c, b, a);
 
             // act
@@ -242,7 +332,32 @@ class EmbeddingPlaneTest {
 
             Assertions.assertFalse(result.contains(t.apply(notOnPlane1)));
             Assertions.assertFalse(result.contains(t.apply(notOnPlane2)));
+
+            checkTransform(plane, t, result);
         });
+    }
+
+    private static void checkTransform(final EmbeddingPlane plane, final AffineTransformMatrix3D transform,
+            final EmbeddingPlane result) {
+        Assertions.assertSame(plane.getPrecision(), result.getPrecision());
+        Assertions.assertEquals(1, result.getU().norm(), TEST_EPS);
+        Assertions.assertEquals(1, result.getV().norm(), TEST_EPS);
+        Assertions.assertEquals(1, result.getW().norm(), TEST_EPS);
+        Assertions.assertEquals(0, result.getU().dot(result.getV()), TEST_EPS);
+        Assertions.assertEquals(0, result.getU().dot(result.getW()), TEST_EPS);
+        Assertions.assertEquals(0, result.getV().dot(result.getW()), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(result.getW(), result.getU().cross(result.getV()), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(transform.applyVector(plane.getU()).normalize(),
+                result.getU(), TEST_EPS);
+
+        for (final Vector2D subPt : new Vector2D[] {Vector2D.ZERO, Vector2D.of(1, -2), Vector2D.of(-3, 4)}) {
+            final Vector3D transformedPt = transform.apply(plane.toSpace(subPt));
+            Assertions.assertTrue(result.contains(transformedPt));
+            EuclideanTestUtils.assertCoordinatesEqual(transformedPt,
+                    result.toSpace(result.toSubspace(transformedPt)), TEST_EPS);
+            EuclideanTestUtils.assertCoordinatesEqual(subPt,
+                    result.toSubspace(result.toSpace(subPt)), TEST_EPS);
+        }
     }
 
     @Test
