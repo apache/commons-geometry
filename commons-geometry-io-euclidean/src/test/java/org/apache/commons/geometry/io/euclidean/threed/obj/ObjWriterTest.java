@@ -154,6 +154,52 @@ class ObjWriterTest {
     }
 
     @Test
+    void testWriteObjectName_containsNewLine() {
+        // arrange
+        final StringWriter writer = new StringWriter();
+
+        // act/assert
+        try (ObjWriter objWriter = new ObjWriter(writer)) {
+            final String err = "Object name cannot contain new line characters";
+
+            GeometryTestUtils.assertThrowsWithMessage(
+                    () -> objWriter.writeObjectName("a\nv 0 0 0"),
+                    IllegalArgumentException.class, err);
+            GeometryTestUtils.assertThrowsWithMessage(
+                    () -> objWriter.writeObjectName("a\r\nv 0 0 0"),
+                    IllegalArgumentException.class, err);
+            GeometryTestUtils.assertThrowsWithMessage(
+                    () -> objWriter.writeObjectName("a\rv 0 0 0"),
+                    IllegalArgumentException.class, err);
+        }
+
+        Assertions.assertEquals("", writer.getBuffer().toString());
+    }
+
+    @Test
+    void testWriteGroupName_containsNewLine() {
+        // arrange
+        final StringWriter writer = new StringWriter();
+
+        // act/assert
+        try (ObjWriter objWriter = new ObjWriter(writer)) {
+            final String err = "Group name cannot contain new line characters";
+
+            GeometryTestUtils.assertThrowsWithMessage(
+                    () -> objWriter.writeGroupName("a\nv 0 0 0"),
+                    IllegalArgumentException.class, err);
+            GeometryTestUtils.assertThrowsWithMessage(
+                    () -> objWriter.writeGroupName("a\r\nv 0 0 0"),
+                    IllegalArgumentException.class, err);
+            GeometryTestUtils.assertThrowsWithMessage(
+                    () -> objWriter.writeGroupName("a\rv 0 0 0"),
+                    IllegalArgumentException.class, err);
+        }
+
+        Assertions.assertEquals("", writer.getBuffer().toString());
+    }
+
+    @Test
     void testWriteVertex() {
         // arrange
         final StringWriter writer = new StringWriter();
